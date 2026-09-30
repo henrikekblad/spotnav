@@ -1,0 +1,1 @@
+Ensimmäinen julkaisu: sähkönhintawidget, hintataulukko, sähköauton latauksen suunnittelija ja valinnainen Home Assistant -yhdistäminen.

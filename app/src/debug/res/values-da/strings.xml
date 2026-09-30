@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testtilstand</string>
+  <string name="test_mode_intro">Se de skærme, som en rigtig oplader ikke kan frembringe, med en mock af Home Assistant på netværket. Dine egne opladere lægges til side, mens testtilstanden er slået til, og lægges tilbage præcis som de var, når du forlader den.</string>
+  <string name="test_mode_discover">Find mock-servere</string>
+  <string name="test_mode_discovering">Søger efter mock-servere…</string>
+  <string name="test_mode_none_found">Ingen mock-server svarede. Start tools/fake_ha.py, eller skriv adressen nedenfor.</string>
+  <string name="test_mode_found">Mock-servere fundet: %1$d</string>
+  <string name="test_mode_manual_label">Mock-serverens adresse</string>
+  <string name="test_mode_manual_fetch">Hent scenarier</string>
+  <string name="test_mode_unreachable">Kunne ikke nå %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s svarede, men har ingen scenarier.</string>
+  <string name="test_mode_enter">Start testtilstand</string>
+  <string name="test_mode_leave">Forlad testtilstand</string>
+  <string name="test_mode_on">Testtilstanden er slået til</string>
+  <string name="test_mode_off">Dine opladere er tilbage</string>
+  <string name="test_mode_nothing_to_restore">Intet at gendanne — ingen gemt kopi blev fundet</string>
+  <string name="test_mode_already_on">Testtilstanden er allerede slået til</string>
+  <string name="test_mode_banner">TESTTILSTAND — ikke dine rigtige opladere</string>
+  <string name="test_mode_not_a_mock">%1$s er ikke en mock-server, som appen må tale med. Brug HTTPS eller en privat HTTP-adresse.</string>
+</resources>

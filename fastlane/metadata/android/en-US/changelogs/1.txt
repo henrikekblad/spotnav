@@ -1,0 +1,1 @@
+First release: price widget, price table, EV charging planner and optional Home Assistant pairing.

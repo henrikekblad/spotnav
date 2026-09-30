@@ -1,0 +1,1 @@
+Første versjon: strømpris-widget, pristabell, ladeplanlegger for elbil og valgfri kobling til Home Assistant.

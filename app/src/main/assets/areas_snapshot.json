@@ -1,0 +1,178 @@
+{
+  "v": 1,
+  "generated": "2026-09-20T17:49:20+02:00",
+  "areas": [
+    {
+      "id": "DK1",
+      "eic": "10YDK-1--------W",
+      "countries": [
+        "DK"
+      ],
+      "name": "Västdanmark",
+      "tz": "Europe/Copenhagen",
+      "currency": "DKK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 0.8
+    },
+    {
+      "id": "DK2",
+      "eic": "10YDK-2--------M",
+      "countries": [
+        "DK"
+      ],
+      "name": "Östdanmark",
+      "tz": "Europe/Copenhagen",
+      "currency": "DKK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 0.8
+    },
+    {
+      "id": "FI",
+      "eic": "10YFI-1--------U",
+      "countries": [
+        "FI"
+      ],
+      "name": "Finland",
+      "tz": "Europe/Helsinki",
+      "currency": "EUR",
+      "major_unit": "€",
+      "minor_unit": "cent",
+      "vat_percent": 25.5,
+      "suggested_tax": 2.325
+    },
+    {
+      "id": "NO1",
+      "eic": "10YNO-1--------2",
+      "countries": [
+        "NO"
+      ],
+      "name": "Oslo",
+      "tz": "Europe/Oslo",
+      "currency": "NOK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 7.13
+    },
+    {
+      "id": "NO2",
+      "eic": "10YNO-2--------T",
+      "countries": [
+        "NO"
+      ],
+      "name": "Kristiansand",
+      "tz": "Europe/Oslo",
+      "currency": "NOK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 7.13
+    },
+    {
+      "id": "NO3",
+      "eic": "10YNO-3--------J",
+      "countries": [
+        "NO"
+      ],
+      "name": "Trondheim",
+      "tz": "Europe/Oslo",
+      "currency": "NOK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 7.13
+    },
+    {
+      "id": "NO4",
+      "eic": "10YNO-4--------9",
+      "countries": [
+        "NO"
+      ],
+      "name": "Tromsø",
+      "tz": "Europe/Oslo",
+      "currency": "NOK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 0,
+      "suggested_tax": 7.13
+    },
+    {
+      "id": "NO5",
+      "eic": "10Y1001A1001A48H",
+      "countries": [
+        "NO"
+      ],
+      "name": "Bergen",
+      "tz": "Europe/Oslo",
+      "currency": "NOK",
+      "major_unit": "kr",
+      "minor_unit": "øre",
+      "vat_percent": 25,
+      "suggested_tax": 7.13
+    },
+    {
+      "id": "SE1",
+      "eic": "10Y1001A1001A44P",
+      "countries": [
+        "SE"
+      ],
+      "name": "Luleå",
+      "tz": "Europe/Stockholm",
+      "currency": "SEK",
+      "major_unit": "kr",
+      "minor_unit": "öre",
+      "vat_percent": 25,
+      "suggested_tax": 36,
+      "suggested_grid_fee": 30
+    },
+    {
+      "id": "SE2",
+      "eic": "10Y1001A1001A45N",
+      "countries": [
+        "SE"
+      ],
+      "name": "Sundsvall",
+      "tz": "Europe/Stockholm",
+      "currency": "SEK",
+      "major_unit": "kr",
+      "minor_unit": "öre",
+      "vat_percent": 25,
+      "suggested_tax": 36,
+      "suggested_grid_fee": 30
+    },
+    {
+      "id": "SE3",
+      "eic": "10Y1001A1001A46L",
+      "countries": [
+        "SE"
+      ],
+      "name": "Stockholm",
+      "tz": "Europe/Stockholm",
+      "currency": "SEK",
+      "major_unit": "kr",
+      "minor_unit": "öre",
+      "vat_percent": 25,
+      "suggested_tax": 36,
+      "suggested_grid_fee": 30
+    },
+    {
+      "id": "SE4",
+      "eic": "10Y1001A1001A47J",
+      "countries": [
+        "SE"
+      ],
+      "name": "Malmö",
+      "tz": "Europe/Stockholm",
+      "currency": "SEK",
+      "major_unit": "kr",
+      "minor_unit": "öre",
+      "vat_percent": 25,
+      "suggested_tax": 36,
+      "suggested_grid_fee": 30
+    }
+  ]
+}

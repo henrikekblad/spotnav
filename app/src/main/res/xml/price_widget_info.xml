@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="se.sensnology.elpris.WidgetConfigActivity"
+    android:configure="se.sensnology.spotnav.ui.WidgetConfigActivity"
     android:description="@string/widget_description"
     android:initialLayout="@layout/widget_price"
     android:minWidth="180dp"

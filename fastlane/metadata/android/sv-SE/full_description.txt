@@ -1,0 +1,28 @@
+SpotNav visar elens spotpris som widget på hemskärmen och i en färgkodad pristabell, och hjälper dig att planera elbilsladdning till de billigaste timmarna.
+
+PRISER
+- Idag och imorgon i ett 24-timmarsdiagram, med aktuellt intervall, lägsta, högsta och nuvarande pris markerade.
+- Elområden i Norden och Baltikum, Tyskland och Nederländerna.
+- Kvartspriser eller timmedelvärden, i lokal valuta.
+- Valfri moms, energiskatt och nätavgift. Föreslagna skattevärden kan ändras; kontrollera dem mot ditt eget avtal.
+- Widget som går att ändra storlek på, lokal cache vid nätverksfel och automatisk kontroll av morgondagens priser.
+- Finns på svenska, norska, danska, finska och engelska.
+
+LADDPLANERARE FÖR ELBIL
+- Ställ in enfas- eller trefasladdning, ström, energi att ladda, bilens förbrukning, avresetid och upp till åtta laddperioder.
+- Appen väljer den billigaste kombinationen av kvartar och visar kostnad och räckvidd. De valda perioderna skuggas i widgeten.
+- Om laddfönstret sträcker sig förbi de publicerade priserna uppskattas de saknade intervallen från den senast publicerade dagen, och planen märks som uppskattad. Laddförluster och bilens laddkurva ingår inte.
+
+HOME ASSISTANT (VALFRITT)
+- Koppla appen till din Home Assistant via SpotNav-integrationen för att se och ändra laddinställningar från telefonen.
+- Laddstyrning, sol- och hybridplanering samt lastbalansering körs i SpotNav-integrationen för Home Assistant, som installeras separat. Appen behöver inte vara uppkopplad för att schemat ska köras.
+- Appen får ett webhook-ID per laddbox, aldrig lösenord eller token till Home Assistant.
+- Allt utom Home Assistant-funktionerna fungerar utan koppling.
+
+DATA OCH INTEGRITET
+- Priserna är day-ahead-priser från ENTSO-E, publicerade av SpotNav-reläet, med valutor omräknade med ECB:s växelkurser. Priset som visas är spotpris; moms, skatt och avgifter läggs till bara om du slår på dem.
+- Inget konto, ingen annonsering, ingen analys. Utvecklaren tar inte emot några data från appen.
+- Appen hämtar priser från reläet (elområde och datum) och pratar, om du kopplat den, bara med din egen Home Assistant.
+- Integritetspolicy: https://spotnav.sensnology.se/privacy
+
+SpotNav har ingen koppling till ENTSO-E, ECB, Nord Pool, elhandlare eller nätägare. Priser och laddberäkningar är vägledning; kontrollera dem mot ditt avtal och din faktura.

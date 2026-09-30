@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The closed view of a card header's selector: what stands in for the card's
+     own title, so it is laid out exactly like one — 17 sp, bold, one line, and
+     no taller than the title it replaces. Its height is what keeps this card's
+     heading on the same line as every other card's (see the card() builder
+     in ui/common/Cards.kt and headerSpinnerAdapter); the dropdown rows are the platform's own,
+     which is where a 48 dp row belongs. The colour comes from the same place
+     the title's does, so this file cannot state it. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="17sp"
+    android:textStyle="bold"
+    android:maxLines="1"
+    android:ellipsize="end" />

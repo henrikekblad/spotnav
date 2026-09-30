@@ -2,43 +2,52 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Finding Home Assistant over mDNS: a multicast lock keeps replies
+         arriving while the phone dozes. Normal protection level, so it is
+         granted at install with no prompt, and discovery treats it as best
+         effort anyway. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
+    <!-- Cleartext stays on, deliberately: a local Home Assistant is usually plain
+         http:// on a private IP or a bare/.local hostname, and a network-security
+         config can name single hosts or domain suffixes but not IP ranges or
+         single-label names, so it cannot express "private addresses only".
+         The restriction lives in code instead: HomeAssistantSettings
+         .isAllowedBaseUrl accepts http only for private, loopback, link-local,
+         .local/.lan and single-label hosts, and every Home Assistant request
+         (HomeAssistantClient) and pairing step enforces it. -->
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/full_backup_content"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".LauncherActivity"
+            android:name=".app.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="elpris" android:host="home-assistant" />
-                <data android:scheme="spotnav" android:host="home-assistant" />
-            </intent-filter>
         </activity>
         <activity
-            android:name=".WidgetConfigActivity"
+            android:name=".ui.WidgetConfigActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <receiver
-            android:name=".PriceWidgetProvider"
+            android:name=".widget.PriceWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="se.sensnology.elpris.REFRESH" />
-                <action android:name="se.sensnology.elpris.PUBLICATION_CHECK" />
+                <action android:name="se.sensnology.spotnav.REFRESH" />
+                <action android:name="se.sensnology.spotnav.PUBLICATION_CHECK" />
+                <action android:name="se.sensnology.spotnav.CHART_BOUNDARY" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
             <meta-data

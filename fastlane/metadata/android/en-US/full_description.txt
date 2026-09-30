@@ -1,0 +1,28 @@
+SpotNav shows electricity spot prices as a home-screen widget and a colour-coded price table, and helps you plan EV charging for the cheapest hours.
+
+PRICES
+- Today and tomorrow on one 24-hour chart, with the current interval, minimum, maximum and current price marked.
+- Price areas in the Nordic and Baltic countries, Germany and the Netherlands.
+- 15-minute prices or hourly averages, in the local currency.
+- Optional VAT, electricity tax and grid fee. Suggested tax values can be edited; check them against your own agreement.
+- Resizable widget, a local cache for network failures and automatic checks for tomorrow's prices.
+- Available in English, Swedish, Norwegian, Danish and Finnish.
+
+EV CHARGING PLANNER
+- Set single-phase or three-phase charging, current, energy to add, vehicle consumption, departure time and up to eight charging periods.
+- The app picks the cheapest combination of quarter-hours and shows cost and range. The chosen periods are shaded in the widget.
+- If the charging window runs past the published prices, missing intervals are estimated from the latest published day and the plan is marked as estimated. Charging losses and the vehicle's charging curve are not included.
+
+HOME ASSISTANT (OPTIONAL)
+- Pair the app with your Home Assistant through the SpotNav integration to see and change charging settings from the phone.
+- Charging control, solar and hybrid planning and load balancing run in the SpotNav Home Assistant integration, which is installed separately. The app does not need to stay online for the schedule to run.
+- The app receives one webhook ID per charger, never a Home Assistant password or token.
+- Everything except the Home Assistant features works without pairing.
+
+DATA AND PRIVACY
+- Prices are day-ahead prices from ENTSO-E, published by the SpotNav relay, with currencies converted using ECB exchange rates. The price shown is a spot price; VAT, tax and fees are added only if you enable them.
+- No account, no advertising, no analytics. The developer receives no data from the app.
+- The app requests prices from the relay (price area and date) and, if paired, talks only to your own Home Assistant.
+- Privacy policy: https://spotnav.sensnology.se/privacy
+
+SpotNav is not affiliated with ENTSO-E, the ECB, Nord Pool, electricity retailers or grid operators. Prices and charging calculations are guidance only; verify them against your agreement and invoice.

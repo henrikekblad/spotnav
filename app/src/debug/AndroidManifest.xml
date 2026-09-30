@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The test-mode screen, debug builds only.
+
+  Declaring it here rather than in the main manifest is what keeps a release
+  build structurally unable to reach it: the class lives under src/debug/ and is
+  never compiled into a release APK, so a main-manifest entry would be a
+  reference to something that does not exist.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".testmode.TestModeActivity"
+            android:exported="false"
+            android:label="@string/test_mode_title" />
+    </application>
+</manifest>

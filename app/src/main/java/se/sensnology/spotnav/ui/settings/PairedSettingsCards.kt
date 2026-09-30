@@ -1,0 +1,473 @@
+package se.sensnology.spotnav.ui.settings
+
+import android.app.AlertDialog
+import android.text.InputType
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.ScrollView
+import android.widget.TextView
+import se.sensnology.spotnav.R
+import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.client.SiteFacts
+import se.sensnology.spotnav.ha.client.SiteUpdate
+import se.sensnology.spotnav.ha.client.VehicleField
+import se.sensnology.spotnav.ha.client.VehicleFieldIssue
+import se.sensnology.spotnav.ha.client.VehicleUpdate
+import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardSite
+import se.sensnology.spotnav.ha.dashboard.DashboardSummary
+import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
+import se.sensnology.spotnav.ui.common.ValueCue
+import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.card
+import se.sensnology.spotnav.ui.common.valueLabel
+import se.sensnology.spotnav.ui.common.valueColour
+import se.sensnology.spotnav.ui.common.valueRow
+import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.PairedVehicles
+import java.util.Locale
+
+/**
+ * The cards of a paired charger's settings, in the order the Home Assistant card has them after the
+ * price card: one card per vehicle, the charger, the site and solar.
+ *
+ * The overview saves nothing by itself. The two areas the webhook lets the app change (a vehicle's
+ * capacity and consumption, the site's solar settings) each have a **Change** button that opens a
+ * dialog with Save and Cancel; the charger and the site's entities are read-only here and changed
+ * in Home Assistant.
+ */
+internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : ViewScope(scope) {
+    private val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private var dashboard: Dashboard? = null
+    private var unreachable = false
+
+    // What a write answered with, shown until the next dashboard replaces it.
+    private val adoptedVehicles = mutableMapOf<String, DashboardVehicle>()
+    private var adoptedSite: DashboardSite? = null
+    private val vehicleNotices = mutableMapOf<String, String>()
+    private var solarNotice: String? = null
+
+    private var writeVehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit =
+        { _, _, done -> done(VehicleUpdate.Outcome.Failed(null)) }
+    private var writeSite: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit =
+        { _, done -> done(SiteUpdate.Outcome.Failed(null)) }
+
+    init {
+        parent.addView(container)
+    }
+
+    /** Where the two writes are carried out (the screen owns the connection). */
+    fun attachWrites(
+        vehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit,
+        site: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit
+    ) {
+        writeVehicle = vehicle
+        writeSite = site
+    }
+
+    /** Paint [fresh] (the rows a write adopted give way to it); a failed read (`null`) leaves what is shown and says so only when nothing is. */
+    fun show(fresh: Dashboard?) {
+        if (fresh != null && fresh !== dashboard) {
+            adoptedVehicles.clear()
+            adoptedSite = null
+        }
+        if (fresh != null) dashboard = fresh
+        unreachable = fresh == null && dashboard == null
+        repaint()
+    }
+
+    private fun muted(text: String, top: Int = 0, bottom: Int = 0) = TextView(context).apply {
+        this.text = text; textSize = 13f; setTextColor(muted); setPadding(0, dp(top), 0, dp(bottom))
+    }
+
+    private fun readRow(parent: LinearLayout, label: String, value: String) {
+        if (value.length <= STACK_AFTER_CHARS) {
+            valueRow(parent, label, valueLabel().apply { text = value })
+            return
+        }
+        // A long value (an entity name, a sentence) gets the whole width under its label instead of
+        // being broken inside a word in half a row.
+        parent.addView(LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(0, dp(5), 0, dp(5))
+            addView(TextView(context).apply { text = label; textSize = 15f; setTextColor(muted) })
+            addView(valueLabel().apply { text = value; gravity = Gravity.START; setTextColor(palette.valueColour(ValueCue.READ_ONLY)) })
+        })
+    }
+
+    private fun changeButton(parent: LinearLayout, label: String, enabled: Boolean = true, onClick: () -> Unit) {
+        parent.addView(Button(context).apply {
+            text = label
+            isAllCaps = false
+            isEnabled = enabled
+            setOnClickListener { onClick() }
+        }, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { topMargin = dp(8) })
+    }
+
+    private fun repaint() {
+        container.removeAllViews()
+        val dash = dashboard
+        if (dash == null) {
+            if (unreachable) container.addView(muted(t(R.string.instance_unreachable), bottom = 14))
+            return
+        }
+        addVehicleCards(dash)
+        addChargerCard(dash)
+        val site = adoptedSite ?: dash.site
+        addSiteCard(site)
+        if (site != null) addSolarCard(site)
+    }
+
+    // --- Vehicles -------------------------------------------------------------------------------
+
+    private fun addVehicleCards(dash: Dashboard) {
+        val vehicles = PairedOverview.vehicles(dash, adoptedVehicles)
+        if (vehicles.isEmpty()) {
+            val card = card(container, t(R.string.vehicle_title), R.drawable.ic_ev)
+            card.body.addView(muted(t(R.string.settings_vehicle_none), top = 8))
+            return
+        }
+        for (vehicle in vehicles) {
+            val card = card(container, vehicle.name, R.drawable.ic_ev)
+            if (vehicle.planned) card.body.addView(muted(t(R.string.settings_vehicle_planned_here), top = 8))
+            readRow(card.body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
+            readRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle))
+            readRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
+                ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset))
+            vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
+            changeButton(card.body, t(R.string.settings_vehicle_change)) { openVehicleDialog(vehicle.id) }
+        }
+    }
+
+    private fun chargeLevelText(vehicle: PairedOverview.VehicleCard): String {
+        val name = vehicle.sensorName
+        return when (val level = vehicle.chargeLevel) {
+            is PairedOverview.ChargeLevel.Reading -> t(R.string.vehicle_card_soc_value, level.percent)
+                .let { reading -> if (name == null) reading else "$reading ($name)" }
+            PairedOverview.ChargeLevel.NoSensor -> t(R.string.settings_vehicle_no_sensor)
+            PairedOverview.ChargeLevel.NoReading -> name ?: t(R.string.paired_value_unset)
+        }
+    }
+
+    private fun capacityText(vehicle: PairedOverview.VehicleCard): String {
+        val kwh = vehicle.capacityKwh ?: return t(R.string.paired_value_unset)
+        val text = t(R.string.vehicle_card_capacity_value, kwh)
+        return if (vehicle.capacityReported) "$text (${t(R.string.vehicle_capacity_reported)})" else text
+    }
+
+    private fun vehicleNoticeText(notice: PairedVehicles.Notice) = t(
+        when (notice) {
+            PairedVehicles.Notice.CONFLICT -> R.string.paired_error_conflict
+            PairedVehicles.Notice.UNKNOWN_VEHICLE -> R.string.vehicle_error_unknown
+            PairedVehicles.Notice.NOT_SUPPORTED -> R.string.paired_error_version
+            PairedVehicles.Notice.FAILED -> R.string.paired_error_generic
+            PairedVehicles.Notice.REFUSED -> R.string.paired_error_invalid
+        }
+    )
+
+    private fun issueText(field: VehicleField, issue: VehicleFieldIssue) = t(
+        when (issue) {
+            VehicleFieldIssue.OUT_OF_RANGE ->
+                if (field == VehicleField.CAPACITY) R.string.vehicle_error_capacity else R.string.vehicle_error_consumption
+            VehicleFieldIssue.NOT_A_NUMBER -> R.string.paired_error_number
+            VehicleFieldIssue.UNKNOWN -> R.string.paired_error_field
+        }
+    )
+
+    /** A current as the card writes it: whole amps without decimals, else one, in the screen's number locale. */
+    private fun ampsText(amps: Double): String =
+        if (amps % 1.0 == 0.0) amps.toLong().toString()
+        else String.format(AppLanguageSettings.numberLocale(context), "%.1f", amps)
+
+    private fun errorView() = TextView(context).apply {
+        textSize = 13f; setTextColor(ERROR_COLOUR); setPadding(0, dp(4), 0, 0); visibility = View.GONE
+    }
+
+    private fun TextView.say(text: String?) {
+        this.text = text.orEmpty()
+        visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+    }
+
+    /** A decimal field with its unit and the error its save can put under it. */
+    private class NumberField(val input: EditText, val error: TextView, val view: View)
+
+    private fun numberInput(initial: Double?, unit: String): NumberField {
+        val input = EditText(context).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            initial?.let { setText(VehicleUpdate.display(it, Locale.ROOT)) }
+            hint = t(R.string.paired_value_unset)
+            setSelectAllOnFocus(true)
+        }
+        val error = errorView()
+        val view = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                addView(input, weight())
+                addView(TextView(context).apply {
+                    text = unit; textSize = 15f; setTextColor(muted); setPadding(dp(8), 0, 0, 0)
+                })
+            })
+            addView(error)
+        }
+        return NumberField(input, error, view)
+    }
+
+    private fun openVehicleDialog(vehicleId: String) {
+        val dash = dashboard ?: return
+        val row = PairedVehicles.row(dash, adoptedVehicles, vehicleId) ?: return
+        val editable = VehicleUpdate.capacityEditable(row)
+        vehicleNotices.remove(vehicleId)
+        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val capacity = numberInput(row.capacityKwh, "kWh")
+        body.addView(TextView(context).apply {
+            text = t(R.string.vehicle_card_capacity_label); textSize = 14f; setTextColor(muted)
+        })
+        if (editable) {
+            body.addView(capacity.view)
+            body.addView(muted(t(R.string.vehicle_card_capacity_note), top = 2))
+        } else {
+            // A capacity the car reports itself always wins, so a typed figure could never take effect.
+            body.addView(TextView(context).apply {
+                text = "${row.capacityKwh?.let { t(R.string.vehicle_card_capacity_value, it) }.orEmpty()} (${t(R.string.vehicle_capacity_reported)})"
+                textSize = 16f; setTextColor(dark); setPadding(0, dp(6), 0, dp(6))
+            })
+        }
+        val consumption = numberInput(row.consumptionKwhPer10km, "kWh/10 km")
+        body.addView(TextView(context).apply {
+            text = t(R.string.consumption); textSize = 14f; setTextColor(muted); setPadding(0, dp(14), 0, 0)
+        })
+        body.addView(consumption.view)
+        body.addView(muted(t(R.string.vehicle_card_consumption_note), top = 2))
+        val general = errorView()
+        body.addView(general)
+
+        openSaveDialog(t(R.string.settings_vehicle_dialog_title, row.name), body) { dialog, save ->
+            val current = PairedVehicles.row(dashboard ?: return@openSaveDialog, adoptedVehicles, vehicleId)
+                ?: return@openSaveDialog
+            capacity.error.say(null); consumption.error.say(null); general.say(null)
+            when (val draft = VehicleUpdate.draft(current, capacity.input.text.toString(), consumption.input.text.toString())) {
+                VehicleUpdate.Draft.Unchanged -> dialog.dismiss()
+                is VehicleUpdate.Draft.Invalid -> {
+                    draft.issues[VehicleField.CAPACITY]?.let { capacity.error.say(issueText(VehicleField.CAPACITY, it)) }
+                    draft.issues[VehicleField.CONSUMPTION]?.let { consumption.error.say(issueText(VehicleField.CONSUMPTION, it)) }
+                }
+                is VehicleUpdate.Draft.Write -> {
+                    save.isEnabled = false
+                    writeVehicle(vehicleId, draft.changes) { outcome ->
+                        val feedback = PairedVehicles.feedback(outcome)
+                        feedback.adopted?.let { adoptedVehicles[it.id] = it }
+                        if (feedback.close) {
+                            feedback.notice?.let { vehicleNotices[vehicleId] = vehicleNoticeText(it) }
+                                ?: vehicleNotices.remove(vehicleId)
+                            dialog.dismiss()
+                            repaint()
+                        } else {
+                            save.isEnabled = true
+                            feedback.issues[VehicleField.CAPACITY]?.let { capacity.error.say(issueText(VehicleField.CAPACITY, it)) }
+                            feedback.issues[VehicleField.CONSUMPTION]?.let { consumption.error.say(issueText(VehicleField.CONSUMPTION, it)) }
+                            if (feedback.issues.isEmpty()) general.say(feedback.notice?.let { vehicleNoticeText(it) })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Charger --------------------------------------------------------------------------------
+
+    private fun addChargerCard(dash: Dashboard) {
+        val charger = PairedOverview.charger(dash)
+        val card = card(container, t(R.string.section_charger), R.drawable.ic_card_charger)
+        if (charger.showsStartStop) {
+            readRow(card.body, t(R.string.charger_start_stop_label),
+                charger.summary?.startStopName ?: t(R.string.paired_value_unset))
+        }
+        readRow(card.body, t(R.string.charger_current_label), when (charger.summaryPath) {
+            DashboardSummary.CurrentPath.CHANGE_CONFIGURATION -> t(R.string.charger_current_ocpp)
+            DashboardSummary.CurrentPath.NUMBER -> charger.summary?.currentEntityName
+                ?.let { t(R.string.charger_current_number, it) } ?: t(R.string.charger_current_number_unnamed)
+            DashboardSummary.CurrentPath.EASEE_DYNAMIC_LIMIT -> t(R.string.charger_current_easee)
+            DashboardSummary.CurrentPath.NONE -> t(R.string.charger_current_kept)
+            null -> when (charger.currentPath) {
+                PairedOverview.CurrentPath.SET_BY_SPOTNAV ->
+                    t(R.string.charger_current_set, charger.minA, charger.maxA)
+                PairedOverview.CurrentPath.KEPT_BY_CHARGER -> t(R.string.charger_current_kept)
+            }
+        })
+        charger.energy?.let { energy ->
+            readRow(card.body, t(R.string.charger_energy_label), when (energy) {
+                is PairedOverview.EnergyMeter.Named -> energy.name
+                PairedOverview.EnergyMeter.Automatic -> t(R.string.charger_energy_automatic)
+                PairedOverview.EnergyMeter.NotSpecified -> t(R.string.paired_value_unset)
+            })
+        }
+        card.body.addView(muted(t(R.string.changed_in_home_assistant), top = 6))
+    }
+
+    // --- Site -----------------------------------------------------------------------------------
+
+    private fun siteNoticeText(notice: PairedVehicles.SiteNotice) = t(
+        when (notice) {
+            PairedVehicles.SiteNotice.CONFLICT -> R.string.site_error_conflict
+            PairedVehicles.SiteNotice.INVALID -> R.string.paired_error_invalid
+            PairedVehicles.SiteNotice.NOT_PERMITTED -> R.string.site_error_not_permitted
+            PairedVehicles.SiteNotice.UNAVAILABLE -> R.string.site_error_unavailable
+            PairedVehicles.SiteNotice.NOT_SUPPORTED -> R.string.paired_error_version
+            PairedVehicles.SiteNotice.FAILED -> R.string.paired_error_generic
+        }
+    )
+
+    private fun addSiteCard(site: DashboardSite?) {
+        if (site == null) {
+            val card = card(container, t(R.string.site_default_name), R.drawable.ic_site)
+            card.body.addView(muted(t(R.string.site_none), top = 8))
+            return
+        }
+        val summary = PairedOverview.site(site, dashboard?.summary?.site)
+        // The site's own name alone; "Site" only when it has none.
+        val card = card(container, summary.name ?: t(R.string.site_default_name), R.drawable.ic_site)
+        card.body.addView(muted(tq(R.plurals.site_applies, summary.chargers, summary.chargers), top = 8, bottom = 4))
+        summary.setup?.let { setup ->
+            setup.mainFuseA?.let { readRow(card.body, t(R.string.site_main_fuse_label), t(R.string.site_main_fuse_value, ampsText(it))) }
+            setup.measurementMode?.let { mode ->
+                readRow(card.body, t(R.string.site_measurement_label), t(
+                    when (mode) {
+                        DashboardSummary.MeasurementMode.DIRECT -> R.string.site_measurement_direct
+                        DashboardSummary.MeasurementMode.DERIVED -> R.string.site_measurement_derived
+                    }
+                ))
+            }
+            readRow(card.body, t(R.string.site_battery_label), setup.batteryName ?: t(R.string.value_none))
+        }
+        readRow(card.body, t(R.string.site_active_title), t(if (summary.activeControlOn) R.string.site_on else R.string.site_off))
+        val reason = when (summary.reason) {
+            SiteFacts.Reason.NONE -> null
+            SiteFacts.Reason.DUPLICATE_MEMBERSHIP -> t(R.string.site_active_reason_duplicate)
+            SiteFacts.Reason.NO_COMMANDABLE_CHARGER -> t(R.string.site_active_reason_no_charger)
+            SiteFacts.Reason.MEASUREMENT -> t(R.string.site_active_reason_measurement)
+            SiteFacts.Reason.UNKNOWN -> t(R.string.site_active_reason_unknown)
+        }
+        // State and reason only: the switch and the site's entities are changed in Home Assistant.
+        card.body.addView(muted(
+            listOfNotNull(reason, t(R.string.site_active_in_ha), t(R.string.site_active_note)).joinToString(" "),
+            top = 6
+        ))
+    }
+
+    // --- Solar ----------------------------------------------------------------------------------
+
+    private fun priorityText(value: String?) = when (value) {
+        SiteUpdate.CAR_FIRST -> t(R.string.site_car_first)
+        SiteUpdate.BATTERY_FIRST -> t(R.string.site_battery_first)
+        else -> t(R.string.paired_value_unset)
+    }
+
+    private fun addSolarCard(site: DashboardSite) {
+        val summary = PairedOverview.solar(site)
+        val chargers = PairedOverview.site(site).chargers
+        val card = card(container, t(R.string.section_solar), R.drawable.ic_solar)
+        card.body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), top = 8, bottom = 4))
+        readRow(card.body, t(R.string.site_solar_priority), priorityText(summary.priority))
+        readRow(card.body, t(R.string.site_forecast_title),
+            if (summary.forecastTitles.isEmpty()) t(R.string.value_none) else summary.forecastTitles.joinToString(", "))
+        if (!summary.editable) card.body.addView(muted(t(R.string.site_read_only), top = 6))
+        solarNotice?.let { card.body.addView(muted(it, top = 4)) }
+        changeButton(card.body, t(R.string.solar_change), enabled = summary.editable) { openSolarDialog() }
+    }
+
+    private fun openSolarDialog() {
+        val site = adoptedSite ?: dashboard?.site ?: return
+        if (!SiteFacts.solarEditable(site)) return
+        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val chargers = PairedOverview.site(site).chargers
+        body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), bottom = 4))
+        body.addView(TextView(context).apply {
+            text = t(R.string.site_solar_priority); textSize = 14f; setTextColor(muted)
+        })
+        val group = RadioGroup(context).apply { orientation = LinearLayout.VERTICAL }
+        val buttons = SiteFacts.PRIORITIES.map { value ->
+            RadioButton(context).apply {
+                id = View.generateViewId()
+                text = priorityText(value)
+                isChecked = value == site.solarPriority
+            }.also { group.addView(it) }
+        }
+        body.addView(group)
+        body.addView(TextView(context).apply {
+            text = t(R.string.site_forecast_title); textSize = 14f; setTextColor(muted); setPadding(0, dp(12), 0, dp(4))
+        })
+        val boxes = site.solarForecastChoices.map { choice ->
+            CheckBox(context).apply {
+                text = choice.title; textSize = 16f; isChecked = choice.id in PairedOverview.solarSelection(site)
+            }.also { body.addView(it) }
+        }
+        if (boxes.isEmpty()) body.addView(muted(t(R.string.site_forecast_none)))
+        val error = errorView()
+        body.addView(error)
+
+        openSaveDialog(t(R.string.solar_dialog_title), body) { dialog, save ->
+            val current = adoptedSite ?: dashboard?.site ?: return@openSaveDialog
+            val priority = SiteFacts.PRIORITIES.getOrNull(buttons.indexOfFirst { it.isChecked })
+                ?: current.solarPriority ?: SiteUpdate.CAR_FIRST
+            val chosen = current.solarForecastChoices.filterIndexed { index, _ -> boxes.getOrNull(index)?.isChecked == true }
+                .map { it.id }.toSet() +
+                current.solarForecastSelected.filter { id -> current.solarForecastChoices.none { it.id == id } }
+            val request = SiteUpdate.solarRequest(current, priority, chosen)
+            if (request == null) {
+                dialog.dismiss()
+            } else {
+                error.say(null)
+                save.isEnabled = false
+                writeSite(request) { outcome ->
+                    val feedback = PairedVehicles.feedback(outcome)
+                    feedback.adopted?.let { adoptedSite = it }
+                    val message = feedback.notice?.let { siteNoticeText(it) }
+                    if (feedback.notice == null || feedback.reload) {
+                        solarNotice = message
+                        dialog.dismiss()
+                        repaint()
+                    } else {
+                        save.isEnabled = true
+                        error.say(message)
+                    }
+                }
+            }
+        }
+    }
+
+    private companion object {
+        const val ERROR_COLOUR = 0xFFD65C5C.toInt()
+
+        /** Longer read-only values go under their label rather than beside it. */
+        const val STACK_AFTER_CHARS = 18
+    }
+}
+
+/** The dialog shell every Change button opens: a title, a body, Save that stays open and Cancel. */
+internal fun ViewScope.openSaveDialog(title: String, body: View, onSave: (AlertDialog, Button) -> Unit) {
+    val padded = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(22), dp(8), dp(22), 0)
+        addView(body)
+    }
+    val dialog = AlertDialog.Builder(context)
+        .setTitle(title)
+        .setView(ScrollView(context).apply { addView(padded) })
+        .setPositiveButton(t(R.string.paired_save), null)
+        .setNegativeButton(t(android.R.string.cancel), null)
+        .create()
+    dialog.show()
+    val save = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+    save.setOnClickListener { onSave(dialog, save) }
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testitila</string>
+  <string name="test_mode_intro">Katsele näyttöjä, joita yksi oikea laturi ei voi tuottaa, käyttäen verkon mock-Home Assistantia. Omat laturisi siirretään sivuun testitilan ajaksi ja palautetaan täsmälleen sellaisina kuin ne olivat, kun poistut siitä.</string>
+  <string name="test_mode_discover">Etsi mock-palvelimia</string>
+  <string name="test_mode_discovering">Etsitään mock-palvelimia…</string>
+  <string name="test_mode_none_found">Yksikään mock-palvelin ei vastannut. Käynnistä tools/fake_ha.py tai kirjoita sen osoite alle.</string>
+  <string name="test_mode_found">Mock-palvelimia löytyi: %1$d</string>
+  <string name="test_mode_manual_label">Mock-palvelimen osoite</string>
+  <string name="test_mode_manual_fetch">Hae skenaariot</string>
+  <string name="test_mode_unreachable">Ei saatu yhteyttä: %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s vastasi, mutta sillä ei ole skenaarioita.</string>
+  <string name="test_mode_enter">Aloita testitila</string>
+  <string name="test_mode_leave">Poistu testitilasta</string>
+  <string name="test_mode_on">Testitila on päällä</string>
+  <string name="test_mode_off">Laturisi ovat palanneet</string>
+  <string name="test_mode_nothing_to_restore">Ei palautettavaa — tallennettua kopiota ei löytynyt</string>
+  <string name="test_mode_already_on">Testitila on jo päällä</string>
+  <string name="test_mode_banner">TESTITILA — eivät oikeat laturisi</string>
+  <string name="test_mode_not_a_mock">%1$s ei ole mock-palvelin, jonka kanssa sovellus saa puhua. Käytä suojattua HTTPS-yhteyttä tai yksityistä HTTP-osoitetta.</string>
+</resources>

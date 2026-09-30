@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="store_action">Osallistu GitHubissa</string>
+  <string name="store_action_unavailable">Selainta ei ole käytettävissä lähdekoodisivun avaamiseen</string>
+</resources>

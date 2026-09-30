@@ -1,7 +1,17 @@
-# Integritet
+# Privacy
 
-SpotNav samlar inte in, analyserar eller skickar någon personlig information.
+SpotNav has no accounts, no analytics, no advertising and no third-party tracking. The developer receives no data from the app.
 
-Appen ansluter till `www.elprisetjustnu.se` för att hämta offentliga spotpriser. Val av elområde, avgifter och cachade prisdata lagras endast lokalt på enheten. Ingen annonsering, telemetri eller tredjepartsspårning ingår.
+The full privacy policy, in all the app's languages, is at <https://spotnav.sensnology.se/privacy>. This file is a summary.
 
-Androids systemlogg kan innehålla API-adresser, HTTP-status och antal hämtade prisposter för felsökning. Den innehåller inga signeringsuppgifter, lösenord eller personuppgifter från appen.
+## What the app sends, and where
+
+- **SpotNav relay (`spotnav.sensnology.se`)**: the app downloads public electricity prices and the list of price areas. Requests contain the price area and date; no personal data is sent. As with any web request, the server sees your IP address.
+- **Your own Home Assistant**: if you pair a charger, the app talks to the Home Assistant address you entered, using the webhook IDs it received when you approved the pairing. Charging settings and commands go only there.
+- Home Assistant instances on your local network may be discovered with local network discovery (mDNS); this stays on your network.
+
+## What is stored on the device
+
+Language, theme, price area, taxes and fees, widget settings, cached prices, and, if paired, the Home Assistant address, webhook ID and the charger and vehicle settings. Android backup is disabled, so none of this is copied to a cloud backup or transferred to a new device. Uninstalling the app removes it.
+
+Android's system log may contain request URLs, HTTP status codes and price counts for troubleshooting; it holds no personal data from the app.

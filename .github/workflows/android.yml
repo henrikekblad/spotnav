@@ -22,6 +22,8 @@ jobs:
           java-version: '17'
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests and lint
+        run: ./gradlew testDebugUnitTest lintDebug
       - run: ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
@@ -51,12 +53,24 @@ jobs:
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
         run: printf '%s' "$ANDROID_KEYSTORE" | base64 --decode > "$SIGNING_STORE_PATH"
-      - run: ./gradlew assembleRelease
-      - name: Name release APK
-        run: mv app/build/outputs/apk/release/app-release.apk "app/build/outputs/apk/release/spotnav-${GITHUB_REF_NAME#v}.apk"
+      - name: Unit tests and lint (github store)
+        run: ./gradlew testDebugUnitTest lintDebug
+      - name: Unit tests (play store)
+        run: ./gradlew -Pstore=play testDebugUnitTest
+      # Both stores write to app/build/outputs, so each artifact is renamed before the next build.
+      - name: Build GitHub APK
+        run: |
+          ./gradlew -Pstore=github assembleRelease
+          mv app/build/outputs/apk/release/app-release.apk "spotnav-${GITHUB_REF_NAME#v}.apk"
+      - name: Build Play bundle
+        run: |
+          ./gradlew -Pstore=play bundleRelease
+          mv app/build/outputs/bundle/release/app-release.aab "spotnav-${GITHUB_REF_NAME#v}-play.aab"
       - uses: actions/upload-artifact@v4
         with:
           name: spotnav-release
-          path: app/build/outputs/apk/release/spotnav-*.apk
+          path: |
+            spotnav-*.apk
+            spotnav-*-play.aab
       - name: Publish GitHub release
-        run: gh release create "$GITHUB_REF_NAME" "app/build/outputs/apk/release/spotnav-${GITHUB_REF_NAME#v}.apk" --generate-notes --verify-tag
+        run: gh release create "$GITHUB_REF_NAME" "spotnav-${GITHUB_REF_NAME#v}.apk" --generate-notes --verify-tag

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The charger card's marker: a plug, drawn in the card's own text colour.
+     Decoration, not a control — see the card() builder in ui/common/Cards.kt.
+
+     Four separate closed shapes, each convex, rather than one outline with a
+     counter-drawn hole. A hole depends on the winding of its subpath agreeing
+     with the fill rule, and when it does not the shape renders as a band across
+     the middle instead of a plug. Separate paths cannot be read two ways. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- The two prongs. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8.5,2h2v5.5h-2z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13.5,2h2v5.5h-2z" />
+    <!-- The body: a flat top with a rounded bottom. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5.5,8.5h13v3.5c0,3.59 -2.91,6.5 -6.5,6.5s-6.5,-2.91 -6.5,-6.5z" />
+    <!-- The cable stub. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11,18.2h2v3.8h-2z" />
+</vector>

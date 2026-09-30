@@ -3,7 +3,7 @@
 
     <style name="AppTheme.Light" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#6B5CFF</item>
+        <item name="android:colorAccent">@color/spotnav_accent_light</item>
         <item name="android:navigationBarColor">#F6F7FB</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">#F6F7FB</item>
@@ -11,7 +11,7 @@
 
     <style name="AppTheme.Dark" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#65B9F0</item>
+        <item name="android:colorAccent">@color/spotnav_accent_dark</item>
         <item name="android:navigationBarColor">#10151B</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">#10151B</item>

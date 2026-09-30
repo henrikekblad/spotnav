@@ -1,0 +1,28 @@
+SpotNav näyttää sähkön pörssihinnan widgetinä aloitusnäytöllä ja värikoodatussa hintataulukossa sekä auttaa suunnittelemaan sähköauton latauksen edullisimmille tunneille.
+
+HINNAT
+- Tämä päivä ja huominen samassa 24 tunnin kaaviossa, jossa nykyinen jakso, alin, ylin ja nykyinen hinta on merkitty.
+- Hinta-alueet Pohjoismaissa ja Baltiassa, Saksassa ja Alankomaissa.
+- 15 minuutin hinnat tai tuntikeskiarvot paikallisessa valuutassa.
+- Valinnainen arvonlisävero, sähkövero ja siirtomaksu. Ehdotettuja veroarvoja voi muokata; tarkista ne omasta sopimuksestasi.
+- Kokoa muuttava widget, paikallinen välimuisti verkkovikojen varalle ja huomisen hintojen automaattinen tarkistus.
+- Saatavilla suomeksi, ruotsiksi, norjaksi, tanskaksi ja englanniksi.
+
+SÄHKÖAUTON LATAUKSEN SUUNNITTELIJA
+- Valitse yksi- tai kolmivaihelataus, virta, ladattava energia, auton kulutus, lähtöaika ja enintään kahdeksan latausjaksoa.
+- Sovellus valitsee edullisimman neljännestuntien yhdistelmän ja näyttää kustannuksen ja toimintamatkan. Valitut jaksot varjostetaan widgetissä.
+- Jos latausikkuna ulottuu julkaistujen hintojen yli, puuttuvat jaksot arvioidaan viimeksi julkaistun päivän hinnoista ja suunnitelma merkitään arvioiduksi. Lataushäviöitä ja auton latauskäyrää ei oteta huomioon.
+
+HOME ASSISTANT (VALINNAINEN)
+- Yhdistä sovellus Home Assistantiisi SpotNav-integraation kautta nähdäksesi ja muuttaaksesi latausasetuksia puhelimesta.
+- Latauksen ohjaus, aurinko- ja hybridisuunnittelu sekä kuormanhallinta toimivat Home Assistantin SpotNav-integraatiossa, joka asennetaan erikseen. Sovelluksen ei tarvitse olla verkossa, jotta aikataulu toimii.
+- Sovellus saa yhden webhook-tunnuksen latauspistettä kohden, ei koskaan Home Assistantin salasanaa tai tokenia.
+- Kaikki muu paitsi Home Assistant -toiminnot toimii ilman yhdistämistä.
+
+TIEDOT JA YKSITYISYYS
+- Hinnat ovat ENTSO-E:n day-ahead-hintoja, jotka SpotNav-välityspalvelin julkaisee, ja valuutat on muunnettu EKP:n kursseilla. Näytettävä hinta on pörssihinta; arvonlisävero, verot ja maksut lisätään vain, jos otat ne käyttöön.
+- Ei tiliä, ei mainoksia, ei analytiikkaa. Kehittäjä ei saa sovelluksesta mitään tietoja.
+- Sovellus hakee hinnat välityspalvelimelta (hinta-alue ja päivämäärä) ja, jos se on yhdistetty, keskustelee vain oman Home Assistantisi kanssa.
+- Tietosuojakäytäntö: https://spotnav.sensnology.se/privacy
+
+SpotNavilla ei ole yhteyttä ENTSO-E:hen, EKP:hen, Nord Pooliin, sähkönmyyjiin tai verkkoyhtiöihin. Hinnat ja latauslaskelmat ovat suuntaa antavia; tarkista ne sopimuksestasi ja laskustasi.

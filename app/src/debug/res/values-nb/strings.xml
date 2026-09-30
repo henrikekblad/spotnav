@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testmodus</string>
+  <string name="test_mode_intro">Se skjermene én ekte lader ikke kan lage, med en mock av Home Assistant på nettverket. Dine egne ladere legges til side mens testmodus er på, og legges tilbake nøyaktig som de var når du forlater det.</string>
+  <string name="test_mode_discover">Finn mock-servere</string>
+  <string name="test_mode_discovering">Søker etter mock-servere…</string>
+  <string name="test_mode_none_found">Ingen mock-server svarte. Start tools/fake_ha.py, eller skriv inn adressen nedenfor.</string>
+  <string name="test_mode_found">Mock-servere funnet: %1$d</string>
+  <string name="test_mode_manual_label">Mock-serverens adresse</string>
+  <string name="test_mode_manual_fetch">Hent scenarier</string>
+  <string name="test_mode_unreachable">Kunne ikke nå %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s svarte, men har ingen scenarier.</string>
+  <string name="test_mode_enter">Start testmodus</string>
+  <string name="test_mode_leave">Forlat testmodus</string>
+  <string name="test_mode_on">Testmodus er på</string>
+  <string name="test_mode_off">Laderne dine er tilbake</string>
+  <string name="test_mode_nothing_to_restore">Ingenting å gjenopprette — ingen lagret kopi ble funnet</string>
+  <string name="test_mode_already_on">Testmodus er allerede på</string>
+  <string name="test_mode_banner">TESTMODUS — ikke dine ekte ladere</string>
+  <string name="test_mode_not_a_mock">%1$s er ikke en mock-server appen kan snakke med. Bruk HTTPS, eller en privat HTTP-adresse.</string>
+</resources>

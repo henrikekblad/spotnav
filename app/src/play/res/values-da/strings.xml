@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="store_action">Bidrag på GitHub</string>
+  <string name="store_action_unavailable">Ingen browser er tilgængelig til at åbne kildekodesiden</string>
+</resources>

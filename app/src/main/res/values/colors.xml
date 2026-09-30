@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="spotnav_icon_background">#111318</color>
+    <!-- One accent per app palette. Android's standard controls and our programmatic
+         controls both read these resources, so sliders/dialogs cannot drift from the
+         blue interaction cue used on the main screen. -->
+    <color name="spotnav_accent_light">#1769AA</color>
+    <color name="spotnav_accent_dark">#65B9F0</color>
 </resources>

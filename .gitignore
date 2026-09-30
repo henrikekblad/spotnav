@@ -8,3 +8,6 @@ local.properties
 *.p12
 keystore.properties
 signing.properties
+PLAN.md
+plans/
+docs/

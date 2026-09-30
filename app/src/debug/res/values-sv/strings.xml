@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testläge</string>
+  <string name="test_mode_intro">Titta på skärmarna som en riktig laddare inte kan visa, med en mock av Home Assistant på nätverket. Dina egna laddare läggs åt sidan medan testläget är på och läggs tillbaka precis som de var när du lämnar det.</string>
+  <string name="test_mode_discover">Sök efter mock-servrar</string>
+  <string name="test_mode_discovering">Söker efter mock-servrar…</string>
+  <string name="test_mode_none_found">Ingen mock-server svarade. Starta tools/fake_ha.py, eller skriv in adressen nedan.</string>
+  <string name="test_mode_found">Mock-servrar hittade: %1$d</string>
+  <string name="test_mode_manual_label">Mock-serverns adress</string>
+  <string name="test_mode_manual_fetch">Hämta scenarier</string>
+  <string name="test_mode_unreachable">Kunde inte nå %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s svarade, men har inga scenarier.</string>
+  <string name="test_mode_enter">Starta testläget</string>
+  <string name="test_mode_leave">Lämna testläget</string>
+  <string name="test_mode_on">Testläget är på</string>
+  <string name="test_mode_off">Dina laddare är tillbaka</string>
+  <string name="test_mode_nothing_to_restore">Inget att återställa — ingen sparad kopia hittades</string>
+  <string name="test_mode_already_on">Testläget är redan på</string>
+  <string name="test_mode_banner">TESTLÄGE — inte dina riktiga laddare</string>
+  <string name="test_mode_not_a_mock">%1$s är ingen mock-server som appen får prata med. Använd HTTPS eller en privat HTTP-adress.</string>
+</resources>

@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 val releaseSigningValues = mapOf(
@@ -11,18 +11,34 @@ val releaseSigningValues = mapOf(
 )
 val hasReleaseSigning = releaseSigningValues.values.all { !it.isNullOrBlank() }
 
+// The store this build targets: -Pstore=github (default) or -Pstore=play. It picks the extra
+// source directory app/src/<store> (code, resources and tests that differ per store) and sets
+// BuildConfig.STORE. A property rather than product flavors keeps the task names (assembleRelease,
+// testDebugUnitTest, ...) and output paths unchanged.
+val store = (findProperty("store") as String?) ?: "github"
+require(store in setOf("github", "play")) { "-Pstore must be github or play, was '$store'" }
+
 android {
-    namespace = "se.sensnology.elpris"
+    namespace = "se.sensnology.spotnav"
     compileSdk = 36
     buildFeatures { buildConfig = true }
     bundle { language { enableSplit = false } }
 
     defaultConfig {
-        applicationId = "se.sensnology.elpris"
+        applicationId = "se.sensnology.spotnav"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.5.2"
+        versionCode = 1
+        versionName = "1.0.0"
+        buildConfigField("String", "STORE", "\"$store\"")
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDir("src/$store/java")
+            res.srcDir("src/$store/res")
+        }
+        getByName("test") { java.srcDir("src/$store/test/java") }
     }
 
     if (hasReleaseSigning) {
@@ -36,9 +52,17 @@ android {
         }
     }
 
+    lint {
+        abortOnError = true
+        // Tool-version advisories change without any change here, and would fail CI by the calendar.
+        disable += setOf("AndroidGradlePluginVersion", "NewerVersionAvailable", "GradleDependency")
+    }
+
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -47,6 +71,6 @@ android {
 kotlin { jvmToolchain(17) }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20260814")
+    testImplementation(libs.junit)
+    testImplementation(libs.org.json)
 }

@@ -1,0 +1,1 @@
+Första versionen: widget med elpris, pristabell, laddplanerare för elbil och valfri koppling till Home Assistant.

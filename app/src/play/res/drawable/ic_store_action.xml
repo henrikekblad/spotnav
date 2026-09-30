@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GitHub mark, from Primer Octicons "mark-github" (24px).
+     Copyright (c) GitHub Inc. Licensed under the MIT License:
+     Permission is hereby granted, free of charge, to any person obtaining a copy of this
+     software and associated documentation files (the "Software"), to deal in the Software
+     without restriction, including without limitation the rights to use, copy, modify,
+     merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+     permit persons to whom the Software is furnished to do so, subject to the following
+     conditions: The above copyright notice and this permission notice shall be included
+     in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS
+     IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+     THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+     ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+     OTHER DEALINGS IN THE SOFTWARE.
+     Monochrome and tinted at use. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M10.226,17.284c-2.965,-0.36 -5.054,-2.493 -5.054,-5.256 0,-1.123 0.404,-2.336 1.078,-3.144 -0.292,-0.741 -0.247,-2.314 0.09,-2.965 0.898,-0.112 2.111,0.36 2.83,1.01 0.853,-0.269 1.752,-0.404 2.853,-0.404 1.1,0 1.999,0.135 2.807,0.382 0.696,-0.629 1.932,-1.1 2.83,-0.988 0.315,0.606 0.36,2.179 0.067,2.942 0.72,0.854 1.101,2 1.101,3.167 0,2.763 -2.089,4.852 -5.098,5.234 0.763,0.494 1.28,1.572 1.28,2.807v2.336c0,0.674 0.561,1.056 1.235,0.786 4.066,-1.55 7.255,-5.615 7.255,-10.646C23.5,6.188 18.334,1 11.978,1 5.62,1 0.5,6.188 0.5,12.545c0,4.986 3.167,9.12 7.435,10.669 0.606,0.225 1.19,-0.18 1.19,-0.786V20.63a2.9,2.9 0,0 1,-1.078 0.224c-1.483,0 -2.359,-0.808 -2.987,-2.313 -0.247,-0.607 -0.517,-0.966 -1.034,-1.033 -0.27,-0.023 -0.359,-0.135 -0.359,-0.27 0,-0.27 0.45,-0.471 0.898,-0.471 0.652,0 1.213,0.404 1.797,1.235 0.45,0.651 0.921,0.943 1.483,0.943 0.561,0 0.92,-0.202 1.437,-0.719 0.382,-0.381 0.674,-0.718 0.944,-0.943" />
+</vector>
