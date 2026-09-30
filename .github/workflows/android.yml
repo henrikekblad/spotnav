@@ -60,11 +60,11 @@ jobs:
       # Both stores write to app/build/outputs, so each artifact is renamed before the next build.
       - name: Build GitHub APK
         run: |
-          ./gradlew -Pstore=github assembleRelease
+          ./gradlew -Pstore=github -PreleaseVersion="${GITHUB_REF_NAME#v}" assembleRelease
           mv app/build/outputs/apk/release/app-release.apk "spotnav-${GITHUB_REF_NAME#v}.apk"
       - name: Build Play bundle
         run: |
-          ./gradlew -Pstore=play bundleRelease
+          ./gradlew -Pstore=play -PreleaseVersion="${GITHUB_REF_NAME#v}" bundleRelease
           mv app/build/outputs/bundle/release/app-release.aab "spotnav-${GITHUB_REF_NAME#v}-play.aab"
       - uses: actions/upload-artifact@v4
         with:
@@ -73,4 +73,9 @@ jobs:
             spotnav-*.apk
             spotnav-*-play.aab
       - name: Publish GitHub release
-        run: gh release create "$GITHUB_REF_NAME" "spotnav-${GITHUB_REF_NAME#v}.apk" --generate-notes --verify-tag
+        # The notes are a file in the repository (release-notes/<version>.md), so line breaks and
+        # wording are reviewed like code; without one the release is not published.
+        run: |
+          notes="release-notes/${GITHUB_REF_NAME#v}.md"
+          test -f "$notes" || { echo "Missing $notes"; exit 1; }
+          gh release create "$GITHUB_REF_NAME" "spotnav-${GITHUB_REF_NAME#v}.apk" --title "SpotNav ${GITHUB_REF_NAME#v}" --notes-file "$notes" --verify-tag

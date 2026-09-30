@@ -18,6 +18,20 @@ val hasReleaseSigning = releaseSigningValues.values.all { !it.isNullOrBlank() }
 val store = (findProperty("store") as String?) ?: "github"
 require(store in setOf("github", "play")) { "-Pstore must be github or play, was '$store'" }
 
+// The version comes from the release tag: CI passes -PreleaseVersion=1.2.3 (the tag without its
+// "v"). versionCode is derived from it as major*10000 + minor*100 + patch, so it always grows with
+// the version and never has to be edited by hand. Local builds are 1.0.0-dev / 1.
+val releaseVersion = findProperty("releaseVersion") as String?
+val versionParts = releaseVersion?.let { version ->
+    val match = Regex("""(\d+)\.(\d+)\.(\d+)""").matchEntire(version)
+        ?: error("-PreleaseVersion must be major.minor.patch, was '$version'")
+    match.groupValues.drop(1).map { it.toInt() }.also { (_, minor, patch) ->
+        require(minor < 100 && patch < 100) { "minor and patch must stay below 100: $version" }
+    }
+}
+val appVersionName = releaseVersion ?: "1.0.0-dev"
+val appVersionCode = versionParts?.let { (major, minor, patch) -> major * 10000 + minor * 100 + patch } ?: 1
+
 android {
     namespace = "se.sensnology.spotnav"
     compileSdk = 36
@@ -28,8 +42,8 @@ android {
         applicationId = "se.sensnology.spotnav"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         buildConfigField("String", "STORE", "\"$store\"")
     }
 
