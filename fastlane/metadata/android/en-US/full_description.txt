@@ -11,7 +11,7 @@ PRICES
 EV CHARGING PLANNER
 - Set single-phase or three-phase charging, current, energy to add, vehicle consumption, departure time and up to eight charging periods.
 - The app picks the cheapest combination of quarter-hours and shows cost and range. The chosen periods are shaded in the widget.
-- If the charging window runs past the published prices, missing intervals are estimated from the latest published day and the plan is marked as estimated. Charging losses and the vehicle's charging curve are not included.
+- Plans use published prices only. If the charging window needs tomorrow's prices before they are out (around 13:00 CET), the app waits for them, and buys now only what cannot wait for the departure. Charging losses and the vehicle's charging curve are not included.
 
 HOME ASSISTANT (OPTIONAL)
 - Pair the app with your Home Assistant through the SpotNav integration to see and change charging settings from the phone.

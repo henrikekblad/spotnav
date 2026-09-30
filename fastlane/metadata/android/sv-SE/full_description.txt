@@ -11,7 +11,7 @@ PRISER
 LADDPLANERARE FÖR ELBIL
 - Ställ in enfas- eller trefasladdning, ström, energi att ladda, bilens förbrukning, avresetid och upp till åtta laddperioder.
 - Appen väljer den billigaste kombinationen av kvartar och visar kostnad och räckvidd. De valda perioderna skuggas i widgeten.
-- Om laddfönstret sträcker sig förbi de publicerade priserna uppskattas de saknade intervallen från den senast publicerade dagen, och planen märks som uppskattad. Laddförluster och bilens laddkurva ingår inte.
+- Planen bygger bara på publicerade priser. Behöver laddfönstret morgondagens priser innan de har kommit (runt 13.00) väntar appen på dem, och laddar nu bara det som inte hinner vänta till avresan. Laddförluster och bilens laddkurva ingår inte.
 
 HOME ASSISTANT (VALFRITT)
 - Koppla appen till din Home Assistant via SpotNav-integrationen för att se och ändra laddinställningar från telefonen.

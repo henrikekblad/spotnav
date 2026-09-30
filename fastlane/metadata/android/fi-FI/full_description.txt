@@ -11,7 +11,7 @@ HINNAT
 SÄHKÖAUTON LATAUKSEN SUUNNITTELIJA
 - Valitse yksi- tai kolmivaihelataus, virta, ladattava energia, auton kulutus, lähtöaika ja enintään kahdeksan latausjaksoa.
 - Sovellus valitsee edullisimman neljännestuntien yhdistelmän ja näyttää kustannuksen ja toimintamatkan. Valitut jaksot varjostetaan widgetissä.
-- Jos latausikkuna ulottuu julkaistujen hintojen yli, puuttuvat jaksot arvioidaan viimeksi julkaistun päivän hinnoista ja suunnitelma merkitään arvioiduksi. Lataushäviöitä ja auton latauskäyrää ei oteta huomioon.
+- Suunnitelma käyttää vain julkaistuja hintoja. Jos latausikkuna tarvitsee huomisen hintoja ennen kuin ne on julkaistu (noin klo 14 Suomen aikaa), sovellus odottaa niitä ja lataa nyt vain sen, mikä ei ehdi odottaa lähtöön. Lataushäviöitä ja auton latauskäyrää ei oteta huomioon.
 
 HOME ASSISTANT (VALINNAINEN)
 - Yhdistä sovellus Home Assistantiisi SpotNav-integraation kautta nähdäksesi ja muuttaaksesi latausasetuksia puhelimesta.

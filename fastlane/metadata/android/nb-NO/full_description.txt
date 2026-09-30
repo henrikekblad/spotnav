@@ -11,7 +11,7 @@ PRISER
 LADEPLANLEGGER FOR ELBIL
 - Velg enfase- eller trefaselading, strøm, energi som skal lades, bilens forbruk, avreisetid og opptil åtte ladeperioder.
 - Appen velger den billigste kombinasjonen av kvarter og viser kostnad og rekkevidde. De valgte periodene skyggelegges i widgeten.
-- Hvis ladevinduet går forbi de publiserte prisene, anslås de manglende intervallene fra siste publiserte dag, og planen merkes som anslått. Ladetap og bilens ladekurve er ikke med.
+- Planen bruker bare publiserte priser. Trenger ladevinduet morgendagens priser før de er ute (rundt kl. 13), venter appen på dem og lader nå bare det som ikke rekker å vente til avreise. Ladetap og bilens ladekurve er ikke med.
 
 HOME ASSISTANT (VALGFRITT)
 - Koble appen til din Home Assistant via SpotNav-integrasjonen for å se og endre ladeinnstillinger fra telefonen.
