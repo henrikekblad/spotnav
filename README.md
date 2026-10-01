@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/spotnav-social-preview.png" alt="SpotNav — Nordic spot prices and smart EV charging">
+  <img src="assets/spotnav-social-preview.png" alt="SpotNav: spot prices and smart EV charging">
 </p>
 
-SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers Sweden (SE1–SE4), Norway (NO1–NO5), Denmark (DK1–DK2) and Finland, and is available in Swedish, Norwegian, Danish, Finnish and English.
+SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas the SpotNav relay publishes, and is available in English, Swedish, Norwegian, Danish and Finnish.
 
 <p align="center">
   <img src="assets/widget_en.jpg" alt="SpotNav widget showing today's and tomorrow's electricity prices" width="720">
