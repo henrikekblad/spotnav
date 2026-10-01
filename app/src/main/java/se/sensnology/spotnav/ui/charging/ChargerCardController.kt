@@ -87,31 +87,34 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         // This widget's own binding, read through the controller that already owns the distinction
         // between a valid, an explicitly empty and a stale binding; ChargerCardSelector turns that
         // state into rows.
-        val chargerSelection = WidgetChargerSelectionController(
+        var chargerSelection = WidgetChargerSelectionController(
             ChargerProfileStore.forContext(applicationContext).listProfiles(),
             settings.chargerProfileId
         )
-        val selector = ChargerCardSelector.content(chargerSelection)
+        var selector = ChargerCardSelector.content(chargerSelection)
 
         // The spinner's own listener fires while its adapter and selection are being rebuilt;
         // without this guard that re-entrancy would persist whatever row happened to be selected
         // mid-rebuild (the stale placeholder, or "No charger"), silently changing the user's
         // binding.
         var repopulatingChargers = true
-        card.title.text = selector.bound?.let { bound -> chargerName(bound) } ?: t(R.string.widget_charger_title)
-        card.title.visibility = if (selector.showsControl) View.GONE else View.VISIBLE
-        chargerSpinner.visibility = if (selector.showsControl) View.VISIBLE else View.GONE
-        chargerSpinner.adapter = headerSpinnerAdapter(
-            selector.entries.map { entry -> chargerEntryLabel(entry) },
-            // As on the Settings screen this replaces: a disabled position cannot be tapped in the
-            // dropdown, so "the charger is missing" is never something the user can pick.
-            isRowEnabled = { position ->
-                selector.entries.getOrNull(position)?.kind != ChargerCardSelector.Kind.PLACEHOLDER
-            }
-        )
-        chargerSpinner.setSelection(selector.selectedIndex, false)
-        // That is what this defers, exactly as that card does.
-        chargerSpinner.post { repopulatingChargers = false }
+        fun paintSelector() {
+            card.title.text = selector.bound?.let { bound -> chargerName(bound) } ?: t(R.string.widget_charger_title)
+            card.title.visibility = if (selector.showsControl) View.GONE else View.VISIBLE
+            chargerSpinner.visibility = if (selector.showsControl) View.VISIBLE else View.GONE
+            chargerSpinner.adapter = headerSpinnerAdapter(
+                selector.entries.map { entry -> chargerEntryLabel(entry) },
+                // As on the Settings screen this replaces: a disabled position cannot be tapped in the
+                // dropdown, so "the charger is missing" is never something the user can pick.
+                isRowEnabled = { position ->
+                    selector.entries.getOrNull(position)?.kind != ChargerCardSelector.Kind.PLACEHOLDER
+                }
+            )
+            chargerSpinner.setSelection(selector.selectedIndex, false)
+            // That is what this defers, exactly as that card does.
+            chargerSpinner.post { repopulatingChargers = false }
+        }
+        paintSelector()
         chargerSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -224,6 +227,20 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             advisory = advisory,
             connection = connection,
             refreshPhasesRow = renderPhasesRow,
+            refreshName = {
+                // A rename reported by Home Assistant lands in the store first; the title and the
+                // selector's rows follow it, keeping this widget's binding as it was.
+                chargerSelection = WidgetChargerSelectionController(
+                    ChargerProfileStore.forContext(applicationContext).listProfiles(),
+                    settings.chargerProfileId
+                )
+                val renamed = ChargerCardSelector.content(chargerSelection)
+                if (renamed.entries.map { chargerEntryLabel(it) } != selector.entries.map { chargerEntryLabel(it) }) {
+                    selector = renamed
+                    repopulatingChargers = true
+                    paintSelector()
+                }
+            },
             setDetectedPhases = { detected ->
                 detectedPhases = detected
                 renderPhasesRow()
@@ -361,6 +378,8 @@ internal class ChargerCard(
     val advisory: TextView,
     val connection: ConnectionControls,
     val refreshPhasesRow: () -> Unit,
+    /** Repaints the title and the selector's rows when a charger's name has changed in the store. */
+    val refreshName: () -> Unit,
     val setDetectedPhases: (Int?) -> Unit,
     val reRead: ChargerReReadControl,
     /**

@@ -145,6 +145,7 @@ internal class ChargerDashboardController(
             dashboard?.let { VehicleCardState.Shot(it.readVehicles, it.capabilities) }
         )
         chargerCard.setDetectedPhases(detectedPhases)
+        chargerCard.refreshName()
         // The vehicle-side advisory, from the same accepted dashboard: the integration's own
         // observation of whether the car is taking the charge (see ChargeProgressContract).
         chargerCard.showAdvisory(

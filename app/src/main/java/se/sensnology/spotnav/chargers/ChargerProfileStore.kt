@@ -91,7 +91,8 @@ internal class ChargerProfileStore(
         updateProfile(localId) { existing ->
             existing.copy(
                 remoteChargerId = dashboard.chargerId,
-                remoteChargerName = dashboard.chargerName ?: existing.remoteChargerName,
+                remoteChargerName = existing.renamedFromDashboard(dashboard.chargerName)?.remoteChargerName
+                    ?: existing.remoteChargerName,
                 detectedPhases = dashboard.detectedPhases ?: existing.detectedPhases,
                 phaseDetectionSource = dashboard.phaseDetectionSource ?: existing.phaseDetectionSource,
                 phaseDetectionConfidence = dashboard.phaseDetectionConfidence ?: existing.phaseDetectionConfidence

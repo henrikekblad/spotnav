@@ -44,6 +44,15 @@ data class ChargerProfile(
     fun label(fallback: String): String =
         remoteChargerName?.trim().orEmpty().ifBlank { displayName.trim() }.ifBlank { fallback }
 
+    /**
+     * This profile with the charger name a dashboard answer states, or null when there is nothing
+     * to write: a blank name is ignored and a name already held changes nothing.
+     */
+    fun renamedFromDashboard(dashboardName: String?): ChargerProfile? {
+        val name = dashboardName?.trim().orEmpty()
+        return if (name.isBlank() || name == remoteChargerName) null else copy(remoteChargerName = name)
+    }
+
     fun webhookUrl(): String {
         val base = baseUrl.trim().trimEnd('/')
         return "$base/api/webhook/${webhookId.trim()}"

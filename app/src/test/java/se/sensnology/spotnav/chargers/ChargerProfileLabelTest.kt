@@ -24,4 +24,22 @@ class ChargerProfileLabelTest {
         assertEquals("My charger", profile("My charger", "   ").label("Fallback"))
         assertEquals("My charger", profile("  My charger  ", null).label("Fallback"))
     }
+
+    @Test fun aRenamedChargerYieldsTheUpdatedProfile() {
+        val renamed = profile("halo", "halo_charger Connector 1").renamedFromDashboard(" HALO Charger ")
+        assertEquals("HALO Charger", renamed?.remoteChargerName)
+        assertEquals("halo", renamed?.displayName)
+        assertEquals("HALO Charger", profile("halo", null).renamedFromDashboard("HALO Charger")?.remoteChargerName)
+    }
+
+    @Test fun anUnchangedNameWritesNothing() {
+        org.junit.Assert.assertNull(profile("halo", "HALO Charger").renamedFromDashboard("HALO Charger"))
+        org.junit.Assert.assertNull(profile("halo", "HALO Charger").renamedFromDashboard(" HALO Charger "))
+    }
+
+    @Test fun aBlankOrMissingNameWritesNothing() {
+        org.junit.Assert.assertNull(profile("halo", "HALO Charger").renamedFromDashboard(""))
+        org.junit.Assert.assertNull(profile("halo", "HALO Charger").renamedFromDashboard("   "))
+        org.junit.Assert.assertNull(profile("halo", "HALO Charger").renamedFromDashboard(null))
+    }
 }

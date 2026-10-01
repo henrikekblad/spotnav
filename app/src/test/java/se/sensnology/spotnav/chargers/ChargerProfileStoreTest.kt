@@ -194,6 +194,17 @@ class ChargerProfileStoreTest {
         assertEquals("unknown", updated?.phaseDetectionSource)
     }
 
+    @Test fun aRenameInTheDashboardReachesTheStoredProfileAndABlankNameDoesNot() {
+        val store = store()
+        store.upsertProfile(ChargerProfile("a", "Charger", "https://a.example.com", "hook-a", remoteChargerName = "halo_charger Connector 1"))
+
+        store.applyDashboardResult("a", Result.success(dashboard(chargerName = "HALO Charger")))
+        assertEquals("HALO Charger", store.getProfile("a")?.remoteChargerName)
+
+        store.applyDashboardResult("a", Result.success(dashboard(chargerName = "  ")))
+        assertEquals("HALO Charger", store.getProfile("a")?.remoteChargerName)
+    }
+
     @Test fun updatingFromTheDashboardForAnUnknownProfileReturnsNull() {
         assertNull(store().updateFromDashboard("does-not-exist", dashboard()))
     }
