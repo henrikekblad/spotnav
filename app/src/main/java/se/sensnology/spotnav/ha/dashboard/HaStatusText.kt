@@ -199,7 +199,71 @@ internal object HaStatusText {
                     )
                 }
             }
+            "site_measurement_problem" -> measurementText(
+                format,
+                strings(p["no_value_phases"]),
+                strings(p["no_value_entities"]),
+                strings(p["stale_phases"]),
+                num(p["max_age_s"])
+            )
+            "duplicate_charger" -> say(key, mapOf("other" to (p["other"] as? String ?: "")))
             else -> say(key)
+        }
+    }
+
+    /**
+     * The card's `measurementProblemText`: the phases with no value (and the entities they are read
+     * from), then the phases older than the maximum age; the general sentence when there is neither.
+     */
+    internal fun measurementText(
+        format: StatusFormat,
+        noValuePhases: List<String>,
+        noValueEntities: List<String>,
+        stalePhases: List<String>,
+        maxAgeS: Double?
+    ): String {
+        val language = format.language
+        fun say(key: String, params: Map<String, String>): String {
+            var text = HaStatusWording.text(language, key).orEmpty()
+            for ((name, value) in params) text = text.replace("{$name}", value)
+            return text
+        }
+        fun form(count: Int) = if (count == 1) "one" else "other"
+        val parts = mutableListOf<String>()
+        if (noValuePhases.isNotEmpty()) {
+            val where = if (noValueEntities.isNotEmpty()) " (${noValueEntities.joinToString(", ")})" else ""
+            parts += say(
+                "status.siteMeasurement.noValue.${form(noValuePhases.size)}",
+                mapOf("phases" to joinPhases(language, noValuePhases), "where" to where)
+            )
+        }
+        if (stalePhases.isNotEmpty()) {
+            parts += say(
+                "status.siteMeasurement.stale.${form(stalePhases.size)}",
+                mapOf(
+                    "phases" to joinPhases(language, stalePhases),
+                    "seconds" to number(format.locale, maxAgeS ?: 0.0, 0)
+                )
+            )
+        }
+        return if (parts.isEmpty()) say("issue.siteMeasurement", emptyMap()) else parts.joinToString(" ")
+    }
+
+    private fun strings(value: Any?): List<String> = (value as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+
+    /** The card's long "and" list (`Intl.ListFormat`): "L1 and L2", "L1, L2, and L3" (no serial comma outside English). */
+    private fun joinPhases(language: String, items: List<String>): String {
+        val and = when (language) {
+            "sv" -> "och"
+            "da", "nb" -> "og"
+            "fi" -> "ja"
+            else -> "and"
+        }
+        return when (items.size) {
+            0 -> ""
+            1 -> items[0]
+            2 -> "${items[0]} $and ${items[1]}"
+            else -> items.dropLast(1).joinToString(", ") + (if (language == "en") ", " else " ") + "$and ${items.last()}"
         }
     }
 

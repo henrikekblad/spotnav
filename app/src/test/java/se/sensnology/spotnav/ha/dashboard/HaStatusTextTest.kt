@@ -216,4 +216,47 @@ class HaStatusTextTest {
             assertTrue("$language: $text", !text.isNullOrBlank() && !text!!.contains('{'))
         }
     }
+
+    private fun measurement(language: String, params: Map<String, Any?>) =
+        HaStatusText.line(StatusLine("site_measurement_problem", params), format(language), now)
+
+    @Test fun aDuplicateChargerNamesTheOtherOne() {
+        val params = mapOf<String, Any?>("other" to "Garage")
+        assertTrue(HaStatusText.line(StatusLine("duplicate_charger", params), format("en"), now)
+            .startsWith("Garage and this charger are the same physical charger."))
+        assertTrue(HaStatusText.line(StatusLine("duplicate_charger", params), format("sv"), now)
+            .startsWith("Garage och den här laddaren är samma fysiska laddare."))
+        val none = HaStatusText.line(StatusLine("duplicate_charger", emptyMap()), format("en"), now)
+        assertFalse(none, none.contains('{'))
+    }
+
+    @Test fun aMeasurementProblemNamesTheMissingAndStalePhases() {
+        fun p(vararg pairs: Pair<String, Any?>) = mapOf(*pairs)
+        assertEquals("L1 has no value.", measurement("en", p("no_value_phases" to listOf("L1"))))
+        assertEquals("L1 and L2 have no value.", measurement("en", p("no_value_phases" to listOf("L1", "L2"))))
+        assertEquals("L1, L2, and L3 have no value.",
+            measurement("en", p("no_value_phases" to listOf("L1", "L2", "L3"))))
+        assertEquals("L2 and L3 have no value (sensor.a, sensor.b).",
+            measurement("en", p("no_value_phases" to listOf("L2", "L3"), "no_value_entities" to listOf("sensor.a", "sensor.b"))))
+        assertEquals("L1 is older than 60 s.",
+            measurement("en", p("stale_phases" to listOf("L1"), "max_age_s" to 60.0)))
+        assertEquals("L2 and L3 have no value. L1 is older than 90 s.",
+            measurement("en", p("no_value_phases" to listOf("L2", "L3"), "stale_phases" to listOf("L1"), "max_age_s" to 90.0)))
+        assertEquals("L2 och L3 saknar värde. L1 är äldre än 90 s.",
+            measurement("sv", p("no_value_phases" to listOf("L2", "L3"), "stale_phases" to listOf("L1"), "max_age_s" to 90.0)))
+        assertEquals("L1, L2 og L3 har ingen verdi.",
+            measurement("nb", p("no_value_phases" to listOf("L1", "L2", "L3"))))
+        assertEquals("L1: arvo on yli 60 s vanha.",
+            measurement("fi", p("stale_phases" to listOf("L1"), "max_age_s" to 60.0)))
+    }
+
+    @Test fun aMalformedMeasurementProblemFallsBackToTheGeneralSentence() {
+        val general = "The site's measurement cannot be used right now."
+        assertEquals(general, measurement("en", emptyMap()))
+        assertEquals(general, measurement("en", mapOf("no_value_phases" to "L1", "stale_phases" to 5.0)))
+        assertEquals(general, measurement("en", mapOf("no_value_phases" to listOf(1.0, null), "stale_phases" to emptyList<String>())))
+        assertEquals("Anläggningens mätning kan inte användas just nu.", measurement("sv", emptyMap()))
+        // A stale phase with no usable age says 0 s, as the card does.
+        assertEquals("L1 is older than 0 s.", measurement("en", mapOf("stale_phases" to listOf("L1"), "max_age_s" to "x")))
+    }
 }
