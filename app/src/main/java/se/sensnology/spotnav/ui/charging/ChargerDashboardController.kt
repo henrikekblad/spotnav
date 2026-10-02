@@ -62,7 +62,7 @@ internal class ChargerDashboardController(
         fun onAcceptedControl(control: AutoControl?)
 
         /** The strategies each accepted dashboard states this charger may be set to right now. */
-        fun onStrategyOptions(options: Set<HaSettingsStrategy>)
+        fun onStrategyOptions(options: Set<HaSettingsStrategy>, needingTotalGridPower: Set<HaSettingsStrategy>)
 
         /** Home Assistant's dashboard each time one was read (`null` when the read failed). */
         fun onDashboard(dashboard: Dashboard?)
@@ -138,7 +138,10 @@ internal class ChargerDashboardController(
         listener.onAcceptedControl(dashboard?.control)
         // The same dashboard's own offered strategies, or cheapest-only for a failed fetch --
         // nothing here may guess otherwise.
-        listener.onStrategyOptions(dashboard?.strategyOptions ?: setOf(HaSettingsStrategy.CHEAPEST))
+        listener.onStrategyOptions(
+            dashboard?.strategyOptions ?: setOf(HaSettingsStrategy.CHEAPEST),
+            dashboard?.strategiesNeedingTotalGridPower.orEmpty()
+        )
         // A fresh (or failed) fetch is the only source of the card's snapshot, and it is handed
         // over whole:
         vehicleCard.setStatus(

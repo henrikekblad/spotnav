@@ -23,7 +23,10 @@ internal enum class StrategyGap {
     MEASURED_SOLAR_PRODUCTION,
 
     /** Neither measurement nor control of the installation exists. */
-    SOLAR_MEASUREMENT_AND_CONTROL
+    SOLAR_MEASUREMENT_AND_CONTROL,
+
+    /** A direct site whose meter's total grid power is not set (`needs_total_grid_power`). */
+    TOTAL_GRID_POWER
 }
 
 /** Who calculates the plan, installs it and keeps it up to date. */
@@ -187,7 +190,8 @@ internal object ChargingStrategyPresentation {
         authority: VisibleAuthority?,
         immediateAction: ChargerAction?,
         control: AutoControl?,
-        strategyOptions: Set<HaSettingsStrategy> = setOf(HaSettingsStrategy.CHEAPEST)
+        strategyOptions: Set<HaSettingsStrategy> = setOf(HaSettingsStrategy.CHEAPEST),
+        needingTotalGridPower: Set<HaSettingsStrategy> = emptySet()
     ): ChargingStrategyUi {
         // A configured charger is bound and nothing has said what its record states. One rule for
         // the whole first frame:
@@ -211,7 +215,11 @@ internal object ChargingStrategyPresentation {
                 val offered = wireStrategy(strategy) in strategyOptions
                 StrategyChoice(
                     strategy = strategy,
-                    gap = if (offered) null else gapFor(strategy),
+                    gap = when {
+                        offered -> null
+                        wireStrategy(strategy) in needingTotalGridPower -> StrategyGap.TOTAL_GRID_POWER
+                        else -> gapFor(strategy)
+                    },
                     chosen = chosen,
                     selectable = offered && !chosen && !readOnly
                 )
@@ -304,7 +312,8 @@ internal object ChargingStrategyScreenFace {
         authority: VisibleAuthority?,
         immediateAction: ChargerAction?,
         control: AutoControl?,
-        strategyOptions: Set<HaSettingsStrategy> = setOf(HaSettingsStrategy.CHEAPEST)
+        strategyOptions: Set<HaSettingsStrategy> = setOf(HaSettingsStrategy.CHEAPEST),
+        needingTotalGridPower: Set<HaSettingsStrategy> = emptySet()
     ): ChargingStrategyUi = ChargingStrategyPresentation.of(
         binding = ChargerBinding.of(
             chargerConfigured = profile?.configured == true,
@@ -313,6 +322,7 @@ internal object ChargingStrategyScreenFace {
         authority = authority,
         immediateAction = immediateAction,
         control = control,
-        strategyOptions = strategyOptions
+        strategyOptions = strategyOptions,
+        needingTotalGridPower = needingTotalGridPower
     )
 }

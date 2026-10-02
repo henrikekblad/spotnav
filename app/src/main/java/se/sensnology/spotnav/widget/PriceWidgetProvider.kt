@@ -295,6 +295,12 @@ class PriceWidgetProvider : AppWidgetProvider() {
                     // Paired without a stored dashboard: the snapshot's market with its installed bands.
                     val confirmed = pass.snapshot
                     when {
+                        // Bound to a charger or pairing that no longer exists: say so, and that a tap rebinds.
+                        confirmed == null && pass.refused == WidgetPlanPass.Remote.Reason.CHARGER_GONE ->
+                            ChartRenderer.noticeState(
+                                width, height,
+                                title = AppLanguageSettings.text(context, R.string.widget_not_linked)
+                            )
                         // Nothing confirmed: the unavailable state.
                         confirmed == null -> ChartRenderer.noticeState(
                             width, height,

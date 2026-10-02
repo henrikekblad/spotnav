@@ -185,6 +185,12 @@ internal data class Dashboard(
      * this app never guesses that solar or hybrid is possible.
      */
     val strategyOptions: Set<HaSettingsStrategy>,
+    /**
+     * The strategies the answer's `strategy.available` rows hold back with the reason
+     * `needs_total_grid_power` (a direct site without the meter's total grid power); empty when the
+     * block is absent or unreadable.
+     */
+    val strategiesNeedingTotalGridPower: Set<HaSettingsStrategy> = emptySet(),
     val detectedPhases: Int?,
     val phaseDetectionSource: String?,
     val phaseDetectionConfidence: String?,
@@ -270,6 +276,7 @@ internal data class Dashboard(
                 control = parseControl(json.optJSONObject("control")),
                 chargeProgress = ChargeProgressContract.of(json.optJSONObject("charge_progress")),
                 strategyOptions = strategyOptions(json.optJSONArray("strategy_options")),
+                strategiesNeedingTotalGridPower = needingTotalGridPower(json.optJSONObject("strategy")),
                 // Any out-of-range or malformed value (a convention this build does not know) is
                 // "not detected".
                 detectedPhases = json.optIntOrNull("detected_phases")?.takeIf { it in 1..3 },
@@ -331,6 +338,20 @@ internal data class Dashboard(
             is String -> value
             else -> AutoControl.UNREADABLE
         }
+
+        /** The rows of `strategy.available` that are unavailable for lack of the meter's total grid power. */
+        private fun needingTotalGridPower(block: JSONObject?): Set<HaSettingsStrategy> {
+            val rows = block?.optJSONArray("available") ?: return emptySet()
+            val found = LinkedHashSet<HaSettingsStrategy>()
+            for (index in 0 until rows.length()) {
+                val row = rows.optJSONObject(index) ?: continue
+                if (row.opt("available") != false || row.opt("reason") != NEEDS_TOTAL_GRID_POWER) continue
+                HaSettingsStrategy.of(row.opt("strategy"))?.let(found::add)
+            }
+            return found
+        }
+
+        private const val NEEDS_TOTAL_GRID_POWER = "needs_total_grid_power"
 
         private fun strategyOptions(array: JSONArray?): Set<HaSettingsStrategy> {
             val listed = array ?: return setOf(HaSettingsStrategy.CHEAPEST)

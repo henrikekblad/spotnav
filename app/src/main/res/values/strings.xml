@@ -85,6 +85,8 @@
   <string name="section_general">General</string>
   <string name="section_electricity_price">Electricity price</string>
   <string name="section_widget">Widget</string>
+  <string name="widget_settings_this">These settings apply to this widget.</string>
+  <string name="widget_settings_none">No widget is open. Each widget has its own setting; tap a widget on the home screen to change it.</string>
   <string name="home_assistant">Home Assistant</string>
   <string name="home_assistant_log_in">Find Home Assistant on the network</string>
   <string name="instance_pairing_enter_code">Enter this code in Home Assistant to approve this phone</string>
@@ -145,6 +147,7 @@
   <string name="widget_charger_missing_placeholder">Selected charger is missing</string>
   <string name="widget_plan_unavailable">No charging plan available</string>
   <string name="widget_plan_stale">Charging plan not updated</string>
+  <string name="widget_not_linked">Not linked — tap to choose a charger</string>
   <string name="version_label">Version %1$s</string>
   <string name="report_issue">Report an issue</string>
   <string name="forget_widget">Forget</string>
@@ -258,6 +261,7 @@
   <string name="strategy_choice_automatic">Home Assistant calculates and installs the plan</string>
   <string name="strategy_gap_solar_measurement">Needs measured solar production</string>
   <string name="strategy_gap_solar_control">Needs measured solar production and control of the solar system</string>
+  <string name="strategy_gap_total_grid_power">Solar needs the meter\'s total grid power</string>
   <string name="strategy_row_description">%1$s. %2$s. Tap to choose.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">reported by the vehicle</string>

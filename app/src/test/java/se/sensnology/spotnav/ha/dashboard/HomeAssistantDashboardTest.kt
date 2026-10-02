@@ -221,6 +221,18 @@ class HomeAssistantDashboardTest {
         )
     }
 
+    @Test fun strategiesHeldBackForTheTotalGridPowerAreRead() {
+        assertEquals(
+            setOf(HaSettingsStrategy.SOLAR, HaSettingsStrategy.HYBRID),
+            Dashboard.parse(v1("cheapest_direct_site_read_only")).strategiesNeedingTotalGridPower
+        )
+        assertEquals(emptySet<HaSettingsStrategy>(), Dashboard.parse(v1("solar_derived_site")).strategiesNeedingTotalGridPower)
+        assertEquals(
+            emptySet<HaSettingsStrategy>(),
+            Dashboard.parse(v1("cheapest_no_site").apply { put("strategy", "broken") }).strategiesNeedingTotalGridPower
+        )
+    }
+
     @Test fun theControlDecisionIsReadAsTheTwoAxesTheBlockStates() {
         val idle = Dashboard.parse(v1("start_idle")).control!!
         assertEquals(ChargerAction.START, idle.chargerCommand())

@@ -82,15 +82,29 @@ data class WidgetSettings(
             return true
         }
 
-        fun load(context: Context, id: Int): WidgetSettings =
+        fun load(context: Context, id: Int): WidgetSettings {
             // Lazy default of the charger binding is decided and persisted here; see WidgetChargerBindingStore.
-            read(
-                context,
-                id,
-                WidgetChargerBindingStore.forContext(context)
-                    .binding(id) { ChargerProfileStore.forContext(context).getActiveProfileId() }
-                    .chargerProfileId
-            )
+            val profileId = WidgetChargerBindingStore.forContext(context)
+                .binding(id) { ChargerProfileStore.forContext(context).getActiveProfileId() }
+                .chargerProfileId
+            // The plan line defaults on for a widget bound to a charger, once, as its binding is first made.
+            if (profileId != null && !prefs(context).contains("$id.showChargingPlan")) {
+                prefs(context).edit().putBoolean("$id.showChargingPlan", true).apply()
+            }
+            return read(context, id, profileId)
+        }
+
+        private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+        /**
+         * A widget just bound to a charger it had none of: the plan line goes on unless the person has
+         * ever changed that option on this widget.
+         */
+        fun planDefaultOnBinding(context: Context, id: Int) {
+            val p = prefs(context)
+            if (p.getBoolean("$id.showChargingPlanChosen", false)) return
+            p.edit().putBoolean("$id.showChargingPlan", true).apply()
+        }
 
         /**
          * Stored settings with the binding read as stored, never defaulted; `null` for a widget whose
@@ -138,7 +152,12 @@ data class WidgetSettings(
 
         fun save(context: Context, id: Int, value: WidgetSettings) {
             val key = "$id."
-            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            val stored = prefs(context)
+            // Changing a stored option is a choice; the first write of the default is not.
+            val chosen = stored.contains(key + "showChargingPlan") &&
+                stored.getBoolean(key + "showChargingPlan", false) != value.showChargingPlan
+            stored.edit()
+                .apply { if (chosen) putBoolean(key + "showChargingPlanChosen", true) }
                 .putString(key + "area", value.area)
                 .putBoolean(key + "vat", value.vat)
                 .putBoolean(key + "tax", value.tax)
@@ -164,7 +183,7 @@ data class WidgetSettings(
         fun delete(context: Context, id: Int) {
             val editor = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             listOf("area", "vat", "tax", "transfer", "taxMinorUnit", "gridFeeMinorUnit", "intervalMinutes",
-                "chargingPhases", "chargingAmps", "consumptionKwhPerMil", "chargingKwh", "driver", "maxChargingPeriods", "showChargingPlan")
+                "chargingPhases", "chargingAmps", "consumptionKwhPerMil", "chargingKwh", "driver", "maxChargingPeriods", "showChargingPlan", "showChargingPlanChosen")
                 .forEach { editor.remove("$id.$it") }
             listOf("useDepartureTime", "departureHour", "departureMinute")
                 .forEach { editor.remove("$id.$it") }

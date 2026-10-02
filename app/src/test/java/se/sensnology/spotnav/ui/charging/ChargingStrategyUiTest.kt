@@ -154,6 +154,18 @@ class ChargingStrategyUiTest {
     // ---- 5. Solar and Hybrid:
 
     @Test
+    fun aStrategyHeldBackForTheTotalGridPowerSaysSo() {
+        val face = ChargingStrategyPresentation.of(
+            ChargerBinding.PAIRED_WITH_AUTHORITY, automatic(), ChargerAction.START, null,
+            setOf(HaSettingsStrategy.CHEAPEST),
+            setOf(HaSettingsStrategy.SOLAR, HaSettingsStrategy.HYBRID)
+        )
+        assertEquals(StrategyGap.TOTAL_GRID_POWER, face.choices.first { it.strategy == ChargingStrategy.SOLAR }.gap)
+        assertEquals(StrategyGap.TOTAL_GRID_POWER, face.choices.first { it.strategy == ChargingStrategy.HYBRID }.gap)
+        assertNull(face.choices.first { it.strategy == ChargingStrategy.CHEAPEST }.gap)
+    }
+
+    @Test
     fun solarAndHybridAreUnavailableRowsWhenThisChargerDoesNotOfferThem() {
         // The default -- no recognisable strategy_options at all -- is cheapest-only, so neither
         // row is offered here.

@@ -139,6 +139,7 @@
   <string name="widget_charger_missing_placeholder">Valittu laturi puuttuu</string>
   <string name="widget_plan_unavailable">Lataussuunnitelmaa ei ole saatavilla</string>
   <string name="widget_plan_stale">Lataussuunnitelmaa ei ole päivitetty</string>
+  <string name="widget_not_linked">Ei yhdistetty — napauta valitaksesi laturin</string>
   <string name="version_label">Versio %1$s</string>
   <string name="report_issue">Ilmoita ongelmasta</string>
   <string name="forget_widget">Unohda</string>
@@ -195,6 +196,8 @@
   <string name="departure_tomorrow">huomenna</string>
   <string name="plan_card_periods_note">Lataus jaetaan enintään näin moneen jaksoon.</string>
   <string name="section_widget">Widget</string>
+  <string name="widget_settings_this">Nämä asetukset koskevat tätä widgetiä.</string>
+  <string name="widget_settings_none">Mikään widget ei ole auki. Jokaisella widgetillä on oma asetuksensa; muuta sitä napauttamalla widgetiä aloitusnäytöllä.</string>
   <string name="nothing_to_charge">Ei ladattavaa</string>
   <string name="nothing_to_charge_note">Tavoite on auton nykyisellä tasolla tai sen alla. Nosta tavoitetta, niin lataus voidaan suunnitella.</string>
   <string name="driver_target_soc">Tavoite</string>
@@ -247,6 +250,7 @@
   <string name="strategy_choice_automatic">Home Assistant laskee ja asentaa suunnitelman</string>
   <string name="strategy_gap_solar_measurement">Vaatii mitatun aurinkotuotannon</string>
   <string name="strategy_gap_solar_control">Vaatii mitatun aurinkotuotannon ja aurinkojärjestelmän ohjauksen</string>
+  <string name="strategy_gap_total_grid_power">Aurinko vaatii mittarin verkon kokonaistehon</string>
   <string name="strategy_row_description">%1$s. %2$s. Valitse napauttamalla.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">auton ilmoittama</string>

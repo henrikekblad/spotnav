@@ -1,0 +1,4 @@
+- Widgetar kopplade till en parad laddare visar laddstatus som standard
+- Inställningarna visar vilken widget de gäller
+- En widget vars laddare är borta visar "Inte länkad" och kan kopplas om genom att trycka på den
+- Anpassad till Home Assistant-integrationen 1.2: Sol kräver mätarens totala näteffekt

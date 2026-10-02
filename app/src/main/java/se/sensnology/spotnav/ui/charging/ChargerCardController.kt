@@ -134,6 +134,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 // This widget's binding only -- never ChargerProfileStore's active profile, which a
                 // widget deliberately does not follow.
                 WidgetChargerBindingStore.forContext(applicationContext).setBinding(widgetId, chosen)
+                if (chosen != null && settings.chargerProfileId == null && widgetId > 0) {
+                    WidgetSettings.planDefaultOnBinding(applicationContext, widgetId)
+                }
                 onChargerChosen()
             }
         }

@@ -139,6 +139,7 @@
   <string name="widget_charger_missing_placeholder">Valgt lader mangler</string>
   <string name="widget_plan_unavailable">Ingen ladeplan tilgjengelig</string>
   <string name="widget_plan_stale">Ladeplanen er ikke oppdatert</string>
+  <string name="widget_not_linked">Ikke koblet — trykk for å velge lader</string>
   <string name="version_label">Versjon %1$s</string>
   <string name="report_issue">Rapporter en feil</string>
   <string name="forget_widget">Glem</string>
@@ -195,6 +196,8 @@
   <string name="departure_tomorrow">i morgen</string>
   <string name="plan_card_periods_note">Ladingen deles i høyst så mange perioder.</string>
   <string name="section_widget">Widget</string>
+  <string name="widget_settings_this">Disse innstillingene gjelder denne widgeten.</string>
+  <string name="widget_settings_none">Ingen widget er åpen. Hver widget har sin egen innstilling; trykk på en widget på startskjermen for å endre den.</string>
   <string name="nothing_to_charge">Ingenting å lade</string>
   <string name="nothing_to_charge_note">Målet er på eller under bilens nåværende nivå. Øk målet for å planlegge en lading.</string>
   <string name="driver_target_soc">Mål</string>
@@ -247,6 +250,7 @@
   <string name="strategy_choice_automatic">Home Assistant beregner og installerer planen</string>
   <string name="strategy_gap_solar_measurement">Krever målt solproduksjon</string>
   <string name="strategy_gap_solar_control">Krever målt solproduksjon og styring av solanlegget</string>
+  <string name="strategy_gap_total_grid_power">Sol krever målerens samlede effekt på nettet</string>
   <string name="strategy_row_description">%1$s. %2$s. Trykk for å velge.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">rapportert av bilen</string>

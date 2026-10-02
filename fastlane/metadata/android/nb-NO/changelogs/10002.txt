@@ -1,0 +1,4 @@
+- Widgeter koblet til en paret lader viser ladestatus som standard
+- Innstillingene viser hvilken widget de gjelder
+- En widget hvis lader er borte viser "Ikke koblet" og kan kobles på nytt ved å trykke på den
+- Tilpasset Home Assistant-integrasjonen 1.2: Sol krever målerens samlede effekt på nettet

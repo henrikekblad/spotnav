@@ -1,0 +1,4 @@
+- Widgets bound to a paired charger show the charging status by default
+- Settings says which widget it changes
+- A widget whose charger is gone says "Not linked" and can be rebound by tapping it
+- Matches Home Assistant integration 1.2: Solar needs the meter's total grid power

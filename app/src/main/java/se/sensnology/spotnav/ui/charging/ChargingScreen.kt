@@ -99,6 +99,7 @@ internal class ChargingScreen(
 
     /** the picker's selectability comes from this and nothing else. */
     internal var currentStrategyOptions: Set<HaSettingsStrategy> = setOf(HaSettingsStrategy.CHEAPEST)
+    internal var currentNeedingTotalGridPower: Set<HaSettingsStrategy> = emptySet()
 
     /**
      * The strategy presentation this pass rendered. Initialised in [show] before anything can be
@@ -252,7 +253,8 @@ internal class ChargingScreen(
      */
     internal fun strategyFace(state: VisibleAuthority?): ChargingStrategyUi =
         ChargingStrategyScreenFace.first(
-            resolvedChargerProfile, state, currentPrimaryAction, currentControl, currentStrategyOptions
+            resolvedChargerProfile, state, currentPrimaryAction, currentControl, currentStrategyOptions,
+            currentNeedingTotalGridPower
         )
 
     internal fun pairedNow(): Dashboard? = pairedDashboard.takeIf { authority.authority?.haOwnsPlanning == true }
@@ -331,8 +333,12 @@ internal class ChargingScreen(
                     applyAcceptedControl(control)
                 }
 
-                override fun onStrategyOptions(options: Set<HaSettingsStrategy>) {
+                override fun onStrategyOptions(
+                    options: Set<HaSettingsStrategy>,
+                    needingTotalGridPower: Set<HaSettingsStrategy>
+                ) {
                     currentStrategyOptions = options
+                    currentNeedingTotalGridPower = needingTotalGridPower
                     applyAcceptedStrategyOptions()
                 }
 

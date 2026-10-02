@@ -148,14 +148,14 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Widget appearance, not operation:
         val widgetCard = card(content, t(R.string.section_widget), R.drawable.ic_widget_grid)
         val display = addWidgetDisplayControls(widgetCard.body, old) { applyLocal() }
-        readShowPlan = { display.showInWidget.isChecked }
+        display.showInWidget?.let { box -> readShowPlan = { box.isChecked } }
         // The instance, everything it hands over, and where the integration comes from.
         // A paired charger's vehicles, charger, site and solar come after the phone's own settings
         // and right before the Home Assistant card, in the order the Home Assistant card has them.
         // The page is an overview: each area that can be changed from here opens its own dialog.
         val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content) }
         val homeAssistantCard = card(content, t(R.string.home_assistant), R.drawable.ic_card_charger)
-        HomeAssistantSection(shell).add(homeAssistantCard.body)
+        HomeAssistantSection(shell, onPlanDefaulted = { display.showInWidget?.isChecked = true }).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
             fun loadPaired() = session.peekDashboard { dashboard -> pairedCards.show(dashboard) }
@@ -428,6 +428,13 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         settings: WidgetSettings,
         onChange: () -> Unit
     ): WidgetDisplayControls {
+        // Which widget these settings change: the one this screen was opened from. Opened from the app
+        // with no widget placed (or none chosen), there is nothing to change, and the section says so.
+        parent.addView(TextView(context).apply {
+            text = t(if (widgetId > 0) R.string.widget_settings_this else R.string.widget_settings_none)
+            textSize = 13f; setTextColor(muted)
+        })
+        if (widgetId <= 0) return WidgetDisplayControls(null)
         val showInWidget = checkbox(t(R.string.widget_plan), settings.showChargingPlan)
         showInWidget.setOnCheckedChangeListener { _, _ -> onChange() }
         // Unlike most first rows this label commonly wraps.
@@ -468,4 +475,4 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
 }
 
 /** What [addWidgetDisplayControls] hands back: the single option it builds. */
-internal class WidgetDisplayControls(val showInWidget: CheckBox)
+internal class WidgetDisplayControls(val showInWidget: CheckBox?)

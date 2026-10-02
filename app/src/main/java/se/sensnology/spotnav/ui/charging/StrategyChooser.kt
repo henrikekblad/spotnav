@@ -87,4 +87,5 @@ internal fun ViewScope.strategyChoiceNote(choice: StrategyChoice) = when {
 internal fun ViewScope.strategyGapText(gap: StrategyGap) = when (gap) {
     StrategyGap.MEASURED_SOLAR_PRODUCTION -> t(R.string.strategy_gap_solar_measurement)
     StrategyGap.SOLAR_MEASUREMENT_AND_CONTROL -> t(R.string.strategy_gap_solar_control)
+    StrategyGap.TOTAL_GRID_POWER -> t(R.string.strategy_gap_total_grid_power)
 }

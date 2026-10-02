@@ -38,13 +38,18 @@ import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.chargerName
 import se.sensnology.spotnav.ui.common.weight
 import se.sensnology.spotnav.widget.WidgetChargerBindingStore
+import se.sensnology.spotnav.widget.WidgetSettings
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The Home Assistant card of the settings screen: the instance, its pairing, and what it handed
  * over.
  */
-internal class HomeAssistantSection(shell: ScreenShell) : ScreenPart(shell) {
+internal class HomeAssistantSection(
+    shell: ScreenShell,
+    /** Told when pairing switched this widget's plan line on, so the screen's own checkbox follows. */
+    private val onPlanDefaulted: () -> Unit = {}
+) : ScreenPart(shell) {
     /** The Home Assistant connection: **one instance, paired once**. */
     /**
      * The line under the Home Assistant heading: what the app connects *to*, with the integration's
@@ -177,7 +182,14 @@ internal class HomeAssistantSection(shell: ScreenShell) : ScreenPart(shell) {
 
                 override fun activate(localId: String) = profileStore.setActiveProfileId(localId)
 
-                override fun bind(localId: String) = bindingStore.setBinding(widgetId, localId)
+                override fun bind(localId: String) {
+                    val hadCharger = bindingStore.storedBinding(widgetId).chargerProfileId != null
+                    bindingStore.setBinding(widgetId, localId)
+                    if (!hadCharger && widgetId > 0) {
+                        WidgetSettings.planDefaultOnBinding(applicationContext, widgetId)
+                        onPlanDefaulted()
+                    }
+                }
 
                 override fun repaint() {
                     report = null
