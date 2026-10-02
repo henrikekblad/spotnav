@@ -186,10 +186,10 @@
   <string name="plan_card_departure_label">Avresa</string>
   <string name="plan_card_departure_none">Ingen avresa</string>
   <string name="plan_card_departure_note">När den är på måste laddningen vara klar före denna tid.</string>
-  <string name="departure_day_title">Avgång</string>
+  <string name="departure_day_title">Avresa</string>
   <string name="departure_day_daily">Varje dag</string>
   <string name="departure_day_on_date">Ett visst datum</string>
-  <string name="departure_date_help">Planen kan vänta på timmar som brukar vara billigare. Avgången hålls alltid.</string>
+  <string name="departure_date_help">Planen kan vänta på timmar som brukar vara billigare. Avresan hålls alltid.</string>
   <string name="departure_date_past">Datumet har passerat, så planen körs varje dag tills du väljer ett nytt datum. Sparar du rensas det.</string>
   <string name="departure_today">idag</string>
   <string name="departure_tomorrow">imorgon</string>
@@ -219,7 +219,7 @@
   <string name="authority_changed_elsewhere">Inställningarna ändrades någon annanstans. Gör om din ändring.</string>
   <string name="authority_committed_unreconciled">Sparat, men Home Assistant kunde inte verkställa det direkt. Ändringen gäller.</string>
   <string name="authority_refused_invalid">Home Assistant avvisade värdet. Det tidigare värdet används fortfarande.</string>
-  <string name="authority_refused_departure">Home Assistant avvisade avgången. Den tidigare avgången används fortfarande.</string>
+  <string name="authority_refused_departure">Home Assistant avvisade avresan. Den tidigare avresan används fortfarande.</string>
   <string name="settings_paired_read_only">Home Assistant äger dessa värden och de kan inte skrivas just nu. Inget sparades.</string>
   <string name="settings_save_not_applied">Inställningarna ändrades innan den här sparningen skickades, så inget skrevs.</string>
   <string name="authority_control_approximate">Det bekräftade värdet är %1$s; reglaget kan inte hålla det exakt, så ett drag ändrar det.</string>
@@ -232,7 +232,7 @@
   <string name="authority_reason_vat">ingen moms eller förslag</string>
   <string name="authority_reason_tax">ingen elskatt eller förslag</string>
   <string name="authority_reason_transfer">ingen nätavgift eller förslag</string>
-  <string name="authority_reason_departure">oläsbar avgångstid</string>
+  <string name="authority_reason_departure">oläsbar avresetid</string>
   <string name="authority_reason_target">ingen målladdningsnivå</string>
   <string name="authority_reason_presentation">oläsbar visningsupplösning</string>
   <string name="authority_reason_rejected">ett värde som beräkningen avvisar</string>
