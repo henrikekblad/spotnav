@@ -18,6 +18,7 @@ import se.sensnology.spotnav.ui.common.Palette
 import se.sensnology.spotnav.ui.prices.PriceTableScreen
 import se.sensnology.spotnav.ui.settings.SettingsScreen
 import se.sensnology.spotnav.widget.PriceWidgetProvider
+import se.sensnology.spotnav.widget.WidgetChartBoundary
 import se.sensnology.spotnav.widget.WidgetSettings
 
 /**
@@ -39,6 +40,7 @@ class WidgetConfigActivity : Activity() {
 
     /** The publication listener's handle, so registration and destruction are symmetrical. */
     private var pricePublication: AutoCloseable? = null
+    private var resumedOnce = false
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +100,7 @@ class WidgetConfigActivity : Activity() {
         currentScreen = screen
         // The publication hook lives exactly as long as the charging screen does:
         shell.reloadPrices = null
+        shell.onForeground = null
         when (screen) {
             Screen.MAIN -> showCharging()
             Screen.PRICE_TABLE -> PriceTableScreen(shell).show()
@@ -149,6 +152,12 @@ class WidgetConfigActivity : Activity() {
         // A return to an already-built charging screen: a publication accepted while this Activity
         // was stopped was announced to nobody, so this is the one place that gap closes.
         shell.priceRefresh.resumed()
+        // The first resume follows creation, which has just read everything; each later one may follow hours
+        // away, across midnight.
+        if (resumedOnce) shell.onForeground?.invoke()
+        resumedOnce = true
+        // The widget draws from held data cut by the local clock, so a redraw here costs no network.
+        WidgetChartBoundary.requestRedraw(this)
         if (widgetId < 0) {
             val manager = AppWidgetManager.getInstance(this)
             val component = ComponentName(this, PriceWidgetProvider::class.java)

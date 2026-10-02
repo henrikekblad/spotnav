@@ -28,6 +28,7 @@ import se.sensnology.spotnav.ha.settings.HaTargetIntent
 import se.sensnology.spotnav.planning.LocalPlanningInputs
 import se.sensnology.spotnav.planning.PlanDriver
 import se.sensnology.spotnav.prices.AreaCatalogue
+import se.sensnology.spotnav.prices.PriceDays
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.testmode.TestMode
@@ -125,7 +126,7 @@ internal class ChargingScreen(
     internal var pendingVehiclePick: String? = null
 
     // The paired chart is built from the dashboard once per answer and interval, not once per pass:
-    internal var pairedChartMemo: Triple<Dashboard, Int, PairedChart?>? = null
+    internal var pairedChartMemo: PairedChartMemo? = null
 
     fun show() {
         beginScreen()
@@ -217,6 +218,13 @@ internal class ChargingScreen(
         // behaves exactly as it always did.
         loadPrices()
         shell.reloadPrices = { loadPrices() }
+        // Back in the foreground: what is held is drawn again for today's date at once, then a fresh
+        // dashboard is asked for now rather than on whatever next triggers one (the prices follow
+        // through the price refresh's own resume).
+        shell.onForeground = {
+            render()
+            startDashboardFetch()
+        }
         startDashboardFetch()
     }
 
@@ -356,6 +364,19 @@ internal class ChargingScreen(
         val area = subject.areaId
         shell.priceRefresh.loadStarted()
         ioExecutor.execute {
+            // Held prices first when what the screen shows is not today's: the load below may wait on the
+            // network for the index, and a stale day must not stay on screen meanwhile.
+            val zone = PriceMarkets.find(area)?.zoneId ?: java.time.ZoneId.systemDefault()
+            val shown = authority.currentPrices
+            if (shown == null || !PriceDays.showsDate(shown, java.time.LocalDate.now(zone))) {
+                val held = PriceRepository.heldOnly(applicationContext, area)
+                if (held.today.isNotEmpty() || held.tomorrow.isNotEmpty()) {
+                    runOnUiThread {
+                        if (isDestroyed || generation != viewGeneration) return@runOnUiThread
+                        if (authority.currentPrices === shown && authority.onPriceLoaded(subject, held) != null) render()
+                    }
+                }
+            }
             // Off the main thread, as the screen's own work always is:
             AreaCatalogue.refreshIfDue(applicationContext)
             val loaded = PriceRepository.load(applicationContext, area)

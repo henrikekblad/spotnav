@@ -71,6 +71,12 @@ internal class ScreenShell(
     var reloadPrices: (() -> Unit)? = null
 
     /**
+     * What the charging screen does when the app comes back to the foreground: draw again from what it
+     * holds (cut by the local clock) and ask for a fresh dashboard now. Cleared with [reloadPrices].
+     */
+    var onForeground: (() -> Unit)? = null
+
+    /**
      * a tap that begins anywhere else puts the readout away (see [afterDispatch] and
      * ChartDismissal). Both are dropped by [begin], which is what happens whenever the screen is
      * rebuilt -- so nothing here outlives the views it points at.

@@ -32,10 +32,11 @@ internal sealed interface WidgetChartSource {
             chargerProfileId: String?,
             chargerKnown: Boolean,
             settings: WidgetSettings,
-            stored: StoredDashboard?
+            stored: StoredDashboard?,
+            now: java.time.Instant = java.time.Instant.now()
         ): WidgetChartSource {
             if (chargerProfileId == null || !chargerKnown || stored == null) return Pass
-            val chart = DashboardChart.build(stored.dashboard, settings.intervalMinutes) ?: return Pass
+            val chart = DashboardChart.build(stored.dashboard, settings.intervalMinutes, now = now) ?: return Pass
             return Dashboard(chart, if (settings.showChargingPlan) chart.bands else emptyList())
         }
     }

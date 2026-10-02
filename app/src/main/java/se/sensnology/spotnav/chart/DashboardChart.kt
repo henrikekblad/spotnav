@@ -8,6 +8,7 @@ import se.sensnology.spotnav.planning.FiscalInput
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PricePoint
 import se.sensnology.spotnav.prices.PriceResult
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -52,23 +53,30 @@ internal data class PairedChart(
  */
 internal object DashboardChart {
     /**
-     * The renderer's price days: the day named `today` is today, later days are tomorrow, in the market's
-     * zone. `null` when nothing priced remains.
+     * The renderer's price days, cut by the local clock: the intervals on [now]'s date in the market's
+     * zone are today, later dates are tomorrow, earlier ones are dropped. The answer's own `today` and
+     * generation time are deliberately not consulted: a stored answer read the next morning must not
+     * keep drawing the day it was composed on. `null` when nothing priced remains.
      */
-    fun prices(prices: DashboardPrices, zone: ZoneId, fetchedAt: Long): PriceResult? {
+    fun prices(prices: DashboardPrices, zone: ZoneId, fetchedAt: Long, now: Instant = Instant.now()): PriceResult? {
         val points = prices.intervals.mapNotNull { interval ->
             val effective = interval.effectivePrice ?: return@mapNotNull null
             val start = atZone(interval.start, zone)
             PricePoint(start, effective / 100.0) to start.toLocalDate()
         }
         if (points.isEmpty()) return null
-        val dates = points.map { it.second }.distinct().sorted()
-        val today = prices.today?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: dates.first()
+        val today = localDate(now, zone)
         val todayPoints = points.filter { it.second == today }.map { it.first }.sortedBy { it.start }
         val tomorrowPoints = points.filter { it.second.isAfter(today) }.map { it.first }.sortedBy { it.start }
         if (todayPoints.isEmpty() && tomorrowPoints.isEmpty()) return null
         return PriceResult(today = todayPoints, tomorrow = tomorrowPoints, fetchedAt = fetchedAt)
     }
+
+    /** The date it is at [now] in [zone]: the one definition of "today" for a drawn dashboard. */
+    fun localDate(now: Instant, zone: ZoneId): LocalDate = now.atZone(zone).toLocalDate()
+
+    /** The date the chart of [dashboard] is cut for at [now], or `null` without a clock. */
+    fun localDate(dashboard: Dashboard, now: Instant): LocalDate? = zone(dashboard)?.let { localDate(now, it) }
 
     private fun atZone(instant: OffsetDateTime, zone: ZoneId): OffsetDateTime =
         instant.atZoneSameInstant(zone).toOffsetDateTime()
@@ -79,10 +87,15 @@ internal object DashboardChart {
             ?: dashboard.market.areaId?.let { PriceMarkets.find(it)?.zoneId }
 
     /** The chart for [dashboard] at [intervalMinutes], or `null` without an area, a clock or a priced interval. */
-    fun build(dashboard: Dashboard, intervalMinutes: Int, fetchedAt: Long = stamp(dashboard)): PairedChart? {
+    fun build(
+        dashboard: Dashboard,
+        intervalMinutes: Int,
+        fetchedAt: Long = stamp(dashboard),
+        now: Instant = Instant.now()
+    ): PairedChart? {
         val areaId = dashboard.market.areaId?.takeIf { it.isNotBlank() } ?: return null
         val zone = zone(dashboard) ?: return null
-        val prices = prices(dashboard.prices, zone, fetchedAt) ?: return null
+        val prices = prices(dashboard.prices, zone, fetchedAt, now) ?: return null
         val market = ChartMarket(
             areaId = areaId,
             intervalMinutes = intervalMinutes,

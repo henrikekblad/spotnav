@@ -44,10 +44,23 @@ internal fun ChargingScreen.distanceText(mil: Double): String =
     "${t(R.string.approximately)} " +
         DistanceUnit.text(mil, AppLanguageSettings.language(context), AppLanguageSettings.numberLocale(context))
 
+/** One built paired chart and what it was built from. */
+internal class PairedChartMemo(
+    val dashboard: Dashboard,
+    val intervalMinutes: Int,
+    val date: java.time.LocalDate?,
+    val chart: PairedChart?
+)
+
 internal fun ChargingScreen.pairedChartFor(dashboard: Dashboard, intervalMinutes: Int): PairedChart? {
-    pairedChartMemo?.let { if (it.first === dashboard && it.second == intervalMinutes) return it.third }
-    return DashboardChart.build(dashboard, intervalMinutes).also {
-        pairedChartMemo = Triple(dashboard, intervalMinutes, it)
+    // The local date is part of the key: the same answer drawn after midnight is a different chart.
+    val now = java.time.Instant.now()
+    val date = DashboardChart.localDate(dashboard, now)
+    pairedChartMemo?.let {
+        if (it.dashboard === dashboard && it.intervalMinutes == intervalMinutes && it.date == date) return it.chart
+    }
+    return DashboardChart.build(dashboard, intervalMinutes, now = now).also {
+        pairedChartMemo = PairedChartMemo(dashboard, intervalMinutes, date, it)
     }
 }
 

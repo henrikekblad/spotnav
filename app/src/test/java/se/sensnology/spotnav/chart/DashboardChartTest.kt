@@ -22,6 +22,8 @@ import java.util.Locale
 
 /** A paired charger's chart and plan figures, read from the dashboard's `prices` and `plan`. */
 class DashboardChartTest {
+    private val NOON = OffsetDateTime.parse("2026-09-22T12:00:00+02:00").toInstant()
+
     private fun fixture(name: String) = Dashboard.parse(HaFixtures.json("dashboard/$name.json"))
 
     @Test fun everyVendoredFixtureDecodesItsPrices() {
@@ -58,7 +60,7 @@ class DashboardChartTest {
 
     @Test fun theChartIsHomeAssistantsOwnAllInPriceWithNoFiscalAppliedAgain() {
         val d = fixture("cheapest_direct_site_admin")
-        val chart = DashboardChart.build(d, 15)!!
+        val chart = DashboardChart.build(d, 15, now = NOON)!!
         assertEquals("SE4", chart.market.areaId)
         assertEquals(FiscalInput.OFF, chart.market.vat)
         assertEquals(FiscalInput.OFF, chart.market.tax)
@@ -76,7 +78,7 @@ class DashboardChartTest {
 
     @Test fun theHourlyPresentationAveragesTheSameAllInPrices() {
         val d = fixture("cheapest_direct_site_admin")
-        val chart = DashboardChart.build(d, 60)!!
+        val chart = DashboardChart.build(d, 60, now = NOON)!!
         val hour = PriceAggregation.aggregate(chart.prices.today, chart.market).first()
         val quarters = d.prices.intervals.take(4).map { it.effectivePrice!! }
         assertEquals(quarters.average(), chart.market.apply(hour.second), 1e-6)
@@ -86,13 +88,13 @@ class DashboardChartTest {
         val json = HaFixtures.json("dashboard/cheapest_direct_site_admin.json")
         val intervals = json.getJSONObject("prices").getJSONArray("intervals")
         intervals.getJSONObject(0).put("effective_price", JSONObject.NULL).put("known", false)
-        val chart = DashboardChart.build(Dashboard.parse(json), 15)!!
+        val chart = DashboardChart.build(Dashboard.parse(json), 15, now = NOON)!!
         assertEquals(95, chart.prices.today.size)
     }
 
     @Test fun theProposalShadesTheChartAndStatesItsFacts() {
         val d = fixture("cheapest_direct_site_admin")
-        val chart = DashboardChart.build(d, 15)!!
+        val chart = DashboardChart.build(d, 15, now = NOON)!!
         // 08:45-17:30 local on 2026-09-22 (06:45-15:30 UTC, +02:00).
         val band = chart.bands.single()
         assertEquals(LocalDate.parse("2026-09-22"), band.date)
@@ -135,7 +137,7 @@ class DashboardChartTest {
     @Test fun withNoPlanThereAreNoFiguresAndNoBands() {
         val d = fixture("waiting_for_publication")
         assertNull(DashboardChart.figures(d))
-        val chart = DashboardChart.build(d, 15)!!
+        val chart = DashboardChart.build(d, 15, now = NOON)!!
         assertTrue(chart.bands.isEmpty())
         assertNull(chart.footer)
         // One market day only: the second is not published yet.
@@ -144,7 +146,7 @@ class DashboardChartTest {
     }
 
     @Test fun anAnswerWithNoPricesOrNoAreaDrawsNothing() {
-        assertNull(DashboardChart.build(fixture("solar_derived_site"), 15))
+        assertNull(DashboardChart.build(fixture("solar_derived_site"), 15, now = NOON))
     }
 
     @Test fun anInstalledScheduleWithNoProposalShowsItsPeriodsAndNoFigures() {
@@ -155,7 +157,7 @@ class DashboardChartTest {
         assertFalse(f.fromProposal)
         assertNull(f.costMajor)
         assertNull(f.energyKwh)
-        val chart = DashboardChart.build(d, 15)!!
+        val chart = DashboardChart.build(d, 15, now = NOON)!!
         assertEquals(1, chart.bands.size)
         assertNull(chart.footer)
     }
@@ -166,15 +168,54 @@ class DashboardChartTest {
         val f = DashboardChart.figures(Dashboard.parse(json))!!
         assertTrue(f.unpriced)
         assertEquals(3, f.unpricedSlots)
-        assertTrue(DashboardChart.build(Dashboard.parse(json), 15)!!.footer!!.unpriced)
+        assertTrue(DashboardChart.build(Dashboard.parse(json), 15, now = NOON)!!.footer!!.unpriced)
     }
 
     @Test fun theSameAnswerIsTheSameChartSoAnUnchangedScreenIsNotRedrawn() {
         val d = fixture("cheapest_direct_site_admin")
-        assertEquals(DashboardChart.build(d, 15), DashboardChart.build(d, 15))
+        assertEquals(DashboardChart.build(d, 15, now = NOON), DashboardChart.build(d, 15, now = NOON))
         assertEquals(
             OffsetDateTime.parse("2026-09-22T06:00:00+00:00").toInstant().toEpochMilli(),
             DashboardChart.stamp(d)
         )
+    }
+
+    private fun at(iso: String) = OffsetDateTime.parse(iso).toInstant()
+
+    @Test fun theDayIsCutByTheLocalClockNotByTheAnswersOwnToday() {
+        // The answer was composed on the 22nd (today = 22nd, tomorrow = 23rd); the screen is opened on the morning of the 23rd.
+        val d = fixture("cheapest_direct_site_admin")
+        val chart = DashboardChart.build(d, 15, now = at("2026-09-23T07:30:00+02:00"))!!
+        val zone = ZoneId.of("Europe/Stockholm")
+        assertEquals(96, chart.prices.today.size)
+        assertTrue(chart.prices.today.all { it.start.atZoneSameInstant(zone).toLocalDate() == LocalDate.parse("2026-09-23") })
+        assertTrue(chart.prices.tomorrow.isEmpty())
+    }
+
+    @Test fun theDayChangesAtLocalMidnightAndNotBefore() {
+        val d = fixture("cheapest_direct_site_admin")
+        val before = DashboardChart.build(d, 15, now = at("2026-09-22T23:59:59+02:00"))!!
+        val after = DashboardChart.build(d, 15, now = at("2026-09-23T00:00:00+02:00"))!!
+        assertEquals(LocalDate.parse("2026-09-22"), before.prices.today.first().start.toLocalDate())
+        assertEquals(96, before.prices.tomorrow.size)
+        assertEquals(LocalDate.parse("2026-09-23"), after.prices.today.first().start.toLocalDate())
+        assertTrue(after.prices.tomorrow.isEmpty())
+    }
+
+    @Test fun midnightIsTheMarketsNotTheDevicesOrUtc() {
+        // 22:30 UTC on the 22nd is 00:30 on the 23rd in Stockholm (+02:00).
+        val d = fixture("cheapest_direct_site_admin")
+        val chart = DashboardChart.build(d, 15, now = at("2026-09-22T22:30:00+00:00"))!!
+        assertEquals(LocalDate.parse("2026-09-23"), chart.prices.today.first().start.toLocalDate())
+    }
+
+    @Test fun anAnswerOlderThanItsLastDayDrawsNothingRatherThanAWrongDay() {
+        val d = fixture("cheapest_direct_site_admin")
+        assertNull(DashboardChart.build(d, 15, now = at("2026-09-25T12:00:00+02:00")))
+    }
+
+    @Test fun theLocalDateIsTheMarketsDate() {
+        val d = fixture("cheapest_direct_site_admin")
+        assertEquals(LocalDate.parse("2026-09-23"), DashboardChart.localDate(d, at("2026-09-22T22:00:00+00:00")))
     }
 }

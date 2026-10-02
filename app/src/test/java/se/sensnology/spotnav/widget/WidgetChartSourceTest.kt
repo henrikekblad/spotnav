@@ -12,11 +12,12 @@ import se.sensnology.spotnav.testing.DashboardFixtures
 class WidgetChartSourceTest {
     private val stored = StoredDashboard(DashboardFixtures.dashboard("target_soc_estimated.json"), 1_000L)
     private val shown = WidgetSettings(area = "SE4", showChargingPlan = true)
+    private val noon = java.time.Instant.parse("2026-09-22T10:00:00Z")
     private val hidden = shown.copy(showChargingPlan = false)
 
     @Test fun aPairedWidgetWithAStoredDashboardDrawsTheDashboardChart() {
-        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, stored) as WidgetChartSource.Dashboard
-        val expected = DashboardChart.build(stored.dashboard, shown.intervalMinutes)!!
+        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, stored, noon) as WidgetChartSource.Dashboard
+        val expected = DashboardChart.build(stored.dashboard, shown.intervalMinutes, now = noon)!!
         assertEquals(expected, source.chart)
         assertEquals(expected.bands, source.bands)
         assertTrue(source.bands.isNotEmpty())
@@ -24,13 +25,13 @@ class WidgetChartSourceTest {
     }
 
     @Test fun theWidgetsOwnChoiceHidesTheBandsAndNothingElse() {
-        val source = WidgetChartSource.of("c1", chargerKnown = true, hidden, stored) as WidgetChartSource.Dashboard
+        val source = WidgetChartSource.of("c1", chargerKnown = true, hidden, stored, noon) as WidgetChartSource.Dashboard
         assertTrue(source.bands.isEmpty())
-        assertEquals(DashboardChart.build(stored.dashboard, hidden.intervalMinutes), source.chart)
+        assertEquals(DashboardChart.build(stored.dashboard, hidden.intervalMinutes, now = noon), source.chart)
     }
 
     @Test fun theBoundaryIsComputedFromExactlyWhatWasDrawn() {
-        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, stored) as WidgetChartSource.Dashboard
+        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, stored, noon) as WidgetChartSource.Dashboard
         assertSame(source.chart.market, source.need.market)
         assertSame(source.chart.prices, source.need.result)
     }
@@ -54,7 +55,7 @@ class WidgetChartSourceTest {
             },
             1_000L
         )
-        assertSame(WidgetChartSource.Pass, WidgetChartSource.of("c1", chargerKnown = true, shown, unpriced))
+        assertSame(WidgetChartSource.Pass, WidgetChartSource.of("c1", chargerKnown = true, shown, unpriced, noon))
         assertNotNull(stored)
     }
 }

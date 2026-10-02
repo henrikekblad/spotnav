@@ -9,15 +9,20 @@ import android.content.Intent
 import android.util.Log
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chart.ChartBoundaryAction
+import se.sensnology.spotnav.chart.DayBoundary
+import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.chart.ChartBoundaryNeed
 import se.sensnology.spotnav.chart.ChartBoundaryPlan
 import se.sensnology.spotnav.chart.ChartMarket
 import se.sensnology.spotnav.planning.LocalPlanningInputs
 import se.sensnology.spotnav.prices.PriceRepository
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
 /**
- * The widget's chart-boundary appointment: one inexact alarm for the whole installation. The decision is
+ * The widget's chart-boundary appointments: one inexact interval alarm and one allow-while-idle local-midnight
+ * alarm for the whole installation. The decision is
  * [ChartBoundaryPlan]'s; this owns arming, replacing and cancelling it.
  *
  * The intent identity is fixed, so re-arming replaces the pending alarm. [ACTION] and [REQUEST_CODE]
@@ -34,6 +39,9 @@ internal object WidgetChartBoundary {
     /** Its own request code, for the same reason. */
     private const val REQUEST_CODE = 13_036
 
+    /** The day-boundary alarm's own code: it is a separate appointment, so a deferred interval alarm cannot take it with it. */
+    private const val DAY_REQUEST_CODE = 13_037
+
     /** The window requested of the platform; a hint, not a bound. */
     private const val WINDOW_MILLIS = 60_000L
 
@@ -47,12 +55,14 @@ internal object WidgetChartBoundary {
             cancel(context)
             return
         }
+        armDayBoundary(context, ids)
         val dashboards = WidgetDashboardStore.forContext(context)
         val held = HashMap<String, StoredDashboard?>()
         val needs = ids.mapNotNull { id -> needOf(context, id, dashboards, held) }
         when (val action = ChartBoundaryPlan.action(OffsetDateTime.now(), needs)) {
             is ChartBoundaryAction.Arm -> arm(context, action.atMillis)
-            ChartBoundaryAction.Cancel -> cancel(context)
+            // Only the interval appointment: the day boundary stays armed above.
+            ChartBoundaryAction.Cancel -> cancelInterval(context)
         }
     }
 
@@ -86,9 +96,30 @@ internal object WidgetChartBoundary {
         else Log.i("SpotNavChartBoundary", "A widget remains: the boundary appointment stays")
     }
 
+    /**
+     * The local-midnight redraw, separate from the interval appointment and allowed while idle: a chart
+     * cut by the local clock needs only a redraw there, and `setWindow` would be held to the next
+     * maintenance window. Still inexact (no exact-alarm permission), so it may lag by minutes under
+     * Doze; `setAndAllowWhileIdle` is rate-limited by the platform, which one alarm a day never meets.
+     */
+    private fun armDayBoundary(context: Context, ids: List<Int>) {
+        val zones = ids.map { PriceMarkets.find(WidgetSettings.load(context, it).area)?.zoneId ?: ZoneId.systemDefault() }
+            .distinct()
+        val at = DayBoundary.nextMidnight(Instant.now(), zones) ?: return
+        context.getSystemService(AlarmManager::class.java).setAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP, at.toEpochMilli(), pendingIntent(context, DAY_REQUEST_CODE)
+        )
+        Log.i("SpotNavChartBoundary", "Next day boundary $at")
+    }
+
     fun cancel(context: Context) {
+        context.getSystemService(AlarmManager::class.java).cancel(pendingIntent(context, DAY_REQUEST_CODE))
+        cancelInterval(context)
+        Log.i("SpotNavChartBoundary", "Boundary appointments cancelled")
+    }
+
+    private fun cancelInterval(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pendingIntent(context))
-        Log.i("SpotNavChartBoundary", "Boundary appointment cancelled")
     }
 
     private fun arm(context: Context, atMillis: Long) {
@@ -107,11 +138,11 @@ internal object WidgetChartBoundary {
             .filter { WidgetSettings.isConfigured(context, it) }
     }
 
-    private fun pendingIntent(context: Context): PendingIntent {
+    private fun pendingIntent(context: Context, requestCode: Int = REQUEST_CODE): PendingIntent {
         val intent = Intent(context, PriceWidgetProvider::class.java).apply { action = ACTION }
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE,
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

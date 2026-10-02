@@ -44,6 +44,10 @@ class PriceWidgetProvider : AppWidgetProvider() {
         super.onReceive(context, intent)
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             PriceUpdateScheduler.scheduleNext(context, tomorrowAvailable = false)
+            // Alarms do not survive a reboot: redraw from what is held, which re-arms the chart boundaries.
+            val manager = AppWidgetManager.getInstance(context)
+            val ids = manager.getAppWidgetIds(ComponentName(context, PriceWidgetProvider::class.java))
+            updateBatch(context, manager, ids.toList(), goAsync(), Mode.REDRAW)
         } else if (intent.action == ACTION_PUBLICATION_CHECK) {
             // Schedule the next attempt now; the result below moves it to the next day if tomorrow is available.
             PriceUpdateScheduler.scheduleNext(context, tomorrowAvailable = false)
