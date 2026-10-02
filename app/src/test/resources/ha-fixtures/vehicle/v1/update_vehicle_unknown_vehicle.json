@@ -74,6 +74,11 @@
         "effective": null,
         "field": "current_limit",
         "kind": "entity",
+        "none": {
+          "allowed": true,
+          "automatic": null,
+          "chosen": false
+        },
         "required": false,
         "scope": "charger",
         "writable": true
@@ -150,6 +155,18 @@
         "required": true,
         "scope": "site",
         "value": "direct_phase_current",
+        "writable": true
+      },
+      {
+        "choices": [
+          "400",
+          "230"
+        ],
+        "field": "voltage_between_phases_v",
+        "kind": "enum",
+        "required": true,
+        "scope": "site",
+        "value": "400",
         "writable": true
       },
       {
