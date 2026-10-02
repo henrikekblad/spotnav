@@ -279,8 +279,8 @@
   <string name="settings_vehicle_change">Muuta ajoneuvoa</string>
   <string name="settings_vehicle_dialog_title">Ajoneuvo · %1$s</string>
   <string name="settings_vehicle_planned_here">Tämä lataaja suunnittelee sille</string>
-  <string name="settings_vehicle_no_sensor">Anturia ei valittu</string>
-  <string name="vehicle_charge_level_label">Ajoneuvon lataustaso</string>
+  <string name="vehicle_charge_level_label">Varaustaso</string>
+  <string name="vehicle_charge_level_none">Ei lukemaa</string>
   <string name="settings_vehicle_none">Ajoneuvoa ei ole vielä asetettu.</string>
   <string name="section_charger">Laturi</string>
   <string name="charger_current_label">Latausvirta</string>

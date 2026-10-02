@@ -279,8 +279,8 @@
   <string name="settings_vehicle_change">Endre kjøretøy</string>
   <string name="settings_vehicle_dialog_title">Kjøretøy · %1$s</string>
   <string name="settings_vehicle_planned_here">Denne laderen planlegger for det</string>
-  <string name="settings_vehicle_no_sensor">Ingen sensor valgt</string>
-  <string name="vehicle_charge_level_label">Kjøretøyets ladenivå</string>
+  <string name="vehicle_charge_level_label">Ladenivå</string>
+  <string name="vehicle_charge_level_none">Ingen avlesning</string>
   <string name="settings_vehicle_none">Ingen kjøretøy er satt opp ennå.</string>
   <string name="section_charger">Lader</string>
   <string name="charger_current_label">Ladestrøm</string>

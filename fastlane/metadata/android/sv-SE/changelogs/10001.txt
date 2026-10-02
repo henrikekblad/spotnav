@@ -1,0 +1,3 @@
+- Laddnivån visas nu som ett tal (59 %, ~59 % när den är uppskattad) på fordonskortet i inställningarna
+- Följer en omdöpt laddare i Home Assistant
+- Grafen byter till nya dagen vid midnatt, även när appen är öppen

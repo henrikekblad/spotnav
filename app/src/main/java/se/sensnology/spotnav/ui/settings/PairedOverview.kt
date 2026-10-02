@@ -21,7 +21,7 @@ internal object PairedOverview {
     /** What the vehicle's charge-level row shows. */
     sealed interface ChargeLevel {
         /** The car's state of charge as last read, whole percent. */
-        data class Reading(val percent: Int) : ChargeLevel
+        data class Reading(val percent: Int, val estimated: Boolean = false) : ChargeLevel
 
         /** No charge-level sensor is chosen for the vehicle. */
         data object NoSensor : ChargeLevel
@@ -50,12 +50,14 @@ internal object PairedOverview {
             val row = adopted[listed.id] ?: listed
             val percent = PairedVehicles.socPercent(dashboard, null, row.id) ?: row.socPercent
             val sensorName = dashboard.summary?.vehicleSensorNames?.get(row.id)
+            // The `soc` block marks a value it carried forward; a row's own reading is a measurement.
+            val estimated = dashboard.soc?.let { it.vehicleId == row.id && it.value != null && it.estimated } == true
             VehicleCard(
                 id = row.id,
                 name = row.name,
                 planned = row.id == dashboard.targetVehicleId,
                 chargeLevel = when {
-                    percent != null -> ChargeLevel.Reading(SocDisplay.wholePercent(percent))
+                    percent != null -> ChargeLevel.Reading(SocDisplay.wholePercent(percent), estimated)
                     row.socEntityId == null && sensorName == null -> ChargeLevel.NoSensor
                     else -> ChargeLevel.NoReading
                 },

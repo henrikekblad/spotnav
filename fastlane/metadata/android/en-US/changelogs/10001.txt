@@ -1,0 +1,3 @@
+- Charge level is now shown as a number (59 %, ~59 % when estimated) on the vehicle card in Settings
+- Follows a charger renamed in Home Assistant
+- The chart switches to the new day at midnight, even with the app left open

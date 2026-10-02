@@ -279,8 +279,8 @@
   <string name="settings_vehicle_change">Skift køretøj</string>
   <string name="settings_vehicle_dialog_title">Køretøj · %1$s</string>
   <string name="settings_vehicle_planned_here">Denne oplader planlægger for det</string>
-  <string name="settings_vehicle_no_sensor">Ingen sensor valgt</string>
-  <string name="vehicle_charge_level_label">Køretøjets opladningsniveau</string>
+  <string name="vehicle_charge_level_label">Ladeniveau</string>
+  <string name="vehicle_charge_level_none">Ingen aflæsning</string>
   <string name="settings_vehicle_none">Der er endnu ikke sat noget køretøj op.</string>
   <string name="section_charger">Lader</string>
   <string name="charger_current_label">Ladestrøm</string>

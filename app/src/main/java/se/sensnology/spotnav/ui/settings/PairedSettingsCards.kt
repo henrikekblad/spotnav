@@ -148,15 +148,12 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
         }
     }
 
-    private fun chargeLevelText(vehicle: PairedOverview.VehicleCard): String {
-        val name = vehicle.sensorName
-        return when (val level = vehicle.chargeLevel) {
+    private fun chargeLevelText(vehicle: PairedOverview.VehicleCard): String =
+        when (val level = vehicle.chargeLevel) {
             is PairedOverview.ChargeLevel.Reading -> t(R.string.vehicle_card_soc_value, level.percent)
-                .let { reading -> if (name == null) reading else "$reading ($name)" }
-            PairedOverview.ChargeLevel.NoSensor -> t(R.string.settings_vehicle_no_sensor)
-            PairedOverview.ChargeLevel.NoReading -> name ?: t(R.string.paired_value_unset)
+                .let { if (level.estimated) "~$it" else it }
+            PairedOverview.ChargeLevel.NoSensor, PairedOverview.ChargeLevel.NoReading -> t(R.string.vehicle_charge_level_none)
         }
-    }
 
     private fun capacityText(vehicle: PairedOverview.VehicleCard): String {
         val kwh = vehicle.capacityKwh ?: return t(R.string.paired_value_unset)

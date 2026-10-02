@@ -1,0 +1,3 @@
+- Varaustaso näytetään nyt lukuna (59 %, ~59 % kun arvio) ajoneuvokortissa asetuksissa
+- Seuraa Home Assistantissa uudelleennimettyä laturia
+- Kaavio vaihtuu uuteen päivään keskiyöllä, vaikka sovellus olisi auki

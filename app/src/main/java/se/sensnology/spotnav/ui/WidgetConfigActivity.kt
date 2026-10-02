@@ -11,6 +11,7 @@ import android.os.Looper
 import android.view.MotionEvent
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.app.LauncherActivity
+import se.sensnology.spotnav.chart.DayRollover
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.ui.charging.ChargingScreen
@@ -20,6 +21,8 @@ import se.sensnology.spotnav.ui.settings.SettingsScreen
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChartBoundary
 import se.sensnology.spotnav.widget.WidgetSettings
+import java.time.Instant
+import java.time.ZoneId
 
 /**
  * The app's one Activity for a widget: the screen the widget host opens when a widget is added, the
@@ -41,6 +44,27 @@ class WidgetConfigActivity : Activity() {
     /** The publication listener's handle, so registration and destruction are symmetrical. */
     private var pricePublication: AutoCloseable? = null
     private var resumedOnce = false
+    private var foreground = false
+
+    /** The local-midnight appointment of the charging screen: armed while resumed, gone when stopped. */
+    private val dayRollover by lazy {
+        val main = Handler(Looper.getMainLooper())
+        DayRollover(
+            timer = object : DayRollover.Timer {
+                private var pending: Runnable? = null
+                override fun after(delayMs: Long, task: () -> Unit) {
+                    cancel()
+                    val run = Runnable { pending = null; task() }
+                    pending = run
+                    main.postDelayed(run, delayMs)
+                }
+                override fun cancel() { pending?.let(main::removeCallbacks); pending = null }
+            },
+            now = { Instant.now() },
+            zone = { shell.dayZone?.invoke() ?: ZoneId.systemDefault() },
+            onRollover = { shell.onDayBoundary?.invoke() }
+        )
+    }
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,6 +125,9 @@ class WidgetConfigActivity : Activity() {
         // The publication hook lives exactly as long as the charging screen does:
         shell.reloadPrices = null
         shell.onForeground = null
+        shell.onDayBoundary = null
+        shell.dayZone = null
+        dayRollover.cancel()
         when (screen) {
             Screen.MAIN -> showCharging()
             Screen.PRICE_TABLE -> PriceTableScreen(shell).show()
@@ -116,6 +143,7 @@ class WidgetConfigActivity : Activity() {
     /** The charging screen, drawn afresh; a new charger chosen on its card calls this to redraw in place. */
     private fun showCharging() {
         ChargingScreen(shell) { showCharging() }.show()
+        if (foreground) dayRollover.arm()
     }
 
     /**
@@ -156,6 +184,8 @@ class WidgetConfigActivity : Activity() {
         // away, across midnight.
         if (resumedOnce) shell.onForeground?.invoke()
         resumedOnce = true
+        foreground = true
+        if (currentScreen == Screen.MAIN) dayRollover.arm()
         // The widget draws from held data cut by the local clock, so a redraw here costs no network.
         WidgetChartBoundary.requestRedraw(this)
         if (widgetId < 0) {
@@ -166,6 +196,12 @@ class WidgetConfigActivity : Activity() {
                 finish()
             }
         }
+    }
+
+    override fun onStop() {
+        foreground = false
+        dayRollover.cancel()
+        super.onStop()
     }
 
     override fun onPause() {

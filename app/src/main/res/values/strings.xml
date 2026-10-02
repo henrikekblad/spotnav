@@ -291,8 +291,8 @@
   <string name="settings_vehicle_change">Change vehicle</string>
   <string name="settings_vehicle_dialog_title">Vehicle · %1$s</string>
   <string name="settings_vehicle_planned_here">This charger plans for it</string>
-  <string name="settings_vehicle_no_sensor">No sensor chosen</string>
-  <string name="vehicle_charge_level_label">Vehicle charge level</string>
+  <string name="vehicle_charge_level_label">Charge level</string>
+  <string name="vehicle_charge_level_none">No reading</string>
   <string name="settings_vehicle_none">No vehicle is set up yet.</string>
   <string name="section_charger">Charger</string>
   <string name="charger_current_label">Charging current</string>

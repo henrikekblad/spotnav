@@ -77,6 +77,14 @@ internal class ScreenShell(
     var onForeground: (() -> Unit)? = null
 
     /**
+     * The charging screen's day change: what it does at the next local midnight of its market while the app
+     * stays open, and which zone that is. The Activity keeps the timer, armed while it is resumed and
+     * cancelled when it stops; cleared with [reloadPrices].
+     */
+    var onDayBoundary: (() -> Unit)? = null
+    var dayZone: (() -> java.time.ZoneId)? = null
+
+    /**
      * a tap that begins anywhere else puts the readout away (see [afterDispatch] and
      * ChartDismissal). Both are dropped by [begin], which is what happens whenever the screen is
      * rebuilt -- so nothing here outlives the views it points at.

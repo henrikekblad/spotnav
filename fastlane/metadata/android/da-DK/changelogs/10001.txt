@@ -1,0 +1,3 @@
+- Opladningsniveau vises nu som et tal (59 %, ~59 % når det er et estimat) på køretøjets kort i indstillingerne
+- Følger en omdøbt lader i Home Assistant
+- Grafen skifter til den nye dag ved midnat, også når appen står åben

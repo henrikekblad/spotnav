@@ -279,8 +279,8 @@
   <string name="settings_vehicle_change">Ändra fordon</string>
   <string name="settings_vehicle_dialog_title">Fordon · %1$s</string>
   <string name="settings_vehicle_planned_here">Laddaren planerar för det här fordonet</string>
-  <string name="settings_vehicle_no_sensor">Ingen sensor vald</string>
-  <string name="vehicle_charge_level_label">Fordonets laddnivå</string>
+  <string name="vehicle_charge_level_label">Laddnivå</string>
+  <string name="vehicle_charge_level_none">Ingen avläsning</string>
   <string name="settings_vehicle_none">Inget fordon är inställt ännu.</string>
   <string name="section_charger">Laddare</string>
   <string name="charger_current_label">Laddström</string>

@@ -10,6 +10,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.chart.DashboardChart
 import se.sensnology.spotnav.chart.PairedChart
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.authority.AuthorityResolution
@@ -224,6 +225,17 @@ internal class ChargingScreen(
         shell.onForeground = {
             render()
             startDashboardFetch()
+        }
+        // Midnight with the app open: today's date drawn from what is held at once, then fresh answers.
+        shell.dayZone = {
+            pairedDashboard?.let { DashboardChart.zone(it) }
+                ?: shell.authorityController?.priceArea()?.let { PriceMarkets.find(it)?.zoneId }
+                ?: java.time.ZoneId.systemDefault()
+        }
+        shell.onDayBoundary = {
+            render()
+            startDashboardFetch()
+            loadPrices()
         }
         startDashboardFetch()
     }

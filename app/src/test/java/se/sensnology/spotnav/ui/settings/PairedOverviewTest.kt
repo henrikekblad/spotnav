@@ -189,6 +189,17 @@ class PairedOverviewTest {
         assertEquals(PairedOverview.ChargeLevel.NoReading, card.chargeLevel)
     }
 
+    @Test fun aChargeLevelTheSocBlockCarriedForwardIsMarkedEstimatedAndAMeasurementIsNot() {
+        val estimated = DashboardFixtures.dashboard("target_soc_estimated.json")
+        assertEquals(PairedOverview.ChargeLevel.Reading(75, estimated = true), PairedOverview.vehicles(estimated)[0].chargeLevel)
+        val measured = DashboardFixtures.dashboard("target_soc_estimated.json") {
+            getJSONObject("soc").put("estimated", false)
+        }
+        assertEquals(PairedOverview.ChargeLevel.Reading(75, estimated = false), PairedOverview.vehicles(measured)[0].chargeLevel)
+        // The other vehicle's card is not marked by this vehicle's estimate.
+        assertFalse((PairedOverview.vehicles(twoVehicles)[1].chargeLevel as PairedOverview.ChargeLevel.Reading).estimated)
+    }
+
     @Test fun noEntityIdIsEverInTheSummaryRows() {
         for (name in listOf("cheapest_direct_site_admin.json", "target_soc_two_vehicles.json", "solar_derived_site.json")) {
             val dashboard = DashboardFixtures.dashboard(name)
