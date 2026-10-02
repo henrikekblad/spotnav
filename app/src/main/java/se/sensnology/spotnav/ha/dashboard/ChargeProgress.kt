@@ -23,7 +23,7 @@ internal object ChargeProgressContract {
     /** The states this app knows. A value outside this set is a value it cannot read. */
     val STATES = setOf("normal", VEHICLE_NOT_REQUESTING_CURRENT, "unknown")
 
-    /** The exact key set of the block: a missing key and an extra one are both not this value. */
+    /** The block's required keys: a missing one is not this value, an added one is ignored. */
     val KEYS = setOf("state", "reason", "since")
 
     /** A bound on the code this app will render, so no payload can put an essay on the screen. */
@@ -32,7 +32,6 @@ internal object ChargeProgressContract {
     /** The block, or `null` when it is not one this app can read. */
     fun of(json: JSONObject?): ChargeProgress? {
         if (json == null) return null
-        if (json.length() != KEYS.size) return null
         for (key in KEYS) {
             if (!json.has(key)) return null
         }

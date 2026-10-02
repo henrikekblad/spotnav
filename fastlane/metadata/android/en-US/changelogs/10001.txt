@@ -1,3 +1,5 @@
 - Charge level is now shown as a number (59 %, ~59 % when estimated) on the vehicle card in Settings
 - Follows a charger renamed in Home Assistant
 - The chart switches to the new day at midnight, even with the app left open
+- Paired chargers can depart on a chosen date, up to a week ahead
+- Matches Home Assistant integration 1.1: new status messages, and fields added later no longer break the app

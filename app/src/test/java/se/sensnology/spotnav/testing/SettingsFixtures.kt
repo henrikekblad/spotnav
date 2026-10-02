@@ -58,6 +58,7 @@ internal object SettingsFixtures {
         maxPeriods: Any? = 4,
         departureEnabled: Any? = true,
         departureTime: Any? = "07:30",
+        departureDate: Any? = null,
         strategy: Any? = "cheapest",
         driver: Any? = "manual_kwh",
         target: Any? = target()
@@ -71,6 +72,7 @@ internal object SettingsFixtures {
         put("max_periods", maxPeriods ?: JSONObject.NULL)
         put("departure_enabled", departureEnabled ?: JSONObject.NULL)
         put("departure_time", departureTime ?: JSONObject.NULL)
+        put("departure_date", departureDate ?: JSONObject.NULL)
         put("strategy", strategy ?: JSONObject.NULL)
         put("driver", driver ?: JSONObject.NULL)
         put("target", target ?: JSONObject.NULL)
@@ -87,6 +89,7 @@ internal object SettingsFixtures {
         maxPeriods: Any? = 4,
         departureEnabled: Any? = true,
         departureTime: Any? = "07:30",
+        departureDate: Any? = null,
         strategy: Any? = "cheapest",
         driver: Any? = "manual_kwh",
         target: Any? = target()
@@ -101,6 +104,7 @@ internal object SettingsFixtures {
             maxPeriods = maxPeriods,
             departureEnabled = departureEnabled,
             departureTime = departureTime,
+            departureDate = departureDate,
             strategy = strategy,
             driver = driver,
             target = target

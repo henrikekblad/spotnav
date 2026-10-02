@@ -9,12 +9,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.SeekBar
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerProfile
+import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.chart.PlanChartView
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.settings.DepartureDays
+import se.sensnology.spotnav.ha.settings.DepartureText
 import se.sensnology.spotnav.planning.ChargeNeed
 import se.sensnology.spotnav.planning.PlanDriver
 import se.sensnology.spotnav.planning.PlanMode
@@ -47,6 +51,9 @@ import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import se.sensnology.spotnav.widget.WidgetSettings
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 internal class PlanCardController(scope: ViewScope, private val shell: ScreenShell) : ViewScope(scope) {
     fun add(
@@ -149,6 +156,52 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         departureControl.addView(departurePicker, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, dp(44)
         ).apply { topMargin = dp(6) })
+        // The departure's day (a paired charger only): "Every day" or "On a date", under the time.
+        var departureDate: LocalDate? = null
+        var departureDays: DepartureDays? = null
+        var dayShown = false
+        val dayLocale = { AppLanguageSettings.locale(context).let { if (it.language == "en") Locale.UK else it } }
+        val dayGroup = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = View.GONE
+            setPadding(0, dp(10), 0, 0)
+        }
+        dayGroup.addView(TextView(context).apply {
+            text = t(R.string.departure_day_title)
+            textSize = 14f
+            setTextColor(dark)
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        val dailyRadio = RadioButton(context).apply { text = t(R.string.departure_day_daily) }
+        val onDateRadio = RadioButton(context).apply { text = t(R.string.departure_day_on_date) }
+        val dateButton = Button(context).apply { isAllCaps = false; visibility = View.GONE }
+        dayGroup.addView(dailyRadio)
+        // The date sits on the "On a date" row, right-aligned, and only while that row is chosen:
+        val dateRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(onDateRadio, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            addView(dateButton, LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)
+            ))
+        }
+        dayGroup.addView(dateRow)
+        val pastNote = TextView(context).apply {
+            text = t(R.string.departure_date_past)
+            textSize = 13f
+            setTextColor(muted)
+            visibility = View.GONE
+        }
+        val dateHelp = TextView(context).apply {
+            text = t(R.string.departure_date_help)
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(4), 0, 0)
+            visibility = View.GONE
+        }
+        dayGroup.addView(pastNote)
+        dayGroup.addView(dateHelp)
+        departureControl.addView(dayGroup)
         val departureValue = valueLabel()
         val departurePopoverValue = valueLabel()
         var departureDialog: AlertDialog? = null
@@ -163,9 +216,26 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         }
         val refreshDepartureLabel = {
             val reading = PlanReadout.departureReading(useDeparture.isChecked, departureHour, departureMinute)
-            val text = reading.time() ?: t(R.string.plan_card_departure_none)
+            // The plan summary names a dated departure's day, as the card's Plan cell does:
+            val text = reading.time()?.let { time ->
+                DepartureText.text(
+                    if (dayShown) departureDate else null, time, departureDays?.today, dayLocale(),
+                    t(R.string.departure_today), t(R.string.departure_tomorrow)
+                )
+            } ?: t(R.string.plan_card_departure_none)
             departureValue.text = text
             departurePopoverValue.text = text
+            // The day block exists only while the deadline is on, and only for a paired record:
+            val date = departureDate
+            val past = date != null && departureDays?.isPast(date) == true
+            dayGroup.visibility = if (dayShown && useDeparture.isChecked) View.VISIBLE else View.GONE
+            dailyRadio.isChecked = date == null
+            onDateRadio.isChecked = date != null
+            dateButton.visibility = if (date != null) View.VISIBLE else View.GONE
+            dateButton.isEnabled = onDateRadio.isEnabled && departureDays != null
+            dateButton.text = date?.let { DateTimeFormatter.ofPattern("EEE d MMM", dayLocale()).format(it) }.orEmpty()
+            dateHelp.visibility = if (date != null) View.VISIBLE else View.GONE
+            pastNote.visibility = if (past) View.VISIBLE else View.GONE
         }
         refreshDepartureLabel()
 
@@ -313,6 +383,20 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 refreshDepartureLabel()
             },
             refreshDepartureLabel = refreshDepartureLabel,
+            dailyRadio = dailyRadio,
+            onDateRadio = onDateRadio,
+            dateButton = dateButton,
+            departureDate = { departureDate },
+            setDepartureDate = { date ->
+                departureDate = date
+                refreshDepartureLabel()
+            },
+            departureDays = { departureDays },
+            setDepartureDays = { days, shown ->
+                departureDays = days
+                dayShown = shown
+                refreshDepartureLabel()
+            },
             result = result
         )
     }
@@ -511,5 +595,15 @@ internal class PlanCard(
     val departureMinute: () -> Int,
     val setDeparture: (Int, Int) -> Unit,
     val refreshDepartureLabel: () -> Unit,
+    /** The departure's day: "Every day", "On a date", and the date's own button. */
+    val dailyRadio: RadioButton,
+    val onDateRadio: RadioButton,
+    val dateButton: Button,
+    /** The day the departure names, or `null` for every day. */
+    val departureDate: () -> LocalDate?,
+    val setDepartureDate: (LocalDate?) -> Unit,
+    /** The days the area's zone offers now (or `null`), and whether the day block is shown at all. */
+    val departureDays: () -> DepartureDays?,
+    val setDepartureDays: (DepartureDays?, Boolean) -> Unit,
     val result: ResultBox
 )

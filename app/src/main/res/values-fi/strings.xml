@@ -186,6 +186,13 @@
   <string name="plan_card_departure_label">Lähtö</string>
   <string name="plan_card_departure_none">Ei lähtöaikaa</string>
   <string name="plan_card_departure_note">Kun tämä on päällä, latauksen on valmistuttava ennen tätä aikaa.</string>
+  <string name="departure_day_title">Lähtö</string>
+  <string name="departure_day_daily">Joka päivä</string>
+  <string name="departure_day_on_date">Tietty päivämäärä</string>
+  <string name="departure_date_help">Suunnitelma voi odottaa tunteja, jotka ovat yleensä halvempia. Lähtö pidetään aina.</string>
+  <string name="departure_date_past">Päivämäärä on mennyt ohi, joten suunnitelma toimii joka päivä, kunnes valitset uuden päivämäärän. Tallennus tyhjentää sen.</string>
+  <string name="departure_today">tänään</string>
+  <string name="departure_tomorrow">huomenna</string>
   <string name="plan_card_periods_note">Lataus jaetaan enintään näin moneen jaksoon.</string>
   <string name="section_widget">Widget</string>
   <string name="nothing_to_charge">Ei ladattavaa</string>
@@ -212,6 +219,7 @@
   <string name="authority_changed_elsewhere">Asetuksia muutettiin muualla. Tee muutoksesi uudelleen.</string>
   <string name="authority_committed_unreconciled">Tallennettu, mutta Home Assistant ei voinut toteuttaa sitä heti. Muutos on voimassa.</string>
   <string name="authority_refused_invalid">Home Assistant hylkäsi arvon. Aiempi arvo on edelleen käytössä.</string>
+  <string name="authority_refused_departure">Home Assistant hylkäsi lähdön. Aiempi lähtö on edelleen käytössä.</string>
   <string name="settings_paired_read_only">Home Assistant omistaa nämä arvot, eikä niitä voi kirjoittaa juuri nyt. Mitään ei tallennettu.</string>
   <string name="settings_save_not_applied">Asetukset muuttuivat ennen tämän tallennuksen lähettämistä, joten mitään ei kirjoitettu.</string>
   <string name="authority_control_approximate">Vahvistettu arvo on %1$s; säädin ei voi näyttää sitä tarkasti, joten sen siirtäminen muuttaa sitä.</string>

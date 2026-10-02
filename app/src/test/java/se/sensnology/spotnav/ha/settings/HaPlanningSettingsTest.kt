@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ha.settings
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
@@ -102,9 +103,9 @@ class HaPlanningSettingsTest {
         refusal("invalid_periods", { HaSettingsCodec.parseResponse(response(maxPeriods = 0)) })
     }
 
-    @Test fun refusesMissingAndUnknownKeysAtEveryLevel() {
+    @Test fun refusesMissingKeysAtEveryLevelAndIgnoresAddedOnes() {
         refusal("missing_field", { HaSettingsCodec.parseResponse(response().apply { remove("amps") }) })
-        refusal("unknown_field", { HaSettingsCodec.parseResponse(response().put("charger_id", "x")) })
+        assertNotNull(HaSettingsCodec.parseResponse(response().put("charger_id", "x")))
         refusal("missing_field", { HaSettingsCodec.parseResponse(response().apply { remove("revision") }) })
         // A body never states the record's revision.
         refusal(
@@ -115,15 +116,12 @@ class HaPlanningSettingsTest {
             "missing_field",
             { HaSettingsCodec.parseResponse(response(overrides = JSONArray().put(override().apply { remove("tax") }))) }
         )
-        refusal(
-            "unknown_field",
-            { HaSettingsCodec.parseResponse(response(overrides = JSONArray().put(override().put("fee", 1)))) }
-        )
+        assertNotNull(HaSettingsCodec.parseResponse(response(overrides = JSONArray().put(override().put("fee", 1)))))
         refusal(
             "missing_field",
             { HaSettingsCodec.parseResponse(response(target = target().apply { remove("target_percent") })) }
         )
-        refusal("unknown_field", { HaSettingsCodec.parseResponse(response(target = target().put("soc", 50))) })
+        assertNotNull(HaSettingsCodec.parseResponse(response(target = target().put("soc", 50))))
         refusal("missing_field", { HaSettingsCodec.parseResponse(response(overrides = JSONArray().put(fiscal()))) })
         refusal("missing_field", { HaSettingsCodec.parseResponse(JSONObject("{\"mode\":null}")) })
     }
@@ -132,16 +130,13 @@ class HaPlanningSettingsTest {
         // A JSON number is not a boolean, and a string is not a number.
         refusal("invalid_departure", { HaSettingsCodec.parseResponse(response(departureEnabled = 1)) })
         refusal("invalid_departure", { HaSettingsCodec.parseResponse(response(departureEnabled = "true")) })
-        refusal("unknown_field", { HaSettingsCodec.parseResponse(response().put("execution_paused", false)) })
+        assertNotNull(HaSettingsCodec.parseResponse(response().put("execution_paused", false)))
         // The retired keys -- the estimated-prices flag, and the vehicle's own figures, which live
         // on the vehicle and are written with `update_vehicle` -- are not part of the record any
         // more.
-        refusal("unknown_field", { HaSettingsCodec.parseResponse(response().put("allow_estimated_prices", false)) })
-        refusal("unknown_field", { HaSettingsCodec.parseResponse(response().put("consumption_kwh_per_10km", 2.0)) })
-        refusal(
-            "unknown_field",
-            { HaSettingsCodec.parseResponse(response(target = target().put("remembered_capacity_kwh", 60.0))) }
-        )
+        assertNotNull(HaSettingsCodec.parseResponse(response().put("allow_estimated_prices", false)))
+        assertNotNull(HaSettingsCodec.parseResponse(response().put("consumption_kwh_per_10km", 2.0)))
+        assertNotNull(HaSettingsCodec.parseResponse(response(target = target().put("remembered_capacity_kwh", 60.0))))
         refusal("invalid_phases", { HaSettingsCodec.parseResponse(response(phases = "3")) })
         refusal("invalid_amps", { HaSettingsCodec.parseResponse(response(amps = "16")) })
         refusal("invalid_amps", { HaSettingsCodec.parseResponse(response(amps = 16.5)) })
@@ -184,7 +179,7 @@ class HaPlanningSettingsTest {
 
     @Test fun refusesUnknownEnumsAndWallTimes() {
         for (legacyMode in listOf("external", "auto_price", 1)) {
-            refusal("unknown_field", { HaSettingsCodec.parseResponse(response().put("mode", legacyMode)) })
+            assertEquals(parsed(), HaSettingsCodec.parseResponse(response().put("mode", legacyMode)))
         }
         assertEquals(HaSettingsStrategy.SOLAR, HaSettingsCodec.parseResponse(response(strategy = "solar")).strategy)
         assertEquals(HaSettingsStrategy.HYBRID, HaSettingsCodec.parseResponse(response(strategy = "hybrid")).strategy)
@@ -268,5 +263,37 @@ class HaPlanningSettingsTest {
             "unknown_field",
             { HaSettingsCodec.parseBody(HaSettingsCodec.encode(HaSettingsCodec.parseResponse(response(revision = 7)))) }
         )
+    }
+
+    @Test fun anAddedKeyIsIgnoredAtEveryLevelOfAResponseButNeverInABodyOrTheStoredCopy() {
+        val extra = response(
+            overrides = JSONArray().put(override().put("fee", 1)),
+            target = target().put("soc", 50)
+        ).put("charger_id", "x")
+        val plain = response(overrides = JSONArray().put(override()), target = target())
+        assertEquals(HaSettingsCodec.parseResponse(plain), HaSettingsCodec.parseResponse(extra))
+
+        val canonical = HaSettingsCodec.parseResponse(response(revision = 3))
+        refusal("unknown_field", { HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(canonical).put("charger_id", "x")) })
+        refusal("unknown_field", { HaSettingsCodec.parseStored(HaSettingsCodec.encode(canonical).put("mode", "external")) })
+        // A stored copy is read as it was written.
+        assertEquals(canonical, HaSettingsCodec.parseStored(HaSettingsCodec.encode(canonical)))
+    }
+
+    @Test fun theDepartureDateIsNullOrAnIsoDateAndAReplacementAlwaysStatesIt() {
+        // Absent (a response that was not asked for it) reads as no date; a body must name it.
+        val without = response().apply { remove("departure_date") }
+        assertEquals(null, HaSettingsCodec.parseResponse(without).departureDate)
+        refusal("missing_field", { HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(parsed()).apply { remove("departure_date") }) })
+
+        val dated = HaSettingsCodec.parseResponse(response(departureDate = "2026-09-27"))
+        assertEquals(java.time.LocalDate.of(2026, 9, 27), dated.departureDate)
+        assertEquals("2026-09-27", HaSettingsCodec.encodeBody(dated).getString("departure_date"))
+        assertTrue(HaSettingsCodec.encodeBody(parsed()).isNull("departure_date"))
+        assertEquals(dated.copy(revision = 0), HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(dated)))
+
+        for (bad in listOf("2026-9-27", "27/09/2026", "2026-02-30", "2026-13-01", 20260927, true)) {
+            refusal("invalid_departure", { HaSettingsCodec.parseResponse(response(departureDate = bad)) })
+        }
     }
 }

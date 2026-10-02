@@ -2,10 +2,12 @@ package se.sensnology.spotnav.ha.dashboard
 
 import se.sensnology.spotnav.app.DistanceUnit
 import java.text.NumberFormat
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 
 /** What the status words need to know about the reader and the market, and nothing else. */
@@ -104,6 +106,24 @@ internal object HaStatusText {
                 if (at == null || zone == null) say("status.waitingForPublicationNoTime")
                 else say("status.waitingForPublication", mapOf("time" to clock(at)))
             }
+            "waiting_for_history" -> {
+                // The weekday's plural, the saving and the weeks behind it; without all three, only
+                // the plain fact.
+                val weekday = weekdayPlural(language, num(p["weekday"]))
+                val percent = num(p["percent"])
+                val weeks = num(p["weeks"])
+                if (weekday == null || percent == null || weeks == null) say("status.waitingForHistoryNoDetail")
+                else say(key, mapOf(
+                    "weekday" to weekday,
+                    "percent" to number(format.locale, percent, 0),
+                    "weeks" to number(format.locale, weeks, 0)
+                ))
+            }
+            "held_until_window" -> {
+                val at = instant(p["time"])
+                if (at == null || zone == null) say("status.scheduledNoTime")
+                else say(key, mapOf("time" to clock(at)))
+            }
             "buying_before_publication" ->
                 say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "auto_planned", "auto_installed" -> {
@@ -180,6 +200,23 @@ internal object HaStatusText {
                 }
             }
             else -> say(key)
+        }
+    }
+
+    /**
+     * A weekday in the plural the language uses for "every Sunday" (`Sundays`, `söndagar`,
+     * `søndager`, `søndage`, `sunnuntaisin`), or `null` for a number that is no ISO weekday.
+     */
+    internal fun weekdayPlural(language: String, isoWeekday: Double?): String? {
+        val number = isoWeekday?.takeIf { it == Math.floor(it) && it >= 1 && it <= 7 }?.toInt() ?: return null
+        val locale = if (language == "en") Locale.UK else Locale.forLanguageTag(language)
+        val name = DayOfWeek.of(number).getDisplayName(TextStyle.FULL_STANDALONE, locale).lowercase(locale)
+        return when (language) {
+            "sv" -> "${name}ar"
+            "nb" -> "${name}er"
+            "da" -> "${name}e"
+            "fi" -> if (name.endsWith("i")) "${name}sin" else "${name}isin"
+            else -> name.replaceFirstChar { it.titlecase(locale) } + "s"
         }
     }
 

@@ -26,7 +26,8 @@ internal fun ViewScope.authorityReasonText(reason: HaPlanningInputs.Reason): Str
 
 /** A refusal, as a sentence -- never a code and never an exception's prose. */
 internal fun ViewScope.authorityRefusalText(outcome: SettingsUpdate.Outcome): String = when (outcome) {
-    is SettingsUpdate.Outcome.Invalid -> t(R.string.authority_refused_invalid)
+    is SettingsUpdate.Outcome.Invalid ->
+        if (outcome.code == "invalid_departure") t(R.string.authority_refused_departure) else t(R.string.authority_refused_invalid)
     is SettingsUpdate.Outcome.NotCommitted -> t(R.string.authority_refused_not_committed)
     SettingsUpdate.Outcome.Unavailable -> t(R.string.authority_unreachable)
     else -> t(R.string.authority_refused_unreadable)

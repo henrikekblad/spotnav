@@ -52,7 +52,8 @@
     "target_capacity_unknown",
     "target_soc_unknown",
     "unexpected_failure",
-    "unpriced"
+    "unpriced",
+    "waiting_for_history"
   ],
   "planning_states": [
     "error",
@@ -125,6 +126,10 @@
       ],
       "tone": "normal"
     },
+    "charger_disabled": {
+      "params": [],
+      "tone": "notice"
+    },
     "charger_unavailable": {
       "params": [],
       "tone": "blocking"
@@ -136,6 +141,20 @@
       "tone": "normal"
     },
     "charging_without_prices": {
+      "params": [],
+      "tone": "notice"
+    },
+    "held_by_charger": {
+      "params": [],
+      "tone": "notice"
+    },
+    "held_until_window": {
+      "params": [
+        "time"
+      ],
+      "tone": "normal"
+    },
+    "hold_overridden": {
       "params": [],
       "tone": "notice"
     },
@@ -323,6 +342,14 @@
     "unpriced": {
       "params": [],
       "tone": "notice"
+    },
+    "waiting_for_history": {
+      "params": [
+        "percent",
+        "weekday",
+        "weeks"
+      ],
+      "tone": "normal"
     },
     "waiting_for_publication": {
       "params": [

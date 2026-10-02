@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.ha.settings
 
 import se.sensnology.spotnav.widget.WidgetSettings
+import java.time.LocalDate
 
 /** `driver`: what the plan is a function of — an amount of energy, or a target state of charge. */
 enum class HaSettingsDriver(val wire: String) {
@@ -68,6 +69,8 @@ data class HaPlanningSettings(
     val maxPeriods: Int,
     val departureEnabled: Boolean,
     val departureTime: String,
+    /** A departure on one particular day (ISO date in the area's zone), or `null` for every day. */
+    val departureDate: LocalDate? = null,
     val strategy: HaSettingsStrategy,
     val driver: HaSettingsDriver,
     val target: HaTargetIntent

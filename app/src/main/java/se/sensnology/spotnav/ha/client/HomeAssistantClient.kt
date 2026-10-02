@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ha.client
 
+import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -49,9 +50,20 @@ internal class WebhookHttpStatusException(
     val bodyText: String
 ) : IllegalStateException("HTTP $status")
 
+/**
+ * The settings fields this app reads that Home Assistant withholds from an app that does not ask
+ * (`docs/api.md`, "Withheld settings field"). Every request the app sends names them.
+ */
+internal object WebhookReads {
+    val FIELDS: List<String> = listOf("departure_date")
+
+    fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
+}
+
 object HomeAssistantClient {
     internal fun payload(command: HomeAssistantCommand): String = JSONObject().apply {
         put("version", 1)
+        WebhookReads.put(this)
         put("action", command.action)
         command.amps?.let { put("amps", it) }
         command.phases?.let { put("phases", it) }

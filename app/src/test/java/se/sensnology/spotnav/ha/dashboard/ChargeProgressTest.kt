@@ -49,6 +49,14 @@ class ChargeProgressTest {
     }
 
     @Test
+    fun `ignores a key a newer Home Assistant adds to the block`() {
+        val parsed = ChargeProgressContract.of(block(extraKey = "sampled_at"))
+
+        assertNotNull(parsed)
+        assertEquals("vehicle_not_requesting_current", parsed!!.state)
+    }
+
+    @Test
     fun `accepts a null since as an observation that has not begun`() {
         val parsed = ChargeProgressContract.of(block(state = "normal", since = null))
 
@@ -63,7 +71,6 @@ class ChargeProgressTest {
             block(omit = "state"),
             block(omit = "reason"),
             block(omit = "since"),
-            block(extraKey = "sampled_at"),
             block(state = "SuspendedEV"),
             block(state = "pending"),
             block(state = ""),
@@ -126,7 +133,7 @@ class ChargeProgressTest {
     fun `a malformed block leaves every other fact in the answer intact`() {
         val document = read(
             """{"state": "SuspendedEV", "reason": "suspended_ev_zero_current", """ +
-                """"since": null, "sampled_at": "2026-09-27T12:00:00+00:00"}"""
+                """"since": null}"""
         )
 
         assertNull(document.chargeProgress)

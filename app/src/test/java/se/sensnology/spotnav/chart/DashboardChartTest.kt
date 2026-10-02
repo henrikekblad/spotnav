@@ -218,4 +218,41 @@ class DashboardChartTest {
         val d = fixture("cheapest_direct_site_admin")
         assertEquals(LocalDate.parse("2026-09-23"), DashboardChart.localDate(d, at("2026-09-22T22:00:00+00:00")))
     }
+
+    /**
+     * Portugal is published on the Madrid clock, so for a device in Lisbon the price day changes at
+     * 23:00 local (midnight in Madrid), not at the device's own midnight.
+     */
+    @Test fun aDeviceInLisbonCutsThePortugueseDayAtTwentyThreeHundredLocal() {
+        val saved = java.util.TimeZone.getDefault()
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("Europe/Lisbon"))
+        try {
+            val json = HaFixtures.json("dashboard/cheapest_direct_site_admin.json")
+            json.getJSONObject("market").put("area_id", "PT").put("timezone", "Europe/Madrid")
+            val d = Dashboard.parse(json)
+            val lisbon = ZoneId.of("Europe/Lisbon")
+            val madrid = ZoneId.of("Europe/Madrid")
+
+            // 22:59 in Lisbon is 23:59 in Madrid: still the 22nd.
+            val before = DashboardChart.build(d, 15, now = at("2026-09-22T21:59:00+00:00"))!!
+            assertEquals(LocalDate.parse("2026-09-22"), before.prices.today.first().start.toLocalDate())
+            assertEquals(96, before.prices.tomorrow.size)
+
+            // 23:00 in Lisbon is midnight in Madrid: the 23rd, though it is still the 22nd on the phone.
+            val nowInstant = at("2026-09-22T22:00:00+00:00")
+            assertEquals(LocalDate.parse("2026-09-22"), nowInstant.atZone(lisbon).toLocalDate())
+            val after = DashboardChart.build(d, 15, now = nowInstant)!!
+            assertEquals(LocalDate.parse("2026-09-23"), after.prices.today.first().start.toLocalDate())
+            assertEquals(96, after.prices.today.size)
+            assertTrue(after.prices.tomorrow.isEmpty())
+            assertEquals(LocalDate.parse("2026-09-23"), DashboardChart.localDate(d, nowInstant))
+
+            // The redraw is armed for Madrid's midnight, which is 23:00 on a Lisbon clock.
+            val next = DayBoundary.nextMidnight(at("2026-09-22T21:00:00+00:00"), madrid)
+            assertEquals(at("2026-09-22T22:00:00+00:00"), next)
+            assertEquals(java.time.LocalTime.of(23, 0), next.atZone(lisbon).toLocalTime())
+        } finally {
+            java.util.TimeZone.setDefault(saved)
+        }
+    }
 }

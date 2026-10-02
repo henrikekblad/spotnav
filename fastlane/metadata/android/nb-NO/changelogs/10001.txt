@@ -1,3 +1,5 @@
 - Ladenivå vises nå som et tall (59 %, ~59 % når det er et estimat) på kjøretøykortet i innstillingene
 - Følger en omdøpt lader i Home Assistant
 - Grafen bytter til ny dag ved midnatt, også når appen står åpen
+- Parede ladere kan ha avreise på en bestemt dato, opptil en uke frem
+- Tilpasset Home Assistant-integrasjonen 1.1: nye statusmeldinger, og felt som legges til senere forstyrrer ikke lenger appen

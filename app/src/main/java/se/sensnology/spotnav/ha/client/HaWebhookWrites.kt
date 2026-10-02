@@ -111,6 +111,7 @@ internal object VehicleUpdate {
         require(changes.isNotEmpty()) { "a vehicle write names at least one field" }
         return JSONObject().apply {
             put("version", 1)
+            WebhookReads.put(this)
             put("action", "update_vehicle")
             put("api_version", API_VERSION)
             put("vehicle_id", vehicleId)
@@ -239,6 +240,7 @@ internal object SiteUpdate {
 
         fun payload(): JSONObject = JSONObject().apply {
             put("version", 1)
+            WebhookReads.put(this)
             put("action", "update_site_settings")
             put("api_version", API_VERSION)
             val expected = JSONObject()

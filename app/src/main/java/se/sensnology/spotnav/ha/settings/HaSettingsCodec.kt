@@ -2,6 +2,8 @@ package se.sensnology.spotnav.ha.settings
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.format.DateTimeParseException
 import java.util.regex.Pattern
 
 internal object HaSettingsCodec {
@@ -15,13 +17,21 @@ internal object HaSettingsCodec {
         "max_periods",
         "departure_enabled",
         "departure_time",
+        "departure_date",
         "strategy",
         "driver",
         "target"
     )
 
-    /** What a response carries: the body plus the revision the record is at. */
-    val RESPONSE_KEYS: Set<String> = BODY_KEYS + "revision"
+    /**
+     * What a response must carry: the body plus the revision the record is at. `departure_date` is
+     * the one body key a response may leave out (an older Home Assistant, or a request that did
+     * not ask for it): it then reads as no date.
+     */
+    val RESPONSE_KEYS: Set<String> = BODY_KEYS - "departure_date" + "revision"
+
+    /** A key a record may carry although it need not (see [RESPONSE_KEYS]). */
+    private val OPTIONAL_KEYS = setOf("departure_date")
 
     private val OVERRIDE_KEYS = setOf("area_id", "vat", "tax", "transfer")
     private val FISCAL_KEYS = setOf("enabled", "value")
@@ -30,6 +40,8 @@ internal object HaSettingsCodec {
     /** A wall time, `HH:MM`, exactly as the dashboard reports it. */
     private val WALL_TIME: Pattern = Pattern.compile("^([01][0-9]|2[0-3]):([0-5][0-9])$")
 
+    private val ISO_DATE: Pattern = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+
     /** The domain ranges the server itself enforces. Never clamped — out of range is a refusal. */
     private const val MAX_AMPS = 80
     private const val MAX_PERIODS = 8
@@ -37,11 +49,18 @@ internal object HaSettingsCodec {
 
     /** A response record: the body plus the revision it is at. */
     fun parseResponse(raw: JSONObject): HaPlanningSettings =
-        parse(raw, RESPONSE_KEYS, withRevision = true)
+        parse(raw, RESPONSE_KEYS, withRevision = true, exact = false)
 
     /** A replacement body: every body key, and no `revision`. */
     fun parseBody(raw: JSONObject): HaPlanningSettings =
-        parse(raw, BODY_KEYS, withRevision = false)
+        parse(raw, BODY_KEYS, withRevision = false, exact = true)
+
+    /**
+     * This app's own stored copy of a confirmed record (what [encode] wrote): read exactly, so a
+     * document of another shape is never taken for this one.
+     */
+    fun parseStored(raw: JSONObject): HaPlanningSettings =
+        parse(raw, RESPONSE_KEYS, withRevision = true, exact = true)
 
     /** The record's revision, read from a response and only from a response. */
     private fun revision(raw: JSONObject, withRevision: Boolean): Int =
@@ -51,11 +70,11 @@ internal object HaSettingsCodec {
             0
         }
 
-    private fun parse(raw: JSONObject, keys: Set<String>, withRevision: Boolean): HaPlanningSettings {
-        exactKeys(raw, keys, "settings")
+    private fun parse(raw: JSONObject, keys: Set<String>, withRevision: Boolean, exact: Boolean): HaPlanningSettings {
+        requireKeys(raw, keys, "settings", exact)
         val overrides = raw.opt("overrides")
         if (overrides !is JSONArray) refuse("invalid_area", "overrides must be an array")
-        val parsed = (0 until overrides.length()).map { index -> override(overrides.opt(index), index) }
+        val parsed = (0 until overrides.length()).map { index -> override(overrides.opt(index), index, exact) }
         val seen = mutableSetOf<String>()
         parsed.forEach { item ->
             if (!seen.add(item.areaId)) {
@@ -79,31 +98,32 @@ internal object HaSettingsCodec {
             maxPeriods = whole(raw.opt("max_periods"), "max_periods", "invalid_periods", 1, MAX_PERIODS),
             departureEnabled = boolean(raw.opt("departure_enabled"), "departure_enabled", "invalid_departure"),
             departureTime = wallTime(raw.opt("departure_time")),
+            departureDate = nullable(raw.opt("departure_date")) { departureDate(it) },
             strategy = HaSettingsStrategy.of(
                 enum(raw.opt("strategy"), HaSettingsStrategy.entries.map { it.wire }, "invalid_strategy")
             )!!,
             driver = HaSettingsDriver.of(enum(raw.opt("driver"), HaSettingsDriver.entries.map { it.wire }, "invalid_driver"))!!,
-            target = target(raw.opt("target"))
+            target = target(raw.opt("target"), exact)
         )
     }
 
-    private fun override(raw: Any?, index: Int): HaAreaOverride {
+    private fun override(raw: Any?, index: Int, exact: Boolean): HaAreaOverride {
         val json = raw as? JSONObject ?: refuse("invalid_area", "override $index must be an object")
-        exactKeys(json, OVERRIDE_KEYS, "override $index")
+        requireKeys(json, OVERRIDE_KEYS, "override $index", exact)
         return HaAreaOverride(
             areaId = text(json.opt("area_id"), "an override's area_id", "invalid_area")
                 .takeIf { name -> name.isNotEmpty() }
                 ?: refuse("invalid_area", "an override needs an area id"),
-            vat = fiscal(json.opt("vat"), "vat"),
-            tax = fiscal(json.opt("tax"), "tax"),
-            transfer = fiscal(json.opt("transfer"), "transfer")
+            vat = fiscal(json.opt("vat"), "vat", exact),
+            tax = fiscal(json.opt("tax"), "tax", exact),
+            transfer = fiscal(json.opt("transfer"), "transfer", exact)
         )
     }
 
     /** One fiscal component, with all three states kept apart. */
-    private fun fiscal(raw: Any?, what: String): HaFiscalValue {
+    private fun fiscal(raw: Any?, what: String, exact: Boolean): HaFiscalValue {
         val json = raw as? JSONObject ?: refuse("invalid_fiscal", "$what must be an object")
-        exactKeys(json, FISCAL_KEYS, what)
+        requireKeys(json, FISCAL_KEYS, what, exact)
         return HaFiscalValue(
             enabled = boolean(json.opt("enabled"), "$what.enabled", "invalid_fiscal"),
             value = nullable(json.opt("value")) { value ->
@@ -113,9 +133,9 @@ internal object HaSettingsCodec {
         )
     }
 
-    private fun target(raw: Any?): HaTargetIntent {
+    private fun target(raw: Any?, exact: Boolean): HaTargetIntent {
         val json = raw as? JSONObject ?: refuse("invalid_target", "target must be an object")
-        exactKeys(json, TARGET_KEYS, "target")
+        requireKeys(json, TARGET_KEYS, "target", exact)
         return HaTargetIntent(
             vehicleId = nullable(json.opt("vehicle_id")) { value ->
                 text(value, "vehicle_id", "invalid_target").takeIf { it.isNotEmpty() }
@@ -130,12 +150,17 @@ internal object HaSettingsCodec {
 
     // reading
 
-    /** An exact-shape object: every key present, none unknown, and nothing interpreted. */
-    private fun exactKeys(json: JSONObject, keys: Set<String>, what: String) {
+    /**
+     * An object's shape: every required key present, and nothing interpreted. A request body ([exact])
+     * also has no unknown key; a response keeps the contract's way of growing, so an added field is
+     * ignored and never refuses the answer.
+     */
+    private fun requireKeys(json: JSONObject, keys: Set<String>, what: String, exact: Boolean) {
         val present = json.keys().asSequence().toSet()
         val missing = keys - present
         if (missing.isNotEmpty()) refuse("missing_field", "$what is missing ${missing.sorted()}")
-        val unknown = present - keys
+        if (!exact) return
+        val unknown = present - keys - OPTIONAL_KEYS
         if (unknown.isNotEmpty()) refuse("unknown_field", "$what has unknown fields ${unknown.sorted()}")
     }
 
@@ -174,6 +199,17 @@ internal object HaSettingsCodec {
     private fun enum(raw: Any?, allowed: List<String>, code: String): String =
         (raw as? String)?.takeIf { it in allowed } ?: refuse(code, "$raw is not one of $allowed")
 
+    /** A calendar date, `YYYY-MM-DD`, exactly as the contract writes it. */
+    private fun departureDate(raw: Any): LocalDate {
+        val value = raw as? String ?: refuse("invalid_departure", "departure_date must be a date string")
+        if (!ISO_DATE.matcher(value).matches()) refuse("invalid_departure", "departure_date must be YYYY-MM-DD")
+        return try {
+            LocalDate.parse(value)
+        } catch (failure: DateTimeParseException) {
+            refuse("invalid_departure", "departure_date is not a calendar date")
+        }
+    }
+
     private fun wallTime(raw: Any?): String {
         val value = raw as? String ?: refuse("invalid_departure", "departure_time must be a wall time string")
         if (!WALL_TIME.matcher(value).matches()) {
@@ -203,6 +239,7 @@ internal object HaSettingsCodec {
             put("max_periods", settings.maxPeriods)
             put("departure_enabled", settings.departureEnabled)
             put("departure_time", settings.departureTime)
+            putNullable("departure_date", settings.departureDate?.toString())
             put("strategy", settings.strategy.wire)
             put("driver", settings.driver.wire)
             put("target", JSONObject().apply {

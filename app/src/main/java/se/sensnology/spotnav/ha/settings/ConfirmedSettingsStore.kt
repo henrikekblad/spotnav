@@ -82,7 +82,7 @@ internal class ConfirmedSettingsStore(
                 logWarning("Confirmed settings for one profile are not a readable document")
                 null
             } else {
-                HaSettingsCodec.parseResponse(settings)
+                HaSettingsCodec.parseStored(settings)
             }
         } catch (failure: Exception) {
             logWarning("Confirmed settings for one profile could not be read: ${failure.javaClass.simpleName}")

@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.charging
 
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
+import se.sensnology.spotnav.ha.settings.DepartureDays
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
 import se.sensnology.spotnav.ha.settings.HaSettingsEdit
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
@@ -48,6 +50,10 @@ import se.sensnology.spotnav.widget.WidgetChartBoundary
 import se.sensnology.spotnav.widget.WidgetPlanPublication
 import se.sensnology.spotnav.widget.WidgetPlanSnapshotStore
 import se.sensnology.spotnav.widget.WidgetSettings
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 
 /** The charging screen: */
 internal class ChargingScreen(
@@ -265,6 +271,7 @@ internal class ChargingScreen(
         // charger, even in the moment before the authority has resolved:
         vehicleCard.applyPaired(held ?: pairedDashboard.takeIf { authorityProfile != null && authority.authority == null }, picked)
         planCard.applyPaired(held, picked)
+        syncDepartureDays()
     }
 
     internal fun currentSettings() = settings.copy(
@@ -413,6 +420,29 @@ internal class ChargingScreen(
     /** Re-sync the charger controls with the dashboard now held; the render pass calls this. */
     internal fun refreshChargerControls() = refreshControls()
 
+    /** One departure edit: the whole state (enabled, time, day), as the contract replaces it. */
+    internal fun commitDeparture(enabled: Boolean, date: LocalDate?) {
+        commitEdit(
+            HaSettingsEdit.Departure(
+                enabled,
+                "%02d:%02d".format(planCard.departureHour(), planCard.departureMinute()),
+                date
+            )
+        )
+    }
+
+    /**
+     * The departure day's own facts for the paired record now held: the days its area's zone
+     * offers, shown only while Home Assistant owns the plan. The local planner keeps the daily
+     * departure.
+     */
+    internal fun syncDepartureDays() {
+        val owned = authority.authority?.takeIf { it.haOwnsPlanning }
+        val zone = owned?.remoteSettings?.areaId?.let { PriceMarkets.find(it)?.zoneId }
+            ?: pairedNow()?.market?.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
+        planCard.setDepartureDays(DepartureDays.of(zone, Instant.now()), owned != null)
+    }
+
     /** The energy the energy control is showing, in kWh. */
     internal fun energyEnergy(): Double = (energy.energy.progress + ENERGY_PROGRESS_OFFSET).toDouble()
 
@@ -504,13 +534,44 @@ internal class ChargingScreen(
         planCard.departurePicker.setOnClickListener {
             TimePickerDialog(context, { _, hour, minute ->
                 planCard.setDeparture(hour, minute)
-                commitEdit(
-                    HaSettingsEdit.Departure(
-                        planCard.useDeparture.isChecked,
-                        "%02d:%02d".format(planCard.departureHour(), planCard.departureMinute())
-                    )
-                )
+                commitDeparture(planCard.useDeparture.isChecked, planCard.departureDate())
             }, planCard.departureHour(), planCard.departureMinute(), true).show()
+        }
+        planCard.dailyRadio.setOnClickListener {
+            if (authorityApplying) return@setOnClickListener
+            if (planCard.departureDate() == null) {
+                planCard.refreshDepartureLabel()
+                return@setOnClickListener
+            }
+            planCard.setDepartureDate(null)
+            commitDeparture(planCard.useDeparture.isChecked, null)
+        }
+        planCard.onDateRadio.setOnClickListener {
+            if (authorityApplying) return@setOnClickListener
+            val days = planCard.departureDays()
+            if (days == null || planCard.departureDate() != null) {
+                planCard.refreshDepartureLabel()
+                return@setOnClickListener
+            }
+            // Choosing the date starts at the next occurrence of the time:
+            val date = planCard.departureDate()
+                ?: days.nextOccurrence(LocalTime.of(planCard.departureHour(), planCard.departureMinute()))
+            planCard.setDepartureDate(date)
+            commitDeparture(planCard.useDeparture.isChecked, date)
+        }
+        planCard.dateButton.setOnClickListener {
+            val days = planCard.departureDays() ?: return@setOnClickListener
+            // A stored date that has gone by opens on today; the picker offers today..today+7.
+            val shown = planCard.departureDate()?.takeUnless { days.isPast(it) } ?: days.today
+            val zone = ZoneId.systemDefault()
+            DatePickerDialog(context, { _, year, month, day ->
+                val chosen = LocalDate.of(year, month + 1, day)
+                planCard.setDepartureDate(chosen)
+                commitDeparture(planCard.useDeparture.isChecked, chosen)
+            }, shown.year, shown.monthValue - 1, shown.dayOfMonth).apply {
+                datePicker.minDate = days.today.atStartOfDay(zone).toInstant().toEpochMilli()
+                datePicker.maxDate = days.max.atStartOfDay(zone).toInstant().toEpochMilli()
+            }.show()
         }
         planCard.useDeparture.setOnCheckedChangeListener { _, checked ->
             if (authorityApplying) {
@@ -520,12 +581,7 @@ internal class ChargingScreen(
             }
             planCard.departurePicker.isEnabled = checked && (authority.authority?.pairedControlsEnabled ?: false)
             planCard.refreshDepartureLabel()
-            commitEdit(
-                HaSettingsEdit.Departure(
-                    checked,
-                    "%02d:%02d".format(planCard.departureHour(), planCard.departureMinute())
-                )
-            )
+            commitDeparture(checked, planCard.departureDate())
         }
         planCard.kwhOption.setOnClickListener {
             if (authorityApplying) return@setOnClickListener

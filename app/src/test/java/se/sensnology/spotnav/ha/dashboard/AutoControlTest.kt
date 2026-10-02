@@ -52,8 +52,8 @@ class AutoControlTest {
         // And the wire payloads are the three fields a pause needs and the two a resume needs --
         // which is what makes "one typed request" a fact about the bytes rather than about the
         // object.
-        assertEquals(setOf("version", "action", "choice"), keys(HomeAssistantClient.payload(pause)))
-        assertEquals(setOf("version", "action"), keys(HomeAssistantClient.payload(resume)))
+        assertEquals(setOf("version", "reads", "action", "choice"), keys(HomeAssistantClient.payload(pause)))
+        assertEquals(setOf("version", "reads", "action"), keys(HomeAssistantClient.payload(resume)))
         assertEquals(
             AutoControl.PAUSE_UNTIL_RESUMED,
             JSONObject(HomeAssistantClient.payload(pause)).getString("choice")
@@ -64,9 +64,9 @@ class AutoControlTest {
     fun aChoiceNeverTravelsBesideAnActionThatHasNoChoiceToMake() {
         // The transport's own rule, asserted where it is enforced.
         val smuggled = HomeAssistantCommand(action = "resume", choice = AutoControl.PAUSE_UNTIL_RESUMED)
-        assertEquals(setOf("version", "action"), keys(HomeAssistantClient.payload(smuggled)))
+        assertEquals(setOf("version", "reads", "action"), keys(HomeAssistantClient.payload(smuggled)))
         val started = HomeAssistantCommand(action = "start", choice = AutoControl.PAUSE_UNTIL_RESUMED)
-        assertEquals(setOf("version", "action"), keys(HomeAssistantClient.payload(started)))
+        assertEquals(setOf("version", "reads", "action"), keys(HomeAssistantClient.payload(started)))
     }
 
     // ---- 1 and 2.

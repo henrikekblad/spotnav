@@ -67,6 +67,8 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings): St
         val hour = parts.getOrNull(0)?.toIntOrNull()
         val minute = parts.getOrNull(1)?.toIntOrNull()
         if (hour != null && minute != null) planCard.setDeparture(hour, minute)
+        planCard.setDepartureDate(record.departureDate)
+        syncDepartureDays()
         planCard.refreshDepartureLabel()
         // The exact readings last, and handed back: the labels above were written from the
         // controls' own steps, and the record's decimals are what has to be visible.
@@ -156,6 +158,9 @@ internal fun ChargingScreen.setPlanningControlsEnabled(enabled: Boolean) {
     planCard.periods.isEnabled = enabled
     planCard.useDeparture.isEnabled = enabled
     planCard.departurePicker.isEnabled = enabled && planCard.useDeparture.isChecked
+    planCard.dailyRadio.isEnabled = enabled
+    planCard.onDateRadio.isEnabled = enabled
+    planCard.refreshDepartureLabel()
     planCard.kwhOption.isEnabled = enabled
     planCard.targetOption.isEnabled = enabled
     targetSoc.slider.isEnabled = enabled

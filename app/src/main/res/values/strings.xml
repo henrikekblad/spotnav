@@ -198,6 +198,13 @@
   <string name="plan_card_departure_label">Departure</string>
   <string name="plan_card_departure_none">No departure</string>
   <string name="plan_card_departure_note">When on, the plan must finish before this time.</string>
+  <string name="departure_day_title">Departure</string>
+  <string name="departure_day_daily">Every day</string>
+  <string name="departure_day_on_date">On a date</string>
+  <string name="departure_date_help">The plan may wait for hours that are usually cheaper. The departure is always kept.</string>
+  <string name="departure_date_past">This date has gone by, so the plan runs every day until you choose a new date. Saving clears it.</string>
+  <string name="departure_today">today</string>
+  <string name="departure_tomorrow">tomorrow</string>
   <string name="plan_card_periods_note">The plan is split into at most this many charging windows.</string>
   <string name="nothing_to_charge">Nothing to charge</string>
   <string name="nothing_to_charge_note">The target is at or below the car\'s current level. Raise the target to plan a charge.</string>
@@ -223,6 +230,7 @@
   <string name="authority_changed_elsewhere">The settings changed elsewhere. Make your change again.</string>
   <string name="authority_committed_unreconciled">Saved, but Home Assistant could not apply it immediately. The change stands.</string>
   <string name="authority_refused_invalid">Home Assistant refused that value. The previous value is still in use.</string>
+  <string name="authority_refused_departure">Home Assistant refused that departure. The previous departure is still in use.</string>
   <string name="settings_paired_read_only">Home Assistant owns these values, and they cannot be written right now. Nothing was saved.</string>
   <string name="settings_save_not_applied">The settings changed before this save was sent, so nothing was written.</string>
   <string name="authority_control_approximate">The confirmed value is %1$s; this control cannot hold it exactly, so moving it would change it.</string>

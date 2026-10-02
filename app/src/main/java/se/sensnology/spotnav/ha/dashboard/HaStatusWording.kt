@@ -50,6 +50,11 @@ internal object HaStatusWording {
         "unpriced" to "issue.estimated",
         "load_balancing_limited" to "status.loadBalancingLimitedTo",
         "load_balancing_unavailable" to "issue.loadBalancing",
+        "waiting_for_history" to "status.waitingForHistory",
+        "held_by_charger" to "issue.heldByCharger",
+        "charger_disabled" to "issue.chargerDisabled",
+        "held_until_window" to "status.heldUntilWindow",
+        "hold_overridden" to "issue.holdOverridden",
     )
 
     /** The extra keys a code's variants use (an absent fact, or no zone to write an instant in). */
@@ -73,6 +78,7 @@ internal object HaStatusWording {
         "status.scheduledNoTime",
         "status.waitingForPublicationNoTime",
         "status.loadBalancingLimited",
+        "status.waitingForHistoryNoDetail",
         "strategy.status.solar.chargingUnknown",
         "strategy.status.hybrid.creditSuffix",
     )
@@ -92,6 +98,12 @@ internal object HaStatusWording {
     private val CARD: Map<String, Map<String, String>> = mapOf(
         "en" to mapOf(
             "control.pausedIndefinitely" to "Paused until you resume.",
+            "status.heldUntilWindow" to "Charging waits for the planned start at {time}.",
+            "status.waitingForHistory" to "Waiting: {weekday} were {percent} % cheaper the last {weeks} weeks.",
+            "status.waitingForHistoryNoDetail" to "Waiting for hours that usually cost less, will plan then.",
+            "issue.heldByCharger" to "The charger's own schedule or load balancing is holding the charge, so it has not started.",
+            "issue.chargerDisabled" to "The charger's own enable switch is off, so it cannot start. Turn it on in the charger's settings.",
+            "issue.holdOverridden" to "Charging was started outside the plan and is allowed to continue.",
             "control.pausedUntil" to "Paused until {time}.",
             "issue.chargerMissing" to "The configured charger is not usable: it is unknown, unloaded or a site.",
             "issue.chargingWithoutPrices" to "Charging without published prices to keep the deadline.",
@@ -158,6 +170,12 @@ internal object HaStatusWording {
         ),
         "sv" to mapOf(
             "control.pausedIndefinitely" to "Pausad tills du återupptar.",
+            "status.heldUntilWindow" to "Laddningen väntar till planerad start kl. {time}.",
+            "status.waitingForHistory" to "Väntar: {weekday} har varit {percent} % billigare de senaste {weeks} veckorna.",
+            "status.waitingForHistoryNoDetail" to "Väntar på timmar som brukar vara billigare, planerar då.",
+            "issue.heldByCharger" to "Laddarens eget schema eller lastbalansering håller tillbaka laddningen, så den har inte startat.",
+            "issue.chargerDisabled" to "Laddarens egen aktiveringsbrytare är av, så den kan inte starta. Slå på den i laddarens inställningar.",
+            "issue.holdOverridden" to "Laddningen startades utanför planen och får fortsätta.",
             "control.pausedUntil" to "Pausad till {time}.",
             "issue.chargerMissing" to "Den valda laddaren går inte att använda: den är okänd, inte laddad eller en anläggning.",
             "issue.chargingWithoutPrices" to "Laddar utan publicerade priser för att hålla sluttiden.",
@@ -224,6 +242,12 @@ internal object HaStatusWording {
         ),
         "da" to mapOf(
             "control.pausedIndefinitely" to "Sat på pause, indtil du genoptager.",
+            "status.heldUntilWindow" to "Opladningen venter til den planlagte start kl. {time}.",
+            "status.waitingForHistory" to "Venter: {weekday} har været {percent} % billigere de seneste {weeks} uger.",
+            "status.waitingForHistoryNoDetail" to "Venter på timer, der plejer at være billigere, planlægger derefter.",
+            "issue.heldByCharger" to "Laderens eget skema eller lastbalancering holder opladningen tilbage, så den er ikke startet.",
+            "issue.chargerDisabled" to "Laderens egen aktiveringskontakt er slået fra, så den kan ikke starte. Slå den til i laderens indstillinger.",
+            "issue.holdOverridden" to "Opladningen blev startet uden for planen og må fortsætte.",
             "control.pausedUntil" to "Sat på pause til {time}.",
             "issue.chargerMissing" to "Den valgte lader kan ikke bruges: den er ukendt, ikke indlæst eller et anlæg.",
             "issue.chargingWithoutPrices" to "Lader uden offentliggjorte priser for at overholde sluttidspunktet.",
@@ -290,6 +314,12 @@ internal object HaStatusWording {
         ),
         "nb" to mapOf(
             "control.pausedIndefinitely" to "Pauset til du gjenopptar.",
+            "status.heldUntilWindow" to "Ladingen venter til planlagt start kl. {time}.",
+            "status.waitingForHistory" to "Venter: {weekday} har vært {percent} % billigere de siste {weeks} ukene.",
+            "status.waitingForHistoryNoDetail" to "Venter på timer som pleier å være billigere, planlegger da.",
+            "issue.heldByCharger" to "Laderens egen timeplan eller lastbalansering holder tilbake ladingen, så den har ikke startet.",
+            "issue.chargerDisabled" to "Laderens egen aktiveringsbryter er av, så den kan ikke starte. Slå den på i laderens innstillinger.",
+            "issue.holdOverridden" to "Ladingen ble startet utenfor planen og får fortsette.",
             "control.pausedUntil" to "Pauset til {time}.",
             "issue.chargerMissing" to "Den valgte laderen kan ikke brukes: den er ukjent, ikke lastet eller et anlegg.",
             "issue.chargingWithoutPrices" to "Lader uten publiserte priser for å holde sluttiden.",
@@ -356,6 +386,12 @@ internal object HaStatusWording {
         ),
         "fi" to mapOf(
             "control.pausedIndefinitely" to "Keskeytetty, kunnes jatkat.",
+            "status.heldUntilWindow" to "Lataus odottaa suunniteltua alkamisaikaa klo {time}.",
+            "status.waitingForHistory" to "Odotetaan: {weekday} on ollut {percent} % halvempaa viimeisten {weeks} viikon aikana.",
+            "status.waitingForHistoryNoDetail" to "Odotetaan tunteja, jotka ovat yleensä halvempia, suunnitellaan sen jälkeen.",
+            "issue.heldByCharger" to "Laturin oma aikataulu tai kuormanhallinta pidättää latausta, joten se ei ole alkanut.",
+            "issue.chargerDisabled" to "Laturin oma käyttöönottokytkin on pois päältä, joten lataus ei voi alkaa. Kytke se päälle laturin asetuksista.",
+            "issue.holdOverridden" to "Lataus käynnistettiin suunnitelman ulkopuolella ja sen annetaan jatkua.",
             "control.pausedUntil" to "Keskeytetty {time} asti.",
             "issue.chargerMissing" to "Valittua laturia ei voi käyttää: se on tuntematon, ei ladattu tai kyseessä on asema.",
             "issue.chargingWithoutPrices" to "Ladataan ilman julkaistuja hintoja, jotta määräaika pysyy.",

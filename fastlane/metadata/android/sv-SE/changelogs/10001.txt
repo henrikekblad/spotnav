@@ -1,3 +1,5 @@
 - Laddnivån visas nu som ett tal (59 %, ~59 % när den är uppskattad) på fordonskortet i inställningarna
 - Följer en omdöpt laddare i Home Assistant
 - Grafen byter till nya dagen vid midnatt, även när appen är öppen
+- Parade laddare kan få avgång ett visst datum, upp till en vecka framåt
+- Anpassad till Home Assistant-integrationen 1.1: nya statusmeddelanden, och fält som läggs till senare stör inte längre appen

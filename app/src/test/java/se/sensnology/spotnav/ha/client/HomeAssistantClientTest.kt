@@ -39,7 +39,7 @@ class HomeAssistantClientTest {
 
     @Test fun theDashboardRequestStatesItsVersionAndNoNegotiation() {
         val read = JSONObject(HomeAssistantClient.payload(HomeAssistantCommand(action = "dashboard")))
-        assertEquals(setOf("version", "action", "api_version"), read.keys().asSequence().toSet())
+        assertEquals(setOf("version", "reads", "action", "api_version"), read.keys().asSequence().toSet())
         assertEquals(1, read.getInt("api_version"))
 
         // A settings write carries the revision and the body and no version of its own.

@@ -29,7 +29,7 @@ class SettingsUpdateTest {
         )
 
         assertEquals(
-            setOf("version", "action", "expected_revision", "settings"),
+            setOf("version", "reads", "action", "expected_revision", "settings"),
             payload.keys().asSequence().toSet()
         )
         assertEquals(1, payload.getInt("version"))
@@ -75,9 +75,15 @@ class SettingsUpdateTest {
         val routed = JSONObject(success.toString()).put("action", "settings").toString()
         assertTrue(SettingsUpdate.answer(200, routed) is SettingsUpdate.Outcome.Updated)
 
-        // Any other extra key is not this contract's answer.
+        // A key a newer Home Assistant adds beside the envelope's five is ignored.
         val stray = JSONObject(success.toString()).apply { put("surprise", true) }.toString()
-        assertEquals(SettingsUpdate.Outcome.Malformed, SettingsUpdate.answer(200, stray))
+        assertTrue(SettingsUpdate.answer(200, stray) is SettingsUpdate.Outcome.Updated)
+
+        // The dated answers, with and without a departure date.
+        val dated = SettingsUpdate.answer(200, HaFixtures.json("settings/v1/success_dated.json").toString())
+        assertEquals(java.time.LocalDate.of(2026, 9, 27), (dated as SettingsUpdate.Outcome.Updated).settings.departureDate)
+        val invalid = SettingsUpdate.answer(400, HaFixtures.json("settings/v1/refusal_invalid_departure_date.json").toString())
+        assertEquals("invalid_departure", (invalid as SettingsUpdate.Outcome.Invalid).code)
     }
 
     @Test fun readsEveryDocumentedOutcome() {
@@ -202,7 +208,15 @@ class SettingsUpdateTest {
         assertEquals(record, SettingsUpdate.Outcome.CommittedButReconcileFailed(record).record)
     }
 
-    @Test fun theEnvelopeShapeIsExactAndItsActionIsCheckedWhenPresent() {
+    @Test fun theEnvelopeNeedsItsFiveKeysAndIgnoresAnAddedOne() {
+        val body = SettingsFixtures.envelope(
+            ok = true,
+            settings = HaSettingsCodec.encode(SettingsFixtures.parsed(revision = 4))
+        ).put("charger_id", "x")
+        assertTrue(SettingsUpdate.answer(200, body.toString()) is SettingsUpdate.Outcome.Updated)
+    }
+
+    @Test fun theEnvelopeShapeIsCompleteAndItsActionIsCheckedWhenPresent() {
         fun good() = SettingsFixtures.envelope(
             ok = true,
             settings = HaSettingsCodec.encode(SettingsFixtures.parsed(revision = 4))
@@ -216,7 +230,6 @@ class SettingsUpdateTest {
             "a missing settings" to good().apply { remove("settings") },
             "a missing ok" to good().apply { remove("ok") },
             "a missing api_version" to good().apply { remove("api_version") },
-            "an extra key" to good().apply { put("charger_id", "x") },
             "a wrong action" to SettingsFixtures.envelope(ok = true, settings = encoded, action = "status"),
             "a null action" to SettingsFixtures.envelope(ok = true, settings = encoded, action = null),
             "an error of the wrong type" to SettingsFixtures.envelope(ok = false, settings = valid)

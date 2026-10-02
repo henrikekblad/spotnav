@@ -75,7 +75,7 @@ class HaSettingsEditorTest {
             HaSettingsEdit.Energy(12.75) to 1,
             HaSettingsEdit.MaxPeriods(2) to 1,
             // Departure is one control over two fields: whether it applies, and the time.
-            HaSettingsEdit.Departure(enabled = false, time = "06:15") to 2,
+            HaSettingsEdit.Departure(enabled = false, time = "06:15", date = null) to 2,
             // The driver and its target are one statement, so they travel together.
             HaSettingsEdit.Driver(HaSettingsDriver.TARGET_SOC, HaTargetIntent("vehicle-1", 90.0)) to 2,
             HaSettingsEdit.Fiscal("SE4", HaAreaOverrideComponent.TAX, HaFiscalValue(true, 5.0)) to 1
@@ -92,6 +92,7 @@ class HaSettingsEditorTest {
                 confirmed.maxPeriods != replacement.maxPeriods,
                 confirmed.departureEnabled != replacement.departureEnabled,
                 confirmed.departureTime != replacement.departureTime,
+                confirmed.departureDate != replacement.departureDate,
                 confirmed.driver != replacement.driver,
                 confirmed.target != replacement.target
             ).count { it }
@@ -186,7 +187,7 @@ class HaSettingsEditorTest {
         assertEquals("invalid_energy", refused(HaSettingsEdit.Energy(0.0)))
         assertEquals("invalid_periods", refused(HaSettingsEdit.MaxPeriods(9)))
         assertEquals("invalid_area", refused(HaSettingsEdit.Area("")))
-        assertEquals("invalid_departure", refused(HaSettingsEdit.Departure(true, "25:00")))
+        assertEquals("invalid_departure", refused(HaSettingsEdit.Departure(true, "25:00", null)))
     }
 
     @Test fun aTargetDrivenRecordWithoutATargetIsStillWhatTheContractAllows() {

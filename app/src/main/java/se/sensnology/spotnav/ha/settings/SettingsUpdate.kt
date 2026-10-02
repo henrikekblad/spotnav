@@ -48,7 +48,7 @@ object SettingsUpdate {
     /** The action the webhook routes this contract on; anything else is another contract's answer. */
     const val SETTINGS_ACTION = "settings"
 
-    /** The envelope's exact keys: the settings contract's own five. */
+    /** The envelope's required keys: the settings contract's own five. */
     private val ENVELOPE_KEYS = setOf("api_version", "ok", "error", "settings", "pause")
 
     /** What one answer means. [status] is `null` when no HTTP answer arrived at all. */
@@ -57,10 +57,10 @@ object SettingsUpdate {
         val body = bodyText?.let { text -> runCatching { JSONObject(text) }.getOrNull() }
             ?: return Outcome.Malformed
 
-        // The shape first: the five keys, none missing and none extra, and an `action` (when there
+        // The shape first: the five keys, none missing (an added one is ignored), and an `action` (when there
         // is one) naming this action.
         val keys = body.keys().asSequence().toSet() - "action"
-        if (keys != ENVELOPE_KEYS) return Outcome.Malformed
+        if (!keys.containsAll(ENVELOPE_KEYS)) return Outcome.Malformed
         if (body.has("action") && body.opt("action") != SETTINGS_ACTION) return Outcome.Malformed
 
         // The version decides whether the value may be read at all: only the one this app

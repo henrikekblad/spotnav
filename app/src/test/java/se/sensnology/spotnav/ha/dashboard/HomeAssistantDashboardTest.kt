@@ -4,6 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -297,13 +298,50 @@ class HomeAssistantDashboardTest {
     }
 
     @Test fun aSettingsRecordThisAppCannotReadRefusesTheAnswer() {
-        val retiredKey = v1("cheapest_direct_site_admin")
-        retiredKey.getJSONObject("settings").put("allow_estimated_prices", false)
-        assertThrows(DashboardDecodeException::class.java) { Dashboard.parse(retiredKey) }
-
         val badRevision = v1("cheapest_direct_site_admin")
         badRevision.getJSONObject("settings").put("revision", "1")
         assertThrows(DashboardDecodeException::class.java) { Dashboard.parse(badRevision) }
+
+        val missing = v1("cheapest_direct_site_admin")
+        missing.getJSONObject("settings").remove("amps")
+        assertThrows(DashboardDecodeException::class.java) { Dashboard.parse(missing) }
+
+        val badDate = v1("cheapest_direct_site_admin")
+        badDate.getJSONObject("settings").put("departure_date", "tomorrow")
+        assertThrows(DashboardDecodeException::class.java) { Dashboard.parse(badDate) }
+    }
+
+    @Test fun aFieldANewerHomeAssistantAddsIsIgnoredInSettingsAndInEveryOtherBlock() {
+        val plain = Dashboard.parse(v1("cheapest_direct_site_admin"))
+        val grown = v1("cheapest_direct_site_admin")
+        grown.getJSONObject("settings").put("added_by_a_newer_home_assistant", 1)
+        grown.getJSONObject("settings").getJSONObject("target").put("added", true)
+        grown.put("added_block", JSONObject().put("x", 1))
+        for (block in listOf("charger", "control", "charge_progress", "market", "site", "status", "summary", "soc")) {
+            grown.optJSONObject(block)?.put("added_by_a_newer_home_assistant", "x")
+        }
+        grown.optJSONArray("vehicles")?.let { vehicles ->
+            for (i in 0 until vehicles.length()) vehicles.getJSONObject(i).put("added", 1)
+        }
+        val decoded = Dashboard.parse(grown)
+        assertEquals(plain.settings, decoded.settings)
+        assertEquals(plain.control, decoded.control)
+        assertEquals(plain.site, decoded.site)
+        assertEquals(plain.chargeProgress, decoded.chargeProgress)
+        assertEquals(plain.vehicles, decoded.vehicles)
+    }
+
+    @Test fun aDashboardAnsweredWithTheDepartureDateReadsIt() {
+        val dated = v1("cheapest_direct_site_admin")
+        dated.getJSONObject("settings").put("departure_date", "2026-09-27")
+        assertEquals(java.time.LocalDate.of(2026, 9, 27), Dashboard.parse(dated).settings!!.departureDate)
+        assertNull(Dashboard.parse(v1("cheapest_direct_site_admin")).settings!!.departureDate)
+    }
+
+    @Test fun theWaitingForHistoryDashboardIsQuietAndWordedByItsStatusLine() {
+        val waiting = Dashboard.parse(v1("waiting_for_history"))
+        assertTrue(waiting.status.lines.any { it.code == "waiting_for_history" })
+        assertNotEquals(StatusTone.BLOCKING, waiting.status.tone)
     }
 
     @Test fun unpricedIsWhatTheProposalAndThePricesCallAPlanWithoutPublishedPrices() {

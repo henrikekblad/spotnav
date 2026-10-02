@@ -158,7 +158,7 @@ class AreaCatalogueTest {
 
         // Nothing stored: the snapshot, parsed by the same parser as a fetch.
         val fresh = AreaCatalogue.startupAreas(store, { snapshot })
-        assertEquals(12, fresh.size)
+        assertEquals(20, fresh.size)
         assertTrue(fresh.any { it.id == "NO4" && it.vatPercent == 0.0 })
 
         // A persisted valid remote document wins over it.
@@ -166,7 +166,14 @@ class AreaCatalogueTest {
         assertEquals(listOf("SE4"), AreaCatalogue.startupAreas(store, { snapshot }).map { it.id })
 
         store.putString(AreaCatalogue.KEY_LAST_GOOD, "{\"v\":99}")
-        assertEquals(12, AreaCatalogue.startupAreas(store, { snapshot }).size)
+        assertEquals(20, AreaCatalogue.startupAreas(store, { snapshot }).size)
+    }
+
+    @Test
+    fun theBundledSnapshotListsTwentyAreasAndPortugalOnTheMadridClock() {
+        val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() })
+        assertEquals(20, areas.size)
+        assertEquals("Europe/Madrid", areas.single { it.id == "PT" }.tz)
     }
 
     @Test
@@ -180,7 +187,7 @@ class AreaCatalogueTest {
 
         val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() }, sink)
 
-        assertEquals(12, areas.size)
+        assertEquals(20, areas.size)
         assertEquals(1, messages.size)
         assertTrue(messages.single().contains("no longer valid"))
     }

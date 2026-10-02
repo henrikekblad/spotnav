@@ -171,4 +171,49 @@ class HaStatusTextTest {
         assertEquals("152 km", line("da", java.util.Locale.forLanguageTag("da")))
         assertEquals("152 km", line("fi", java.util.Locale.forLanguageTag("fi")))
     }
+
+    @Test fun waitingForHistoryNamesTheWeekdayInThePluralOfEachLanguage() {
+        fun say(language: String, params: Map<String, Any?>) =
+            HaStatusText.line(StatusLine("waiting_for_history", params), format(language), now)
+        val sunday = mapOf<String, Any?>("weekday" to 7.0, "percent" to 22.0, "weeks" to 4.0)
+        assertEquals("Waiting: Sundays were 22 % cheaper the last 4 weeks.", say("en", sunday))
+        assertEquals("Väntar: söndagar har varit 22 % billigare de senaste 4 veckorna.", say("sv", sunday))
+        assertEquals("Venter: søndage har været 22 % billigere de seneste 4 uger.", say("da", sunday))
+        assertEquals("Venter: søndager har vært 22 % billigere de siste 4 ukene.", say("nb", sunday))
+        assertEquals(
+            "Odotetaan: sunnuntaisin on ollut 22 % halvempaa viimeisten 4 viikon aikana.", say("fi", sunday)
+        )
+        assertEquals("Waiting: Mondays were 22 % cheaper the last 4 weeks.", say("en", sunday + ("weekday" to 1.0)))
+        assertEquals("Odotetaan: keskiviikkoisin", say("fi", sunday + ("weekday" to 3.0)).substringBefore(" on "))
+        // Without all three facts, or with a weekday that is none, only the plain fact:
+        val plain = "Waiting for hours that usually cost less, will plan then."
+        assertEquals(plain, say("en", emptyMap()))
+        assertEquals(plain, say("en", sunday + ("weekday" to 9.0)))
+        assertEquals(plain, say("en", sunday - "weeks"))
+        assertEquals("Väntar på timmar som brukar vara billigare, planerar då.", say("sv", emptyMap()))
+    }
+
+    @Test fun theHoldCodesAreWorded() {
+        fun say(code: String, params: Map<String, Any?> = emptyMap()) =
+            HaStatusText.line(StatusLine(code, params), format("en"), now)
+        assertEquals("Charging waits for the planned start at 10:15.",
+            say("held_until_window", mapOf("time" to "2026-09-22T08:15:00+00:00")))
+        assertEquals("Charging is scheduled.", say("held_until_window"))
+        assertTrue(say("held_by_charger").startsWith("The charger's own schedule or load balancing"))
+        assertTrue(say("charger_disabled").contains("enable switch is off"))
+        assertEquals("Charging was started outside the plan and is allowed to continue.", say("hold_overridden"))
+        assertEquals(
+            "Laddningen väntar till planerad start kl. 10:15.",
+            HaStatusText.line(
+                StatusLine("held_until_window", mapOf("time" to "2026-09-22T08:15:00+00:00")), format("sv"), now
+            )
+        )
+    }
+
+    @Test fun theWaitingForHistoryFixtureIsWordedInEveryLocale() {
+        for (language in HaStatusWording.LANGUAGES) {
+            val text = HaStatusText.render(status("waiting_for_history"), format(language), now)
+            assertTrue("$language: $text", !text.isNullOrBlank() && !text!!.contains('{'))
+        }
+    }
 }

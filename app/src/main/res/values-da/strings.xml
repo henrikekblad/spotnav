@@ -186,6 +186,13 @@
   <string name="plan_card_departure_label">Afgang</string>
   <string name="plan_card_departure_none">Ingen afgang</string>
   <string name="plan_card_departure_note">Når den er slået til, skal opladningen være færdig før dette tidspunkt.</string>
+  <string name="departure_day_title">Afgang</string>
+  <string name="departure_day_daily">Hver dag</string>
+  <string name="departure_day_on_date">En bestemt dato</string>
+  <string name="departure_date_help">Planen kan vente på timer, der plejer at være billigere. Afgangen holdes altid.</string>
+  <string name="departure_date_past">Datoen er passeret, så planen kører hver dag, indtil du vælger en ny dato. Gemmer du, ryddes den.</string>
+  <string name="departure_today">i dag</string>
+  <string name="departure_tomorrow">i morgen</string>
   <string name="plan_card_periods_note">Opladningen opdeles i højst så mange perioder.</string>
   <string name="section_widget">Widget</string>
   <string name="nothing_to_charge">Intet at oplade</string>
@@ -212,6 +219,7 @@
   <string name="authority_changed_elsewhere">Indstillingerne blev ændret et andet sted. Foretag din ændring igen.</string>
   <string name="authority_committed_unreconciled">Gemt, men Home Assistant kunne ikke gennemføre det med det samme. Ændringen gælder.</string>
   <string name="authority_refused_invalid">Home Assistant afviste værdien. Den tidligere værdi bruges stadig.</string>
+  <string name="authority_refused_departure">Home Assistant afviste afgangen. Den tidligere afgang bruges stadig.</string>
   <string name="settings_paired_read_only">Home Assistant ejer disse værdier, og de kan ikke skrives lige nu. Intet blev gemt.</string>
   <string name="settings_save_not_applied">Indstillingerne blev ændret, før denne gemning blev sendt, så intet blev skrevet.</string>
   <string name="authority_control_approximate">Den bekræftede værdi er %1$s; kontrollen kan ikke holde den præcist, så et træk ændrer den.</string>

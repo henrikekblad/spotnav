@@ -1,3 +1,5 @@
 - Varaustaso näytetään nyt lukuna (59 %, ~59 % kun arvio) ajoneuvokortissa asetuksissa
 - Seuraa Home Assistantissa uudelleennimettyä laturia
 - Kaavio vaihtuu uuteen päivään keskiyöllä, vaikka sovellus olisi auki
+- Pariliitetyille latureille voi valita lähtöpäivän, enintään viikon päähän
+- Sopii Home Assistant -integraatioon 1.1: uudet tilaviestit, eivätkä myöhemmin lisättävät kentät enää rikkoa sovellusta

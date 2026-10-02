@@ -1,3 +1,5 @@
 - Opladningsniveau vises nu som et tal (59 %, ~59 % når det er et estimat) på køretøjets kort i indstillingerne
 - Følger en omdøbt lader i Home Assistant
 - Grafen skifter til den nye dag ved midnat, også når appen står åben
+- Parrede ladere kan have afgang på en bestemt dato, op til en uge frem
+- Tilpasset Home Assistant-integrationen 1.1: nye statusbeskeder, og felter der tilføjes senere forstyrrer ikke længere appen

@@ -26,12 +26,12 @@ class HaOwnerContractTest {
         assertFalse(AuthorityPlan.source(authority) is PlanSource.AndroidCalculates)
     }
 
-    @Test fun aRecordWithAModeOrAnyRetiredKeyIsNotTheContractAndRefusesTheAnswer() {
+    @Test fun aRecordWithAModeOrAnyRetiredKeyIsReadWithoutThatKey() {
         for ((key, value) in listOf("mode" to "external", "allow_estimated_prices" to false, "execution_paused" to false)) {
             val json = DashboardFixtures.json().apply {
                 put("settings", SettingsFixtures.response(revision = 7).put(key, value))
             }
-            assertThrows(key, DashboardDecodeException::class.java) { Dashboard.parse(json) }
+            assertEquals(key, SettingsFixtures.parsed(revision = 7), Dashboard.parse(json).settings)
         }
     }
 
@@ -41,10 +41,13 @@ class HaOwnerContractTest {
             action = "settings", expectedRevision = 9, settingsReplacement = record
         )))
         assertEquals(
-            setOf("version", "action", "expected_revision", "settings"),
+            setOf("version", "reads", "action", "expected_revision", "settings"),
             request.keys().asSequence().toSet()
         )
         assertEquals(9, request.getInt("expected_revision"))
+        assertEquals(listOf("departure_date"), List(request.getJSONArray("reads").length()) { request.getJSONArray("reads").getString(it) })
+        // The replacement names the date explicitly, null clearing it:
+        assertTrue(request.getJSONObject("settings").has("departure_date"))
         assertFalse(request.getJSONObject("settings").has("mode"))
         assertFalse(request.getJSONObject("settings").has("revision"))
         assertEquals(41.6, request.getJSONObject("settings").getDouble("requested_kwh"), 0.0)

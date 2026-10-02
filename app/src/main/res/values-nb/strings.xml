@@ -186,6 +186,13 @@
   <string name="plan_card_departure_label">Avreise</string>
   <string name="plan_card_departure_none">Ingen avreise</string>
   <string name="plan_card_departure_note">Når den er på, må ladingen være ferdig før dette tidspunktet.</string>
+  <string name="departure_day_title">Avreise</string>
+  <string name="departure_day_daily">Hver dag</string>
+  <string name="departure_day_on_date">En bestemt dato</string>
+  <string name="departure_date_help">Planen kan vente på timer som pleier å være billigere. Avreisen holdes alltid.</string>
+  <string name="departure_date_past">Datoen er passert, så planen kjører hver dag til du velger en ny dato. Lagring fjerner den.</string>
+  <string name="departure_today">i dag</string>
+  <string name="departure_tomorrow">i morgen</string>
   <string name="plan_card_periods_note">Ladingen deles i høyst så mange perioder.</string>
   <string name="section_widget">Widget</string>
   <string name="nothing_to_charge">Ingenting å lade</string>
@@ -212,6 +219,7 @@
   <string name="authority_changed_elsewhere">Innstillingene ble endret et annet sted. Gjør endringen på nytt.</string>
   <string name="authority_committed_unreconciled">Lagret, men Home Assistant kunne ikke utføre det med en gang. Endringen gjelder.</string>
   <string name="authority_refused_invalid">Home Assistant avviste verdien. Den forrige verdien brukes fortsatt.</string>
+  <string name="authority_refused_departure">Home Assistant avviste avreisen. Den forrige avreisen brukes fortsatt.</string>
   <string name="settings_paired_read_only">Home Assistant eier disse verdiene, og de kan ikke skrives akkurat nå. Ingenting ble lagret.</string>
   <string name="settings_save_not_applied">Innstillingene ble endret før denne lagringen ble sendt, så ingenting ble skrevet.</string>
   <string name="authority_control_approximate">Den bekreftede verdien er %1$s; kontrollen kan ikke holde den nøyaktig, så et drag endrer den.</string>
