@@ -43,9 +43,16 @@ internal object FiscalResolution {
      * The three components the record states for **one area**: its own override for that area, and
      * that area's catalogue suggestions beside it.
      */
-    fun forArea(record: HaPlanningSettings, areaId: String?, market: PriceMarket?): ForArea = ForArea(
-        vat = component(HaSettingsEditor.fiscalFor(record, HaAreaOverrideComponent.VAT, areaId), market?.vatPercent),
-        tax = component(HaSettingsEditor.fiscalFor(record, HaAreaOverrideComponent.TAX, areaId), market?.suggestedTax),
-        transfer = component(HaSettingsEditor.fiscalFor(record, HaAreaOverrideComponent.TRANSFER, areaId), market?.suggestedGridFee)
-    )
+    fun forArea(record: HaPlanningSettings, areaId: String?, market: PriceMarket?): ForArea {
+        // A component the published price already includes adds nothing and is never unresolved.
+        val included = HaAreaOverrideComponent.includedFor(record, areaId, market)
+        fun resolved(component: HaAreaOverrideComponent, suggestion: Double?): Resolved =
+            if (component in included) Resolved(FiscalInput.OFF, unresolved = false)
+            else component(HaSettingsEditor.fiscalFor(record, component, areaId), suggestion)
+        return ForArea(
+            vat = resolved(HaAreaOverrideComponent.VAT, market?.vatPercent),
+            tax = resolved(HaAreaOverrideComponent.TAX, market?.suggestedTax),
+            transfer = resolved(HaAreaOverrideComponent.TRANSFER, market?.suggestedGridFee)
+        )
+    }
 }

@@ -7,12 +7,16 @@ import se.sensnology.spotnav.app.optStringOrNull
 import se.sensnology.spotnav.app.strictBoolean
 import se.sensnology.spotnav.app.strictText
 import se.sensnology.spotnav.chargers.ChargerCapabilities
+import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
 import se.sensnology.spotnav.ha.settings.HaSettingsFormatException
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ha.sessions.SessionsCodec
 import se.sensnology.spotnav.ha.sessions.SessionsSummary
+import se.sensnology.spotnav.prices.AreaSource
+import se.sensnology.spotnav.prices.IncludedPart
+import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import java.time.OffsetDateTime
 
@@ -52,8 +56,24 @@ internal data class DashboardMarket(
     val timezone: String?,
     val currency: String?,
     val majorUnit: String?,
-    val minorUnit: String?
-)
+    val minorUnit: String?,
+    /** The area's countries; empty from an answer that does not state them. */
+    val countries: List<String> = emptyList(),
+    /**
+     * Home Assistant 1.8: the calendar of the relay's day files (`market_timezone`), equal to [timezone]
+     * except for Great Britain and Portugal; `null` from an older Home Assistant.
+     */
+    val marketTimezone: String? = null,
+    /** Home Assistant 1.8: what the published price already contains (`included`, relay names). */
+    val included: Set<IncludedPart> = emptySet(),
+    /** Home Assistant 1.8: where the prices come from (`source`), or `null`. */
+    val source: AreaSource? = null,
+    /** The fiscal components the answer's `fiscal` block states with the policy `included`. */
+    val fiscalIncluded: Set<HaAreaOverrideComponent> = emptySet()
+) {
+    /** Whether the market is in Great Britain: distances are then written in miles. */
+    val inGreatBritain: Boolean get() = countries.any { it.equals(PriceMarket.GREAT_BRITAIN, ignoreCase = true) }
+}
 
 internal data class DashboardPeriod(val start: OffsetDateTime, val end: OffsetDateTime)
 
@@ -281,6 +301,7 @@ internal data class Dashboard(
             if (whole(json.opt("api_version")) != API_VERSION) throw DashboardDecodeException("not api_version 1")
             val charger = obj(json, "charger")
             val phases = json.optJSONObject("phase_detection")
+            val market = market(obj(json, "market"), json.optJSONObject("fiscal"))
             return Dashboard(
                 generatedAt = optText(json, "generated_at"),
                 chargerId = requiredText(charger, "charger_id"),
@@ -290,19 +311,13 @@ internal data class Dashboard(
                 currentRange = obj(json, "current_range").let {
                     DashboardCurrentRange(requiredInt(it, "min_a"), requiredInt(it, "max_a"), optText(it, "source").orEmpty())
                 },
-                market = obj(json, "market").let {
-                    DashboardMarket(
-                        areaId = optText(it, "area_id"),
-                        timezone = optText(it, "timezone"),
-                        currency = optText(it, "currency"),
-                        majorUnit = optText(it, "major_unit"),
-                        minorUnit = optText(it, "minor_unit")
-                    )
-                },
+                market = market,
                 plan = plan(obj(json, "plan")),
                 prices = prices(obj(json, "prices")),
                 live = obj(json, "live").let { DashboardLive(bool(it, "charging"), bool(it, "schedule_active")) },
-                settings = optObj(json, "settings")?.let(::settings),
+                settings = optObj(json, "settings")?.let(::settings)?.let { record ->
+                    withIncluded(record, market)
+                },
                 control = parseControl(json.optJSONObject("control")),
                 chargeProgress = ChargeProgressContract.of(json.optJSONObject("charge_progress")),
                 strategyOptions = strategyOptions(json.optJSONArray("strategy_options")),
@@ -339,6 +354,46 @@ internal data class Dashboard(
                 vehicle = whole(block.opt("vehicle"))?.takeIf { it == 1 || it == 3 },
                 limitedBy = block.opt("limited_by") as? String
             )
+        }
+
+        /**
+         * The `market` block, with Home Assistant 1.8's additive fields read leniently: a field this app
+         * cannot read is absent, never a refusal of the answer.
+         */
+        private fun market(json: JSONObject, fiscal: JSONObject?): DashboardMarket = DashboardMarket(
+            areaId = optText(json, "area_id"),
+            timezone = optText(json, "timezone"),
+            currency = optText(json, "currency"),
+            majorUnit = optText(json, "major_unit"),
+            minorUnit = optText(json, "minor_unit"),
+            countries = (json.opt("countries") as? JSONArray)?.let { list ->
+                (0 until list.length()).mapNotNull { (list.opt(it) as? String)?.trim()?.takeIf(String::isNotEmpty) }
+            }.orEmpty(),
+            marketTimezone = optText(json, "market_timezone"),
+            included = (json.opt("included") as? JSONArray)?.let { list ->
+                (0 until list.length()).mapNotNull { IncludedPart.of(list.opt(it)) }.toSet()
+            }.orEmpty(),
+            source = (json.opt("source") as? JSONObject)?.let { block ->
+                val name = optText(block, "name")
+                val url = optText(block, "url")
+                if (name != null && url != null && (url.startsWith("https://") || url.startsWith("http://"))) AreaSource(name, url) else null
+            },
+            fiscalIncluded = fiscal?.let { block ->
+                HaAreaOverrideComponent.entries.filter { component ->
+                    (block.opt(component.wire) as? JSONObject)?.opt("policy") == "included"
+                }.toSet()
+            }.orEmpty()
+        )
+
+        /**
+         * The record with what its area's price already includes, from every place the answer states
+         * it: the record's own `fiscal_included`, the market's `included` and the `fiscal` block's
+         * `included` policy (each only for the record's own area).
+         */
+        private fun withIncluded(record: HaPlanningSettings, market: DashboardMarket): HaPlanningSettings {
+            if (market.areaId == null || market.areaId != record.areaId) return record
+            val included = record.fiscalIncluded + HaAreaOverrideComponent.of(market.included) + market.fiscalIncluded
+            return if (included == record.fiscalIncluded) record else record.copy(fiscalIncluded = included)
         }
 
         /** The canonical settings record; one this app cannot read refuses the whole answer. */

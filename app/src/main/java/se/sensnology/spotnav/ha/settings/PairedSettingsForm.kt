@@ -64,16 +64,22 @@ internal object PairedSettingsForm {
         }
         val market = catalogue.firstOrNull { it.id == areaId }
         val existing = record.overrides.firstOrNull { it.areaId == areaId }
+        // A component the area's price already includes is locked: whatever is stored for it stays, and
+        // the form's locked box is never sent back as an edit.
+        val included = HaAreaOverrideComponent.includedFor(record, areaId, market)
         val wanted = HaAreaOverride(
             areaId = areaId,
             // The VAT switch has no figure field of its own, so it changes only what it can say.
             vat = when {
+                HaAreaOverrideComponent.VAT in included -> existing?.vat ?: HaFiscalValue.OFF
                 (existing?.vat ?: HaFiscalValue.OFF).enabled == values.vat -> existing?.vat ?: HaFiscalValue.OFF
                 values.vat -> HaFiscalValue(enabled = true, value = market?.vatPercent)
                 else -> HaFiscalValue.OFF
             },
-            tax = HaFiscalValue(enabled = values.tax, value = if (values.tax) values.taxFigure else null),
-            transfer = HaFiscalValue(enabled = values.transfer, value = if (values.transfer) values.transferFigure else null)
+            tax = if (HaAreaOverrideComponent.TAX in included) existing?.tax ?: HaFiscalValue.OFF
+                else HaFiscalValue(enabled = values.tax, value = if (values.tax) values.taxFigure else null),
+            transfer = if (HaAreaOverrideComponent.TRANSFER in included) existing?.transfer ?: HaFiscalValue.OFF
+                else HaFiscalValue(enabled = values.transfer, value = if (values.transfer) values.transferFigure else null)
         )
         val overrides = when {
             existing == null && wanted == HaAreaOverride(areaId = areaId) -> record.overrides
@@ -82,7 +88,7 @@ internal object PairedSettingsForm {
         val candidate = record.copy(areaId = areaId, overrides = overrides)
         return try {
             val validated = HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(candidate))
-            HaSettingsEditResult.Ready(validated.copy(revision = record.revision))
+            HaSettingsEditResult.Ready(validated.copy(revision = record.revision, fiscalIncluded = record.fiscalIncluded))
         } catch (refusal: HaSettingsFormatException) {
             HaSettingsEditResult.Refused(refusal.code)
         }

@@ -31,8 +31,14 @@ internal object HaSettingsCodec {
      */
     val RESPONSE_KEYS: Set<String> = BODY_KEYS - "departure_date" - "departure_weekdays" + "revision"
 
-    /** Keys a record may carry although it need not (see [RESPONSE_KEYS]). */
-    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays")
+    /**
+     * Keys a record may carry although it need not (see [RESPONSE_KEYS]). `fiscal_included` is a
+     * read-only fact of the record (Home Assistant 1.8): read from an answer, kept in this app's stored
+     * copy, and never part of a replacement body.
+     */
+    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED)
+
+    private const val FISCAL_INCLUDED = "fiscal_included"
 
     private val OVERRIDE_KEYS = setOf("area_id", "vat", "tax", "transfer")
     private val FISCAL_KEYS = setOf("enabled", "value")
@@ -105,8 +111,19 @@ internal object HaSettingsCodec {
                 enum(raw.opt("strategy"), HaSettingsStrategy.entries.map { it.wire }, "invalid_strategy")
             )!!,
             driver = HaSettingsDriver.of(enum(raw.opt("driver"), HaSettingsDriver.entries.map { it.wire }, "invalid_driver"))!!,
-            target = target(raw.opt("target"), exact)
+            target = target(raw.opt("target"), exact),
+            fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet()
         )
+    }
+
+    /**
+     * The read-only `fiscal_included`: the components named in it that this app knows. Lenient on
+     * purpose -- it is a fact about the price, not a value this app edits, so a shape it does not
+     * understand reads as nothing included rather than refusing the whole record.
+     */
+    private fun fiscalIncluded(raw: Any?): Set<HaAreaOverrideComponent> {
+        val list = raw as? JSONArray ?: return emptySet()
+        return (0 until list.length()).mapNotNull { HaAreaOverrideComponent.of(list.opt(it)) }.toSet()
     }
 
     private fun override(raw: Any?, index: Int, exact: Boolean): HaAreaOverride {
@@ -261,6 +278,10 @@ internal object HaSettingsCodec {
                 putNullable("vehicle_id", settings.target.vehicleId)
                 putNullable("target_percent", settings.target.targetPercent)
             })
+            // The stored copy keeps the read-only fact; a replacement body never carries it.
+            if (withRevision && settings.fiscalIncluded.isNotEmpty()) {
+                put(FISCAL_INCLUDED, JSONArray(HaAreaOverrideComponent.entries.filter { it in settings.fiscalIncluded }.map { it.wire }))
+            }
         }
 
     private fun encodedOverride(override: HaAreaOverride): JSONObject = JSONObject().apply {

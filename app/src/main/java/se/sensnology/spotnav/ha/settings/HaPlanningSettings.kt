@@ -78,7 +78,13 @@ data class HaPlanningSettings(
     val departureWeekdays: List<Int> = ALL_WEEKDAYS,
     val strategy: HaSettingsStrategy,
     val driver: HaSettingsDriver,
-    val target: HaTargetIntent
+    val target: HaTargetIntent,
+    /**
+     * Read-only (Home Assistant 1.8, `fiscal_included`): the fiscal components the record's area's
+     * published price already contains. They are locked as included in the price, nothing is added for
+     * them, and they are never sent back as an edit. Empty from an older Home Assistant.
+     */
+    val fiscalIncluded: Set<HaAreaOverrideComponent> = emptySet()
 )
 
 /** Every weekday, Monday (1) to Sunday (7): what a record without `departure_weekdays` means. */

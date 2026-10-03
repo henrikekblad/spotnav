@@ -1,13 +1,30 @@
 package se.sensnology.spotnav.ha.settings
 
 import se.sensnology.spotnav.ha.authority.HaPlanningAdapter
+import se.sensnology.spotnav.prices.IncludedPart
+import se.sensnology.spotnav.prices.PriceMarket
 import java.time.LocalDate
 
 /** A fiscal component by name, so an edit can say *which* one it is about. */
-internal enum class HaAreaOverrideComponent(val wire: String) {
-    VAT("vat"),
-    TAX("tax"),
-    TRANSFER("transfer")
+enum class HaAreaOverrideComponent(val wire: String, val part: IncludedPart) {
+    VAT("vat", IncludedPart.VAT),
+    TAX("tax", IncludedPart.TAX),
+    TRANSFER("transfer", IncludedPart.GRID_FEE);
+
+    companion object {
+        fun of(wire: Any?): HaAreaOverrideComponent? = entries.firstOrNull { it.wire == wire }
+
+        /** The components a relay `included` list names (`grid_fee` is the transfer fee). */
+        fun of(parts: Set<IncludedPart>): Set<HaAreaOverrideComponent> = entries.filter { it.part in parts }.toSet()
+
+        /**
+         * What [areaId]'s price already includes: the record's own `fiscal_included` when it is the
+         * record's area, and what the catalogue says of [market].
+         */
+        fun includedFor(record: HaPlanningSettings?, areaId: String?, market: PriceMarket?): Set<HaAreaOverrideComponent> =
+            (if (record != null && areaId != null && areaId == record.areaId) record.fiscalIncluded else emptySet()) +
+                of(market?.included.orEmpty())
+    }
 }
 /** **One** deliberate user edit of the charger's canonical settings. */
 internal sealed interface HaSettingsEdit {
@@ -66,7 +83,7 @@ internal object HaSettingsEditor {
         val candidate = apply(confirmed, edit)
         return try {
             val validated = HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(candidate))
-            HaSettingsEditResult.Ready(validated.copy(revision = confirmed.revision))
+            HaSettingsEditResult.Ready(validated.copy(revision = confirmed.revision, fiscalIncluded = confirmed.fiscalIncluded))
         } catch (refusal: HaSettingsFormatException) {
             HaSettingsEditResult.Refused(refusal.code)
         }
@@ -85,7 +102,10 @@ internal object HaSettingsEditor {
                 departureWeekdays = edit.weekdays ?: confirmed.departureWeekdays
             )
         is HaSettingsEdit.Driver -> confirmed.copy(driver = edit.driver, target = edit.target)
-        is HaSettingsEdit.Fiscal -> confirmed.copy(overrides = withComponent(confirmed, edit))
+        // A component the price already includes is locked: an edit of it changes nothing.
+        is HaSettingsEdit.Fiscal ->
+            if (edit.component in HaAreaOverrideComponent.includedFor(confirmed, edit.areaId, null)) confirmed
+            else confirmed.copy(overrides = withComponent(confirmed, edit))
         is HaSettingsEdit.Strategy -> confirmed.copy(strategy = edit.strategy)
     }
 
