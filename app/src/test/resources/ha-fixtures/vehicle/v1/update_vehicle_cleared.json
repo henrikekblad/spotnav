@@ -114,6 +114,19 @@
         "writable": true
       },
       {
+        "choices": [
+          "first",
+          "normal",
+          "last"
+        ],
+        "field": "charger_priority",
+        "kind": "enum",
+        "required": true,
+        "scope": "charger",
+        "value": "normal",
+        "writable": true
+      },
+      {
         "allowed_device_classes": [
           "battery"
         ],
@@ -143,6 +156,15 @@
         "required": true,
         "scope": "site",
         "value": 25.0,
+        "writable": true
+      },
+      {
+        "field": "safety_margin_a",
+        "kind": "number",
+        "minimum": 0.0,
+        "required": false,
+        "scope": "site",
+        "value": 1.0,
         "writable": true
       },
       {
@@ -408,6 +430,7 @@
     "id": "vehicle_niro",
     "max_percent": null,
     "name": "Niro",
+    "onboard_phases": 3,
     "soc_entity_id": "sensor.niro_battery",
     "soc_percent": 55.0
   }

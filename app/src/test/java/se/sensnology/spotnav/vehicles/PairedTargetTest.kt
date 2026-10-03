@@ -59,9 +59,12 @@ class PairedTargetTest {
         soc is JSONObject && !soc.isNull("need_kwh")
     }
 
-    @Test fun theFixturesThatCarryANeedAreTheThreeTargetSocOnes() {
+    @Test fun theFixturesThatCarryANeedAreTheTargetSocOnes() {
         assertEquals(
-            listOf("target_soc_estimated.json", "target_soc_stopped_on_estimate.json", "target_soc_two_vehicles.json"),
+            listOf(
+                "target_soc_estimated.json", "target_soc_phases_limited_by_vehicle.json",
+                "target_soc_stopped_on_estimate.json", "target_soc_two_vehicles.json"
+            ),
             carrying
         )
     }

@@ -95,29 +95,29 @@ class DashboardChartTest {
     @Test fun theProposalShadesTheChartAndStatesItsFacts() {
         val d = fixture("cheapest_direct_site_admin")
         val chart = DashboardChart.build(d, 15, now = NOON)!!
-        // 08:45-17:30 local on 2026-09-22 (06:45-15:30 UTC, +02:00).
+        // 12:15-15:15 local on 2026-09-22 (10:15-13:15 UTC, +02:00): three phases, so a shorter window.
         val band = chart.bands.single()
         assertEquals(LocalDate.parse("2026-09-22"), band.date)
-        assertEquals(8 * 60 + 45f, band.fromMinute, 0f)
-        assertEquals(17 * 60 + 30f, band.toMinute, 0f)
+        assertEquals(12 * 60 + 15f, band.fromMinute, 0f)
+        assertEquals(15 * 60 + 15f, band.toMinute, 0f)
         val footer = chart.footer!!
         assertEquals(1, footer.periodCount)
-        assertEquals(20.125, footer.energyKwh, 1e-9)
-        assertEquals(10.0625, footer.distanceMil, 1e-9)
+        assertEquals(20.784609690826528, footer.energyKwh, 1e-9)
+        assertEquals(10.392304845413264, footer.distanceMil, 1e-9)
         assertFalse(footer.unpriced)
     }
 
     @Test fun theFiguresAreTheProposalsWithItsCurrencyAndUnit() {
         val f = DashboardChart.figures(fixture("cheapest_direct_site_admin"))!!
         assertTrue(f.fromProposal)
-        assertEquals(34.6026423875, f.costMajor!!, 1e-9)
+        assertEquals(28.737126984088583, f.costMajor!!, 1e-9)
         assertEquals("SEK", f.costCurrency)
         assertEquals("kr", f.costUnit)
-        assertEquals(20.125, f.energyKwh!!, 1e-9)
-        assertEquals(10.0625, f.distanceMil!!, 1e-9)
-        assertEquals(OffsetDateTime.parse("2026-09-22T06:45:00+00:00"), f.periods.single().start)
-        assertEquals("34.60 kr", DashboardChart.costText(f, Locale.US))
-        assertEquals("34,60 kr", DashboardChart.costText(f, Locale.forLanguageTag("sv")))
+        assertEquals(20.784609690826528, f.energyKwh!!, 1e-9)
+        assertEquals(10.392304845413264, f.distanceMil!!, 1e-9)
+        assertEquals(OffsetDateTime.parse("2026-09-22T10:15:00+00:00"), f.periods.single().start)
+        assertEquals("28.74 kr", DashboardChart.costText(f, Locale.US))
+        assertEquals("28,74 kr", DashboardChart.costText(f, Locale.forLanguageTag("sv")))
     }
 
     @Test fun aCostInAnotherCurrencyIsNeverLabelledWithTheMarketsUnit() {

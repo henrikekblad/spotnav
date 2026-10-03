@@ -27,6 +27,12 @@
       "name": "cheapest_no_site"
     }
   ],
+  "charging_phases": {
+    "charger": 1,
+    "limited_by": null,
+    "phases": 1,
+    "vehicle": null
+  },
   "control": {
     "automatic_action": "pause",
     "automatic_action_reason": null,
@@ -2125,12 +2131,55 @@
     "unpriced_slots": 0,
     "waiting_for_tomorrow": false
   },
+  "sessions_summary": {
+    "last_month": {
+      "average_price_minor_per_kwh": null,
+      "cost": null,
+      "currency": null,
+      "energy_kwh": 0.0,
+      "estimated": false,
+      "major_unit": null,
+      "minor_unit": null,
+      "period": "2026-08",
+      "reference_cost": null,
+      "savings": null,
+      "savings_basis": "day_average_price",
+      "savings_estimate": true,
+      "sessions": 0,
+      "solar_share": null
+    },
+    "this_month": {
+      "average_price_minor_per_kwh": null,
+      "cost": null,
+      "currency": null,
+      "energy_kwh": 0.0,
+      "estimated": false,
+      "major_unit": null,
+      "minor_unit": null,
+      "period": "2026-09",
+      "reference_cost": null,
+      "savings": null,
+      "savings_basis": "day_average_price",
+      "savings_estimate": true,
+      "sessions": 0,
+      "solar_share": null
+    }
+  },
   "settings": {
     "amps": 10,
     "area_id": "SE4",
     "departure_date": null,
     "departure_enabled": false,
     "departure_time": "08:00",
+    "departure_weekdays": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
     "driver": "manual_kwh",
     "max_periods": 1,
     "overrides": [],
