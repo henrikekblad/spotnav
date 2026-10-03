@@ -259,4 +259,42 @@ class HaStatusTextTest {
         // A stale phase with no usable age says 0 s, as the card does.
         assertEquals("L1 is older than 0 s.", measurement("en", mapOf("stale_phases" to listOf("L1"), "max_age_s" to "x")))
     }
+
+    @Test fun aWaitingProposalNamesWhenTheCurrentWindowEndsInEveryLanguage() {
+        val line = StatusLine("proposal_pending", mapOf("installs_at" to "2026-09-22T14:45:00+00:00", "waits_for" to "window_end"))
+        assertEquals(
+            "A new plan is ready and is installed when the current charging window ends at 16:45.",
+            HaStatusText.line(line, format("en"), now)
+        )
+        assertEquals(
+            "En ny plan väntar och installeras när pågående laddfönster slutar kl. 16:45.",
+            HaStatusText.line(line, format("sv"), now)
+        )
+        // Another day carries the day with the time, as the card does; without an instant it is the plain fact.
+        val later = StatusLine("proposal_pending", mapOf("installs_at" to "2026-09-23T14:45:00+00:00"))
+        assertTrue(HaStatusText.line(later, format("en"), now).contains("Wed 23 Sep 16:45"))
+        assertEquals("A new charging proposal is ready.", HaStatusText.line(StatusLine("proposal_pending", emptyMap()), format("en"), now))
+        for (language in HaStatusWording.LANGUAGES) {
+            val text = HaStatusText.line(line, format(language), now)
+            assertTrue("$language: $text", text.contains("16:45") && !text.contains('{'))
+        }
+    }
+
+    @Test fun loadBalancingNamesWhoSharesTheFuseAndFallsBackToThePlainSentence() {
+        fun text(language: String, cause: Any?) = HaStatusText.line(
+            StatusLine("load_balancing_limited", mapOf("limit_a" to 12.0, "phase" to "L1", "cause" to cause)),
+            format(language), now
+        )
+        assertEquals("The home battery charges from the grid and shares the main fuse: the car gets 12 A.", text("en", "battery_shares_fuse"))
+        assertEquals("Hushållets förbrukning begränsar bilen till 12 A.", text("sv", "house_consumption"))
+        assertEquals("Charging is limited to 12 A by the site's load balancing.", text("en", null))
+        assertEquals("Charging is limited to 12 A by the site's load balancing.", text("en", "something_new"))
+        for (language in HaStatusWording.LANGUAGES) {
+            assertFalse(text(language, "battery_shares_fuse") == text(language, "house_consumption"))
+        }
+        assertEquals(
+            "Charging is limited by the site's load balancing right now.",
+            HaStatusText.line(StatusLine("load_balancing_limited", mapOf("cause" to "house_consumption")), format("en"), now)
+        )
+    }
 }

@@ -163,8 +163,20 @@ internal object HaStatusText {
             }
             "load_balancing_limited" -> {
                 val limit = num(p["limit_a"])
+                // The cause names who shares the fuse; an unknown (or absent) cause is the plain sentence.
+                val wording = when (p["cause"]) {
+                    "battery_shares_fuse" -> "status.loadBalancingLimitedByBattery"
+                    "house_consumption" -> "status.loadBalancingLimitedByHouse"
+                    else -> key
+                }
                 if (limit == null) say("status.loadBalancingLimited")
-                else say(key, mapOf("limit" to number(format.locale, limit, 0)))
+                else say(wording, mapOf("limit" to number(format.locale, limit, 0)))
+            }
+            "proposal_pending" -> {
+                // When the new plan takes over, if the current charging window decides it.
+                val at = instant(p["installs_at"])
+                if (at == null || zone == null) say(key)
+                else say("status.proposalPendingAt", mapOf("time" to moment(at)))
             }
             "settings_incomplete" -> {
                 // Setup, not a fault: name what is still needed when every field is a known word.

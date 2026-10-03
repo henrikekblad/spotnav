@@ -80,6 +80,9 @@ internal object HaStatusWording {
         "status.scheduledNoTime",
         "status.waitingForPublicationNoTime",
         "status.loadBalancingLimited",
+        "status.loadBalancingLimitedByBattery",
+        "status.loadBalancingLimitedByHouse",
+        "status.proposalPendingAt",
         "status.waitingForHistoryNoDetail",
         "strategy.status.solar.chargingUnknown",
         "strategy.status.hybrid.creditSuffix",
@@ -103,6 +106,9 @@ internal object HaStatusWording {
 
     private val CARD: Map<String, Map<String, String>> = mapOf(
         "en" to mapOf(
+            "status.proposalPendingAt" to "A new plan is ready and is installed when the current charging window ends at {time}.",
+            "status.loadBalancingLimitedByBattery" to "The home battery charges from the grid and shares the main fuse: the car gets {limit} A.",
+            "status.loadBalancingLimitedByHouse" to "House consumption limits the car to {limit} A.",
             "control.pausedIndefinitely" to "Paused until you resume.",
             "status.heldUntilWindow" to "Charging waits for the planned start at {time}.",
             "status.waitingForHistory" to "Waiting: {weekday} were {percent} % cheaper the last {weeks} weeks.",
@@ -181,6 +187,9 @@ internal object HaStatusWording {
             "status.missing.target_percent" to "target level",
         ),
         "sv" to mapOf(
+            "status.proposalPendingAt" to "En ny plan väntar och installeras när pågående laddfönster slutar kl. {time}.",
+            "status.loadBalancingLimitedByBattery" to "Hemmabatteriet laddar från nätet och delar huvudsäkringen: bilen får {limit} A.",
+            "status.loadBalancingLimitedByHouse" to "Hushållets förbrukning begränsar bilen till {limit} A.",
             "control.pausedIndefinitely" to "Pausad tills du återupptar.",
             "status.heldUntilWindow" to "Laddningen väntar till planerad start kl. {time}.",
             "status.waitingForHistory" to "Väntar: {weekday} har varit {percent} % billigare de senaste {weeks} veckorna.",
@@ -259,6 +268,9 @@ internal object HaStatusWording {
             "status.missing.target_percent" to "målnivå",
         ),
         "da" to mapOf(
+            "status.proposalPendingAt" to "En ny plan er klar og installeres, når det igangværende opladningsvindue slutter kl. {time}.",
+            "status.loadBalancingLimitedByBattery" to "Hjemmebatteriet oplader fra nettet og deler hovedsikringen: bilen får {limit} A.",
+            "status.loadBalancingLimitedByHouse" to "Husets forbrug begrænser bilen til {limit} A.",
             "control.pausedIndefinitely" to "Sat på pause, indtil du genoptager.",
             "status.heldUntilWindow" to "Opladningen venter til den planlagte start kl. {time}.",
             "status.waitingForHistory" to "Venter: {weekday} har været {percent} % billigere de seneste {weeks} uger.",
@@ -337,6 +349,9 @@ internal object HaStatusWording {
             "status.missing.target_percent" to "målniveau",
         ),
         "nb" to mapOf(
+            "status.proposalPendingAt" to "En ny plan er klar og installeres når det pågående ladevinduet slutter kl. {time}.",
+            "status.loadBalancingLimitedByBattery" to "Hjemmebatteriet lader fra nettet og deler hovedsikringen: bilen får {limit} A.",
+            "status.loadBalancingLimitedByHouse" to "Husets forbruk begrenser bilen til {limit} A.",
             "control.pausedIndefinitely" to "Pauset til du gjenopptar.",
             "status.heldUntilWindow" to "Ladingen venter til planlagt start kl. {time}.",
             "status.waitingForHistory" to "Venter: {weekday} har vært {percent} % billigere de siste {weeks} ukene.",
@@ -415,6 +430,9 @@ internal object HaStatusWording {
             "status.missing.target_percent" to "målnivå",
         ),
         "fi" to mapOf(
+            "status.proposalPendingAt" to "Uusi suunnitelma on valmis ja otetaan käyttöön, kun käynnissä oleva latausikkuna päättyy klo {time}.",
+            "status.loadBalancingLimitedByBattery" to "Kotiakku lataa verkosta ja jakaa pääsulakkeen: auto saa {limit} A.",
+            "status.loadBalancingLimitedByHouse" to "Talon kulutus rajoittaa auton {limit} A:iin.",
             "control.pausedIndefinitely" to "Keskeytetty, kunnes jatkat.",
             "status.heldUntilWindow" to "Lataus odottaa suunniteltua alkamisaikaa klo {time}.",
             "status.waitingForHistory" to "Odotetaan: {weekday} on ollut {percent} % halvempaa viimeisten {weeks} viikon aikana.",
