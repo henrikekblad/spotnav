@@ -52,16 +52,3 @@ internal object FullCarRule {
             !carNeedsNoCharge(dashboard.soc) &&
             !needAlreadyMet(dashboard.status)
 }
-
-/** The card's header line: the vehicle's charge, then the connection state, joined with " · ". */
-internal object ChargerStatusLine {
-    /** The parts of the line, or `null` when there is nothing to show. */
-    fun text(vehicleName: String?, charge: String?, connectionWord: String?): String? {
-        val parts = listOfNotNull(
-            vehicleName?.trim()?.takeIf { it.isNotEmpty() && charge != null },
-            charge,
-            connectionWord
-        )
-        return if (parts.isEmpty()) null else parts.joinToString(" \u00B7 ")
-    }
-}

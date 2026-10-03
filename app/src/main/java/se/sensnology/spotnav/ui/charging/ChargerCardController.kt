@@ -171,7 +171,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(advisory)
 
-        // The vehicle's charge and the charger's connection state, "EV6 · 96 % · Ansluten".
+        // The charger's connection state, "Ansluten" (the vehicle card carries the car and its charge).
         val vehicleLine = TextView(context).apply {
             textSize = 13f
             setTextColor(muted)

@@ -8,7 +8,6 @@ import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.dashboard.AutoControl
-import se.sensnology.spotnav.ha.dashboard.ChargerStatusLine
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
@@ -19,7 +18,6 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.vehicles.ChargeLimit
-import se.sensnology.spotnav.vehicles.SocDisplay
 import se.sensnology.spotnav.vehicles.VehicleCardState
 import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -179,17 +177,8 @@ internal class ChargerDashboardController(
         cells.refresh()
     }
 
-    /** "EV6 · 96 % · Ansluten": the planned car's charge, then the connection state; `null` for neither. */
-    private fun vehicleLineText(held: Dashboard?): String? {
-        if (held == null) return null
-        val soc = held.soc?.takeIf { it.vehicleId != null && it.value != null }
-        val charge = soc?.value?.let {
-            val text = t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it))
-            if (soc.estimated) "~$text" else text
-        }
-        val word = held.connection?.let { t(connectionString(it)) }
-        return ChargerStatusLine.text(soc?.vehicleName, charge, word)
-    }
+    /** The charger's connection state in words ("Ansluten"); `null` when the dashboard states none. */
+    private fun vehicleLineText(held: Dashboard?): String? = held?.connection?.let { t(connectionString(it)) }
 
     private fun connectionString(state: ConnectionState): Int = when (state) {
         ConnectionState.DISCONNECTED -> R.string.connection_disconnected

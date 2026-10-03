@@ -27,14 +27,6 @@ class ChargerConnectionTest {
         assertNull(DashboardFixtures.dashboard("target_soc_estimated.json") { remove("connection") }.connection)
     }
 
-    @Test
-    fun `the line joins the vehicle, its charge and the state`() {
-        assertEquals("EV6 · 96 % · Ansluten", ChargerStatusLine.text("EV6", "96 %", "Ansluten"))
-        assertEquals("EV6 · 96 %", ChargerStatusLine.text("EV6", "96 %", null))
-        assertEquals("Ansluten", ChargerStatusLine.text("EV6", null, "Ansluten"))
-        assertNull(ChargerStatusLine.text(null, null, null))
-    }
-
     private fun advisory(edit: JSONObject.() -> Unit = {}) = FullCarRule.advisory(
         DashboardFixtures.dashboard("target_soc_estimated.json") {
             put(
