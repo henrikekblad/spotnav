@@ -25,6 +25,17 @@ internal object MarketZone {
      */
     fun marketCalendarOf(areaId: String?): ZoneId =
         areaId?.let { PriceMarkets.find(it)?.marketZoneId } ?: of(areaId)
+
+    /**
+     * [areaId]'s own zone, or [fallback] (the offset the prices are stated in) when the catalogue does
+     * not know it: a plan never reads the device's zone, so a phone abroad plans what one at home does.
+     */
+    fun of(areaId: String?, fallback: ZoneId): ZoneId =
+        areaId?.let { PriceMarkets.find(it)?.zoneId } ?: fallback
+
+    /** [marketCalendarOf] with the same [fallback] as [of]: the market's calendar, never the device's. */
+    fun marketCalendarOf(areaId: String?, fallback: ZoneId): ZoneId =
+        areaId?.let { PriceMarkets.find(it)?.marketZoneId } ?: fallback
 }
 
 /** One endpoint of a schedule period, in the market's own wall clock. */

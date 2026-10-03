@@ -71,7 +71,9 @@ object ChargingPlanner {
         }
         val horizon = firstStart.plusHours(24)
         // The departure is a wall-clock time in the market's own zone, so a clock-change day keeps it.
-        val zone = MarketZone.of(inputs.areaId)
+        // An area the catalogue does not know falls back to the prices' own offset, never the device's.
+        val pricesOffset = published.first().start.offset
+        val zone = MarketZone.of(inputs.areaId, pricesOffset)
         val departure = if (inputs.departure.enabled) {
             val time = inputs.departure.time
             val local = firstStart.atZoneSameInstant(zone)
@@ -111,7 +113,7 @@ object ChargingPlanner {
         val missingDay = gapAt.toInstant().atZone(zone).toLocalDate()
         // The publication that fills the gap is the market day's: a London evening hour is the next
         // Paris file, published the day before it. One calendar for every other area.
-        val missingMarketDay = gapAt.toInstant().atZone(MarketZone.marketCalendarOf(inputs.areaId)).toLocalDate()
+        val missingMarketDay = gapAt.toInstant().atZone(MarketZone.marketCalendarOf(inputs.areaId, pricesOffset)).toLocalDate()
         val publicationAt = PriceWait.expectedPublicationAt(missingMarketDay)
         val decision = PriceWait.decide(
             now = now.toInstant(),
@@ -126,7 +128,7 @@ object ChargingPlanner {
         val usableFrom = maxOf(publicationAt, now.toInstant().plus(PriceWait.START_LAG))
         val waiting = PriceWaiting(
             expectedAt = usableFrom.atOffset(marketNow.offset),
-            forLaterDay = missingDay.isAfter(marketNow.toLocalDate())
+            forLaterDay = missingDay.isAfter(marketNow.atZoneSameInstant(zone).toLocalDate())
         )
         when (decision.action) {
             PriceWait.Action.WAIT -> return PlanOutcome(null, waiting)
