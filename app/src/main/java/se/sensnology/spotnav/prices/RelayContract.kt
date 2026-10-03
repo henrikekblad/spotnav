@@ -45,7 +45,7 @@ private sealed interface Fiscal {
 
 internal object RelayAreasParser {
     const val SUPPORTED_VERSION = 1
-    const val MAX_ID_LENGTH = 12
+    const val MAX_ID_LENGTH = 32
 
     /** Parse and validate a whole catalogue document. */
     fun parse(body: String): CatalogueParse {
@@ -63,12 +63,12 @@ internal object RelayAreasParser {
         val areas = ArrayList<RelayArea>(array.length())
         val seen = HashSet<String>(array.length())
         for (index in 0 until array.length()) {
-            val entry = array.optJSONObject(index)
-                ?: return CatalogueParse.Invalid("area $index is not an object")
-            val parsed = parseArea(entry) ?: return CatalogueParse.Invalid("area $index is invalid")
+            // One bad entry is skipped, never the whole catalogue: the rest stays usable.
+            val parsed = array.optJSONObject(index)?.let { parseArea(it) } ?: continue
             if (!seen.add(parsed.id)) return CatalogueParse.Invalid("duplicate area id ${parsed.id}")
             areas.add(parsed)
         }
+        if (areas.isEmpty()) return CatalogueParse.Invalid("no valid area")
         return CatalogueParse.Ok(RelayCatalogue(SUPPORTED_VERSION, generated, areas))
     }
 
@@ -146,14 +146,20 @@ internal object RelayIndexParser {
         val days = HashMap<String, Set<String>>()
         val resolutions = HashMap<String, Int>()
         for (id in areas.keys()) {
-            val entry = areas.optJSONObject(id) ?: return null
-            val array = entry.optJSONArray("days") ?: return null
+            // An invalid area entry is skipped; the other areas keep their days.
+            val entry = areas.optJSONObject(id) ?: continue
+            val array = entry.optJSONArray("days") ?: continue
             val listed = ArrayList<String>(array.length())
+            var valid = true
             for (index in 0 until array.length()) {
-                val day = array.opt(index) as? String ?: return null
-                if (!DAY_PATTERN.matches(day)) return null
+                val day = array.opt(index) as? String
+                if (day == null || !DAY_PATTERN.matches(day)) {
+                    valid = false
+                    break
+                }
                 listed.add(day)
             }
+            if (!valid) continue
             days[id] = listed.toSet()
             entry.strictPositiveInt("res")?.let { resolutions[id] = it }
         }
