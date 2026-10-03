@@ -38,7 +38,7 @@ class DashboardConfirmationOrderTest {
 
     /** The widget's own record: */
     private val local = WidgetSettings(
-        area = "NO1", chargerProfileId = profileId, chargingAmps = 10, chargingKwh = 12
+        area = "NO1", chargerProfileId = profileId, chargingAmps = 10, chargingKwh = 12.0
     )
 
     private val cache = ConfirmedSettingsStore(FakeKeyValueStore()) { }

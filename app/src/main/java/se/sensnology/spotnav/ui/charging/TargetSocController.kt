@@ -240,7 +240,7 @@ internal class TargetSocControls(
      */
     val enforceBand: (Int) -> Int,
     val refreshValueLabel: () -> Unit,
-    /** The label the slider writes its own step into (see showExactReadings). */
+    /** The label the slider writes its own step into (see showExactValues). */
     val valueLabel: TextView,
     val applyVehicle: (VehicleStatus?) -> Unit,
     /**

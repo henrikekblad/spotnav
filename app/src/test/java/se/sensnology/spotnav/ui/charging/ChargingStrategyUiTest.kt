@@ -33,7 +33,7 @@ class ChargingStrategyUiTest {
     private val automaticRecord = SettingsFixtures.parsed(revision = 6, areaId = "SE4")
 
     private val localInputs = LocalPlanningInputs.of(
-        WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12)
+        WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12.0)
     )
 
     private fun external(record: HaPlanningSettings = externalRecord): VisibleAuthority =

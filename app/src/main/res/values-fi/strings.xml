@@ -228,7 +228,6 @@
   <string name="authority_refused_departure">Home Assistant hylkäsi lähdön. Aiempi lähtö on edelleen käytössä.</string>
   <string name="settings_paired_read_only">Home Assistant omistaa nämä arvot, eikä niitä voi kirjoittaa juuri nyt. Mitään ei tallennettu.</string>
   <string name="settings_save_not_applied">Asetukset muuttuivat ennen tämän tallennuksen lähettämistä, joten mitään ei kirjoitettu.</string>
-  <string name="authority_control_approximate">Vahvistettu arvo on %1$s; säädin ei voi näyttää sitä tarkasti, joten sen siirtäminen muuttaa sitä.</string>
   <string name="authority_refused_not_committed">Home Assistant ei voinut tallentaa muutosta. Aiempi arvo on edelleen käytössä.</string>
   <string name="authority_refused_unreadable">Home Assistantin vastausta ei voitu lukea. Aiempi arvo on edelleen käytössä.</string>
   <string name="authority_unreachable">Home Assistantiin ei saatu yhteyttä. Aiempi arvo on edelleen käytössä.</string>

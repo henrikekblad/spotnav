@@ -60,7 +60,7 @@ object PlanMode {
      * The energy the current state of charge needs to reach [targetSocPercent] on this vehicle, in
      * whole kWh, or `null` when there is no capacity to compute from.
      */
-    fun derivedEnergyKwh(vehicle: VehicleStatus?, targetSocPercent: Int?, rememberedCapacityKwh: Double?): Int? {
+    fun derivedEnergyKwh(vehicle: VehicleStatus?, targetSocPercent: Int?, rememberedCapacityKwh: Double?): Double? {
         val selected = vehicle ?: return null
         // VehicleEnergy's own pure functions are what work this out: the target clamped to the
         // vehicle's limit, the capacity from either source, and the energy between the two states
@@ -68,7 +68,7 @@ object PlanMode {
         val needed = VehicleEnergy
             .suggestedChargingKwh(selected, targetSocPercent, rememberedCapacityKwh)
             ?: return null
-        return ceil(needed).toInt()
+        return (ceil(needed / VehicleEnergy.ENERGY_SLIDER_STEP_KWH) * VehicleEnergy.ENERGY_SLIDER_STEP_KWH)
             .coerceIn(VehicleEnergy.ENERGY_SLIDER_MIN_KWH, VehicleEnergy.ENERGY_SLIDER_MAX_KWH)
     }
 }

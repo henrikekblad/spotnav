@@ -27,7 +27,7 @@ class VisibleAuthorityTest {
     private val revisionZero = SettingsFixtures.parsed(revision = 0, areaId = null, phases = null, amps = null)
     private val incompleteRecord = SettingsFixtures.parsed(revision = 3, areaId = null, amps = 16)
 
-    private val localSettings = WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12)
+    private val localSettings = WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12.0)
     private val localInputs = LocalPlanningInputs.of(localSettings)
 
     private fun adapted(record: HaPlanningSettings): HaPlanningInputs =

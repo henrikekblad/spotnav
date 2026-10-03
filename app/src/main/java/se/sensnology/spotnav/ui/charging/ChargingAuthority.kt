@@ -5,7 +5,6 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.AuthorityRefresh
 import se.sensnology.spotnav.ha.authority.CommitRoute
-import se.sensnology.spotnav.ha.authority.PairedControlRanges
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.authority.WriteSubject
@@ -16,31 +15,21 @@ import se.sensnology.spotnav.ha.settings.HaSettingsEdit
 import se.sensnology.spotnav.ha.settings.HaSettingsEditor
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.planning.PlanDriver
+import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.authorityRefusalText
 import se.sensnology.spotnav.ui.common.authorityStateNote
 
 // The authority applied to the charging screen: which values are the record's, what may be edited,
 // and how a write is routed and answered.
 
-/** The exact confirmed value of every paired control that cannot hold it. */
-internal fun ChargingScreen.showExactReadings(record: HaPlanningSettings): String? {
-    val energyReading = PairedControlRanges.energy(record.requestedKwh)
+/** The exact confirmed values, written over what the controls' own steps put in their labels. */
+internal fun ChargingScreen.showExactValues(record: HaPlanningSettings) {
     energy.valueLabel.text = kwhText(record.requestedKwh)
-    val percent = record.target.targetPercent
-    val targetReading = percent?.let { PairedControlRanges.target(it) }
-    if (percent != null) targetSoc.valueLabel.text = t(R.string.percent_value_decimal, percent)
-    val approximate = listOfNotNull(
-        energyReading.takeUnless { it.representable }?.exact,
-        targetReading?.takeUnless { it.representable }?.exact
-    )
-    return if (approximate.isEmpty()) null else t(
-        R.string.authority_control_approximate,
-        approximate.joinToString(", ")
-    )
+    record.target.targetPercent?.let { targetSoc.valueLabel.text = t(R.string.percent_value_decimal, it) }
 }
 
 /** Show the record's own values in the existing controls. */
-internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings): String? {
+internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings) {
     authorityApplying = true
     try {
         // A field the record states nothing for is shown as "not set", never as this phone's own
@@ -54,7 +43,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings): St
         }
         connection.refreshValueLabel()
         chargerCard.refreshPhasesRow()
-        energy.energy.progress = (record.requestedKwh.toInt() - 1).coerceIn(0, energy.energy.max)
+        energy.energy.progress = VehicleEnergy.energyProgressNearest(record.requestedKwh)
         energy.refreshValueLabel()
         planCard.periods.progress = (record.maxPeriods - 1).coerceIn(0, planCard.periods.max)
         planCard.refreshPeriodsLabel()
@@ -73,7 +62,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings): St
         planCard.refreshDepartureLabel()
         // The exact readings last, and handed back: the labels above were written from the
         // controls' own steps, and the record's decimals are what has to be visible.
-        return showExactReadings(record)
+        showExactValues(record)
     } finally {
         authorityApplying = false
     }
@@ -184,10 +173,7 @@ internal fun ChargingScreen.applyState(state: VisibleAuthority?, note: String? =
     if (offlineSentence != null && note == null) text = null
     syncPaired()
     if (state != null && state.haOwnsPlanning) {
-        // A control that cannot hold the confirmed value says so beside the record's own reading
-        // (see showExactReadings).
-        val approximate = state.remoteSettings?.let { showRecordInControls(it) }
-        text = listOfNotNull(text, approximate).joinToString(" ").ifEmpty { null }
+        state.remoteSettings?.let { showRecordInControls(it) }
         setPlanningControlsEnabled(state.pairedControlsEnabled)
     } else {
         setPlanningControlsEnabled(state != null)

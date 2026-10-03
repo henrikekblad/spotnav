@@ -239,7 +239,6 @@
   <string name="authority_refused_departure">Home Assistant refused that departure. The previous departure is still in use.</string>
   <string name="settings_paired_read_only">Home Assistant owns these values, and they cannot be written right now. Nothing was saved.</string>
   <string name="settings_save_not_applied">The settings changed before this save was sent, so nothing was written.</string>
-  <string name="authority_control_approximate">The confirmed value is %1$s; this control cannot hold it exactly, so moving it would change it.</string>
   <string name="authority_refused_not_committed">Home Assistant could not store that change. The previous value is still in use.</string>
   <string name="authority_refused_unreadable">Home Assistant\'s answer could not be read. The previous value is still in use.</string>
   <string name="authority_unreachable">Home Assistant could not be reached. The previous value is still in use.</string>

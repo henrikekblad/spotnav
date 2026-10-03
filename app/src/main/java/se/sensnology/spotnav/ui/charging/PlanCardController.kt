@@ -367,7 +367,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 val held = paired
                 if (held == null) {
                     PlanMode.derivedEnergyKwh(vehicle, targetSoc.progress(), rememberedCapacityKwh)?.let { kwh ->
-                        energy.energy.progress = VehicleEnergy.energySliderProgress(kwh.toDouble())
+                        energy.energy.progress = VehicleEnergy.energySliderProgress(kwh)
                     }
                 } else {
                     // Kept at Home Assistant's own need for the target, so switching back to kWh

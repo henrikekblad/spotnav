@@ -14,8 +14,21 @@ object VehicleEnergy {
      * `slider(t(R.string.charging), 1, 100, …)` call uses. Kept here so [energySliderProgress]
      * cannot drift away from that call.
      */
-    const val ENERGY_SLIDER_MIN_KWH = 1
-    const val ENERGY_SLIDER_MAX_KWH = 100
+    const val ENERGY_SLIDER_MIN_KWH = 1.0
+    const val ENERGY_SLIDER_MAX_KWH = 100.0
+    const val ENERGY_SLIDER_STEP_KWH = 0.5
+
+    /** The slider's last progress step: the range in half kWh. */
+    const val ENERGY_SLIDER_MAX_PROGRESS = 198
+
+    /** The kWh a slider position stands for. */
+    fun energyKwhOfProgress(progress: Int): Double =
+        ENERGY_SLIDER_MIN_KWH + progress.coerceIn(0, ENERGY_SLIDER_MAX_PROGRESS) * ENERGY_SLIDER_STEP_KWH
+
+    /** The nearest slider position to [kwh], inside the range. */
+    fun energyProgressNearest(kwh: Double): Int =
+        Math.round((kwh - ENERGY_SLIDER_MIN_KWH) / ENERGY_SLIDER_STEP_KWH).toInt()
+            .coerceIn(0, ENERGY_SLIDER_MAX_PROGRESS)
 
     /**
      * Where the target-soc slider starts before the user has ever moved it. Stored as `null` until
@@ -35,15 +48,12 @@ object VehicleEnergy {
     }
 
     /**
-     * The `SeekBar.progress` the energy slider needs to represent [neededKwh], using that slider's
-     * own `(value - min).coerceIn(0, max - min)` mapping — its `chargingKwh` is `progress + 1`, so
-     * a suggestion of 35 kWh is progress 34, never 35.
+     * The `SeekBar.progress` the energy slider needs to represent [neededKwh], rounded up to the
+     * next half kWh so the charge is never short: a need of 34.2 is 34.5 kWh, progress 67.
      */
-    fun energySliderProgress(
-        neededKwh: Double,
-        sliderMinKwh: Int = ENERGY_SLIDER_MIN_KWH,
-        sliderMaxKwh: Int = ENERGY_SLIDER_MAX_KWH
-    ): Int = ceil(neededKwh).toInt().coerceIn(sliderMinKwh, sliderMaxKwh) - sliderMinKwh
+    fun energySliderProgress(neededKwh: Double): Int =
+        Math.ceil((neededKwh - ENERGY_SLIDER_MIN_KWH) / ENERGY_SLIDER_STEP_KWH).toInt()
+            .coerceIn(0, ENERGY_SLIDER_MAX_PROGRESS)
 
     /**
      * The target state of charge to work with for one vehicle: what the user stored for this

@@ -22,7 +22,7 @@ class ChargingPlannerTest {
         val prices = (listOf(4.0, 3.0, 0.5, 0.4, 2.0, 3.0) + listOf(3.0, 3.0)).mapIndexed { index, price ->
             PricePoint(start.plusMinutes(index * 15L), price)
         }
-        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1.0,
             useDepartureTime = true, departureHour = 20, departureMinute = 0)
         val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)
         assertNotNull(plan)
@@ -36,7 +36,7 @@ class ChargingPlannerTest {
             PricePoint(start.plusMinutes(index * 15L), price)
         }
         val settings = WidgetSettings(
-            chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+            chargingPhases = 1, chargingAmps = 10, chargingKwh = 1.0,
             maxChargingPeriods = 2, useDepartureTime = true,
             departureHour = 20, departureMinute = 0
         )
@@ -52,7 +52,7 @@ class ChargingPlannerTest {
         val start = OffsetDateTime.parse("2026-09-12T18:00:00+02:00")
         val prices = List(8) { index -> PricePoint(start.plusMinutes(index * 15L), 2.0) }
         // Two slots of 2.3 kW over 15 minutes: 1 kWh needs two slots.
-        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1.0,
             useDepartureTime = true, departureHour = 20, departureMinute = 0)
 
         val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
@@ -67,7 +67,7 @@ class ChargingPlannerTest {
         val prices = listOf(5.0, 1.0, 1.0, 5.0, 5.0, 1.0, 1.0, 5.0).mapIndexed { index, price ->
             PricePoint(start.plusMinutes(index * 15L), price)
         }
-        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1.0,
             maxChargingPeriods = 1, useDepartureTime = true, departureHour = 20, departureMinute = 0)
 
         val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
@@ -81,7 +81,7 @@ class ChargingPlannerTest {
         val prices = listOf(1.0, 9.0, 1.0, 9.0, 1.0, 9.0, 1.0, 9.0).mapIndexed { index, price ->
             PricePoint(start.plusMinutes(index * 15L), price)
         }
-        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1.0,
             maxChargingPeriods = 2, useDepartureTime = true, departureHour = 20, departureMinute = 0)
 
         val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!

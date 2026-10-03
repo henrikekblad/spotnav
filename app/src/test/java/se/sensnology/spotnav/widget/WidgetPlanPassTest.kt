@@ -43,7 +43,7 @@ class WidgetPlanPassTest {
         area = "NO1",
         chargerProfileId = charger,
         chargingAmps = 10,
-        chargingKwh = 20,
+        chargingKwh = 20.0,
         maxChargingPeriods = 2,
         showChargingPlan = true
     )

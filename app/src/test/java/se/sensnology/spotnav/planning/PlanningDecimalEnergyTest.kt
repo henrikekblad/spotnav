@@ -17,7 +17,7 @@ class PlanningDecimalEnergyTest {
     private val energyPerSlot = ChargingPlanner.powerKw(16, 3) * 0.25
 
     private val inputs = LocalPlanningInputs.of(
-        WidgetSettings(chargingKwh = 20, chargingAmps = 16, chargingPhases = 3)
+        WidgetSettings(chargingKwh = 20.0, chargingAmps = 16, chargingPhases = 3)
     )
 
     private fun prices(count: Int = 96, priceAt: (Int) -> Double = { 1.0 }): PriceResult = PriceResult(

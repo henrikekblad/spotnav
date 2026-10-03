@@ -132,7 +132,7 @@ class PriceWaitTest {
 
     private fun baseInputs(amps: Int, phases: Int, hour: Int = 8) = LocalPlanningInputs.of(
         WidgetSettings(
-            area = "SE4", chargingPhases = phases, chargingAmps = amps, chargingKwh = 1,
+            area = "SE4", chargingPhases = phases, chargingAmps = amps, chargingKwh = 1.0,
             useDepartureTime = true, departureHour = hour, departureMinute = 0, maxChargingPeriods = 4
         )
     )

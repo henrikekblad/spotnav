@@ -228,7 +228,6 @@
   <string name="authority_refused_departure">Home Assistant avviste avreisen. Den forrige avreisen brukes fortsatt.</string>
   <string name="settings_paired_read_only">Home Assistant eier disse verdiene, og de kan ikke skrives akkurat nå. Ingenting ble lagret.</string>
   <string name="settings_save_not_applied">Innstillingene ble endret før denne lagringen ble sendt, så ingenting ble skrevet.</string>
-  <string name="authority_control_approximate">Den bekreftede verdien er %1$s; kontrollen kan ikke holde den nøyaktig, så et drag endrer den.</string>
   <string name="authority_refused_not_committed">Home Assistant kunne ikke lagre endringen. Den forrige verdien brukes fortsatt.</string>
   <string name="authority_refused_unreadable">Home Assistants svar kunne ikke leses. Den forrige verdien brukes fortsatt.</string>
   <string name="authority_unreachable">Home Assistant kunne ikke nås. Den forrige verdien brukes fortsatt.</string>

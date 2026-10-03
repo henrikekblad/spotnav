@@ -24,7 +24,7 @@ data class WidgetSettings(
     val chargingPhases: Int = 3,
     val chargingAmps: Int = 10,
     val consumptionKwhPerMil: Double = 2.0,
-    val chargingKwh: Int = 20,
+    val chargingKwh: Double = 20.0,
     // What drives the plan: the energy control, or a target state of charge.
     val driver: PlanDriver = PlanDriver.KWH,
     val maxChargingPeriods: Int = 1,
@@ -111,6 +111,14 @@ data class WidgetSettings(
             return read(context, id, profileId)
         }
 
+        /** The stored energy: a float now, a whole number in what an older version saved. */
+        private fun chargingKwh(p: android.content.SharedPreferences, key: String): Double =
+            try {
+                p.getFloat(key + "chargingKwh", 20f).toDouble()
+            } catch (_: ClassCastException) {
+                p.getInt(key + "chargingKwh", 20).toDouble()
+            }
+
         private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
         /**
@@ -156,7 +164,7 @@ data class WidgetSettings(
                 chargingPhases = p.getInt(key + "chargingPhases", 3).takeIf { it == 1 || it == 3 } ?: 3,
                 chargingAmps = p.getInt(key + "chargingAmps", 10),
                 consumptionKwhPerMil = p.getString(key + "consumptionKwhPerMil", "2.0")?.toDoubleOrNull() ?: 2.0,
-                chargingKwh = p.getInt(key + "chargingKwh", 20),
+                chargingKwh = chargingKwh(p, key),
                 driver = PlanDriver.of(p.getString(key + "driver", null)),
                 maxChargingPeriods = p.getInt(key + "maxChargingPeriods", 1).coerceIn(1, 8),
                 showChargingPlan = p.getBoolean(key + "showChargingPlan", false),
@@ -185,7 +193,7 @@ data class WidgetSettings(
                 .putInt(key + "chargingPhases", value.chargingPhases)
                 .putInt(key + "chargingAmps", value.chargingAmps)
                 .putString(key + "consumptionKwhPerMil", value.consumptionKwhPerMil.toString())
-                .putInt(key + "chargingKwh", value.chargingKwh)
+                .putFloat(key + "chargingKwh", value.chargingKwh.toFloat())
                 .putString(key + "driver", PlanDriver.storedForm(value.driver))
                 .putInt(key + "maxChargingPeriods", value.maxChargingPeriods.coerceIn(1, 8))
                 .putBoolean(key + "showChargingPlan", value.showChargingPlan)

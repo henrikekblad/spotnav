@@ -228,7 +228,6 @@
   <string name="authority_refused_departure">Home Assistant avvisade avresan. Den tidigare avresan används fortfarande.</string>
   <string name="settings_paired_read_only">Home Assistant äger dessa värden och de kan inte skrivas just nu. Inget sparades.</string>
   <string name="settings_save_not_applied">Inställningarna ändrades innan den här sparningen skickades, så inget skrevs.</string>
-  <string name="authority_control_approximate">Det bekräftade värdet är %1$s; reglaget kan inte hålla det exakt, så ett drag ändrar det.</string>
   <string name="authority_refused_not_committed">Home Assistant kunde inte spara ändringen. Det tidigare värdet används fortfarande.</string>
   <string name="authority_refused_unreadable">Home Assistants svar kunde inte läsas. Det tidigare värdet används fortfarande.</string>
   <string name="authority_unreachable">Home Assistant gick inte att nå. Det tidigare värdet används fortfarande.</string>

@@ -27,7 +27,7 @@ internal object LocalPlanningInputs {
         transfer = local(settings.transferAdded, settings.gridFeeMinorUnit),
         phases = ChargerPhases.normalized(settings.chargingPhases),
         amps = settings.chargingAmps.coerceAtLeast(1),
-        requestedEnergyKwh = settings.chargingKwh.toDouble().coerceAtLeast(MIN_ENERGY_KWH),
+        requestedEnergyKwh = settings.chargingKwh.coerceAtLeast(MIN_ENERGY_KWH),
         consumptionKwhPer10Km = settings.consumptionKwhPerMil
             .takeIf { it.isFinite() }
             ?.coerceAtLeast(MIN_CONSUMPTION_KWH_PER_10KM)

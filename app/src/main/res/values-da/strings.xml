@@ -228,7 +228,6 @@
   <string name="authority_refused_departure">Home Assistant afviste afgangen. Den tidligere afgang bruges stadig.</string>
   <string name="settings_paired_read_only">Home Assistant ejer disse værdier, og de kan ikke skrives lige nu. Intet blev gemt.</string>
   <string name="settings_save_not_applied">Indstillingerne blev ændret, før denne gemning blev sendt, så intet blev skrevet.</string>
-  <string name="authority_control_approximate">Den bekræftede værdi er %1$s; kontrollen kan ikke holde den præcist, så et træk ændrer den.</string>
   <string name="authority_refused_not_committed">Home Assistant kunne ikke gemme ændringen. Den tidligere værdi bruges stadig.</string>
   <string name="authority_refused_unreadable">Home Assistants svar kunne ikke læses. Den tidligere værdi bruges stadig.</string>
   <string name="authority_unreachable">Home Assistant kunne ikke nås. Den tidligere værdi bruges stadig.</string>

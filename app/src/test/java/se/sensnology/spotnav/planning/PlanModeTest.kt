@@ -90,16 +90,17 @@ class PlanModeTest {
     // the derived energy
 
     @Test fun theDerivedEnergyIsWhatTheTargetNeeds() {
-        // 52 % -> 80 % of 77.5 kWh = 21.7 kWh, rounded up to whole kWh: a plan must deliver at
+        // 52 % -> 80 % of 77.5 kWh = 21.7 kWh, rounded up to the next half kWh: a plan must deliver at
         // least what the target needs.
-        assertEquals(22, PlanMode.derivedEnergyKwh(car(socPercent = 52.0, capacityKwh = 77.5), 80, null))
+        assertEquals(22.0, PlanMode.derivedEnergyKwh(car(socPercent = 52.0, capacityKwh = 77.5), 80, null)!!, 0.0)
+        assertEquals(21.5, PlanMode.derivedEnergyKwh(car(socPercent = 52.5, capacityKwh = 77.5), 80, null)!!, 0.0)
     }
 
     @Test fun theDerivedEnergyNeverExceedsTheEnergyControlsRange() {
         // The energy control is the 1..100 kWh slider, so the derived figure lives in the same
         // range -- the plan's input comes from that slider whichever mode is driving it.
-        assertEquals(100, PlanMode.derivedEnergyKwh(car(socPercent = 0.0, capacityKwh = 300.0), 100, null))
-        assertEquals(1, PlanMode.derivedEnergyKwh(car(socPercent = 90.0, capacityKwh = 77.5), 90, null))
+        assertEquals(100.0, PlanMode.derivedEnergyKwh(car(socPercent = 0.0, capacityKwh = 300.0), 100, null)!!, 0.0)
+        assertEquals(1.0, PlanMode.derivedEnergyKwh(car(socPercent = 90.0, capacityKwh = 77.5), 90, null)!!, 0.0)
     }
 
     @Test fun theDerivedEnergyIsNullWhenNothingCanBeDerived() {

@@ -44,7 +44,7 @@ class ThirtyMinutePlanningTest {
     )
 
     private fun settings(departureHour: Int = 7, kwh: Int = 1) = WidgetSettings(
-        area = "GB-C", chargingPhases = 1, chargingAmps = 10, chargingKwh = kwh,
+        area = "GB-C", chargingPhases = 1, chargingAmps = 10, chargingKwh = kwh.toDouble(),
         useDepartureTime = true, departureHour = departureHour, departureMinute = 0, maxChargingPeriods = 1
     )
 

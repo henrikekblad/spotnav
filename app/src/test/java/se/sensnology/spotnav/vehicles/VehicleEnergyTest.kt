@@ -38,21 +38,30 @@ class VehicleEnergyTest {
         assertNull(VehicleEnergy.neededKwh(20.0, 80.0, Double.POSITIVE_INFINITY))
     }
 
-    // --- energySliderProgress: the energy slider's own (value - min) mapping -
+    // --- the energy slider's half-kWh mapping -
 
-    @Test fun energySliderProgressRoundsUpAndSubtractsTheSlidersMinimum() {
-        // ceil(34.5) = 35 kWh, minus the slider's min of 1 → progress 34.
-        assertEquals(34, VehicleEnergy.energySliderProgress(34.5))
-        // A whole kWh reproduces exactly what slider(1, 100, 20, …) does today.
-        assertEquals(19, VehicleEnergy.energySliderProgress(20.0))
+    @Test fun energySliderProgressRoundsUpToTheNextHalfKwh() {
+        // 34.2 kWh needs 34.5, which is (34.5 - 1) / 0.5 = 67.
+        assertEquals(67, VehicleEnergy.energySliderProgress(34.2))
+        assertEquals(67, VehicleEnergy.energySliderProgress(34.5))
+        assertEquals(68, VehicleEnergy.energySliderProgress(34.6))
+        assertEquals(38, VehicleEnergy.energySliderProgress(20.0))
     }
 
     @Test fun energySliderProgressNeverGoesOutsideTheSlidersRange() {
         assertEquals(0, VehicleEnergy.energySliderProgress(0.2))
-        assertEquals(0, VehicleEnergy.energySliderProgress(0.0))
         assertEquals(0, VehicleEnergy.energySliderProgress(-5.0))
-        assertEquals(99, VehicleEnergy.energySliderProgress(150.0))
-        assertEquals(99, VehicleEnergy.energySliderProgress(100.0))
+        assertEquals(198, VehicleEnergy.energySliderProgress(150.0))
+        assertEquals(198, VehicleEnergy.energySliderProgress(100.0))
+    }
+
+    @Test fun sliderPositionsAreHalfKwhSteps() {
+        assertEquals(1.0, VehicleEnergy.energyKwhOfProgress(0), 0.0)
+        assertEquals(17.5, VehicleEnergy.energyKwhOfProgress(33), 0.0)
+        assertEquals(100.0, VehicleEnergy.energyKwhOfProgress(198), 0.0)
+        assertEquals(33, VehicleEnergy.energyProgressNearest(17.5))
+        assertEquals(33, VehicleEnergy.energyProgressNearest(17.3))
+        assertEquals(198, VehicleEnergy.energyProgressNearest(500.0))
     }
 
     // effectiveTargetSocPercent

@@ -18,7 +18,7 @@ class PairedOfflineTest {
     private val autoRecord = SettingsFixtures.parsed(
         revision = 7, areaId = "SE4", amps = 16, requestedKwh = 20.5
     )
-    private val localInputs = LocalPlanningInputs.of(WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12))
+    private val localInputs = LocalPlanningInputs.of(WidgetSettings(area = "SE4", chargingAmps = 10, chargingKwh = 12.0))
 
     // Who may be touched
 

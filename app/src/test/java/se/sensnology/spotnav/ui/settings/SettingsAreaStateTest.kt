@@ -362,7 +362,7 @@ class SettingsAreaStateTest {
         // The pair, checked against each other rather than against a literal:
         val start = OffsetDateTime.parse("2026-09-12T18:00:00+02:00")
         val prices = (0 until 96).map { index -> PricePoint(start.plusMinutes(index * 15L), 1.0) }
-        val settings = WidgetSettings(area = se4.id, chargingPhases = 1, chargingAmps = 10, chargingKwh = 4)
+        val settings = WidgetSettings(area = se4.id, chargingPhases = 1, chargingAmps = 10, chargingKwh = 4.0)
         val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
 
         assertEquals("a major total is the energy at 1 kr/kWh", plan.energyKwh, plan.cost, 0.01)

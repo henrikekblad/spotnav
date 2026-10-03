@@ -39,7 +39,7 @@ import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
-import se.sensnology.spotnav.ui.common.ENERGY_PROGRESS_OFFSET
+import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.addMainHeader
 import se.sensnology.spotnav.ui.haSession
 import se.sensnology.spotnav.ui.settings.AreaMoney
@@ -285,7 +285,7 @@ internal class ChargingScreen(
         chargingPhases = connection.selectedPhases(),
         chargingAmps = connection.amps(),
         consumptionKwhPerMil = (consumption.consumption.progress + 10) / 10.0,
-        chargingKwh = energy.energy.progress + ENERGY_PROGRESS_OFFSET,
+        chargingKwh = energyEnergy(),
         driver = planCard.driver(),
         maxChargingPeriods = planCard.periods.progress + 1,
         // The widget display option lives on the settings screen; this reads the stored value,
@@ -456,7 +456,7 @@ internal class ChargingScreen(
     }
 
     /** The energy the energy control is showing, in kWh. */
-    internal fun energyEnergy(): Double = (energy.energy.progress + ENERGY_PROGRESS_OFFSET).toDouble()
+    internal fun energyEnergy(): Double = VehicleEnergy.energyKwhOfProgress(energy.energy.progress)
 
     /** The target intent a driver edit carries. */
     internal fun targetIntentFor(driver: HaSettingsDriver): HaTargetIntent {

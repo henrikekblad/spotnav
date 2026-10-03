@@ -56,7 +56,7 @@ class AuthorityControllerTest {
 
     /** The widget's own record: NO1, ten amperes, twelve kWh -- deliberately not SE4. */
     private var local = WidgetSettings(
-        area = "NO1", chargerProfileId = profileId, chargingAmps = 10, chargingKwh = 12
+        area = "NO1", chargerProfileId = profileId, chargingAmps = 10, chargingKwh = 12.0
     )
 
     private val cache = ConfirmedSettingsStore(FakeKeyValueStore()) { }
@@ -359,10 +359,16 @@ class AuthorityControllerTest {
     // Finding 9.
 
     @Test
-    fun aConfirmedDecimalIsReadExactlyAndSaidToBeBeyondTheControl() {
+    fun aConfirmedDecimalIsReadExactlyAndMarkedWhenBeyondTheControl() {
         val energy = PairedControlRanges.energy(20.5)
         assertEquals("20.5", energy.exact)
-        assertFalse("a whole-kWh slider cannot hold 20.5 exactly", energy.representable)
+        assertTrue("the half-kWh slider holds 20.5", energy.representable)
+        assertTrue(PairedControlRanges.energy(17.5).representable)
+        assertTrue(PairedControlRanges.energy(1.0).representable)
+        assertTrue(PairedControlRanges.energy(100.0).representable)
+        assertFalse("17.3 is between two steps", PairedControlRanges.energy(17.3).representable)
+        assertFalse("beyond the range", PairedControlRanges.energy(100.5).representable)
+        assertFalse(PairedControlRanges.energy(0.5).representable)
 
         val whole = PairedControlRanges.energy(20.0)
         assertEquals("20.0", whole.exact)

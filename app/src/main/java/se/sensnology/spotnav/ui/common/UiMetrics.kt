@@ -2,9 +2,6 @@ package se.sensnology.spotnav.ui.common
 
 // Sizes and colours that more than one screen part draws with.
 
-/** The energy control's own zero: its progress plus this is kWh (see energyEnergy). */
-internal const val ENERGY_PROGRESS_OFFSET = 1
-
 // Alpha of the shading over the target track's dead ends.
 internal const val SHADING_ALPHA = 0x99
 

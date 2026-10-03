@@ -75,6 +75,7 @@ internal object PairedControlRanges {
     const val AMPS_MAX = 16
     const val ENERGY_KWH_MIN = 1
     const val ENERGY_KWH_MAX = 100
+    const val ENERGY_KWH_STEP = 0.5
     const val PERIODS_MIN = 1
     const val PERIODS_MAX = 8
     const val TARGET_PERCENT_MIN = 0
@@ -84,9 +85,9 @@ internal object PairedControlRanges {
     fun amps(amps: Int): ControlReading =
         ControlReading(amps.toString(), amps in AMPS_MIN..AMPS_MAX)
 
-    /** The requested energy, which the whole-kWh slider cannot hold exactly when it is fractional. */
+    /** The requested energy, which the half-kWh slider holds exactly when it is a multiple of 0.5. */
     fun energy(kwh: Double): ControlReading =
-        ControlReading(oneDecimal(kwh), kwh == Math.floor(kwh) && kwh in ENERGY_KWH_MIN.toDouble()..ENERGY_KWH_MAX.toDouble())
+        ControlReading(oneDecimal(kwh), kwh / ENERGY_KWH_STEP == Math.floor(kwh / ENERGY_KWH_STEP) && kwh in ENERGY_KWH_MIN.toDouble()..ENERGY_KWH_MAX.toDouble())
 
     fun periods(periods: Int): ControlReading =
         ControlReading(periods.toString(), periods in PERIODS_MIN..PERIODS_MAX)

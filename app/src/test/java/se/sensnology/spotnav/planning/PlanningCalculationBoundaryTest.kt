@@ -25,7 +25,7 @@ class PlanningCalculationBoundaryTest {
         gridFeeMinorUnit = 25.0,
         chargingAmps = 16,
         chargingPhases = 3,
-        chargingKwh = 20,
+        chargingKwh = 20.0,
         consumptionKwhPerMil = 2.0
     )
 

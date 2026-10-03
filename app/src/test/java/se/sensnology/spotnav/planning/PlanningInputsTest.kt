@@ -19,7 +19,7 @@ class PlanningInputsTest {
         chargingPhases = 1,
         chargingAmps = 10,
         consumptionKwhPerMil = 1.8,
-        chargingKwh = 20,
+        chargingKwh = 20.0,
         driver = PlanDriver.TARGET_SOC,
         maxChargingPeriods = 4,
         showChargingPlan = true,
@@ -76,7 +76,7 @@ class PlanningInputsTest {
 
     @Test fun wholeKwhBecomesTheSameDoubleAndNothingElseMoves() {
         listOf(1, 7, 20, 51).forEach { kwh ->
-            val settings = WidgetSettings(chargingKwh = kwh)
+            val settings = WidgetSettings(chargingKwh = kwh.toDouble())
             val inputs = LocalPlanningInputs.of(settings)
 
             assertEquals(kwh.toDouble(), inputs.requestedEnergyKwh, 0.0)
@@ -90,7 +90,7 @@ class PlanningInputsTest {
     }
 
     @Test fun presentationAndBindingFieldsCannotAffectCalculationEquality() {
-        val plain = WidgetSettings(chargingKwh = 20, chargerProfileId = "local-a")
+        val plain = WidgetSettings(chargingKwh = 20.0, chargerProfileId = "local-a")
         val shown = plain.copy(showChargingPlan = true)
         val otherWidget = plain.copy(chargerProfileId = "local-b", showChargingPlan = true)
 
@@ -101,7 +101,7 @@ class PlanningInputsTest {
 
         // And a real calculation input still does.
         assertNotEquals(LocalPlanningInputs.of(plain), LocalPlanningInputs.of(plain.copy(chargingAmps = 16)))
-        assertNotEquals(LocalPlanningInputs.of(plain), LocalPlanningInputs.of(plain.copy(chargingKwh = 21)))
+        assertNotEquals(LocalPlanningInputs.of(plain), LocalPlanningInputs.of(plain.copy(chargingKwh = 21.0)))
     }
 
     @Test fun aZeroFiscalFigureIsNotAnAbsentOne() {
@@ -219,7 +219,7 @@ class PlanningInputsTest {
         // where they belong: the model itself refuses rather than repairs, and every value a screen
         // can write passes through unchanged.
         val stored = WidgetSettings(
-            chargingKwh = 0,
+            chargingKwh = 0.0,
             chargingAmps = 0,
             chargingPhases = 2,
             consumptionKwhPerMil = 0.0,
@@ -276,7 +276,7 @@ class PlanningInputsTest {
     @Test fun aWidgetWithNoAreaHasNoCalculationInputsRatherThanAFabricatedOne() {
         // `WidgetSettings.load` gives `area = ""` when the catalogue is empty and the widget has
         // never stored an area.
-        val unconfigured = WidgetSettings(area = "", chargingKwh = 20)
+        val unconfigured = WidgetSettings(area = "", chargingKwh = 20.0)
 
         assertEquals(null, LocalPlanningInputs.ofOrNull(unconfigured))
         // The pure model still refuses it: the boundary answering "unavailable" must not be the
@@ -293,7 +293,7 @@ class PlanningInputsTest {
         val broken = WidgetSettings(
             area = "",
             chargingAmps = 0,
-            chargingKwh = 0,
+            chargingKwh = 0.0,
             consumptionKwhPerMil = 0.0,
             maxChargingPeriods = 0,
             departureHour = 99,

@@ -24,7 +24,7 @@ class PlanHandoverTest {
         fetchedAt
     )
 
-    private val settings = WidgetSettings(chargingKwh = 4)
+    private val settings = WidgetSettings(chargingKwh = 4.0)
     private val now = OffsetDateTime.parse("2026-09-12T10:00:00+02:00")
 
     /** The calculation inputs for these widget settings, through the one adapter. */
