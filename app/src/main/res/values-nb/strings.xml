@@ -327,4 +327,13 @@
   <string name="price_row_tax">Elavgift</string>
   <string name="price_row_transfer">Nettleie</string>
   <string name="price_value_off">Av</string>
+  <plurals name="charging_phases_on">
+    <item quantity="one">Lader på %1$d fase</item>
+    <item quantity="other">Lader på %1$d faser</item>
+  </plurals>
+  <string name="charging_phases_nominal">nominelt ≈ %1$.1f kW</string>
+  <string name="charging_phases_limited_by_vehicle">Begrenset av bilens innebygde lader.</string>
+  <string name="vehicle_onboard_label">Innebygd lader</string>
+  <string name="vehicle_onboard_note">Det høyeste antallet faser bilens egen lader klarer. En enfaset bil lader på én fase, selv på en trefaset lader.</string>
+  <string name="vehicle_error_onboard">Den innebygde laderen må være enfaset eller trefaset.</string>
 </resources>

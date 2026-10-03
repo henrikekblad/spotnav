@@ -41,7 +41,9 @@ internal object PairedOverview {
         val capacityKwh: Double?,
         /** The car reports the capacity itself, so it cannot be typed. */
         val capacityReported: Boolean,
-        val consumptionKwhPer10km: Double?
+        val consumptionKwhPer10km: Double?,
+        /** The most phases the car's own charger takes (1 or 3), or `null` when Home Assistant does not say. */
+        val onboardPhases: Int? = null
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -64,7 +66,8 @@ internal object PairedOverview {
                 sensorName = sensorName,
                 capacityKwh = PairedVehicles.capacityKwh(dashboard, row, null, null, row.id),
                 capacityReported = !VehicleUpdate.capacityEditable(row),
-                consumptionKwhPer10km = row.consumptionKwhPer10km
+                consumptionKwhPer10km = row.consumptionKwhPer10km,
+                onboardPhases = row.onboardPhases
             )
         }
 

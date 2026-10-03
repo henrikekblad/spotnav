@@ -327,4 +327,13 @@
   <string name="price_row_tax">Energiskatt</string>
   <string name="price_row_transfer">Nätavgift</string>
   <string name="price_value_off">Av</string>
+  <plurals name="charging_phases_on">
+    <item quantity="one">Laddar på %1$d fas</item>
+    <item quantity="other">Laddar på %1$d faser</item>
+  </plurals>
+  <string name="charging_phases_nominal">nominellt ≈ %1$.1f kW</string>
+  <string name="charging_phases_limited_by_vehicle">Begränsat av bilens inbyggda laddare.</string>
+  <string name="vehicle_onboard_label">Inbyggd laddare</string>
+  <string name="vehicle_onboard_note">Det högsta antal faser bilens egen laddare klarar. En enfasbil laddar på en fas även på en trefasladdare.</string>
+  <string name="vehicle_error_onboard">Den inbyggda laddaren måste vara enfas eller trefas.</string>
 </resources>

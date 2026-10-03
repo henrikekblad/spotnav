@@ -108,8 +108,27 @@ internal data class DashboardVehicle(
     val maxPercent: Double?,
     val socEntityId: String?,
     /** The vehicle's current charge level, or `null` when Home Assistant cannot read it. */
-    val socPercent: Double? = null
+    val socPercent: Double? = null,
+    /**
+     * The most phases the car's own onboard charger takes, 1 or 3; `null` from a Home Assistant that
+     * does not state it (which plans as three).
+     */
+    val onboardPhases: Int? = null
 )
+
+/**
+ * The `charging_phases` block: how many phases a charge uses (the smaller of the charger's wiring
+ * and the planned vehicle's onboard charger), and which of the two sets it.
+ */
+internal data class DashboardChargingPhases(
+    val phases: Int,
+    val charger: Int?,
+    val vehicle: Int?,
+    /** `"vehicle"` when the car, not the wiring, sets [phases]; otherwise `null`. */
+    val limitedBy: String?
+) {
+    val limitedByVehicle: Boolean get() = limitedBy == "vehicle"
+}
 
 /** One solar forecast source the site can use: the config entry id the write names, and its title. */
 internal data class DashboardForecastChoice(val id: String, val title: String)
@@ -204,7 +223,9 @@ internal data class Dashboard(
     val targetVehicleId: String?,
     val site: DashboardSite?,
     /** The setup in words (friendly names, never entity ids); `null` from a Home Assistant that does not send it. */
-    val summary: DashboardSummary? = null
+    val summary: DashboardSummary? = null,
+    /** How many phases a charge uses and why; `null` from a Home Assistant that does not state it. */
+    val chargingPhases: DashboardChargingPhases? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -289,7 +310,23 @@ internal data class Dashboard(
                 vehicles = array(json, "vehicles").objects().map(::parseVehicle),
                 targetVehicleId = optText(json, "target_vehicle_id"),
                 site = optObj(json, "site")?.let(::parseSite),
-                summary = DashboardSummary.parse(json.opt("summary"))
+                summary = DashboardSummary.parse(json.opt("summary")),
+                chargingPhases = chargingPhases(json.opt("charging_phases"))
+            )
+        }
+
+        /**
+         * The `charging_phases` block, read leniently: one that does not state a usable count of one
+         * or three phases is simply not there, and never refuses the whole answer.
+         */
+        private fun chargingPhases(raw: Any?): DashboardChargingPhases? {
+            val block = raw as? JSONObject ?: return null
+            val phases = whole(block.opt("phases"))?.takeIf { it == 1 || it == 3 } ?: return null
+            return DashboardChargingPhases(
+                phases = phases,
+                charger = whole(block.opt("charger"))?.takeIf { it == 1 || it == 3 },
+                vehicle = whole(block.opt("vehicle"))?.takeIf { it == 1 || it == 3 },
+                limitedBy = block.opt("limited_by") as? String
             )
         }
 
@@ -488,7 +525,8 @@ internal data class Dashboard(
             consumptionKwhPer10km = optNum(json, "consumption_kwh_per_10km"),
             maxPercent = optNum(json, "max_percent"),
             socEntityId = optText(json, "soc_entity_id"),
-            socPercent = optNum(json, "soc_percent")
+            socPercent = optNum(json, "soc_percent"),
+            onboardPhases = whole(json.opt("onboard_phases"))?.takeIf { it == 1 || it == 3 }
         )
 
         /** The `site` block, as the dashboard and the site write's own answers state it. */

@@ -13,6 +13,7 @@ import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerCardSelector
 import se.sensnology.spotnav.chargers.ChargerPhases
+import se.sensnology.spotnav.ha.dashboard.DashboardChargingPhases
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.dashboard.ChargeProgress
@@ -206,6 +207,30 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             ))
         }
 
+        // A paired charger's phases are a fact the integration states, not a choice made here: one
+        // read-only line, in the editor's place, from the dashboard's `charging_phases` block.
+        val pairedPhasesLine = TextView(context).apply {
+            textSize = 13f; setTextColor(muted); setPadding(0, dp(2), 0, dp(6))
+            visibility = View.GONE
+        }
+        card.body.addView(pairedPhasesLine)
+        var pairedPhases: DashboardChargingPhases? = null
+        var phaseEditorShown = true
+        val renderPairedPhases = {
+            val block = pairedPhases
+            if (block == null || phaseEditorShown) {
+                pairedPhasesLine.visibility = View.GONE
+            } else {
+                pairedPhasesLine.text = ChargingPhasesText.line(
+                    block, if (connection.ampsNotSet()) null else connection.amps(),
+                    { tq(R.plurals.charging_phases_on, block.phases, block.phases) },
+                    { kw -> t(R.string.charging_phases_nominal, kw) },
+                    t(R.string.charging_phases_limited_by_vehicle)
+                )
+                pairedPhasesLine.visibility = View.VISIBLE
+            }
+        }
+
         val renderPhasesRow = {
             val notSet = connection.phasesNotSet()
             val display = ChargerPhases.display(connection.selectedPhases(), detectedPhases)
@@ -229,7 +254,11 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             status = status,
             advisory = advisory,
             connection = connection,
-            refreshPhasesRow = renderPhasesRow,
+            refreshPhasesRow = { renderPhasesRow(); renderPairedPhases() },
+            showPairedPhases = { block ->
+                pairedPhases = block
+                renderPairedPhases()
+            },
             refreshName = {
                 // A rename reported by Home Assistant lands in the store first; the title and the
                 // selector's rows follow it, keeping this widget's binding as it was.
@@ -266,6 +295,8 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 phasesRow.view.visibility = if (rowVisible) View.VISIBLE else View.GONE
                 phasesControl.visibility = if (rowVisible) View.VISIBLE else View.GONE
                 connection.phases.isEnabled = controlEnabled
+                phaseEditorShown = rowVisible
+                renderPairedPhases()
             }
         )
     }
@@ -381,6 +412,11 @@ internal class ChargerCard(
     val advisory: TextView,
     val connection: ConnectionControls,
     val refreshPhasesRow: () -> Unit,
+    /**
+     * A paired charger's `charging_phases` block (or `null`): the read-only line "Charges on N
+     * phases · nominal ≈ X kW" that stands in for the phase editor while Home Assistant owns it.
+     */
+    val showPairedPhases: (DashboardChargingPhases?) -> Unit,
     /** Repaints the title and the selector's rows when a charger's name has changed in the store. */
     val refreshName: () -> Unit,
     val setDetectedPhases: (Int?) -> Unit,

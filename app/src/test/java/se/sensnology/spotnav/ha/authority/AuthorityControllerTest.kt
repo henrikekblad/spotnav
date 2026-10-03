@@ -228,7 +228,6 @@ class AuthorityControllerTest {
         val edits = listOf(
             HaSettingsEdit.Amps(11),
             HaSettingsEdit.Energy(22.0),
-            HaSettingsEdit.Phases(1),
             HaSettingsEdit.MaxPeriods(3),
             HaSettingsEdit.Departure(true, "07:30", null),
             HaSettingsEdit.Area("SE4")

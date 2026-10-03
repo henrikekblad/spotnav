@@ -143,10 +143,15 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             readRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle))
             readRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
                 ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset))
+            vehicle.onboardPhases?.let { phases ->
+                readRow(card.body, t(R.string.vehicle_onboard_label), phasesText(phases))
+            }
             vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
             changeButton(card.body, t(R.string.settings_vehicle_change)) { openVehicleDialog(vehicle.id) }
         }
     }
+
+    private fun phasesText(phases: Int) = t(if (phases == 1) R.string.phase_one else R.string.phase_three)
 
     private fun chargeLevelText(vehicle: PairedOverview.VehicleCard): String =
         when (val level = vehicle.chargeLevel) {
@@ -173,8 +178,11 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
 
     private fun issueText(field: VehicleField, issue: VehicleFieldIssue) = t(
         when (issue) {
-            VehicleFieldIssue.OUT_OF_RANGE ->
-                if (field == VehicleField.CAPACITY) R.string.vehicle_error_capacity else R.string.vehicle_error_consumption
+            VehicleFieldIssue.OUT_OF_RANGE -> when (field) {
+                VehicleField.CAPACITY -> R.string.vehicle_error_capacity
+                VehicleField.CONSUMPTION -> R.string.vehicle_error_consumption
+                VehicleField.ONBOARD_PHASES -> R.string.vehicle_error_onboard
+            }
             VehicleFieldIssue.NOT_A_NUMBER -> R.string.paired_error_number
             VehicleFieldIssue.UNKNOWN -> R.string.paired_error_field
         }
@@ -246,6 +254,23 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
         })
         body.addView(consumption.view)
         body.addView(muted(t(R.string.vehicle_card_consumption_note), top = 2))
+        // The car's onboard charger: how many phases it takes (a car that takes one charges on one
+        // phase even on a three-phase charger). Offered only when Home Assistant states it.
+        var onboardGroup: RadioGroup? = null
+        var onboardOne: RadioButton? = null
+        row.onboardPhases?.let { phases ->
+            body.addView(TextView(context).apply {
+                text = t(R.string.vehicle_onboard_label); textSize = 14f; setTextColor(muted); setPadding(0, dp(14), 0, 0)
+            })
+            val group = RadioGroup(context).apply { orientation = RadioGroup.HORIZONTAL }
+            val one = RadioButton(context).apply { id = View.generateViewId(); text = phasesText(1); isChecked = phases == 1 }
+            val three = RadioButton(context).apply { id = View.generateViewId(); text = phasesText(3); isChecked = phases != 1 }
+            group.addView(one); group.addView(three)
+            body.addView(group)
+            body.addView(muted(t(R.string.vehicle_onboard_note), top = 2))
+            onboardGroup = group
+            onboardOne = one
+        }
         val general = errorView()
         body.addView(general)
 
@@ -253,11 +278,15 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             val current = PairedVehicles.row(dashboard ?: return@openSaveDialog, adoptedVehicles, vehicleId)
                 ?: return@openSaveDialog
             capacity.error.say(null); consumption.error.say(null); general.say(null)
-            when (val draft = VehicleUpdate.draft(current, capacity.input.text.toString(), consumption.input.text.toString())) {
+            val chosenPhases = onboardGroup?.let { group -> if (group.checkedRadioButtonId == onboardOne?.id) 1 else 3 }
+            when (val draft = VehicleUpdate.draft(
+                current, capacity.input.text.toString(), consumption.input.text.toString(), chosenPhases
+            )) {
                 VehicleUpdate.Draft.Unchanged -> dialog.dismiss()
                 is VehicleUpdate.Draft.Invalid -> {
                     draft.issues[VehicleField.CAPACITY]?.let { capacity.error.say(issueText(VehicleField.CAPACITY, it)) }
                     draft.issues[VehicleField.CONSUMPTION]?.let { consumption.error.say(issueText(VehicleField.CONSUMPTION, it)) }
+                    draft.issues[VehicleField.ONBOARD_PHASES]?.let { general.say(issueText(VehicleField.ONBOARD_PHASES, it)) }
                 }
                 is VehicleUpdate.Draft.Write -> {
                     save.isEnabled = false
@@ -273,6 +302,7 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
                             save.isEnabled = true
                             feedback.issues[VehicleField.CAPACITY]?.let { capacity.error.say(issueText(VehicleField.CAPACITY, it)) }
                             feedback.issues[VehicleField.CONSUMPTION]?.let { consumption.error.say(issueText(VehicleField.CONSUMPTION, it)) }
+                            feedback.issues[VehicleField.ONBOARD_PHASES]?.let { general.say(issueText(VehicleField.ONBOARD_PHASES, it)) }
                             if (feedback.issues.isEmpty()) general.say(feedback.notice?.let { vehicleNoticeText(it) })
                         }
                     }

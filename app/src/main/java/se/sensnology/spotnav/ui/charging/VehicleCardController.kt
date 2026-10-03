@@ -164,6 +164,12 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
             ))
         }
 
+        // The car's onboard charger (a paired vehicle only): read-only here, like the capacity and the
+        // consumption, and changed in Settings, in the vehicle's own dialog.
+        val onboardValue = valueLabel()
+        val onboardRow = valueRow(card.body, t(R.string.vehicle_onboard_label), onboardValue)
+        onboardRow.view.visibility = View.GONE
+
         val capacityStore = VehicleCapacityStore.forContext(applicationContext)
         val profileStore = ChargerProfileStore.forContext(applicationContext)
         val profileId = profile?.localId
@@ -290,7 +296,12 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
                 consumptionRow.view.visibility = if (pairedRow != null) View.VISIBLE else View.GONE
                 // Consumption is changed in Settings, in the vehicle's own dialog.
                 consumptionRow.show(ValueCue.READ_ONLY)
+                val onboard = pairedRow?.onboardPhases
+                onboardRow.view.visibility = if (onboard != null) View.VISIBLE else View.GONE
+                onboardRow.show(ValueCue.READ_ONLY)
+                if (onboard != null) onboardValue.text = t(if (onboard == 1) R.string.phase_one else R.string.phase_three)
             } else {
+                onboardRow.view.visibility = View.GONE
                 capacityNote.visibility = View.GONE
                 consumptionRow.view.visibility = View.VISIBLE
                 consumptionRow.show(ValueCue.EDITABLE)

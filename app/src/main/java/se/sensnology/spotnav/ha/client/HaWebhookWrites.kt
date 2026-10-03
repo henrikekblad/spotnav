@@ -57,10 +57,14 @@ internal object WriteEnvelope {
     fun block(head: Head, key: String): JSONObject? = head.json.opt(key) as? JSONObject
 }
 
-/** A vehicle's two editable properties, capacity and consumption, as `update_vehicle` names them. */
+/**
+ * A vehicle's editable properties as `update_vehicle` names them: capacity, consumption and the
+ * onboard charger's phases (1 or 3).
+ */
 internal enum class VehicleField(val wire: String, val min: Double, val max: Double) {
     CAPACITY("capacity_kwh", 1.0, 500.0),
-    CONSUMPTION("consumption_kwh_per_10km", 0.1, 50.0)
+    CONSUMPTION("consumption_kwh_per_10km", 0.1, 50.0),
+    ONBOARD_PHASES("onboard_phases", 1.0, 3.0)
 }
 
 /** Why the app (or the integration) refuses a typed value or a save. */
@@ -87,6 +91,7 @@ internal object VehicleUpdate {
     fun shown(row: DashboardVehicle, field: VehicleField): Double? = when (field) {
         VehicleField.CAPACITY -> row.capacityKwh
         VehicleField.CONSUMPTION -> row.consumptionKwhPer10km
+        VehicleField.ONBOARD_PHASES -> row.onboardPhases?.toDouble()
     }
 
     /**
@@ -115,10 +120,16 @@ internal object VehicleUpdate {
             put("action", "update_vehicle")
             put("api_version", API_VERSION)
             put("vehicle_id", vehicleId)
-            put("changes", JSONObject().also { body -> changes.forEach { body.put(it.field.wire, it.value) } })
-            put("expected", JSONObject().also { body -> changes.forEach { body.put(it.field.wire, it.shown ?: JSONObject.NULL) } })
+            put("changes", JSONObject().also { body -> changes.forEach { body.put(it.field.wire, wireValue(it.field, it.value)) } })
+            put("expected", JSONObject().also { body ->
+                changes.forEach { body.put(it.field.wire, it.shown?.let { shown -> wireValue(it.field, shown) } ?: JSONObject.NULL) }
+            })
         }
     }
+
+    /** The phases are a whole number on the wire (`1`, not `1.0`); the other fields are decimals. */
+    private fun wireValue(field: VehicleField, value: Double): Any =
+        if (field == VehicleField.ONBOARD_PHASES) value.toInt() else value
 
     /** What pressing Save in the vehicle dialog means, decided from the typed texts. */
     sealed interface Draft {
@@ -133,10 +144,11 @@ internal object VehicleUpdate {
     }
 
     /**
-     * The dialog's two typed texts against the row. A blank text for a field the row shows nothing
-     * for is "left alone"; a capacity the vehicle reports itself is never sent.
+     * The dialog's two typed texts and the onboard charger's chosen phases (`null` when the dialog
+     * offers no choice) against the row. A blank text for a field the row shows nothing for is "left
+     * alone"; a capacity the vehicle reports itself is never sent.
      */
-    fun draft(row: DashboardVehicle, capacityText: String, consumptionText: String): Draft {
+    fun draft(row: DashboardVehicle, capacityText: String, consumptionText: String, onboardPhases: Int? = null): Draft {
         val issues = LinkedHashMap<VehicleField, VehicleFieldIssue>()
         val changes = ArrayList<FieldChange>()
         val typed = buildList {
@@ -149,6 +161,13 @@ internal object VehicleUpdate {
             when (val check = check(field, text)) {
                 is Check.Invalid -> issues[field] = check.issue
                 is Check.Valid -> if (check.value != shown) changes += FieldChange(field, check.value, shown)
+            }
+        }
+        if (onboardPhases != null && onboardPhases != row.onboardPhases) {
+            if (onboardPhases == 1 || onboardPhases == 3) {
+                changes += FieldChange(VehicleField.ONBOARD_PHASES, onboardPhases.toDouble(), shown(row, VehicleField.ONBOARD_PHASES))
+            } else {
+                issues[VehicleField.ONBOARD_PHASES] = VehicleFieldIssue.OUT_OF_RANGE
             }
         }
         return when {
@@ -201,7 +220,7 @@ internal object VehicleUpdate {
                 for (error in head.fieldErrors) {
                     val field = VehicleField.entries.firstOrNull { it.wire == error.field } ?: continue
                     issues[field] = when (error.code) {
-                        "invalid_capacity", "invalid_consumption" -> VehicleFieldIssue.OUT_OF_RANGE
+                        "invalid_capacity", "invalid_consumption", "invalid_onboard_phases" -> VehicleFieldIssue.OUT_OF_RANGE
                         else -> VehicleFieldIssue.UNKNOWN
                     }
                 }

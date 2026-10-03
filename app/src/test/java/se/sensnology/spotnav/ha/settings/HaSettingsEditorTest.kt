@@ -70,7 +70,6 @@ class HaSettingsEditorTest {
         // One entry per control, with how many record fields that control owns.
         val edits = listOf(
             HaSettingsEdit.Area("SE3") to 1,
-            HaSettingsEdit.Phases(1) to 1,
             HaSettingsEdit.Amps(10) to 1,
             HaSettingsEdit.Energy(12.75) to 1,
             HaSettingsEdit.MaxPeriods(2) to 1,
@@ -183,7 +182,6 @@ class HaSettingsEditorTest {
     @Test fun aValueTheContractRefusesComesBackAsItsOwnStableCode() {
         assertEquals("invalid_amps", refused(HaSettingsEdit.Amps(0)))
         assertEquals("invalid_amps", refused(HaSettingsEdit.Amps(81)))
-        assertEquals("invalid_phases", refused(HaSettingsEdit.Phases(2)))
         assertEquals("invalid_energy", refused(HaSettingsEdit.Energy(0.0)))
         assertEquals("invalid_periods", refused(HaSettingsEdit.MaxPeriods(9)))
         assertEquals("invalid_area", refused(HaSettingsEdit.Area("")))

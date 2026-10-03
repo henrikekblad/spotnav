@@ -14,8 +14,6 @@ internal sealed interface HaSettingsEdit {
     /** The price area whose market the plan is for. */
     data class Area(val areaId: String) : HaSettingsEdit
 
-    data class Phases(val phases: Int) : HaSettingsEdit
-
     /** The charger's current limit in whole amperes. */
     data class Amps(val amps: Int) : HaSettingsEdit
 
@@ -76,7 +74,6 @@ internal object HaSettingsEditor {
 
     private fun apply(confirmed: HaPlanningSettings, edit: HaSettingsEdit): HaPlanningSettings = when (edit) {
         is HaSettingsEdit.Area -> confirmed.copy(areaId = edit.areaId)
-        is HaSettingsEdit.Phases -> confirmed.copy(phases = edit.phases)
         is HaSettingsEdit.Amps -> confirmed.copy(amps = edit.amps)
         is HaSettingsEdit.Energy -> confirmed.copy(requestedKwh = edit.requestedKwh)
         is HaSettingsEdit.MaxPeriods -> confirmed.copy(maxPeriods = edit.maxPeriods)

@@ -62,6 +62,35 @@ class HaWebhookWritesTest {
         assertTrue(VehicleUpdate.capacityEditable(row(null, null)))
     }
 
+    @Test fun theOnboardChargerTravelsAsAWholeNumberAndIsExpectedAsShown() {
+        val body = VehicleUpdate.payload("vehicle_niro", VehicleField.ONBOARD_PHASES, 1.0, 3.0)
+        assertEquals("1", body.getJSONObject("changes").get("onboard_phases").toString())
+        assertEquals("3", body.getJSONObject("expected").get("onboard_phases").toString())
+        assertEquals(setOf("onboard_phases"), body.getJSONObject("changes").keys().asSequence().toSet())
+    }
+
+    @Test fun theDialogWritesTheOnboardChargerOnlyWhenItDiffers() {
+        val row = DashboardVehicle("v", "V", 64.8, "stored", 1.7, null, null, onboardPhases = 3)
+        assertEquals(VehicleUpdate.Draft.Unchanged, VehicleUpdate.draft(row, "64.8", "1.7", 3))
+        assertEquals(VehicleUpdate.Draft.Unchanged, VehicleUpdate.draft(row, "64.8", "1.7", null))
+        val write = VehicleUpdate.draft(row, "64.8", "1.7", 1) as VehicleUpdate.Draft.Write
+        assertEquals(listOf(VehicleUpdate.FieldChange(VehicleField.ONBOARD_PHASES, 1.0, 3.0)), write.changes)
+        assertEquals(
+            VehicleUpdate.Draft.Invalid(mapOf(VehicleField.ONBOARD_PHASES to VehicleFieldIssue.OUT_OF_RANGE)),
+            VehicleUpdate.draft(row, "64.8", "1.7", 2)
+        )
+    }
+
+    @Test fun anInvalidOnboardChargerIsRefusedByFieldAndTheRowReadsItsPhases() {
+        val refused = JSONObject(fixture("update_vehicle_refused")).apply {
+            put("field_errors", org.json.JSONArray().put(JSONObject().put("field", "onboard_phases").put("code", "invalid_onboard_phases")))
+        }
+        val outcome = VehicleUpdate.answer(400, refused.toString()) as VehicleUpdate.Outcome.Refused
+        assertEquals(mapOf(VehicleField.ONBOARD_PHASES to VehicleFieldIssue.OUT_OF_RANGE), outcome.issues)
+        val updated = VehicleUpdate.answer(200, fixture("update_vehicle_success")) as VehicleUpdate.Outcome.Updated
+        assertEquals(3, updated.row.onboardPhases)
+    }
+
     @Test fun updateVehicleSuccessAdoptsTheReturnedRow() {
         val outcome = VehicleUpdate.answer(200, fixture("update_vehicle_success"))
         val row = (outcome as VehicleUpdate.Outcome.Updated).row

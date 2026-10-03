@@ -274,6 +274,7 @@ internal class ChargingScreen(
         // charger, even in the moment before the authority has resolved:
         vehicleCard.applyPaired(held ?: pairedDashboard.takeIf { authorityProfile != null && authority.authority == null }, picked)
         planCard.applyPaired(held, picked)
+        chargerCard.showPairedPhases(held?.chargingPhases)
         syncDepartureDays()
     }
 
@@ -531,13 +532,13 @@ internal class ChargingScreen(
         })
         connection.phases.setOnCheckedChangeListener { _, _ ->
             if (authorityApplying) return@setOnCheckedChangeListener
-            if (!strategyUi.phaseRadioEnabled) {
-                chargerCard.refreshPhasesRow()
-                return@setOnCheckedChangeListener
-            }
-            connection.refreshValueLabel()
             chargerCard.refreshPhasesRow()
-            commitEdit(HaSettingsEdit.Phases(connection.selectedPhases()))
+            // Only the local planner has a phase choice. A paired charger's phases come from its
+            // wiring and the car's onboard charger, which Home Assistant states: nothing is written.
+            if (!strategyUi.phaseRadioEnabled) return@setOnCheckedChangeListener
+            connection.refreshValueLabel()
+            saveCharging(currentSettings())
+            render()
         }
         planCard.departurePicker.setOnClickListener {
             TimePickerDialog(context, { _, hour, minute ->

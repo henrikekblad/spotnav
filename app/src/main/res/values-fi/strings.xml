@@ -327,4 +327,13 @@
   <string name="price_row_tax">Sähkövero</string>
   <string name="price_row_transfer">Siirtomaksu</string>
   <string name="price_value_off">Pois</string>
+  <plurals name="charging_phases_on">
+    <item quantity="one">Lataa %1$d vaiheella</item>
+    <item quantity="other">Lataa %1$d vaiheella</item>
+  </plurals>
+  <string name="charging_phases_nominal">nimellisteho ≈ %1$.1f kW</string>
+  <string name="charging_phases_limited_by_vehicle">Auton oma laturi rajoittaa.</string>
+  <string name="vehicle_onboard_label">Auton oma laturi</string>
+  <string name="vehicle_onboard_note">Suurin vaiheiden määrä, jonka auton oma laturi kestää. Yksivaiheinen auto lataa yhdellä vaiheella myös kolmivaiheisella laturilla.</string>
+  <string name="vehicle_error_onboard">Auton oman laturin on oltava yksi- tai kolmivaiheinen.</string>
 </resources>
