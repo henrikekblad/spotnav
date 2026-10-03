@@ -11,13 +11,6 @@ import org.json.JSONObject
 class ChargingPhasesTextTest {
     private fun dashboard(name: String) = Dashboard.parse(HaFixtures.json("dashboard/$name.json"))
 
-    private fun line(block: DashboardChargingPhases, amps: Int?) = ChargingPhasesText.line(
-        block, amps,
-        charges = { "Charges on ${block.phases} phase" + if (block.phases == 1) "" else "s" },
-        nominal = { kw -> "nominal ≈ %.1f kW".format(java.util.Locale.ROOT, kw) },
-        limitedByVehicle = "Limited by the car."
-    )
-
     @Test fun theBlockIsReadFromTheFixtures() {
         val wired = dashboard("start_idle").chargingPhases!!
         assertEquals(DashboardChargingPhases(phases = 1, charger = 1, vehicle = null, limitedBy = null), wired)
@@ -37,16 +30,16 @@ class ChargingPhasesTextTest {
         assertNull(Dashboard.parse(json).chargingPhases)
     }
 
-    @Test fun theLineStatesThePhasesAndTheNominalPowerOfTheCurrent() {
-        assertEquals("Charges on 3 phases · nominal ≈ 6.9 kW", line(DashboardChargingPhases(3, 3, null, null), 10))
-        assertEquals("Charges on 1 phase · nominal ≈ 2.3 kW", line(DashboardChargingPhases(1, 1, null, null), 10))
-        assertEquals("Charges on 3 phases", line(DashboardChargingPhases(3, 3, null, null), null))
+    @Test fun theCurrentLabelCarriesThePhaseCountWhenKnown() {
+        val withPhases = { n: Int -> "Charging current · $n phase" + if (n == 1) "" else "s" }
+        assertEquals("Charging current · 3 phases", ChargingPhasesText.currentLabel(3, "Charging current", withPhases))
+        assertEquals("Charging current · 1 phase", ChargingPhasesText.currentLabel(1, "Charging current", withPhases))
+        assertEquals("Charging current", ChargingPhasesText.currentLabel(null, "Charging current", withPhases))
     }
 
-    @Test fun theCarsLimitIsNamedWhenItSetsTheCount() {
-        assertEquals(
-            "Charges on 1 phase · nominal ≈ 3.7 kW. Limited by the car.",
-            line(DashboardChargingPhases(1, 3, 1, "vehicle"), 16)
-        )
+    @Test fun theHistoryMonthIsAbbreviatedInTheLocale() {
+        val october = java.time.LocalDate.of(2026, 10, 3)
+        assertEquals("Oct", ChargingPhasesText.monthAbbreviation(october, java.util.Locale.UK))
+        assertEquals("okt.", ChargingPhasesText.monthAbbreviation(october, java.util.Locale.forLanguageTag("sv")))
     }
 }

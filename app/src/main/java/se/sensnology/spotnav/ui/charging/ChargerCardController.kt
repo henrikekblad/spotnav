@@ -12,6 +12,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerCardSelector
+import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.chargers.ChargerPhases
 import se.sensnology.spotnav.ha.dashboard.DashboardChargingPhases
 import se.sensnology.spotnav.ha.sessions.SessionsSummary
@@ -192,7 +193,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         val connection = addConnectionControls(ampsControl, phasesControl, ampsRowValue, settings)
         var ampsDialog: AlertDialog? = null
         var phasesDialog: AlertDialog? = null
-        valueRow(card.body, t(R.string.charge_current), ampsRowValue) {
+        val ampsRow = valueRow(card.body, t(R.string.charge_current), ampsRowValue) {
             ampsDialog = showValuePopover(ampsDialog, PopoverSpec(
                 eyebrow = t(R.string.popover_eyebrow_charger),
                 title = t(R.string.charge_current),
@@ -219,28 +220,16 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             ))
         }
 
-        // A paired charger's phases are a fact the integration states, not a choice made here: one
-        // read-only line, in the editor's place, from the dashboard's `charging_phases` block.
-        val pairedPhasesLine = TextView(context).apply {
-            textSize = 13f; setTextColor(muted); setPadding(0, dp(2), 0, dp(6))
-            visibility = View.GONE
-        }
-        card.body.addView(pairedPhasesLine)
+        // A paired charger's phases are a fact the integration states, not a choice made here: they
+        // go into the current row's label, in the editor's place, from the dashboard's
+        // `charging_phases` block.
         var pairedPhases: DashboardChargingPhases? = null
         var phaseEditorShown = true
         val renderPairedPhases = {
-            val block = pairedPhases
-            if (block == null || phaseEditorShown) {
-                pairedPhasesLine.visibility = View.GONE
-            } else {
-                pairedPhasesLine.text = ChargingPhasesText.line(
-                    block, if (connection.ampsNotSet()) null else connection.amps(),
-                    { tq(R.plurals.charging_phases_on, block.phases, block.phases) },
-                    { kw -> t(R.string.charging_phases_nominal, kw) },
-                    t(R.string.charging_phases_limited_by_vehicle)
-                )
-                pairedPhasesLine.visibility = View.VISIBLE
-            }
+            val block = pairedPhases?.takeUnless { phaseEditorShown }
+            ampsRow.label?.text = ChargingPhasesText.currentLabel(
+                block?.phases, t(R.string.charge_current)
+            ) { count -> tq(R.plurals.charge_current_on_phases, count, count) }
         }
 
         // The charge history, for a paired charger whose dashboard carries `sessions_summary`: one
@@ -277,7 +266,10 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             showHistory = { summary ->
                 val month = summary?.thisMonth
                 historyRow.view.visibility = if (summary != null) View.VISIBLE else View.GONE
-                historyValue.text = if (month != null && !month.isEmpty) t(R.string.history_row_this_month, kwhText(month.energyKwh))
+                historyValue.text = if (month != null && !month.isEmpty) t(
+                    R.string.history_row_month, kwhText(month.energyKwh),
+                    ChargingPhasesText.monthAbbreviation(java.time.LocalDate.now(), monthLocale())
+                )
                     else t(R.string.history_row_empty)
             },
             showPairedPhases = { block ->
@@ -337,6 +329,10 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
     }
 
     /** The app's own phase model as a label: one phase, or three. */
+    /** The locale the history row's month is written in; English as the British write it ("Oct"). */
+    private fun monthLocale(): java.util.Locale =
+        AppLanguageSettings.locale(context).let { if (it.language == "en") java.util.Locale.UK else it }
+
     private fun phasesLabel(phases: Int) = t(if (phases == 1) R.string.phase_one else R.string.phase_three)
 
     /** The connection readout: phases, and the charging current. */

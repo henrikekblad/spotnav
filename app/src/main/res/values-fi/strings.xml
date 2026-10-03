@@ -327,18 +327,16 @@
   <string name="price_row_tax">Sähkövero</string>
   <string name="price_row_transfer">Siirtomaksu</string>
   <string name="price_value_off">Pois</string>
-  <plurals name="charging_phases_on">
-    <item quantity="one">Lataa %1$d vaiheella</item>
-    <item quantity="other">Lataa %1$d vaiheella</item>
+  <plurals name="charge_current_on_phases">
+    <item quantity="one">Latausvirta · %1$d vaihe</item>
+    <item quantity="other">Latausvirta · %1$d vaihetta</item>
   </plurals>
-  <string name="charging_phases_nominal">nimellisteho ≈ %1$.1f kW</string>
-  <string name="charging_phases_limited_by_vehicle">Auton oma laturi rajoittaa.</string>
   <string name="vehicle_onboard_label">Auton oma laturi</string>
   <string name="vehicle_onboard_note">Suurin vaiheiden määrä, jonka auton oma laturi kestää. Yksivaiheinen auto lataa yhdellä vaiheella myös kolmivaiheisella laturilla.</string>
   <string name="vehicle_error_onboard">Auton oman laturin on oltava yksi- tai kolmivaiheinen.</string>
   <string name="history_title">Historia</string>
   <string name="history_row_label">Lataushistoria</string>
-  <string name="history_row_this_month">%1$s tässä kuussa</string>
+  <string name="history_row_month">%1$s · %2$s</string>
   <string name="history_row_empty">Ei latauksia tässä kuussa</string>
   <string name="history_previous_month">Edellinen kuukausi</string>
   <string name="history_next_month">Seuraava kuukausi</string>

@@ -1,30 +1,20 @@
 package se.sensnology.spotnav.ui.charging
 
-import se.sensnology.spotnav.ha.dashboard.DashboardChargingPhases
-import se.sensnology.spotnav.planning.ChargingPlanner
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
- * The read-only phases line of a paired charger: "Charges on 3 phases · nominal ≈ 6.9 kW", with
- * the car's limit named when the vehicle, not the wiring, sets the count. Kept apart from the view
- * so it is tested directly, like [se.sensnology.spotnav.chargers.ChargerPhases].
+ * The words of the charger card's two short rows, kept apart from the view so they are tested
+ * directly: the charging-current label that carries the phase count of a paired charger
+ * ("Charging current \u00B7 3 phases"), and the abbreviated month of the charge-history value.
  */
 internal object ChargingPhasesText {
-    /** The nominal power of [amps] on [phases], in kW: the figure the line states. */
-    fun nominalKw(amps: Int, phases: Int): Double = ChargingPlanner.powerKw(amps, phases)
+    /** The current row's label: [withPhases] for a known count, else the plain [plain] label. */
+    fun currentLabel(phases: Int?, plain: String, withPhases: (Int) -> String): String =
+        if (phases == null) plain else withPhases(phases)
 
-    /**
-     * The line for [block] at [amps] (`null` while no current is stated, which leaves the power
-     * out), from the words [charges] ("Charges on 3 phases"), [nominal] (its power) and
-     * [limitedByVehicle].
-     */
-    fun line(
-        block: DashboardChargingPhases,
-        amps: Int?,
-        charges: () -> String,
-        nominal: (Double) -> String,
-        limitedByVehicle: String
-    ): String {
-        val head = listOfNotNull(charges(), amps?.let { nominal(nominalKw(it, block.phases)) }).joinToString(" · ")
-        return if (block.limitedByVehicle) "$head. $limitedByVehicle" else head
-    }
+    /** The month of [date] abbreviated as [locale] writes it ("Oct", "okt."), for the history row. */
+    fun monthAbbreviation(date: LocalDate, locale: Locale): String =
+        DateTimeFormatter.ofPattern("LLL", locale).format(date)
 }

@@ -340,18 +340,16 @@
   <string name="price_row_tax">Energy tax</string>
   <string name="price_row_transfer">Grid fee</string>
   <string name="price_value_off">Off</string>
-  <plurals name="charging_phases_on">
-    <item quantity="one">Charges on %1$d phase</item>
-    <item quantity="other">Charges on %1$d phases</item>
+  <plurals name="charge_current_on_phases">
+    <item quantity="one">Charging current · %1$d phase</item>
+    <item quantity="other">Charging current · %1$d phases</item>
   </plurals>
-  <string name="charging_phases_nominal">nominal ≈ %1$.1f kW</string>
-  <string name="charging_phases_limited_by_vehicle">Limited by the car\'s onboard charger.</string>
   <string name="vehicle_onboard_label">Onboard charger</string>
   <string name="vehicle_onboard_note">The most phases the car\'s own charger takes. A single-phase car charges on one phase even on a three-phase charger.</string>
   <string name="vehicle_error_onboard">The onboard charger must be single or three phase.</string>
   <string name="history_title">History</string>
   <string name="history_row_label">Charge history</string>
-  <string name="history_row_this_month">%1$s this month</string>
+  <string name="history_row_month">%1$s in %2$s</string>
   <string name="history_row_empty">No charges this month</string>
   <string name="history_previous_month">Previous month</string>
   <string name="history_next_month">Next month</string>

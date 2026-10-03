@@ -13,28 +13,31 @@ import android.widget.TextView
 
 /** The tappable value row pattern: a label and a readout that together are one tap target. */
 internal fun ViewScope.valueRow(parent: LinearLayout, label: String, value: TextView, onTap: (() -> Unit)? = null): ValueRow {
+    val labelView = TextView(context).apply {
+        text = label
+        textSize = 15f
+        setTextColor(muted)
+    }
     val row = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(0, dp(5), 0, dp(5))
-        addView(TextView(context).apply {
-            text = label
-            textSize = 15f
-            setTextColor(muted)
-        }, weight())
+        addView(labelView, weight())
         addView(value, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         // A value reads right-aligned, exactly like `resultRow`'s.
         value.gravity = Gravity.END
     }
     parent.addView(row)
-    return ValueRow(row, value, palette, onTap).apply { show(ValueCue.of(editable = onTap != null)) }
+    return ValueRow(row, value, palette, onTap, labelView).apply { show(ValueCue.of(editable = onTap != null)) }
 }
 
 internal class ValueRow(
     val view: LinearLayout,
     val value: TextView,
     private val palette: Palette,
-    private var onTap: (() -> Unit)? = null
+    private var onTap: (() -> Unit)? = null,
+    /** The row's label, for a row whose wording changes with what the card learns. */
+    val label: TextView? = null
 ) {
     private var cue = ValueCue.READ_ONLY
     private var attention = false
