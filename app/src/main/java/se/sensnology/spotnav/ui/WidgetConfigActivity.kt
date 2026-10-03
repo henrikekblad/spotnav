@@ -16,6 +16,7 @@ import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.ui.charging.ChargingScreen
 import se.sensnology.spotnav.ui.common.Palette
+import se.sensnology.spotnav.ui.history.HistoryScreen
 import se.sensnology.spotnav.ui.prices.PriceTableScreen
 import se.sensnology.spotnav.ui.settings.SettingsScreen
 import se.sensnology.spotnav.widget.PriceWidgetProvider
@@ -132,6 +133,7 @@ class WidgetConfigActivity : Activity() {
             Screen.MAIN -> showCharging()
             Screen.PRICE_TABLE -> PriceTableScreen(shell).show()
             Screen.SETTINGS -> SettingsScreen(shell).show()
+            Screen.HISTORY -> HistoryScreen(shell).show()
         }
         // A screen the user *navigated* to starts at its top; a refresh of the screen they are
         // already on does not (that is why this is here and not in the screens -- the charging

@@ -160,7 +160,9 @@ internal class ChargingScreen(
         val shareRow = CardLayout.sideBySide(resources.configuration.screenWidthDp)
         val objectCards = if (shareRow) LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL } else content
         if (shareRow) content.addView(objectCards)
-        chargerCard = ChargerCardController(this, widgetId).add(objectCards, settings, resolvedChargerProfile, shareRow) { rebuild() }
+        chargerCard = ChargerCardController(this, widgetId).add(
+            objectCards, settings, resolvedChargerProfile, shareRow, onOpenHistory = { shell.navigate(Screen.HISTORY) }
+        ) { rebuild() }
         connection = chargerCard.connection
         // The vehicle card is the second of the two, and the one that exists in every state.
         vehicleCard = VehicleCardController(this).add(objectCards, settings, resolvedChargerProfile, shareRow)
@@ -275,6 +277,7 @@ internal class ChargingScreen(
         vehicleCard.applyPaired(held ?: pairedDashboard.takeIf { authorityProfile != null && authority.authority == null }, picked)
         planCard.applyPaired(held, picked)
         chargerCard.showPairedPhases(held?.chargingPhases)
+        chargerCard.showHistory((held ?: pairedDashboard.takeIf { authorityProfile != null })?.sessionsSummary)
         syncDepartureDays()
     }
 

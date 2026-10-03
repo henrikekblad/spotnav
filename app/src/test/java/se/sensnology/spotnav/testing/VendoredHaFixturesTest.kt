@@ -8,7 +8,7 @@ import java.io.File
 
 /** The vendored fixtures are a copy, so they can fall behind. */
 class VendoredHaFixturesTest {
-    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "codes")
+    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes")
 
     private fun sourceRoot(): File? {
         var dir: File? = File(System.getProperty("user.dir")).absoluteFile
@@ -28,6 +28,7 @@ class VendoredHaFixturesTest {
         assertTrue(HaFixtures.files("settings/v1").any { it.name == "success.json" })
         assertTrue(HaFixtures.files("site_settings/v1").any { it.name == "success.json" })
         assertTrue(HaFixtures.files("vehicle/v1").any { it.name == "update_vehicle_success.json" })
+        assertTrue(HaFixtures.files("sessions").any { it.name == "get_sessions_month.json" })
     }
 
     @Test fun theVendoredCopyEqualsTheHomeAssistantFixturesWhenTheyArePresent() {

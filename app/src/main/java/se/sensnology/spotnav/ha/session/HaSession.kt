@@ -12,6 +12,10 @@ import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.VehicleRefresh
+import se.sensnology.spotnav.ha.client.SessionsOutcome
+import se.sensnology.spotnav.ha.sessions.SessionsCsv
+import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import java.time.YearMonth
 import java.util.concurrent.Executor
 
 /** What a session needs of the network, so its rules can be run against a fake. */
@@ -31,6 +35,12 @@ internal interface HaTransport {
     fun updateSettings(expectedRevision: Int, replacement: HaPlanningSettings): SettingsUpdate.Outcome
 
     fun updateSite(request: SiteUpdate.Request): SiteUpdate.Outcome
+
+    /** One month of charge history (`null`: the current month); never throws. */
+    fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
+
+    /** One month of charge history as a CSV text; never throws. */
+    fun sessionsCsv(month: YearMonth): SessionsOutcome<SessionsCsv> = SessionsOutcome.Failed
 }
 
 /** [HaTransport] over the webhook of one charger, captured once so no answer can land on another. */
@@ -51,6 +61,10 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
         HomeAssistantClient.updateSettings(connection, expectedRevision, replacement)
 
     override fun updateSite(request: SiteUpdate.Request) = HomeAssistantClient.updateSiteSettings(connection, request)
+
+    override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
+
+    override fun sessionsCsv(month: YearMonth) = HomeAssistantClient.sessionsCsv(connection, month)
 }
 
 /**
@@ -176,6 +190,22 @@ internal class HaSession(
     fun updateSite(request: SiteUpdate.Request, done: (SiteUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updateSite(request)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** One month of charge history, read on the background executor and answered on the main thread. */
+    fun sessionsMonth(month: YearMonth?, done: (SessionsOutcome<SessionsMonth>) -> Unit) {
+        background.execute {
+            val outcome = transport.sessionsMonth(month)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** One month of charge history as a CSV text. */
+    fun sessionsCsv(month: YearMonth, done: (SessionsOutcome<SessionsCsv>) -> Unit) {
+        background.execute {
+            val outcome = transport.sessionsCsv(month)
             mainThread { done(outcome) }
         }
     }

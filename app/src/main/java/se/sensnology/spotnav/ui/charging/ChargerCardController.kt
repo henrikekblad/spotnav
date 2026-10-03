@@ -14,6 +14,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerCardSelector
 import se.sensnology.spotnav.chargers.ChargerPhases
 import se.sensnology.spotnav.ha.dashboard.DashboardChargingPhases
+import se.sensnology.spotnav.ha.sessions.SessionsSummary
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.dashboard.ChargeProgress
@@ -53,6 +54,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         settings: WidgetSettings,
         profile: ChargerProfile?,
         shareRow: Boolean = false,
+        onOpenHistory: () -> Unit = {},
         onChargerChosen: () -> Unit
     ): ChargerCard {
         val card = card(parent, t(R.string.widget_charger_title), R.drawable.ic_card_charger, shareRow)
@@ -231,6 +233,12 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             }
         }
 
+        // The charge history, for a paired charger whose dashboard carries `sessions_summary`: one
+        // row, the month so far, and a tap opens the History view.
+        val historyValue = valueLabel()
+        val historyRow = valueRow(card.body, t(R.string.history_row_label), historyValue) { onOpenHistory() }
+        historyRow.view.visibility = View.GONE
+
         val renderPhasesRow = {
             val notSet = connection.phasesNotSet()
             val display = ChargerPhases.display(connection.selectedPhases(), detectedPhases)
@@ -255,6 +263,12 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             advisory = advisory,
             connection = connection,
             refreshPhasesRow = { renderPhasesRow(); renderPairedPhases() },
+            showHistory = { summary ->
+                val month = summary?.thisMonth
+                historyRow.view.visibility = if (summary != null) View.VISIBLE else View.GONE
+                historyValue.text = if (month != null && !month.isEmpty) t(R.string.history_row_this_month, kwhText(month.energyKwh))
+                    else t(R.string.history_row_empty)
+            },
             showPairedPhases = { block ->
                 pairedPhases = block
                 renderPairedPhases()
@@ -417,6 +431,8 @@ internal class ChargerCard(
      * phases · nominal ≈ X kW" that stands in for the phase editor while Home Assistant owns it.
      */
     val showPairedPhases: (DashboardChargingPhases?) -> Unit,
+    /** The dashboard's `sessions_summary` (or `null`): the History row is there only when it is. */
+    val showHistory: (SessionsSummary?) -> Unit,
     /** Repaints the title and the selector's rows when a charger's name has changed in the store. */
     val refreshName: () -> Unit,
     val setDetectedPhases: (Int?) -> Unit,

@@ -11,6 +11,8 @@ import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
 import se.sensnology.spotnav.ha.settings.HaSettingsFormatException
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
+import se.sensnology.spotnav.ha.sessions.SessionsCodec
+import se.sensnology.spotnav.ha.sessions.SessionsSummary
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import java.time.OffsetDateTime
 
@@ -225,7 +227,12 @@ internal data class Dashboard(
     /** The setup in words (friendly names, never entity ids); `null` from a Home Assistant that does not send it. */
     val summary: DashboardSummary? = null,
     /** How many phases a charge uses and why; `null` from a Home Assistant that does not state it. */
-    val chargingPhases: DashboardChargingPhases? = null
+    val chargingPhases: DashboardChargingPhases? = null,
+    /**
+     * This and last month's charge totals; `null` from a Home Assistant that records no charge
+     * history. The History view is offered only when it is there.
+     */
+    val sessionsSummary: SessionsSummary? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -311,7 +318,8 @@ internal data class Dashboard(
                 targetVehicleId = optText(json, "target_vehicle_id"),
                 site = optObj(json, "site")?.let(::parseSite),
                 summary = DashboardSummary.parse(json.opt("summary")),
-                chargingPhases = chargingPhases(json.opt("charging_phases"))
+                chargingPhases = chargingPhases(json.opt("charging_phases")),
+                sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary"))
             )
         }
 

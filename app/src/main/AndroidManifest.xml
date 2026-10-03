@@ -40,6 +40,13 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <!-- Serves the exported charge history CSV to the share sheet: read-only, from the app's own
+             export folder, and only to the app the share sheet hands it to. -->
+        <provider
+            android:name=".ui.history.CsvExportProvider"
+            android:authorities="${applicationId}.exports"
+            android:exported="false"
+            android:grantUriPermissions="true" />
         <receiver
             android:name=".widget.PriceWidgetProvider"
             android:exported="true">

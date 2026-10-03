@@ -1,6 +1,6 @@
 package se.sensnology.spotnav.ui
 
-/** The three screens this Activity can show, and how the user moves between them. */
+/** The screens this Activity can show, and how the user moves between them. */
 internal enum class Screen(val storedKey: String) {
     /** The root: the charger, the car, the plan and the plan's graph, on one page. */
     MAIN("charging"),
@@ -9,7 +9,10 @@ internal enum class Screen(val storedKey: String) {
     PRICE_TABLE("price_table"),
 
     /** The settings form, with the save button that ends the widget-host flow. */
-    SETTINGS("settings");
+    SETTINGS("settings"),
+
+    /** A paired charger's charge history, one month at a time. */
+    HISTORY("history");
 
     /**
      * Where Back from this screen lands, or `null` when Back leaves the Activity -- which is the
@@ -21,15 +24,16 @@ internal enum class Screen(val storedKey: String) {
         MAIN -> null
         PRICE_TABLE -> MAIN
         SETTINGS -> if (existingWidget) MAIN else null
+        HISTORY -> MAIN
     }
 
     companion object {
         /**
-         * The two panels the main screen opens, and the whole of what it opens: Nothing else
+         * The panels the main screen opens, and the whole of what it opens: Nothing else
          * navigates anywhere, so an entry added here without an action is a mistake the navigation
          * tests can see.
          */
-        val panels: List<Screen> = listOf(SETTINGS, PRICE_TABLE)
+        val panels: List<Screen> = listOf(SETTINGS, PRICE_TABLE, HISTORY)
 
         /** Where a launch with nothing to restore begins. */
         fun freshLaunch(existingWidget: Boolean): Screen = if (existingWidget) MAIN else SETTINGS

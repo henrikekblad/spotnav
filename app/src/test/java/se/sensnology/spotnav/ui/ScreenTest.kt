@@ -72,10 +72,10 @@ class ScreenTest {
     // navigation: two ways in, one way back
 
     @Test
-    fun theMainScreenOpensExactlyTheTwoPanelsAndNothingElse() {
+    fun theMainScreenOpensExactlyThePanelsAndNothingElse() {
         // MAIN itself in this list would be a "navigation" that goes nowhere; a third entry would
         // be an action the main screen does not have.
-        assertEquals(listOf(Screen.SETTINGS, Screen.PRICE_TABLE), Screen.panels)
+        assertEquals(listOf(Screen.SETTINGS, Screen.PRICE_TABLE, Screen.HISTORY), Screen.panels)
     }
 
     @Test
@@ -88,6 +88,13 @@ class ScreenTest {
         assertEquals(Screen.MAIN, Screen.PRICE_TABLE.back(existingWidget = true))
         // The table has no second parent: whoever opened it, Back leads out of it.
         assertEquals(Screen.MAIN, Screen.PRICE_TABLE.back(existingWidget = false))
+    }
+
+    @Test
+    fun theHistorySurvivesARecreationAndLeadsBackToTheMainScreen() {
+        assertEquals(Screen.HISTORY, Screen.restored(Screen.HISTORY.storedKey, existingWidget = true))
+        assertEquals(Screen.MAIN, Screen.HISTORY.back(existingWidget = true))
+        assertEquals(Screen.MAIN, Screen.HISTORY.back(existingWidget = false))
     }
 
     @Test

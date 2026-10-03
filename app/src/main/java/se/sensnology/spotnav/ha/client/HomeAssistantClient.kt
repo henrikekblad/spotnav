@@ -9,7 +9,10 @@ import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.vehicles.VehicleStatus
+import se.sensnology.spotnav.ha.sessions.SessionsCsv
+import se.sensnology.spotnav.ha.sessions.SessionsMonth
 import java.net.HttpURLConnection
+import java.time.YearMonth
 import java.net.URL
 
 data class HomeAssistantCommand(
@@ -222,6 +225,18 @@ object HomeAssistantClient {
     internal fun updateSiteSettings(settings: HomeAssistantSettings, request: SiteUpdate.Request): SiteUpdate.Outcome {
         val (status, body) = write(settings, request.payload())
         return SiteUpdate.answer(status, body)
+    }
+
+    /** One month of charge history (webhook `sessions`); `null` asks for the current month. Never throws. */
+    internal fun sessionsMonth(settings: HomeAssistantSettings, month: YearMonth?): SessionsOutcome<SessionsMonth> {
+        val (status, body) = write(settings, SessionsRead.payload(month))
+        return SessionsRead.month(status, body)
+    }
+
+    /** One month of charge history as a CSV text and the name to save it under. Never throws. */
+    internal fun sessionsCsv(settings: HomeAssistantSettings, month: YearMonth): SessionsOutcome<SessionsCsv> {
+        val (status, body) = write(settings, SessionsRead.payload(month, csv = true))
+        return SessionsRead.csv(status, body)
     }
 
     private fun post(
