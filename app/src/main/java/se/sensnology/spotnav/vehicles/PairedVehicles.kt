@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.vehicles
 
+import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
+import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
@@ -117,5 +119,20 @@ internal object PairedVehicles {
         SiteUpdate.Outcome.Unavailable -> SiteFeedback(null, SiteNotice.UNAVAILABLE, reload = true)
         SiteUpdate.Outcome.NotSupported -> SiteFeedback(null, SiteNotice.NOT_SUPPORTED, reload = false)
         is SiteUpdate.Outcome.Failed -> SiteFeedback(null, SiteNotice.FAILED, reload = false)
+    }
+
+    /** How the site card takes one `update_charger_priority` answer. */
+    enum class PriorityNotice { CONFLICT, INVALID, NO_SITE, NOT_SUPPORTED, FAILED }
+
+    /** [adopted] is the block to show from now on; a write that changed nothing keeps what was shown. */
+    data class PriorityFeedback(val adopted: ChargerPriority?, val notice: PriorityNotice?, val reload: Boolean)
+
+    fun feedback(outcome: ChargerPriorityUpdate.Outcome): PriorityFeedback = when (outcome) {
+        is ChargerPriorityUpdate.Outcome.Updated -> PriorityFeedback(outcome.priority, null, reload = true)
+        is ChargerPriorityUpdate.Outcome.Conflict -> PriorityFeedback(outcome.priority, PriorityNotice.CONFLICT, reload = true)
+        is ChargerPriorityUpdate.Outcome.Refused -> PriorityFeedback(outcome.priority, PriorityNotice.INVALID, reload = false)
+        ChargerPriorityUpdate.Outcome.NoSite -> PriorityFeedback(null, PriorityNotice.NO_SITE, reload = true)
+        ChargerPriorityUpdate.Outcome.NotSupported -> PriorityFeedback(null, PriorityNotice.NOT_SUPPORTED, reload = false)
+        is ChargerPriorityUpdate.Outcome.Failed -> PriorityFeedback(null, PriorityNotice.FAILED, reload = false)
     }
 }

@@ -331,6 +331,12 @@
   <string name="section_solar">Solar</string>
   <string name="solar_change">Change solar settings</string>
   <string name="solar_dialog_title">Solar settings</string>
+  <string name="priority_label">Priority</string>
+  <string name="priority_help">Which charger gets power and solar surplus first on the site</string>
+  <string name="priority_change">Change priority</string>
+  <string name="priority_first">First</string>
+  <string name="priority_normal">Normal</string>
+  <string name="priority_last">Last</string>
   <string name="value_none">None</string>
   <string name="price_change">Change price area and taxes</string>
   <string name="price_dialog_title">Area and taxes</string>

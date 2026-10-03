@@ -1,0 +1,1 @@
+- Ladererens prioritet på et anlæg: Først, Normal eller Sidst, vises og ændres på anlægskortet

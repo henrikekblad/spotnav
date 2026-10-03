@@ -2,6 +2,7 @@ package se.sensnology.spotnav.ha.client
 
 import org.json.JSONArray
 import org.json.JSONObject
+import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardForecastChoice
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
@@ -347,6 +348,54 @@ internal object SiteUpdate {
             WriteEnvelope.INVALID_VALUE -> Outcome.Refused(site)
             WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted(site)
             WriteEnvelope.NO_SITE, WriteEnvelope.SITE_UNAVAILABLE -> Outcome.Unavailable
+            WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * `update_charger_priority` at `api_version` 1: this charger's priority on its site (First, Normal
+ * or Last), under compare-and-set against the value the screen showed.
+ */
+internal object ChargerPriorityUpdate {
+    const val API_VERSION = 1
+
+    fun payload(expected: String, priority: String): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_charger_priority")
+        put("api_version", API_VERSION)
+        put("expected", expected)
+        put("priority", priority)
+    }
+
+    sealed interface Outcome {
+        data class Updated(val priority: ChargerPriority) : Outcome
+
+        /** Changed elsewhere first: adopt [priority] (when it came back). Nothing was written. */
+        data class Conflict(val priority: ChargerPriority?) : Outcome
+
+        data class Refused(val priority: ChargerPriority?) : Outcome
+
+        /** The charger is on no site (any more). */
+        data object NoSite : Outcome
+
+        data object NotSupported : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        val priority = ChargerPriority.parse(head.json.opt("charger_priority"))
+        if (head.ok) {
+            return if (head.error == null && priority != null) Outcome.Updated(priority) else Outcome.Failed(head.error)
+        }
+        return when (head.error) {
+            WriteEnvelope.CONFLICT -> Outcome.Conflict(priority)
+            WriteEnvelope.INVALID_VALUE -> Outcome.Refused(priority)
+            WriteEnvelope.NO_SITE -> Outcome.NoSite
             WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)
         }

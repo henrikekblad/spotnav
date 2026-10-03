@@ -227,6 +227,12 @@ object HomeAssistantClient {
         return SiteUpdate.answer(status, body)
     }
 
+    /** Change this charger's priority on its site (webhook `update_charger_priority`). */
+    internal fun updateChargerPriority(settings: HomeAssistantSettings, expected: String, priority: String): ChargerPriorityUpdate.Outcome {
+        val (status, body) = write(settings, ChargerPriorityUpdate.payload(expected, priority))
+        return ChargerPriorityUpdate.answer(status, body)
+    }
+
     /** One month of charge history (webhook `sessions`); `null` asks for the current month. Never throws. */
     internal fun sessionsMonth(settings: HomeAssistantSettings, month: YearMonth?): SessionsOutcome<SessionsMonth> {
         val (status, body) = write(settings, SessionsRead.payload(month))

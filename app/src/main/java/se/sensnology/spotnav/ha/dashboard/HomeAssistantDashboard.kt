@@ -180,6 +180,30 @@ internal data class DashboardPrices(
     val intervals: List<DashboardPriceInterval>
 )
 
+/**
+ * The `charger_priority` block (Home Assistant 1.9): this charger's place in its site's order, one of
+ * [VALUES]. [choices] keeps only values this app knows, in the order sent; [writable] is false for a
+ * reader. `null` on the dashboard for a charger on no site and from a Home Assistant without it.
+ */
+internal data class ChargerPriority(val value: String, val choices: List<String>, val writable: Boolean) {
+    companion object {
+        const val FIRST = "first"
+        const val NORMAL = "normal"
+        const val LAST = "last"
+        val VALUES = listOf(FIRST, NORMAL, LAST)
+
+        /** Read leniently: anything that does not state a known value is simply not there. */
+        fun parse(raw: Any?): ChargerPriority? {
+            val block = raw as? JSONObject ?: return null
+            val value = (block.opt("value") as? String)?.takeIf { it in VALUES } ?: return null
+            val sent = block.optJSONArray("choices")
+            val choices = (0 until (sent?.length() ?: 0)).mapNotNull { (sent?.opt(it) as? String)?.takeIf { c -> c in VALUES } }
+                .distinct().ifEmpty { VALUES }
+            return ChargerPriority(value, choices, block.opt("writable") == true)
+        }
+    }
+}
+
 internal data class DashboardSite(
     val name: String?,
     val writable: Boolean,
@@ -254,7 +278,9 @@ internal data class Dashboard(
      */
     val sessionsSummary: SessionsSummary? = null,
     /** The charger's connection state (Home Assistant 1.6); `null` when absent or `unknown`. */
-    val connection: ConnectionState? = null
+    val connection: ConnectionState? = null,
+    /** This charger's priority on its site (Home Assistant 1.9); `null` when absent, or on no site. */
+    val chargerPriority: ChargerPriority? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -337,7 +363,8 @@ internal data class Dashboard(
                 summary = DashboardSummary.parse(json.opt("summary")),
                 chargingPhases = chargingPhases(json.opt("charging_phases")),
                 sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary")),
-                connection = ChargerConnectionContract.of(json.optJSONObject("connection"))
+                connection = ChargerConnectionContract.of(json.optJSONObject("connection")),
+                chargerPriority = ChargerPriority.parse(json.opt("charger_priority"))
             )
         }
 

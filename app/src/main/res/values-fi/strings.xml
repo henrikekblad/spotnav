@@ -318,6 +318,12 @@
   <string name="section_solar">Aurinko</string>
   <string name="solar_change">Muuta aurinkoasetuksia</string>
   <string name="solar_dialog_title">Aurinkoasetukset</string>
+  <string name="priority_label">Prioriteetti</string>
+  <string name="priority_help">Mikä laturi saa virtaa ja aurinkoylijäämää ensin kohteessa</string>
+  <string name="priority_change">Muuta prioriteettia</string>
+  <string name="priority_first">Ensin</string>
+  <string name="priority_normal">Normaali</string>
+  <string name="priority_last">Viimeksi</string>
   <string name="value_none">Ei mitään</string>
   <string name="price_change">Muuta hinta-aluetta ja veroja</string>
   <string name="price_dialog_title">Alue ja verot</string>

@@ -1,0 +1,1 @@
+- Charger priority on a site: First, Normal or Last, shown and changed from the site card

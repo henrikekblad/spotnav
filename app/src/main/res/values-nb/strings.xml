@@ -318,6 +318,12 @@
   <string name="section_solar">Sol</string>
   <string name="solar_change">Endre solinnstillinger</string>
   <string name="solar_dialog_title">Solinnstillinger</string>
+  <string name="priority_label">Prioritet</string>
+  <string name="priority_help">Hvilken lader som får strøm og solenergioverskudd først på anlegget</string>
+  <string name="priority_change">Endre prioritet</string>
+  <string name="priority_first">Først</string>
+  <string name="priority_normal">Normal</string>
+  <string name="priority_last">Sist</string>
   <string name="value_none">Ingen</string>
   <string name="price_change">Endre prisområde og avgifter</string>
   <string name="price_dialog_title">Område og avgifter</string>

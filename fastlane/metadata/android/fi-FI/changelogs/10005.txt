@@ -1,0 +1,1 @@
+- Laturin prioriteetti kohteessa: Ensin, Normaali tai Viimeksi, näkyy ja muuttuu kohdekortissa

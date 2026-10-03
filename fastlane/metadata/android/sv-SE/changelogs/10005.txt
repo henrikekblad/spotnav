@@ -1,0 +1,1 @@
+- Laddarens prioritet på en anläggning: Först, Normal eller Sist, visas och ändras på anläggningskortet

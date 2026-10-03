@@ -15,11 +15,13 @@ import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
+import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
@@ -53,11 +55,16 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
     private var adoptedSite: DashboardSite? = null
     private val vehicleNotices = mutableMapOf<String, String>()
     private var solarNotice: String? = null
+    private var adoptedPriority: ChargerPriority? = null
+    private var priorityNotice: String? = null
 
     private var writeVehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(VehicleUpdate.Outcome.Failed(null)) }
     private var writeSite: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit =
         { _, done -> done(SiteUpdate.Outcome.Failed(null)) }
+
+    private var writePriority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
+        { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
 
     init {
         parent.addView(container)
@@ -66,10 +73,13 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
     /** Where the two writes are carried out (the screen owns the connection). */
     fun attachWrites(
         vehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit,
-        site: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit
+        site: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit,
+        priority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
+            { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
     ) {
         writeVehicle = vehicle
         writeSite = site
+        writePriority = priority
     }
 
     /** Paint [fresh] (the rows a write adopted give way to it); a failed read (`null`) leaves what is shown and says so only when nothing is. */
@@ -77,6 +87,7 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
         if (fresh != null && fresh !== dashboard) {
             adoptedVehicles.clear()
             adoptedSite = null
+            adoptedPriority = null
         }
         if (fresh != null) dashboard = fresh
         unreachable = fresh == null && dashboard == null
@@ -390,6 +401,79 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             listOfNotNull(reason, t(R.string.site_active_in_ha), t(R.string.site_active_note)).joinToString(" "),
             top = 6
         ))
+        addPriority(card.body)
+    }
+
+    // --- Charger priority -----------------------------------------------------------------------
+
+    private fun priorityName(value: String) = t(
+        when (value) {
+            ChargerPriority.FIRST -> R.string.priority_first
+            ChargerPriority.LAST -> R.string.priority_last
+            else -> R.string.priority_normal
+        }
+    )
+
+    private fun priorityNoticeText(notice: PairedVehicles.PriorityNotice) = t(
+        when (notice) {
+            PairedVehicles.PriorityNotice.CONFLICT -> R.string.site_error_conflict
+            PairedVehicles.PriorityNotice.INVALID -> R.string.paired_error_invalid
+            PairedVehicles.PriorityNotice.NO_SITE -> R.string.site_error_unavailable
+            PairedVehicles.PriorityNotice.NOT_SUPPORTED -> R.string.paired_error_version
+            PairedVehicles.PriorityNotice.FAILED -> R.string.paired_error_generic
+        }
+    )
+
+    /** The charger's priority on its site: absent from an older Home Assistant, so then nothing is shown. */
+    private fun addPriority(body: LinearLayout) {
+        val priority = adoptedPriority ?: dashboard?.chargerPriority ?: return
+        readRow(body, t(R.string.priority_label), priorityName(priority.value))
+        body.addView(muted(t(R.string.priority_help), top = 2))
+        if (!priority.writable) body.addView(muted(t(R.string.site_read_only), top = 4))
+        priorityNotice?.let { body.addView(muted(it, top = 4)) }
+        changeButton(body, t(R.string.priority_change), enabled = priority.writable) { openPriorityDialog() }
+    }
+
+    private fun openPriorityDialog() {
+        val shown = adoptedPriority ?: dashboard?.chargerPriority ?: return
+        if (!shown.writable) return
+        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        body.addView(muted(t(R.string.priority_help), bottom = 4))
+        val group = RadioGroup(context).apply { orientation = LinearLayout.VERTICAL }
+        val buttons = shown.choices.map { value ->
+            RadioButton(context).apply {
+                id = View.generateViewId()
+                text = priorityName(value)
+                isChecked = value == shown.value
+            }.also { group.addView(it) }
+        }
+        body.addView(group)
+        val error = errorView()
+        body.addView(error)
+
+        openSaveDialog(t(R.string.priority_label), body) { dialog, save ->
+            val current = adoptedPriority ?: dashboard?.chargerPriority ?: return@openSaveDialog
+            val chosen = current.choices.getOrNull(buttons.indexOfFirst { it.isChecked }) ?: current.value
+            if (chosen == current.value) {
+                dialog.dismiss()
+                return@openSaveDialog
+            }
+            error.say(null)
+            save.isEnabled = false
+            writePriority(current.value, chosen) { outcome ->
+                val feedback = PairedVehicles.feedback(outcome)
+                feedback.adopted?.let { adoptedPriority = it }
+                val message = feedback.notice?.let { priorityNoticeText(it) }
+                if (feedback.notice == null || feedback.reload) {
+                    priorityNotice = message
+                    dialog.dismiss()
+                    repaint()
+                } else {
+                    save.isEnabled = true
+                    error.say(message)
+                }
+            }
+        }
     }
 
     // --- Solar ----------------------------------------------------------------------------------
