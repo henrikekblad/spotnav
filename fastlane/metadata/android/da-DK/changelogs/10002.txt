@@ -2,3 +2,6 @@
 - Indstillinger viser, hvilken widget de gælder
 - En widget, hvis lader er væk, viser "Ikke forbundet" og kan kobles igen ved at trykke på den
 - Tilpasset Home Assistant-integrationen 1.2: Sol kræver målerens samlede effekt på nettet
+- Opladningshistorik pr. måned med CSV-eksport fra en parret lader
+- Faser følger laderens installation og bilens indbyggede lader
+- Afgangsdage, og ens priser lader sent, som i Home Assistant

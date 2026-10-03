@@ -2,3 +2,6 @@
 - Asetuksissa näkyy, mitä widgetiä ne koskevat
 - Widget, jonka laturi on poissa, näyttää "Ei yhdistetty" ja sen voi sitoa uudelleen napauttamalla
 - Sopii Home Assistant -integraatioon 1.2: Aurinko vaatii mittarin verkon kokonaistehon
+- Lataushistoria kuukausittain CSV-vientineen pariliitetystä laturista
+- Vaiheet noudattavat laturin asennusta ja auton omaa laturia
+- Lähtöpäivät, ja samanhintaiset tunnit ladataan myöhään kuten Home Assistantissa

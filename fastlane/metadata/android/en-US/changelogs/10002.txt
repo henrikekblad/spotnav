@@ -2,3 +2,6 @@
 - Settings says which widget it changes
 - A widget whose charger is gone says "Not linked" and can be rebound by tapping it
 - Matches Home Assistant integration 1.2: Solar needs the meter's total grid power
+- Charge history by month with CSV export, from a paired charger
+- Phases follow the charger's wiring and the car's onboard charger
+- Departure weekdays, and equal prices charge late, as in Home Assistant

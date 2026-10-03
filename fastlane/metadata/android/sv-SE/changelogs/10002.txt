@@ -2,3 +2,6 @@
 - Inställningarna visar vilken widget de gäller
 - En widget vars laddare är borta visar "Inte länkad" och kan kopplas om genom att trycka på den
 - Anpassad till Home Assistant-integrationen 1.2: Sol kräver mätarens totala näteffekt
+- Laddhistorik per månad med CSV-export, från en parad laddare
+- Faser följer laddarens installation och bilens inbyggda laddare
+- Avresedagar, och lika priser laddar sent, som i Home Assistant
