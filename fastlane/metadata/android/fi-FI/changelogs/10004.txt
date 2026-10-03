@@ -1,0 +1,8 @@
+- Iso-Britannia: 14 Octopus Agile -aluetta ja Etsi alueeni postinumerolla
+- Välityspalvelun sopimus v2, varalla v1; haetut hinnat säilyvät
+- Vuorokaudet alueen omassa ajassa markkinan tiedostoista
+- Puolen tunnin hinnat suunnitellaan varttitunteina
+- Hintaan jo sisältyvät osat lukitaan: Sisältyy hintaan
+- Hintojen lähde aluevalinnan alla
+- Punnat ja mailit Iso-Britanniassa
+- Sopii Home Assistantiin 1.8

@@ -1,0 +1,8 @@
+- Storbritannien: 14 Octopus Agile-regioner, med Hitta min region från ett postnummer
+- Reläkontrakt v2, med reserv till v1; hämtade priser behålls
+- Dygn i områdets egen tid, skurna ur marknadens filer
+- Halvtimmespriser planeras som kvartar
+- Delar som redan ingår i priset låses som Ingår i priset
+- Priskällan under områdesvalet
+- Pund och engelska mil i Storbritannien
+- Fungerar med Home Assistant 1.8

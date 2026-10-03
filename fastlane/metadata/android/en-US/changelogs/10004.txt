@@ -1,0 +1,8 @@
+- Great Britain: 14 Octopus Agile regions, with Find my region from a postcode
+- Relay contract v2, with a fallback to v1; held prices are kept
+- Days in the area's own time, cut from the market's files
+- Half-hour prices planned as quarter-hours
+- Parts already in the price are locked as Included in the price
+- The price source under the area choice
+- Pounds and miles in Great Britain
+- Matches Home Assistant 1.8
