@@ -37,7 +37,7 @@ class RelayContractV2Test {
         assertEquals(AreaSource("Octopus Energy (Agile)", "https://octopus.energy/smart/agile/"), gb.source)
         assertNull(gb.vatPercent)
         assertNull(gb.suggestedTax)
-        assertTrue(gb.usesMiles)
+        assertTrue(gb.inGreatBritain)
         // The relay's own name already says the region; the id is not repeated.
         assertEquals("GB C – London", gb.selectorLabel)
 
@@ -50,7 +50,7 @@ class RelayContractV2Test {
         val se4 = RelayV2Fixtures.area("SE4")
         assertEquals("Europe/Stockholm", se4.marketTz)
         assertEquals("SE4 – Malmö", se4.selectorLabel)
-        assertTrue(!se4.usesMiles)
+        assertTrue(!se4.inGreatBritain)
         // GB has no EIC in v2, and that is not a fault.
         assertNull(parsedAreas(RelayV2Fixtures.read("areas-v2.json"), 2)!!.first { it.id == "GB-C" }.eic)
     }

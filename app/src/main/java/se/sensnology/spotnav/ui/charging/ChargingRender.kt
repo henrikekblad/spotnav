@@ -39,10 +39,10 @@ internal fun ChargingScreen.periodLines(periods: List<ChargingPeriod>, zoneId: Z
     }
 }
 
-/** A distance in the person's own unit: mil for Swedish and Norwegian, kilometres elsewhere. */
-internal fun ChargingScreen.distanceText(mil: Double): String =
+/** A distance in the person's own unit: miles in Great Britain, mil for Swedish and Norwegian, kilometres elsewhere. */
+internal fun ChargingScreen.distanceText(mil: Double, miles: Boolean = false): String =
     "${t(R.string.approximately)} " +
-        DistanceUnit.text(mil, AppLanguageSettings.language(context), AppLanguageSettings.numberLocale(context))
+        DistanceUnit.text(mil, AppLanguageSettings.language(context), AppLanguageSettings.numberLocale(context), miles)
 
 /** One built paired chart and what it was built from. */
 internal class PairedChartMemo(
@@ -84,7 +84,7 @@ internal fun ChargingScreen.showPairedFigures(figures: PairedPlanFigures) {
         result.costRow.visibility = View.GONE
     }
     figures.energyKwh?.let { result.energyResult.text = kwhText(it) }
-    figures.distanceMil?.let { result.distance.text = distanceText(it) }
+    figures.distanceMil?.let { result.distance.text = distanceText(it, figures.miles) }
     result.note.text = if (figures.unpriced && figures.unpricedSlots > 0) {
         tq(R.plurals.unpriced_note, figures.unpricedSlots, figures.unpricedSlots)
     } else ""
@@ -249,7 +249,7 @@ internal fun ChargingScreen.render() {
         // A charge at unknown prices has no cost to state.
         planCard.result.costRow.visibility = if (unpriced) View.GONE else View.VISIBLE
         planCard.result.energyResult.text = kwhText(plan.energyKwh)
-        planCard.result.distance.text = distanceText(plan.distanceMil)
+        planCard.result.distance.text = distanceText(plan.distanceMil, PriceMarkets.find(plannedArea)?.inGreatBritain == true)
         planCard.result.note.text = when {
             unpriced -> tq(R.plurals.unpriced_note, plan.unpricedSlots, plan.unpricedSlots)
             plan.awaiting != null -> t(R.string.partly_waiting_for_prices, publicationTime(plan.awaiting, marketZone))

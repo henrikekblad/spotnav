@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.chart
 
+import se.sensnology.spotnav.app.MoneyText
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardMarket
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceInterval
@@ -30,7 +31,9 @@ internal data class PairedPlanFigures(
     val unpriced: Boolean,
     val unpricedSlots: Int,
     val energyKwh: Double?,
-    val distanceMil: Double?
+    val distanceMil: Double?,
+    /** Whether the distance is written in miles: the market is in Great Britain. */
+    val miles: Boolean = false
 )
 
 /** The chart a paired charger draws: Home Assistant's own prices and plan as the renderer's types. */
@@ -146,7 +149,8 @@ internal object DashboardChart {
                 unpriced = proposal.unpriced || (proposal.unpricedSlots ?: 0) > 0,
                 unpricedSlots = proposal.unpricedSlots ?: 0,
                 energyKwh = proposal.plannedKwh,
-                distanceMil = proposal.distanceMil
+                distanceMil = proposal.distanceMil,
+                miles = inGreatBritain(dashboard.market)
             )
         }
         if (installed != null && installed.periods.isNotEmpty()) {
@@ -159,6 +163,10 @@ internal object DashboardChart {
         }
         return null
     }
+
+    /** Whether [market] is in Great Britain: as the answer states its countries, else as the catalogue does. */
+    fun inGreatBritain(market: DashboardMarket): Boolean =
+        market.inGreatBritain || market.areaId?.let { PriceMarkets.find(it)?.inGreatBritain } == true
 
     /** The cost label: the market's major unit when the cost is in the market's currency, else the ISO code. */
     fun moneyUnit(currency: String, market: DashboardMarket): String =
@@ -183,10 +191,10 @@ internal object DashboardChart {
         )
     }
 
-    /** `"34.60 kr"`: a cost and its unit, in [locale]. */
+    /** `"34.60 kr"` (`"£1.33"` for the pound, see [MoneyText]): a cost and its unit, in [locale]. */
     fun costText(figures: PairedPlanFigures, locale: Locale): String? {
         val cost = figures.costMajor ?: return null
         val unit = figures.costUnit ?: return null
-        return String.format(locale, "%.2f %s", cost, unit)
+        return MoneyText.amount(cost, figures.costCurrency, unit, locale)
     }
 }

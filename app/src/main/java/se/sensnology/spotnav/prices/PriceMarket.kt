@@ -41,8 +41,8 @@ data class PriceMarket(
     /** Whether the published price already contains [part]. */
     fun includes(part: IncludedPart): Boolean = part in included
 
-    /** Whether distances are written in miles for this area: its countries include Great Britain. */
-    val usesMiles: Boolean get() = countries.any { it.equals(GREAT_BRITAIN, ignoreCase = true) }
+    /** Whether this area is in Great Britain (its countries include GB): distances are then written in miles. */
+    val inGreatBritain: Boolean get() = countries.any { it.equals(GREAT_BRITAIN, ignoreCase = true) }
 
     /**
      * The unit of a price that has been through `WidgetSettings.apply`, which is `local major x

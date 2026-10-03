@@ -296,7 +296,8 @@ internal object ChartRenderer {
                     context, R.plurals.charging_period_count, plan.periodCount, plan.periodCount
                 )
             val chargingText = "$unpricedPrefix${AppLanguageSettings.text(context, R.string.charge)} $timeText · ${String.format(numbers, "%.1f kWh", plan.energyKwh)}"
-            val rangeText = DistanceUnit.text(plan.distanceMil, AppLanguageSettings.language(context), numbers)
+            val miles = PriceMarkets.find(market.areaId)?.inGreatBritain == true
+            val rangeText = DistanceUnit.text(plan.distanceMil, AppLanguageSettings.language(context), numbers, miles)
             val chargingTextWithRange = "$chargingText · $rangeText"
             val footerText = if (paint.measureText(chargingTextWithRange) <= right - left) chargingTextWithRange else chargingText
             canvas.drawText(footerText, (left + right) / 2f, h - pad * .7f, paint)

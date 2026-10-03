@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.MoneyText
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.prices.AreaSelection
 import se.sensnology.spotnav.prices.PriceMarket
@@ -186,13 +187,13 @@ internal object AreaMoney {
 
 internal object CostLabel {
     /**
-     * `"3.95 kr"`, or `null` when the area is unavailable (the caller then shows its own
+     * `"3.95 kr"` (`"£1.33"` for Great Britain, see [MoneyText]), or `null` when the area is unavailable (the caller then shows its own
      * unavailable state rather than a number with no unit).
      */
     fun amount(costMajor: Double, facts: AreaMoneyFacts, locale: Locale): String? =
         when (facts) {
             is AreaMoneyFacts.Unavailable -> null
-            is AreaMoneyFacts.Available -> String.format(locale, "%.2f %s", costMajor, facts.majorUnit)
+            is AreaMoneyFacts.Available -> MoneyText.amount(costMajor, facts.currency, facts.majorUnit, locale)
         }
 }
 

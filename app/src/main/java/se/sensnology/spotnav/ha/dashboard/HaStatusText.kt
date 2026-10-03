@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.ha.dashboard
 
 import se.sensnology.spotnav.app.DistanceUnit
+import se.sensnology.spotnav.app.MoneyText
+import se.sensnology.spotnav.prices.PriceMarkets
 import java.text.NumberFormat
 import java.time.DayOfWeek
 import java.time.Instant
@@ -17,7 +19,9 @@ internal data class StatusFormat(
     val currency: String?,
     val majorUnit: String?,
     /** The locale numbers and dates are written in: the same one the screen's own rows use. */
-    val locale: Locale = Locale.forLanguageTag(language)
+    val locale: Locale = Locale.forLanguageTag(language),
+    /** Whether a distance is written in miles: the market is in Great Britain. */
+    val miles: Boolean = false
 ) {
     companion object {
         fun of(language: String, market: DashboardMarket, locale: Locale? = null) = StatusFormat(
@@ -25,7 +29,8 @@ internal data class StatusFormat(
             zone = market.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() },
             currency = market.currency,
             majorUnit = market.majorUnit,
-            locale = locale ?: Locale.forLanguageTag(language)
+            locale = locale ?: Locale.forLanguageTag(language),
+            miles = market.inGreatBritain || market.areaId?.let { PriceMarkets.find(it)?.inGreatBritain } == true
         )
     }
 }
@@ -138,13 +143,19 @@ internal object HaStatusText {
                 // The market's own major unit when the amount is in the market's currency, else the
                 // code.
                 val unit = if (currency == format.currency && format.majorUnit != null) format.majorUnit else currency
-                say(key, mapOf("cost" to "${number(format.locale, major, 2)} $unit".trim()))
+                // The pound is written as the locale writes money ("£1.33"); every other unit as before.
+                val cost = if (currency == "GBP") MoneyText.amount(major, currency, unit, format.locale)
+                    else "${number(format.locale, major, 2)} $unit".trim()
+                say(key, mapOf("cost" to cost))
             }
             "plan_distance" -> {
                 // Home Assistant states mil; the unit follows the app's language (km elsewhere).
                 val mil = num(p["mil"]) ?: 0.0
-                say(key, mapOf("distance" to if (DistanceUnit.usesMil(language)) "${number(format.locale, mil, 1)} mil"
-                    else "${number(format.locale, mil * 10, 0)} km"))
+                say(key, mapOf("distance" to when {
+                    format.miles -> "${number(format.locale, mil * 10 / DistanceUnit.KM_PER_MILE, 0)} mi"
+                    DistanceUnit.usesMil(language) -> "${number(format.locale, mil, 1)} mil"
+                    else -> "${number(format.locale, mil * 10, 0)} km"
+                }))
             }
             "solar_charging" -> {
                 val amps = num(p["requested_a"])
