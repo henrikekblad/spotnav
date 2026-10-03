@@ -114,11 +114,17 @@ class FakeRelayTransport(
     private val areas: String? = null,
     private val index: String? = null,
     private val days: Map<String, String> = emptyMap(),
-    private val failDays: Boolean = false
+    private val failDays: Boolean = false,
+    private val indexV2: String? = null
 ) : RelayTransport {
     val areasRequests = mutableListOf<String>()
     val indexRequests = mutableListOf<String>()
     val dayRequests = mutableListOf<String>()
+
+    override fun indexV2(): String? {
+        indexRequests.add(HttpRelayTransport.INDEX_V2_URL)
+        return indexV2
+    }
 
     override fun areas(): String? {
         areasRequests.add(AreaCatalogue.AREAS_URL)

@@ -237,7 +237,9 @@ class PriceRepositoryTest {
         assertTrue(parseDay(body(date = "2026-09-19")) is DayParse.Invalid)
         assertTrue(parseDay(body(tz = "Europe/Oslo")) is DayParse.Invalid)
         assertTrue(parseDay(body(unit = "SEK/kWh")) is DayParse.Invalid)
-        assertTrue(parseDay(RelayFixtures.dayBody(RelayFixtures.se4, "2026-09-20", listOf(0.01), "2026-09-20T00:00:00+02:00", res = 30)) is DayParse.Invalid)
+        // Contract v2 allows any whole divisor of an hour; this client plans 15, 30 and 60.
+        assertTrue(parseDay(RelayFixtures.dayBody(RelayFixtures.se4, "2026-09-20", listOf(0.01), "2026-09-20T00:00:00+02:00", res = 20)) is DayParse.Invalid)
+        assertTrue(parseDay(RelayFixtures.dayBody(RelayFixtures.se4, "2026-09-20", listOf(0.01), "2026-09-20T00:00:00+02:00", res = 30)) is DayParse.Ok)
         assertTrue(parseDay(RelayFixtures.dayBody(RelayFixtures.se4, "2026-09-20", emptyList(), "2026-09-20T00:00:00+02:00")) is DayParse.Invalid)
         assertTrue(parseDay("not json at all") is DayParse.Invalid)
         assertTrue(parseDay("{\"v\":2}") is DayParse.Invalid)

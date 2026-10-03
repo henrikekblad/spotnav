@@ -14,12 +14,35 @@ data class PriceMarket(
     val minorUnit: String,
     val vatPercent: Double? = null,
     val suggestedTax: Double? = null,
-    val suggestedGridFee: Double? = null
+    val suggestedGridFee: Double? = null,
+    /**
+     * The zone whose calendar day one relay day file covers (contract v2's `market_tz`); equal to [tz]
+     * for every area of a v1 list. Great Britain is shown in London and published on the Paris calendar.
+     */
+    val marketTz: String = tz,
+    /** The fiscal parts the published price already contains: locked as included, never added. */
+    val included: Set<IncludedPart> = emptySet(),
+    /** Where the prices come from (v2), shown under the area choice; `null` from a v1 list. */
+    val source: AreaSource? = null
 ) {
     /** The zone this area's days are rendered in. */
     val zoneId: ZoneId get() = ZoneId.of(tz)
 
-    val selectorLabel: String get() = "$id – $name"
+    /** The zone of the relay's market-day files for this area. */
+    val marketZoneId: ZoneId get() = ZoneId.of(marketTz)
+
+    /**
+     * The picker's label: `"SE4 – Malmö"`, or the relay's own name when it already starts with the
+     * id as people write it (`"GB C – London"` for `GB-C`), so the id is not said twice.
+     */
+    val selectorLabel: String
+        get() = if ('-' in id && name.startsWith(id.replace('-', ' ') + " ")) name else "$id – $name"
+
+    /** Whether the published price already contains [part]. */
+    fun includes(part: IncludedPart): Boolean = part in included
+
+    /** Whether distances are written in miles for this area: its countries include Great Britain. */
+    val usesMiles: Boolean get() = countries.any { it.equals(GREAT_BRITAIN, ignoreCase = true) }
 
     /**
      * The unit of a price that has been through `WidgetSettings.apply`, which is `local major x
@@ -51,8 +74,14 @@ data class PriceMarket(
             minorUnit = area.minorUnit,
             vatPercent = area.vatPercent,
             suggestedTax = area.suggestedTax,
-            suggestedGridFee = area.suggestedGridFee
+            suggestedGridFee = area.suggestedGridFee,
+            marketTz = area.marketTz,
+            included = area.included,
+            source = area.source
         )
+
+        /** The country code of the Great Britain regions (Octopus Agile). */
+        const val GREAT_BRITAIN = "GB"
     }
 }
 
@@ -61,19 +90,24 @@ data class PriceMarket(
  * snapshot, or both refusing to load.
  */
 object PriceMarkets {
+    private class Held(val areas: List<PriceMarket>, val version: Int)
+
     @Volatile
-    private var current: List<PriceMarket> = emptyList()
+    private var current: Held = Held(emptyList(), RelayContractVersion.V1)
 
     /** Every area currently selectable, in catalogue order. */
-    val all: List<PriceMarket> get() = current
+    val all: List<PriceMarket> get() = current.areas
+
+    /** The contract version the held catalogue was read in; the index is read in the same one. */
+    val version: Int get() = current.version
 
     /** Replace the catalogue atomically. */
-    fun replace(areas: List<PriceMarket>) {
-        current = areas
+    fun replace(areas: List<PriceMarket>, version: Int = RelayContractVersion.V1) {
+        current = Held(areas, version)
     }
 
     /** The area with this id, or `null`. */
-    fun find(area: String): PriceMarket? = current.firstOrNull { it.id == area }
+    fun find(area: String): PriceMarket? = current.areas.firstOrNull { it.id == area }
 }
 
 /**

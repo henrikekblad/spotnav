@@ -75,23 +75,37 @@ internal interface RelayTransport {
     fun areas(): String?
     fun index(): String?
     fun day(areaId: String, dateKey: String): String?
+
+    /** `/v2/areas.json`, keeping a 404 (a relay before contract v2) apart from a failure. */
+    fun areasV2(): RelayFetch = RelayFetch.NotFound
+
+    /** `/v2/index.json`, or `null`. */
+    fun indexV2(): String? = null
+
+    /** The index in the catalogue's own contract [version]. */
+    fun index(version: Int): String? = if (version == RelayContractVersion.V2) indexV2() else index()
 }
 
 /** The production transport: plain GETs, no cache-buster, no fallback host. */
 internal object HttpRelayTransport : RelayTransport {
     const val INDEX_URL = "https://spotnav.sensnology.se/v1/index.json"
+    const val INDEX_V2_URL = "https://spotnav.sensnology.se/v2/index.json"
     private const val BASE = "https://spotnav.sensnology.se/v1"
 
     override fun areas(): String? = RelayHttp.get(AreaCatalogue.AREAS_URL)
 
+    override fun areasV2(): RelayFetch = RelayHttp.fetch(AreaCatalogue.AREAS_V2_URL)
+
     override fun index(): String? = RelayHttp.get(INDEX_URL)
+
+    override fun indexV2(): String? = RelayHttp.get(INDEX_V2_URL)
 
     override fun day(areaId: String, dateKey: String): String? = RelayHttp.get(dayUrl(areaId, dateKey))
 
     /**
      * `v1/{area}/{YYYY}/{MM-DD}.json` from a `YYYY-MM-DD` key, exactly the path the relay
-     * publishes. The area id comes from the validated catalogue, never from anything a person
-     * typed.
+     * publishes (under contract v2 as under v1). The area id comes from the validated catalogue,
+     * never from anything a person typed.
      */
     fun dayUrl(areaId: String, dateKey: String): String =
         "$BASE/$areaId/${dateKey.substring(0, 4)}/${dateKey.substring(5)}.json"
@@ -103,6 +117,12 @@ object PriceRepository {
     internal const val CACHE_PREFS = "relay_price_cache"
     internal const val SCHEMA = "v1"
     internal const val INDEX_KEY = "$SCHEMA:index"
+
+    /**
+     * The held v2 index, beside the v1 one: day files are one document under both contracts, so the
+     * held days (`v1:{area}:{date}`) are read as they are whichever list the app reads.
+     */
+    internal const val INDEX_V2_KEY = "$SCHEMA:index_v2"
 
     private const val MEMORY_CACHE_MS = 10 * 60 * 1000L
     private const val FORCE_REFRESH_DEDUP_MS = 30 * 1000L
@@ -152,7 +172,8 @@ object PriceRepository {
         today: LocalDate,
         nowMillis: Long,
         forceRefresh: Boolean = false,
-        log: RelayLog = RelayLog.NONE
+        log: RelayLog = RelayLog.NONE,
+        version: Int = RelayContractVersion.V1
     ): PriceResult {
         // 1. An id the catalogue does not have is not a fetch, it is a refusal: nothing is
         // requested for it, today or tomorrow.
@@ -171,12 +192,17 @@ object PriceRepository {
 
         // 2 is the caller's, because the settings screen refreshes the catalogue for its own
         // reasons; 3 happens here, and its failure is not fatal.
-        val index = loadIndex(store, transport, nowMillis, log)
+        val index = loadIndex(store, transport, nowMillis, log, version)
         val zone = area.zoneId
-        val todayPrices = dayFor(store, transport, area, todayKey, index, previous?.today, previous?.todayFetchedAt, zone, nowMillis, log)
-        val tomorrowPrices = dayFor(
-            store, transport, area, today.plusDays(1).toString(), index,
-            previous?.tomorrow, previous?.tomorrowFetchedAt, zone, nowMillis, log
+        val todayPrices = displayDay(
+            store, transport, area, today, index, previous?.today, previous?.todayFetchedAt, zone, nowMillis, log,
+            requirePrincipal = false
+        )
+        // Tomorrow exists once its main market file is held, as Home Assistant and the web page say.
+        val tomorrowPrices = displayDay(
+            store, transport, area, today.plusDays(1), index,
+            previous?.tomorrow, previous?.tomorrowFetchedAt, zone, nowMillis, log,
+            requirePrincipal = true
         )
 
         if (todayPrices.points.isEmpty() && tomorrowPrices.points.isEmpty()) {
@@ -209,8 +235,8 @@ object PriceRepository {
         if (area == null) return emptyResult(nowMillis)
         cache["${area.id}:$today"]?.let { return it }
         val zone = area.zoneId
-        val todayDay = readCachedDay(store, area, today.toString(), zone, RelayLog.NONE)
-        val tomorrowDay = readCachedDay(store, area, today.plusDays(1).toString(), zone, RelayLog.NONE)
+        val todayDay = heldDisplayDay(store, area, today, zone, requirePrincipal = false)
+        val tomorrowDay = heldDisplayDay(store, area, today.plusDays(1), zone, requirePrincipal = true)
         if (todayDay == null && tomorrowDay == null) return emptyResult(nowMillis)
         return PriceResult(
             today = todayDay?.points.orEmpty(),
@@ -233,7 +259,72 @@ object PriceRepository {
         tomorrowFetchedAt = null
     )
 
-    /** One day, end to end: ask only when the index lists it, then resolve against what is held. */
+    /**
+     * One display day, end to end: the market-day files that cover it, each asked for only when the
+     * index lists it and resolved against what is held, then cut to the display day. Each piece keeps
+     * its own file's rate. With one calendar this is exactly one file, resolved as it always was.
+     */
+    private fun displayDay(
+        store: KeyValueStore,
+        transport: RelayTransport,
+        area: PriceMarket,
+        date: LocalDate,
+        index: RelayIndex?,
+        memoryPoints: List<PricePoint>?,
+        memoryFetchedAt: Long?,
+        zone: ZoneId,
+        nowMillis: Long,
+        log: RelayLog,
+        requirePrincipal: Boolean
+    ): DayPrices {
+        val keys = MarketDays.keysFor(date, area.tz, area.marketTz)
+        if (keys.size == 1 && keys[0] == date) {
+            return dayFor(store, transport, area, date.toString(), index, memoryPoints, memoryFetchedAt, zone, nowMillis, log)
+        }
+        val marketZone = area.marketZoneId
+        val pieces = keys.associateWith { key ->
+            val memory = memoryPoints?.let { MarketDays.within(it, key, marketZone) }
+            dayFor(store, transport, area, key.toString(), index, memory, memoryFetchedAt, zone, nowMillis, log)
+        }
+        return compose(pieces, MarketDays.principal(date, area.tz, area.marketTz), date, zone, requirePrincipal)
+    }
+
+    /** A display day from the market-day [pieces] that cover it, named by its [principal] file. */
+    private fun compose(
+        pieces: Map<LocalDate, DayPrices>,
+        principal: LocalDate,
+        date: LocalDate,
+        zone: ZoneId,
+        requirePrincipal: Boolean
+    ): DayPrices {
+        val main = pieces[principal]
+        if (requirePrincipal && main?.points.isNullOrEmpty()) return DayPrices(emptyList(), PriceSource.NONE, null)
+        val points = MarketDays.cut(pieces.values.flatMap { it.points }, date, zone)
+        if (points.isEmpty()) return DayPrices(emptyList(), PriceSource.NONE, null)
+        val named = main?.takeIf { it.points.isNotEmpty() } ?: pieces.values.first { it.points.isNotEmpty() }
+        return DayPrices(points, named.source, named.fetchedAt)
+    }
+
+    /** One display day from the disk alone, or `null` when nothing of it is held. */
+    private fun heldDisplayDay(
+        store: KeyValueStore,
+        area: PriceMarket,
+        date: LocalDate,
+        zone: ZoneId,
+        requirePrincipal: Boolean
+    ): HeldPrices? {
+        val keys = MarketDays.keysFor(date, area.tz, area.marketTz)
+        if (keys.size == 1 && keys[0] == date) return readCachedDay(store, area, date.toString(), zone, RelayLog.NONE)
+        val pieces = keys.associateWith { key ->
+            readCachedDay(store, area, key.toString(), zone, RelayLog.NONE)
+                ?.let { DayPrices(it.points, PriceSource.DISK, it.fetchedAt) }
+                ?: DayPrices(emptyList(), PriceSource.NONE, null)
+        }
+        val composed = compose(pieces, MarketDays.principal(date, area.tz, area.marketTz), date, zone, requirePrincipal)
+        return if (composed.points.isEmpty()) null else HeldPrices(composed.points, composed.fetchedAt)
+    }
+
+    /** One market-day file, end to end: ask only when the index lists it, then resolve against what is held. */
     private fun dayFor(
         store: KeyValueStore,
         transport: RelayTransport,
@@ -266,7 +357,7 @@ object PriceRepository {
         log: RelayLog
     ): FetchOutcome {
         val body = transport.day(area.id, dateKey) ?: return FetchOutcome.Failed
-        return when (val parsed = RelayDayParser.parse(body, area.id, area.tz, area.currency, dateKey)) {
+        return when (val parsed = RelayDayParser.parse(body, area.id, area.marketTz, area.currency, dateKey)) {
             is DayParse.Invalid -> {
                 log.log(LogLevel.ERROR, "Invalid day document ${area.id} $dateKey: ${parsed.reason}")
                 FetchOutcome.Failed
@@ -280,26 +371,29 @@ object PriceRepository {
         }
     }
 
-    /** The index, revalidated against the relay. */
+    /** The index in the catalogue's contract [version], revalidated against the relay. */
     private fun loadIndex(
         store: KeyValueStore,
         transport: RelayTransport,
         nowMillis: Long,
-        log: RelayLog
+        log: RelayLog,
+        version: Int
     ): RelayIndex? {
-        val held = heldIndex(store)
-        val body = transport.index() ?: return held
-        val parsed = RelayIndexParser.parse(body)
+        val held = heldIndex(store, version)
+        val body = transport.index(version) ?: return held
+        val parsed = RelayIndexParser.parse(body, version)
         if (parsed == null) {
             log.log(LogLevel.ERROR, "Malformed index; keeping the last valid one")
             return held
         }
-        store.putString(INDEX_KEY, body)
+        store.putString(indexKey(version), body)
         return parsed
     }
 
-    private fun heldIndex(store: KeyValueStore): RelayIndex? =
-        store.getString(INDEX_KEY)?.let { RelayIndexParser.parse(it) }
+    private fun indexKey(version: Int): String = if (version == RelayContractVersion.V2) INDEX_V2_KEY else INDEX_KEY
+
+    private fun heldIndex(store: KeyValueStore, version: Int): RelayIndex? =
+        store.getString(indexKey(version))?.let { RelayIndexParser.parse(it, version) }
 
     // The on-disk day cache
 
@@ -328,7 +422,7 @@ object PriceRepository {
         log: RelayLog
     ): HeldPrices? {
         val body = store.getString(dayKey(area.id, dateKey)) ?: return null
-        val parsed = RelayDayParser.parse(body, area.id, area.tz, area.currency, dateKey)
+        val parsed = RelayDayParser.parse(body, area.id, area.marketTz, area.currency, dateKey)
         if (parsed !is DayParse.Ok) {
             log.log(LogLevel.WARN, "Discarding an unreadable cached day ${area.id} $dateKey")
             return null
@@ -364,7 +458,10 @@ object PriceRepository {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
         val market = PriceMarkets.find(areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
-        return load(store, HttpRelayTransport, market, LocalDate.now(zone), System.currentTimeMillis(), forceRefresh, AndroidRelayLog)
+        return load(
+            store, HttpRelayTransport, market, LocalDate.now(zone), System.currentTimeMillis(), forceRefresh, AndroidRelayLog,
+            PriceMarkets.version
+        )
     }
 
     /** [heldOnly] for [areaId], against the catalogue currently held: no request, ever. */
@@ -375,11 +472,19 @@ object PriceRepository {
         return heldOnly(store, market, LocalDate.now(zone), System.currentTimeMillis())
     }
 
-    /** Whether a usable day is held for tomorrow -- the scheduler's publication check. */
+    /**
+     * Whether a usable day is held for tomorrow -- the scheduler's publication check: tomorrow's main
+     * market file (see [MarketDays.principal]).
+     */
     fun hasCachedTomorrow(context: Context, areaId: String): Boolean {
         val market = PriceMarkets.find(areaId) ?: return false
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
-        val tomorrow = LocalDate.now(market.zoneId).plusDays(1).toString()
-        return readCachedDay(store, market, tomorrow, market.zoneId, AndroidRelayLog) != null
+        return holdsTomorrow(store, market, LocalDate.now(market.zoneId), AndroidRelayLog)
+    }
+
+    /** Whether tomorrow's main market file (after [today] on the display calendar) is held. */
+    internal fun holdsTomorrow(store: KeyValueStore, market: PriceMarket, today: LocalDate, log: RelayLog = RelayLog.NONE): Boolean {
+        val principal = MarketDays.principal(today.plusDays(1), market.tz, market.marketTz)
+        return readCachedDay(store, market, principal.toString(), market.zoneId, log) != null
     }
 }

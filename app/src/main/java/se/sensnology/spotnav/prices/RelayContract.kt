@@ -1,21 +1,41 @@
 package se.sensnology.spotnav.prices
 
+import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.app.strictPositiveInt
 import se.sensnology.spotnav.app.strictText
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 /**
  * The relay's wire documents as *shapes* plus the validation each must pass before anything else in
- * the app believes it: `v1/areas.json`, `v1/index.json` and `v1/{area}/{YYYY}/{MM-DD}.json`.
+ * the app believes it: the area list and the index (`v2/…`, or `v1/…` from a relay that predates
+ * contract v2) and `v1/{area}/{YYYY}/{MM-DD}.json`, which is the same document under both.
  */
+
+/** The parts of a bill a published price may already contain (contract v2's `included`). */
+enum class IncludedPart(val wire: String) {
+    VAT("vat"),
+    TAX("tax"),
+    GRID_FEE("grid_fee");
+
+    companion object {
+        fun of(wire: Any?): IncludedPart? = entries.firstOrNull { it.wire == wire }
+    }
+}
+
+/** Where an area's prices come from, shown beside the area choice as attribution. */
+data class AreaSource(val name: String, val url: String)
+
 internal data class RelayArea(
     val id: String,
-    val eic: String,
+    /** The bidding zone's EIC; `null` for an area that has none (a Great Britain region, v2 only). */
+    val eic: String?,
     val countries: List<String>,
     val name: String,
+    /** The zone a person reads this area's times in. */
     val tz: String,
     val currency: String,
     val majorUnit: String,
@@ -23,7 +43,13 @@ internal data class RelayArea(
     /** `null` means the relay has no figure; `0.0` is a real zero (NO4's VAT). */
     val vatPercent: Double?,
     val suggestedTax: Double?,
-    val suggestedGridFee: Double?
+    val suggestedGridFee: Double?,
+    /** The zone whose calendar day one day file covers; equal to [tz] unless a v2 list says otherwise. */
+    val marketTz: String = tz,
+    /** What the published price already contains; those parts are locked, never added. */
+    val included: Set<IncludedPart> = emptySet(),
+    /** The v2 list's attribution; `null` from a v1 list, which states none. */
+    val source: AreaSource? = null
 ) {
     /** The zone, or `null` if this runtime cannot construct what the relay named. */
     val zoneId: ZoneId? get() = runCatching { ZoneId.of(tz) }.getOrNull()
@@ -43,15 +69,32 @@ private sealed interface Fiscal {
     data object Absent : Fiscal
 }
 
+/** The two published contracts of the area list and the index. Day files are one document in both. */
+internal object RelayContractVersion {
+    const val V1 = 1
+    const val V2 = 2
+}
+
+/** The resolutions this client can plan with: whole minutes that divide an hour, on the quarter-hour grid. */
+internal val RELAY_RESOLUTIONS: Set<Int> = setOf(15, 30, 60)
+
+/** An area id as the contract allows it: `[A-Z0-9-]{1,32}`. */
+internal fun isValidAreaId(id: String): Boolean =
+    id.isNotEmpty() && id.length <= RelayAreasParser.MAX_ID_LENGTH &&
+        id.all { it in 'A'..'Z' || it in '0'..'9' || it == '-' }
+
 internal object RelayAreasParser {
-    const val SUPPORTED_VERSION = 1
+    const val SUPPORTED_VERSION = RelayContractVersion.V1
     const val MAX_ID_LENGTH = 32
 
-    /** Parse and validate a whole catalogue document. */
-    fun parse(body: String): CatalogueParse {
+    /**
+     * Parse and validate a whole catalogue document of [version] (`/v1/areas.json` or `/v2/areas.json`):
+     * a document must say the version it was asked for.
+     */
+    fun parse(body: String, version: Int = RelayContractVersion.V1): CatalogueParse {
         val json = runCatching { JSONObject(body) }.getOrNull()
             ?: return CatalogueParse.Invalid("not a JSON object")
-        if (json.strictPositiveInt("v") != SUPPORTED_VERSION) {
+        if (json.strictPositiveInt("v") != version) {
             return CatalogueParse.Invalid("unsupported version")
         }
         val generated = json.strictText("generated")
@@ -64,20 +107,22 @@ internal object RelayAreasParser {
         val seen = HashSet<String>(array.length())
         for (index in 0 until array.length()) {
             // One bad entry is skipped, never the whole catalogue: the rest stays usable.
-            val parsed = array.optJSONObject(index)?.let { parseArea(it) } ?: continue
+            val parsed = array.optJSONObject(index)?.let { parseArea(it, version) } ?: continue
             if (!seen.add(parsed.id)) return CatalogueParse.Invalid("duplicate area id ${parsed.id}")
             areas.add(parsed)
         }
         if (areas.isEmpty()) return CatalogueParse.Invalid("no valid area")
-        return CatalogueParse.Ok(RelayCatalogue(SUPPORTED_VERSION, generated, areas))
+        return CatalogueParse.Ok(RelayCatalogue(version, generated, areas))
     }
 
     /** One entry, or `null` when anything required is missing, blank, the wrong shape, or unusable. */
-    private fun parseArea(entry: JSONObject): RelayArea? {
+    private fun parseArea(entry: JSONObject, version: Int): RelayArea? {
         val id = entry.strictText("id") ?: return null
-        if (id.length > MAX_ID_LENGTH) return null
-        if (id.any { it !in 'A'..'Z' && it !in '0'..'9' && it != '-' }) return null
-        val eic = entry.strictText("eic") ?: return null
+        if (!isValidAreaId(id)) return null
+        // Required in v1; optional in v2, where a Great Britain region has none. Present means a
+        // real code, in either.
+        val eic = entry.strictText("eic")
+        if (eic == null && (version == RelayContractVersion.V1 || entry.has("eic"))) return null
         val name = entry.strictText("name") ?: return null
         val tz = entry.strictText("tz") ?: return null
         val currency = entry.strictText("currency") ?: return null
@@ -86,6 +131,19 @@ internal object RelayAreasParser {
         // A zone only counts when this runtime can construct it: a catalogue naming a zone Android
         // does not know would otherwise fail later, on a screen, with nothing to explain why.
         if (runCatching { ZoneId.of(tz) }.isFailure) return null
+
+        // The v2 properties. A v1 list states none of them, and its zone is both calendars.
+        var marketTz = tz
+        var included = emptySet<IncludedPart>()
+        var source: AreaSource? = null
+        if (version == RelayContractVersion.V2) {
+            if (entry.has("market_tz")) {
+                marketTz = entry.strictText("market_tz") ?: return null
+                if (runCatching { ZoneId.of(marketTz) }.isFailure) return null
+            }
+            included = included(entry) ?: return null
+            source = source(entry.opt("source")) ?: return null
+        }
 
         val countries = entry.optJSONArray("countries") ?: return null
         if (countries.length() == 0) return null
@@ -105,8 +163,38 @@ internal object RelayAreasParser {
             currency = currency, majorUnit = majorUnit, minorUnit = minorUnit,
             vatPercent = (vat as? Fiscal.Num)?.value,
             suggestedTax = (tax as? Fiscal.Num)?.value,
-            suggestedGridFee = (gridFee as? Fiscal.Num)?.value
+            suggestedGridFee = (gridFee as? Fiscal.Num)?.value,
+            marketTz = marketTz,
+            included = included,
+            source = source
         )
+    }
+
+    /**
+     * `included`: absent is none; anything present must be a list of known names, each once. An
+     * unknown name skips the area rather than being ignored -- a client that does not know what the
+     * price already holds would add it a second time.
+     */
+    private fun included(entry: JSONObject): Set<IncludedPart>? {
+        if (!entry.has("included")) return emptySet()
+        val array = entry.opt("included") as? JSONArray ?: return null
+        val parts = LinkedHashSet<IncludedPart>()
+        for (index in 0 until array.length()) {
+            val part = IncludedPart.of(array.opt(index)) ?: return null
+            if (!parts.add(part)) return null
+        }
+        return parts
+    }
+
+    /** `source`: a name to show and an http(s) address, or `null`. */
+    private fun source(raw: Any?): AreaSource? {
+        val json = raw as? JSONObject ?: return null
+        val name = json.strictText("name") ?: return null
+        val url = json.strictText("url") ?: return null
+        val uri = runCatching { URI(url) }.getOrNull() ?: return null
+        val scheme = uri.scheme?.lowercase()
+        if ((scheme != "https" && scheme != "http") || uri.host.isNullOrEmpty()) return null
+        return AreaSource(name, url)
     }
 
     /**
@@ -121,7 +209,7 @@ internal object RelayAreasParser {
     }
 }
 
-/** `v1/index.json`: which immutable day documents exist, per area. */
+/** `v1/index.json` or `v2/index.json`: which immutable day documents exist, per area. */
 internal data class RelayIndex(
     val v: Int,
     val generated: String,
@@ -134,19 +222,20 @@ internal data class RelayIndex(
 }
 
 internal object RelayIndexParser {
-    const val SUPPORTED_VERSION = 1
+    const val SUPPORTED_VERSION = RelayContractVersion.V1
 
     private val DAY_PATTERN = Regex("""\d{4}-\d{2}-\d{2}""")
 
-    /** Parse an index, or `null` when it is not one this client can use. */
-    fun parse(body: String): RelayIndex? {
+    /** Parse an index of [version], or `null` when it is not one this client can use. */
+    fun parse(body: String, version: Int = RelayContractVersion.V1): RelayIndex? {
         val json = runCatching { JSONObject(body) }.getOrNull() ?: return null
-        if (json.strictPositiveInt("v") != SUPPORTED_VERSION) return null
+        if (json.strictPositiveInt("v") != version) return null
         val areas = json.optJSONObject("areas") ?: return null
         val days = HashMap<String, Set<String>>()
         val resolutions = HashMap<String, Int>()
         for (id in areas.keys()) {
             // An invalid area entry is skipped; the other areas keep their days.
+            if (!isValidAreaId(id)) continue
             val entry = areas.optJSONObject(id) ?: continue
             val array = entry.optJSONArray("days") ?: continue
             val listed = ArrayList<String>(array.length())
@@ -160,11 +249,14 @@ internal object RelayIndexParser {
                 listed.add(day)
             }
             if (!valid) continue
+            // A resolution this client cannot plan with skips the area, not the index.
+            val res = entry.strictPositiveInt("res")
+            if (entry.has("res") && res !in RELAY_RESOLUTIONS) continue
             days[id] = listed.toSet()
-            entry.strictPositiveInt("res")?.let { resolutions[id] = it }
+            res?.let { resolutions[id] = it }
         }
         return RelayIndex(
-            v = SUPPORTED_VERSION,
+            v = version,
             generated = json.strictText("generated").orEmpty(),
             areasRev = json.strictText("areas_rev").orEmpty(),
             resDefault = json.strictPositiveInt("res_default"),
@@ -178,7 +270,8 @@ internal object RelayIndexParser {
 internal data class RelayDayDocument(
     val area: String,
     val date: String,
-    val tz: String,
+    /** The market calendar the file's date belongs to (`market_tz`, else `tz`). */
+    val marketTz: String,
     val start: OffsetDateTime,
     val resMinutes: Int,
     val prices: List<Double>,
@@ -196,10 +289,14 @@ internal object RelayDayParser {
     const val UNIT = "EUR/kWh"
 
     /** What this client can lay out on a quarter-hour grid. */
-    val SUPPORTED_RESOLUTIONS = setOf(15, 60)
+    val SUPPORTED_RESOLUTIONS: Set<Int> = RELAY_RESOLUTIONS
 
-    /** Parse one day document for [area] and [requestedDate]. */
-    fun parse(body: String, areaId: String, areaTz: String, areaCurrency: String, requestedDate: String): DayParse {
+    /**
+     * Parse one day document for [areaId] and [requestedDate]. [areaMarketTz] is the area's market
+     * calendar, which the file's own `market_tz` (else its `tz`) must name: a Great Britain file is
+     * shown in London and dated in Paris, every v1 zone's file is one calendar.
+     */
+    fun parse(body: String, areaId: String, areaMarketTz: String, areaCurrency: String, requestedDate: String): DayParse {
         val json = runCatching { JSONObject(body) }.getOrNull()
             ?: return DayParse.Invalid("not a JSON object")
         if (json.strictPositiveInt("v") != SUPPORTED_VERSION) {
@@ -214,7 +311,8 @@ internal object RelayDayParser {
         if (json.strictText("unit") != UNIT) {
             return DayParse.Invalid("unit is not $UNIT")
         }
-        if (json.strictText("tz") != areaTz) {
+        val calendar = if (json.has("market_tz")) json.strictText("market_tz") else json.strictText("tz")
+        if (calendar != areaMarketTz) {
             return DayParse.Invalid("timezone does not match the catalogue")
         }
         val res = json.strictPositiveInt("res") ?: return DayParse.Invalid("res missing or invalid")
@@ -252,7 +350,7 @@ internal object RelayDayParser {
 
         return DayParse.Ok(
             RelayDayDocument(
-                area = areaId, date = requestedDate, tz = areaTz, start = start,
+                area = areaId, date = requestedDate, marketTz = areaMarketTz, start = start,
                 resMinutes = res, prices = prices, fxRate = fxRate
             )
         )
