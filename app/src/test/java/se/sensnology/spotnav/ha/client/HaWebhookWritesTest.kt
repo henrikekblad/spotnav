@@ -285,11 +285,11 @@ class HaWebhookWritesTest {
         assertFalse(webhook.activeControlWritable)
     }
 
-    @Test fun everyWriteAsksForTheWithheldDepartureDate() {
+    @Test fun everyWriteAsksForTheWithheldDepartureFields() {
         val reads = listOf(
             VehicleUpdate.payload("v", VehicleField.CAPACITY, 60.0, null),
             SiteUpdate.priorityRequest("car_first", "battery_first").payload()
         ).map { body -> List(body.getJSONArray("reads").length()) { body.getJSONArray("reads").getString(it) } }
-        reads.forEach { assertEquals(listOf("departure_date"), it) }
+        reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays"), it) }
     }
 }

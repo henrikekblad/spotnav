@@ -192,6 +192,9 @@
   <string name="departure_day_on_date">Ett visst datum</string>
   <string name="departure_date_help">Planen kan vänta på timmar som brukar vara billigare. Avresan hålls alltid.</string>
   <string name="departure_date_past">Datumet har passerat, så planen körs varje dag tills du väljer ett nytt datum. Sparar du rensas det.</string>
+  <string name="departure_weekdays_title">Veckodagar</string>
+  <string name="departure_weekdays_help">En dag du utelämnar har ingen avresa: planen löper till nästa dag du valt.</string>
+  <string name="departure_weekdays_error">Välj minst en veckodag.</string>
   <string name="departure_today">idag</string>
   <string name="departure_tomorrow">imorgon</string>
   <string name="plan_card_periods_note">Laddningen delas upp i högst så här många perioder.</string>

@@ -192,6 +192,9 @@
   <string name="departure_day_on_date">En bestemt dato</string>
   <string name="departure_date_help">Planen kan vente på timer som pleier å være billigere. Avreisen holdes alltid.</string>
   <string name="departure_date_past">Datoen er passert, så planen kjører hver dag til du velger en ny dato. Lagring fjerner den.</string>
+  <string name="departure_weekdays_title">Ukedager</string>
+  <string name="departure_weekdays_help">På en dag du utelater er det ingen avreise: planen går til neste dag du har valgt.</string>
+  <string name="departure_weekdays_error">Velg minst én ukedag.</string>
   <string name="departure_today">i dag</string>
   <string name="departure_tomorrow">i morgen</string>
   <string name="plan_card_periods_note">Ladingen deles i høyst så mange perioder.</string>

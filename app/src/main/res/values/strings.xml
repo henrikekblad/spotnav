@@ -206,6 +206,9 @@
   <string name="departure_day_on_date">On a date</string>
   <string name="departure_date_help">The plan may wait for hours that are usually cheaper. The departure is always kept.</string>
   <string name="departure_date_past">This date has gone by, so the plan runs every day until you choose a new date. Saving clears it.</string>
+  <string name="departure_weekdays_title">Weekdays</string>
+  <string name="departure_weekdays_help">On a day you leave out there is no departure: the plan runs to the next day you choose.</string>
+  <string name="departure_weekdays_error">Choose at least one weekday.</string>
   <string name="departure_today">today</string>
   <string name="departure_tomorrow">tomorrow</string>
   <string name="plan_card_periods_note">The plan is split into at most this many charging windows.</string>

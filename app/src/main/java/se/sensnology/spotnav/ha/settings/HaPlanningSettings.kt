@@ -71,10 +71,18 @@ data class HaPlanningSettings(
     val departureTime: String,
     /** A departure on one particular day (ISO date in the area's zone), or `null` for every day. */
     val departureDate: LocalDate? = null,
+    /**
+     * The weekdays a daily departure applies on, 1 (Monday) to 7 (Sunday), ascending and never
+     * empty; every day for a record that states none.
+     */
+    val departureWeekdays: List<Int> = ALL_WEEKDAYS,
     val strategy: HaSettingsStrategy,
     val driver: HaSettingsDriver,
     val target: HaTargetIntent
 )
+
+/** Every weekday, Monday (1) to Sunday (7): what a record without `departure_weekdays` means. */
+val ALL_WEEKDAYS: List<Int> = (1..7).toList()
 
 /** A refusal from the contract codec, carrying a stable code rather than prose alone. */
 internal class HaSettingsFormatException(

@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ui.charging
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.SeekBar
@@ -432,7 +433,8 @@ internal class ChargingScreen(
             HaSettingsEdit.Departure(
                 enabled,
                 "%02d:%02d".format(planCard.departureHour(), planCard.departureMinute()),
-                date
+                date,
+                planCard.departureWeekdays()
             )
         )
     }
@@ -578,6 +580,20 @@ internal class ChargingScreen(
                 datePicker.minDate = days.today.atStartOfDay(zone).toInstant().toEpochMilli()
                 datePicker.maxDate = days.max.atStartOfDay(zone).toInstant().toEpochMilli()
             }.show()
+        }
+        planCard.weekdayBoxes.forEach { box ->
+            box.setOnCheckedChangeListener { _, checked ->
+                if (authorityApplying) return@setOnCheckedChangeListener
+                if (!checked && planCard.departureWeekdays().isEmpty()) {
+                    // At least one day: the last one stays, and the card says why.
+                    authorityApplying = true
+                    try { box.isChecked = true } finally { authorityApplying = false }
+                    planCard.weekdayError.visibility = View.VISIBLE
+                    return@setOnCheckedChangeListener
+                }
+                planCard.weekdayError.visibility = View.GONE
+                commitDeparture(planCard.useDeparture.isChecked, planCard.departureDate())
+            }
         }
         planCard.useDeparture.setOnCheckedChangeListener { _, checked ->
             if (authorityApplying) {

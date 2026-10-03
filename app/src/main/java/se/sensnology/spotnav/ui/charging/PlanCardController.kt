@@ -51,8 +51,10 @@ import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import se.sensnology.spotnav.widget.WidgetSettings
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 
 internal class PlanCardController(scope: ViewScope, private val shell: ScreenShell) : ViewScope(scope) {
@@ -201,6 +203,46 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         }
         dayGroup.addView(pastNote)
         dayGroup.addView(dateHelp)
+        // The weekdays a daily departure applies on: one box per day, Monday first, named in the
+        // app's language. They belong to "Every day"; a chosen date overrides them.
+        val weekdayGroup = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(0, dp(10), 0, 0)
+        }
+        weekdayGroup.addView(TextView(context).apply {
+            text = t(R.string.departure_weekdays_title)
+            textSize = 14f
+            setTextColor(dark)
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        val weekdayBoxes = DayOfWeek.entries.map { day ->
+            CheckBox(context).apply {
+                text = day.getDisplayName(TextStyle.SHORT, dayLocale())
+                isChecked = true
+            }
+        }
+        weekdayBoxes.chunked(4).forEach { rowBoxes ->
+            weekdayGroup.addView(LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                rowBoxes.forEach { addView(it, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)) }
+                // The shorter row keeps the same column widths as the row above it:
+                repeat(4 - rowBoxes.size) { addView(View(context), LinearLayout.LayoutParams(0, 0, 1f)) }
+            })
+        }
+        val weekdayError = TextView(context).apply {
+            text = t(R.string.departure_weekdays_error)
+            textSize = 13f
+            setTextColor(0xFFD65C5C.toInt())
+            visibility = View.GONE
+        }
+        weekdayGroup.addView(weekdayError)
+        weekdayGroup.addView(TextView(context).apply {
+            text = t(R.string.departure_weekdays_help)
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(4), 0, 0)
+        })
+        dayGroup.addView(weekdayGroup)
         departureControl.addView(dayGroup)
         val departureValue = valueLabel()
         val departurePopoverValue = valueLabel()
@@ -235,6 +277,8 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             dateButton.isEnabled = onDateRadio.isEnabled && departureDays != null
             dateButton.text = date?.let { DateTimeFormatter.ofPattern("EEE d MMM", dayLocale()).format(it) }.orEmpty()
             dateHelp.visibility = if (date != null) View.VISIBLE else View.GONE
+            weekdayGroup.visibility = if (date == null) View.VISIBLE else View.GONE
+            weekdayBoxes.forEach { it.isEnabled = dailyRadio.isEnabled }
             pastNote.visibility = if (past) View.VISIBLE else View.GONE
         }
         refreshDepartureLabel()
@@ -390,6 +434,15 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             setDepartureDate = { date ->
                 departureDate = date
                 refreshDepartureLabel()
+            },
+            weekdayBoxes = weekdayBoxes,
+            weekdayError = weekdayError,
+            departureWeekdays = {
+                weekdayBoxes.mapIndexedNotNull { index, box -> (index + 1).takeIf { box.isChecked } }
+            },
+            setDepartureWeekdays = { days ->
+                weekdayBoxes.forEachIndexed { index, box -> box.isChecked = (index + 1) in days }
+                weekdayError.visibility = View.GONE
             },
             departureDays = { departureDays },
             setDepartureDays = { days, shown ->
@@ -602,6 +655,11 @@ internal class PlanCard(
     /** The day the departure names, or `null` for every day. */
     val departureDate: () -> LocalDate?,
     val setDepartureDate: (LocalDate?) -> Unit,
+    /** The seven weekday boxes, Monday first, the error under them, and the days that are ticked. */
+    val weekdayBoxes: List<CheckBox>,
+    val weekdayError: TextView,
+    val departureWeekdays: () -> List<Int>,
+    val setDepartureWeekdays: (List<Int>) -> Unit,
     /** The days the area's zone offers now (or `null`), and whether the day block is shown at all. */
     val departureDays: () -> DepartureDays?,
     val setDepartureDays: (DepartureDays?, Boolean) -> Unit,

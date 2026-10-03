@@ -18,20 +18,21 @@ internal object HaSettingsCodec {
         "departure_enabled",
         "departure_time",
         "departure_date",
+        "departure_weekdays",
         "strategy",
         "driver",
         "target"
     )
 
     /**
-     * What a response must carry: the body plus the revision the record is at. `departure_date` is
-     * the one body key a response may leave out (an older Home Assistant, or a request that did
-     * not ask for it): it then reads as no date.
+     * What a response must carry: the body plus the revision the record is at. `departure_date` and
+     * `departure_weekdays` are the body keys a response may leave out (an older Home Assistant, or a
+     * request that did not ask for them): they then read as no date and every weekday.
      */
-    val RESPONSE_KEYS: Set<String> = BODY_KEYS - "departure_date" + "revision"
+    val RESPONSE_KEYS: Set<String> = BODY_KEYS - "departure_date" - "departure_weekdays" + "revision"
 
-    /** A key a record may carry although it need not (see [RESPONSE_KEYS]). */
-    private val OPTIONAL_KEYS = setOf("departure_date")
+    /** Keys a record may carry although it need not (see [RESPONSE_KEYS]). */
+    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays")
 
     private val OVERRIDE_KEYS = setOf("area_id", "vat", "tax", "transfer")
     private val FISCAL_KEYS = setOf("enabled", "value")
@@ -99,6 +100,7 @@ internal object HaSettingsCodec {
             departureEnabled = boolean(raw.opt("departure_enabled"), "departure_enabled", "invalid_departure"),
             departureTime = wallTime(raw.opt("departure_time")),
             departureDate = nullable(raw.opt("departure_date")) { departureDate(it) },
+            departureWeekdays = nullable(raw.opt("departure_weekdays")) { weekdays(it) } ?: ALL_WEEKDAYS,
             strategy = HaSettingsStrategy.of(
                 enum(raw.opt("strategy"), HaSettingsStrategy.entries.map { it.wire }, "invalid_strategy")
             )!!,
@@ -210,6 +212,18 @@ internal object HaSettingsCodec {
         }
     }
 
+    /** A list of distinct ISO weekdays, 1 (Monday) to 7 (Sunday), at least one, read ascending. */
+    private fun weekdays(raw: Any): List<Int> {
+        val list = raw as? JSONArray ?: refuse("invalid_departure", "departure_weekdays must be a list")
+        val days = (0 until list.length()).map { index ->
+            whole(list.opt(index), "a departure weekday", "invalid_departure", 1, 7)
+        }
+        if (days.isEmpty() || days.toSet().size != days.size) {
+            refuse("invalid_departure", "departure_weekdays must name each chosen day once, and at least one")
+        }
+        return days.sorted()
+    }
+
     private fun wallTime(raw: Any?): String {
         val value = raw as? String ?: refuse("invalid_departure", "departure_time must be a wall time string")
         if (!WALL_TIME.matcher(value).matches()) {
@@ -240,6 +254,7 @@ internal object HaSettingsCodec {
             put("departure_enabled", settings.departureEnabled)
             put("departure_time", settings.departureTime)
             putNullable("departure_date", settings.departureDate?.toString())
+            put("departure_weekdays", JSONArray(settings.departureWeekdays.sorted()))
             put("strategy", settings.strategy.wire)
             put("driver", settings.driver.wire)
             put("target", JSONObject().apply {

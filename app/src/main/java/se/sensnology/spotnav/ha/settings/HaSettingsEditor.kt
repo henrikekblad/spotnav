@@ -26,10 +26,15 @@ internal sealed interface HaSettingsEdit {
     data class MaxPeriods(val maxPeriods: Int) : HaSettingsEdit
 
     /**
-     * Departure, as a whole state: whether it applies, the wall time it is, and the day (`null`
-     * for every day).
+     * Departure, as a whole state: whether it applies, the wall time it is, the day (`null` for
+     * every day) and the weekdays a daily departure applies on (`null` keeps the record's own).
      */
-    data class Departure(val enabled: Boolean, val time: String, val date: LocalDate?) : HaSettingsEdit
+    data class Departure(
+        val enabled: Boolean,
+        val time: String,
+        val date: LocalDate?,
+        val weekdays: List<Int>? = null
+    ) : HaSettingsEdit
 
     /** What drives the plan, and the target intent that goes with it. */
     data class Driver(val driver: HaSettingsDriver, val target: HaTargetIntent) : HaSettingsEdit
@@ -76,7 +81,12 @@ internal object HaSettingsEditor {
         is HaSettingsEdit.Energy -> confirmed.copy(requestedKwh = edit.requestedKwh)
         is HaSettingsEdit.MaxPeriods -> confirmed.copy(maxPeriods = edit.maxPeriods)
         is HaSettingsEdit.Departure ->
-            confirmed.copy(departureEnabled = edit.enabled, departureTime = edit.time, departureDate = edit.date)
+            confirmed.copy(
+                departureEnabled = edit.enabled,
+                departureTime = edit.time,
+                departureDate = edit.date,
+                departureWeekdays = edit.weekdays ?: confirmed.departureWeekdays
+            )
         is HaSettingsEdit.Driver -> confirmed.copy(driver = edit.driver, target = edit.target)
         is HaSettingsEdit.Fiscal -> confirmed.copy(overrides = withComponent(confirmed, edit))
         is HaSettingsEdit.Strategy -> confirmed.copy(strategy = edit.strategy)

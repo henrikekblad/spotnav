@@ -296,4 +296,29 @@ class HaPlanningSettingsTest {
             refusal("invalid_departure", { HaSettingsCodec.parseResponse(response(departureDate = bad)) })
         }
     }
+
+    @Test fun theDepartureWeekdaysDefaultToEveryDayAndAReplacementAlwaysStatesThem() {
+        // Absent (a response that was not asked for them) reads as every weekday.
+        assertEquals((1..7).toList(), HaSettingsCodec.parseResponse(response()).departureWeekdays)
+        refusal("missing_field", { HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(parsed()).apply { remove("departure_weekdays") }) })
+
+        val workdays = HaSettingsCodec.parseResponse(response().put("departure_weekdays", JSONArray(listOf(5, 1, 3))))
+        assertEquals(listOf(1, 3, 5), workdays.departureWeekdays)
+        assertEquals(listOf(1, 3, 5), List(3) { HaSettingsCodec.encodeBody(workdays).getJSONArray("departure_weekdays").getInt(it) })
+        assertEquals(workdays.copy(revision = 0), HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(workdays)))
+
+        for (bad in listOf(JSONArray(), JSONArray(listOf(0)), JSONArray(listOf(8)), JSONArray(listOf(2, 2)), "mon", 3)) {
+            refusal("invalid_departure", { HaSettingsCodec.parseResponse(response().put("departure_weekdays", bad)) })
+        }
+    }
+
+    @Test fun aDepartureEditKeepsTheRecordsWeekdaysUnlessItNamesThem() {
+        val record = HaSettingsCodec.parseResponse(response().put("departure_weekdays", JSONArray(listOf(1, 2))))
+        val kept = HaSettingsEditor.replacement(record, HaSettingsEdit.Departure(true, "08:00", null)) as HaSettingsEditResult.Ready
+        assertEquals(listOf(1, 2), kept.settings.departureWeekdays)
+        val changed = HaSettingsEditor.replacement(record, HaSettingsEdit.Departure(true, "08:00", null, listOf(6, 7))) as HaSettingsEditResult.Ready
+        assertEquals(listOf(6, 7), changed.settings.departureWeekdays)
+        val empty = HaSettingsEditor.replacement(record, HaSettingsEdit.Departure(true, "08:00", null, emptyList()))
+        assertEquals("invalid_departure", (empty as HaSettingsEditResult.Refused).code)
+    }
 }

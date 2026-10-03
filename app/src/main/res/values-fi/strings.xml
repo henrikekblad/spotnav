@@ -192,6 +192,9 @@
   <string name="departure_day_on_date">Tietty päivämäärä</string>
   <string name="departure_date_help">Suunnitelma voi odottaa tunteja, jotka ovat yleensä halvempia. Lähtö pidetään aina.</string>
   <string name="departure_date_past">Päivämäärä on mennyt ohi, joten suunnitelma toimii joka päivä, kunnes valitset uuden päivämäärän. Tallennus tyhjentää sen.</string>
+  <string name="departure_weekdays_title">Viikonpäivät</string>
+  <string name="departure_weekdays_help">Pois jätettynä päivänä ei ole lähtöä: suunnitelma ulottuu seuraavaan valitsemaasi päivään.</string>
+  <string name="departure_weekdays_error">Valitse vähintään yksi viikonpäivä.</string>
   <string name="departure_today">tänään</string>
   <string name="departure_tomorrow">huomenna</string>
   <string name="plan_card_periods_note">Lataus jaetaan enintään näin moneen jaksoon.</string>

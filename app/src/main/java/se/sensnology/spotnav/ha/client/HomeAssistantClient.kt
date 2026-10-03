@@ -55,7 +55,7 @@ internal class WebhookHttpStatusException(
  * (`docs/api.md`, "Withheld settings field"). Every request the app sends names them.
  */
 internal object WebhookReads {
-    val FIELDS: List<String> = listOf("departure_date")
+    val FIELDS: List<String> = listOf("departure_date", "departure_weekdays")
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
 }

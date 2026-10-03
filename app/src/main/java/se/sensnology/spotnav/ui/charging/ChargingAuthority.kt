@@ -68,6 +68,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings): St
         val minute = parts.getOrNull(1)?.toIntOrNull()
         if (hour != null && minute != null) planCard.setDeparture(hour, minute)
         planCard.setDepartureDate(record.departureDate)
+        planCard.setDepartureWeekdays(record.departureWeekdays)
         syncDepartureDays()
         planCard.refreshDepartureLabel()
         // The exact readings last, and handed back: the labels above were written from the
