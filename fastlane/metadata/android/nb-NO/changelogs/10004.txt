@@ -6,3 +6,4 @@
 - Priskilden under områdevalget
 - Pund og engelske mil i Storbritannia
 - Passer med Home Assistant 1.8
+- Ryddigere laderkort; energi i halve kWh

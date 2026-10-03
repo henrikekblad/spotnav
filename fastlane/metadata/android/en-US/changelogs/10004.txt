@@ -6,3 +6,4 @@
 - The price source under the area choice
 - Pounds and miles in Great Britain
 - Matches Home Assistant 1.8
+- Tidier charger card; energy in half kWh

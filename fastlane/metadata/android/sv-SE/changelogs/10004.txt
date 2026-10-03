@@ -6,3 +6,4 @@
 - Priskällan under områdesvalet
 - Pund och engelska mil i Storbritannien
 - Fungerar med Home Assistant 1.8
+- Tydligare laddarkort; energi i halva kWh

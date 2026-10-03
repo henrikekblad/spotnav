@@ -6,3 +6,4 @@
 - Hintojen lähde aluevalinnan alla
 - Punnat ja mailit Iso-Britanniassa
 - Sopii Home Assistantiin 1.8
+- Selkeämpi laturikortti; energia puolen kWh:n välein
