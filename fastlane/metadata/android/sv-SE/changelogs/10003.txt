@@ -1,0 +1,3 @@
+- Laddarens status efter bilens laddning, t.ex. "EV6 · 96 % · Ansluten"
+- Ingen avisering om utebliven ström för en full bil
+- Ett ogiltigt prisområde döljer inte längre alla områden

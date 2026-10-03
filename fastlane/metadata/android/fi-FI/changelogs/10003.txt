@@ -1,0 +1,3 @@
+- Laturin tila auton latauksen jälkeen, esim. "EV6 · 96 % · Kytketty"
+- Ei ilmoitusta puuttuvasta virrasta täydelle autolle
+- Yksi virheellinen hinta-alue ei enää piilota kaikkia alueita

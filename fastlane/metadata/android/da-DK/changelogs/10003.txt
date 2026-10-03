@@ -1,0 +1,3 @@
+- Opladerens status efter bilens opladning, f.eks. "EV6 · 96 % · Tilsluttet"
+- Ingen besked om manglende strøm for en fuld bil
+- Ét ugyldigt prisområde skjuler ikke længere alle områder

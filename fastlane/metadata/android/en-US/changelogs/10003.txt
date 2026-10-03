@@ -1,0 +1,3 @@
+- Charger status after the car's charge, e.g. "EV6 · 96 % · Connected"
+- No "not requesting current" notice for a full car
+- One invalid price area no longer hides all areas
