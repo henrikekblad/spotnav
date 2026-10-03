@@ -330,6 +330,7 @@
     <item quantity="one">Ladestrøm · %1$d fase</item>
     <item quantity="other">Ladestrøm · %1$d faser</item>
   </plurals>
+  <string name="charge_current_limited_by_vehicle">%1$s (bilen)</string>
   <string name="vehicle_onboard_label">Indbygget lader</string>
   <string name="vehicle_onboard_note">Det højeste antal faser, bilens egen lader klarer. En enfaset bil lader på én fase, selv på en trefaset lader.</string>
   <string name="vehicle_error_onboard">Den indbyggede lader skal være enfaset eller trefaset.</string>

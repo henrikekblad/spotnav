@@ -229,7 +229,11 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             val block = pairedPhases?.takeUnless { phaseEditorShown }
             ampsRow.label?.text = ChargingPhasesText.currentLabel(
                 block?.phases, t(R.string.charge_current)
-            ) { count -> tq(R.plurals.charge_current_on_phases, count, count) }
+            ) { count ->
+                val label = tq(R.plurals.charge_current_on_phases, count, count)
+                // Fewer phases than the charger is wired for: name the car as the reason.
+                if (block?.limitedByVehicle == true) t(R.string.charge_current_limited_by_vehicle, label) else label
+            }
         }
 
         // The charge history, for a paired charger whose dashboard carries `sessions_summary`: one

@@ -330,6 +330,7 @@
     <item quantity="one">Laddström · %1$d fas</item>
     <item quantity="other">Laddström · %1$d faser</item>
   </plurals>
+  <string name="charge_current_limited_by_vehicle">%1$s (bilen)</string>
   <string name="vehicle_onboard_label">Inbyggd laddare</string>
   <string name="vehicle_onboard_note">Det högsta antal faser bilens egen laddare klarar. En enfasbil laddar på en fas även på en trefasladdare.</string>
   <string name="vehicle_error_onboard">Den inbyggda laddaren måste vara enfas eller trefas.</string>

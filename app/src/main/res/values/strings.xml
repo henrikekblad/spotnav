@@ -343,6 +343,7 @@
     <item quantity="one">Charging current · %1$d phase</item>
     <item quantity="other">Charging current · %1$d phases</item>
   </plurals>
+  <string name="charge_current_limited_by_vehicle">%1$s (the car)</string>
   <string name="vehicle_onboard_label">Onboard charger</string>
   <string name="vehicle_onboard_note">The most phases the car\'s own charger takes. A single-phase car charges on one phase even on a three-phase charger.</string>
   <string name="vehicle_error_onboard">The onboard charger must be single or three phase.</string>

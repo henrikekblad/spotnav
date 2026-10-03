@@ -330,6 +330,7 @@
     <item quantity="one">Latausvirta · %1$d vaihe</item>
     <item quantity="other">Latausvirta · %1$d vaihetta</item>
   </plurals>
+  <string name="charge_current_limited_by_vehicle">%1$s (auto)</string>
   <string name="vehicle_onboard_label">Auton oma laturi</string>
   <string name="vehicle_onboard_note">Suurin vaiheiden määrä, jonka auton oma laturi kestää. Yksivaiheinen auto lataa yhdellä vaiheella myös kolmivaiheisella laturilla.</string>
   <string name="vehicle_error_onboard">Auton oman laturin on oltava yksi- tai kolmivaiheinen.</string>
