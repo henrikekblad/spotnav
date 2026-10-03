@@ -232,7 +232,9 @@ internal data class Dashboard(
      * This and last month's charge totals; `null` from a Home Assistant that records no charge
      * history. The History view is offered only when it is there.
      */
-    val sessionsSummary: SessionsSummary? = null
+    val sessionsSummary: SessionsSummary? = null,
+    /** The charger's connection state (Home Assistant 1.6); `null` when absent or `unknown`. */
+    val connection: ConnectionState? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -319,7 +321,8 @@ internal data class Dashboard(
                 site = optObj(json, "site")?.let(::parseSite),
                 summary = DashboardSummary.parse(json.opt("summary")),
                 chargingPhases = chargingPhases(json.opt("charging_phases")),
-                sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary"))
+                sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary")),
+                connection = ChargerConnectionContract.of(json.optJSONObject("connection"))
             )
         }
 

@@ -33,6 +33,10 @@
     "phases": 1,
     "vehicle": 3
   },
+  "connection": {
+    "source": null,
+    "state": "unknown"
+  },
   "control": {
     "automatic_action": "pause",
     "automatic_action_reason": null,
@@ -2283,7 +2287,8 @@
       "name": "EV6",
       "onboard_phases": 3,
       "soc_entity_id": "sensor.ev6_battery",
-      "soc_percent": 81.1428571428572
+      "soc_percent": 81.1428571428572,
+      "suggested_onboard_phases": null
     }
   ]
 }

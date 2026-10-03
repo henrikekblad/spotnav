@@ -364,4 +364,10 @@
   <string name="history_unsupported">Tämä Home Assistant ei tarjoa lataushistoriaa. Päivitä SpotNav-integraatio.</string>
   <string name="history_retry">Yritä uudelleen</string>
   <string name="history_not_paired">Lataushistoria vaatii laturin, joka on pariliitetty Home Assistantiin.</string>
+  <string name="connection_disconnected">Ei kytketty</string>
+  <string name="connection_connected">Kytketty</string>
+  <string name="connection_charging">Lataa</string>
+  <string name="connection_paused">Tauolla</string>
+  <string name="connection_finished">Valmis</string>
+  <string name="connection_error">Virhe</string>
 </resources>

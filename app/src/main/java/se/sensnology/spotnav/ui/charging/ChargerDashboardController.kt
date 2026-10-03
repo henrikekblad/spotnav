@@ -8,6 +8,8 @@ import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.dashboard.AutoControl
+import se.sensnology.spotnav.ha.dashboard.ChargerStatusLine
+import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
 import se.sensnology.spotnav.ha.dashboard.PlannerControl
@@ -17,6 +19,7 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.vehicles.ChargeLimit
+import se.sensnology.spotnav.vehicles.SocDisplay
 import se.sensnology.spotnav.vehicles.VehicleCardState
 import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -152,9 +155,10 @@ internal class ChargerDashboardController(
         // The vehicle-side advisory, from the same accepted dashboard: the integration's own
         // observation of whether the car is taking the charge (see ChargeProgressContract).
         chargerCard.showAdvisory(
-            dashboard?.chargeProgress,
+            dashboard,
             t(R.string.charge_progress_vehicle_not_requesting_current)
         )
+        chargerCard.showVehicleLine(vehicleLineText(dashboard), if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
         // Home Assistant's own status block words the line (see HaStatusText):
         val held = dashboard
         if (held != null) {
@@ -173,6 +177,27 @@ internal class ChargerDashboardController(
             )
         }
         cells.refresh()
+    }
+
+    /** "EV6 · 96 % · Ansluten": the planned car's charge, then the connection state; `null` for neither. */
+    private fun vehicleLineText(held: Dashboard?): String? {
+        if (held == null) return null
+        val soc = held.soc?.takeIf { it.vehicleId != null && it.value != null }
+        val charge = soc?.value?.let {
+            val text = t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it))
+            if (soc.estimated) "~$text" else text
+        }
+        val word = held.connection?.let { t(connectionString(it)) }
+        return ChargerStatusLine.text(soc?.vehicleName, charge, word)
+    }
+
+    private fun connectionString(state: ConnectionState): Int = when (state) {
+        ConnectionState.DISCONNECTED -> R.string.connection_disconnected
+        ConnectionState.CONNECTED -> R.string.connection_connected
+        ConnectionState.CHARGING -> R.string.connection_charging
+        ConnectionState.PAUSED -> R.string.connection_paused
+        ConnectionState.FINISHED -> R.string.connection_finished
+        ConnectionState.ERROR -> R.string.connection_error
     }
 
     /** Read the dashboard, store it, and show it. */

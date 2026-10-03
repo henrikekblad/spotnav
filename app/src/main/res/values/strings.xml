@@ -377,4 +377,10 @@
   <string name="history_unsupported">This Home Assistant does not provide the charge history. Update the SpotNav integration.</string>
   <string name="history_retry">Try again</string>
   <string name="history_not_paired">The charge history needs a charger paired with Home Assistant.</string>
+  <string name="connection_disconnected">Not connected</string>
+  <string name="connection_connected">Connected</string>
+  <string name="connection_charging">Charging</string>
+  <string name="connection_paused">Paused</string>
+  <string name="connection_finished">Finished</string>
+  <string name="connection_error">Error</string>
 </resources>

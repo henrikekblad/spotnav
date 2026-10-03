@@ -364,4 +364,10 @@
   <string name="history_unsupported">Den här Home Assistant lämnar ingen laddhistorik. Uppdatera SpotNav-integrationen.</string>
   <string name="history_retry">Försök igen</string>
   <string name="history_not_paired">Laddhistoriken kräver en laddare som är parad med Home Assistant.</string>
+  <string name="connection_disconnected">Ej ansluten</string>
+  <string name="connection_connected">Ansluten</string>
+  <string name="connection_charging">Laddar</string>
+  <string name="connection_paused">Pausad</string>
+  <string name="connection_finished">Klar</string>
+  <string name="connection_error">Fel</string>
 </resources>

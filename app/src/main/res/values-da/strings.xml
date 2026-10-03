@@ -364,4 +364,10 @@
   <string name="history_unsupported">Denne Home Assistant leverer ikke opladningshistorik. Opdatér SpotNav-integrationen.</string>
   <string name="history_retry">Prøv igen</string>
   <string name="history_not_paired">Opladningshistorikken kræver en lader, der er parret med Home Assistant.</string>
+  <string name="connection_disconnected">Ikke tilsluttet</string>
+  <string name="connection_connected">Tilsluttet</string>
+  <string name="connection_charging">Oplader</string>
+  <string name="connection_paused">På pause</string>
+  <string name="connection_finished">Færdig</string>
+  <string name="connection_error">Fejl</string>
 </resources>

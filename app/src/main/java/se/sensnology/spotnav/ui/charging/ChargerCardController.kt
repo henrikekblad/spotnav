@@ -17,7 +17,8 @@ import se.sensnology.spotnav.ha.dashboard.DashboardChargingPhases
 import se.sensnology.spotnav.ha.sessions.SessionsSummary
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
-import se.sensnology.spotnav.ha.dashboard.ChargeProgress
+import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.FullCarRule
 import se.sensnology.spotnav.ha.dashboard.ChargeProgressContract
 import se.sensnology.spotnav.planning.ChargingPlanner
 import se.sensnology.spotnav.ui.common.PopoverSpec
@@ -170,6 +171,15 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(advisory)
 
+        // The vehicle's charge and the charger's connection state, "EV6 · 96 % · Ansluten".
+        val vehicleLine = TextView(context).apply {
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(2), 0, dp(6))
+            visibility = View.GONE
+        }
+        card.body.addView(vehicleLine)
+
         // The controls themselves live in the popovers, built once here rather than per tap, so
         // they stay the single source of truth that `currentSettings()`, the shared seek listener
         // and the phases listener already read.
@@ -261,6 +271,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             body = card.body,
             status = status,
             advisory = advisory,
+            vehicleLine = vehicleLine,
             connection = connection,
             refreshPhasesRow = { renderPhasesRow(); renderPairedPhases() },
             showHistory = { summary ->
@@ -424,6 +435,8 @@ internal class ChargerCard(
      * hidden whenever there is nothing to say, and never a control.
      */
     val advisory: TextView,
+    /** The vehicle's charge followed by the connection state; hidden when there is neither. */
+    val vehicleLine: TextView,
     val connection: ConnectionControls,
     val refreshPhasesRow: () -> Unit,
     /**
@@ -443,9 +456,16 @@ internal class ChargerCard(
      */
     val setPhaseEditor: (rowVisible: Boolean, controlEnabled: Boolean) -> Unit
 ) {
+    /** Write the vehicle line, or hide it when there is nothing to say. */
+    fun showVehicleLine(text: String?, colour: Int) {
+        vehicleLine.text = text.orEmpty()
+        vehicleLine.setTextColor(colour)
+        vehicleLine.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+    }
+
     /** Write the vehicle-side advisory, or hide the line when there is nothing to say. */
-    fun showAdvisory(progress: ChargeProgress?, sentence: String) {
-        val show = ChargeProgressContract.advisory(progress)
+    fun showAdvisory(dashboard: Dashboard?, sentence: String) {
+        val show = FullCarRule.advisory(dashboard)
         advisory.text = if (show) sentence else ""
         advisory.visibility = if (show) View.VISIBLE else View.GONE
     }

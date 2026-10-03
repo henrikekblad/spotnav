@@ -115,6 +115,18 @@
       },
       {
         "choices": [
+          "1",
+          "3"
+        ],
+        "field": "charger_phases",
+        "kind": "enum",
+        "required": true,
+        "scope": "charger",
+        "value": "3",
+        "writable": false
+      },
+      {
+        "choices": [
           "first",
           "normal",
           "last"
@@ -125,6 +137,15 @@
         "scope": "charger",
         "value": "normal",
         "writable": true
+      },
+      {
+        "choices": [],
+        "field": "measured_current_source",
+        "kind": "enum",
+        "required": false,
+        "scope": "charger",
+        "value": null,
+        "writable": false
       },
       {
         "allowed_device_classes": [
@@ -378,6 +399,7 @@
           "entity_id": null,
           "integration": null,
           "interval_s": 120.0,
+          "limits_a": null,
           "option": null,
           "phases": [
             {
