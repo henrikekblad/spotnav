@@ -20,7 +20,11 @@ import se.sensnology.spotnav.prices.PriceMarket
 internal data class ChartMarket(
     /** Which price area's market these prices are. */
     val areaId: String,
-    /** The presentation resolution the price series is aggregated to: 15 or 60 minutes. */
+    /**
+     * The presentation resolution the price series is aggregated to: 15 or 60 minutes, never the
+     * source's (15, 30 or 60), which is already on the quarter-hour grid: a half-hour is two equal
+     * quarters at 15 and half an hour of the average at 60.
+     */
     val intervalMinutes: Int,
     val vat: FiscalInput,
     val tax: FiscalInput,

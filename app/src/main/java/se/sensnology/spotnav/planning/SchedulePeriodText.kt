@@ -18,6 +18,13 @@ internal object MarketZone {
     /** [areaId]'s own zone, or the device's when the catalogue does not know that area (or none was named). */
     fun of(areaId: String?): ZoneId =
         areaId?.let { PriceMarkets.find(it)?.zoneId } ?: ZoneId.systemDefault()
+
+    /**
+     * The calendar [areaId]'s relay day files are dated on (contract v2's `market_tz`): the zone a
+     * publication is expected in. Equal to [of] for every area with one calendar.
+     */
+    fun marketCalendarOf(areaId: String?): ZoneId =
+        areaId?.let { PriceMarkets.find(it)?.marketZoneId } ?: of(areaId)
 }
 
 /** One endpoint of a schedule period, in the market's own wall clock. */

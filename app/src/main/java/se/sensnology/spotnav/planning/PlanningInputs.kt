@@ -15,7 +15,11 @@ data class DepartureIntent(val enabled: Boolean, val time: LocalTime)
 data class PlanningInputs(
     /** Which price area's market this plan is for. */
     val areaId: String,
-    /** The presentation resolution the price series is aggregated to: 15 or 60 minutes. */
+    /**
+     * The presentation resolution the price series is aggregated to: 15 or 60 minutes. It is not the
+     * source's resolution: every source (15, 30 or 60 minutes) is laid out on the quarter-hour grid
+     * first, so a 30-minute area (Great Britain) shows each half-hour as two equal quarters at 15.
+     */
     val intervalMinutes: Int,
     /** VAT: multiplied in last, by its own effective percentage. */
     val vat: FiscalInput,

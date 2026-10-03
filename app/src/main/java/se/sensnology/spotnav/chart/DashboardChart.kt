@@ -2,6 +2,7 @@ package se.sensnology.spotnav.chart
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardMarket
+import se.sensnology.spotnav.ha.dashboard.DashboardPriceInterval
 import se.sensnology.spotnav.ha.dashboard.DashboardPrices
 import se.sensnology.spotnav.planning.ChargingPeriod
 import se.sensnology.spotnav.planning.FiscalInput
@@ -59,10 +60,14 @@ internal object DashboardChart {
      * keep drawing the day it was composed on. `null` when nothing priced remains.
      */
     fun prices(prices: DashboardPrices, zone: ZoneId, fetchedAt: Long, now: Instant = Instant.now()): PriceResult? {
-        val points = prices.intervals.mapNotNull { interval ->
-            val effective = interval.effectivePrice ?: return@mapNotNull null
-            val start = atZone(interval.start, zone)
-            PricePoint(start, effective / 100.0) to start.toLocalDate()
+        val points = prices.intervals.flatMap { interval ->
+            val effective = interval.effectivePrice ?: return@flatMap emptyList()
+            // A half-hour or an hour (Great Britain's 30-minute rows, an hourly market) is drawn as
+            // its quarter-hours at one price, the grid the renderer and the local prices share.
+            quarterStarts(interval).map { instant ->
+                val start = atZone(instant, zone)
+                PricePoint(start, effective / 100.0) to start.toLocalDate()
+            }
         }
         if (points.isEmpty()) return null
         val today = localDate(now, zone)
@@ -71,6 +76,19 @@ internal object DashboardChart {
         if (todayPoints.isEmpty() && tomorrowPoints.isEmpty()) return null
         return PriceResult(today = todayPoints, tomorrow = tomorrowPoints, fetchedAt = fetchedAt)
     }
+
+    /**
+     * The quarter-hour starts of one interval, by elapsed time: one for a quarter-hour, two for a
+     * half-hour, four for an hour (three or five on a clock-change hour). An interval that is not a
+     * whole number of quarter-hours keeps its one start, as before.
+     */
+    private fun quarterStarts(interval: DashboardPriceInterval): List<OffsetDateTime> {
+        val minutes = java.time.Duration.between(interval.start.toInstant(), interval.end.toInstant()).toMinutes()
+        if (minutes <= QUARTER_MINUTES || minutes % QUARTER_MINUTES != 0L) return listOf(interval.start)
+        return (0 until minutes / QUARTER_MINUTES).map { interval.start.plusMinutes(it * QUARTER_MINUTES) }
+    }
+
+    private const val QUARTER_MINUTES = 15L
 
     /** The date it is at [now] in [zone]: the one definition of "today" for a drawn dashboard. */
     fun localDate(now: Instant, zone: ZoneId): LocalDate = now.atZone(zone).toLocalDate()

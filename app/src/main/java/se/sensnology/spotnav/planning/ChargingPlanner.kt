@@ -109,7 +109,10 @@ object ChargingPlanner {
         }
 
         val missingDay = gapAt.toInstant().atZone(zone).toLocalDate()
-        val publicationAt = PriceWait.expectedPublicationAt(missingDay)
+        // The publication that fills the gap is the market day's: a London evening hour is the next
+        // Paris file, published the day before it. One calendar for every other area.
+        val missingMarketDay = gapAt.toInstant().atZone(MarketZone.marketCalendarOf(inputs.areaId)).toLocalDate()
+        val publicationAt = PriceWait.expectedPublicationAt(missingMarketDay)
         val decision = PriceWait.decide(
             now = now.toInstant(),
             deadline = endLimit.toInstant(),

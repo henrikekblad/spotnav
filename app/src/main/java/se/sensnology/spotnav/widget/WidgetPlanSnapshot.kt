@@ -60,7 +60,7 @@ internal data class WidgetPlanSnapshot(
     val areaId: String,
     /** The market's own clock, captured rather than re-derived from the catalogue. */
     val zoneId: ZoneId,
-    /** The resolution drawn at (15 or 60 minutes). */
+    /** The presentation resolution drawn at (15 or 60 minutes; a 30-minute source is drawn on quarters). */
     val intervalMinutes: Int,
     val vat: FiscalInput,
     val tax: FiscalInput,
