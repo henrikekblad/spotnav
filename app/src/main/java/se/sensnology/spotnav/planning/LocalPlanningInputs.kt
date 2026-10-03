@@ -21,9 +21,10 @@ internal object LocalPlanningInputs {
         // Anything that is not the quarter-hour presentation is the hourly one, which is exactly
         // how the aggregation has always read this field.
         intervalMinutes = if (settings.intervalMinutes == 15) 15 else 60,
-        vat = local(settings.vat, settings.effectiveVatPercent),
-        tax = local(settings.tax, settings.taxMinorUnit),
-        transfer = local(settings.transfer, settings.gridFeeMinorUnit),
+        // A part the area's published price already includes adds nothing (see WidgetSettings.included).
+        vat = local(settings.vatAdded, settings.effectiveVatPercent),
+        tax = local(settings.taxAdded, settings.taxMinorUnit),
+        transfer = local(settings.transferAdded, settings.gridFeeMinorUnit),
         phases = ChargerPhases.normalized(settings.chargingPhases),
         amps = settings.chargingAmps.coerceAtLeast(1),
         requestedEnergyKwh = settings.chargingKwh.toDouble().coerceAtLeast(MIN_ENERGY_KWH),

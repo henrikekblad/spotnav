@@ -108,6 +108,9 @@ internal object ImmediateSettings {
 internal sealed interface FiscalLine {
     data object Off : FiscalLine
     data object Unset : FiscalLine
+
+    /** The area's published price already includes it: nothing is added. */
+    data object Included : FiscalLine
     data class Figure(val amount: Double, val unit: String) : FiscalLine
 }
 
@@ -123,7 +126,9 @@ internal data class PriceOverview(
         fun of(record: HaPlanningSettings?, market: (String) -> PriceMarket?): PriceOverview {
             val areaId = record?.areaId?.takeIf { it.isNotEmpty() }
             val areaMarket = areaId?.let(market)
+            val included = HaAreaOverrideComponent.includedFor(record, areaId, areaMarket)
             fun line(component: HaAreaOverrideComponent, unit: String, fallback: Double? = null): FiscalLine {
+                if (component in included) return FiscalLine.Included
                 val value: HaFiscalValue = record?.let { HaSettingsEditor.fiscalFor(it, component, areaId) } ?: return FiscalLine.Unset
                 if (!value.enabled) return FiscalLine.Off
                 val amount = value.value ?: fallback ?: return FiscalLine.Unset

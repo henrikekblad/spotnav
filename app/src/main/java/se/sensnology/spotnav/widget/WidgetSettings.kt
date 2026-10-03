@@ -9,6 +9,7 @@ import se.sensnology.spotnav.planning.PlanDriver
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.planning.fiscalFigure
 import se.sensnology.spotnav.prices.AreaSelection
+import se.sensnology.spotnav.prices.IncludedPart
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PricePoint
 
@@ -38,14 +39,30 @@ data class WidgetSettings(
     val effectiveVatPercent: Double get() = PriceMarkets.find(area)?.vatPercent ?: 0.0
 
     /**
+     * The fiscal parts the area's published price already contains (contract v2's `included`): they are
+     * locked as included in the price and nothing is added for them, whatever this record's own flags
+     * say. The flags themselves are kept, so another area still gets the person's own choice.
+     */
+    val included: Set<IncludedPart> get() = PriceMarkets.find(area)?.included.orEmpty()
+
+    /** Whether VAT is added: chosen, and not already in the price. */
+    val vatAdded: Boolean get() = vat && IncludedPart.VAT !in included
+
+    /** Whether the electricity tax is added: chosen, and not already in the price. */
+    val taxAdded: Boolean get() = tax && IncludedPart.TAX !in included
+
+    /** Whether the grid fee is added: chosen, and not already in the price. */
+    val transferAdded: Boolean get() = transfer && IncludedPart.GRID_FEE !in included
+
+    /**
      * One relay price (local major unit per kWh) into what this widget displays, via [FiscalArithmetic].
      * Deliberately not built on [PlanningInputs], so a record with unfilled plan inputs still works.
      */
     fun apply(localMajorPerKwh: Double): Double = FiscalArithmetic.apply(
         localMajorPerKwh,
-        vat = component(vat, effectiveVatPercent),
-        tax = component(tax, taxMinorUnit),
-        transfer = component(transfer, gridFeeMinorUnit)
+        vat = component(vatAdded, effectiveVatPercent),
+        tax = component(taxAdded, taxMinorUnit),
+        transfer = component(transferAdded, gridFeeMinorUnit)
     )
 
     /** One component from this record's own figure, with no figure stated where none is usable. */

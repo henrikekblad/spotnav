@@ -370,4 +370,19 @@
   <string name="connection_paused">På pause</string>
   <string name="connection_finished">Færdig</string>
   <string name="connection_error">Fejl</string>
+  <string name="fiscal_included">%1$s – indgår i prisen</string>
+  <string name="price_value_included">Indgår i prisen</string>
+  <string name="market_info_included">Den offentliggjorte pris indeholder allerede moms, afgifter og tariffer, så intet lægges til.</string>
+  <string name="market_info_included_some">Den offentliggjorte pris indeholder allerede de dele, der er markeret som inkluderet, så intet lægges til for dem. Resten lægges til, som du angiver, og momsen lægges sidst på hele beløbet.</string>
+  <string name="price_source">Priskilde: %1$s</string>
+  <string name="area_heading_great_britain">Storbritannien</string>
+  <string name="find_region_label">Find min region</string>
+  <string name="find_region_description">Dit postnummer. Det sendes kun til Octopus Energy for at slå regionen op og gemmes ikke.</string>
+  <string name="find_region_hint">Postnummer</string>
+  <string name="find_region_button">Søg</string>
+  <string name="find_region_invalid">Det er ikke et britisk postnummer.</string>
+  <string name="find_region_not_found">Der blev ikke fundet nogen region for det postnummer.</string>
+  <string name="find_region_unavailable">Regionen kunne ikke slås op lige nu. Vælg den på listen.</string>
+  <string name="find_region_found">Fundet: %1$s.</string>
+  <string name="find_region_found_save">Fundet: %1$s. Gem for at beholde den.</string>
 </resources>

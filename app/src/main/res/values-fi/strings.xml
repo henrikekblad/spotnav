@@ -370,4 +370,19 @@
   <string name="connection_paused">Tauolla</string>
   <string name="connection_finished">Valmis</string>
   <string name="connection_error">Virhe</string>
+  <string name="fiscal_included">%1$s – sisältyy hintaan</string>
+  <string name="price_value_included">Sisältyy hintaan</string>
+  <string name="market_info_included">Julkaistu hinta sisältää jo arvonlisäveron, verot ja maksut, joten mitään ei lisätä.</string>
+  <string name="market_info_included_some">Julkaistu hinta sisältää jo hintaan sisältyviksi merkityt osat, joten niistä ei lisätä mitään. Loput lisätään asetustesi mukaan, ja arvonlisävero lasketaan viimeisenä koko summasta.</string>
+  <string name="price_source">Hintojen lähde: %1$s</string>
+  <string name="area_heading_great_britain">Iso-Britannia</string>
+  <string name="find_region_label">Etsi alueeni</string>
+  <string name="find_region_description">Postinumerosi. Se lähetetään vain Octopus Energylle alueen hakemista varten, eikä sitä tallenneta.</string>
+  <string name="find_region_hint">Postinumero</string>
+  <string name="find_region_button">Hae</string>
+  <string name="find_region_invalid">Tämä ei ole brittiläinen postinumero.</string>
+  <string name="find_region_not_found">Postinumerolle ei löytynyt aluetta.</string>
+  <string name="find_region_unavailable">Aluetta ei voitu hakea juuri nyt. Valitse se luettelosta.</string>
+  <string name="find_region_found">Löytyi: %1$s.</string>
+  <string name="find_region_found_save">Löytyi: %1$s. Tallenna, niin se säilyy.</string>
 </resources>

@@ -383,4 +383,19 @@
   <string name="connection_paused">Paused</string>
   <string name="connection_finished">Finished</string>
   <string name="connection_error">Error</string>
+  <string name="fiscal_included">%1$s – included in the price</string>
+  <string name="price_value_included">Included in the price</string>
+  <string name="market_info_included">The published price already includes VAT, taxes and fees, so nothing is added.</string>
+  <string name="market_info_included_some">The published price already includes the parts marked as included, so nothing is added for them. The rest is added as you set it, and VAT is applied last to the entire amount.</string>
+  <string name="price_source">Price source: %1$s</string>
+  <string name="area_heading_great_britain">Great Britain</string>
+  <string name="find_region_label">Find my region</string>
+  <string name="find_region_description">Your postcode. It is sent only to Octopus Energy to look up the region, and is not saved.</string>
+  <string name="find_region_hint">Postcode</string>
+  <string name="find_region_button">Find</string>
+  <string name="find_region_invalid">That is not a UK postcode.</string>
+  <string name="find_region_not_found">No region was found for that postcode.</string>
+  <string name="find_region_unavailable">The region could not be looked up right now. Choose it from the list.</string>
+  <string name="find_region_found">Found: %1$s.</string>
+  <string name="find_region_found_save">Found: %1$s. Save to keep it.</string>
 </resources>

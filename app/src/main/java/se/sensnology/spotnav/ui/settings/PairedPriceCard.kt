@@ -54,6 +54,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         fun text(line: FiscalLine): String = when (line) {
             FiscalLine.Off -> t(R.string.price_value_off)
             FiscalLine.Unset -> t(R.string.value_not_set)
+            FiscalLine.Included -> t(R.string.price_value_included)
             is FiscalLine.Figure -> PriceOverview.figureText(line, locale)
         }
         fun row(label: Int, value: String) = valueRow(rows, t(label), valueLabel().apply { this.text = value })
