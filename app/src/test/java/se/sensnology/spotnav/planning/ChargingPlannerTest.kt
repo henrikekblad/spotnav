@@ -47,4 +47,45 @@ class ChargingPlannerTest {
         assertEquals(start.plusMinutes(15), plan.periods[0].start)
         assertEquals(start.plusMinutes(45), plan.periods[1].start)
     }
+
+    @Test fun equalPricesChargeInTheLatestSlotsBeforeTheDeparture() {
+        val start = OffsetDateTime.parse("2026-09-12T18:00:00+02:00")
+        val prices = List(8) { index -> PricePoint(start.plusMinutes(index * 15L), 2.0) }
+        // Two slots of 2.3 kW over 15 minutes: 1 kWh needs two slots.
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+            useDepartureTime = true, departureHour = 20, departureMinute = 0)
+
+        val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
+
+        assertEquals(1, plan.periods.size)
+        assertEquals(start.plusMinutes(90), plan.start)
+        assertEquals(start.plusMinutes(120), plan.end)
+    }
+
+    @Test fun twoEquallyCheapValleysTakeTheLaterOne() {
+        val start = OffsetDateTime.parse("2026-09-12T18:00:00+02:00")
+        val prices = listOf(5.0, 1.0, 1.0, 5.0, 5.0, 1.0, 1.0, 5.0).mapIndexed { index, price ->
+            PricePoint(start.plusMinutes(index * 15L), price)
+        }
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+            maxChargingPeriods = 1, useDepartureTime = true, departureHour = 20, departureMinute = 0)
+
+        val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
+
+        assertEquals(start.plusMinutes(75), plan.start)
+    }
+
+    @Test fun aTiedSplitPrefersTheLatestSlotsSlotByTheLastOneFirst() {
+        val start = OffsetDateTime.parse("2026-09-12T18:00:00+02:00")
+        // One cheap slot is needed twice over two periods; four slots cost the same.
+        val prices = listOf(1.0, 9.0, 1.0, 9.0, 1.0, 9.0, 1.0, 9.0).mapIndexed { index, price ->
+            PricePoint(start.plusMinutes(index * 15L), price)
+        }
+        val settings = WidgetSettings(chargingPhases = 1, chargingAmps = 10, chargingKwh = 1,
+            maxChargingPeriods = 2, useDepartureTime = true, departureHour = 20, departureMinute = 0)
+
+        val plan = ChargingPlanner.calculate(PriceResult(prices, emptyList(), 0), inputs(settings), start)!!
+
+        assertEquals(listOf(start.plusMinutes(60), start.plusMinutes(90)), plan.periods.map { it.start })
+    }
 }

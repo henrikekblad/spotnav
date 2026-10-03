@@ -179,7 +179,8 @@ object ChargingPlanner {
         points.forEachIndexed { index, point ->
             val next = mutableMapOf<State, Choice>()
             fun keep(state: State, choice: Choice) {
-                if (choice.cost < (next[state]?.cost ?: Double.POSITIVE_INFINITY)) next[state] = choice
+                val existing = next[state]
+                if (existing == null || ranksBefore(choice.cost, choice.slots, existing.cost, existing.slots)) next[state] = choice
             }
             states.forEach { (state, choice) ->
                 keep(state.copy(active = false), choice)
@@ -196,8 +197,14 @@ object ChargingPlanner {
             }
             states = next
         }
-        val best = states.filterKeys { it.selected == slotsNeeded }.minByOrNull { it.value.cost }?.value ?: return null
-        val selected = points.filterIndexed { index, _ -> best.slots[index] }
+        var best: Choice? = null
+        for ((state, choice) in states) {
+            if (state.selected != slotsNeeded) continue
+            val held = best
+            if (held == null || ranksBefore(choice.cost, choice.slots, held.cost, held.slots)) best = choice
+        }
+        val chosen = best ?: return null
+        val selected = points.filterIndexed { index, _ -> chosen.slots[index] }
         val periods = buildList<ChargingPeriod> {
             selected.forEach { item ->
                 val previous = lastOrNull()
@@ -209,10 +216,27 @@ object ChargingPlanner {
         return ChargingPlan(
             periods.first().start, periods.last().end, power, plannedEnergy,
             plannedEnergy / inputs.consumptionKwhPer10Km,
-            best.cost / 100.0,
+            chosen.cost / 100.0,
             0,
             periods
         )
+    }
+
+    /**
+     * Whether a choice of [cost] and [slots] is better than another: lower cost first and, on exactly
+     * equal costs (no epsilon), the latest slots -- compared from the last chosen slot backwards -- so
+     * the car charges as late as the prices allow, as Home Assistant's planner does.
+     */
+    private fun ranksBefore(cost: Double, slots: BitSet, otherCost: Double, otherSlots: BitSet): Boolean {
+        if (cost != otherCost) return cost < otherCost
+        var mine = slots.length() - 1
+        var theirs = otherSlots.length() - 1
+        while (mine >= 0 && theirs >= 0) {
+            if (mine != theirs) return mine > theirs
+            mine = slots.previousSetBit(mine - 1)
+            theirs = otherSlots.previousSetBit(theirs - 1)
+        }
+        return false
     }
 
     private const val SLOT_MINUTES = 15L
