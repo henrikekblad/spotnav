@@ -7,6 +7,7 @@ The full privacy policy, in all the app's languages, is at <https://spotnav.sens
 ## What the app sends, and where
 
 - **SpotNav relay (`spotnav.sensnology.se`)**: the app downloads public electricity prices and the list of price areas. Requests contain the price area and date; no personal data is sent. As with any web request, the server sees your IP address.
+- **Octopus Energy (`api.octopus.energy`)**: only when you use "Find my region" for a Great Britain price area, the postcode you type is sent to Octopus Energy's public lookup to find the region. It is sent nowhere else (never to the SpotNav relay), and it is neither saved nor logged by the app.
 - **Your own Home Assistant**: if you pair a charger, the app talks to the Home Assistant address you entered, using the webhook IDs it received when you approved the pairing. Charging settings and commands go only there.
 - Home Assistant instances on your local network may be discovered with local network discovery (mDNS); this stays on your network.
 
