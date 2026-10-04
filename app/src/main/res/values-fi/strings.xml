@@ -412,6 +412,13 @@
   <string name="notify_local_help">SpotNav tarkistaa laturin noin 15 minuutin välein, kun puhelimella on verkkoyhteys, joten ilmoitus voi tulla jopa 15 minuuttia myöhässä. Koskee tässä valittuja tapahtumia vain tässä puhelimessa.</string>
   <string name="notify_local_events_change">Muuta tapahtumia</string>
   <string name="notify_local_denied">Ilmoitukset ovat pois päältä SpotNavilta. Salli ne puhelimen asetuksista.</string>
+  <string name="notify_push_toggle">Välittömät ilmoitukset SpotNav-palvelimen kautta (Google Firebase)</string>
+  <string name="notify_push_help">Valinnainen. Home Assistant herättää puhelimen SpotNav-palvelimen ja Googlen push-palvelun kautta, joten ilmoitus tulee heti. Herätys ei sisällä mitään latauksestasi. Vaatii Google Play -palvelut.</string>
+  <string name="notify_push_no_token">Välittömiä ilmoituksia ei voitu ottaa käyttöön: Googlen push-palvelu ei vastannut.</string>
+  <string name="notify_push_server_off">Välittömiä ilmoituksia ei voitu ottaa käyttöön: SpotNav-palvelin ei tarjoa niitä juuri nyt.</string>
+  <string name="notify_push_rate_limited">Välittömiä ilmoituksia ei voitu ottaa käyttöön: liian monta yritystä. Yritä myöhemmin uudelleen.</string>
+  <string name="notify_push_failed">Välittömiä ilmoituksia ei voitu ottaa käyttöön: SpotNav-palvelimeen ei saatu yhteyttä.</string>
+  <string name="notify_push_test">SpotNavin testi-ilmoitus – välittömät ilmoitukset toimivat</string>
   <string name="notify_channel_alerts">Latausongelmat</string>
   <string name="notify_channel_updates">Latauspäivitykset</string>
   <string name="notify_title">SpotNav · %1$s</string>

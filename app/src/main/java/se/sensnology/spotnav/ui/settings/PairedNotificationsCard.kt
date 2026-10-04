@@ -12,6 +12,8 @@ import se.sensnology.spotnav.ha.settings.HaNotificationSettings
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.push.PushNotifications
+import se.sensnology.spotnav.push.PushRegistration
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
@@ -41,6 +43,8 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
     private var record: HaNotificationSettings? = null
     private var writable = false
     private var notice: String? = null
+    private var pushBusy = false
+    private var pushNotice: String? = null
 
     private var save: (List<String>, List<String>, (String?) -> Unit) -> Unit = { _, _, done -> done(null) }
     private var requestPermission: () -> Unit = {}
@@ -192,6 +196,34 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         if (!LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), top = 4))
         readRow(body, t(R.string.notify_events), eventsOn(local.events.size))
         button(body, t(R.string.notify_local_events_change), enabled = true) { openLocalDialog() }
+        if (PushNotifications.available(context)) addPush(body)
+    }
+
+    /** Instant notifications: opt-in, offered only in a build with push on a phone with Play services. */
+    private fun addPush(body: LinearLayout) {
+        val toggle: CheckBox = checkbox(t(R.string.notify_push_toggle), PushNotifications.enabled(context))
+        toggle.isEnabled = !pushBusy
+        body.addView(toggle)
+        body.addView(muted(t(R.string.notify_push_help), top = 2))
+        pushNotice?.let { body.addView(muted(it, top = 4)) }
+        toggle.setOnCheckedChangeListener { _, on ->
+            pushBusy = true
+            pushNotice = null
+            repaint()
+            PushNotifications.setEnabled(context, on) { result ->
+                runOnUiThread {
+                    pushBusy = false
+                    pushNotice = when (result) {
+                        PushRegistration.Result.ON, PushRegistration.Result.OFF -> null
+                        PushRegistration.Result.NO_TOKEN -> t(R.string.notify_push_no_token)
+                        PushRegistration.Result.SERVER_OFF -> t(R.string.notify_push_server_off)
+                        PushRegistration.Result.RATE_LIMITED -> t(R.string.notify_push_rate_limited)
+                        PushRegistration.Result.FAILED -> t(R.string.notify_push_failed)
+                    }
+                    if (!isDestroyed) repaint()
+                }
+            }
+        }
     }
 
     private fun openLocalDialog() {
@@ -203,6 +235,8 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         }
         openSaveDialog(t(R.string.notify_local_title), body) { dialog, _ ->
             local.events = NotificationEvent.entries.filterIndexed { index, _ -> boxes[index].isChecked }.toSet()
+            // Instant notifications wake this phone for the same events.
+            LocalNotifications.sync(context)
             dialog.dismiss()
             repaint()
         }

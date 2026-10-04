@@ -233,6 +233,12 @@ object HomeAssistantClient {
         return ChargerPriorityUpdate.answer(status, body)
     }
 
+    /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
+    internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
+        val (status, body) = write(settings, PushRegister.payload(pushRef, events))
+        return PushRegister.accepted(status, body)
+    }
+
     /** One month of charge history (webhook `sessions`); `null` asks for the current month. Never throws. */
     internal fun sessionsMonth(settings: HomeAssistantSettings, month: YearMonth?): SessionsOutcome<SessionsMonth> {
         val (status, body) = write(settings, SessionsRead.payload(month))

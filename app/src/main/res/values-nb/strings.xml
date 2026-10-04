@@ -412,6 +412,13 @@
   <string name="notify_local_help">SpotNav sjekker laderen omtrent hvert 15. minutt når telefonen har nettverk, så et varsel kan komme opptil 15 minutter for sent. Gjelder hendelsene som velges her, bare på denne telefonen.</string>
   <string name="notify_local_events_change">Endre hendelser</string>
   <string name="notify_local_denied">Varsler er slått av for SpotNav. Tillat dem i telefonens innstillinger.</string>
+  <string name="notify_push_toggle">Umiddelbare varsler via SpotNav-serveren (Google Firebase)</string>
+  <string name="notify_push_help">Valgfritt. Home Assistant vekker telefonen via SpotNav-serveren og Googles push-tjeneste, så et varsel kommer med en gang. Vekkingen inneholder ingenting om ladingen din. Krever Google Play-tjenester.</string>
+  <string name="notify_push_no_token">Umiddelbare varsler kunne ikke slås på: Googles push-tjeneste svarte ikke.</string>
+  <string name="notify_push_server_off">Umiddelbare varsler kunne ikke slås på: SpotNav-serveren tilbyr dem ikke akkurat nå.</string>
+  <string name="notify_push_rate_limited">Umiddelbare varsler kunne ikke slås på: for mange forsøk. Prøv igjen senere.</string>
+  <string name="notify_push_failed">Umiddelbare varsler kunne ikke slås på: SpotNav-serveren kunne ikke nås.</string>
+  <string name="notify_push_test">Testvarsel fra SpotNav – umiddelbare varsler fungerer</string>
   <string name="notify_channel_alerts">Ladeproblemer</string>
   <string name="notify_channel_updates">Ladeoppdateringer</string>
   <string name="notify_title">SpotNav · %1$s</string>

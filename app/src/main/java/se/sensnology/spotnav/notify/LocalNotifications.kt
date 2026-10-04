@@ -23,6 +23,7 @@ import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.settings.NotificationEvent
+import se.sensnology.spotnav.push.PushNotifications
 import java.text.NumberFormat
 import java.time.Instant
 import java.util.concurrent.Executors
@@ -36,6 +37,8 @@ import java.util.concurrent.Executors
 internal object LocalNotifications {
     private const val TAG = "SpotNavNotify"
     private const val JOB_ID = 13_050
+    private const val NOW_JOB_ID = 13_052
+    private const val TEST_TAG = "push_test"
     private const val PERIOD_MS = 15 * 60 * 1000L
     private const val FLEX_MS = 5 * 60 * 1000L
 
@@ -60,7 +63,7 @@ internal object LocalNotifications {
         !needsPermission(context) && context.getSystemService(NotificationManager::class.java).areNotificationsEnabled()
 
     /** Schedule the check when it is on and something is paired; cancel it otherwise. */
-    fun sync(context: Context) {
+    private fun schedule(context: Context) {
         val app = context.applicationContext
         val scheduler = app.getSystemService(JobScheduler::class.java) ?: return
         val wanted = LocalNotificationStore.forContext(app).enabled && pairedProfiles(app).isNotEmpty()
@@ -80,6 +83,50 @@ internal object LocalNotifications {
             JobScheduler.RESULT_FAILURE
         }
         if (result != JobScheduler.RESULT_SUCCESS) Log.w(TAG, "The notification check could not be scheduled")
+    }
+
+    /** [schedule], and bring the instant notifications every Home Assistant holds up to date. */
+    fun sync(context: Context) {
+        schedule(context)
+        PushNotifications.sync(context)
+    }
+
+    /**
+     * One check as soon as there is a network, for a push wake-up: an expedited job where Android
+     * has them (12+), an immediate one otherwise. It replaces one still waiting.
+     */
+    fun checkNow(context: Context) {
+        val app = context.applicationContext
+        val scheduler = app.getSystemService(JobScheduler::class.java) ?: return
+        val builder = JobInfo.Builder(NOW_JOB_ID, ComponentName(app, LocalNotificationJob::class.java))
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) builder.setExpedited(true)
+        val result = runCatching { scheduler.schedule(builder.build()) }.getOrElse { error ->
+            Log.w(TAG, "The immediate check could not be scheduled: ${error.javaClass.simpleName}")
+            JobScheduler.RESULT_FAILURE
+        }
+        if (result != JobScheduler.RESULT_SUCCESS) Log.w(TAG, "The immediate check could not be scheduled")
+    }
+
+    /** A test push from Home Assistant: a fixed notification saying instant notifications work. */
+    fun postTest(context: Context) {
+        val app = context.applicationContext
+        if (!allowed(app)) return
+        ensureChannels(app)
+        val message = AppLanguageSettings.text(app, R.string.notify_push_test)
+        val notification = Notification.Builder(app, CHANNEL_UPDATES)
+            .setSmallIcon(R.drawable.ic_spotnav_monochrome)
+            .setContentTitle(AppLanguageSettings.text(app, R.string.app_name))
+            .setContentText(message)
+            .setStyle(Notification.BigTextStyle().bigText(message))
+            .setContentIntent(openApp(app))
+            .setAutoCancel(true)
+            .build()
+        try {
+            app.getSystemService(NotificationManager::class.java).notify(TEST_TAG, 0, notification)
+        } catch (denied: SecurityException) {
+            Log.w(TAG, "Notifications are not allowed")
+        }
     }
 
     /** One profile was unpaired: its snapshot goes, and the check stops when nothing is paired. */
@@ -130,13 +177,15 @@ internal object LocalNotifications {
         )
     }
 
+    private fun openApp(context: Context): PendingIntent = PendingIntent.getActivity(
+        context, 0,
+        Intent(context, LauncherActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
     private fun post(context: Context, localId: String, chargerName: String, event: LocalEvent) {
         ensureChannels(context)
-        val open = PendingIntent.getActivity(
-            context, 0,
-            Intent(context, LauncherActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        val open = openApp(context)
         val message = message(context, event)
         val notification = Notification.Builder(context, if (event.event in ALERTS) CHANNEL_ALERTS else CHANNEL_UPDATES)
             .setSmallIcon(R.drawable.ic_spotnav_monochrome)

@@ -412,6 +412,13 @@
   <string name="notify_local_help">SpotNav kollar laddaren ungefär var 15:e minut när telefonen har nätverk, så en avisering kan komma upp till 15 minuter sent. Gäller händelserna som väljs här, bara på den här telefonen.</string>
   <string name="notify_local_events_change">Ändra händelser</string>
   <string name="notify_local_denied">Aviseringar är avstängda för SpotNav. Tillåt dem i telefonens inställningar.</string>
+  <string name="notify_push_toggle">Direktaviseringar via SpotNav-servern (Google Firebase)</string>
+  <string name="notify_push_help">Valfritt. Home Assistant väcker telefonen via SpotNav-servern och Googles push-tjänst, så en avisering kommer direkt. Väckningen innehåller inget om din laddning. Kräver Google Play-tjänster.</string>
+  <string name="notify_push_no_token">Direktaviseringar kunde inte slås på: Googles push-tjänst svarade inte.</string>
+  <string name="notify_push_server_off">Direktaviseringar kunde inte slås på: SpotNav-servern erbjuder dem inte just nu.</string>
+  <string name="notify_push_rate_limited">Direktaviseringar kunde inte slås på: för många försök. Försök igen senare.</string>
+  <string name="notify_push_failed">Direktaviseringar kunde inte slås på: SpotNav-servern gick inte att nå.</string>
+  <string name="notify_push_test">Testavisering från SpotNav – direktaviseringar fungerar</string>
   <string name="notify_channel_alerts">Laddningsproblem</string>
   <string name="notify_channel_updates">Laddningsuppdateringar</string>
   <string name="notify_title">SpotNav · %1$s</string>

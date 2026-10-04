@@ -412,6 +412,13 @@
   <string name="notify_local_help">SpotNav tjekker laderen cirka hvert 15. minut, når telefonen har netværk, så en notifikation kan komme op til 15 minutter for sent. Gælder hændelserne valgt her, kun på denne telefon.</string>
   <string name="notify_local_events_change">Skift hændelser</string>
   <string name="notify_local_denied">Notifikationer er slået fra for SpotNav. Tillad dem i telefonens indstillinger.</string>
+  <string name="notify_push_toggle">Øjeblikkelige notifikationer via SpotNav-serveren (Google Firebase)</string>
+  <string name="notify_push_help">Valgfrit. Home Assistant vækker telefonen via SpotNav-serveren og Googles push-tjeneste, så en notifikation kommer med det samme. Vækningen indeholder intet om din opladning. Kræver Google Play-tjenester.</string>
+  <string name="notify_push_no_token">Øjeblikkelige notifikationer kunne ikke slås til: Googles push-tjeneste svarede ikke.</string>
+  <string name="notify_push_server_off">Øjeblikkelige notifikationer kunne ikke slås til: SpotNav-serveren tilbyder dem ikke lige nu.</string>
+  <string name="notify_push_rate_limited">Øjeblikkelige notifikationer kunne ikke slås til: for mange forsøg. Prøv igen senere.</string>
+  <string name="notify_push_failed">Øjeblikkelige notifikationer kunne ikke slås til: SpotNav-serveren kunne ikke nås.</string>
+  <string name="notify_push_test">Testnotifikation fra SpotNav – øjeblikkelige notifikationer virker</string>
   <string name="notify_channel_alerts">Opladningsproblemer</string>
   <string name="notify_channel_updates">Opladningsopdateringer</string>
   <string name="notify_title">SpotNav · %1$s</string>

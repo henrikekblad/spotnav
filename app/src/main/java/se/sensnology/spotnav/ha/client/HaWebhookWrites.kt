@@ -402,6 +402,29 @@ internal object ChargerPriorityUpdate {
     }
 }
 
+/**
+ * `push_register`: the relay's opaque `push_ref` for this phone (`null` clears it) and the events
+ * this phone wants an instant wake-up for (wire ids). Home Assistant keeps it with the charger and
+ * wakes the phone through the relay when one of those events fires.
+ */
+internal object PushRegister {
+    const val API_VERSION = 1
+
+    fun payload(pushRef: String?, events: List<String>): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "push_register")
+        put("api_version", API_VERSION)
+        put("push_ref", pushRef ?: JSONObject.NULL)
+        put("events", JSONArray(events))
+    }
+
+    /** Whether Home Assistant kept it: `{"ok": true}`. An older one answers 400 (no such action). */
+    fun accepted(status: Int?, body: String?): Boolean {
+        if (status == null || status !in 200..299) return false
+        return WriteEnvelope.head(body)?.ok == true
+    }
+}
+
 /** What the site section of a paired charger shows, decided once from the dashboard's `site`. */
 internal object SiteFacts {
     /** Why active load balancing is not available, as the card words it. */
