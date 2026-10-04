@@ -74,7 +74,11 @@ internal object LocalNotifications {
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setPersisted(true)
             .build()
-        val result = scheduler.schedule(job)
+        // A refused schedule (a missing permission, a system limit) must never take the app down.
+        val result = runCatching { scheduler.schedule(job) }.getOrElse { error ->
+            Log.w(TAG, "The notification check could not be scheduled: ${error.javaClass.simpleName}")
+            JobScheduler.RESULT_FAILURE
+        }
         if (result != JobScheduler.RESULT_SUCCESS) Log.w(TAG, "The notification check could not be scheduled")
     }
 
