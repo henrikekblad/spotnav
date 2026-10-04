@@ -99,9 +99,21 @@ jobs:
           path: |
             spotnav-*.apk
             spotnav-*-play.aab
+      - name: Publish GitHub release
+        # The notes are a file in the repository (release-notes/<version>.md), so line breaks and
+        # wording are reviewed like code; without one the release is not published.
+        run: |
+          notes="release-notes/${GITHUB_REF_NAME#v}.md"
+          test -f "$notes" || { echo "Missing $notes"; exit 1; }
+          # A re-run (e.g. to retry the Play upload) finds the release already published.
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already published"; exit 0
+          fi
+          gh release create "$GITHUB_REF_NAME" "spotnav-${GITHUB_REF_NAME#v}.apk" --title "SpotNav ${GITHUB_REF_NAME#v}" --notes-file "$notes" --verify-tag
       # The Play bundle goes to the production track as a draft with the store changelogs
       # (fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt); it is sent for review by hand
-      # in Play Console. Skipped while the PLAY_SERVICE_ACCOUNT_JSON secret is not set.
+      # in Play Console. Skipped while the PLAY_SERVICE_ACCOUNT_JSON secret is not set. It runs after the
+      # GitHub release, so a Play failure does not hold that release back; re-run the failed job to retry.
       - name: Prepare Play upload
         id: play
         env:
@@ -133,10 +145,3 @@ jobs:
           track: production
           status: draft
           whatsNewDirectory: whatsnew
-      - name: Publish GitHub release
-        # The notes are a file in the repository (release-notes/<version>.md), so line breaks and
-        # wording are reviewed like code; without one the release is not published.
-        run: |
-          notes="release-notes/${GITHUB_REF_NAME#v}.md"
-          test -f "$notes" || { echo "Missing $notes"; exit 1; }
-          gh release create "$GITHUB_REF_NAME" "spotnav-${GITHUB_REF_NAME#v}.apk" --title "SpotNav ${GITHUB_REF_NAME#v}" --notes-file "$notes" --verify-tag
