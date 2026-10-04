@@ -11,3 +11,6 @@ signing.properties
 PLAN.md
 plans/
 docs/
+
+# Firebase configuration for instant notifications: provided locally, never committed.
+app/google-services.json

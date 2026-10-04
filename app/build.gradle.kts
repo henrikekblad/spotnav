@@ -29,6 +29,21 @@ val versionParts = releaseVersion?.let { version ->
         require(minor < 100 && patch < 100) { "minor and patch must stay below 100: $version" }
     }
 }
+// Instant notifications (a content-free Firebase Cloud Messaging wake-up through SpotNav Relay) are
+// in a build only when app/google-services.json is there. That file is never committed, so CI and
+// every other build without it contain no Firebase at all: the sources come from app/src/nopush
+// instead of app/src/push, and neither the google-services plugin nor firebase-messaging is applied.
+// -Ppush=false leaves push out even with the file; -Ppush=true insists on it. BuildConfig.PUSH_AVAILABLE
+// says which one this is.
+val pushConfig = file("google-services.json")
+val push = when (val flag = findProperty("push") as String?) {
+    null -> pushConfig.exists()
+    "true" -> true.also { require(pushConfig.exists()) { "-Ppush=true needs app/google-services.json" } }
+    "false" -> false
+    else -> error("-Ppush must be true or false, was '$flag'")
+}
+if (push) apply(plugin = "com.google.gms.google-services")
+
 val appVersionName = releaseVersion ?: "1.0.0-dev"
 val appVersionCode = versionParts?.let { (major, minor, patch) -> major * 10000 + minor * 100 + patch } ?: 1
 
@@ -45,12 +60,14 @@ android {
         versionCode = appVersionCode
         versionName = appVersionName
         buildConfigField("String", "STORE", "\"$store\"")
+        buildConfigField("boolean", "PUSH_AVAILABLE", push.toString())
     }
 
     sourceSets {
         getByName("main") {
             java.srcDir("src/$store/java")
             res.srcDir("src/$store/res")
+            java.srcDir(if (push) "src/push/java" else "src/nopush/java")
         }
         getByName("test") { java.srcDir("src/$store/test/java") }
     }
@@ -82,9 +99,20 @@ android {
     }
 }
 
+// The Firebase messaging service is declared only in a build with push.
+androidComponents {
+    onVariants { variant ->
+        if (push) variant.sources.manifests.addStaticManifestFile("src/push/AndroidManifest.xml")
+    }
+}
+
 kotlin { jvmToolchain(17) }
 
 dependencies {
+    if (push) {
+        implementation(platform(libs.firebase.bom))
+        implementation(libs.firebase.messaging)
+    }
     testImplementation(libs.junit)
     testImplementation(libs.org.json)
 }
