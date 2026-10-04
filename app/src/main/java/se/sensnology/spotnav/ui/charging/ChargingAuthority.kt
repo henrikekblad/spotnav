@@ -15,7 +15,6 @@ import se.sensnology.spotnav.ha.settings.HaSettingsEdit
 import se.sensnology.spotnav.ha.settings.HaSettingsEditor
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.planning.PlanDriver
-import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.authorityRefusalText
 import se.sensnology.spotnav.ui.common.authorityStateNote
 
@@ -43,7 +42,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings) {
         }
         connection.refreshValueLabel()
         chargerCard.refreshPhasesRow()
-        energy.energy.progress = VehicleEnergy.energyProgressNearest(record.requestedKwh)
+        energy.setKwh(record.requestedKwh)
         energy.refreshValueLabel()
         planCard.periods.progress = (record.maxPeriods - 1).coerceIn(0, planCard.periods.max)
         planCard.refreshPeriodsLabel()

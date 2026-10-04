@@ -21,6 +21,7 @@ import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
+import se.sensnology.spotnav.vehicles.BatteryRoom
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.TargetNeed
 import se.sensnology.spotnav.vehicles.TargetVerdict
@@ -109,9 +110,12 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         // [PairedTarget]).
         val factsLine = pairedLine()
         val verdictLine = pairedLine()
+        // At or above the car's own limit the car ends the charge itself: said under the slider.
+        val carEndsLine = pairedLine()
         val needLine = pairedLine()
         container.addView(factsLine, 0)
         container.addView(verdictLine)
+        container.addView(carEndsLine)
         container.addView(needLine)
         var pairedSoc: DashboardSoc? = null
         var pairedVehicles: List<DashboardVehicle> = emptyList()
@@ -119,7 +123,7 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         val paintPaired = {
             val soc = pairedSoc
             if (soc == null) {
-                for (line in listOf(factsLine, verdictLine, needLine)) { line.text = ""; line.visibility = View.GONE }
+                for (line in listOf(factsLine, verdictLine, carEndsLine, needLine)) { line.text = ""; line.visibility = View.GONE }
             } else {
                 val facts = PairedTarget.facts(soc, pairedVehicles, pairedPicked)
                 val target = targetSoc.progress.toDouble()
@@ -142,6 +146,9 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 }
                 verdictLine.text = verdict
                 verdictLine.visibility = if (verdict.isEmpty()) View.GONE else View.VISIBLE
+                val carEnds = BatteryRoom.targetAtCarLimit(targetSoc.progress, facts.limit)
+                carEndsLine.text = if (carEnds) carEndsChargeText(facts.limit) else ""
+                carEndsLine.visibility = if (carEnds) View.VISIBLE else View.GONE
                 val kwh = PairedTarget.needKwh(facts, target)
                 needLine.text = t(
                     R.string.paired_need,

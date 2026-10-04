@@ -409,6 +409,8 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 pairedPicked = picked
                 val soc = dashboard?.soc
                 targetSoc.applyPaired(soc, dashboard?.vehicles.orEmpty(), picked)
+                // The kWh slider tops out at the battery's room; an older Home Assistant states none.
+                energy.applyRoom(soc?.roomKwh, soc?.vehicleMaxPercent)
                 if (dashboard != null && soc == null) targetSoc.applyVehicle(vehicle)
                 if (dashboard == null) targetSoc.applyVehicle(vehicle)
                 refreshDriver()

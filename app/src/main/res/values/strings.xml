@@ -161,6 +161,7 @@
   <string name="paired_target_limit">Vehicle charge limit %1$s</string>
   <string name="paired_target_no_need">No charging needed now</string>
   <string name="paired_target_to_limit">Charging to the vehicle\'s limit, %1$s</string>
+  <string name="car_ends_charge">The car ends the charge itself when it is full or reaches its charge limit (%1$s).</string>
   <string name="paired_need">Energy needed: %1$s</string>
   <string name="paired_need_unknown">Unknown</string>
   <string name="pause_dialog_title">Pause automatic charging</string>

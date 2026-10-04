@@ -153,6 +153,7 @@
   <string name="paired_target_limit">Auton latausraja %1$s</string>
   <string name="paired_target_no_need">Latausta ei tarvita nyt</string>
   <string name="paired_target_to_limit">Ladataan auton rajaan, %1$s</string>
+  <string name="car_ends_charge">Auto lopettaa latauksen itse, kun se on täynnä tai saavuttaa latausrajansa (%1$s).</string>
   <string name="paired_need">Tarvittava energia: %1$s</string>
   <string name="paired_need_unknown">Tuntematon</string>
   <string name="pause_dialog_title">Keskeytä automaattinen lataus</string>

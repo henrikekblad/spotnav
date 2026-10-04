@@ -153,6 +153,7 @@
   <string name="paired_target_limit">Bilens laddegrense %1$s</string>
   <string name="paired_target_no_need">Ingen lading trengs nå</string>
   <string name="paired_target_to_limit">Lader til bilens grense, %1$s</string>
+  <string name="car_ends_charge">Bilen avslutter selv ladingen når den er full eller når ladegrensen sin (%1$s).</string>
   <string name="paired_need">Energi som trengs: %1$s</string>
   <string name="paired_need_unknown">Ukjent</string>
   <string name="pause_dialog_title">Pause automatisk lading</string>

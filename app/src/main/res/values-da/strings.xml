@@ -153,6 +153,7 @@
   <string name="paired_target_limit">Bilens ladegrænse %1$s</string>
   <string name="paired_target_no_need">Ingen opladning nødvendig nu</string>
   <string name="paired_target_to_limit">Lader til bilens grænse, %1$s</string>
+  <string name="car_ends_charge">Bilen afslutter selv opladningen, når den er fuld eller når sin ladegrænse (%1$s).</string>
   <string name="paired_need">Energi der skal bruges: %1$s</string>
   <string name="paired_need_unknown">Ukendt</string>
   <string name="pause_dialog_title">Pause automatisk opladning</string>
