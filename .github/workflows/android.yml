@@ -99,6 +99,40 @@ jobs:
           path: |
             spotnav-*.apk
             spotnav-*-play.aab
+      # The Play bundle goes to the production track as a draft with the store changelogs
+      # (fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt); it is sent for review by hand
+      # in Play Console. Skipped while the PLAY_SERVICE_ACCOUNT_JSON secret is not set.
+      - name: Prepare Play upload
+        id: play
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::notice::PLAY_SERVICE_ACCOUNT_JSON is not set; the Play bundle is not uploaded."
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" | base64 --decode > "$RUNNER_TEMP/play.json"
+          IFS=. read -r major minor patch <<< "${GITHUB_REF_NAME#v}"
+          code=$((major * 10000 + minor * 100 + patch))
+          mkdir -p whatsnew
+          for dir in fastlane/metadata/android/*/; do
+            locale=$(basename "$dir")
+            file="$dir/changelogs/$code.txt"
+            test -f "$file" || { echo "Missing $file"; exit 1; }
+            cp "$file" "whatsnew/whatsnew-$locale"
+          done
+          echo "upload=true" >> "$GITHUB_OUTPUT"
+      - name: Upload to Google Play (draft)
+        if: steps.play.outputs.upload == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ runner.temp }}/play.json
+          packageName: se.sensnology.spotnav
+          releaseFiles: spotnav-*-play.aab
+          track: production
+          status: draft
+          whatsNewDirectory: whatsnew
       - name: Publish GitHub release
         # The notes are a file in the repository (release-notes/<version>.md), so line breaks and
         # wording are reviewed like code; without one the release is not published.
