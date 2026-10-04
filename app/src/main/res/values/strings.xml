@@ -404,12 +404,11 @@
   <string name="find_region_found">Found: %1$s.</string>
   <string name="find_region_found_save">Found: %1$s. Save to keep it.</string>
   <string name="notify_section">Notifications</string>
-  <string name="notify_companion_title">Through the Home Assistant app</string>
-  <string name="notify_companion_intro">SpotNav sends the chosen events to the Home Assistant Companion app on the chosen phones. A tap opens Home Assistant.</string>
+  <string name="notify_companion_title">Via the Home Assistant app</string>
+  <string name="notify_companion_intro">The Home Assistant app (Companion) shows the notification; a tap opens Home Assistant.</string>
   <string name="notify_phones">Phones</string>
   <string name="notify_events">Events</string>
-  <string name="notify_events_on">%1$d of %2$d on</string>
-  <string name="notify_phones_none">None chosen</string>
+  <string name="notify_phones_none">No phone chosen</string>
   <string name="notify_change">Change notifications</string>
   <string name="notify_no_phones">No phone with the Home Assistant app is signed in to this Home Assistant.</string>
   <string name="notify_missing">%1$s (not found)</string>
@@ -420,13 +419,23 @@
   <string name="notify_event_plugged_in">Car plugged in</string>
   <string name="notify_event_unplugged">Car unplugged</string>
   <string name="notify_event_plan_installed">New plan</string>
-  <string name="notify_local_title">On this phone, without the Home Assistant app</string>
-  <string name="notify_local_toggle">Notify on this phone without the Companion app</string>
-  <string name="notify_local_help">SpotNav checks the charger about every 15 minutes while the phone has a network, so a notification can be up to 15 minutes late. For the events chosen here, on this phone only.</string>
-  <string name="notify_local_events_change">Change events</string>
+  <string name="notify_app_title">Via the SpotNav app</string>
+  <plurals name="notify_events_count">
+    <item quantity="one">%1$d of %2$d event</item>
+    <item quantity="other">%1$d of %2$d events</item>
+  </plurals>
+  <string name="notify_app_off">Off</string>
+  <string name="notify_app_periodic">Every 15 minutes</string>
+  <string name="notify_app_instant">Instant</string>
+  <plurals name="notify_phones_count">
+    <item quantity="one">%1$d phone</item>
+    <item quantity="other">%1$d phones</item>
+  </plurals>
+  <string name="notify_local_toggle">Notify in the SpotNav app</string>
+  <string name="notify_local_help">SpotNav checks about every 15 minutes, so a notification can be up to 15 minutes late.</string>
   <string name="notify_local_denied">Notifications are turned off for SpotNav. Allow them in the phone\'s settings.</string>
-  <string name="notify_push_toggle">Instant notifications via the SpotNav server (Google Firebase)</string>
-  <string name="notify_push_help">Optional. Home Assistant wakes this phone through the SpotNav server and Google\'s push service, so a notification arrives at once. The wake-up carries nothing about your charging. Needs Google Play services.</string>
+  <string name="notify_push_toggle">Instant via the SpotNav server (Google Firebase)</string>
+  <string name="notify_push_help">The notification arrives at once. The wake-up carries nothing about your charging.</string>
   <string name="notify_push_no_token">Instant notifications could not be turned on: Google\'s push service did not answer.</string>
   <string name="notify_push_server_off">Instant notifications could not be turned on: the SpotNav server does not offer them right now.</string>
   <string name="notify_push_rate_limited">Instant notifications could not be turned on: too many attempts. Try again later.</string>

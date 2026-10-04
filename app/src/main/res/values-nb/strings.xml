@@ -392,11 +392,10 @@
   <string name="find_region_found_save">Fant: %1$s. Lagre for å beholde den.</string>
   <string name="notify_section">Varsler</string>
   <string name="notify_companion_title">Via Home Assistant-appen</string>
-  <string name="notify_companion_intro">SpotNav sender de valgte hendelsene til Home Assistant-appen (Companion) på de valgte telefonene. Et trykk åpner Home Assistant.</string>
+  <string name="notify_companion_intro">Home Assistant-appen (Companion) viser varselet; et trykk åpner Home Assistant.</string>
   <string name="notify_phones">Telefoner</string>
   <string name="notify_events">Hendelser</string>
-  <string name="notify_events_on">%1$d av %2$d på</string>
-  <string name="notify_phones_none">Ingen valgt</string>
+  <string name="notify_phones_none">Ingen telefon valgt</string>
   <string name="notify_change">Endre varsler</string>
   <string name="notify_no_phones">Ingen telefon med Home Assistant-appen er logget inn i denne Home Assistant.</string>
   <string name="notify_missing">%1$s (ikke funnet)</string>
@@ -407,13 +406,23 @@
   <string name="notify_event_plugged_in">Bilen tilkoblet</string>
   <string name="notify_event_unplugged">Bilen frakoblet</string>
   <string name="notify_event_plan_installed">Ny plan</string>
-  <string name="notify_local_title">På denne telefonen, uten Home Assistant-appen</string>
-  <string name="notify_local_toggle">Varsle på denne telefonen uten Companion-appen</string>
-  <string name="notify_local_help">SpotNav sjekker laderen omtrent hvert 15. minutt når telefonen har nettverk, så et varsel kan komme opptil 15 minutter for sent. Gjelder hendelsene som velges her, bare på denne telefonen.</string>
-  <string name="notify_local_events_change">Endre hendelser</string>
+  <string name="notify_app_title">Via SpotNav-appen</string>
+  <plurals name="notify_events_count">
+    <item quantity="one">%1$d av %2$d hendelse</item>
+    <item quantity="other">%1$d av %2$d hendelser</item>
+  </plurals>
+  <string name="notify_app_off">Av</string>
+  <string name="notify_app_periodic">Hvert 15. minutt</string>
+  <string name="notify_app_instant">Umiddelbart</string>
+  <plurals name="notify_phones_count">
+    <item quantity="one">%1$d telefon</item>
+    <item quantity="other">%1$d telefoner</item>
+  </plurals>
+  <string name="notify_local_toggle">Varsle i SpotNav-appen</string>
+  <string name="notify_local_help">SpotNav sjekker omtrent hvert 15. minutt, så et varsel kan komme opptil 15 minutter for sent.</string>
   <string name="notify_local_denied">Varsler er slått av for SpotNav. Tillat dem i telefonens innstillinger.</string>
-  <string name="notify_push_toggle">Umiddelbare varsler via SpotNav-serveren (Google Firebase)</string>
-  <string name="notify_push_help">Valgfritt. Home Assistant vekker telefonen via SpotNav-serveren og Googles push-tjeneste, så et varsel kommer med en gang. Vekkingen inneholder ingenting om ladingen din. Krever Google Play-tjenester.</string>
+  <string name="notify_push_toggle">Umiddelbart via SpotNav-serveren (Google Firebase)</string>
+  <string name="notify_push_help">Varselet kommer med en gang. Vekkingen inneholder ingenting om ladingen din.</string>
   <string name="notify_push_no_token">Umiddelbare varsler kunne ikke slås på: Googles push-tjeneste svarte ikke.</string>
   <string name="notify_push_server_off">Umiddelbare varsler kunne ikke slås på: SpotNav-serveren tilbyr dem ikke akkurat nå.</string>
   <string name="notify_push_rate_limited">Umiddelbare varsler kunne ikke slås på: for mange forsøk. Prøv igjen senere.</string>

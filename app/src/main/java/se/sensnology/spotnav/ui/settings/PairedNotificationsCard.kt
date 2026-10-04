@@ -1,11 +1,14 @@
 package se.sensnology.spotnav.ui.settings
 
+import android.app.AlertDialog
+import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.settings.HaNotificationSettings
@@ -20,7 +23,6 @@ import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.checkbox
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.valueLabel
-import se.sensnology.spotnav.ui.common.valueRow
 
 /** The phones a notification choice can name: the ones that exist, then chosen ones that no longer do. */
 internal object NotificationPhones {
@@ -33,21 +35,25 @@ internal object NotificationPhones {
 }
 
 /**
- * A paired charger's notifications, after the paired cards: the Home Assistant card's own choice of
- * phones and events (sent through the Companion app; shown only when Home Assistant states it), and
- * this phone's own background check (off by default, see [LocalNotifications]).
+ * A paired charger's notifications, after the paired cards: a summary of the two routes, named by
+ * the app that shows the notification, and one dialog that changes both. Via the Home Assistant app
+ * is the Home Assistant card's own choice of phones and events (shown only when Home Assistant
+ * states it); via the SpotNav app is this phone's own check (off by default, see
+ * [LocalNotifications]), at once with instant notifications where the build and phone offer them.
  */
 internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) : ViewScope(scope) {
     private val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val local = LocalNotificationStore.forContext(context)
     private var record: HaNotificationSettings? = null
     private var writable = false
-    private var notice: String? = null
-    private var pushBusy = false
-    private var pushNotice: String? = null
 
     private var save: (List<String>, List<String>, (String?) -> Unit) -> Unit = { _, _, done -> done(null) }
     private var requestPermission: () -> Unit = {}
+
+    private val texts = object : NotificationTexts {
+        override fun text(id: Int, vararg args: Any) = t(id, *args)
+        override fun quantity(id: Int, count: Int, vararg args: Any) = tq(id, count, *args)
+    }
 
     init {
         parent.addView(container)
@@ -66,37 +72,37 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         repaint()
     }
 
-    /** The permission prompt was answered: say what it means for the switch. */
+    /** The permission prompt was answered: say what it means for the summary. */
     fun permissionAnswered() {
         LocalNotifications.sync(context)
         repaint()
     }
 
+    private fun instantOffered() = PushNotifications.available(context)
+
+    private fun instantOn() = instantOffered() && PushNotifications.enabled(context)
+
     private fun muted(text: String, top: Int = 0, bottom: Int = 0) = TextView(context).apply {
         this.text = text; textSize = 13f; setTextColor(muted); setPadding(0, dp(top), 0, dp(bottom))
     }
 
-    private fun heading(text: String) = TextView(context).apply {
-        this.text = text; textSize = 15f; setTextColor(dark); setPadding(0, dp(14), 0, dp(2))
+    private fun heading(text: String, top: Int = 14) = TextView(context).apply {
+        this.text = text; textSize = 15f; setTextColor(dark); setPadding(0, dp(top), 0, dp(2))
     }
 
+    private fun sectionHeading(text: String, top: Int) = TextView(context).apply {
+        this.text = text; textSize = 17f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
+        setPadding(0, dp(top), 0, dp(2))
+    }
+
+    /** A route's summary under its name: both are long, so the value never shares a line with it. */
     private fun readRow(parent: LinearLayout, label: String, value: String) {
-        if (value.length <= 18) {
-            valueRow(parent, label, valueLabel().apply { text = value; setTextColor(palette.valueColour(ValueCue.READ_ONLY)) })
-            return
-        }
         parent.addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(0, dp(5), 0, dp(5))
             addView(TextView(context).apply { text = label; textSize = 15f; setTextColor(muted) })
             addView(valueLabel().apply { text = value; gravity = Gravity.START; setTextColor(palette.valueColour(ValueCue.READ_ONLY)) })
         })
-    }
-
-    private fun button(parent: LinearLayout, label: String, enabled: Boolean, onClick: () -> Unit) {
-        parent.addView(Button(context).apply {
-            text = label; isAllCaps = false; isEnabled = enabled; setOnClickListener { onClick() }
-        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
     }
 
     private fun eventName(event: NotificationEvent) = t(
@@ -111,135 +117,148 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         }
     )
 
-    private fun eventsOn(count: Int) = t(R.string.notify_events_on, count, NotificationEvent.entries.size)
+    private fun errorView() = TextView(context).apply {
+        textSize = 13f; setTextColor(ERROR_COLOUR); setPadding(0, dp(4), 0, 0); visibility = View.GONE
+    }
+
+    private fun TextView.say(message: String?) {
+        text = message.orEmpty()
+        visibility = if (message == null) View.GONE else View.VISIBLE
+    }
+
+    // --- The card ---------------------------------------------------------------------------------
 
     private fun repaint() {
         container.removeAllViews()
         val card = card(container, t(R.string.notify_section), R.drawable.ic_settings)
-        record?.let { addCompanion(card.body, it) }
-        addLocal(card.body)
+        val body = card.body
+        record?.let { settings ->
+            readRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts))
+            if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
+        }
+        readRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts))
+        if (local.enabled && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
+        body.addView(Button(context).apply {
+            text = t(R.string.notify_change); isAllCaps = false; setOnClickListener { openDialog() }
+        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
     }
 
-    // --- Through the Companion app ----------------------------------------------------------------
+    // --- The dialog -------------------------------------------------------------------------------
 
-    private fun addCompanion(body: LinearLayout, settings: HaNotificationSettings) {
-        body.addView(heading(t(R.string.notify_companion_title)))
-        body.addView(muted(t(R.string.notify_companion_intro), bottom = 4))
-        val phones = NotificationPhones.of(settings).filter { it.chosen }
-            .map { if (it.missing) t(R.string.notify_missing, it.name) else it.name }
-        readRow(body, t(R.string.notify_phones), phones.joinToString(", ").ifEmpty { t(R.string.notify_phones_none) })
-        val known = settings.events.count { NotificationEvent.of(it) != null }
-        readRow(body, t(R.string.notify_events), eventsOn(known))
+    /** The Home Assistant app's section: who gets it and for what; read-only when it cannot be written. */
+    private class HomeAssistantSection(
+        val phones: List<NotificationPhones.Phone>,
+        val phoneBoxes: List<CheckBox>,
+        val eventBoxes: List<CheckBox>,
+        val error: TextView
+    )
+
+    private fun addHomeAssistantSection(body: LinearLayout, settings: HaNotificationSettings): HomeAssistantSection {
+        body.addView(sectionHeading(t(R.string.notify_companion_title), top = 0))
+        body.addView(muted(t(R.string.notify_companion_intro)))
         if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), top = 4))
-        notice?.let { body.addView(muted(it, top = 4)) }
-        button(body, t(R.string.notify_change), enabled = writable) { openCompanionDialog() }
-    }
-
-    private fun openCompanionDialog() {
-        val settings = record ?: return
-        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        body.addView(muted(t(R.string.notify_companion_intro), bottom = 4))
-        body.addView(heading(t(R.string.notify_phones)))
+        body.addView(heading(t(R.string.notify_phones), top = 10))
         val phones = NotificationPhones.of(settings)
         if (phones.isEmpty()) body.addView(muted(t(R.string.notify_no_phones)))
         val phoneBoxes = phones.map { phone ->
             checkbox(if (phone.missing) t(R.string.notify_missing, phone.name) else phone.name, phone.chosen)
-                .also { body.addView(it) }
+                .also { it.isEnabled = writable; body.addView(it) }
         }
-        body.addView(heading(t(R.string.notify_events)))
+        body.addView(heading(t(R.string.notify_events), top = 10))
         val eventBoxes = NotificationEvent.entries.map { event ->
-            checkbox(eventName(event), event.wire in settings.events).also { body.addView(it) }
+            checkbox(eventName(event), event.wire in settings.events).also { it.isEnabled = writable; body.addView(it) }
         }
-        val error = TextView(context).apply {
-            textSize = 13f; setTextColor(ERROR_COLOUR); setPadding(0, dp(4), 0, 0); visibility = View.GONE
-        }
-        body.addView(error)
-        openSaveDialog(t(R.string.notify_section), body) { dialog, saveButton ->
-            val current = record ?: return@openSaveDialog
-            val targets = phones.filterIndexed { index, _ -> phoneBoxes[index].isChecked }.map { it.service }
-            // An event this app cannot name stays as Home Assistant has it.
-            val events = NotificationEvent.entries.filterIndexed { index, _ -> eventBoxes[index].isChecked }.map { it.wire } +
-                current.events.filter { NotificationEvent.of(it) == null }
-            if (targets == current.targets && events.toSet() == current.events.toSet()) {
-                dialog.dismiss()
-                return@openSaveDialog
-            }
-            saveButton.isEnabled = false
-            error.visibility = View.GONE
-            save(targets, events) { failure ->
-                if (failure == null) {
-                    notice = null
-                    dialog.dismiss()
-                    repaint()
-                } else {
-                    saveButton.isEnabled = true
-                    error.text = failure
-                    error.visibility = View.VISIBLE
-                }
-            }
-        }
+        val error = errorView().also { body.addView(it) }
+        return HomeAssistantSection(phones, phoneBoxes, eventBoxes, error)
     }
 
-    // --- On this phone ----------------------------------------------------------------------------
+    /** The SpotNav app's section: on or off, instant or every 15 minutes, and for what. */
+    private class SpotNavSection(val on: Switch, val instant: Switch?, val eventBoxes: List<CheckBox>, val error: TextView)
 
-    private fun addLocal(body: LinearLayout) {
-        body.addView(heading(t(R.string.notify_local_title)))
-        val toggle: CheckBox = checkbox(t(R.string.notify_local_toggle), local.enabled)
-        body.addView(toggle)
-        body.addView(muted(t(R.string.notify_local_help), top = 2))
-        toggle.setOnCheckedChangeListener { _, on ->
-            local.enabled = on
-            LocalNotifications.sync(context)
-            if (on && LocalNotifications.needsPermission(context)) requestPermission() else repaint()
-        }
-        if (!local.enabled) return
-        if (!LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), top = 4))
-        readRow(body, t(R.string.notify_events), eventsOn(local.events.size))
-        button(body, t(R.string.notify_local_events_change), enabled = true) { openLocalDialog() }
-        if (PushNotifications.available(context)) addPush(body)
+    private fun switch(label: String, checked: Boolean) = Switch(context).apply {
+        text = label; isChecked = checked; textSize = 16f; setTextColor(dark)
+        setPadding(0, dp(6), 0, dp(6))
     }
 
-    /** Instant notifications: opt-in, offered only in a build with push on a phone with Play services. */
-    private fun addPush(body: LinearLayout) {
-        val toggle: CheckBox = checkbox(t(R.string.notify_push_toggle), PushNotifications.enabled(context))
-        toggle.isEnabled = !pushBusy
-        body.addView(toggle)
-        body.addView(muted(t(R.string.notify_push_help), top = 2))
-        pushNotice?.let { body.addView(muted(it, top = 4)) }
-        toggle.setOnCheckedChangeListener { _, on ->
-            pushBusy = true
-            pushNotice = null
-            repaint()
-            PushNotifications.setEnabled(context, on) { result ->
-                runOnUiThread {
-                    pushBusy = false
-                    pushNotice = when (result) {
-                        PushRegistration.Result.ON, PushRegistration.Result.OFF -> null
-                        PushRegistration.Result.NO_TOKEN -> t(R.string.notify_push_no_token)
-                        PushRegistration.Result.SERVER_OFF -> t(R.string.notify_push_server_off)
-                        PushRegistration.Result.RATE_LIMITED -> t(R.string.notify_push_rate_limited)
-                        PushRegistration.Result.FAILED -> t(R.string.notify_push_failed)
-                    }
-                    if (!isDestroyed) repaint()
-                }
-            }
-        }
-    }
-
-    private fun openLocalDialog() {
-        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        body.addView(muted(t(R.string.notify_local_help), bottom = 4))
+    private fun addSpotNavSection(body: LinearLayout, top: Int): SpotNavSection {
+        body.addView(sectionHeading(t(R.string.notify_app_title), top = top))
+        val on = switch(t(R.string.notify_local_toggle), local.enabled).also { body.addView(it) }
+        val instant = if (instantOffered()) {
+            switch(t(R.string.notify_push_toggle), PushNotifications.enabled(context)).also { body.addView(it) }
+        } else null
+        val help = muted("", top = 2).also { body.addView(it) }
+        body.addView(heading(t(R.string.notify_events), top = 10))
         val chosen = local.events
-        val boxes = NotificationEvent.entries.map { event ->
+        val eventBoxes = NotificationEvent.entries.map { event ->
             checkbox(eventName(event), event in chosen).also { body.addView(it) }
         }
-        openSaveDialog(t(R.string.notify_local_title), body) { dialog, _ ->
-            local.events = NotificationEvent.entries.filterIndexed { index, _ -> boxes[index].isChecked }.toSet()
-            // Instant notifications wake this phone for the same events.
-            LocalNotifications.sync(context)
-            dialog.dismiss()
-            repaint()
+        val error = errorView().also { body.addView(it) }
+        fun follow() {
+            instant?.isEnabled = on.isChecked
+            eventBoxes.forEach { it.isEnabled = on.isChecked }
+            help.text = t(NotificationsOverview.spotNavHelp(instant?.isChecked == true))
         }
+        on.setOnCheckedChangeListener { _, _ -> follow() }
+        instant?.setOnCheckedChangeListener { _, _ -> follow() }
+        follow()
+        return SpotNavSection(on, instant, eventBoxes, error)
+    }
+
+    private fun saver() = NotificationsSave(
+        local = local,
+        push = object : NotificationsSave.Push {
+            override val offered get() = instantOffered()
+            override val on get() = PushNotifications.enabled(context)
+            override fun set(on: Boolean, done: (PushRegistration.Result) -> Unit) =
+                PushNotifications.setEnabled(context, on) { result -> runOnUiThread { done(result) } }
+        },
+        writeHomeAssistant = { targets, events, done -> save(targets, events, done) },
+        localChanged = { LocalNotifications.sync(context) },
+        turnedOn = { if (LocalNotifications.needsPermission(context)) requestPermission() }
+    )
+
+    private fun openDialog() {
+        val settings = record
+        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val homeAssistant = settings?.let { addHomeAssistantSection(body, it) }
+        val spotNav = addSpotNavSection(body, top = if (homeAssistant == null) 0 else 22)
+        openSaveDialog(t(R.string.notify_section), body) { dialog, saveButton ->
+            val current = record
+            val choice = NotificationsSave.Choice(
+                homeAssistant = homeAssistant?.takeIf { writable && current != null }?.let { section ->
+                    NotificationsSave.homeAssistantChoice(
+                        current!!, section.phones, section.phoneBoxes.map { it.isChecked }, section.eventBoxes.map { it.isChecked }
+                    )
+                },
+                spotNavOn = spotNav.on.isChecked,
+                spotNavEvents = NotificationEvent.entries.filterIndexed { index, _ -> spotNav.eventBoxes[index].isChecked }.toSet(),
+                instant = spotNav.instant?.isChecked ?: PushNotifications.enabled(context)
+            )
+            saveButton.isEnabled = false
+            homeAssistant?.error?.say(null)
+            spotNav.error.say(null)
+            saver().save(current, choice) { outcome -> finish(dialog, saveButton, homeAssistant, spotNav, outcome) }
+        }
+    }
+
+    private fun finish(
+        dialog: AlertDialog,
+        saveButton: Button,
+        homeAssistant: HomeAssistantSection?,
+        spotNav: SpotNavSection,
+        outcome: NotificationsSave.Outcome
+    ) {
+        if (isDestroyed) return
+        repaint()
+        if (outcome.saved) {
+            dialog.dismiss()
+            return
+        }
+        saveButton.isEnabled = true
+        homeAssistant?.error?.say(outcome.homeAssistantError)
+        spotNav.error.say(NotificationsOverview.pushFailure(outcome.push)?.let { t(it) })
+        // A failed turn-on leaves instant notifications off: the switch says so.
+        if (NotificationsOverview.pushFailure(outcome.push) != null) spotNav.instant?.isChecked = false
     }
 
     private companion object {

@@ -392,11 +392,10 @@
   <string name="find_region_found_save">Löytyi: %1$s. Tallenna, niin se säilyy.</string>
   <string name="notify_section">Ilmoitukset</string>
   <string name="notify_companion_title">Home Assistant -sovelluksen kautta</string>
-  <string name="notify_companion_intro">SpotNav lähettää valitut tapahtumat Home Assistant -sovellukseen (Companion) valituissa puhelimissa. Napautus avaa Home Assistantin.</string>
+  <string name="notify_companion_intro">Home Assistant -sovellus (Companion) näyttää ilmoituksen; napautus avaa Home Assistantin.</string>
   <string name="notify_phones">Puhelimet</string>
   <string name="notify_events">Tapahtumat</string>
-  <string name="notify_events_on">%1$d/%2$d päällä</string>
-  <string name="notify_phones_none">Ei valittu</string>
+  <string name="notify_phones_none">Puhelinta ei valittu</string>
   <string name="notify_change">Muuta ilmoituksia</string>
   <string name="notify_no_phones">Yksikään puhelin, jossa on Home Assistant -sovellus, ei ole kirjautunut tähän Home Assistantiin.</string>
   <string name="notify_missing">%1$s (ei löydy)</string>
@@ -407,13 +406,23 @@
   <string name="notify_event_plugged_in">Auto kytketty</string>
   <string name="notify_event_unplugged">Auto irrotettu</string>
   <string name="notify_event_plan_installed">Uusi suunnitelma</string>
-  <string name="notify_local_title">Tässä puhelimessa ilman Home Assistant -sovellusta</string>
-  <string name="notify_local_toggle">Ilmoita tässä puhelimessa ilman Companion-sovellusta</string>
-  <string name="notify_local_help">SpotNav tarkistaa laturin noin 15 minuutin välein, kun puhelimella on verkkoyhteys, joten ilmoitus voi tulla jopa 15 minuuttia myöhässä. Koskee tässä valittuja tapahtumia vain tässä puhelimessa.</string>
-  <string name="notify_local_events_change">Muuta tapahtumia</string>
+  <string name="notify_app_title">SpotNav-sovelluksen kautta</string>
+  <plurals name="notify_events_count">
+    <item quantity="one">%1$d/%2$d tapahtuma</item>
+    <item quantity="other">%1$d/%2$d tapahtumaa</item>
+  </plurals>
+  <string name="notify_app_off">Pois</string>
+  <string name="notify_app_periodic">15 minuutin välein</string>
+  <string name="notify_app_instant">Heti</string>
+  <plurals name="notify_phones_count">
+    <item quantity="one">%1$d puhelin</item>
+    <item quantity="other">%1$d puhelinta</item>
+  </plurals>
+  <string name="notify_local_toggle">Ilmoita SpotNav-sovelluksessa</string>
+  <string name="notify_local_help">SpotNav tarkistaa noin 15 minuutin välein, joten ilmoitus voi tulla jopa 15 minuuttia myöhässä.</string>
   <string name="notify_local_denied">Ilmoitukset ovat pois päältä SpotNavilta. Salli ne puhelimen asetuksista.</string>
-  <string name="notify_push_toggle">Välittömät ilmoitukset SpotNav-palvelimen kautta (Google Firebase)</string>
-  <string name="notify_push_help">Valinnainen. Home Assistant herättää puhelimen SpotNav-palvelimen ja Googlen push-palvelun kautta, joten ilmoitus tulee heti. Herätys ei sisällä mitään latauksestasi. Vaatii Google Play -palvelut.</string>
+  <string name="notify_push_toggle">Heti SpotNav-palvelimen kautta (Google Firebase)</string>
+  <string name="notify_push_help">Ilmoitus tulee heti. Herätys ei sisällä mitään latauksestasi.</string>
   <string name="notify_push_no_token">Välittömiä ilmoituksia ei voitu ottaa käyttöön: Googlen push-palvelu ei vastannut.</string>
   <string name="notify_push_server_off">Välittömiä ilmoituksia ei voitu ottaa käyttöön: SpotNav-palvelin ei tarjoa niitä juuri nyt.</string>
   <string name="notify_push_rate_limited">Välittömiä ilmoituksia ei voitu ottaa käyttöön: liian monta yritystä. Yritä myöhemmin uudelleen.</string>

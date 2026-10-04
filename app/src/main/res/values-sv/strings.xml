@@ -392,11 +392,10 @@
   <string name="find_region_found_save">Hittade: %1$s. Spara för att behålla den.</string>
   <string name="notify_section">Aviseringar</string>
   <string name="notify_companion_title">Via Home Assistant-appen</string>
-  <string name="notify_companion_intro">SpotNav skickar de valda händelserna till Home Assistant-appen (Companion) på de valda telefonerna. Ett tryck öppnar Home Assistant.</string>
+  <string name="notify_companion_intro">Home Assistant-appen (Companion) visar aviseringen; ett tryck öppnar Home Assistant.</string>
   <string name="notify_phones">Telefoner</string>
   <string name="notify_events">Händelser</string>
-  <string name="notify_events_on">%1$d av %2$d på</string>
-  <string name="notify_phones_none">Ingen vald</string>
+  <string name="notify_phones_none">Ingen telefon vald</string>
   <string name="notify_change">Ändra aviseringar</string>
   <string name="notify_no_phones">Ingen telefon med Home Assistant-appen är inloggad i den här Home Assistant.</string>
   <string name="notify_missing">%1$s (hittas inte)</string>
@@ -407,13 +406,23 @@
   <string name="notify_event_plugged_in">Bilen ansluten</string>
   <string name="notify_event_unplugged">Bilen urkopplad</string>
   <string name="notify_event_plan_installed">Ny plan</string>
-  <string name="notify_local_title">På den här telefonen, utan Home Assistant-appen</string>
-  <string name="notify_local_toggle">Avisera på den här telefonen utan Companion-appen</string>
-  <string name="notify_local_help">SpotNav kollar laddaren ungefär var 15:e minut när telefonen har nätverk, så en avisering kan komma upp till 15 minuter sent. Gäller händelserna som väljs här, bara på den här telefonen.</string>
-  <string name="notify_local_events_change">Ändra händelser</string>
+  <string name="notify_app_title">Via SpotNav-appen</string>
+  <plurals name="notify_events_count">
+    <item quantity="one">%1$d av %2$d händelse</item>
+    <item quantity="other">%1$d av %2$d händelser</item>
+  </plurals>
+  <string name="notify_app_off">Av</string>
+  <string name="notify_app_periodic">Var 15:e minut</string>
+  <string name="notify_app_instant">Direkt</string>
+  <plurals name="notify_phones_count">
+    <item quantity="one">%1$d telefon</item>
+    <item quantity="other">%1$d telefoner</item>
+  </plurals>
+  <string name="notify_local_toggle">Avisera i SpotNav-appen</string>
+  <string name="notify_local_help">SpotNav kollar ungefär var 15:e minut, så en avisering kan komma upp till 15 minuter sent.</string>
   <string name="notify_local_denied">Aviseringar är avstängda för SpotNav. Tillåt dem i telefonens inställningar.</string>
-  <string name="notify_push_toggle">Direktaviseringar via SpotNav-servern (Google Firebase)</string>
-  <string name="notify_push_help">Valfritt. Home Assistant väcker telefonen via SpotNav-servern och Googles push-tjänst, så en avisering kommer direkt. Väckningen innehåller inget om din laddning. Kräver Google Play-tjänster.</string>
+  <string name="notify_push_toggle">Direkt via SpotNav-servern (Google Firebase)</string>
+  <string name="notify_push_help">Aviseringen kommer direkt. Väckningen innehåller inget om din laddning.</string>
   <string name="notify_push_no_token">Direktaviseringar kunde inte slås på: Googles push-tjänst svarade inte.</string>
   <string name="notify_push_server_off">Direktaviseringar kunde inte slås på: SpotNav-servern erbjuder dem inte just nu.</string>
   <string name="notify_push_rate_limited">Direktaviseringar kunde inte slås på: för många försök. Försök igen senare.</string>
