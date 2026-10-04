@@ -374,7 +374,7 @@
   <string name="history_saving_note">The saving compares with the average price of each day.</string>
   <string name="history_none">No charging in this month.</string>
   <string name="history_chart_title">Energy per day</string>
-  <string name="history_chart_hint">Tap a bar for the day\'s figures. Greener is a cheaper day, redder a dearer one.</string>
+  <string name="history_chart_hint">Tap a bar for the day\'s figures. Greener is a cheaper day, redder a more expensive one.</string>
   <string name="history_chart_description">Energy per day in %1$s, %2$s in total</string>
   <string name="history_day_none">no charging</string>
   <string name="history_day_solar">%1$s solar</string>
