@@ -58,6 +58,7 @@ internal object HaStatusWording {
         "site_measurement_problem" to "issue.siteMeasurement",
         "duplicate_charger" to "issue.duplicateCharger",
         "starting_up" to "status.startingUp",
+        "remaining_need_estimated" to "issue.needKept",
     )
 
     /** The extra keys a code's variants use (an absent fact, or no zone to write an instant in). */
@@ -91,6 +92,7 @@ internal object HaStatusWording {
         "status.siteMeasurement.noValue.other",
         "status.siteMeasurement.stale.one",
         "status.siteMeasurement.stale.other",
+        "issue.needFromSessions",
     )
 
     /** The app's own additions: a status this app version cannot word, and the age of a kept one. */
@@ -123,6 +125,8 @@ internal object HaStatusWording {
             "status.siteMeasurement.noValue.one" to "{phases} has no value{where}.",
             "issue.duplicateCharger" to "{other} and this charger are the same physical charger. Two SpotNav chargers on one charger send it conflicting commands, so keep only one: remove the other in Settings → Devices & services → SpotNav. SpotNav never removes one for you.",
             "status.startingUp" to "Starting up…",
+            "issue.needKept" to "The energy meter cannot be read: {kwh} kWh remains, from its last reading.",
+            "issue.needFromSessions" to "No energy meter: {kwh} kWh remains, counted from this charger's recorded charges.",
             "issue.siteMeasurement" to "The site's measurement cannot be used right now.",
             "control.pausedUntil" to "Paused until {time}.",
             "issue.chargerMissing" to "The configured charger is not usable: it is unknown, unloaded or a site.",
@@ -205,6 +209,8 @@ internal object HaStatusWording {
             "status.siteMeasurement.noValue.one" to "{phases} saknar värde{where}.",
             "issue.duplicateCharger" to "{other} och den här laddaren är samma fysiska laddare. Två SpotNav-laddare på en laddare skickar motstridiga kommandon, så behåll bara en: ta bort den andra under Inställningar → Enheter och tjänster → SpotNav. SpotNav tar aldrig bort en åt dig.",
             "status.startingUp" to "Startar upp…",
+            "issue.needKept" to "Energimätaren kan inte läsas: {kwh} kWh återstår enligt dess senaste värde.",
+            "issue.needFromSessions" to "Ingen energimätare: {kwh} kWh återstår, räknat från laddarens sparade laddningar.",
             "issue.siteMeasurement" to "Anläggningens mätning kan inte användas just nu.",
             "control.pausedUntil" to "Pausad till {time}.",
             "issue.chargerMissing" to "Den valda laddaren går inte att använda: den är okänd, inte laddad eller en anläggning.",
@@ -287,6 +293,8 @@ internal object HaStatusWording {
             "status.siteMeasurement.noValue.one" to "{phases} har ingen værdi{where}.",
             "issue.duplicateCharger" to "{other} og denne lader er den samme fysiske lader. To SpotNav-ladere på én lader sender modstridende kommandoer, så behold kun én: fjern den anden under Indstillinger → Enheder og tjenester → SpotNav. SpotNav fjerner aldrig en for dig.",
             "status.startingUp" to "Starter op…",
+            "issue.needKept" to "Energimåleren kan ikke aflæses: {kwh} kWh mangler ifølge seneste aflæsning.",
+            "issue.needFromSessions" to "Ingen energimåler: {kwh} kWh mangler, regnet ud fra laderens gemte opladninger.",
             "issue.siteMeasurement" to "Anlæggets måling kan ikke bruges lige nu.",
             "control.pausedUntil" to "Sat på pause til {time}.",
             "issue.chargerMissing" to "Den valgte lader kan ikke bruges: den er ukendt, ikke indlæst eller et anlæg.",
@@ -369,6 +377,8 @@ internal object HaStatusWording {
             "status.siteMeasurement.noValue.one" to "{phases} har ingen verdi{where}.",
             "issue.duplicateCharger" to "{other} og denne laderen er den samme fysiske laderen. To SpotNav-ladere på én lader sender motstridende kommandoer, så behold bare én: fjern den andre under Innstillinger → Enheter og tjenester → SpotNav. SpotNav fjerner aldri en for deg.",
             "status.startingUp" to "Starter opp…",
+            "issue.needKept" to "Energimåleren kan ikke leses: {kwh} kWh gjenstår ifølge siste avlesning.",
+            "issue.needFromSessions" to "Ingen energimåler: {kwh} kWh gjenstår, regnet ut fra laderens lagrede ladinger.",
             "issue.siteMeasurement" to "Anleggets måling kan ikke brukes akkurat nå.",
             "control.pausedUntil" to "Pauset til {time}.",
             "issue.chargerMissing" to "Den valgte laderen kan ikke brukes: den er ukjent, ikke lastet eller et anlegg.",
@@ -451,6 +461,8 @@ internal object HaStatusWording {
             "status.siteMeasurement.noValue.one" to "{phases}: ei arvoa{where}.",
             "issue.duplicateCharger" to "{other} ja tämä latauslaite ovat sama fyysinen laite. Kaksi SpotNav-latauslaitetta yhdellä laitteella lähettää sille ristiriitaisia komentoja, joten säilytä vain yksi: poista toinen kohdasta Asetukset → Laitteet ja palvelut → SpotNav. SpotNav ei koskaan poista kumpaakaan puolestasi.",
             "status.startingUp" to "Käynnistyy…",
+            "issue.needKept" to "Energiamittaria ei voi lukea: {kwh} kWh jäljellä sen viimeisimmän lukeman mukaan.",
+            "issue.needFromSessions" to "Ei energiamittaria: {kwh} kWh jäljellä laturin tallennettujen latausten perusteella.",
             "issue.siteMeasurement" to "Kohteen mittausta ei voi käyttää juuri nyt.",
             "control.pausedUntil" to "Keskeytetty {time} asti.",
             "issue.chargerMissing" to "Valittua laturia ei voi käyttää: se on tuntematon, ei ladattu tai kyseessä on asema.",

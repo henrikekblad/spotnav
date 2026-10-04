@@ -230,6 +230,11 @@ internal object HaStatusText {
                 num(p["max_age_s"])
             )
             "duplicate_charger" -> say(key, mapOf("other" to (p["other"] as? String ?: "")))
+            "remaining_need_estimated" -> say(
+                // Counted from the recorded charges, or kept from the meter's last reading.
+                if (p["basis"] == "sessions") "issue.needFromSessions" else key,
+                mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1))
+            )
             else -> say(key)
         }
     }

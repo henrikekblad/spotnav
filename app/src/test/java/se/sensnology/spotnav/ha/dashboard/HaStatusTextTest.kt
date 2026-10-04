@@ -297,4 +297,25 @@ class HaStatusTextTest {
             HaStatusText.line(StatusLine("load_balancing_limited", mapOf("cause" to "house_consumption")), format("en"), now)
         )
     }
+
+    @Test fun wordsAnEstimatedRemainingNeedByWhereItWasCounted() {
+        val kept = StatusLine("remaining_need_estimated", mapOf("kwh" to 7.25, "basis" to "kept"))
+        val sessions = StatusLine("remaining_need_estimated", mapOf("kwh" to 7.25, "basis" to "sessions"))
+        assertEquals(
+            "The energy meter cannot be read: 7.3 kWh remains, from its last reading.",
+            HaStatusText.line(kept, format("en"), now)
+        )
+        assertEquals(
+            "Energimätaren kan inte läsas: 7,3 kWh återstår enligt dess senaste värde.",
+            HaStatusText.line(kept, format("sv"), now)
+        )
+        assertEquals(
+            "No energy meter: 7.3 kWh remains, counted from this charger's recorded charges.",
+            HaStatusText.line(sessions, format("en"), now)
+        )
+        assertEquals(
+            "Ingen energimätare: 7,3 kWh återstår, räknat från laddarens sparade laddningar.",
+            HaStatusText.line(sessions, format("sv"), now)
+        )
+    }
 }

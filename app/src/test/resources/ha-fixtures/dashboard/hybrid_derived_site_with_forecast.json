@@ -154,7 +154,7 @@
     "source": "unknown"
   },
   "plan": {
-    "delivered_kwh": null,
+    "delivered_kwh": 0.0,
     "installed": {
       "active_period_index": null,
       "amps": 10,
@@ -196,7 +196,7 @@
       "applied_identity": "a9e50792cf4a4de4146041478fcf25ca",
       "pending_identity": null
     },
-    "remaining_kwh": null
+    "remaining_kwh": 20.0
   },
   "planning": {
     "applied": true,
@@ -2223,6 +2223,16 @@
     "driver": "manual_kwh",
     "fiscal_included": [],
     "max_periods": 1,
+    "notifications": {
+      "available": [],
+      "events": [
+        "plan_stopped",
+        "plan_at_risk",
+        "charge_complete"
+      ],
+      "targets": [],
+      "url": null
+    },
     "overrides": [],
     "phases": 3,
     "requested_kwh": 20.0,
