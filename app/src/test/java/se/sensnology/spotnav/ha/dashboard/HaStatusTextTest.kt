@@ -352,6 +352,23 @@ class HaStatusTextTest {
         assertTrue(HaStatusText.line(meter, format("en"), now).contains("Meter A, Meter B"))
     }
 
+    @Test fun aSignedMeterReadAsUnsignedNamesThePhasesAndTheSetting() {
+        val line = StatusLine("site_current_negative", mapOf("phases" to listOf("L2", "L3")))
+        assertEquals(
+            "The meter reports a negative current (export) on L2 and L3 — turn on “Grid current is signed”.",
+            HaStatusText.line(line, format("en"), now)
+        )
+        assertEquals(
+            "Mätaren rapporterar negativ ström (export) på L2 och L3 — slå på ”Nätströmmen är teckenmärkt”.",
+            HaStatusText.line(line, format("sv"), now)
+        )
+        for (language in listOf("da", "nb", "fi")) {
+            val worded = HaStatusText.line(line, format(language), now)
+            assertTrue(worded.contains("L2") && worded.contains("L3"))
+            assertFalse(worded.contains("{"))
+        }
+    }
+
     @Test fun whySolarHasNoFullBasisAndAMeterInStandbyAreWorded() {
         val notSet = StatusLine("solar_charger_current_missing", mapOf("entity" to null))
         val unreadable = StatusLine("solar_charger_current_missing", mapOf("entity" to "sensor.easee_current"))

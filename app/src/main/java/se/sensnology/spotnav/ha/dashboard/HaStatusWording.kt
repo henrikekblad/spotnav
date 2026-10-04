@@ -70,6 +70,7 @@ internal object HaStatusWording {
         "solar_charger_current_missing" to "strategy.status.solar.chargerCurrentNotSet",
         "solar_site_incomplete" to "strategy.status.solar.siteIncomplete",
         "site_meter_unavailable" to "status.meterUnavailable.meter",
+        "site_current_negative" to "status.siteCurrentNegative",
     )
 
     /** The extra keys a code's variants use (an absent fact, or no zone to write an instant in). */
@@ -217,6 +218,7 @@ internal object HaStatusWording {
             "strategy.status.solar.siteIncomplete" to "The site measurement is incomplete ({phases}) — solar runs on total grid power only.",
             "status.meterUnavailable.inverter" to "The meter's sensors are unavailable (the inverter may be in standby): {entities}.",
             "status.meterUnavailable.meter" to "The meter's sensors are unavailable: {entities}.",
+            "status.siteCurrentNegative" to "The meter reports a negative current (export) on {phases} — turn on “Grid current is signed”.",
             "status.finishSetupArea" to "Finish setting up: choose a price area in Settings.",
             "status.finishSetup" to "Finish setting up in Settings: {fields}.",
             "status.settingsSuggested" to "Suggested from your location and charger – check Settings.",
@@ -318,6 +320,7 @@ internal object HaStatusWording {
             "strategy.status.solar.siteIncomplete" to "Anläggningens mätning är ofullständig ({phases}) — sol går bara på nätets totala effekt.",
             "status.meterUnavailable.inverter" to "Mätarens sensorer är otillgängliga (växelriktaren kan vara i viloläge): {entities}.",
             "status.meterUnavailable.meter" to "Mätarens sensorer är otillgängliga: {entities}.",
+            "status.siteCurrentNegative" to "Mätaren rapporterar negativ ström (export) på {phases} — slå på ”Nätströmmen är teckenmärkt”.",
             "status.finishSetupArea" to "Slutför inställningen: välj ett prisområde i Inställningar.",
             "status.finishSetup" to "Slutför inställningen i Inställningar: {fields}.",
             "status.settingsSuggested" to "Förslag utifrån din plats och laddare – kontrollera Inställningar.",
@@ -419,6 +422,7 @@ internal object HaStatusWording {
             "strategy.status.solar.siteIncomplete" to "Anlæggets måling er ufuldstændig ({phases}) — sol kører kun på nettets samlede effekt.",
             "status.meterUnavailable.inverter" to "Målerens sensorer er utilgængelige (inverteren kan være i standby): {entities}.",
             "status.meterUnavailable.meter" to "Målerens sensorer er utilgængelige: {entities}.",
+            "status.siteCurrentNegative" to "Måleren angiver negativ strøm (eksport) på {phases} — slå »Netstrømmen har fortegn« til.",
             "status.finishSetupArea" to "Færdiggør opsætningen: vælg et prisområde i Indstillinger.",
             "status.finishSetup" to "Færdiggør opsætningen i Indstillinger: {fields}.",
             "status.settingsSuggested" to "Foreslået ud fra din placering og lader – tjek Indstillinger.",
@@ -520,6 +524,7 @@ internal object HaStatusWording {
             "strategy.status.solar.siteIncomplete" to "Anleggets måling er ufullstendig ({phases}) — sol går bare på nettets samlede effekt.",
             "status.meterUnavailable.inverter" to "Målerens sensorer er utilgjengelige (vekselretteren kan være i hvilemodus): {entities}.",
             "status.meterUnavailable.meter" to "Målerens sensorer er utilgjengelige: {entities}.",
+            "status.siteCurrentNegative" to "Måleren rapporterer negativ strøm (eksport) på {phases} — slå på «Nettstrømmen har fortegn».",
             "status.finishSetupArea" to "Fullfør oppsettet: velg et prisområde i Innstillinger.",
             "status.finishSetup" to "Fullfør oppsettet i Innstillinger: {fields}.",
             "status.settingsSuggested" to "Foreslått ut fra plassering og lader – sjekk Innstillinger.",
@@ -621,6 +626,7 @@ internal object HaStatusWording {
             "strategy.status.solar.siteIncomplete" to "Kohteen mittaus on puutteellinen ({phases}) — aurinko toimii vain verkon kokonaisteholla.",
             "status.meterUnavailable.inverter" to "Mittarin anturit eivät ole käytettävissä (invertteri voi olla valmiustilassa): {entities}.",
             "status.meterUnavailable.meter" to "Mittarin anturit eivät ole käytettävissä: {entities}.",
+            "status.siteCurrentNegative" to "Mittari ilmoittaa negatiivisen virran (vienti) vaiheissa {phases} — kytke päälle ”Verkkovirralla on etumerkki”.",
             "status.finishSetupArea" to "Viimeistele asetukset: valitse hinta-alue Asetuksissa.",
             "status.finishSetup" to "Viimeistele asetukset Asetuksissa: {fields}.",
             "status.settingsSuggested" to "Ehdotettu sijaintisi ja laturin perusteella – tarkista Asetukset.",

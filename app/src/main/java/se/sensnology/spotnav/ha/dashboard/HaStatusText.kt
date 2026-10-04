@@ -267,6 +267,8 @@ internal object HaStatusText {
                 if (p["cause"] == "inverter_standby") "status.meterUnavailable.inverter" else key,
                 mapOf("entities" to meterNames(p).joinToString(", "))
             )
+            // A signed meter read as unsigned: the phases that read negative, and the setting that fixes it.
+            "site_current_negative" -> say(key, mapOf("phases" to joinPhases(format.language, strings(p["phases"]))))
             "need_limited_by_room" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "remaining_need_estimated" -> say(
