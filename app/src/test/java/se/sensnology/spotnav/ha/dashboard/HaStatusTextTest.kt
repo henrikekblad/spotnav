@@ -202,7 +202,8 @@ class HaStatusTextTest {
         assertTrue(say("held_by_charger").startsWith("The charger's own schedule or load balancing"))
         assertTrue(say("charger_disabled").contains("enable switch is off"))
         assertEquals("Charging was started outside the plan and is allowed to continue.", say("hold_overridden"))
-        assertTrue(say("stopped_by_person").startsWith("You stopped the charge. The sun does not start it again"))
+        assertTrue(say("stopped_by_person", mapOf("ends" to "replug")).contains("plugged in again"))
+        assertFalse(say("stopped_by_person", mapOf("ends" to "start")).contains("plugged in"))
         assertEquals(
             "Laddningen väntar till planerad start kl. 10:15.",
             HaStatusText.line(

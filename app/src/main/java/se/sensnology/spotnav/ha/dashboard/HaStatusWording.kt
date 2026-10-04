@@ -106,6 +106,7 @@ internal object HaStatusWording {
         "strategy.status.solar.noGridPowerEntity",
         "strategy.status.solar.chargerCurrentUnreadable",
         "status.meterUnavailable.inverter",
+        "status.stoppedByPersonUntilStart",
     )
 
     /** The app's own additions: a status this app version cannot word, and the age of a kept one. */
@@ -133,6 +134,7 @@ internal object HaStatusWording {
             "issue.chargerDisabled" to "The charger's own enable switch is off, so it cannot start. Turn it on in the charger's settings.",
             "issue.holdOverridden" to "Charging was started outside the plan and is allowed to continue.",
             "status.stoppedByPerson" to "You stopped the charge. The sun does not start it again until the car is plugged in again, you press Start now or a planned window begins.",
+            "status.stoppedByPersonUntilStart" to "You stopped the charge. The sun does not start it again until you press Start now or the next planned window begins.",
             "status.siteMeasurement.stale.other" to "{phases} are older than {seconds} s.",
             "status.siteMeasurement.stale.one" to "{phases} is older than {seconds} s.",
             "status.siteMeasurement.noValue.other" to "{phases} have no value{where}.",
@@ -230,6 +232,7 @@ internal object HaStatusWording {
             "issue.chargerDisabled" to "Laddarens egen aktiveringsbrytare är av, så den kan inte starta. Slå på den i laddarens inställningar.",
             "issue.holdOverridden" to "Laddningen startades utanför planen och får fortsätta.",
             "status.stoppedByPerson" to "Du stoppade laddningen. Solen startar den inte igen förrän bilen kopplas in på nytt, du trycker på Starta nu eller ett planerat fönster börjar.",
+            "status.stoppedByPersonUntilStart" to "Du stoppade laddningen. Solen startar den inte igen förrän du trycker på Starta nu eller nästa planerade fönster börjar.",
             "status.siteMeasurement.stale.other" to "{phases} är äldre än {seconds} s.",
             "status.siteMeasurement.stale.one" to "{phases} är äldre än {seconds} s.",
             "status.siteMeasurement.noValue.other" to "{phases} saknar värde{where}.",
@@ -327,6 +330,7 @@ internal object HaStatusWording {
             "issue.chargerDisabled" to "Laderens egen aktiveringskontakt er slået fra, så den kan ikke starte. Slå den til i laderens indstillinger.",
             "issue.holdOverridden" to "Opladningen blev startet uden for planen og må fortsætte.",
             "status.stoppedByPerson" to "Du stoppede opladningen. Solen starter den ikke igen, før bilen tilsluttes på ny, du trykker på Start nu, eller et planlagt vindue begynder.",
+            "status.stoppedByPersonUntilStart" to "Du stoppede opladningen. Solen starter den ikke igen, før du trykker på Start nu, eller det næste planlagte vindue begynder.",
             "status.siteMeasurement.stale.other" to "{phases} er ældre end {seconds} s.",
             "status.siteMeasurement.stale.one" to "{phases} er ældre end {seconds} s.",
             "status.siteMeasurement.noValue.other" to "{phases} har ingen værdi{where}.",
@@ -424,6 +428,7 @@ internal object HaStatusWording {
             "issue.chargerDisabled" to "Laderens egen aktiveringsbryter er av, så den kan ikke starte. Slå den på i laderens innstillinger.",
             "issue.holdOverridden" to "Ladingen ble startet utenfor planen og får fortsette.",
             "status.stoppedByPerson" to "Du stoppet ladingen. Solen starter den ikke igjen før bilen kobles til på nytt, du trykker på Start nå eller et planlagt vindu begynner.",
+            "status.stoppedByPersonUntilStart" to "Du stoppet ladingen. Solen starter den ikke igjen før du trykker på Start nå eller neste planlagte vindu begynner.",
             "status.siteMeasurement.stale.other" to "{phases} er eldre enn {seconds} s.",
             "status.siteMeasurement.stale.one" to "{phases} er eldre enn {seconds} s.",
             "status.siteMeasurement.noValue.other" to "{phases} har ingen verdi{where}.",
@@ -521,6 +526,7 @@ internal object HaStatusWording {
             "issue.chargerDisabled" to "Laturin oma käyttöönottokytkin on pois päältä, joten lataus ei voi alkaa. Kytke se päälle laturin asetuksista.",
             "issue.holdOverridden" to "Lataus käynnistettiin suunnitelman ulkopuolella ja sen annetaan jatkua.",
             "status.stoppedByPerson" to "Pysäytit latauksen. Aurinko ei käynnistä sitä uudelleen ennen kuin auto kytketään uudelleen, painat Käynnistä nyt tai suunniteltu jakso alkaa.",
+            "status.stoppedByPersonUntilStart" to "Pysäytit latauksen. Aurinko ei käynnistä sitä uudelleen ennen kuin painat Käynnistä nyt tai seuraava suunniteltu jakso alkaa.",
             "status.siteMeasurement.stale.other" to "{phases}: arvot ovat yli {seconds} s vanhoja.",
             "status.siteMeasurement.stale.one" to "{phases}: arvo on yli {seconds} s vanha.",
             "status.siteMeasurement.noValue.other" to "{phases}: ei arvoa{where}.",

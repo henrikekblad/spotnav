@@ -256,6 +256,8 @@ internal object HaStatusText {
                 entity(p)?.let { say("strategy.status.solar.chargerCurrentUnreadable", mapOf("entity" to it)) }
                     ?: say(key)
             "solar_site_incomplete" -> say(key, mapOf("phases" to strings(p["phases"]).joinToString(", ")))
+            // A charger that cannot say when a car is plugged in: only a Start or a plan window ends the Stop.
+            "stopped_by_person" -> say(if (p["ends"] == "start") "status.stoppedByPersonUntilStart" else key)
             "site_meter_unavailable" -> say(
                 if (p["cause"] == "inverter_standby") "status.meterUnavailable.inverter" else key,
                 mapOf("entities" to strings(p["entities"]).joinToString(", "))
