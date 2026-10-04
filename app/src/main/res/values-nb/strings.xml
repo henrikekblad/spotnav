@@ -440,6 +440,7 @@
   <string name="notify_stopped_vehicle">Bilen tar ikke imot strøm i et planlagt vindu.</string>
   <string name="notify_stopped_held">Laderens egen tidsplan holder den planlagte ladingen tilbake.</string>
   <string name="notify_stopped_disabled">Laderen er slått av, så den planlagte ladingen kan ikke starte.</string>
+  <string name="notify_stopped_ignores_stop">Laderen fortsetter å lade selv om den ble stoppet. Stopp den ved laderen eller koble fra bilen.</string>
   <string name="notify_at_risk">Ladingen blir ikke ferdig til avreise.</string>
   <string name="notify_at_risk_time">Ladingen blir ikke ferdig til avreise kl. %1$s.</string>
   <string name="notify_complete_target">Ladingen er ferdig: målet %1$s er nådd.</string>

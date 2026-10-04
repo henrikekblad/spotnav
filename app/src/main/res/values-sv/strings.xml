@@ -440,6 +440,7 @@
   <string name="notify_stopped_vehicle">Bilen tar inte emot ström under ett planerat fönster.</string>
   <string name="notify_stopped_held">Laddarens eget schema håller tillbaka den planerade laddningen.</string>
   <string name="notify_stopped_disabled">Laddaren är avstängd, så den planerade laddningen kan inte starta.</string>
+  <string name="notify_stopped_ignores_stop">Laddaren fortsätter ladda fast den stoppades. Stoppa den vid laddaren eller koppla ur bilen.</string>
   <string name="notify_at_risk">Laddningen hinner inte bli klar till avresan.</string>
   <string name="notify_at_risk_time">Laddningen hinner inte bli klar till avresan %1$s.</string>
   <string name="notify_complete_target">Laddningen är klar: målet %1$s är nått.</string>

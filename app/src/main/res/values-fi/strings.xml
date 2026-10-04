@@ -440,6 +440,7 @@
   <string name="notify_stopped_vehicle">Auto ei ota virtaa suunnitellun jakson aikana.</string>
   <string name="notify_stopped_held">Laturin oma aikataulu pidättää suunniteltua latausta.</string>
   <string name="notify_stopped_disabled">Laturi on pois käytöstä, joten suunniteltu lataus ei voi alkaa.</string>
+  <string name="notify_stopped_ignores_stop">Laturi jatkaa lataamista, vaikka se pysäytettiin. Pysäytä se laturista tai irrota auto.</string>
   <string name="notify_at_risk">Lataus ei valmistu lähtöön mennessä.</string>
   <string name="notify_at_risk_time">Lataus ei valmistu lähtöön klo %1$s mennessä.</string>
   <string name="notify_complete_target">Lataus on valmis: tavoite %1$s saavutettiin.</string>

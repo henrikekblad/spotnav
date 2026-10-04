@@ -220,6 +220,7 @@ internal object LocalNotifications {
                     "vehicle_not_requesting" -> R.string.notify_stopped_vehicle
                     "held_by_charger" -> R.string.notify_stopped_held
                     "charger_disabled" -> R.string.notify_stopped_disabled
+                    NotificationRules.IGNORES_STOP -> R.string.notify_stopped_ignores_stop
                     else -> R.string.notify_stopped_not_started
                 }
             )

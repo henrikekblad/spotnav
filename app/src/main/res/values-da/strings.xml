@@ -440,6 +440,7 @@
   <string name="notify_stopped_vehicle">Bilen tager ikke strøm i et planlagt vindue.</string>
   <string name="notify_stopped_held">Laderens egen tidsplan holder den planlagte opladning tilbage.</string>
   <string name="notify_stopped_disabled">Laderen er slået fra, så den planlagte opladning kan ikke starte.</string>
+  <string name="notify_stopped_ignores_stop">Laderen bliver ved med at lade, selvom den blev stoppet. Stop den ved laderen, eller tag stikket ud af bilen.</string>
   <string name="notify_at_risk">Opladningen bliver ikke færdig til afgangen.</string>
   <string name="notify_at_risk_time">Opladningen bliver ikke færdig til afgangen kl. %1$s.</string>
   <string name="notify_complete_target">Opladningen er færdig: målet %1$s er nået.</string>

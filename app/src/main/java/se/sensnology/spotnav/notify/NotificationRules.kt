@@ -125,6 +125,9 @@ internal object NotificationRules {
 
     private const val NEED_MET_KWH = 0.05
 
+    /** `plan_stopped`'s reason when the charger keeps charging under a person's Stop. */
+    const val IGNORES_STOP = "charger_ignores_stop"
+
     /** Lines under which a charge that is not running is no fault (`docs/notifications.md`). */
     private val EXCUSED = setOf(
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "load_balancing_limited",
@@ -158,6 +161,8 @@ internal object NotificationRules {
             codes.none { it in EXCUSED } &&
             (remaining == null || remaining > NEED_MET_KWH)
         val stopReason = when {
+            // SpotNav gave up stopping a charger under a person's Stop: told whatever the plan says.
+            "charger_ignores_stop" in codes -> IGNORES_STOP
             !expected -> null
             "charger_unavailable" in codes -> "charger_unavailable"
             "held_by_charger" in codes -> "held_by_charger"
@@ -211,7 +216,8 @@ internal object NotificationRules {
 
     /** Every event the change from [before] to [now] is, chosen or not, in the contract's order. */
     private fun changes(before: NotificationSnapshot, now: NotificationSnapshot): List<LocalEvent> = buildList {
-        if (now.stopReason != null && before.stopReason == null) {
+        val ignoresStop = now.stopReason == IGNORES_STOP && before.stopReason != IGNORES_STOP
+        if (ignoresStop || (now.stopReason != null && now.stopReason != IGNORES_STOP && before.stopReason == null)) {
             val reason = if (now.stopReason == "not_started" && before.charging) "stopped" else now.stopReason
             add(LocalEvent(NotificationEvent.PLAN_STOPPED, reason = reason))
         }
