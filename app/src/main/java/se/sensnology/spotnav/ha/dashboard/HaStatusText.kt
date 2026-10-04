@@ -119,6 +119,11 @@ internal object HaStatusText {
                 if (until == null || zone == null) say("status.chargingNowOpen")
                 else say("status.chargingNow", mapOf("time" to clock(until)))
             }
+            "topping_off" -> {
+                val until = instant(p["until"])
+                if (until == null || zone == null) say("status.toppingOffOpen")
+                else say("status.toppingOff", mapOf("time" to clock(until)))
+            }
             "waiting_for_publication" -> {
                 val at = instant(p["publication_at"])
                 if (at == null || zone == null) say("status.waitingForPublicationNoTime")

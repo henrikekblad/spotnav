@@ -59,6 +59,14 @@ class ChargerConnectionTest {
     }
 
     @Test
+    fun `a car finishing past the last window shows nothing when it stops taking current`() {
+        assertFalse(advisory {
+            getJSONObject("status").getJSONArray("lines")
+                .put(JSONObject().put("code", "topping_off").put("params", JSONObject().put("until", "2026-09-22T05:40:00+00:00")))
+        })
+    }
+
+    @Test
     fun `a charge to the car's own limit shows nothing when the car stops taking current`() {
         assertFalse(advisory {
             getJSONObject("status").getJSONArray("lines")

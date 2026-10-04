@@ -338,6 +338,21 @@ class HaStatusTextTest {
         }
     }
 
+    @Test fun aCarFinishingPastTheLastWindowChargesUntilItIsFullAtMostUntilATime() {
+        val topOff = StatusLine("topping_off", mapOf("until" to "2026-09-22T05:40:00+00:00"))
+        assertEquals(
+            "Charging until the car is full (at most until 07:40).",
+            HaStatusText.line(topOff, format("en"), now)
+        )
+        assertEquals(
+            "Laddar tills bilen är full (som längst till 07:40).",
+            HaStatusText.line(topOff, format("sv"), now)
+        )
+        for (language in listOf("da", "nb", "fi")) {
+            assertFalse(HaStatusText.line(topOff, format(language), now).contains("{"))
+        }
+    }
+
     @Test fun aPriceWaitAfterAStrategyHeadlineIsShownAsItsOwnLine() {
         val status = DashboardStatus(
             listOf(

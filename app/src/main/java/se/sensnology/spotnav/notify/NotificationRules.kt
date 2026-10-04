@@ -129,7 +129,7 @@ internal object NotificationRules {
     private val EXCUSED = setOf(
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "load_balancing_limited",
         // The car ends a charge to its own limit itself: one that stops there is full, not a fault.
-        "charging_to_vehicle_limit"
+        "charging_to_vehicle_limit", "topping_off"
     )
 
     private val CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
