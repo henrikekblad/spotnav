@@ -139,6 +139,10 @@
       "params": [],
       "tone": "notice"
     },
+    "charger_ignores_stop": {
+      "params": [],
+      "tone": "blocking"
+    },
     "charger_unavailable": {
       "params": [
         "entity",
@@ -235,7 +239,9 @@
     },
     "paused": {
       "params": [
+        "action",
         "choice",
+        "ends",
         "until"
       ],
       "tone": "normal"
@@ -422,12 +428,6 @@
     },
     "starting_up": {
       "params": [],
-      "tone": "normal"
-    },
-    "stopped_by_person": {
-      "params": [
-        "ends"
-      ],
       "tone": "normal"
     },
     "target_reached": {

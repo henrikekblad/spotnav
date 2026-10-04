@@ -87,6 +87,20 @@ internal object HaStatusText {
         "target_percent" to "status.missing.target_percent",
     )
 
+    /**
+     * A person's Start or Stop pauses Auto for the plug-in session (`paused` with `choice` `manual`):
+     * the card's key for what they did (`action`) and what ends it (`ends`: `unplug`, `next_plug_in`,
+     * or `resume` on a charger that cannot say when a car is plugged in). A Start also ends when the
+     * car is full; an action this build does not know reads as a Stop, as on the card.
+     */
+    internal fun manualPauseKey(action: Any?, ends: Any?): String = when {
+        action == "start" ->
+            if (ends == "resume") "control.pausedManualStartResume" else "control.pausedManualStart"
+        ends == "next_plug_in" -> "control.pausedManualStopNextPlugIn"
+        ends == "resume" -> "control.pausedManualStopResume"
+        else -> "control.pausedManualStop"
+    }
+
     /** One line's sentence or fact, with its params formatted here. */
     fun line(line: StatusLine, format: StatusFormat, now: Instant): String {
         val language = format.language
@@ -109,6 +123,8 @@ internal object HaStatusText {
             "paused" -> {
                 val until = instant(p["until"])
                 when {
+                    // A person's Start or Stop: what they did and what ends it, never a clock.
+                    p["choice"] == "manual" -> say(manualPauseKey(p["action"], p["ends"]))
                     until == null -> say("control.pausedIndefinitely")
                     zone == null -> say("status.pausedShort")
                     else -> say("control.pausedUntil", mapOf("time" to moment(until)))
@@ -262,7 +278,6 @@ internal object HaStatusText {
                     ?: say(key)
             "solar_site_incomplete" -> say(key, mapOf("phases" to strings(p["phases"]).joinToString(", ")))
             // A charger that cannot say when a car is plugged in: only a Start or a plan window ends the Stop.
-            "stopped_by_person" -> say(if (p["ends"] == "start") "status.stoppedByPersonUntilStart" else key)
             "site_meter_unavailable" -> say(
                 if (p["cause"] == "inverter_standby") "status.meterUnavailable.inverter" else key,
                 mapOf("entities" to meterNames(p).joinToString(", "))
