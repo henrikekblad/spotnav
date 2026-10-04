@@ -1,1 +1,2 @@
 - Laturin prioriteetti kohteessa: Ensin, Normaali tai Viimeksi, näkyy ja muuttuu kohdekortissa
+- Ilmoitukset: valitse puhelimet ja tapahtumat Home Assistantin Companion-sovellukselle, tai anna puhelimen tarkistaa laturi itse 15 minuutin välein (oletuksena pois)

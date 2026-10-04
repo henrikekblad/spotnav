@@ -1,1 +1,2 @@
 - Laddarens prioritet på en anläggning: Först, Normal eller Sist, visas och ändras på anläggningskortet
+- Aviseringar: välj telefoner och händelser för Home Assistants Companion-app, eller låt telefonen själv kolla laddaren var 15:e minut (av som standard)

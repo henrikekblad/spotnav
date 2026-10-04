@@ -1,1 +1,2 @@
 - Charger priority on a site: First, Normal or Last, shown and changed from the site card
+- Notifications: choose phones and events for Home Assistant's Companion app, or let this phone check the charger itself every 15 minutes (off by default)

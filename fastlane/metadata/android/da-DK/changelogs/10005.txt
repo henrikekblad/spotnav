@@ -1,1 +1,2 @@
 - Ladererens prioritet på et anlæg: Først, Normal eller Sidst, vises og ændres på anlægskortet
+- Notifikationer: vælg telefoner og hændelser til Home Assistants Companion-app, eller lad telefonen selv tjekke laderen hvert 15. minut (fra som standard)
