@@ -321,6 +321,26 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun aFriendlyNameIsShownInPlaceOfTheEntityId() {
+        val unreadable = StatusLine(
+            "solar_charger_current_missing",
+            mapOf("entity" to "sensor.halo_current", "entity_name" to "HALO current")
+        )
+        val meter = StatusLine(
+            "site_meter_unavailable",
+            mapOf(
+                "entities" to listOf("sensor.a", "sensor.b"),
+                "cause" to "meter_unavailable",
+                "entity_names" to listOf("Meter A", "Meter B")
+            )
+        )
+        assertEquals(
+            "Laddarens egen ström (HALO current) har ingen mätning; till dess startar sol bara på minsta ström.",
+            HaStatusText.line(unreadable, format("sv"), now)
+        )
+        assertTrue(HaStatusText.line(meter, format("en"), now).contains("Meter A, Meter B"))
+    }
+
     @Test fun whySolarHasNoFullBasisAndAMeterInStandbyAreWorded() {
         val notSet = StatusLine("solar_charger_current_missing", mapOf("entity" to null))
         val unreadable = StatusLine("solar_charger_current_missing", mapOf("entity" to "sensor.easee_current"))

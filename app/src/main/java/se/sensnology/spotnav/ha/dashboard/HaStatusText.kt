@@ -260,7 +260,7 @@ internal object HaStatusText {
             "stopped_by_person" -> say(if (p["ends"] == "start") "status.stoppedByPersonUntilStart" else key)
             "site_meter_unavailable" -> say(
                 if (p["cause"] == "inverter_standby") "status.meterUnavailable.inverter" else key,
-                mapOf("entities" to strings(p["entities"]).joinToString(", "))
+                mapOf("entities" to meterNames(p).joinToString(", "))
             )
             "need_limited_by_room" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
@@ -313,7 +313,17 @@ internal object HaStatusText {
 
     private fun strings(value: Any?): List<String> = (value as? List<*>)?.filterIsInstance<String>() ?: emptyList()
 
-    private fun entity(params: Map<String, Any?>): String? = (params["entity"] as? String)?.takeIf { it.isNotEmpty() }
+    /** The entity a line names: its friendly name (`entity_name`) when given, else its id. */
+    private fun entity(params: Map<String, Any?>): String? =
+        (params["entity_name"] as? String)?.takeIf { it.isNotEmpty() }
+            ?: (params["entity"] as? String)?.takeIf { it.isNotEmpty() }
+
+    /** The meter's sensors by friendly name where `entity_names` runs parallel to `entities`. */
+    private fun meterNames(params: Map<String, Any?>): List<String> {
+        val ids = strings(params["entities"])
+        val names = strings(params["entity_names"])
+        return if (names.size == ids.size) names.mapIndexed { i, name -> name.ifEmpty { ids[i] } } else ids
+    }
 
     /** The card's long "and" list (`Intl.ListFormat`): "L1 and L2", "L1, L2, and L3" (no serial comma outside English). */
     private fun joinPhases(language: String, items: List<String>): String {
