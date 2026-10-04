@@ -1,0 +1,6 @@
+- Start and Stop pause automatic charging until the car is unplugged (Start: until it is full)
+- The status line says it: "Stopped manually – until the car is unplugged.", "Charging manually – until the car is full or unplugged."
+- A Start with no car plugged in says so
+- The status line names a charger that keeps charging after a stop
+- A setting changed right after Start or Stop is saved without a conflict
+- Needs SpotNav for Home Assistant 1.11

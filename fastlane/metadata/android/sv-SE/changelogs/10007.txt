@@ -1,0 +1,6 @@
+- Starta och Stoppa pausar automatisk laddning tills bilen kopplas ur (Starta: tills den är full)
+- Statusraden säger det: "Stoppad manuellt – tills bilen kopplas ur.", "Laddar manuellt – tills bilen är full eller kopplas ur."
+- En start utan inkopplad bil säger det
+- Statusraden nämner en laddare som laddar vidare efter stopp
+- En inställning som ändras direkt efter Starta eller Stoppa sparas utan konflikt
+- Kräver SpotNav för Home Assistant 1.11

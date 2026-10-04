@@ -1,0 +1,6 @@
+- Start og Stopp pauser automatisk lading til bilen kobles fra (Start: til den er full)
+- Statuslinjen sier det: "Stoppet manuelt – til bilen kobles fra.", "Lader manuelt – til bilen er full eller kobles fra."
+- En start uten tilkoblet bil sier det
+- Statuslinjen nevner en lader som lader videre etter stopp
+- En innstilling endret rett etter Start eller Stopp lagres uten konflikt
+- Krever SpotNav for Home Assistant 1.11
