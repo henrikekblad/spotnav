@@ -248,6 +248,18 @@ internal object HaStatusText {
                 num(p["max_age_s"])
             )
             "duplicate_charger" -> say(key, mapOf("other" to (p["other"] as? String ?: "")))
+            // Why solar has no full basis: the entity concerned where one is named (the card's `basisWording`).
+            "solar_no_grid_power" -> entity(p)?.let { say("strategy.status.solar.noGridPowerEntity", mapOf("entity" to it)) }
+                ?: say(key)
+            "solar_battery_unreadable" -> say(key, mapOf("entity" to (entity(p) ?: "")))
+            "solar_charger_current_missing" ->
+                entity(p)?.let { say("strategy.status.solar.chargerCurrentUnreadable", mapOf("entity" to it)) }
+                    ?: say(key)
+            "solar_site_incomplete" -> say(key, mapOf("phases" to strings(p["phases"]).joinToString(", ")))
+            "site_meter_unavailable" -> say(
+                if (p["cause"] == "inverter_standby") "status.meterUnavailable.inverter" else key,
+                mapOf("entities" to strings(p["entities"]).joinToString(", "))
+            )
             "need_limited_by_room" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "remaining_need_estimated" -> say(
@@ -298,6 +310,8 @@ internal object HaStatusText {
     }
 
     private fun strings(value: Any?): List<String> = (value as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+
+    private fun entity(params: Map<String, Any?>): String? = (params["entity"] as? String)?.takeIf { it.isNotEmpty() }
 
     /** The card's long "and" list (`Intl.ListFormat`): "L1 and L2", "L1, L2, and L3" (no serial comma outside English). */
     private fun joinPhases(language: String, items: List<String>): String {

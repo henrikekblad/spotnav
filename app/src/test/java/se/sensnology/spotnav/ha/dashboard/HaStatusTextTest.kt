@@ -319,6 +319,52 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun whySolarHasNoFullBasisAndAMeterInStandbyAreWorded() {
+        val notSet = StatusLine("solar_charger_current_missing", mapOf("entity" to null))
+        val unreadable = StatusLine("solar_charger_current_missing", mapOf("entity" to "sensor.easee_current"))
+        val grid = StatusLine("solar_no_grid_power", mapOf("entity" to null))
+        val gridEntity = StatusLine("solar_no_grid_power", mapOf("entity" to "sensor.net"))
+        val battery = StatusLine("solar_battery_unreadable", mapOf("entity" to "sensor.bat"))
+        val site = StatusLine("solar_site_incomplete", mapOf("phases" to listOf("L1")))
+        val meter = StatusLine(
+            "site_meter_unavailable",
+            mapOf("entities" to listOf("sensor.solax_grid_current_l1"), "cause" to "inverter_standby")
+        )
+        assertEquals(
+            "The charger's own current is not set — choose it under Site wiring (e.g. Easee Current); " +
+                "until then solar starts only at the minimum current.",
+            HaStatusText.line(notSet, format("en"), now)
+        )
+        assertEquals(
+            "Laddarens egen ström (sensor.easee_current) har ingen mätning; till dess startar sol bara på minsta ström.",
+            HaStatusText.line(unreadable, format("sv"), now)
+        )
+        assertEquals("Solar · no grid power reading — set Total grid power under Site entities", HaStatusText.line(grid, format("en"), now))
+        assertEquals("Sol · nätets totala effekt (sensor.net) har ingen färsk mätning", HaStatusText.line(gridEntity, format("sv"), now))
+        assertEquals("Solar · the battery power (sensor.bat) has no fresh reading", HaStatusText.line(battery, format("en"), now))
+        assertEquals(
+            "Anläggningens mätning är ofullständig (L1) — sol går bara på nätets totala effekt.",
+            HaStatusText.line(site, format("sv"), now)
+        )
+        assertEquals(
+            "The meter's sensors are unavailable (the inverter may be in standby): sensor.solax_grid_current_l1.",
+            HaStatusText.line(meter, format("en"), now)
+        )
+        assertEquals(
+            "Mätarens sensorer är otillgängliga: sensor.m.",
+            HaStatusText.line(
+                StatusLine("site_meter_unavailable", mapOf("entities" to listOf("sensor.m"), "cause" to "meter_unavailable")),
+                format("sv"),
+                now
+            )
+        )
+        for (language in listOf("da", "nb", "fi")) {
+            for (line in listOf(notSet, unreadable, grid, gridEntity, battery, site, meter)) {
+                assertFalse(HaStatusText.line(line, format(language), now).contains("{"))
+            }
+        }
+    }
+
     @Test fun aNeedCappedAtTheBatteryRoomAndAChargeToTheCarsLimitAreWorded() {
         val capped = StatusLine("need_limited_by_room", mapOf("kwh" to 3.44))
         val toLimit = StatusLine("charging_to_vehicle_limit", mapOf("percent" to 100.0))
