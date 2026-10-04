@@ -26,7 +26,7 @@ SpotNav is an Android home-screen widget and EV charging planner. It shows today
 
 ## Get it
 
-1. Download the APK from [Releases](../../releases).
+1. Install SpotNav from [Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav), or download the APK from [Releases](../../releases).
 2. Install it and add **SpotNav** from the Android widget picker.
 3. Choose language, price area, resolution and any taxes or fees. Tap the widget to open the price table and the EV planner.
 
