@@ -318,4 +318,20 @@ class HaStatusTextTest {
             HaStatusText.line(sessions, format("sv"), now)
         )
     }
+
+    @Test fun aPriceWaitAfterAStrategyHeadlineIsShownAsItsOwnLine() {
+        val status = DashboardStatus(
+            listOf(
+                StatusLine("hybrid_grid", mapOf("grid_kwh" to 34.7, "credit_kwh" to 8.8, "window_start" to null, "window_end" to null)),
+                StatusLine("waiting_for_publication", mapOf("publication_at" to "2026-09-22T11:00:00+00:00"))
+            ),
+            StatusTone.NORMAL
+        )
+        assertEquals(
+            "Hybrid · 34,7 kWh från elnätet, 8,8 kWh väntas från solen · Väntar på morgondagens priser (~13:00), planerar då.",
+            HaStatusText.render(status, format("sv"), now)
+        )
+        assertEquals("Väntar på morgondagens priser (~13:00), planerar då", HaStatusText.priceWait(status, format("sv"), now))
+        assertEquals(null, HaStatusText.priceWait(DashboardStatus(emptyList(), StatusTone.NORMAL), format("sv"), now))
+    }
 }

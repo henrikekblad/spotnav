@@ -13,6 +13,8 @@ import se.sensnology.spotnav.ha.authority.AuthorityPlan
 import se.sensnology.spotnav.ha.authority.PlanSource
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.HaStatusText
+import se.sensnology.spotnav.ha.dashboard.StatusFormat
 import se.sensnology.spotnav.planning.ChargingPeriod
 import se.sensnology.spotnav.planning.ChargingPlanner
 import se.sensnology.spotnav.planning.LocalPlanningInputs
@@ -184,7 +186,14 @@ internal fun ChargingScreen.render() {
         } else if (remotePlan != null && remotePlan.hasInstalledPeriods) {
             periodLines(remotePlan.periods, marketZone)
         } else {
-            t(R.string.authority_auto_waiting)
+            // A plan that waits on prices says so; otherwise nothing is installed yet.
+            held?.let {
+                HaStatusText.priceWait(
+                    it.status,
+                    StatusFormat.of(AppLanguageSettings.language(context), it.market, AppLanguageSettings.numberLocale(context)),
+                    java.time.Instant.now()
+                )
+            } ?: t(R.string.authority_auto_waiting)
         }
         planCard.result.note.text = ""
         if (figures != null && figures.fromProposal) showPairedFigures(figures)

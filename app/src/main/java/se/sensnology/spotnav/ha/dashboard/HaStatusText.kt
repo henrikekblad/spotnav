@@ -64,6 +64,19 @@ internal object HaStatusText {
     fun render(status: DashboardStatus, format: StatusFormat, now: Instant): String? =
         parts(status, format, now).headline
 
+    /** The planning states that wait on prices, in the order Home Assistant words them. */
+    private val PRICE_WAIT_CODES = listOf("waiting_for_history", "waiting_for_publication", "buying_before_publication")
+
+    /**
+     * The line saying the plan waits on prices (tomorrow's, or the history that decides what to
+     * leave for them), or `null` when the status says no such thing.
+     */
+    fun priceWait(status: DashboardStatus, format: StatusFormat, now: Instant): String? {
+        val wait = PRICE_WAIT_CODES.firstNotNullOfOrNull { code -> status.lines.firstOrNull { it.code == code } }
+            ?: return null
+        return line(wait, format, now).replace(Regex("[.。]$"), "")
+    }
+
     const val SEPARATOR = " · "
 
     private val MISSING_FIELDS = mapOf(
