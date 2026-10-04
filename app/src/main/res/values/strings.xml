@@ -123,6 +123,9 @@
   <string name="home_assistant_error">Home Assistant error: %1$s</string>
   <string name="home_assistant_start">Start now</string>
   <string name="home_assistant_stop">Stop</string>
+  <string name="home_assistant_start_help">Starts a charge now and pauses automatic charging until the car is full or unplugged.</string>
+  <string name="home_assistant_stop_help">Stops the charge and pauses automatic charging until the car is unplugged.</string>
+  <string name="home_assistant_not_connected">No car is plugged in, so there is nothing to start.</string>
   <string name="home_assistant_pause_automatic">Pause automatic charging</string>
   <string name="home_assistant_resume_automatic">Resume automatic charging</string>
   <!-- The action cells' words, the Home Assistant card's own (bar.* in its i18n). -->

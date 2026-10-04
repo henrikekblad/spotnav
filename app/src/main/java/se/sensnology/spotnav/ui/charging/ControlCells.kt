@@ -111,12 +111,16 @@ internal class ControlCells(
             ChargerAction.START -> actionCell.show(
                 caption = t(R.string.bar_caption_charge_now), icon = R.drawable.ic_play,
                 action = t(R.string.bar_start),
-                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_not_charging)}. ${t(R.string.home_assistant_start)}"
+                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_not_charging)}. ${t(R.string.home_assistant_start)}",
+                // A person's Start pauses Auto until the car is full or unplugged (Home Assistant 1.11).
+                help = t(R.string.home_assistant_start_help)
             )
             ChargerAction.STOP -> actionCell.show(
                 caption = t(R.string.bar_caption_charging), icon = R.drawable.ic_stop,
                 action = t(R.string.bar_stop),
-                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_charging)}. ${t(R.string.home_assistant_stop)}"
+                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_charging)}. ${t(R.string.home_assistant_stop)}",
+                // A person's Stop pauses Auto until the car is unplugged.
+                help = t(R.string.home_assistant_stop_help)
             )
         }
         // The automatic control:

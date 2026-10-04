@@ -115,6 +115,9 @@
   <string name="home_assistant_error">Fel från Home Assistant: %1$s</string>
   <string name="home_assistant_start">Starta nu</string>
   <string name="home_assistant_stop">Stoppa</string>
+  <string name="home_assistant_start_help">Startar en laddning nu och pausar automatisk laddning tills bilen är full eller kopplas ur.</string>
+  <string name="home_assistant_stop_help">Stoppar laddningen och pausar automatisk laddning tills bilen kopplas ur.</string>
+  <string name="home_assistant_not_connected">Ingen bil är ansluten, så det finns inget att starta.</string>
   <string name="home_assistant_pause_automatic">Pausa automatisk laddning</string>
   <string name="home_assistant_resume_automatic">Återuppta automatisk laddning</string>
   <!-- The action cells' words, the Home Assistant card's own (bar.* in its i18n). -->

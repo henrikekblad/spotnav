@@ -115,6 +115,9 @@
   <string name="home_assistant_error">Home Assistant-fejl: %1$s</string>
   <string name="home_assistant_start">Start nu</string>
   <string name="home_assistant_stop">Stop</string>
+  <string name="home_assistant_start_help">Starter en opladning nu og sætter automatisk opladning på pause, indtil bilen er fuld eller frakobles.</string>
+  <string name="home_assistant_stop_help">Stopper opladningen og sætter automatisk opladning på pause, indtil bilen frakobles.</string>
+  <string name="home_assistant_not_connected">Der er ingen bil tilsluttet, så der er intet at starte.</string>
   <string name="home_assistant_pause_automatic">Pause automatisk opladning</string>
   <string name="home_assistant_resume_automatic">Genoptag automatisk opladning</string>
   <!-- The action cells' words, the Home Assistant card's own (bar.* in its i18n). -->

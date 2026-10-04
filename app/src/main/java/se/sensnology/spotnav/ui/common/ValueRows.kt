@@ -80,11 +80,13 @@ internal fun Palette.valueColour(cue: ValueCue) = when (cue) {
  * stating the state, and below it an icon and the action.
  */
 internal class ControlCell(val view: LinearLayout, private val caption: TextView, private val icon: ImageView, private val action: TextView) {
-    fun show(caption: String, icon: Int, action: String, description: String) {
+    /** [help], when given, says what the action does: read out after [description], and shown on a long press. */
+    fun show(caption: String, icon: Int, action: String, description: String, help: String? = null) {
         this.caption.text = caption
         this.icon.setImageResource(icon)
         this.action.text = action
-        view.contentDescription = description
+        view.contentDescription = if (help == null) description else "$description. $help"
+        view.tooltipText = help
         view.visibility = View.VISIBLE
     }
 }

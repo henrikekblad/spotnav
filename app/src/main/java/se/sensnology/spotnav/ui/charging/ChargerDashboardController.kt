@@ -6,6 +6,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
+import se.sensnology.spotnav.ha.client.CommandRefusal
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
@@ -218,9 +219,15 @@ internal class ChargerDashboardController(
                 // and the control button are repainted from it; the line then says what came of the
                 // send.
                 applyDashboard(sent.result, sent.detectedPhases)
+                val failure = sent.result.exceptionOrNull()
                 showStatusLine(
-                    text = if (sent.result.isSuccess) t(R.string.home_assistant_sent)
-                        else t(R.string.home_assistant_error, sent.result.exceptionOrNull()?.message ?: ""),
+                    text = when {
+                        failure == null -> t(R.string.home_assistant_sent)
+                        // A Start with no car: Home Assistant's own refusal, said plainly.
+                        CommandRefusal.code(failure) == CommandRefusal.VEHICLE_NOT_CONNECTED ->
+                            t(R.string.home_assistant_not_connected)
+                        else -> t(R.string.home_assistant_error, failure.message ?: "")
+                    },
                     colour = if (sent.result.isSuccess) accent else ERROR_COLOUR
                 )
             },

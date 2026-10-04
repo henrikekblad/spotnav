@@ -115,6 +115,9 @@
   <string name="home_assistant_error">Home Assistant -virhe: %1$s</string>
   <string name="home_assistant_start">Käynnistä nyt</string>
   <string name="home_assistant_stop">Pysäytä</string>
+  <string name="home_assistant_start_help">Aloittaa latauksen nyt ja keskeyttää automaattisen latauksen, kunnes auto on täynnä tai irrotetaan.</string>
+  <string name="home_assistant_stop_help">Pysäyttää latauksen ja keskeyttää automaattisen latauksen, kunnes auto irrotetaan.</string>
+  <string name="home_assistant_not_connected">Autoa ei ole kytketty, joten käynnistettävää ei ole.</string>
   <string name="home_assistant_pause_automatic">Keskeytä automaattinen lataus</string>
   <string name="home_assistant_resume_automatic">Jatka automaattista latausta</string>
   <!-- The action cells' words, the Home Assistant card's own (bar.* in its i18n). -->
