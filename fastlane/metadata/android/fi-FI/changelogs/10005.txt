@@ -1,3 +1,3 @@
 - Laturin prioriteetti kohteessa: Ensin, Normaali tai Viimeksi, näkyy ja muuttuu kohdekortissa
-- Ilmoitukset: valitse puhelimet ja tapahtumat Home Assistantin Companion-sovellukselle, tai anna puhelimen tarkistaa laturi itse 15 minuutin välein (oletuksena pois)
+- Ilmoitukset: valitse puhelimet ja tapahtumat Home Assistantin Companion-sovellukselle, tai anna SpotNav-sovelluksen ilmoittaa, 15 minuutin välein tai heti push-viestillä (oletuksena pois)
 - kWh-liukusäädin ei ylitä akun vapaata tilaa; auto lopettaa latauksen itse rajallaan

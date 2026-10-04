@@ -1,3 +1,3 @@
 - Charger priority on a site: First, Normal or Last, shown and changed from the site card
-- Notifications: choose phones and events for Home Assistant's Companion app, or let this phone check the charger itself every 15 minutes (off by default)
+- Notifications: choose phones and events for Home Assistant's Companion app, or let the SpotNav app notify, every 15 minutes or instantly through push (off by default)
 - kWh slider no higher than the room left in the battery; the car ends the charge itself at its limit

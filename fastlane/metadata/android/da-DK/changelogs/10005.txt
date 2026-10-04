@@ -1,3 +1,3 @@
 - Ladererens prioritet på et anlæg: Først, Normal eller Sidst, vises og ændres på anlægskortet
-- Notifikationer: vælg telefoner og hændelser til Home Assistants Companion-app, eller lad telefonen selv tjekke laderen hvert 15. minut (fra som standard)
+- Notifikationer: vælg telefoner og hændelser til Home Assistants Companion-app, eller lad SpotNav-appen give besked, hvert 15. minut eller øjeblikkeligt via push (fra som standard)
 - kWh-skyderen går ikke over det, der er plads til i batteriet; bilen afslutter selv ved sin grænse

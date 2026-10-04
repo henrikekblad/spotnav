@@ -1,3 +1,3 @@
 - Laddarens prioritet på en anläggning: Först, Normal eller Sist, visas och ändras på anläggningskortet
-- Aviseringar: välj telefoner och händelser för Home Assistants Companion-app, eller låt telefonen själv kolla laddaren var 15:e minut (av som standard)
+- Aviseringar: välj telefoner och händelser för Home Assistants Companion-app, eller låt SpotNav-appen avisera, var 15:e minut eller direkt via push (av som standard)
 - kWh-reglaget går inte över det som ryms i batteriet; bilen avslutar själv laddningen vid sin gräns
