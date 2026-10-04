@@ -212,6 +212,17 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun aCarThatEndedTheChargeIsFullOrTriedAgainNeverCharging() {
+        fun say(code: String, params: Map<String, Any?> = emptyMap(), language: String = "en") =
+            HaStatusText.line(StatusLine(code, params), format(language), now)
+        assertEquals("Solar · the car is full", say("solar_vehicle_full"))
+        assertEquals("Solar · the car stopped charging; trying again at 10:15",
+            say("solar_car_stopped", mapOf("time" to "2026-09-22T08:15:00+00:00")))
+        assertEquals("Solar · the car stopped charging", say("solar_car_stopped", mapOf("time" to null)))
+        assertEquals("Sol · bilen slutade ladda; försöker igen kl. 10:15",
+            say("solar_car_stopped", mapOf("time" to "2026-09-22T08:15:00+00:00"), "sv"))
+    }
+
     @Test fun theWaitingForHistoryFixtureIsWordedInEveryLocale() {
         for (language in HaStatusWording.LANGUAGES) {
             val text = HaStatusText.render(status("waiting_for_history"), format(language), now)
