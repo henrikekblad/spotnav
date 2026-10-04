@@ -57,4 +57,12 @@ class ChargerConnectionTest {
                 .put(JSONObject().put("code", "hybrid_satisfied").put("params", JSONObject()))
         })
     }
+
+    @Test
+    fun `a charge to the car's own limit shows nothing when the car stops taking current`() {
+        assertFalse(advisory {
+            getJSONObject("status").getJSONArray("lines")
+                .put(JSONObject().put("code", "charging_to_vehicle_limit").put("params", JSONObject().put("percent", 100)))
+        })
+    }
 }

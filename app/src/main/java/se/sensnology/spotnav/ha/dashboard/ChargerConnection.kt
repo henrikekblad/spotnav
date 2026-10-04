@@ -31,6 +31,9 @@ internal object ChargerConnectionContract {
 internal object FullCarRule {
     private const val NEED_MET_LINE = "hybrid_satisfied"
 
+    /** A charge to the car's own limit (Home Assistant 1.9): a car that stops taking current there is full. */
+    private const val CAR_ENDS_LINE = "charging_to_vehicle_limit"
+
     /** Whether the car needs no charge: its charge is at its target or maximum, or the need is 0 kWh. */
     fun carNeedsNoCharge(soc: DashboardSoc?): Boolean {
         val value = soc?.value ?: return false
@@ -43,7 +46,8 @@ internal object FullCarRule {
         return value >= min(stop, ceiling)
     }
 
-    fun needAlreadyMet(status: DashboardStatus): Boolean = status.lines.any { it.code == NEED_MET_LINE }
+    fun needAlreadyMet(status: DashboardStatus): Boolean =
+        status.lines.any { it.code == NEED_MET_LINE || it.code == CAR_ENDS_LINE }
 
     /** Whether this dashboard puts the advisory on screen. */
     fun advisory(dashboard: Dashboard?): Boolean =

@@ -319,6 +319,25 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun aNeedCappedAtTheBatteryRoomAndAChargeToTheCarsLimitAreWorded() {
+        val capped = StatusLine("need_limited_by_room", mapOf("kwh" to 3.44))
+        val toLimit = StatusLine("charging_to_vehicle_limit", mapOf("percent" to 100.0))
+        assertEquals("Limited to 3.4 kWh: the car is almost full.", HaStatusText.line(capped, format("en"), now))
+        assertEquals("Begränsat till 3,4 kWh: bilen är nästan full.", HaStatusText.line(capped, format("sv"), now))
+        assertEquals(
+            "Charging until the car stops at its own limit (100 %).",
+            HaStatusText.line(toLimit, format("en"), now)
+        )
+        assertEquals(
+            "Laddar tills bilen stoppar vid sin egen laddgräns (100 %).",
+            HaStatusText.line(toLimit, format("sv"), now)
+        )
+        for (language in listOf("da", "nb", "fi")) {
+            assertFalse(HaStatusText.line(capped, format(language), now).contains("{"))
+            assertFalse(HaStatusText.line(toLimit, format(language), now).contains("{"))
+        }
+    }
+
     @Test fun aPriceWaitAfterAStrategyHeadlineIsShownAsItsOwnLine() {
         val status = DashboardStatus(
             listOf(

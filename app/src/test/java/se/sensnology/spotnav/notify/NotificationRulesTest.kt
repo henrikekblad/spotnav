@@ -175,6 +175,14 @@ class NotificationRulesTest {
         assertNull(out.stopReason)
     }
 
+    @Test fun aChargeTheCarEndsAtItsOwnLimitIsNoFaultWhenItStops() {
+        val full = HaFixtures.json("dashboard/start_idle.json")
+        full.getJSONObject("status").getJSONArray("lines")
+            .put(JSONObject().put("code", "charging_to_vehicle_limit").put("params", JSONObject().put("percent", 100)))
+        val snapshot = NotificationRules.snapshot(Dashboard.parse(full), Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
+        assertNull(snapshot.stopReason)
+    }
+
     @Test fun aDeadlineTooShortIsAtRiskAndAMetNeedIsNoFault() {
         val json = HaFixtures.json("dashboard/start_idle.json")
         json.getJSONObject("planning").put("reason", "deadline_too_short")

@@ -127,7 +127,13 @@ internal data class DashboardSoc(
     val vehicleName: String?,
     val vehicleMaxPercent: Double?,
     /** The vehicles the charge state may be read from, for the choice when it is ambiguous. */
-    val vehicles: List<DashboardVehicleRef>
+    val vehicles: List<DashboardVehicleRef>,
+    /**
+     * The wall energy the battery still has room for, to the car's own limit (else 100 %): what Home
+     * Assistant caps a manual amount at, and the kWh slider's top. `null` without a level or a battery
+     * size, and from a Home Assistant that does not state it.
+     */
+    val roomKwh: Double? = null
 )
 
 internal data class DashboardVehicle(
@@ -624,7 +630,8 @@ internal data class Dashboard(
             vehicleMaxPercent = optNum(json, "vehicle_max_percent"),
             vehicles = array(json, "vehicles").objects().map {
                 DashboardVehicleRef(requiredText(it, "id"), optText(it, "name") ?: requiredText(it, "id"))
-            }
+            },
+            roomKwh = optNum(json, "room_kwh")?.takeIf { it >= 0.0 }
         )
 
         /** One `vehicles` row, as the dashboard and the vehicle writes' own answers state it. */
