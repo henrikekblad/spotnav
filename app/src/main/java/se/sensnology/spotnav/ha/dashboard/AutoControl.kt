@@ -52,6 +52,12 @@ data class AutoControl(
         const val PAUSE_UNTIL_TOMORROW = "until_tomorrow"
         const val PAUSE_UNTIL_RESUMED = "until_resumed"
 
+        /**
+         * The pause a person's Start or Stop makes (Home Assistant 1.11): a pause this app shows and
+         * resumes, never one it asks for, so it is never a choice here.
+         */
+        const val PAUSE_MANUAL = "manual"
+
         /** The two axes' actions, as *separate* closed sets. */
         val IMMEDIATE_ACTIONS = setOf(ACTION_START, ACTION_STOP, ACTION_NONE)
         val AUTOMATIC_ACTIONS = setOf(ACTION_PAUSE, ACTION_RESUME, ACTION_NONE)
@@ -79,11 +85,14 @@ data class AutoControl(
             pauseChoices: List<String>
         ): AutoControl? {
             val immediate = immediateAxis(immediateAction, immediateReason)
-            val automatic = automaticAxis(automaticAction, automaticReason, pauseChoices)
+            // `manual` is Home Assistant's own word for a person's Start or Stop, never something a
+            // person picks from the pause sheet: it is left out rather than offered.
+            val offered = pauseChoices.filterNot { it == PAUSE_MANUAL }
+            val automatic = automaticAxis(automaticAction, automaticReason, offered)
             if (immediate == null && automatic == null) return null
             // The choices travel only with a readable automatic axis: an axis this build could not
             // read offers no pause, so it publishes nothing to choose for one either.
-            return AutoControl(immediate, automatic, if (automatic == null) emptyList() else pauseChoices)
+            return AutoControl(immediate, automatic, if (automatic == null) emptyList() else offered)
         }
 
         /** One axis's action, or `null` when the half that describes it is not a decision. */
