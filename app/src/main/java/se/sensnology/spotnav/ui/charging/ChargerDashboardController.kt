@@ -219,6 +219,9 @@ internal class ChargerDashboardController(
                 // and the control button are repainted from it; the line then says what came of the
                 // send.
                 applyDashboard(sent.result, sent.detectedPhases)
+                // The same read is the authority's newest record: a settings write right after a
+                // Start or Stop is built on the revision the command left.
+                if (sent.result.isSuccess) listener.onResult(sent.admission, sent.result)
                 val failure = sent.result.exceptionOrNull()
                 showStatusLine(
                     text = when {

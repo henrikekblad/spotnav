@@ -134,6 +134,17 @@ internal object HaSettingsEditor {
         return settings.overrides.filterNot { it.areaId == edit.areaId } + updated
     }
 
+    /**
+     * Whether [answer] is a revision conflict in which nothing this app edits moved since [base]: only
+     * the revision (and read-only facts). Home Assistant 1.11 stores a person's Start or Stop as a pause
+     * in the record, so a write built just before one meets a newer revision with the same settings;
+     * the same edit is then sent once more against it, quietly, rather than asked for again.
+     */
+    fun onlyRevisionMoved(base: HaPlanningSettings, answer: SettingsUpdate.Outcome): Boolean =
+        answer is SettingsUpdate.Outcome.Conflict &&
+            answer.current.revision > base.revision &&
+            answer.current.withReadOnlyOf(base) == base
+
     /** The edit the screen may send *next* after [answer] to [edit]. */
     fun nextEdit(edit: HaSettingsEdit, answer: SettingsUpdate.Outcome): HaSettingsEdit? = null
 

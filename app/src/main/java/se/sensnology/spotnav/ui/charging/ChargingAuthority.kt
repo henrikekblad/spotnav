@@ -222,11 +222,27 @@ internal fun ChargingScreen.applyWriteAnswer(subject: WriteSubject, answer: Sett
     if (followUp != null) commitEdit(followUp)
 }
 
-/** One settings request in flight, for the operation the controller reserved. */
-internal fun ChargingScreen.sendEdit(route: CommitRoute.Send, edit: HaSettingsEdit) {
+/**
+ * One settings request in flight, for the operation the controller reserved. A conflict in which only
+ * the revision moved (a Start, Stop, pause or resume stored meanwhile) is folded in and the same edit
+ * sent once more against the new revision, without a note; any other conflict is said as before.
+ */
+internal fun ChargingScreen.sendEdit(route: CommitRoute.Send, edit: HaSettingsEdit, retried: Boolean = false) {
     val profile = authorityProfile ?: return
     val subject = WriteSubject(profile.localId, route.operation, route.expectedRevision)
     session?.updateSettings(route.expectedRevision, route.replacement) { answer ->
+        if (!retried && HaSettingsEditor.onlyRevisionMoved(route.base, answer) &&
+            authority.onWriteAnswer(subject, answer) is WriteOutcome.Applied
+        ) {
+            val again = authority.beginWrite(edit)
+            if (again is CommitRoute.Send) {
+                sendEdit(again, edit, retried = true)
+                return@updateSettings
+            }
+            // Nothing may be written now after all: show the record as it stands.
+            authority.authority?.let { applyState(it, t(R.string.authority_changed_elsewhere)) }
+            return@updateSettings
+        }
         applyWriteAnswer(subject, answer, HaSettingsEditor.nextEdit(edit, answer))
     }
 }

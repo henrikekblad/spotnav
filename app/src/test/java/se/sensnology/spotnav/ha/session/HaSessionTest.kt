@@ -128,6 +128,19 @@ class HaSessionTest {
         assertEquals(1, rig.recorded.size)
     }
 
+    @Test fun theConfirmationReadIsAdmittedOnlyOnceTheCommandWasAccepted() {
+        val rig = Rig()
+        var confirmed: HaSession.Sent? = null
+        rig.session.send(HomeAssistantCommand("start"), { admission }, { confirmed = it }, {})
+        assertSame(admission, confirmed!!.admission)
+
+        val refused = Rig(FakeTransport().apply { sendFails = true })
+        var admitted = false
+        refused.session.send(HomeAssistantCommand("start"), { admitted = true; admission }, { confirmed = it }, {})
+        assertFalse(admitted)
+        assertNull(confirmed!!.admission)
+    }
+
     @Test fun aStartIsFollowedByOneMoreOrdinaryReadAfterTheDelay() {
         val rig = Rig()
         var refreshed: HaSession.Read? = null

@@ -29,7 +29,9 @@ internal sealed interface CommitRoute {
     data class Send(
         val expectedRevision: Int,
         val replacement: HaPlanningSettings,
-        val operation: Long
+        val operation: Long,
+        /** The confirmed record the edit was built on (at [expectedRevision]). */
+        val base: HaPlanningSettings
     ) : CommitRoute
 
     /** Home Assistant owns the values and nothing may be written: restore what is shown. */
@@ -240,7 +242,7 @@ internal class AuthorityController(
         return when (val built = HaSettingsEditor.replacement(record, edit)) {
             is HaSettingsEditResult.Refused -> CommitRoute.Refused(built.code)
             is HaSettingsEditResult.Ready ->
-                CommitRoute.Send(record.revision, built.settings, reserveWrite())
+                CommitRoute.Send(record.revision, built.settings, reserveWrite(), record)
         }
     }
 

@@ -100,8 +100,11 @@ internal class HaSession(
      */
     class Read(val admission: DashboardAdmission?, val result: Result<Dashboard>, val detectedPhases: Int?)
 
-    /** A command's outcome: the confirmation read that followed it (or the failure of either step). */
-    class Sent(val result: Result<Dashboard>, val detectedPhases: Int?)
+    /**
+     * A command's outcome: the confirmation read that followed it (or the failure of either step), and
+     * the admission that read was taken under once the command was accepted (`null` when it was not).
+     */
+    class Sent(val result: Result<Dashboard>, val detectedPhases: Int?, val admission: DashboardAdmission? = null)
 
     /** The vehicle re-read's answer, and the read that followed it when the integration re-read. */
     class ReRead(val answer: VehicleRefresh.Answer, val read: Sent?)
@@ -132,13 +135,18 @@ internal class HaSession(
         onRefreshed: (Read) -> Unit
     ) {
         background.execute {
+            var admission: DashboardAdmission? = null
             val fetched = runCatching {
                 transport.send(command)
+                // Admitted only once the command was accepted: the read that follows carries the
+                // record the command left (a Start or Stop moves its revision), so the screen writes
+                // against that, not the one before it.
+                admission = admit()
                 transport.dashboard()
             }
             val phases = recorder.record(fetched)
             mainThread {
-                onConfirmed(Sent(fetched.map { it.dashboard }, phases))
+                onConfirmed(Sent(fetched.map { it.dashboard }, phases, admission))
                 if (fetched.isSuccess && command.action in FOLLOWED_BY_A_READ) {
                     schedule(FOLLOW_UP_MS) { read(admit, onRefreshed) }
                 }
