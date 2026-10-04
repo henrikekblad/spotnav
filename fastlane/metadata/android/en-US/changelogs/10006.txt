@@ -1,0 +1,8 @@
+- Notifications: through Home Assistant's Companion app, or from the SpotNav app itself, every 15 minutes or instantly through push (optional)
+- Charger priority on a site; charge history with CSV export
+- Departure on a chosen date, up to a week ahead
+- Great Britain: Octopus Agile regions
+- Charger status after the charge, e.g. "EV6 · 96 % · Connected"
+- kWh slider capped at the room left in the battery
+- Widgets show the charging status
+- Works with SpotNav for Home Assistant 1.10

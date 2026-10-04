@@ -1,0 +1,8 @@
+- Notifikationer: via Home Assistants Companion-app, eller fra SpotNav-appen selv, hvert 15. minut eller øjeblikkeligt via push (valgfrit)
+- Ladernes prioritet på et anlæg; ladehistorik med CSV-eksport
+- Afgang på en valgt dato, op til en uge frem
+- Storbritannien: Octopus Agile-regioner
+- Laderens status efter opladningen, f.eks. "EV6 · 96 % · Tilsluttet"
+- kWh-skyderen går ikke over pladsen i batteriet
+- Widgets viser ladestatus
+- Virker med SpotNav til Home Assistant 1.10

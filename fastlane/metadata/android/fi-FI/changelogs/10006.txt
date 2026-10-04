@@ -1,0 +1,8 @@
+- Ilmoitukset: Home Assistantin Companion-sovelluksen kautta tai SpotNav-sovelluksesta itsestään, 15 minuutin välein tai heti push-viestillä (valinnainen)
+- Laturin prioriteetti kohteessa; lataushistoria CSV-vientinä
+- Lähtö valittuna päivänä, enintään viikon päähän
+- Iso-Britannia: Octopus Agile -alueet
+- Laturin tila latauksen jälkeen, esim. "EV6 · 96 % · Kytketty"
+- kWh-liukusäädin ei ylitä akun vapaata tilaa
+- Widgetit näyttävät lataustilan
+- Toimii SpotNav for Home Assistant 1.10:n kanssa
