@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.app.LauncherActivity
 import se.sensnology.spotnav.chart.DayRollover
+import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.ui.charging.ChargingScreen
@@ -88,6 +89,8 @@ class WidgetConfigActivity : Activity() {
             back = ::goBack
         )
         setContentView(shell.root)
+        // This phone's own notification check: scheduled while it is on and something is paired.
+        LocalNotifications.sync(this)
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))
@@ -128,6 +131,7 @@ class WidgetConfigActivity : Activity() {
         shell.onForeground = null
         shell.onDayBoundary = null
         shell.dayZone = null
+        shell.onNotificationPermission = null
         dayRollover.cancel()
         when (screen) {
             Screen.MAIN -> showCharging()
@@ -197,6 +201,13 @@ class WidgetConfigActivity : Activity() {
                 startActivity(Intent(this, LauncherActivity::class.java))
                 finish()
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LocalNotifications.PERMISSION_REQUEST && ::shell.isInitialized) {
+            shell.onNotificationPermission?.invoke()
         }
     }
 

@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -7,6 +8,7 @@ import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
+import android.os.Build
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -31,11 +33,14 @@ import se.sensnology.spotnav.app.StoreAction
 import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
+import se.sensnology.spotnav.ha.authority.CommitRoute
+import se.sensnology.spotnav.ha.authority.WriteSubject
 import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
 import se.sensnology.spotnav.ha.settings.FormSaveOutcome
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
+import se.sensnology.spotnav.ha.settings.HaSettingsEdit
 import se.sensnology.spotnav.ha.settings.SaveEffect
 import se.sensnology.spotnav.ha.settings.SettingsFormSession
 import se.sensnology.spotnav.ha.settings.SettingsFormValues
@@ -44,6 +49,7 @@ import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
@@ -154,11 +160,56 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // and right before the Home Assistant card, in the order the Home Assistant card has them.
         // The page is an overview: each area that can be changed from here opens its own dialog.
         val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content) }
+        // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
+        val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
+        val settingsGeneration = viewGeneration
         val homeAssistantCard = card(content, t(R.string.home_assistant), R.drawable.ic_card_charger)
         HomeAssistantSection(shell, onPlanDefaulted = { display.showInWidget?.isChecked = true }).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
-            fun loadPaired() = session.peekDashboard { dashboard -> pairedCards.show(dashboard) }
+            fun showNotifications() = notificationsCard?.show(
+                settingsCache.confirmed(settingsProfile.localId)?.notifications,
+                priceControlsEnabled(true, settingsAuthority.authority)
+            )
+            fun loadPaired() = session.peekDashboard { dashboard ->
+                pairedCards.show(dashboard)
+                if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
+                    // A newer record (or one now stating its notifications) is what this screen writes against.
+                    settingsAuthority.seedFromConfirmedRecord()
+                    applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
+                }
+                showNotifications()
+            }
+            notificationsCard?.attach(
+                save = { targets, events, done ->
+                    when (val route = settingsAuthority.beginWrite(HaSettingsEdit.Notifications(targets, events))) {
+                        is CommitRoute.Send -> session.updateSettings(route.expectedRevision, route.replacement) { answer ->
+                            if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
+                            val outcome = settingsAuthority.onWriteAnswer(
+                                WriteSubject(settingsProfile.localId, route.operation, route.expectedRevision), answer
+                            )
+                            if (outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
+                            showNotifications()
+                            done(
+                                when (answer) {
+                                    is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
+                                    is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
+                                    else -> authorityRefusalText(answer)
+                                }
+                            )
+                        }
+                        is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
+                        CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
+                    }
+                },
+                requestPermission = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        activity.requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), LocalNotifications.PERMISSION_REQUEST)
+                    }
+                }
+            )
+            shell.onNotificationPermission = { notificationsCard?.permissionAnswered() }
+            showNotifications()
             pairedCards.attachWrites(
                 vehicle = { vehicleId, changes, done ->
                     session.updateVehicle(vehicleId, changes) { outcome ->
@@ -181,7 +232,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             )
             loadPaired()
         }
-        val settingsGeneration = viewGeneration
         // Revalidate the catalogue off the main thread, as the rest of this screen's work is.
         ioExecutor.execute {
             val result = AreaCatalogue.refreshIfDue(applicationContext)

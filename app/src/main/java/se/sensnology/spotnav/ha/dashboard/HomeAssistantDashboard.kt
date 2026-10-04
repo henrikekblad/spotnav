@@ -100,7 +100,16 @@ internal data class DashboardInstalled(
     val periods: List<DashboardPeriod>
 )
 
-internal data class DashboardPlan(val proposal: DashboardProposal?, val installed: DashboardInstalled?)
+internal data class DashboardPlan(
+    val proposal: DashboardProposal?,
+    val installed: DashboardInstalled?,
+    /**
+     * A manual need's count (Home Assistant 1.9): the energy delivered toward it and what remains,
+     * `null` where nothing tracks it (a target, nothing delivered known, an older Home Assistant).
+     */
+    val deliveredKwh: Double? = null,
+    val remainingKwh: Double? = null
+)
 
 internal data class DashboardVehicleRef(val id: String, val name: String)
 
@@ -280,7 +289,12 @@ internal data class Dashboard(
     /** The charger's connection state (Home Assistant 1.6); `null` when absent or `unknown`. */
     val connection: ConnectionState? = null,
     /** This charger's priority on its site (Home Assistant 1.9); `null` when absent, or on no site. */
-    val chargerPriority: ChargerPriority? = null
+    val chargerPriority: ChargerPriority? = null,
+    /**
+     * Why the last calculation produced what it did (`planning.reason`, e.g. `deadline_too_short`);
+     * read leniently, `null` when absent or not text.
+     */
+    val planningReason: String? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -364,7 +378,8 @@ internal data class Dashboard(
                 chargingPhases = chargingPhases(json.opt("charging_phases")),
                 sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary")),
                 connection = ChargerConnectionContract.of(json.optJSONObject("connection")),
-                chargerPriority = ChargerPriority.parse(json.opt("charger_priority"))
+                chargerPriority = ChargerPriority.parse(json.opt("charger_priority")),
+                planningReason = json.optJSONObject("planning")?.opt("reason") as? String
             )
         }
 
@@ -557,7 +572,10 @@ internal data class Dashboard(
             },
             installed = optObj(json, "installed")?.let { i ->
                 DashboardInstalled(optInt(i, "amps"), optInt(i, "phases"), optText(i, "origin"), periods(i))
-            }
+            },
+            // Read leniently: a count that is not a finite, non-negative number is simply not there.
+            deliveredKwh = (json.opt("delivered_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 },
+            remainingKwh = (json.opt("remaining_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 }
         )
 
         private fun periods(json: JSONObject): List<DashboardPeriod> = array(json, "periods").objects().map {

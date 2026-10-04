@@ -2,6 +2,7 @@ package se.sensnology.spotnav.chargers
 
 import android.content.Context
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
+import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.widget.WidgetDashboardStore
 import se.sensnology.spotnav.widget.WidgetPlanSnapshotStore
 
@@ -15,5 +16,6 @@ internal object ProfileCaches {
         ConfirmedSettingsStore.forContext(context).removeProfile(localId)
         WidgetDashboardStore.forContext(context).clear(localId)
         WidgetPlanSnapshotStore.forContext(context).clear(localId)
+        LocalNotifications.onProfileForgotten(context, localId)
     }
 }

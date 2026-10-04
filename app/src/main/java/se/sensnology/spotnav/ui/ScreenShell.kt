@@ -84,6 +84,9 @@ internal class ScreenShell(
     var onDayBoundary: (() -> Unit)? = null
     var dayZone: (() -> java.time.ZoneId)? = null
 
+    /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
+    var onNotificationPermission: (() -> Unit)? = null
+
     /**
      * a tap that begins anywhere else puts the readout away (see [afterDispatch] and
      * ChartDismissal). Both are dropped by [begin], which is what happens whenever the screen is

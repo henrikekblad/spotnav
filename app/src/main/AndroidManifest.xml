@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Android 13+: asked for only when the person turns on this phone's own charging
+         notifications in Settings. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Finding Home Assistant over mDNS: a multicast lock keeps replies
          arriving while the phone dozes. Normal protection level, so it is
          granted at install with no prompt, and discovery treats it as best
@@ -47,6 +50,12 @@
             android:authorities="${applicationId}.exports"
             android:exported="false"
             android:grantUriPermissions="true" />
+        <!-- This phone's own charging notifications: a periodic check of the paired charger,
+             scheduled only while it is turned on and something is paired. -->
+        <service
+            android:name=".notify.LocalNotificationJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <receiver
             android:name=".widget.PriceWidgetProvider"
             android:exported="true">
