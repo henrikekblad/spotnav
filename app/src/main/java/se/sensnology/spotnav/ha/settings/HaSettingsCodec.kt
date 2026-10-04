@@ -34,11 +34,17 @@ internal object HaSettingsCodec {
     /**
      * Keys a record may carry although it need not (see [RESPONSE_KEYS]). `fiscal_included` is a
      * read-only fact of the record (Home Assistant 1.8): read from an answer, kept in this app's stored
-     * copy, and never part of a replacement body.
+     * copy, and never part of a replacement body. `notifications` (Home Assistant 1.9) is optional
+     * both ways: a body that leaves it out keeps the stored choice.
      */
-    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED)
+    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS)
 
     private const val FISCAL_INCLUDED = "fiscal_included"
+    private const val NOTIFICATIONS = "notifications"
+
+    /** A notify service as Home Assistant spells one, and how many one charger may name. */
+    private val SERVICE: Pattern = Pattern.compile("^[a-z0-9_]{1,100}$")
+    private const val MAX_TARGETS = 10
 
     private val OVERRIDE_KEYS = setOf("area_id", "vat", "tax", "transfer")
     private val FISCAL_KEYS = setOf("enabled", "value")
@@ -112,9 +118,68 @@ internal object HaSettingsCodec {
             )!!,
             driver = HaSettingsDriver.of(enum(raw.opt("driver"), HaSettingsDriver.entries.map { it.wire }, "invalid_driver"))!!,
             target = target(raw.opt("target"), exact),
-            fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet()
+            fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet(),
+            notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision)
         )
     }
+
+    /**
+     * `notifications`: absent or `null` is "not stated". A replacement body is held to the contract
+     * ([strict]: a refusal names `invalid_notifications`); an answer is read leniently, so a shape
+     * this app cannot read hides the section instead of refusing the whole record. Event ids this
+     * app does not know are kept, so an edit from here never turns off a newer Home Assistant's event.
+     */
+    private fun notifications(raw: Any?, strict: Boolean): HaNotificationSettings? {
+        if (raw == null || raw === JSONObject.NULL) return null
+        return try {
+            val json = raw as? JSONObject ?: refuse(INVALID_NOTIFICATIONS, "notifications must be an object")
+            val targets = textList(json.opt("targets"), "targets")
+            val events = textList(json.opt("events"), "events")
+            if (targets.size > MAX_TARGETS) refuse(INVALID_NOTIFICATIONS, "at most $MAX_TARGETS notify targets")
+            if (targets.any { !SERVICE.matcher(it).matches() }) refuse(INVALID_NOTIFICATIONS, "a target must be a notify service name")
+            if (targets.toSet().size != targets.size || events.toSet().size != events.size) {
+                refuse(INVALID_NOTIFICATIONS, "a target or an event must not repeat")
+            }
+            val url = when (val value = json.opt("url")) {
+                null, JSONObject.NULL -> null
+                is String -> value.takeIf { it.startsWith("/") && !it.startsWith("//") }
+                    ?: refuse(INVALID_NOTIFICATIONS, "url must be a Home Assistant path")
+                else -> refuse(INVALID_NOTIFICATIONS, "url must be a path or null")
+            }
+            HaNotificationSettings(
+                targets = targets,
+                events = canonicalEvents(events),
+                url = url,
+                available = available(json.opt("available"))
+            )
+        } catch (refusal: HaSettingsFormatException) {
+            if (strict) throw refusal else null
+        }
+    }
+
+    /** Events in the order the contract lists them, the ones this app does not know after them. */
+    internal fun canonicalEvents(events: Collection<String>): List<String> =
+        NotificationEvent.entries.map { it.wire }.filter { it in events } +
+            events.filter { NotificationEvent.of(it) == null }.distinct()
+
+    /** The read-only phones: each row with a service name, named after its phone (or the service). */
+    private fun available(raw: Any?): List<HaNotifyService> {
+        val list = raw as? JSONArray ?: return emptyList()
+        return (0 until list.length()).mapNotNull { index ->
+            val row = list.opt(index) as? JSONObject ?: return@mapNotNull null
+            val service = (row.opt("service") as? String)?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+            HaNotifyService(service, (row.opt("name") as? String)?.takeIf { it.isNotBlank() } ?: service)
+        }.distinctBy { it.service }
+    }
+
+    private fun textList(raw: Any?, what: String): List<String> {
+        val list = raw as? JSONArray ?: refuse(INVALID_NOTIFICATIONS, "$what must be a list")
+        return (0 until list.length()).map { index ->
+            list.opt(index) as? String ?: refuse(INVALID_NOTIFICATIONS, "$what must hold text")
+        }
+    }
+
+    private const val INVALID_NOTIFICATIONS = "invalid_notifications"
 
     /**
      * The read-only `fiscal_included`: the components named in it that this app knows. Lenient on
@@ -281,6 +346,21 @@ internal object HaSettingsCodec {
             // The stored copy keeps the read-only fact; a replacement body never carries it.
             if (withRevision && settings.fiscalIncluded.isNotEmpty()) {
                 put(FISCAL_INCLUDED, JSONArray(HaAreaOverrideComponent.entries.filter { it in settings.fiscalIncluded }.map { it.wire }))
+            }
+            // Stated only when Home Assistant stated it; the phones that exist are the stored copy's alone.
+            settings.notifications?.let { choice ->
+                put(NOTIFICATIONS, JSONObject().apply {
+                    put("targets", JSONArray(choice.targets))
+                    put("events", JSONArray(choice.events))
+                    putNullable("url", choice.url)
+                    if (withRevision) {
+                        put("available", JSONArray().apply {
+                            choice.available.forEach { phone ->
+                                put(JSONObject().put("service", phone.service).put("name", phone.name))
+                            }
+                        })
+                    }
+                })
             }
         }
 

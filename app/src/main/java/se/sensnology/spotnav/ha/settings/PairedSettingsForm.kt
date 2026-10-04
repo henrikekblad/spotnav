@@ -88,7 +88,7 @@ internal object PairedSettingsForm {
         val candidate = record.copy(areaId = areaId, overrides = overrides)
         return try {
             val validated = HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(candidate))
-            HaSettingsEditResult.Ready(validated.copy(revision = record.revision, fiscalIncluded = record.fiscalIncluded))
+            HaSettingsEditResult.Ready(validated.withReadOnlyOf(record))
         } catch (refusal: HaSettingsFormatException) {
             HaSettingsEditResult.Refused(refusal.code)
         }

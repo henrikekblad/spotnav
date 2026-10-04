@@ -84,8 +84,58 @@ data class HaPlanningSettings(
      * published price already contains. They are locked as included in the price, nothing is added for
      * them, and they are never sent back as an edit. Empty from an older Home Assistant.
      */
-    val fiscalIncluded: Set<HaAreaOverrideComponent> = emptySet()
+    val fiscalIncluded: Set<HaAreaOverrideComponent> = emptySet(),
+    /**
+     * Who hears about which events through the Home Assistant Companion app (`notifications`, Home
+     * Assistant 1.9); `null` from a Home Assistant that does not state it, and then nothing about it
+     * is shown or sent.
+     */
+    val notifications: HaNotificationSettings? = null
+) {
+    /**
+     * This record with the read-only facts of [confirmed] carried over: a replacement body never
+     * states them, so a record built from one keeps the ones the confirmed record had.
+     */
+    internal fun withReadOnlyOf(confirmed: HaPlanningSettings): HaPlanningSettings = copy(
+        revision = confirmed.revision,
+        fiscalIncluded = confirmed.fiscalIncluded,
+        notifications = notifications?.copy(available = confirmed.notifications?.available.orEmpty())
+    )
+}
+
+/** One phone Home Assistant can notify: the Companion app's notify service and the phone's name. */
+data class HaNotifyService(val service: String, val name: String)
+
+/**
+ * One charger's notification choice (the settings record's `notifications`): the notify services
+ * that are told ([targets]), the events they are told about ([events], wire ids, unknown ones kept as
+ * they are so a newer Home Assistant's choice survives an edit from here), the Home Assistant path a
+ * tap opens ([url]) and the read-only phones that exist now ([available]).
+ */
+data class HaNotificationSettings(
+    val targets: List<String> = emptyList(),
+    val events: List<String> = NotificationEvent.DEFAULTS.map { it.wire },
+    val url: String? = null,
+    val available: List<HaNotifyService> = emptyList()
 )
+
+/** The events a notification can be sent for, in the order a client lists them (`notifications/settings.py`). */
+enum class NotificationEvent(val wire: String) {
+    PLAN_STOPPED("plan_stopped"),
+    PLAN_AT_RISK("plan_at_risk"),
+    CHARGE_COMPLETE("charge_complete"),
+    CHARGE_STARTED("charge_started"),
+    PLUGGED_IN("plugged_in"),
+    UNPLUGGED("unplugged"),
+    PLAN_INSTALLED("plan_installed");
+
+    companion object {
+        /** On until a person turns them off: what needs attention, and the end of a charge. */
+        val DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE)
+
+        fun of(wire: Any?): NotificationEvent? = entries.firstOrNull { it.wire == wire }
+    }
+}
 
 /** Every weekday, Monday (1) to Sunday (7): what a record without `departure_weekdays` means. */
 val ALL_WEEKDAYS: List<Int> = (1..7).toList()

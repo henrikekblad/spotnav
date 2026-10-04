@@ -49,6 +49,11 @@ internal class ConfirmedSettingsStore(
             settings.revision > existing.revision -> store(localId, settings)
             settings.revision < existing.revision -> Merge.Stale(existing)
             canonical(settings) == canonical(existing) -> Merge.Unchanged
+            // The same choice at the same revision, told again with newer read-only facts (the phones
+            // that exist now) or with `notifications` stated for the first time: kept as told. A copy
+            // that does not state it never takes it away.
+            sameChoice(settings, existing) ->
+                if (settings.notifications == null) Merge.Unchanged else store(localId, settings)
             else -> {
                 logWarning("Confirmed settings for one profile disagree at revision ${settings.revision}")
                 Merge.EqualRevisionMismatch(existing)
@@ -96,6 +101,14 @@ internal class ConfirmedSettingsStore(
     }
 
     private fun canonical(settings: HaPlanningSettings): String = HaSettingsCodec.encode(settings).toString()
+
+    /** Whether two records say the same, the notification phones that exist aside and an unstated choice aside. */
+    private fun sameChoice(a: HaPlanningSettings, b: HaPlanningSettings): Boolean {
+        if (canonical(a.copy(notifications = null)) != canonical(b.copy(notifications = null))) return false
+        val left = a.notifications ?: return true
+        val right = b.notifications ?: return true
+        return left.copy(available = emptyList()) == right.copy(available = emptyList())
+    }
 
     private fun key(localId: String): String = "$KEY_PREFIX$localId"
 

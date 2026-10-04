@@ -63,6 +63,12 @@ internal sealed interface HaSettingsEdit {
 
     /** What the system optimizes -- the strategy chooser's own edit (see `ChargingStrategyUi`). */
     data class Strategy(val strategy: HaSettingsStrategy) : HaSettingsEdit
+
+    /**
+     * The Companion app's phones and the events they hear about, as a whole; the record's own tap
+     * path is kept. Only for a record that states `notifications`.
+     */
+    data class Notifications(val targets: List<String>, val events: List<String>) : HaSettingsEdit
 }
 
 /** What one edit produced: a full replacement, or the contract's own stable refusal. */
@@ -83,7 +89,7 @@ internal object HaSettingsEditor {
         val candidate = apply(confirmed, edit)
         return try {
             val validated = HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(candidate))
-            HaSettingsEditResult.Ready(validated.copy(revision = confirmed.revision, fiscalIncluded = confirmed.fiscalIncluded))
+            HaSettingsEditResult.Ready(validated.withReadOnlyOf(confirmed))
         } catch (refusal: HaSettingsFormatException) {
             HaSettingsEditResult.Refused(refusal.code)
         }
@@ -107,6 +113,12 @@ internal object HaSettingsEditor {
             if (edit.component in HaAreaOverrideComponent.includedFor(confirmed, edit.areaId, null)) confirmed
             else confirmed.copy(overrides = withComponent(confirmed, edit))
         is HaSettingsEdit.Strategy -> confirmed.copy(strategy = edit.strategy)
+        is HaSettingsEdit.Notifications -> confirmed.copy(
+            notifications = (confirmed.notifications ?: HaNotificationSettings()).copy(
+                targets = edit.targets.distinct(),
+                events = HaSettingsCodec.canonicalEvents(edit.events.distinct())
+            )
+        )
     }
 
     /** The overrides with one component of one area replaced. */
