@@ -1,2 +1,3 @@
 - Laderens prioritet på et anlegg: Først, Normal eller Sist, vises og endres på anleggskortet
 - Varsler: velg telefoner og hendelser for Home Assistants Companion-app, eller la telefonen selv sjekke laderen hvert 15. minutt (av som standard)
+- kWh-glidebryteren går ikke over det som får plass i batteriet; bilen avslutter selv ved grensen sin
