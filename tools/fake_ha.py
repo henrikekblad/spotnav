@@ -66,12 +66,38 @@ DASHBOARD_BY_SCENARIO = {
     "conflict": "cheapest_direct_site_admin.json",
     "novehicle": "no_settings.json",
     "busy": "stop_charging.json",
+    "manual": "manual_stop.json",
 }
+
+#: The `manual` scenario's status, set with `GET /spotnav-mock/manual?action=start|stop&ends=unplug|
+#: next_plug_in|resume`, `?code=charger_ignores_stop`, or `?no_car=1` (a Start is then refused with
+#: `vehicle_not_connected`, as Home Assistant 1.11 refuses it).
+MANUAL = {"action": "stop", "ends": "resume", "code": "paused", "no_car": False}
+
+
+def _manual_status(body: dict) -> dict:
+    """Home Assistant's status block for a person's Start or Stop (`paused`, choice `manual`)."""
+    if MANUAL["code"] == "charger_ignores_stop":
+        body["control"]["immediate_action"] = "stop"
+        return {"tone": "blocking", "lines": [
+            {"code": "charger_ignores_stop", "params": {}},
+            {"code": "charging_now", "params": {"until": None}},
+        ]}
+    lines = [{"code": "paused", "params": {
+        "until": None, "choice": "manual", "action": MANUAL["action"], "ends": MANUAL["ends"],
+    }}]
+    if MANUAL["action"] == "start":
+        body["control"]["immediate_action"] = "stop"
+        lines.append({"code": "charging_now", "params": {"until": None}})
+    return {"tone": "normal", "lines": lines}
 
 
 def dashboard_body(scenario: str) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
-    return json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
+    body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
+    if scenario == "manual":
+        body["status"] = _manual_status(body)
+    return body
 
 
 class Charger:
@@ -124,6 +150,10 @@ SCENARIOS: dict[str, Charger] = {
         "Laddar nu",
         why="the charge switch is on with a plan installed: the Stop action and its status line",
         charging=True,
+    ),
+    "manual": Charger(
+        "Manuell",
+        why="a person's Start or Stop pausing Auto (HA 1.11): set the state at /spotnav-mock/manual",
     ),
 }
 
@@ -319,6 +349,17 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/spotnav-mock/scenarios":
             self._json(200, catalogue(self._base_url()))
             return
+        if path == "/spotnav-mock/manual":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                MANUAL["code"] = query.get("code", "paused")
+                MANUAL["action"] = query.get("action", MANUAL["action"])
+                MANUAL["ends"] = query.get("ends", MANUAL["ends"])
+                MANUAL["no_car"] = query.get("no_car") == "1"
+                state = dict(MANUAL)
+            self._json(200, state)
+            return
         if path == "/pairing":
             self._pairing_page()
             return
@@ -401,6 +442,9 @@ class Handler(BaseHTTPRequestHandler):
             with _lock:
                 if action == "dashboard":
                     self._json(200, dashboard_body(match.group(1)))
+                    return
+                if match.group(1) == "manual" and action == "start" and MANUAL["no_car"]:
+                    self._json(409, {"ok": False, "error": "vehicle_not_connected"})
                     return
                 charger.command(action, payload)
         except (KeyError, TypeError, ValueError) as error:
