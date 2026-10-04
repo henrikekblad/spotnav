@@ -74,6 +74,12 @@ jobs:
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
         run: printf '%s' "$ANDROID_KEYSTORE" | base64 --decode > "$SIGNING_STORE_PATH"
+      # Released builds carry the opt-in instant notifications: Firebase is built in only when
+      # app/google-services.json is present, and -Ppush=true below fails the build if it is not.
+      - name: Restore Firebase app configuration
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: printf '%s' "$GOOGLE_SERVICES_JSON" | base64 --decode > app/google-services.json
       - name: Unit tests and lint (github store)
         run: ./gradlew testDebugUnitTest lintDebug
       - name: Unit tests (play store)
@@ -81,11 +87,11 @@ jobs:
       # Both stores write to app/build/outputs, so each artifact is renamed before the next build.
       - name: Build GitHub APK
         run: |
-          ./gradlew -Pstore=github -PreleaseVersion="${GITHUB_REF_NAME#v}" assembleRelease
+          ./gradlew -Pstore=github -Ppush=true -PreleaseVersion="${GITHUB_REF_NAME#v}" assembleRelease
           mv app/build/outputs/apk/release/app-release.apk "spotnav-${GITHUB_REF_NAME#v}.apk"
       - name: Build Play bundle
         run: |
-          ./gradlew -Pstore=play -PreleaseVersion="${GITHUB_REF_NAME#v}" bundleRelease
+          ./gradlew -Pstore=play -Ppush=true -PreleaseVersion="${GITHUB_REF_NAME#v}" bundleRelease
           mv app/build/outputs/bundle/release/app-release.aab "spotnav-${GITHUB_REF_NAME#v}-play.aab"
       - uses: actions/upload-artifact@v4
         with:
