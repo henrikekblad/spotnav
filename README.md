@@ -44,7 +44,7 @@ The app receives one secret webhook ID per charger, never a Home Assistant passw
 
 ## Prices
 
-Prices come from the SpotNav relay ([spotnav.sensnology.se](https://spotnav.sensnology.se)), which collects them once for everyone and converts currencies with ECB exchange rates:
+Prices come from the SpotNav relay ([spotnav.sensnology.se](https://spotnav.sensnology.se)), which collects them once for everyone. It publishes them in EUR together with the day's ECB exchange rate, and the app shows them in the area's own currency:
 
 - **Day-ahead spot prices** from the ENTSO-E Transparency Platform for 26 countries: the Nordic and Baltic countries, Germany/Luxembourg, the Netherlands, Belgium, France, Austria, Switzerland, Poland, Czechia, Slovakia, Hungary, Slovenia, Croatia, Romania, Bulgaria, Greece, Italy (all zones), Spain and Portugal.
 - **Spain – PVPC (regulated)** from Red Eléctrica, with the network charges already in the price.
@@ -56,7 +56,7 @@ A spot price has no VAT, tax or grid fee. The enabled additions are applied as:
 (spot price + electricity tax + grid fee) × (1 + VAT)
 ```
 
-A part the price already includes (PVPC's network charges, everything in Agile) is shown as "Included in the price" and not added again. Suggested VAT and tax are per country and editable; grid fees depend on your network operator and agreement, and fixed monthly charges are not included, so check the values against your contract.
+A part the price already includes (PVPC's network charges, everything in Agile) is shown as "Included in the price" and not added again. Suggested VAT and tax are per price area and editable, and a few areas also suggest a grid fee; grid fees depend on your network operator and agreement, and fixed monthly charges are not included, so check the values against your contract. More detail, including the relay's published files, is in [SpotNav for Home Assistant's price documentation](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/prices.md).
 
 When the app is paired with Home Assistant, the price settings are the integration's, and the app shows the same prices and plan as the dashboard card.
 
