@@ -8,46 +8,62 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.prices.AreaPublication
 import se.sensnology.spotnav.prices.AreaSelection
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
-import java.time.ZonedDateTime
+import java.time.Duration
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 /**
- * Supplements AppWidgetProvider's regular 30-minute interval around publication time.
+ * Supplements AppWidgetProvider's regular 30-minute interval around each configured area's own
+ * expected publication (13:00 Brussels for ENTSO-E, 16:00 UK time for Agile, 20:15 Madrid for PVPC).
  * Alarms are intentionally inexact to avoid requiring exact-alarm permission.
  */
 object PriceUpdateScheduler {
-    private val publicationAttempts = listOf(0, 10, 20, 35)
+    /** Minutes after an expected publication at which it is looked for, before the 30-minute retry. */
+    private val publicationAttempts = listOf(0L, 10L, 20L, 35L)
+    private val RETRY: Duration = Duration.ofMinutes(30)
     private const val REQUEST_CODE = 13_035
 
     fun scheduleNext(context: Context, tomorrowAvailable: Boolean) {
         val manager = AppWidgetManager.getInstance(context)
         val ids = manager.getAppWidgetIds(ComponentName(context, PriceWidgetProvider::class.java))
             .filter { WidgetSettings.isConfigured(context, it) }
-        // Zones, not markets: an area missing from the catalogue contributes no clock.
-        val configured = ids
-            .mapNotNull { PriceMarkets.find(WidgetSettings.load(context, it).area)?.zoneId }
-            .distinct()
-        val defaultZone = AreaSelection.defaultArea(PriceMarkets.all, AppLanguageSettings.region(context))
-            ?.let { PriceMarkets.find(it)?.zoneId }
-        val zones = configured.ifEmpty { listOfNotNull(defaultZone) }
-        // No zone to schedule against.
-        if (zones.isEmpty()) return
-        val next = zones.map { zone ->
-            val now = ZonedDateTime.now(zone)
-            if (tomorrowAvailable) nextDayAtOne(now) else nextAttempt(now)
-        }.minBy { it.toInstant() }
+        // An area missing from the catalogue contributes no clock.
+        val configured = ids.mapNotNull { PriceMarkets.find(WidgetSettings.load(context, it).area)?.publication }
+        val default = AreaSelection.defaultArea(PriceMarkets.all, AppLanguageSettings.region(context))
+            ?.let { PriceMarkets.find(it)?.publication }
+        // No area to schedule against.
+        val next = nextCheck(Instant.now(), configured.ifEmpty { listOfNotNull(default) }, tomorrowAvailable) ?: return
         val alarm = context.getSystemService(AlarmManager::class.java)
         // Five-minute window: lets Android batch wake-ups without drifting far from publication.
         alarm.setWindow(
             AlarmManager.RTC_WAKEUP,
-            next.toInstant().toEpochMilli(),
+            next.toEpochMilli(),
             5 * 60 * 1000L,
             pendingIntent(context)
         )
-        Log.i("SpotNavScheduler", "Next publication check ${next.toLocalDateTime()} available=$tomorrowAvailable")
+        Log.i("SpotNavScheduler", "Next publication check $next available=$tomorrowAvailable")
     }
+
+    /**
+     * The next look for tomorrow's prices, or `null` with no area. With tomorrow missing: the next of
+     * each area's attempts today (its publication time in its own zone, then a few minutes after),
+     * else 30 minutes from [now]. With tomorrow in hand: the earliest area's publication tomorrow.
+     */
+    internal fun nextCheck(now: Instant, publications: List<AreaPublication>, tomorrowAvailable: Boolean): Instant? =
+        publications.distinct().minOfOrNull { publication ->
+            val today = now.atZone(publication.zoneId).toLocalDate()
+            if (tomorrowAvailable) {
+                publication.on(today.plusDays(1))
+            } else {
+                val expected = publication.on(today)
+                publicationAttempts.map { expected.plus(Duration.ofMinutes(it)) }.firstOrNull { it.isAfter(now) }
+                    ?: now.plus(RETRY).truncatedTo(ChronoUnit.MINUTES)
+            }
+        }
 
     fun scheduleForActiveWidgets(context: Context) {
         val manager = AppWidgetManager.getInstance(context)
@@ -60,19 +76,6 @@ object PriceUpdateScheduler {
     fun cancel(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pendingIntent(context))
     }
-
-    private fun nextAttempt(now: ZonedDateTime): ZonedDateTime {
-        val todayAt13 = now.withHour(13).withMinute(0).withSecond(0).withNano(0)
-        publicationAttempts.forEach { minutes ->
-            val candidate = todayAt13.plusMinutes(minutes.toLong())
-            if (candidate.isAfter(now)) return candidate
-        }
-        // After the initial attempts, retry every 30 minutes until tomorrow's prices are stored.
-        return now.plusMinutes(30).withSecond(0).withNano(0)
-    }
-
-    private fun nextDayAtOne(now: ZonedDateTime): ZonedDateTime =
-        now.plusDays(1).withHour(13).withMinute(0).withSecond(0).withNano(0)
 
     private fun pendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, PriceWidgetProvider::class.java).apply {
