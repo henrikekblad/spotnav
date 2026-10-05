@@ -355,7 +355,8 @@ def language_pass(lang: str, docs: bool) -> None:
         docs_full("app-main", lang)
     store_shot(1, "main", lang)
 
-    bring_card(exact(s["card_planning_title"]), top=230)
+    # The planning card's title just under the status bar, so no part of the card above shows cut off.
+    bring_card(exact(s["card_planning_title"]), top=120)
     if docs:
         docs_full("app-planning", lang)
     store_shot(2, "plan", lang)

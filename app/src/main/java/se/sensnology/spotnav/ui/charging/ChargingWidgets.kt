@@ -23,7 +23,8 @@ internal fun ViewScope.percentText(value: Double, locale: java.util.Locale): Str
         maximumFractionDigits = 1
         minimumFractionDigits = 0
     }
-    return "${format.format(value)} %"
+    // A no-break space: "80 %" never breaks between the figure and its sign at the end of a line.
+    return "${format.format(value)}\u00A0%"
 }
 
 internal fun ViewScope.bandLabel() = TextView(context).apply {
