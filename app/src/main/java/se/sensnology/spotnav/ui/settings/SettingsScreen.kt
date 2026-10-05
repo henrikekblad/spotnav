@@ -167,8 +167,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         HomeAssistantSection(
             shell,
             onPlanDefaulted = { display.showInWidget?.isChecked = true },
-            // The paired cards above belong to the removed instance: the page is built again without them.
-            onInstanceRemoved = { show() }
+            // The paired cards above belong to the instance: the page is built again with or without them.
+            onInstanceChanged = { show() }
         ).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)

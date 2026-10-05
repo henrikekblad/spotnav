@@ -53,8 +53,11 @@ internal class HomeAssistantSection(
     shell: ScreenShell,
     /** Told when pairing switched this widget's plan line on, so the screen's own checkbox follows. */
     private val onPlanDefaulted: () -> Unit = {},
-    /** Told when the instance was removed, so the screen drops the cards that belonged to it. */
-    private val onInstanceRemoved: () -> Unit = {}
+    /**
+     * Told when an instance was paired or removed, so the screen shows or drops the cards that
+     * belong to it. The page is built again, and the new section asks the instance itself.
+     */
+    private val onInstanceChanged: () -> Unit = {}
 ) : ScreenPart(shell) {
     /** The Home Assistant connection: **one instance, paired once**. */
     /**
@@ -205,8 +208,8 @@ internal class HomeAssistantSection(
                     redraw()
                 }
             })
-            // Only a successful approval is worth asking about again.
-            if (applied != null) refresh()
+            // Only a successful approval changes the page: its paired cards come with it.
+            if (applied != null) onInstanceChanged()
         }
 
         /** [alternatives] are tried in order when [baseUrl] does not answer; the first that does is paired. */
@@ -302,7 +305,7 @@ internal class HomeAssistantSection(
                     report = null
                     statusLine = t(R.string.instance_removed)
                     redraw()
-                    onInstanceRemoved()
+                    onInstanceChanged()
                 }
                 .setNegativeButton(t(R.string.instance_pairing_cancel), null)
                 .show()
