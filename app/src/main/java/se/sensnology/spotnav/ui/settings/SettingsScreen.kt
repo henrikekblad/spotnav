@@ -164,7 +164,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration
         val homeAssistantCard = card(content, t(R.string.home_assistant), R.drawable.ic_card_charger)
-        HomeAssistantSection(shell, onPlanDefaulted = { display.showInWidget?.isChecked = true }).add(homeAssistantCard.body)
+        HomeAssistantSection(
+            shell,
+            onPlanDefaulted = { display.showInWidget?.isChecked = true },
+            // The paired cards above belong to the removed instance: the page is built again without them.
+            onInstanceRemoved = { show() }
+        ).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
             fun showNotifications() = notificationsCard?.show(

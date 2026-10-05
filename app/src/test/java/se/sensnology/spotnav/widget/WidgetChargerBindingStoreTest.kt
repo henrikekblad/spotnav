@@ -15,6 +15,21 @@ class WidgetChargerBindingStoreTest {
 
     private fun rawKey(appWidgetId: Int) = "$appWidgetId.chargerBinding"
 
+    @Test fun releasingRemovedProfilesSetsOnlyTheirBindingsToNoCharger() {
+        val store = store()
+        store.setBinding(-1, "gone-a")
+        store.setBinding(1, "gone-b")
+        store.setBinding(2, "kept")
+
+        store.releaseRemovedProfiles(setOf("gone-a", "gone-b"), listOf(-1, 1, 2, 3))
+
+        assertEquals(WidgetChargerBinding(initialized = true, chargerProfileId = null), store.storedBinding(-1))
+        assertEquals(WidgetChargerBinding(initialized = true, chargerProfileId = null), store.storedBinding(1))
+        assertEquals("kept", store.storedBinding(2).chargerProfileId)
+        // An undecided widget stays undecided:
+        assertFalse(store.storedBinding(3).initialized)
+    }
+
     @Test fun twoWidgetIdsCanBindToTwoDifferentProfiles() {
         val store = store()
 

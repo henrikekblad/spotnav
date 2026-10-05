@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.ui.settings
 
 import android.app.AlertDialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
@@ -37,6 +39,8 @@ import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.chargerName
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.app.LauncherActivity
+import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerBindingStore
 import se.sensnology.spotnav.widget.WidgetSettings
 import java.util.concurrent.atomic.AtomicBoolean
@@ -48,7 +52,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class HomeAssistantSection(
     shell: ScreenShell,
     /** Told when pairing switched this widget's plan line on, so the screen's own checkbox follows. */
-    private val onPlanDefaulted: () -> Unit = {}
+    private val onPlanDefaulted: () -> Unit = {},
+    /** Told when the instance was removed, so the screen drops the cards that belonged to it. */
+    private val onInstanceRemoved: () -> Unit = {}
 ) : ScreenPart(shell) {
     /** The Home Assistant connection: **one instance, paired once**. */
     /**
@@ -263,15 +269,25 @@ internal class HomeAssistantSection(
                 .setTitle(t(R.string.instance_remove_confirm_title, baseUrl))
                 .setMessage(t(R.string.instance_remove_confirm_message))
                 .setPositiveButton(t(R.string.instance_remove)) { _, _ ->
-                    profileStore.listProfiles().filter { it.baseUrl == baseUrl }
-                        .forEach { profile ->
-                            profileStore.removeProfile(profile.localId)
-                            ProfileCaches.forget(applicationContext, profile.localId)
-                        }
+                    val removed = profileStore.listProfiles().filter { it.baseUrl == baseUrl }
+                    removed.forEach { profile ->
+                        profileStore.removeProfile(profile.localId)
+                        ProfileCaches.forget(applicationContext, profile.localId)
+                    }
+                    // Whatever was bound to these chargers is "No charger" now: a person removed them,
+                    // so there is no missing charger to warn about.
+                    val manager = AppWidgetManager.getInstance(applicationContext)
+                    val widgetIds = manager.getAppWidgetIds(ComponentName(applicationContext, PriceWidgetProvider::class.java)).toList()
+                    WidgetChargerBindingStore.forContext(applicationContext).releaseRemovedProfiles(
+                        removed.map { it.localId }.toSet(),
+                        widgetIds + LauncherActivity.STANDALONE_SETTINGS_ID + widgetId
+                    )
+                    widgetIds.forEach { PriceWidgetProvider.update(applicationContext, manager, it) }
                     instanceStore.forget()
                     report = null
                     statusLine = t(R.string.instance_removed)
                     redraw()
+                    onInstanceRemoved()
                 }
                 .setNegativeButton(t(R.string.instance_pairing_cancel), null)
                 .show()

@@ -110,6 +110,6 @@ class LauncherActivity : Activity() {
     companion object {
         // Zero is AppWidgetManager.INVALID_APPWIDGET_ID, so the standalone profile must use a
         // distinct ID that can never belong to a widget.
-        private const val STANDALONE_SETTINGS_ID = -1
+        internal const val STANDALONE_SETTINGS_ID = -1
     }
 }

@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.ui.charging
 
 import android.app.AlertDialog
+import android.appwidget.AppWidgetManager
 import android.content.res.ColorStateList
 import android.view.View
 import android.widget.AdapterView
@@ -38,6 +39,8 @@ import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueRow
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.ha.pairing.HomeAssistantInstanceStore
+import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerBindingStore
 import se.sensnology.spotnav.widget.WidgetChargerSelectionController
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -97,6 +100,17 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             settings.chargerProfileId
         )
         var selector = ChargerCardSelector.content(chargerSelection)
+        // With no Home Assistant paired, a missing charger went with the instance a person removed:
+        // that is "No charger", not a charger to warn about.
+        if (selector.stale && HomeAssistantInstanceStore.forContext(applicationContext).baseUrl() == null) {
+            WidgetChargerBindingStore.forContext(applicationContext).setBinding(widgetId, null)
+            chargerSelection = WidgetChargerSelectionController(
+                ChargerProfileStore.forContext(applicationContext).listProfiles(),
+                null
+            )
+            selector = ChargerCardSelector.content(chargerSelection)
+            if (widgetId > 0) PriceWidgetProvider.update(applicationContext, AppWidgetManager.getInstance(applicationContext), widgetId)
+        }
 
         // The spinner's own listener fires while its adapter and selection are being rebuilt;
         // without this guard that re-entrancy would persist whatever row happened to be selected
@@ -142,6 +156,8 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 if (chosen != null && settings.chargerProfileId == null && widgetId > 0) {
                     WidgetSettings.planDefaultOnBinding(applicationContext, widgetId)
                 }
+                // The widget shows the charger it is bound to, so it is redrawn now, not at its next update:
+                if (widgetId > 0) PriceWidgetProvider.update(applicationContext, AppWidgetManager.getInstance(applicationContext), widgetId)
                 onChargerChosen()
             }
         }

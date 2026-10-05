@@ -66,6 +66,19 @@ internal class WidgetChargerBindingStore(private val store: KeyValueStore) {
         synchronized(lock) { writeBinding(appWidgetId, chargerProfileId) }
     }
 
+    /**
+     * Sets every one of [appWidgetIds] bound to one of [removedProfileIds] to "No charger": the
+     * profiles are gone because a person removed them, so there is nothing to warn about. Other
+     * bindings, and undecided ones, are left as they are.
+     */
+    fun releaseRemovedProfiles(removedProfileIds: Set<String>, appWidgetIds: Iterable<Int>) {
+        synchronized(lock) {
+            appWidgetIds.forEach { id ->
+                if (readBinding(id).chargerProfileId in removedProfileIds) writeBinding(id, null)
+            }
+        }
+    }
+
     /** Removes only this widget's binding and bumps its removal generation (see the class doc). */
     fun removeBinding(appWidgetId: Int) {
         synchronized(lock) {
