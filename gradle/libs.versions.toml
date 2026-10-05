@@ -5,12 +5,17 @@ junit = "4.13.2"
 orgJson = "20260814"
 firebaseBom = "34.19.0"
 googleServices = "4.5.0"
+# Firebase pulls fragment 1.1.0 and activity 1.0.0 through play-services-base; Play flags both as outdated.
+androidxFragment = "1.8.9"
+androidxActivity = "1.11.0"
 
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
 org-json = { module = "org.json:json", version.ref = "orgJson" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidxFragment" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "androidxActivity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

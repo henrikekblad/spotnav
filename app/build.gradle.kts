@@ -87,6 +87,8 @@ android {
         abortOnError = true
         // Tool-version advisories change without any change here, and would fail CI by the calendar.
         disable += setOf("AndroidGradlePluginVersion", "NewerVersionAvailable", "GradleDependency")
+        // core-ktx is on the classpath only through the push build's AndroidX; the app does not use it.
+        disable += "UseKtx"
     }
 
     buildTypes {
@@ -112,6 +114,10 @@ dependencies {
     if (push) {
         implementation(platform(libs.firebase.bom))
         implementation(libs.firebase.messaging)
+        constraints {
+            implementation(libs.androidx.fragment) { because("Play flags Firebase's fragment 1.1.0 as outdated") }
+            implementation(libs.androidx.activity) { because("Play flags Firebase's activity 1.0.0 as outdated") }
+        }
     }
     testImplementation(libs.junit)
     testImplementation(libs.org.json)
