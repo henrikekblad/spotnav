@@ -103,6 +103,8 @@ internal class HomeAssistantSection(
         var statusLine = ""
         var choices: List<InstanceDiscovery.Found> = emptyList()
         var askForAddress = false
+        // What the person typed, kept across redraws so a wrong address can be corrected, not retyped.
+        var typedAddress = ""
         // What discovery called the instance being paired with, so the connected screen can say
         // "Home" rather than an address the user never typed.
         var pairedName: String? = null
@@ -207,7 +209,8 @@ internal class HomeAssistantSection(
             if (applied != null) refresh()
         }
 
-        fun beginPairing(baseUrl: String, discoveredName: String? = null) {
+        /** [alternatives] are tried in order when [baseUrl] does not answer; the first that does is paired. */
+        fun beginPairing(baseUrl: String, discoveredName: String? = null, alternatives: List<String> = emptyList()) {
             cancelled.set(false)
             pairedName = discoveredName
             pairingTarget = baseUrl
@@ -219,16 +222,28 @@ internal class HomeAssistantSection(
             redraw()
             val shown = code.orEmpty()
             ioExecutor.execute {
-                val requestId = HomeAssistantPairingClient.request(baseUrl, Build.MODEL, shown)
+                var target = baseUrl
+                var requestId: String? = null
+                for (candidate in listOf(baseUrl) + alternatives) {
+                    if (cancelled.get()) return@execute
+                    requestId = HomeAssistantPairingClient.request(candidate, Build.MODEL, shown)
+                    if (requestId != null) { target = candidate; break }
+                }
                 if (requestId == null) {
                     runOnUiThread {
                         pairing = false
                         statusLine = t(R.string.instance_unreachable)
+                        // The address field comes back with what was typed in it, to be corrected:
+                        askForAddress = true
                         redraw()
                     }
                     return@execute
                 }
-                val stop = HomeAssistantPairingClient.awaitApproval(baseUrl, requestId) { cancelled.get() }
+                if (target != baseUrl) runOnUiThread {
+                    // The address that answered is the one to open and to remember:
+                    if (pairing && !cancelled.get()) { pairingTarget = target; redraw() }
+                }
+                val stop = HomeAssistantPairingClient.awaitApproval(target, requestId) { cancelled.get() }
                 runOnUiThread {
                     if (cancelled.get()) return@runOnUiThread
                     pairing = false
@@ -365,12 +380,14 @@ internal class HomeAssistantSection(
                             hint = t(R.string.instance_address_label)
                             inputType = android.text.InputType.TYPE_TEXT_VARIATION_URI
                             setSingleLine(true)
+                            setText(typedAddress)
                         }
                         body.addView(field)
                         body.addView(button(t(R.string.instance_use_address)) {
-                            val typed = field.text?.toString()?.trim().orEmpty()
-                            if (HomeAssistantSettings.isAllowedBaseUrl(typed)) {
-                                beginPairing(typed)
+                            typedAddress = field.text?.toString()?.trim().orEmpty()
+                            val candidates = HomeAssistantSettings.addressCandidates(typedAddress)
+                            if (candidates.isNotEmpty()) {
+                                beginPairing(candidates.first(), alternatives = candidates.drop(1))
                             } else {
                                 statusLine = t(R.string.home_assistant_address_required)
                                 redraw()

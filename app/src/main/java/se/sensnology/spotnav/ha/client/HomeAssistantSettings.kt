@@ -28,5 +28,30 @@ data class HomeAssistantSettings(
                 (ipv4[0] == 100 && ipv4[1] in 64..127)
             return host.startsWith("fc") || host.startsWith("fd") || host.matches(Regex("fe[89ab].*"))
         }
+
+        /** Home Assistant's own port, tried first when a typed address names none. */
+        const val DEFAULT_PORT = 8123
+
+        /**
+         * The addresses worth trying for what a person typed, most likely first, each one allowed by
+         * [isAllowedBaseUrl]. A bare host or IP gets http and https, on Home Assistant's port before the
+         * scheme's own; a typed scheme is kept; a typed port is kept.
+         */
+        fun addressCandidates(typed: String): List<String> {
+            val text = typed.trim().trimEnd('/')
+            if (text.isEmpty()) return emptyList()
+            val hasScheme = Regex("^[A-Za-z][A-Za-z0-9+.-]*://").containsMatchIn(text)
+            val schemes = if (hasScheme) listOf(text.substringBefore("://").lowercase()) else listOf("http", "https")
+            val rest = if (hasScheme) text.substringAfter("://") else text
+            val authority = rest.substringBefore('/')
+            val path = rest.substring(authority.length)
+            val hasPort = Regex(":\\d+$").containsMatchIn(authority) && !authority.endsWith("]")
+            val candidates = if (hasPort) {
+                schemes.map { "$it://$authority$path" }
+            } else {
+                schemes.map { "$it://$authority:$DEFAULT_PORT$path" } + schemes.reversed().map { "$it://$authority$path" }
+            }
+            return candidates.distinct().filter { isAllowedBaseUrl(it) }
+        }
     }
 }
