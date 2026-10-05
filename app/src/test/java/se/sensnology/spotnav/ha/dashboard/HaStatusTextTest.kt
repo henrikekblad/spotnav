@@ -432,6 +432,25 @@ class HaStatusTextTest {
         }
     }
 
+    @Test fun aFillChargeAndAFillWithoutAKnownRoomAreWordedAsTheCardWordsThem() {
+        val filling = StatusLine("filling_to_limit", mapOf("kwh" to 9.47))
+        val unknown = StatusLine("fill_room_unknown", mapOf("kwh" to 12.0))
+        assertEquals("Charging until the car is full, 9.5 kWh now.", HaStatusText.line(filling, format("en"), now))
+        assertEquals("Laddar tills bilen är full, nu 9,5 kWh.", HaStatusText.line(filling, format("sv"), now))
+        assertEquals(
+            "The car's level or battery size is unknown, so 12 kWh is charged instead of filling.",
+            HaStatusText.line(unknown, format("en"), now)
+        )
+        assertEquals(
+            "Bilens nivå eller batteristorlek är okänd, så 12 kWh laddas i stället för att fylla.",
+            HaStatusText.line(unknown, format("sv"), now)
+        )
+        for (language in listOf("da", "nb", "fi")) {
+            assertFalse(HaStatusText.line(filling, format(language), now).contains("{"))
+            assertFalse(HaStatusText.line(unknown, format(language), now).contains("{"))
+        }
+    }
+
     @Test fun aCarFinishingPastTheLastWindowChargesUntilItIsFullAtMostUntilATime() {
         val topOff = StatusLine("topping_off", mapOf("until" to "2026-09-22T05:40:00+00:00"))
         assertEquals(
