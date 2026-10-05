@@ -2,5 +2,5 @@
 - Statuslinjen siger det: "Stoppet manuelt – indtil bilen frakobles.", "Lader manuelt – indtil bilen er fuld eller frakobles."
 - En start uden tilsluttet bil siger det
 - Statuslinjen nævner en lader, der lader videre efter stop
-- En indstilling ændret lige efter Start eller Stop gemmes uden konflikt
+- Siger hvor langt opladningen når, når afgangen kommer for tidligt
 - Kræver SpotNav til Home Assistant 1.11

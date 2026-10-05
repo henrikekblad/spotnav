@@ -2,5 +2,5 @@
 - The status line says it: "Stopped manually – until the car is unplugged.", "Charging manually – until the car is full or unplugged."
 - A Start with no car plugged in says so
 - The status line names a charger that keeps charging after a stop
-- A setting changed right after Start or Stop is saved without a conflict
+- Says how far the charge gets when the departure comes too soon
 - Needs SpotNav for Home Assistant 1.11
