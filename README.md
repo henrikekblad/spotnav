@@ -13,7 +13,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 ## Features
 
 - Today and tomorrow overlaid on one chart, with the current interval, minimum, maximum and current price highlighted.
-- 15-minute prices or hourly averages, in local currency (SEK, NOK, DKK, EUR).
+- Day-ahead prices for 26 European countries, 15-minute or hourly, in the local currency (EUR, SEK, NOK, DKK, PLN, CZK, HUF, RON, CHF, GBP).
 - Optional VAT, electricity tax and grid fee.
 - Colour-coded price table.
 - EV charging planner: charging current, phases, energy, vehicle consumption, departure time and up to eight charging periods, with the chosen periods shaded in the widget.
@@ -30,7 +30,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 
 Choose single-phase or three-phase charging (6–16 A), consumption, energy to add, up to eight charging periods and optionally a departure time. The app picks the cheapest combination of quarter-hours and shows cost and range.
 
-If the charging window runs past the published prices, the missing intervals are estimated from the latest published day's prices at the same time of day, and the plan is marked as estimated. Calculations assume ideal power at 230 V single phase or 400 V three phase; charging losses and the vehicle's charging curve are not included.
+The plan uses published prices only. If the charging window runs past them, the app waits for the next day's prices and plans then; when the departure cannot wait that long, it plans now only what cannot wait and the rest once the prices are out. Calculations assume ideal power at 230 V single phase or 400 V three phase; charging losses and the vehicle's charging curve are not included.
 
 ## Home Assistant pairing
 
@@ -44,13 +44,21 @@ The app receives one secret webhook ID per charger, never a Home Assistant passw
 
 ## Prices
 
-Prices come from the SpotNav relay ([spotnav.sensnology.se](https://spotnav.sensnology.se)), which publishes ENTSO-E day-ahead prices and converts currencies with ECB exchange rates. The price is a spot price without VAT, tax or grid fee. Enabled additions are applied as:
+Prices come from the SpotNav relay ([spotnav.sensnology.se](https://spotnav.sensnology.se)), which collects them once for everyone and converts currencies with ECB exchange rates:
+
+- **Day-ahead spot prices** from the ENTSO-E Transparency Platform for 26 countries: the Nordic and Baltic countries, Germany/Luxembourg, the Netherlands, Belgium, France, Austria, Switzerland, Poland, Czechia, Slovakia, Hungary, Slovenia, Croatia, Romania, Bulgaria, Greece, Italy (all zones), Spain and Portugal.
+- **Spain – PVPC (regulated)** from Red Eléctrica, with the network charges already in the price.
+- **Great Britain – Octopus Agile** in all 14 regions, with VAT and network charges already in the price.
+
+A spot price has no VAT, tax or grid fee. The enabled additions are applied as:
 
 ```text
-(spot price × 100 + electricity tax + grid fee) × VAT
+(spot price + electricity tax + grid fee) × (1 + VAT)
 ```
 
-Suggested tax values are editable. Grid fees depend on provider and agreement, and fixed monthly charges are not included; check the values against your contract.
+A part the price already includes (PVPC's network charges, everything in Agile) is shown as "Included in the price" and not added again. Suggested VAT and tax are per country and editable; grid fees depend on your network operator and agreement, and fixed monthly charges are not included, so check the values against your contract.
+
+When the app is paired with Home Assistant, the price settings are the integration's, and the app shows the same prices and plan as the dashboard card.
 
 ## Build locally
 
