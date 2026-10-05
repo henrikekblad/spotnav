@@ -90,7 +90,14 @@ data class HaPlanningSettings(
      * Assistant 1.9); `null` from a Home Assistant that does not state it, and then nothing about it
      * is shown or sent.
      */
-    val notifications: HaNotificationSettings? = null
+    val notifications: HaNotificationSettings? = null,
+    /**
+     * "Fill", the kWh slider's last step (`fill_to_limit`, Home Assistant's next release): while it is
+     * set the manual need is the battery's room at every calculation, and [requestedKwh] is what is
+     * planned while no room is known. `null` from a Home Assistant that does not state it, and then it
+     * is never offered nor sent.
+     */
+    val fillToLimit: Boolean? = null
 ) {
     /**
      * This record with the read-only facts of [confirmed] carried over: a replacement body never

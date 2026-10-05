@@ -35,12 +35,13 @@ internal object HaSettingsCodec {
      * Keys a record may carry although it need not (see [RESPONSE_KEYS]). `fiscal_included` is a
      * read-only fact of the record (Home Assistant 1.8): read from an answer, kept in this app's stored
      * copy, and never part of a replacement body. `notifications` (Home Assistant 1.9) is optional
-     * both ways: a body that leaves it out keeps the stored choice.
+     * both ways: a body that leaves it out keeps the stored choice, and so is `fill_to_limit`.
      */
-    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS)
+    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT)
 
     private const val FISCAL_INCLUDED = "fiscal_included"
     private const val NOTIFICATIONS = "notifications"
+    private const val FILL_TO_LIMIT = "fill_to_limit"
 
     /** A notify service as Home Assistant spells one, and how many one charger may name. */
     private val SERVICE: Pattern = Pattern.compile("^[a-z0-9_]{1,100}$")
@@ -119,7 +120,8 @@ internal object HaSettingsCodec {
             driver = HaSettingsDriver.of(enum(raw.opt("driver"), HaSettingsDriver.entries.map { it.wire }, "invalid_driver"))!!,
             target = target(raw.opt("target"), exact),
             fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet(),
-            notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision)
+            notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision),
+            fillToLimit = nullable(raw.opt(FILL_TO_LIMIT)) { boolean(it, FILL_TO_LIMIT, "invalid_energy") }
         )
     }
 
@@ -332,6 +334,8 @@ internal object HaSettingsCodec {
             putNullable("phases", settings.phases)
             putNullable("amps", settings.amps)
             put("requested_kwh", settings.requestedKwh)
+            // Stated only when Home Assistant stated it, and then always sent back as it stands.
+            settings.fillToLimit?.let { put(FILL_TO_LIMIT, it) }
             put("max_periods", settings.maxPeriods)
             put("departure_enabled", settings.departureEnabled)
             put("departure_time", settings.departureTime)

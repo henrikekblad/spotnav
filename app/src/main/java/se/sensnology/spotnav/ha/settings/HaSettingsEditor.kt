@@ -34,8 +34,12 @@ internal sealed interface HaSettingsEdit {
     /** The charger's current limit in whole amperes. */
     data class Amps(val amps: Int) : HaSettingsEdit
 
-    /** The requested amount, as a decimal kWh exactly as asked. */
-    data class Energy(val requestedKwh: Double) : HaSettingsEdit
+    /**
+     * The requested amount, as a decimal kWh exactly as asked, and whether it is the slider's last
+     * step, Fill ([fill]). An amount is a choice of its own, so it clears a stored Fill; a record
+     * without `fill_to_limit` is never given one.
+     */
+    data class Energy(val requestedKwh: Double, val fill: Boolean = false) : HaSettingsEdit
 
     /** The period cap. */
     data class MaxPeriods(val maxPeriods: Int) : HaSettingsEdit
@@ -98,7 +102,10 @@ internal object HaSettingsEditor {
     private fun apply(confirmed: HaPlanningSettings, edit: HaSettingsEdit): HaPlanningSettings = when (edit) {
         is HaSettingsEdit.Area -> confirmed.copy(areaId = edit.areaId)
         is HaSettingsEdit.Amps -> confirmed.copy(amps = edit.amps)
-        is HaSettingsEdit.Energy -> confirmed.copy(requestedKwh = edit.requestedKwh)
+        is HaSettingsEdit.Energy -> confirmed.copy(
+            requestedKwh = edit.requestedKwh,
+            fillToLimit = confirmed.fillToLimit?.let { edit.fill }
+        )
         is HaSettingsEdit.MaxPeriods -> confirmed.copy(maxPeriods = edit.maxPeriods)
         is HaSettingsEdit.Departure ->
             confirmed.copy(
