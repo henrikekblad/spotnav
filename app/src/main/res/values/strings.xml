@@ -62,8 +62,11 @@
     <item quantity="other">%1$d quarter-hours are charged without a published price, so the cost is unknown.</item>
   </plurals>
   <string name="waiting_for_prices_later">Waiting for tomorrow\'s prices (~%1$s), will plan then</string>
+  <string name="waiting_for_prices_later_no_time">Waiting for tomorrow\'s prices, will plan then</string>
   <string name="waiting_for_prices">Waiting for the prices (~%1$s), will plan then</string>
+  <string name="waiting_for_prices_no_time">Waiting for the prices, will plan then</string>
   <string name="partly_waiting_for_prices">Only what cannot wait is planned now; the rest is planned when the prices arrive (~%1$s).</string>
+  <string name="partly_waiting_for_prices_no_time">Only what cannot wait is planned now; the rest is planned when the prices arrive.</string>
   <string name="market_info">The API price is the spot price without VAT, taxes or fees. Suggested 2026 values: %1$s %2$s/kWh electricity tax and %3$s %2$s/kWh grid fee, excluding VAT. Amounts vary – check local rules and your grid agreement. VAT is applied last to the entire amount.</string>
   <plurals name="duration_hours">
     <item quantity="one">%1$d hour</item>

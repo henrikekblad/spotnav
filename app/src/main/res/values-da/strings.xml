@@ -62,8 +62,11 @@
     <item quantity="other">%1$d kvarterer oplades uden offentliggjort pris, så prisen er ukendt.</item>
   </plurals>
   <string name="waiting_for_prices_later">Venter på morgendagens priser (~%1$s), planlægger da</string>
+  <string name="waiting_for_prices_later_no_time">Venter på morgendagens priser, planlægger da</string>
   <string name="waiting_for_prices">Venter på priserne (~%1$s), planlægger da</string>
+  <string name="waiting_for_prices_no_time">Venter på priserne, planlægger da</string>
   <string name="partly_waiting_for_prices">Kun det, der ikke kan vente, er planlagt nu; resten planlægges, når priserne kommer (~%1$s).</string>
+  <string name="partly_waiting_for_prices_no_time">Kun det, der ikke kan vente, er planlagt nu; resten planlægges, når priserne kommer.</string>
   <string name="market_info">API-prisen er spotpris uden moms, afgifter og tillæg. Forslag for 2026: %1$s %2$s/kWh i elafgift og %3$s %2$s/kWh i nettarif, ekskl. moms. Beløbene varierer – kontrollér lokale regler og din netaftale. Moms tilføjes sidst til hele beløbet.</string>
   <plurals name="duration_hours">
     <item quantity="one">%1$d time</item>

@@ -62,8 +62,11 @@
     <item quantity="other">%1$d varttia ladataan ilman julkaistua hintaa, joten hintaa ei tiedetä.</item>
   </plurals>
   <string name="waiting_for_prices_later">Odotetaan huomisen hintoja (~%1$s), suunnitellaan silloin</string>
+  <string name="waiting_for_prices_later_no_time">Odotetaan huomisen hintoja, suunnitellaan silloin</string>
   <string name="waiting_for_prices">Odotetaan hintoja (~%1$s), suunnitellaan silloin</string>
+  <string name="waiting_for_prices_no_time">Odotetaan hintoja, suunnitellaan silloin</string>
   <string name="partly_waiting_for_prices">Nyt suunnitellaan vain se, mikä ei voi odottaa; loput suunnitellaan hintojen tultua (~%1$s).</string>
+  <string name="partly_waiting_for_prices_no_time">Nyt suunnitellaan vain se, mikä ei voi odottaa; loput suunnitellaan hintojen tultua.</string>
   <string name="market_info">API-hinta on spot-hinta ilman arvonlisäveroa, veroja ja lisämaksuja. Vuoden 2026 ehdotus: sähkövero %1$s %2$s/kWh ja siirtomaksu %3$s %2$s/kWh ilman ALV:tä. Maksut vaihtelevat – tarkista paikalliset säännöt ja verkkosopimus. ALV lisätään lopuksi koko summaan.</string>
   <plurals name="duration_hours">
     <item quantity="one">%1$d tunti</item>

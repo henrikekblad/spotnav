@@ -210,10 +210,15 @@ internal fun ChargingScreen.render() {
     ) {
         // Nothing can be planned yet and nothing needs to be: the prices it needs are still to come.
         val waiting = ChargingPlanner.waitingFor(prices, inputs)!!
-        planCard.result.title.text = t(
-            if (waiting.forLaterDay) R.string.waiting_for_prices_later else R.string.waiting_for_prices,
-            publicationTime(waiting, marketZone)
-        )
+        // Once the expected time has passed, the prices may come any minute: no time is named, as the card does.
+        planCard.result.title.text = when {
+            WaitingTime.passed(waiting) ->
+                t(if (waiting.forLaterDay) R.string.waiting_for_prices_later_no_time else R.string.waiting_for_prices_no_time)
+            else -> t(
+                if (waiting.forLaterDay) R.string.waiting_for_prices_later else R.string.waiting_for_prices,
+                publicationTime(waiting, marketZone)
+            )
+        }
         planCard.result.showFigures(false)
         planCard.result.note.text = ""
     } else if (plan == null && inputs != null) {
@@ -261,6 +266,7 @@ internal fun ChargingScreen.render() {
         planCard.result.distance.text = distanceText(plan.distanceMil, PriceMarkets.find(plannedArea)?.inGreatBritain == true)
         planCard.result.note.text = when {
             unpriced -> tq(R.plurals.unpriced_note, plan.unpricedSlots, plan.unpricedSlots)
+            plan.awaiting != null && WaitingTime.passed(plan.awaiting) -> t(R.string.partly_waiting_for_prices_no_time)
             plan.awaiting != null -> t(R.string.partly_waiting_for_prices, publicationTime(plan.awaiting, marketZone))
             else -> ""
         }

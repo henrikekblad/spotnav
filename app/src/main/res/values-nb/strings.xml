@@ -62,8 +62,11 @@
     <item quantity="other">%1$d kvarter lades uten publisert pris, så kostnaden er ukjent.</item>
   </plurals>
   <string name="waiting_for_prices_later">Venter på morgendagens priser (~%1$s), planlegger da</string>
+  <string name="waiting_for_prices_later_no_time">Venter på morgendagens priser, planlegger da</string>
   <string name="waiting_for_prices">Venter på prisene (~%1$s), planlegger da</string>
+  <string name="waiting_for_prices_no_time">Venter på prisene, planlegger da</string>
   <string name="partly_waiting_for_prices">Bare det som ikke kan vente er planlagt nå; resten planlegges når prisene kommer (~%1$s).</string>
+  <string name="partly_waiting_for_prices_no_time">Bare det som ikke kan vente er planlagt nå; resten planlegges når prisene kommer.</string>
   <string name="market_info">API-prisen er spotpris uten mva., avgifter og tillegg. Forslag for 2026: %1$s %2$s/kWh i elavgift og %3$s %2$s/kWh i nettleie, ekskl. mva. Beløpene varierer – kontroller lokale regler og nettavtalen din. Mva. legges til sist på hele summen.</string>
   <plurals name="duration_hours">
     <item quantity="one">%1$d time</item>

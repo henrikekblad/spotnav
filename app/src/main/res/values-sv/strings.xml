@@ -62,8 +62,11 @@
     <item quantity="other">%1$d kvartar laddas utan publicerat pris, så kostnaden är okänd.</item>
   </plurals>
   <string name="waiting_for_prices_later">Väntar på morgondagens priser (~%1$s), planerar då</string>
+  <string name="waiting_for_prices_later_no_time">Väntar på morgondagens priser, planerar då</string>
   <string name="waiting_for_prices">Väntar på priserna (~%1$s), planerar då</string>
+  <string name="waiting_for_prices_no_time">Väntar på priserna, planerar då</string>
   <string name="partly_waiting_for_prices">Bara det som inte kan vänta är planerat nu; resten planeras när priserna kommer (~%1$s).</string>
+  <string name="partly_waiting_for_prices_no_time">Bara det som inte kan vänta är planerat nu; resten planeras när priserna kommer.</string>
   <string name="market_info">API-priset är spotpris utan moms, skatt och tillägg. Förslag för 2026: %1$s %2$s/kWh i energiskatt och %3$s %2$s/kWh i överföringsavgift, exkl. moms. Beloppen varierar – kontrollera lokala regler och ditt nätavtal. Momsen läggs sist på hela summan.</string>
   <plurals name="duration_hours">
     <item quantity="one">%1$d timme</item>
