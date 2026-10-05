@@ -10,10 +10,6 @@ keystore.properties
 signing.properties
 PLAN.md
 plans/
-# Working notes stay local; the user documentation and its pictures are tracked.
-docs/*
-!docs/app.md
-!docs/images/
 
 # Firebase configuration for instant notifications: provided locally, never committed.
 app/google-services.json
