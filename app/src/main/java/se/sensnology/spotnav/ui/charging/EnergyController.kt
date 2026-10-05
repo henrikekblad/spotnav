@@ -1,12 +1,22 @@
 package se.sensnology.spotnav.ui.charging
 
+import android.graphics.Rect
+import android.graphics.drawable.LayerDrawable
+import android.os.Build
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.dashboard.DashboardSoc
+import se.sensnology.spotnav.ui.common.SLIDER_TRACK_DP
+import se.sensnology.spotnav.ui.common.SliderTicks
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.vehicles.BatteryRoom
@@ -14,54 +24,139 @@ import se.sensnology.spotnav.vehicles.TargetNeed
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.widget.WidgetSettings
 
-/** The plan's kWh driver control. */
+/**
+ * The plan's kWh driver control. With a paired charger's battery room known (`soc.room_kwh`) it is the
+ * card's slider past full: a top past the room ([BatteryRoom.fillTopKwh]), a "full" mark on the track
+ * at the room, a help line under it, and a last step that is "Fill" (`fill_to_limit`) on a Home
+ * Assistant whose record has it. Without a room it is the ordinary 1-100 kWh slider.
+ */
 internal class EnergyController(scope: ViewScope) : ViewScope(scope) {
     /** The energy control: */
     fun add(parent: LinearLayout, settings: WidgetSettings): EnergyControls {
         val energyValue = valueLabel()
-        // A paired charger's battery room (`soc.room_kwh`) and the car's own limit, when Home Assistant
-        // states them: the slider's top, and the note that the car ends the charge there.
-        var roomKwh: Double? = null
-        var limitPercent: Double? = null
-        val carEndsLine = pairedLine()
-        val paintCarEnds = { kwh: Double ->
-            val shown = BatteryRoom.energyAtRoom(kwh, roomKwh)
-            carEndsLine.text = if (shown) carEndsChargeText(limitPercent) else ""
-            carEndsLine.visibility = if (shown) View.VISIBLE else View.GONE
+        var facts: BatteryRoom.FillFacts? = null
+        var top: Double? = null
+        // Whether the record has `fill_to_limit`, and whether the slider stands at "Fill" now.
+        var supported = false
+        var filling = false
+        // The amount the record states, kept for a stored Fill whose room goes unknown.
+        var amountKwh = settings.chargingKwh
+        val helpLine = pairedLine()
+        val markLabel = bandLabel().apply { text = t(R.string.energy_full_mark); visibility = View.INVISIBLE }
+        // Set once the slider exists: its own first label is written while it is being made.
+        var built: SeekBar? = null
+        val paint: () -> Unit = paint@{
+            val seek = built ?: return@paint
+            energyValue.text = if (filling) t(R.string.energy_fill) else kwhText(VehicleEnergy.energyKwhOfProgress(seek.progress))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                seek.stateDescription = if (filling) t(R.string.energy_fill) else null
+            }
+            val room = facts?.roomKwh
+            if (room == null || top == null) {
+                helpLine.text = ""
+                helpLine.visibility = View.GONE
+                return@paint
+            }
+            val locale = AppLanguageSettings.numberLocale(context)
+            val kwh = BatteryRoom.kwhFigure(room, locale)
+            val limit = BatteryRoom.limitNamed(facts?.vehicleMaxPercent)
+                ?.let { " " + t(R.string.energy_limit_suffix, percentText(it.toDouble(), locale)) }
+                .orEmpty()
+            helpLine.text = t(if (filling) R.string.energy_fill_help else R.string.energy_room_help, kwh, limit)
+            helpLine.visibility = View.VISIBLE
         }
         val energy = slider(
             t(R.string.charging), 0, VehicleEnergy.ENERGY_SLIDER_MAX_PROGRESS,
             VehicleEnergy.energyProgressNearest(settings.chargingKwh), energyValue, parent
-        ) { progress ->
-            energyValue.text = kwhText(VehicleEnergy.energyKwhOfProgress(progress))
-            paintCarEnds(VehicleEnergy.energyKwhOfProgress(progress))
+        ) { paint() }
+        built = energy
+        // The "full" mark rides on the framework's own track, as the target slider's shading does.
+        val track = energy.progressDrawable
+        val trackInsets = Rect()
+        track.getPadding(trackInsets)
+        val trackHeight = ((track as? LayerDrawable)?.getDrawable(0)?.intrinsicHeight ?: 0)
+            .takeIf { it > 0 } ?: dp(SLIDER_TRACK_DP)
+        val mark = FullMarkDrawable(dark, dp(2).toFloat(), dp(MARK_REACH_DP).toFloat())
+        energy.progressDrawable = LayerDrawable(arrayOf(track, mark)).apply {
+            setPadding(trackInsets.left, trackInsets.top, trackInsets.right, trackInsets.bottom)
+            setLayerInset(1, trackInsets.left, 0, trackInsets.right, 0)
+            setLayerHeight(1, trackHeight)
+            setLayerGravity(1, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
         }
-        parent.addView(carEndsLine)
-        parent.addView(bandLabel())
-        val applyRoom = {
-            energy.max = BatteryRoom.energySliderMaxProgress(roomKwh, energy.progress)
-            paintCarEnds(VehicleEnergy.energyKwhOfProgress(energy.progress))
+        // Its word under the line, in the row both drivers keep under their slider.
+        val markRow = FrameLayout(context)
+        markRow.addView(markLabel, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        parent.addView(markRow)
+        parent.addView(helpLine)
+        val placeMark = {
+            val at = BatteryRoom.markFraction(facts?.roomKwh?.takeIf { top != null }, energy.max)
+            mark.fraction = at
+            val rail = SliderTicks.rail(
+                energy.width, energy.paddingLeft, energy.paddingRight, energy.thumb?.intrinsicWidth ?: 0, energy.thumbOffset
+            )
+            if (at == null || rail == null) {
+                markLabel.visibility = View.INVISIBLE
+            } else {
+                val mirrored = energy.layoutDirection == View.LAYOUT_DIRECTION_RTL
+                val center = SliderTicks.centerAtFraction(at, rail, mirrored)
+                markLabel.x = SliderTicks.labelLeft(center, markLabel.width.toFloat(), 0f, markRow.width.toFloat())
+                markLabel.visibility = View.VISIBLE
+            }
         }
+        onLaidOut(energy) { placeMark() }
+        onLaidOut(markLabel) { placeMark() }
+        val applyRange = {
+            val topProgress = BatteryRoom.topProgress(top)
+            if (filling && top != null) {
+                energy.max = topProgress
+                energy.progress = topProgress
+            } else {
+                if (filling) {
+                    // A stored Fill with no room known: the amount Home Assistant plans instead.
+                    filling = false
+                    energy.max = VehicleEnergy.ENERGY_SLIDER_MAX_PROGRESS
+                    energy.progress = VehicleEnergy.energyProgressNearest(amountKwh)
+                }
+                energy.max = BatteryRoom.energySliderMaxProgress(top, energy.progress)
+            }
+            placeMark()
+            paint()
+        }
+        var storedFill = false
         return EnergyControls(
             energy = energy,
-            refreshValueLabel = {
-                energyValue.text = kwhText(VehicleEnergy.energyKwhOfProgress(energy.progress))
-                paintCarEnds(VehicleEnergy.energyKwhOfProgress(energy.progress))
-            },
+            refreshValueLabel = { paint() },
             valueLabel = energyValue,
-            setKwh = { kwh ->
-                // The whole scale first, so a stored amount above the room is never cut to it.
+            setKwh = { kwh, fill ->
+                amountKwh = kwh
+                supported = fill != null
+                storedFill = fill == true
+                filling = storedFill
+                // The whole scale first, so a stored amount above the top is never cut to it.
                 energy.max = VehicleEnergy.ENERGY_SLIDER_MAX_PROGRESS
                 energy.progress = VehicleEnergy.energyProgressNearest(kwh)
-                applyRoom()
-                paintCarEnds(kwh)
+                applyRange()
             },
-            applyRoom = { room, limit ->
-                roomKwh = room
-                limitPercent = limit
-                applyRoom()
-            }
+            applyRoom = { soc ->
+                facts = soc?.let { BatteryRoom.FillFacts(it.roomKwh, it.capacityKwh, it.vehicleMaxPercent, it.efficiency) }
+                top = facts?.let { BatteryRoom.fillTopKwh(it) }
+                // A stored Fill shows again once a room is known.
+                if (storedFill && top != null) filling = true
+                applyRange()
+            },
+            userMoved = { progress ->
+                filling = BatteryRoom.isFillStep(progress, energy.max, top, supported)
+                storedFill = filling
+                if (!filling) amountKwh = VehicleEnergy.energyKwhOfProgress(progress)
+                paint()
+            },
+            filling = { filling }
         )
+    }
+
+    private companion object {
+        /** How far the "full" line reaches above and below the track. */
+        const val MARK_REACH_DP = 5
     }
 }
 
@@ -78,11 +173,18 @@ internal class EnergyControls(
     val refreshValueLabel: () -> Unit,
     /** The label the slider writes its own step into (see showExactValues). */
     val valueLabel: TextView,
-    /** Show a stored amount, where it is even above the battery's room. */
-    val setKwh: (Double) -> Unit,
     /**
-     * A paired charger's battery room in kWh and the car's own limit (`null` while Home Assistant
-     * states none, which keeps the ordinary 1-100 kWh slider and no note).
+     * Show a stored amount, where it is even above the battery's room, and the record's
+     * `fill_to_limit` (`null` from a Home Assistant without it, which never offers "Fill").
      */
-    val applyRoom: (Double?, Double?) -> Unit
+    val setKwh: (Double, Boolean?) -> Unit,
+    /**
+     * A paired charger's `soc` block (`null` while Home Assistant states none): its room, battery size,
+     * efficiency and the car's own limit. Without a room the slider is the ordinary 1-100 kWh one.
+     */
+    val applyRoom: (DashboardSoc?) -> Unit,
+    /** A person moved the slider to [Int]: at the last step past the room that is "Fill", elsewhere not. */
+    val userMoved: (Int) -> Unit,
+    /** Whether the slider stands at "Fill" now. */
+    val filling: () -> Boolean
 )

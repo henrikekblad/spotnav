@@ -157,6 +157,11 @@
   <string name="paired_target_no_need">Ingen laddning behövs nu</string>
   <string name="paired_target_to_limit">Laddar till bilens gräns, %1$s</string>
   <string name="car_ends_charge">Bilen avslutar själv laddningen när den är full eller når sin laddgräns (%1$s).</string>
+  <string name="energy_full_mark">fullt</string>
+  <string name="energy_fill">Fyll</string>
+  <string name="energy_room_help">Det behövs %1$s kWh för att fylla batteriet%2$s.</string>
+  <string name="energy_fill_help">Laddar tills batteriet är fullt%2$s, nu %1$s kWh.</string>
+  <string name="energy_limit_suffix">(till bilens laddgräns %1$s)</string>
   <string name="paired_need">Energi som behövs: %1$s</string>
   <string name="paired_need_unknown">Okänd</string>
   <string name="pause_dialog_title">Pausa automatisk laddning</string>

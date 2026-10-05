@@ -493,6 +493,8 @@ internal class ChargingScreen(
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 // A person moving the current states it:
                 if (fromUser && seekBar === connection.ampsSeek) connection.setAmpsNotSet(false)
+                // Only a person's move reaches or leaves "Fill", never a value set from the record.
+                if (fromUser && seekBar === energy.energy) energy.userMoved(progress)
                 connection.refreshValueLabel()
                 consumption.refreshValueLabel()
                 energy.refreshValueLabel()
@@ -511,7 +513,7 @@ internal class ChargingScreen(
                         connection.refreshValueLabel()
                         commitEdit(HaSettingsEdit.Amps(connection.amps()))
                     }
-                    seekBar === energy.energy -> commitEdit(HaSettingsEdit.Energy(energyEnergy()))
+                    seekBar === energy.energy -> commitEdit(HaSettingsEdit.Energy(energyEnergy(), energy.filling()))
                     seekBar === planCard.periods ->
                         commitEdit(HaSettingsEdit.MaxPeriods(planCard.periods.progress + 1))
                     else -> saveCharging(currentSettings())

@@ -23,7 +23,8 @@ import se.sensnology.spotnav.ui.common.authorityStateNote
 
 /** The exact confirmed values, written over what the controls' own steps put in their labels. */
 internal fun ChargingScreen.showExactValues(record: HaPlanningSettings) {
-    energy.valueLabel.text = kwhText(record.requestedKwh)
+    // Under "Fill" the label is the word, not the amount the record keeps beside it.
+    if (!energy.filling()) energy.valueLabel.text = kwhText(record.requestedKwh)
     record.target.targetPercent?.let { targetSoc.valueLabel.text = t(R.string.percent_value_decimal, it) }
 }
 
@@ -42,7 +43,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings) {
         }
         connection.refreshValueLabel()
         chargerCard.refreshPhasesRow()
-        energy.setKwh(record.requestedKwh)
+        energy.setKwh(record.requestedKwh, record.fillToLimit)
         energy.refreshValueLabel()
         planCard.periods.progress = (record.maxPeriods - 1).coerceIn(0, planCard.periods.max)
         planCard.refreshPeriodsLabel()

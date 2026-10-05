@@ -165,6 +165,11 @@
   <string name="paired_target_no_need">No charging needed now</string>
   <string name="paired_target_to_limit">Charging to the vehicle\'s limit, %1$s</string>
   <string name="car_ends_charge">The car ends the charge itself when it is full or reaches its charge limit (%1$s).</string>
+  <string name="energy_full_mark">full</string>
+  <string name="energy_fill">Fill</string>
+  <string name="energy_room_help">%1$s kWh fills the battery%2$s.</string>
+  <string name="energy_fill_help">Charges until the battery is full%2$s, %1$s kWh now.</string>
+  <string name="energy_limit_suffix">(to the car\'s charge limit of %1$s)</string>
   <string name="paired_need">Energy needed: %1$s</string>
   <string name="paired_need_unknown">Unknown</string>
   <string name="pause_dialog_title">Pause automatic charging</string>
