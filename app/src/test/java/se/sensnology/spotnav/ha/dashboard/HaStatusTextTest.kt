@@ -462,4 +462,35 @@ class HaStatusTextTest {
         assertEquals("Väntar på morgondagens priser (~13:00), planerar då", HaStatusText.priceWait(status, format("sv"), now))
         assertEquals(null, HaStatusText.priceWait(DashboardStatus(emptyList(), StatusTone.NORMAL), format("sv"), now))
     }
+
+    @Test fun aDepartureShortfallIsWordedWithThePercentRoundedDownAndTheDeparturesClock() {
+        val s = status("target_soc_departure_shortfall")
+        assertEquals(
+            "Planerat från 10:00 · 7,4 kWh · 13,02 kr · 3,7 mil · Hinner inte bli klar till avresan: cirka 44 % (7,4 kWh) till 12:00.",
+            HaStatusText.render(s, format("sv"), now)
+        )
+        assertEquals(
+            "Planned from 10:00 · 7.4 kWh · 13.02 kr · 37 km · Will not be ready by the departure: about 44 % (7.4 kWh) by 12:00.",
+            HaStatusText.render(s, format("en"), now)
+        )
+        val line = StatusLine("departure_shortfall", mapOf("departure" to "2026-09-22T10:00:00+00:00", "kwh" to 7.36, "requested_kwh" to 13.52, "soc_percent" to null))
+        assertEquals("Hinner inte bli klar till avresan: cirka 7,4 av 13,5 kWh till 12:00.", HaStatusText.line(line, format("sv"), now))
+        val noTime = StatusLine("departure_shortfall", mapOf("kwh" to 7.36, "requested_kwh" to 13.52, "soc_percent" to 44.9))
+        assertEquals("Will not be ready by the departure: about 44 % (7.4 kWh).", HaStatusText.line(noTime, format("en"), now))
+        assertEquals("Will not be ready by the departure.", HaStatusText.line(StatusLine("departure_shortfall", emptyMap()), format("en"), now))
+    }
+
+    @Test fun aPlanningUnavailableReasonHasItsOwnSentenceElseTheGenericOne() {
+        fun say(language: String, reason: Any?) =
+            HaStatusText.line(StatusLine("planning_unavailable", mapOf("reason" to reason)), format(language), now)
+        assertEquals("Inga priser är publicerade för det här prisområdet i dag.", say("sv", "no_published_prices"))
+        assertEquals("The prices cannot be converted to the area's currency: the day's exchange rate is missing.", say("en", "missing_fx_rate"))
+        assertEquals("Not one whole quarter-hour is left before the departure, so nothing can be charged for it.", say("en", "deadline_too_short"))
+        assertEquals(
+            "The charging plan could not be calculated because of an unexpected error. The log has the details.",
+            say("en", "unexpected_failure")
+        )
+        assertEquals(say("en", "price_data_invalid"), HaStatusText.line(StatusLine("price_data_invalid", emptyMap()), format("en"), now))
+        assertEquals("No charging plan could be calculated with the data available right now.", say("en", "something_new"))
+    }
 }

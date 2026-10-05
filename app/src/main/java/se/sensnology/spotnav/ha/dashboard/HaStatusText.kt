@@ -79,6 +79,17 @@ internal object HaStatusText {
 
     const val SEPARATOR = " · "
 
+    /** The `planning_unavailable` reasons the card words specifically (`status.ts`' `PLANNING_UNAVAILABLE_KEYS`). */
+    private val PLANNING_UNAVAILABLE_KEYS = mapOf(
+        "deadline_too_short" to "issue.planningUnavailable.deadlineTooShort",
+        "no_published_prices" to "issue.planningUnavailable.noPublishedPrices",
+        "missing_fx_rate" to "issue.planningUnavailable.missingFxRate",
+        "unexpected_failure" to "issue.planningUnavailable.unexpectedFailure",
+        "price_data_invalid" to "issue.priceInvalid",
+        "insufficient_price_horizon" to "issue.priceHorizon",
+        "solar_execution_unavailable" to "issue.solarUnavailable",
+    )
+
     private val MISSING_FIELDS = mapOf(
         "area" to "status.missing.area",
         "phases" to "status.missing.phases",
@@ -268,6 +279,26 @@ internal object HaStatusText {
                 strings(p["stale_phases"]),
                 num(p["max_age_s"])
             )
+            // The reason a plan could not be made: its own sentence where the card has one.
+            "planning_unavailable" -> say(PLANNING_UNAVAILABLE_KEYS[p["reason"]] ?: key)
+            // A plan that cannot meet the departure: the state of charge (whole percent down) or the energy.
+            "departure_shortfall" -> {
+                val at = instant(p["departure"])?.takeIf { zone != null }
+                val kwh = num(p["kwh"])
+                val soc = num(p["soc_percent"])
+                val requested = num(p["requested_kwh"])
+                val time = at?.let { clock(it) }
+                fun withTime(base: String, params: Map<String, String>) =
+                    if (time == null) say("${base}NoTime", params) else say(base, params + ("time" to time))
+                val energy = number(format.locale, kwh ?: 0.0, 1)
+                when {
+                    soc != null -> withTime("status.departureShortfall.soc", mapOf(
+                        "percent" to number(format.locale, Math.floor(soc), 0), "kwh" to energy))
+                    requested != null && kwh != null -> withTime("status.departureShortfall.kwh", mapOf(
+                        "kwh" to energy, "requested" to number(format.locale, requested, 1)))
+                    else -> say(key)
+                }
+            }
             "duplicate_charger" -> say(key, mapOf("other" to (p["other"] as? String ?: "")))
             // Why solar has no full basis: the entity concerned where one is named (the card's `basisWording`).
             "solar_no_grid_power" -> entity(p)?.let { say("strategy.status.solar.noGridPowerEntity", mapOf("entity" to it)) }

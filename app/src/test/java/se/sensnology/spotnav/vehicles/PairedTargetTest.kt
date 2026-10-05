@@ -62,8 +62,9 @@ class PairedTargetTest {
     @Test fun theFixturesThatCarryANeedAreTheTargetSocOnes() {
         assertEquals(
             listOf(
-                "target_soc_estimated.json", "target_soc_phases_limited_by_vehicle.json",
-                "target_soc_stopped_on_estimate.json", "target_soc_two_vehicles.json"
+                "target_soc_departure_shortfall.json", "target_soc_estimated.json",
+                "target_soc_phases_limited_by_vehicle.json", "target_soc_stopped_on_estimate.json",
+                "target_soc_two_vehicles.json"
             ),
             carrying
         )
