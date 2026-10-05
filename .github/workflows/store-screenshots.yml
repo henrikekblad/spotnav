@@ -1,0 +1,48 @@
+name: Upload store screenshots
+
+# Started by hand (Actions → Upload store screenshots → Run workflow), only after the pictures in
+# fastlane/metadata/android/<locale>/images/phoneScreenshots/ have been looked at. Each chosen locale's phone
+# screenshots in Play are replaced by those files, saved in Play Console without being sent for review: they go
+# for review with the next submission made there. Nothing else in the listing changes.
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: "Repository locale folders, space separated (empty: every one)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Only check the files against Play's limits"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the Play API client
+        run: pip install google-api-python-client google-auth
+      - name: Upload
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          LOCALES: ${{ inputs.locales }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=()
+          if [ -n "$LOCALES" ]; then args+=(--locales $LOCALES); fi
+          if [ "$DRY_RUN" = "true" ]; then
+            python tools/app_screenshots/upload_store.py --dry-run "${args[@]}"
+            exit 0
+          fi
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::error::PLAY_SERVICE_ACCOUNT_JSON is not set"; exit 1
+          fi
+          printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" | base64 --decode > "$RUNNER_TEMP/play.json"
+          python tools/app_screenshots/upload_store.py --key "$RUNNER_TEMP/play.json" "${args[@]}"

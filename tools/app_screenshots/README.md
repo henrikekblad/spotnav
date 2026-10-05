@@ -64,16 +64,19 @@ removes the numbered pictures already in those folders, so a folder holds exactl
 
 ## Uploading the store pictures
 
-Nothing here uploads. The release workflow sends only the bundle and the changelogs to Play. The
-pictures are in fastlane `supply`'s layout, so either upload them in Play Console (Store presence →
-Main store listing → Phone screenshots, per language), or with fastlane:
+Look at the pictures first; then run the **Upload store screenshots** workflow by hand (GitHub → Actions →
+Upload store screenshots → Run workflow, or `gh workflow run store-screenshots.yml`). It runs
+`upload_store.py` with the release workflow's Play service account: one Play edit in which each locale's phone
+screenshots are replaced by the files in its folder, in name order, committed **without being sent for review**,
+so they wait in Play Console's store listing until they are sent for review there by hand. Nothing else in the
+listing changes, and a language the listing does not have is skipped and said so.
 
-    fastlane supply --package_name se.sensnology.spotnav --metadata_path fastlane/metadata/android \
-      --json_key play.json --skip_upload_apk true --skip_upload_aab true --skip_upload_changelogs true \
-      --skip_upload_metadata true --skip_upload_images true
+    python3 tools/app_screenshots/upload_store.py --dry-run          # check against Play's limits, contact nothing
+    gh workflow run store-screenshots.yml -f dry_run=true            # the same check on GitHub
+    gh workflow run store-screenshots.yml -f locales="sv-SE en-US"   # upload two locales
 
-Play names two of the languages differently from these folders, as the workflow's changelog step does:
-en-US is uploaded as en-GB and nb-NO as no-NO (rename or copy the folders first).
+Play names two of the languages differently from these folders, as the release workflow's changelog step does:
+en-US is uploaded as en-GB and nb-NO as no-NO. The release workflow itself never uploads pictures.
 
 ## Things that can break
 
