@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -213,8 +214,14 @@ class PriceWidgetProvider : AppWidgetProvider() {
             } else null
             val options = manager.getAppWidgetOptions(id)
             val density = context.resources.displayMetrics.density
-            val width = (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 320) * density).toInt()
-            val height = (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 180) * density).toInt()
+            val (width, height) = WidgetSize.pixels(
+                minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0),
+                minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0),
+                maxWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0),
+                maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0),
+                portrait = context.resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE,
+                density = density
+            )
             val oneSp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1f, context.resources.displayMetrics)
             val chart: Bitmap = when (source) {
                 is WidgetChartSource.Dashboard -> {
