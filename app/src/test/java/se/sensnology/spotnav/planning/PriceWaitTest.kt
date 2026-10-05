@@ -10,12 +10,14 @@ import org.junit.Test
 import se.sensnology.spotnav.chart.LocalCharts
 import se.sensnology.spotnav.planning.PriceWait.Action
 import se.sensnology.spotnav.planning.PriceWait.KnownInterval
+import se.sensnology.spotnav.prices.AreaPublication
 import se.sensnology.spotnav.prices.PricePoint
 import se.sensnology.spotnav.prices.PriceResult
 import se.sensnology.spotnav.widget.WidgetSettings
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
@@ -100,6 +102,53 @@ class PriceWaitTest {
         assertEquals(at("2026-10-25T12:45:00Z"), pub(2026, 10, 26))
         assertEquals(Duration.ofHours(23), Duration.between(pub(2026, 3, 29), pub(2026, 3, 30)))
         assertEquals(Duration.ofHours(25), Duration.between(pub(2026, 10, 25), pub(2026, 10, 26)))
+    }
+
+    private val agile = AreaPublication(LocalTime.of(16, 0), "Europe/London")
+    private val pvpc = AreaPublication(LocalTime.of(20, 15), "Europe/Madrid")
+
+    @Test fun anAreaWithItsOwnTimeIsExpectedThenInItsOwnZone() {
+        assertEquals(at("2026-09-22T15:45:00Z"), PriceWait.expectedPublicationAt(LocalDate.of(2026, 9, 23), agile))
+        assertEquals(at("2026-01-14T16:45:00Z"), PriceWait.expectedPublicationAt(LocalDate.of(2026, 1, 15), agile))
+        assertEquals(at("2026-09-22T19:00:00Z"), PriceWait.expectedPublicationAt(LocalDate.of(2026, 9, 23), pvpc))
+        assertEquals(at("2026-01-14T20:00:00Z"), PriceWait.expectedPublicationAt(LocalDate.of(2026, 1, 15), pvpc))
+        assertEquals(
+            PriceWait.expectedPublicationAt(LocalDate.of(2026, 9, 23)),
+            PriceWait.expectedPublicationAt(LocalDate.of(2026, 9, 23), AreaPublication.DEFAULT)
+        )
+    }
+
+    @Test fun greatBritainIsDstSafeAcrossBothClockChanges() {
+        fun pub(y: Int, m: Int, d: Int) = PriceWait.expectedPublicationAt(LocalDate.of(y, m, d), agile)
+        // 16:00 GMT, then 16:00 BST: the UK changes clocks on the same nights as the continent.
+        assertEquals(at("2026-03-28T16:45:00Z"), pub(2026, 3, 29))
+        assertEquals(at("2026-03-29T15:45:00Z"), pub(2026, 3, 30))
+        assertEquals(at("2026-10-24T15:45:00Z"), pub(2026, 10, 25))
+        assertEquals(at("2026-10-25T16:45:00Z"), pub(2026, 10, 26))
+        assertEquals(Duration.ofHours(23), Duration.between(pub(2026, 3, 29), pub(2026, 3, 30)))
+        assertEquals(Duration.ofHours(25), Duration.between(pub(2026, 10, 25), pub(2026, 10, 26)))
+        // Always 16:45 on the UK wall clock.
+        for (day in listOf(pub(2026, 3, 29), pub(2026, 3, 30), pub(2026, 10, 25), pub(2026, 10, 26))) {
+            assertEquals(LocalTime.of(16, 45), day.atZone(ZoneId.of("Europe/London")).toLocalTime())
+        }
+    }
+
+    @Test fun spainPvpcIsDstSafeAcrossBothClockChanges() {
+        fun pub(y: Int, m: Int, d: Int) = PriceWait.expectedPublicationAt(LocalDate.of(y, m, d), pvpc)
+        assertEquals(at("2026-03-28T20:00:00Z"), pub(2026, 3, 29))
+        assertEquals(at("2026-03-29T19:00:00Z"), pub(2026, 3, 30))
+        assertEquals(at("2026-10-24T19:00:00Z"), pub(2026, 10, 25))
+        assertEquals(at("2026-10-25T20:00:00Z"), pub(2026, 10, 26))
+        assertEquals(Duration.ofHours(23), Duration.between(pub(2026, 3, 29), pub(2026, 3, 30)))
+        assertEquals(Duration.ofHours(25), Duration.between(pub(2026, 10, 25), pub(2026, 10, 26)))
+        for (day in listOf(pub(2026, 3, 29), pub(2026, 3, 30), pub(2026, 10, 25), pub(2026, 10, 26))) {
+            assertEquals(LocalTime.of(21, 0), day.atZone(ZoneId.of("Europe/Madrid")).toLocalTime())
+        }
+    }
+
+    @Test fun theMarginCrossingMidnightStaysOnTheDayBefore() {
+        val late = AreaPublication(LocalTime.of(23, 30), "Europe/Madrid")
+        assertEquals(at("2026-10-25T23:15:00Z"), PriceWait.expectedPublicationAt(LocalDate.of(2026, 10, 26), late))
     }
 
     // ---- the closed loop: the real planner, replanned every quarter-hour

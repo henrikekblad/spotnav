@@ -1,5 +1,7 @@
 package se.sensnology.spotnav.planning
 
+import se.sensnology.spotnav.prices.AreaPublication
+import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PricePoint
 import se.sensnology.spotnav.prices.PriceResult
 import java.time.Duration
@@ -114,7 +116,9 @@ object ChargingPlanner {
         // The publication that fills the gap is the market day's: a London evening hour is the next
         // Paris file, published the day before it. One calendar for every other area.
         val missingMarketDay = gapAt.toInstant().atZone(MarketZone.marketCalendarOf(inputs.areaId, pricesOffset)).toLocalDate()
-        val publicationAt = PriceWait.expectedPublicationAt(missingMarketDay)
+        // Each area is expected at its own time (Agile 16:00 UK, PVPC 20:15 Madrid); 13:00 Brussels by default.
+        val publication = PriceMarkets.find(inputs.areaId)?.publication ?: AreaPublication.DEFAULT
+        val publicationAt = PriceWait.expectedPublicationAt(missingMarketDay, publication)
         val decision = PriceWait.decide(
             now = now.toInstant(),
             deadline = endLimit.toInstant(),

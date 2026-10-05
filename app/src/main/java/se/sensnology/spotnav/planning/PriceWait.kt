@@ -1,17 +1,15 @@
 package se.sensnology.spotnav.planning
 
+import se.sensnology.spotnav.prices.AreaPublication
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 /**
  * What to do when the prices a plan needs are not published yet. Port of the Home Assistant
  * integration's `planning/price_wait.py`, same slack principle applied to time:
  *
- *     publicationAt = next expected day-ahead publication for the missing day, plus a margin
+ *     publicationAt = the area's expected publication for the missing day, plus a margin
  *     waitCapacity  = hours from max(publicationAt, now + one slot) to the deadline x maxKw x margin
  *     mustBuyNow    = max(0, need - waitCapacity)
  *
@@ -22,17 +20,13 @@ import java.time.ZonedDateTime
  *   start has arrived): the remainder is charged at once at unknown prices. The deadline is kept,
  *   only the price is given up.
  *
- * Pure: no clock, no storage. The publication instant is built in the market's zone and converted to
+ * Pure: no clock, no storage. The publication instant is built in the area's publication zone and converted to
  * an instant before any subtraction, so clock-change days cannot shift it. Comparisons carry a small
  * epsilon so a need exactly equal to the wait capacity waits instead of buying a sliver.
  */
 internal object PriceWait {
     /** Fraction of the charger's maximum rate the deadline must still be reachable at. */
     const val FEASIBILITY_MARGIN = 0.8
-
-    /** Day-ahead auctions clear on one European clock, so one zone serves every area. */
-    val PUBLICATION_ZONE: ZoneId = ZoneId.of("Europe/Brussels")
-    val PUBLICATION_LOCAL_TIME: LocalTime = LocalTime.of(13, 0)
 
     /** How long after the expected instant a publication is still "on time". */
     val PUBLICATION_MARGIN: Duration = Duration.ofMinutes(45)
@@ -64,14 +58,15 @@ internal object PriceWait {
         val windowEnd: Instant? = null
     )
 
-    /** When [missingDay] (local date of the first instant with no price) is expected. */
+    /**
+     * When [missingDay] (the market date of the first instant with no price) is expected: the day
+     * before, at the area's own [publication] time in its own zone, plus [margin].
+     */
     fun expectedPublicationAt(
         missingDay: LocalDate,
-        margin: Duration = PUBLICATION_MARGIN,
-        zone: ZoneId = PUBLICATION_ZONE,
-        localTime: LocalTime = PUBLICATION_LOCAL_TIME
-    ): Instant =
-        ZonedDateTime.of(missingDay.minusDays(1), localTime, zone).toInstant().plus(margin)
+        publication: AreaPublication = AreaPublication.DEFAULT,
+        margin: Duration = PUBLICATION_MARGIN
+    ): Instant = publication.on(missingDay.minusDays(1)).plus(margin)
 
     /** The last instant charging [needKwh] at the derated rate still ends by [deadline]. */
     fun latestSafeStart(deadline: Instant, needKwh: Double, maxChargeKw: Double, margin: Double = FEASIBILITY_MARGIN): Instant =

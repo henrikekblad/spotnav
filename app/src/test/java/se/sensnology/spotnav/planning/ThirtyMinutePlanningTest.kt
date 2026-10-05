@@ -8,6 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import se.sensnology.spotnav.chart.ChartMarket
 import se.sensnology.spotnav.chart.ChartNow
+import se.sensnology.spotnav.prices.AreaPublication
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceResult
@@ -87,9 +88,18 @@ class ThirtyMinutePlanningTest {
         val now = OffsetDateTime.parse("2026-10-04T12:00:00+01:00")
         val waiting = ChargingPlanner.outcome(result, LocalPlanningInputs.of(settings(departureHour = 7, kwh = 2)), now).waiting
         assertNotNull(waiting)
-        // The missing hour (23:00 London) is the Paris day of the 5th, expected 13:00 Brussels on the
-        // 4th plus the margin -- not the day before the London date.
-        assertEquals(OffsetDateTime.parse("2026-10-04T13:45:00+02:00").toInstant(), waiting!!.expectedAt.toInstant())
+        // The missing hour (23:00 London) is the Paris day of the 5th, expected at Agile's own 16:00 UK
+        // time on the 4th plus the margin -- not the day before the London date.
+        assertEquals(OffsetDateTime.parse("2026-10-04T16:45:00+01:00").toInstant(), waiting!!.expectedAt.toInstant())
+        assertEquals("16:45", waiting.expectedAt.toLocalTime().toString())
+
+        // A list that states no publication time falls back to 13:00 Brussels.
+        PriceMarkets.replace(
+            RelayV2Fixtures.areas().map { if (it.id == "GB-C") it.copy(publication = AreaPublication.DEFAULT) else it },
+            RelayContractVersion.V2
+        )
+        val fallback = ChargingPlanner.outcome(result, LocalPlanningInputs.of(settings(departureHour = 7, kwh = 2)), now).waiting
+        assertEquals(OffsetDateTime.parse("2026-10-04T13:45:00+02:00").toInstant(), fallback!!.expectedAt.toInstant())
     }
 
     @Test
