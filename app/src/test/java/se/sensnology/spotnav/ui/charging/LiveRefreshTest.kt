@@ -1,0 +1,63 @@
+package se.sensnology.spotnav.ui.charging
+
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import se.sensnology.spotnav.chart.DayRollover
+import java.time.Instant
+
+class LiveRefreshTest {
+    private class FakeTimer : DayRollover.Timer {
+        var delay: Long? = null
+        var task: (() -> Unit)? = null
+        override fun after(delayMs: Long, task: () -> Unit) { delay = delayMs; this.task = task }
+        override fun cancel() { delay = null; task = null }
+        fun fire() { val t = task; task = null; t?.invoke() }
+    }
+
+    private val t0 = Instant.parse("2026-10-05T09:00:00Z")
+
+    @Test fun readsEveryMinuteWhileArmed() {
+        val timer = FakeTimer()
+        var reads = 0
+        val live = LiveRefresh(timer, { t0 }, { null }) { reads++ }
+        live.arm()
+        assertEquals(60_000L, timer.delay)
+        timer.fire(); timer.fire()
+        assertEquals(2, reads)
+        assertEquals(60_000L, timer.delay)
+    }
+
+    @Test fun readsJustAfterANamedEndThatComesSooner() {
+        val live = LiveRefresh(FakeTimer(), { t0 }, { null }) {}
+        assertEquals(22_000L, live.delayMs(t0, t0.plusSeconds(20)))
+        // An end further away than the period, or already passed, leaves the period:
+        assertEquals(60_000L, live.delayMs(t0, t0.plusSeconds(600)))
+        assertEquals(60_000L, live.delayMs(t0, t0.minusSeconds(30)))
+    }
+
+    @Test fun aSoonerEndNamedMidWaitShortensTheWait() {
+        val timer = FakeTimer()
+        var end: Instant? = null
+        val live = LiveRefresh(timer, { t0 }, { end }) {}
+        live.arm()
+        assertEquals(60_000L, timer.delay)
+        end = t0.plusSeconds(10)
+        live.reconsider()
+        assertEquals(12_000L, timer.delay)
+        live.cancel()
+        live.reconsider()
+        assertEquals(null, timer.delay)
+    }
+
+    @Test fun aCancelledRefreshReadsNothingMore() {
+        val timer = FakeTimer()
+        var reads = 0
+        val live = LiveRefresh(timer, { t0 }, { null }) { reads++ }
+        live.arm()
+        val pending = timer.task
+        live.cancel()
+        pending?.invoke()
+        assertEquals(0, reads)
+        assertEquals(null, timer.delay)
+    }
+}

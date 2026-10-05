@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.app.LauncherActivity
 import se.sensnology.spotnav.chart.DayRollover
+import se.sensnology.spotnav.ui.charging.LiveRefresh
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
@@ -68,6 +69,26 @@ class WidgetConfigActivity : Activity() {
         )
     }
     private val mainHandler = Handler(Looper.getMainLooper())
+
+    /** The charging screen's re-read while it is in view: armed with [dayRollover], cancelled with it. */
+    private val liveRefresh by lazy {
+        val main = Handler(Looper.getMainLooper())
+        LiveRefresh(
+            timer = object : DayRollover.Timer {
+                private var pending: Runnable? = null
+                override fun after(delayMs: Long, task: () -> Unit) {
+                    cancel()
+                    val run = Runnable { pending = null; task() }
+                    pending = run
+                    main.postDelayed(run, delayMs)
+                }
+                override fun cancel() { pending?.let(main::removeCallbacks); pending = null }
+            },
+            now = { Instant.now() },
+            nextEnd = { shell.liveRefreshEnd?.invoke() },
+            onRefresh = { shell.onLiveRefresh?.invoke() }
+        ).also { live -> shell.liveRefreshReconsider = { live.reconsider() } }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppThemeSettings.apply(this)
@@ -131,8 +152,11 @@ class WidgetConfigActivity : Activity() {
         shell.onForeground = null
         shell.onDayBoundary = null
         shell.dayZone = null
+        shell.onLiveRefresh = null
+        shell.liveRefreshEnd = null
         shell.onNotificationPermission = null
         dayRollover.cancel()
+        liveRefresh.cancel()
         when (screen) {
             Screen.MAIN -> showCharging()
             Screen.PRICE_TABLE -> PriceTableScreen(shell).show()
@@ -149,7 +173,7 @@ class WidgetConfigActivity : Activity() {
     /** The charging screen, drawn afresh; a new charger chosen on its card calls this to redraw in place. */
     private fun showCharging() {
         ChargingScreen(shell) { showCharging() }.show()
-        if (foreground) dayRollover.arm()
+        if (foreground) { dayRollover.arm(); liveRefresh.arm() }
     }
 
     /**
@@ -191,7 +215,7 @@ class WidgetConfigActivity : Activity() {
         if (resumedOnce) shell.onForeground?.invoke()
         resumedOnce = true
         foreground = true
-        if (currentScreen == Screen.MAIN) dayRollover.arm()
+        if (currentScreen == Screen.MAIN) { dayRollover.arm(); liveRefresh.arm() }
         // The widget draws from held data cut by the local clock, so a redraw here costs no network.
         WidgetChartBoundary.requestRedraw(this)
         if (widgetId < 0) {
@@ -214,6 +238,7 @@ class WidgetConfigActivity : Activity() {
     override fun onStop() {
         foreground = false
         dayRollover.cancel()
+        liveRefresh.cancel()
         super.onStop()
     }
 

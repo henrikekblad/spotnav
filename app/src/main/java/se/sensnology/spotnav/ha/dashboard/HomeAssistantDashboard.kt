@@ -300,7 +300,12 @@ internal data class Dashboard(
      * Why the last calculation produced what it did (`planning.reason`, e.g. `deadline_too_short`);
      * read leniently, `null` when absent or not text.
      */
-    val planningReason: String? = null
+    val planningReason: String? = null,
+    /**
+     * When Home Assistant's start-up ends at the latest (`starting_up.until` while `active`), read
+     * leniently: `null` when it is not starting up or the time cannot be read.
+     */
+    val startingUpUntil: java.time.Instant? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -385,7 +390,11 @@ internal data class Dashboard(
                 sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary")),
                 connection = ChargerConnectionContract.of(json.optJSONObject("connection")),
                 chargerPriority = ChargerPriority.parse(json.opt("charger_priority")),
-                planningReason = json.optJSONObject("planning")?.opt("reason") as? String
+                planningReason = json.optJSONObject("planning")?.opt("reason") as? String,
+                startingUpUntil = json.optJSONObject("starting_up")
+                    ?.takeIf { it.opt("active") == true }
+                    ?.let { it.opt("until") as? String }
+                    ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() }
             )
         }
 

@@ -247,6 +247,10 @@ internal class ChargingScreen(
             startDashboardFetch()
             loadPrices()
         }
+        // In view, the paired dashboard is read again every minute, and just after a start-up Home
+        // Assistant said would end sooner: a status line does not wait for a tap to move on.
+        shell.onLiveRefresh = { startDashboardFetch() }
+        shell.liveRefreshEnd = { pairedDashboard?.startingUpUntil }
         startDashboardFetch()
     }
 
@@ -349,6 +353,7 @@ internal class ChargingScreen(
 
                 override fun onDashboard(dashboard: Dashboard?) {
                     pairedDashboard = dashboard
+                    if (dashboard?.startingUpUntil != null) shell.liveRefreshReconsider?.invoke()
                     // A fresh answer is the record's own again: a pick that never became a write is
                     // dropped.
                     pendingVehiclePick = null

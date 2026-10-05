@@ -22,6 +22,17 @@ import se.sensnology.spotnav.testing.HaFixtures
 class HomeAssistantDashboardTest {
     private fun v1(name: String) = HaFixtures.json("dashboard/$name.json")
 
+    @Test fun theStartUpsEndIsReadOnlyWhileItIsActive() {
+        assertNull(Dashboard.parse(v1("start_idle")).startingUpUntil)
+        val starting = v1("start_idle").put(
+            "starting_up",
+            JSONObject().put("active", true).put("until", "2026-10-05T09:03:00+00:00").put("waiting_for", JSONArray().put("charger"))
+        )
+        assertEquals(java.time.Instant.parse("2026-10-05T09:03:00Z"), Dashboard.parse(starting).startingUpUntil)
+        val unreadable = v1("start_idle").put("starting_up", JSONObject().put("active", true).put("until", "soon"))
+        assertNull(Dashboard.parse(unreadable).startingUpUntil)
+    }
+
     @Test fun everyVendoredFixtureDecodes() {
         val files = HaFixtures.files("dashboard")
         assertTrue(files.isNotEmpty())

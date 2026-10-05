@@ -82,6 +82,17 @@ internal class ScreenShell(
      * cancelled when it stops; cleared with [reloadPrices].
      */
     var onDayBoundary: (() -> Unit)? = null
+
+    /**
+     * The charging screen's re-read while it is in view (`LiveRefresh`), and the end Home Assistant
+     * named for a passing state of its own; the Activity keeps the timer, armed while it is resumed.
+     * Cleared with [reloadPrices].
+     */
+    var onLiveRefresh: (() -> Unit)? = null
+    var liveRefreshEnd: (() -> java.time.Instant?)? = null
+
+    /** Set by the Activity: the charging screen calls it when an answer arrives, so a sooner end is kept. */
+    var liveRefreshReconsider: (() -> Unit)? = null
     var dayZone: (() -> java.time.ZoneId)? = null
 
     /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
