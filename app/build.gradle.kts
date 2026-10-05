@@ -44,6 +44,19 @@ val push = when (val flag = findProperty("push") as String?) {
 }
 if (push) apply(plugin = "com.google.gms.google-services")
 
+// The relay address is fixed in a release build. A debug build can be pointed somewhere else with
+// -PrelayBaseUrl=http://10.0.2.2:8130 (the documentation screenshots use a local relay stub);
+// release builds always get the official address, and asking for one with the property set fails.
+val officialRelay = "https://spotnav.sensnology.se"
+val relayBaseUrl = (findProperty("relayBaseUrl") as String?)?.trim()?.trimEnd('/')?.takeIf { it.isNotEmpty() }
+if (relayBaseUrl != null) {
+    require(Regex("""https?://[A-Za-z0-9.\-]+(:\d+)?""").matches(relayBaseUrl)) {
+        "-PrelayBaseUrl must be a scheme, host and optional port, was '$relayBaseUrl'"
+    }
+    val nonDebug = gradle.startParameter.taskNames.filterNot { it.contains("Debug") || it.endsWith("clean") }
+    require(nonDebug.isEmpty()) { "-PrelayBaseUrl is for debug tasks only; refused for: ${nonDebug.joinToString()}" }
+}
+
 val appVersionName = releaseVersion ?: "1.0.0-dev"
 val appVersionCode = versionParts?.let { (major, minor, patch) -> major * 10000 + minor * 100 + patch } ?: 1
 
@@ -92,7 +105,11 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "RELAY_BASE_URL", "\"${relayBaseUrl ?: officialRelay}\"")
+        }
         getByName("release") {
+            buildConfigField("String", "RELAY_BASE_URL", "\"$officialRelay\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

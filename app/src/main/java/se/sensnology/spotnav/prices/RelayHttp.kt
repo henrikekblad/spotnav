@@ -26,7 +26,7 @@ internal object RelayHttp {
     /** [get], keeping a 404 apart from every other failure. */
     fun fetch(url: String): RelayFetch {
         val connection = try {
-            URL(url).openConnection() as HttpURLConnection
+            URL(RelayAddress.resolve(url)).openConnection() as HttpURLConnection
         } catch (error: Exception) {
             Log.e(TAG, "Could not open $url", error)
             return RelayFetch.Failed
@@ -66,7 +66,7 @@ internal object RelayHttp {
      */
     fun post(url: String, body: String): Pair<Int?, String?> {
         val connection = try {
-            URL(url).openConnection() as HttpURLConnection
+            URL(RelayAddress.resolve(url)).openConnection() as HttpURLConnection
         } catch (error: Exception) {
             Log.w(TAG, "Could not open POST ${URL_PATH.find(url)?.value}")
             return Pair(null, null)
