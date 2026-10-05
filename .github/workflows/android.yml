@@ -132,6 +132,11 @@ jobs:
             locale=$(basename "$dir")
             file="$dir/changelogs/$code.txt"
             test -f "$file" || { echo "Missing $file"; exit 1; }
+            # The Play listing's own language codes: British English and Norwegian as Play names them.
+            case "$locale" in
+              en-US) locale=en-GB ;;
+              nb-NO) locale=no-NO ;;
+            esac
             cp "$file" "whatsnew/whatsnew-$locale"
           done
           echo "upload=true" >> "$GITHUB_OUTPUT"
