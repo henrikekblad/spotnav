@@ -315,7 +315,8 @@ internal object HaStatusText {
             )
             // A signed meter read as unsigned: the phases that read negative, and the setting that fixes it.
             "site_current_negative" -> say(key, mapOf("phases" to joinPhases(format.language, strings(p["phases"]))))
-            "need_limited_by_room" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
+            "need_limited_by_room", "filling_to_limit", "fill_room_unknown" ->
+                say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "remaining_need_estimated" -> say(
                 // Counted from the recorded charges, or kept from the meter's last reading.
