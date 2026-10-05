@@ -65,7 +65,7 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
             .takeIf { it > 0 } ?: dp(SLIDER_TRACK_DP)
         // One more layer of the track itself, never a wrapper around it: the slider finds its fill and tints
         // it by the track's own `android.R.id.progress` layer, which a wrapper would hide.
-        val layers = track.mutate() as? LayerDrawable
+        val layers = track as? LayerDrawable
         if (layers != null) {
             val index = layers.addLayer(shading)
             // The shading is drawn in the same rect the track paints itself in, which is inset

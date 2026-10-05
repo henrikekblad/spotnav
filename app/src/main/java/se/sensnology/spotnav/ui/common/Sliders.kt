@@ -1,6 +1,6 @@
 package se.sensnology.spotnav.ui.common
 
-import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.DrawableWrapper
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.view.Gravity
@@ -42,7 +42,9 @@ internal fun ViewScope.thickenTrack(seek: SeekBar): Int {
     var resized = false
     for (index in 0 until track.numberOfLayers) {
         val layer = track.getDrawable(index) ?: continue
-        val shape = (layer as? ClipDrawable)?.drawable ?: layer
+        // The fill sits in a clip on older platforms and in a scale on newer ones: both are wrappers, and
+        // the shape inside is what is thickened, or the fill stays a thin line over a thick track.
+        val shape = (layer as? DrawableWrapper)?.drawable ?: layer
         if (shape is GradientDrawable) {
             // No width of its own: the shape spans the layer it sits in, which is what the
             // platform's own `<size>` leaves it doing.
@@ -50,6 +52,11 @@ internal fun ViewScope.thickenTrack(seek: SeekBar): Int {
             shape.setCornerRadius(thickness / 2f)
             resized = true
         }
+        // A layer can carry a height of its own from the platform's drawable, which wins over its shape's
+        // size: the newer track gives the fill one, so only the background thickened. Every layer gets the
+        // track's thickness, centred, so the fill is as thick as the track it fills.
+        track.setLayerHeight(index, thickness)
+        track.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
     }
     return if (resized) thickness else track.intrinsicHeight.takeIf { it > 0 } ?: thickness
 }

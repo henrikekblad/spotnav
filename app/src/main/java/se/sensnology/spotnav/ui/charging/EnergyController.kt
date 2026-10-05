@@ -82,7 +82,7 @@ internal class EnergyController(scope: ViewScope) : ViewScope(scope) {
         val trackHeight = ((track as? LayerDrawable)?.getDrawable(0)?.intrinsicHeight ?: 0)
             .takeIf { it > 0 } ?: dp(SLIDER_TRACK_DP)
         val mark = FullMarkDrawable(dark, dp(2).toFloat(), dp(MARK_REACH_DP).toFloat())
-        val layers = track.mutate() as? LayerDrawable
+        val layers = track as? LayerDrawable
         if (layers != null) {
             val index = layers.addLayer(mark)
             layers.setLayerInset(index, trackInsets.left, 0, trackInsets.right, 0)
