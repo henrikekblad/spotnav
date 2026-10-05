@@ -38,7 +38,7 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
   target charge level. The slider marks where the battery is full.
 - **Charging plan**: the plan Home Assistant has installed.
 
-<img src="images/app-planning-target.png" alt="Planning card set to Target: the target charge level slider, with the range below the car's charge level and above its charge limit shaded" width="420">
+<img src="images/app-planning-target.png" alt="Planning card set to Target: the car's charge level and charge limit above the target state of charge slider at 80 %, and the energy needed" width="420">
 
 With **Target** instead of **kWh**, you set the charge level to reach; the app works out the energy from
 the car's charge level and battery.
