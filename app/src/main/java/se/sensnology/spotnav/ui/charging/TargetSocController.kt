@@ -63,13 +63,17 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         // the platform drawable rather than agreed separately:
         val trackHeight = ((track as? LayerDrawable)?.getDrawable(0)?.intrinsicHeight ?: 0)
             .takeIf { it > 0 } ?: dp(SLIDER_TRACK_DP)
-        targetSoc.progressDrawable = LayerDrawable(arrayOf(track, shading)).apply {
-            setPadding(trackInsets.left, trackInsets.top, trackInsets.right, trackInsets.bottom)
+        // One more layer of the track itself, never a wrapper around it: the slider finds its fill and tints
+        // it by the track's own `android.R.id.progress` layer, which a wrapper would hide.
+        val layers = track.mutate() as? LayerDrawable
+        if (layers != null) {
+            val index = layers.addLayer(shading)
             // The shading is drawn in the same rect the track paints itself in, which is inset
             // where the platform drawable says so (it is how a SeekBar makes room for the thumb).
-            setLayerInset(1, trackInsets.left, 0, trackInsets.right, 0)
-            setLayerHeight(1, trackHeight)
-            setLayerGravity(1, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+            layers.setLayerInset(index, trackInsets.left, 0, trackInsets.right, 0)
+            layers.setLayerHeight(index, trackHeight)
+            layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+            targetSoc.progressDrawable = layers
         }
         // The ends' own numbers, under the track. Decoration around a labelled control:
         val floorLabel = bandLabel()

@@ -70,18 +70,25 @@ internal class EnergyController(scope: ViewScope) : ViewScope(scope) {
             VehicleEnergy.energyProgressNearest(settings.chargingKwh), energyValue, parent
         ) { paint() }
         built = energy
-        // The "full" mark rides on the framework's own track, as the target slider's shading does.
+        // The slider wrote its first label before `built` was set; write it now (a standalone screen has no
+        // later answer that would).
+        paint()
+        // The "full" mark rides on the framework's own track, as the target slider's shading does. It is added
+        // as one more layer of that track, never by wrapping it: the slider finds its fill by the track's own
+        // `android.R.id.progress` layer, and a wrapper hides it, so no fill would be drawn.
         val track = energy.progressDrawable
         val trackInsets = Rect()
         track.getPadding(trackInsets)
         val trackHeight = ((track as? LayerDrawable)?.getDrawable(0)?.intrinsicHeight ?: 0)
             .takeIf { it > 0 } ?: dp(SLIDER_TRACK_DP)
         val mark = FullMarkDrawable(dark, dp(2).toFloat(), dp(MARK_REACH_DP).toFloat())
-        energy.progressDrawable = LayerDrawable(arrayOf(track, mark)).apply {
-            setPadding(trackInsets.left, trackInsets.top, trackInsets.right, trackInsets.bottom)
-            setLayerInset(1, trackInsets.left, 0, trackInsets.right, 0)
-            setLayerHeight(1, trackHeight)
-            setLayerGravity(1, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+        val layers = track.mutate() as? LayerDrawable
+        if (layers != null) {
+            val index = layers.addLayer(mark)
+            layers.setLayerInset(index, trackInsets.left, 0, trackInsets.right, 0)
+            layers.setLayerHeight(index, trackHeight)
+            layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+            energy.progressDrawable = layers
         }
         // Its word under the line, in the row both drivers keep under their slider.
         val markRow = FrameLayout(context)
