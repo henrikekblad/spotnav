@@ -169,6 +169,10 @@ internal class ChargerDashboardController(
                 java.time.Instant.now()
             )
             showStatusLine(text = statusText(parts, colour), colour = colour)
+        } else if (!ReadFailureLine.shown(result.exceptionOrNull())) {
+            // No contact at all: the screen's banner already says so, in words; a second line with the
+            // socket's own message would say the same thing twice.
+            showStatusLine(text = "", colour = muted)
         } else {
             showStatusLine(
                 text = t(R.string.home_assistant_error, result.exceptionOrNull()?.message ?: ""),

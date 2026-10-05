@@ -223,8 +223,8 @@
   <string name="market_info_tax_only">API-hinta on spot-hinta ilman ALV:tä, veroja ja maksuja. Ehdotettu vuoden 2026 arvo tälle alueelle: %1$s %2$s/kWh sähkövero. Siirtomaksua ei ehdoteta – tarkista verkkosopimuksesi. ALV lisätään viimeiseksi koko summaan.</string>
   <string name="market_info_grid_only">API-hinta on spot-hinta ilman ALV:tä, veroja ja maksuja. Ehdotettu vuoden 2026 arvo tälle alueelle: %1$s %2$s/kWh siirtomaksu. Sähköveroa ei ehdoteta – tarkista paikalliset säännöt. ALV lisätään viimeiseksi koko summaan.</string>
   <string name="market_info_neither">API-hinta on spot-hinta ilman ALV:tä, veroja ja maksuja. Tälle alueelle ei julkaista ehdotusta sähköverosta tai siirtomaksusta – syötä omat arvosi, ne säilyvät sinun. ALV lisätään viimeiseksi koko summaan.</string>
-    <string name="authority_offline">Ei yhteyttä Home Assistantiin · näyttää viimeksi vahvistetut arvot (rev %1$d) vain luku -tilassa</string>
-    <string name="authority_offline_none">Ei yhteyttä Home Assistantiin · vahvistettuja arvoja ei ole vielä näytettäväksi, joten hintakäyrää ei piirretä</string>
+    <string name="authority_offline">Ei yhteyttä Home Assistantiin. Näytetään viimeksi tunnetut arvot; muutoksia voi tehdä, kun yhteys palaa.</string>
+    <string name="authority_offline_none">Ei vielä yhteyttä Home Assistantiin, joten arvoja tai hintakäyrää ei ole näytettävänä.</string>
     <string name="authority_no_settings">Home Assistantilla ei ole vielä asetuksia tälle laturille</string>
     <string name="value_not_set">Ei asetettu</string>
   <string name="authority_incomplete">Home Assistantin asetukset ovat puutteelliset: %1$s</string>

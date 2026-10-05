@@ -36,13 +36,14 @@ class PairedOfflineTest {
             val withRecord = valueOf(xml, "authority_offline")
             val without = valueOf(xml, "authority_offline_none")
             assertTrue("$locale names Home Assistant", withRecord.contains("Home Assistant"))
-            assertTrue("$locale names the revision", withRecord.contains("%1${'$'}d"))
+            // A person reads it: no revision number, no format argument.
+            assertFalse("$locale names no revision", withRecord.contains("%1") || withRecord.contains("rev "))
             assertTrue("$locale names Home Assistant", without.contains("Home Assistant"))
         }
         // English, read as the words: the two sentences say what the screen means.
         val english = read("src/main/res/values/strings.xml")
-        assertTrue(valueOf(english, "authority_offline").contains("read-only"))
-        assertTrue(valueOf(english, "authority_offline_none").contains("no price graph is drawn"))
+        assertTrue(valueOf(english, "authority_offline").contains("changes can be made once it is back"))
+        assertTrue(valueOf(english, "authority_offline_none").contains("no values or price graph to show"))
     }
 
     @Test

@@ -223,8 +223,8 @@
   <string name="market_info_tax_only">API-prisen er spotprisen uten MVA, avgifter og gebyrer. Foreslått 2026-verdi for dette området: %1$s %2$s/kWh elavgift. Ingen nettleie foreslås – sjekk nettavtalen din. MVA legges til sist på hele beløpet.</string>
   <string name="market_info_grid_only">API-prisen er spotprisen uten MVA, avgifter og gebyrer. Foreslått 2026-verdi for dette området: %1$s %2$s/kWh nettleie. Ingen elavgift foreslås – sjekk lokale regler. MVA legges til sist på hele beløpet.</string>
   <string name="market_info_neither">API-prisen er spotprisen uten MVA, avgifter og gebyrer. Ingen forslag til elavgift eller nettleie publiseres for dette området – fyll inn egne verdier, de beholdes som dine. MVA legges til sist på hele beløpet.</string>
-    <string name="authority_offline">Ingen forbindelse med Home Assistant · viser sist bekreftede verdier (rev %1$d), skrivebeskyttet</string>
-    <string name="authority_offline_none">Ingen forbindelse med Home Assistant · ingen bekreftede verdier å vise ennå, så ingen prisgraf tegnes</string>
+    <string name="authority_offline">Ingen kontakt med Home Assistant. Viser de sist kjente verdiene; endringer kan gjøres når kontakten er tilbake.</string>
+    <string name="authority_offline_none">Ingen kontakt med Home Assistant ennå, så det er ingen verdier eller prisgraf å vise.</string>
     <string name="authority_no_settings">Home Assistant har ingen innstillinger for denne laderen ennå</string>
     <string name="value_not_set">Ikke angitt</string>
   <string name="authority_incomplete">Home Assistants innstillinger er ufullstendige: %1$s</string>

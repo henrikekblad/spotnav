@@ -223,8 +223,8 @@
   <string name="market_info_tax_only">API-prisen er spotprisen uden moms, afgifter og gebyrer. Foreslået 2026-værdi for dette område: %1$s %2$s/kWh elafgift. Ingen nettarif foreslås – tjek din netaftale. Moms lægges sidst på hele beløbet.</string>
   <string name="market_info_grid_only">API-prisen er spotprisen uden moms, afgifter og gebyrer. Foreslået 2026-værdi for dette område: %1$s %2$s/kWh nettarif. Ingen elafgift foreslås – tjek lokale regler. Moms lægges sidst på hele beløbet.</string>
   <string name="market_info_neither">API-prisen er spotprisen uden moms, afgifter og gebyrer. Der offentliggøres ingen forslag til elafgift eller nettarif for dette område – indtast dine egne værdier, de bevares som dine. Moms lægges sidst på hele beløbet.</string>
-    <string name="authority_offline">Ingen forbindelse til Home Assistant · viser senest bekræftede værdier (rev %1$d), skrivebeskyttet</string>
-    <string name="authority_offline_none">Ingen forbindelse til Home Assistant · ingen bekræftede værdier at vise endnu, så ingen prisgraf tegnes</string>
+    <string name="authority_offline">Ingen kontakt med Home Assistant. Viser de senest kendte værdier; ændringer kan foretages, når kontakten er tilbage.</string>
+    <string name="authority_offline_none">Ingen kontakt med Home Assistant endnu, så der er ingen værdier eller prisgraf at vise.</string>
     <string name="authority_no_settings">Home Assistant har endnu ingen indstillinger for denne oplader</string>
     <string name="value_not_set">Ikke angivet</string>
   <string name="authority_incomplete">Home Assistants indstillinger er ufuldstændige: %1$s</string>

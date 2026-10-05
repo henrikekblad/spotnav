@@ -234,8 +234,8 @@
   <string name="market_info_tax_only">The API price is the spot price without VAT, taxes or fees. Suggested 2026 value for this area: %1$s %2$s/kWh electricity tax. No grid fee is suggested – check your grid agreement. VAT is applied last to the entire amount.</string>
   <string name="market_info_grid_only">The API price is the spot price without VAT, taxes or fees. Suggested 2026 value for this area: %1$s %2$s/kWh grid fee. No electricity tax is suggested – check local rules. VAT is applied last to the entire amount.</string>
   <string name="market_info_neither">The API price is the spot price without VAT, taxes or fees. No suggested electricity tax or grid fee is published for this area – enter your own values, which are kept as yours. VAT is applied last to the entire amount.</string>
-    <string name="authority_offline">No connection to Home Assistant · showing the last confirmed values (rev %1$d), read-only</string>
-    <string name="authority_offline_none">No connection to Home Assistant · no confirmed values to show yet, so no price graph is drawn</string>
+    <string name="authority_offline">No contact with Home Assistant. Showing the last known values; changes can be made once it is back.</string>
+    <string name="authority_offline_none">No contact with Home Assistant yet, so there are no values or price graph to show.</string>
     <string name="authority_no_settings">Home Assistant has no settings for this charger yet</string>
     <string name="value_not_set">Not set</string>
   <string name="authority_incomplete">Home Assistant\'s settings are incomplete: %1$s</string>

@@ -223,8 +223,8 @@
   <string name="market_info_tax_only">API-priset är spotpriset utan moms, skatter och avgifter. Föreslaget 2026-värde för det här området: %1$s %2$s/kWh elskatt. Ingen nätavgift föreslås – kontrollera ditt nätavtal. Moms läggs sist på hela beloppet.</string>
   <string name="market_info_grid_only">API-priset är spotpriset utan moms, skatter och avgifter. Föreslaget 2026-värde för det här området: %1$s %2$s/kWh nätavgift. Ingen elskatt föreslås – kontrollera lokala regler. Moms läggs sist på hela beloppet.</string>
   <string name="market_info_neither">API-priset är spotpriset utan moms, skatter och avgifter. Inget förslag på elskatt eller nätavgift publiceras för det här området – ange egna värden, de behålls som dina. Moms läggs sist på hela beloppet.</string>
-    <string name="authority_offline">Ingen anslutning till Home Assistant · visar senast bekräftade värden (rev %1$d) i skrivskyddat läge</string>
-    <string name="authority_offline_none">Ingen anslutning till Home Assistant · inga bekräftade värden att visa ännu, så ingen prisgraf ritas</string>
+    <string name="authority_offline">Ingen kontakt med Home Assistant. Visar de senast kända värdena; ändringar går att göra när kontakten är tillbaka.</string>
+    <string name="authority_offline_none">Ingen kontakt med Home Assistant än, så det finns inga värden eller någon prisgraf att visa.</string>
     <string name="authority_no_settings">Home Assistant har inga inställningar för den här laddaren ännu</string>
     <string name="value_not_set">Inte angivet</string>
   <string name="authority_incomplete">Home Assistants inställningar är ofullständiga: %1$s</string>

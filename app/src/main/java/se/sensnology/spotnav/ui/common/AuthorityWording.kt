@@ -60,7 +60,7 @@ internal fun ViewScope.authorityStateNote(state: VisibleAuthority): String? = wh
     is VisibleAuthority.ReadOnlyOffline -> if (state.answeredWithoutRecord) {
         t(R.string.authority_no_settings)
     } else {
-        state.lastConfirmed?.let { t(R.string.authority_offline, it.revision) }
+        state.lastConfirmed?.let { t(R.string.authority_offline) }
             ?: t(R.string.authority_offline_none)
     }
 }
