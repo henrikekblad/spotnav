@@ -3,4 +3,5 @@
 - En start uten tilkoblet bil sier det
 - Statuslinjen nevner en lader som lader videre etter stopp
 - Sier hvor langt ladingen rekker når avreisen kommer for tidlig
+- Paring med bare IP-adressen
 - Krever SpotNav for Home Assistant 1.11

@@ -3,4 +3,5 @@
 - A Start with no car plugged in says so
 - The status line names a charger that keeps charging after a stop
 - Says how far the charge gets when the departure comes too soon
+- Pairing with just the IP address
 - Needs SpotNav for Home Assistant 1.11

@@ -1,6 +1,7 @@
 - Aloita ja Pysäytä keskeyttävät automaattisen latauksen, kunnes auto irrotetaan (Aloita: kunnes se on täynnä)
 - Tilarivi kertoo sen: "Pysäytetty käsin – kunnes auto irrotetaan.", "Ladataan käsin – kunnes auto on täynnä tai irrotetaan."
 - Käynnistys ilman kytkettyä autoa kertoo sen
-- Tilarivi mainitsee laturin, joka jatkaa lataamista pysäytyksen jälkeen
+- Tilarivi mainitsee laturin, joka lataa pysäytyksen jälkeen
 - Kertoo, kuinka pitkälle lataus ehtii, kun lähtö tulee liian pian
+- Yhdistäminen pelkällä IP-osoitteella
 - Vaatii SpotNav for Home Assistant 1.11:n

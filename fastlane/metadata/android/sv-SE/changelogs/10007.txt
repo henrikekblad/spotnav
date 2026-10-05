@@ -3,4 +3,5 @@
 - En start utan inkopplad bil säger det
 - Statusraden nämner en laddare som laddar vidare efter stopp
 - Säger hur långt laddningen hinner när avresan kommer för tidigt
+- Parkoppling med bara IP-adressen
 - Kräver SpotNav för Home Assistant 1.11
