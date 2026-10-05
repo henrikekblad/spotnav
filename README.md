@@ -5,8 +5,10 @@
 SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas the SpotNav relay publishes, and is available in English, Swedish, Norwegian, Danish and Finnish.
 
 <p align="center">
-  <img src="assets/widget_en.jpg" alt="SpotNav widget showing today's and tomorrow's electricity prices" width="720">
+  <img src="docs/images/app-main.png" alt="SpotNav main screen paired with Home Assistant: charger status, vehicle and planning" width="360">
 </p>
+
+A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 
 ## Features
 
@@ -17,12 +19,6 @@ SpotNav is an Android home-screen widget and EV charging planner. It shows today
 - EV charging planner: charging current, phases, energy, vehicle consumption, departure time and up to eight charging periods, with the chosen periods shaded in the widget.
 - Optional charging control through Home Assistant.
 - Resizable widget, local cache for network failures and automatic checks for tomorrow's prices.
-
-<p align="center">
-  <img src="assets/table_en.jpg" alt="Colour-coded electricity price table" width="360">
-  &nbsp;&nbsp;
-  <img src="assets/settings_en.jpg" alt="Price-area, tax and display settings" width="360">
-</p>
 
 ## Get it
 
@@ -35,10 +31,6 @@ SpotNav is an Android home-screen widget and EV charging planner. It shows today
 Choose single-phase or three-phase charging (6–16 A), consumption, energy to add, up to eight charging periods and optionally a departure time. The app picks the cheapest combination of quarter-hours and shows cost and range.
 
 If the charging window runs past the published prices, the missing intervals are estimated from the latest published day's prices at the same time of day, and the plan is marked as estimated. Calculations assume ideal power at 230 V single phase or 400 V three phase; charging losses and the vehicle's charging curve are not included.
-
-<p align="center">
-  <img src="assets/charge_en.jpg" alt="EV charging planner" width="360">
-</p>
 
 ## Home Assistant pairing
 
