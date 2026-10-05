@@ -4,14 +4,16 @@ Copied unchanged from `spotnav-relay` (`web/src/domain/__tests__/fixtures/relay/
 `ce6b257`, 2026-10-03). They are not hand-written: the relay's own Go writer produces them
 (`internal/format/web_fixtures_test.go`, which fails when the committed files drift from what the
 writer produces). Re-sync by copying the directory again after the relay test has been run; never
-edit a file here by hand. `RelayV2Fixtures` in the unit tests reads them.
+edit a file here by hand. One exception, until the relay's own fixtures carry it: `areas-v2.json` gives `GB-C` the
+`publication` field (`16:00` `Europe/London`) as the relay documents it; `PT` and `SE4` are left without it,
+so both a list with and one without the field are read. A re-sync replaces this edit. `RelayV2Fixtures` in the unit tests reads them.
 
 The scenario is a London evening, 2026-10-04 23:30 BST, which is already 00:30 on the 5th in Paris
 and Madrid, so "today" in London and Lisbon needs two market-day files:
 
 | file | what it is |
 |---|---|
-| `areas-v2.json` | `GB-C` (no `eic`, `market_tz: Europe/Paris`, `included: [vat, tax, grid_fee]`, Octopus source), `PT` (`tz: Europe/Lisbon`, `market_tz: Europe/Madrid`), `SE4` (one calendar) |
+| `areas-v2.json` | `GB-C` (no `eic`, `market_tz: Europe/Paris`, `included: [vat, tax, grid_fee]`, `publication` 16:00 London, Octopus source), `PT` (`tz: Europe/Lisbon`, `market_tz: Europe/Madrid`), `SE4` (one calendar) |
 | `areas-v1.json` | the same relay's frozen v1 list: `PT` (still `tz: Europe/Madrid`) and `SE4`, no GB |
 | `index-v2.json` / `index-v1.json` | the market days 2026-10-04 and 2026-10-05; `res` 30 for `GB-C` |
 | `GB-C_2026-10-04.json`, `GB-C_2026-10-05.json` | 48 half-hours each, a Paris day (23:00–23:00 London), `fx.GBP` 0.8712 |

@@ -23,7 +23,9 @@ data class PriceMarket(
     /** The fiscal parts the published price already contains: locked as included, never added. */
     val included: Set<IncludedPart> = emptySet(),
     /** Where the prices come from (v2), shown under the area choice; `null` from a v1 list. */
-    val source: AreaSource? = null
+    val source: AreaSource? = null,
+    /** When tomorrow's prices are expected (v2's `publication`); 13:00 Brussels when none is stated. */
+    val publication: AreaPublication = AreaPublication.DEFAULT
 ) {
     /** The zone this area's days are rendered in. */
     val zoneId: ZoneId get() = ZoneId.of(tz)
@@ -77,7 +79,8 @@ data class PriceMarket(
             suggestedGridFee = area.suggestedGridFee,
             marketTz = area.marketTz,
             included = area.included,
-            source = area.source
+            source = area.source,
+            publication = area.publication
         )
 
         /** The country code of the Great Britain regions (Octopus Agile). */

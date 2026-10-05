@@ -1,10 +1,15 @@
 package se.sensnology.spotnav.testing
 
+import org.json.JSONArray
+import org.json.JSONObject
 import se.sensnology.spotnav.prices.AreaCatalogue
+import se.sensnology.spotnav.prices.AreaPublication
+import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.HttpRelayTransport
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.RelayTransport
 import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Fixtures for the relay-era price tests: the wire documents, and the areas they describe, built
@@ -20,11 +25,14 @@ object RelayFixtures {
         countries: List<String> = listOf(id.take(2)),
         vatPercent: Double? = 25.0,
         suggestedTax: Double? = null,
-        suggestedGridFee: Double? = null
+        suggestedGridFee: Double? = null,
+        marketTz: String = tz,
+        publication: AreaPublication = AreaPublication.DEFAULT
     ) = PriceMarket(
         id = id, countries = countries, name = "$id name", tz = tz, currency = currency,
         majorUnit = majorUnit, minorUnit = minorUnit,
-        vatPercent = vatPercent, suggestedTax = suggestedTax, suggestedGridFee = suggestedGridFee
+        vatPercent = vatPercent, suggestedTax = suggestedTax, suggestedGridFee = suggestedGridFee,
+        marketTz = marketTz, publication = publication
     )
 
     val se4 = area("SE4", "SEK", "kr", "öre", vatPercent = 25.0, suggestedTax = 36.0, suggestedGridFee = 30.0)
@@ -32,6 +40,18 @@ object RelayFixtures {
     val no4 = area("NO4", "NOK", "kr", "øre", tz = "Europe/Oslo", vatPercent = 0.0, suggestedTax = 7.13)
     val fi = area("FI", "EUR", "€", "cent", tz = "Europe/Helsinki", vatPercent = 25.5, suggestedTax = 2.325)
     val dk1 = area("DK1", "DKK", "kr", "øre", tz = "Europe/Copenhagen", vatPercent = 25.0, suggestedTax = 0.8)
+
+    /** Octopus Agile: shown in London, dated on the Paris calendar, published about 16:00 UK time. */
+    val gbC = area(
+        "GB-C", "GBP", "£", "p", tz = "Europe/London", countries = listOf("GB"), vatPercent = null,
+        marketTz = "Europe/Paris", publication = AreaPublication(LocalTime.of(16, 0), "Europe/London")
+    )
+
+    /** Spain's regulated PVPC, published about 20:15 Madrid time. */
+    val esPvpc = area(
+        "ES-PVPC", "EUR", "€", "cent", tz = "Europe/Madrid", countries = listOf("ES"), vatPercent = 21.0,
+        publication = AreaPublication(LocalTime.of(20, 15), "Europe/Madrid")
+    )
 
     /** A catalogue document in the relay's own shape, from [areas]. */
     fun areasBody(areas: List<PriceMarket>, generated: String = "2026-09-20T13:10:42+02:00"): String =
@@ -52,6 +72,39 @@ object RelayFixtures {
             }
             append("]}")
         }
+
+    /**
+     * A contract v2 list from [areas]: their `market_tz` and `source`, and `publication` for an area
+     * whose time is not the default; the default is left out, as an area that states none.
+     */
+    fun areasV2Body(areas: List<PriceMarket>, generated: String = "2026-10-05T20:22:35+02:00"): String {
+        val root = JSONObject().put("v", 2).put("generated", generated)
+        val list = JSONArray()
+        for (a in areas) {
+            val entry = JSONObject()
+                .put("id", a.id)
+                .put("countries", JSONArray(a.countries))
+                .put("name", a.name)
+                .put("tz", a.tz)
+                .put("currency", a.currency)
+                .put("major_unit", a.majorUnit)
+                .put("minor_unit", a.minorUnit)
+            if (a.marketTz != a.tz) entry.put("market_tz", a.marketTz)
+            a.vatPercent?.let { entry.put("vat_percent", it) }
+            a.suggestedTax?.let { entry.put("suggested_tax", it) }
+            a.suggestedGridFee?.let { entry.put("suggested_grid_fee", it) }
+            if (a.publication != AreaPublication.DEFAULT) {
+                entry.put(
+                    "publication",
+                    JSONObject().put("time", a.publication.time.toString()).put("tz", a.publication.tz)
+                )
+            }
+            val source = a.source ?: AreaSource("${a.id} source", "https://example.org/${a.id}")
+            entry.put("source", JSONObject().put("name", source.name).put("url", source.url))
+            list.put(entry)
+        }
+        return root.put("areas", list).toString()
+    }
 
     /** An index listing [days] for [areaIds], with an overridable version. */
     fun indexBody(

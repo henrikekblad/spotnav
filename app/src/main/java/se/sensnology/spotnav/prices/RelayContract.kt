@@ -5,8 +5,12 @@ import org.json.JSONObject
 import se.sensnology.spotnav.app.strictPositiveInt
 import se.sensnology.spotnav.app.strictText
 import java.net.URI
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 /**
@@ -29,6 +33,26 @@ enum class IncludedPart(val wire: String) {
 /** Where an area's prices come from, shown beside the area choice as attribution. */
 data class AreaSource(val name: String, val url: String)
 
+/**
+ * When an area's prices for tomorrow are expected (contract v2's `publication`): a wall-clock [time]
+ * in the zone [tz]. ENTSO-E areas publish about 13:00 Brussels, Octopus Agile about 16:00 UK time and
+ * Spain's PVPC about 20:15 Madrid time. An area that states none is expected at [DEFAULT].
+ */
+data class AreaPublication(val time: LocalTime, val tz: String) {
+    val zoneId: ZoneId get() = ZoneId.of(tz)
+
+    /**
+     * The expected instant on [day], built in [tz] before it becomes an instant, so a clock change
+     * keeps the wall-clock time.
+     */
+    fun on(day: LocalDate): Instant = ZonedDateTime.of(day, time, zoneId).toInstant()
+
+    companion object {
+        /** The ENTSO-E day-ahead publication, and what a client assumes when an area states none. */
+        val DEFAULT = AreaPublication(LocalTime.of(13, 0), "Europe/Brussels")
+    }
+}
+
 internal data class RelayArea(
     val id: String,
     /** The bidding zone's EIC; `null` for an area that has none (a Great Britain region, v2 only). */
@@ -49,7 +73,9 @@ internal data class RelayArea(
     /** What the published price already contains; those parts are locked, never added. */
     val included: Set<IncludedPart> = emptySet(),
     /** The v2 list's attribution; `null` from a v1 list, which states none. */
-    val source: AreaSource? = null
+    val source: AreaSource? = null,
+    /** When tomorrow's prices are expected; the default from a v1 list or an area that states none. */
+    val publication: AreaPublication = AreaPublication.DEFAULT
 ) {
     /** The zone, or `null` if this runtime cannot construct what the relay named. */
     val zoneId: ZoneId? get() = runCatching { ZoneId.of(tz) }.getOrNull()
@@ -136,6 +162,7 @@ internal object RelayAreasParser {
         var marketTz = tz
         var included = emptySet<IncludedPart>()
         var source: AreaSource? = null
+        var publication = AreaPublication.DEFAULT
         if (version == RelayContractVersion.V2) {
             if (entry.has("market_tz")) {
                 marketTz = entry.strictText("market_tz") ?: return null
@@ -143,6 +170,7 @@ internal object RelayAreasParser {
             }
             included = included(entry) ?: return null
             source = source(entry.opt("source")) ?: return null
+            publication = publication(entry.opt("publication"))
         }
 
         val countries = entry.optJSONArray("countries") ?: return null
@@ -166,8 +194,26 @@ internal object RelayAreasParser {
             suggestedGridFee = (gridFee as? Fiscal.Num)?.value,
             marketTz = marketTz,
             included = included,
-            source = source
+            source = source,
+            publication = publication
         )
+    }
+
+    private val PUBLICATION_TIME = Regex("""([01]\d|2[0-3]):[0-5]\d""")
+
+    /**
+     * `publication`: `{ "time": "HH:MM", "tz": "<IANA zone>" }`. Unlike the other v2 properties, one
+     * this client cannot read never skips the area: it only says when to look, and the default
+     * (13:00 Brussels) is still a safe answer, because a plan treats an overdue publication as one that
+     * may arrive at any moment. Extra keys inside it are ignored.
+     */
+    private fun publication(raw: Any?): AreaPublication {
+        val json = raw as? JSONObject ?: return AreaPublication.DEFAULT
+        val time = (json.opt("time") as? String)?.takeIf { PUBLICATION_TIME.matches(it) }
+            ?: return AreaPublication.DEFAULT
+        val tz = json.strictText("tz") ?: return AreaPublication.DEFAULT
+        if (runCatching { ZoneId.of(tz) }.isFailure) return AreaPublication.DEFAULT
+        return AreaPublication(LocalTime.parse(time), tz)
     }
 
     /**
