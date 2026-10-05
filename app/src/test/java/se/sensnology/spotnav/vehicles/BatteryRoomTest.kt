@@ -9,37 +9,74 @@ import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.testing.HaFixtures
 
 /**
- * The battery's room as Home Assistant states it (`soc.room_kwh`): the kWh slider's top, and where the
- * note that the car ends the charge itself appears (the card's `energySliderMaximum`/`energyAtRoom`).
+ * The battery's room as Home Assistant states it (`soc.room_kwh`): the kWh slider's top past it, its
+ * "full" mark and its last step, Fill (the card's `energyFillTop`/`energySliderMaximum`).
  */
 class BatteryRoomTest {
     private val max = VehicleEnergy.ENERGY_SLIDER_MAX_PROGRESS
 
-    @Test fun theSliderTopsOutAtTheRoomRoundedUpToHalfAKilowattHour() {
-        // 3.44 kWh is 3.5 kWh on the slider: progress (3.5 - 1) / 0.5 = 5.
-        assertEquals(5, BatteryRoom.energySliderMaxProgress(3.44, 0))
-        assertEquals(3.5, VehicleEnergy.energyKwhOfProgress(5), 1e-9)
-        assertEquals(5, BatteryRoom.energySliderMaxProgress(3.5, 0))
-        // Never below the slider's first step, never above its ordinary top.
-        assertEquals(0, BatteryRoom.energySliderMaxProgress(0.0, 0))
-        assertEquals(max, BatteryRoom.energySliderMaxProgress(250.0, 0))
+    private fun facts(room: Double?, capacity: Double? = 77.0, limit: Double? = 100.0, efficiency: Double? = 0.9) =
+        BatteryRoom.FillFacts(roomKwh = room, capacityKwh = capacity, vehicleMaxPercent = limit, efficiency = efficiency)
+
+    @Test fun theTopIsTwiceTheRoomAtLeastThirtyKilowattHoursRoundedUpToHalfAKilowattHour() {
+        assertEquals(30.0, BatteryRoom.fillTopKwh(facts(9.5))!!, 1e-9)
+        assertEquals(40.5, BatteryRoom.fillTopKwh(facts(20.1))!!, 1e-9)
     }
 
-    @Test fun withoutARoomTheOrdinaryScaleStays() {
+    @Test fun theTopNeverPassesWhatTheBatteryHoldsToTheCarsOwnLimit() {
+        // 77 kWh x 100 % / 0.9 = 85.6 kWh; to a 50 % limit, 42.8 kWh.
+        assertEquals(80.0, BatteryRoom.fillTopKwh(facts(40.0))!!, 1e-9)
+        assertEquals(86.0, BatteryRoom.fillTopKwh(facts(45.0))!!, 1e-9)
+        assertEquals(43.0, BatteryRoom.fillTopKwh(facts(30.0, limit = 50.0))!!, 1e-9)
+    }
+
+    @Test fun withoutABatterySizeOnlyTheOrdinaryTopBoundsItAndWithoutARoomThereIsNone() {
+        assertEquals(100.0, BatteryRoom.fillTopKwh(facts(60.0, capacity = null))!!, 1e-9)
+        assertEquals(100.0, BatteryRoom.fillTopKwh(facts(60.0, efficiency = null))!!, 1e-9)
+        assertNull(BatteryRoom.fillTopKwh(facts(null)))
+        assertNull(BatteryRoom.fillTopKwh(facts(Double.NaN)))
+    }
+
+    @Test fun theSliderEndsAtTheTopAndAStoredAmountAboveItKeepsItsPlace() {
+        // 30 kWh is progress (30 - 1) / 0.5 = 58.
+        assertEquals(58, BatteryRoom.energySliderMaxProgress(30.0, 0))
+        assertEquals(30.0, VehicleEnergy.energyKwhOfProgress(58), 1e-9)
+        val stored = VehicleEnergy.energyProgressNearest(50.0)
+        assertEquals(stored, BatteryRoom.energySliderMaxProgress(30.0, stored))
         assertEquals(max, BatteryRoom.energySliderMaxProgress(null, 0))
-        assertEquals(max, BatteryRoom.energySliderMaxProgress(Double.NaN, 3))
+        assertEquals(max, BatteryRoom.energySliderMaxProgress(null, 3))
     }
 
-    @Test fun aStoredAmountAboveTheRoomKeepsItsPlace() {
-        val stored = VehicleEnergy.energyProgressNearest(43.5)
-        assertEquals(stored, BatteryRoom.energySliderMaxProgress(3.44, stored))
+    @Test fun theFullMarkSitsAtTheRoomAlongTheTrack() {
+        // 9.5 kWh on a 1-30 kWh track: (9.5 - 1) / (30 - 1).
+        assertEquals((9.5 - 1.0) / (30.0 - 1.0), BatteryRoom.markFraction(9.5, 58)!!.toDouble(), 1e-6)
+        assertEquals(0.0, BatteryRoom.markFraction(0.4, 58)!!.toDouble(), 0.0)
+        assertEquals(1.0, BatteryRoom.markFraction(80.0, 58)!!.toDouble(), 0.0)
+        assertNull(BatteryRoom.markFraction(null, 58))
     }
 
-    @Test fun theNoteShowsForAnAmountAtOrAboveTheRoomOnly() {
-        assertTrue(BatteryRoom.energyAtRoom(3.5, 3.44))
-        assertTrue(BatteryRoom.energyAtRoom(43.5, 3.44))
-        assertFalse(BatteryRoom.energyAtRoom(3.0, 3.44))
-        assertFalse(BatteryRoom.energyAtRoom(43.5, null))
+    @Test fun theLastStepIsFillOnlyAtTheOrdinaryTopAndOnlyWhereHomeAssistantHasTheChoice() {
+        assertTrue(BatteryRoom.isFillStep(progress = 58, maxProgress = 58, topKwh = 30.0, supported = true))
+        assertFalse(BatteryRoom.isFillStep(progress = 57, maxProgress = 58, topKwh = 30.0, supported = true))
+        // A stored amount drawn above the top makes the last step that amount, not Fill.
+        assertFalse(BatteryRoom.isFillStep(progress = 98, maxProgress = 98, topKwh = 30.0, supported = true))
+        // An older Home Assistant, or no known room.
+        assertFalse(BatteryRoom.isFillStep(progress = 58, maxProgress = 58, topKwh = 30.0, supported = false))
+        assertFalse(BatteryRoom.isFillStep(progress = max, maxProgress = max, topKwh = null, supported = true))
+    }
+
+    @Test fun theCarsOwnLimitIsNamedOnlyBelowAHundredPercent() {
+        assertEquals(90, BatteryRoom.limitNamed(90.0))
+        assertEquals(80, BatteryRoom.limitNamed(80.6))
+        assertNull(BatteryRoom.limitNamed(100.0))
+        assertNull(BatteryRoom.limitNamed(null))
+    }
+
+    @Test fun theRoomIsWrittenAsTheCardWritesIt() {
+        assertEquals("9.5", BatteryRoom.kwhFigure(9.47, java.util.Locale.ENGLISH))
+        assertEquals("7,5", BatteryRoom.kwhFigure(7.5, java.util.Locale.forLanguageTag("sv-SE")))
+        assertEquals("12", BatteryRoom.kwhFigure(12.0, java.util.Locale.ENGLISH))
+        assertEquals("17.3", BatteryRoom.kwhFigure(17.25, java.util.Locale.ENGLISH))
     }
 
     @Test fun theNoteShowsForATargetAtOrAboveTheCarsOwnLimit() {
