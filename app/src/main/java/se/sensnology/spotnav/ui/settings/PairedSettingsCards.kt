@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.ui.settings
 
 import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
@@ -15,6 +16,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.SiteUpdate
@@ -27,8 +29,11 @@ import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.ha.dashboard.IdentificationSource
+import se.sensnology.spotnav.ha.dashboard.ReferencePicture
 import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
+import se.sensnology.spotnav.ha.settings.HaCameraChoice
 import se.sensnology.spotnav.ha.settings.HaIdentificationSettings
+import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.IdentifyMode
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
@@ -41,10 +46,12 @@ import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.CameraSetup
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 import se.sensnology.spotnav.vehicles.VehicleIdentification
+import java.time.ZoneId
 import java.util.Locale
 
 /**
@@ -97,8 +104,25 @@ internal class PairedSettingsCards(
     private var adoptedIdentification: HaIdentificationSettings? = null
     private var identificationNotice: String? = null
 
+    // The charger's camera: its webhook actions (the screen owns the connection; a picture comes back
+    // decoded at most the given size), what a frame or a picture write answered, and the reference
+    // thumbnails fetched so far (a few, by car, kind and when the picture was taken).
+    private var cameraCall: (CameraCommands.Request, Int?, (CameraCommands.Outcome, Bitmap?) -> Unit) -> Unit =
+        { _, _, done -> done(CameraCommands.Outcome.Failed(null), null) }
+    private var adoptedCamera: HaCameraChoice? = null
+    private val adoptedReferences = mutableMapOf<String, List<ReferencePicture>>()
+    private val thumbnails = object : LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Bitmap>?): Boolean = size > MAX_THUMBNAILS
+    }
+    private val thumbnailWaiters = mutableMapOf<String, MutableList<(Bitmap?) -> Unit>>()
+
     init {
         parent.addView(container)
+    }
+
+    /** Where the camera's actions are carried out (the screen owns the connection and decodes pictures off the main thread). */
+    fun attachCamera(call: (CameraCommands.Request, Int?, (CameraCommands.Outcome, Bitmap?) -> Unit) -> Unit) {
+        cameraCall = call
     }
 
     /** Where the two writes are carried out (the screen owns the connection). */
@@ -134,6 +158,8 @@ internal class PairedSettingsCards(
             adoptedSite = null
             adoptedPriority = null
             adoptedIdentification = null
+            adoptedCamera = null
+            adoptedReferences.clear()
         }
         if (fresh != null) dashboard = fresh
         unreachable = fresh == null && dashboard == null
@@ -229,6 +255,7 @@ internal class PairedSettingsCards(
                 }
             }
             vehicle.sources?.let { addSources(card.body, it) }
+            addReference(card.body, dash, vehicle)
             vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
         }
     }
@@ -405,9 +432,7 @@ internal class PairedSettingsCards(
      * ordinary settings write; while the record cannot be written they are shown read-only.
      */
     private fun addIdentification(body: LinearLayout, dash: Dashboard) {
-        val record = dash.settings?.let { record ->
-            adoptedIdentification?.let { record.copy(identification = it) } ?: record
-        }
+        val record = currentRecord(dash)
         val section = VehicleIdentification.section(dash, record) ?: return
         val writable = identificationWritable && !identificationWriting
         val allIds = section.cars.map { it.vehicleId }
@@ -443,8 +468,106 @@ internal class PairedSettingsCards(
                     write(IdentifyMode.entries[index], stored?.vehicleIds, done)
                 }
             }) else null)
+        addCamera(body, dash, record)
         if (!identificationWritable) body.addView(muted(t(R.string.settings_paired_read_only), top = 4))
         identificationNotice?.let { body.addView(muted(it, top = 4)) }
+    }
+
+    /** The record as shown: the dashboard's, with what a write here answered until the next dashboard. */
+    private fun currentRecord(dash: Dashboard): HaPlanningSettings? = dash.settings?.let { record ->
+        val identified = adoptedIdentification?.let { record.copy(identification = it) } ?: record
+        adoptedCamera?.let { identified.copy(camera = it) } ?: identified
+    }
+
+    // --- The camera -------------------------------------------------------------------------------
+
+    /**
+     * The charger's camera under its identification, where Home Assistant offers one: the camera and its
+     * AI task as chosen in Home Assistant (read-only here), and with a camera chosen its frame, which
+     * opens the frame editor and is saved through `save_camera_frame`.
+     */
+    private fun addCamera(body: LinearLayout, dash: Dashboard, record: HaPlanningSettings?) {
+        val section = CameraSetup.section(dash, record) ?: return
+        val chosen = section.chosen
+        readRow(body, t(R.string.camera_label), section.cameraName ?: t(R.string.camera_none),
+            help = if (chosen == null) t(R.string.camera_help) else null)
+        if (chosen == null) return
+        valueRow(body, t(R.string.camera_frame_label),
+            t(if (section.frameDrawn) R.string.camera_frame_drawn else R.string.camera_frame_whole)) {
+            openFrameEditor(chosen.frame, load = { done -> cameraCall(CameraCommands.Snapshot, PictureDecoding.SNAPSHOT_EDGE, done) }) { frame, done ->
+                cameraCall(CameraCommands.SaveFrame(frame), null) { outcome, _ ->
+                    if (outcome is CameraCommands.Outcome.Framed) {
+                        adoptedCamera = HaCameraChoice(outcome.camera)
+                        done(null)
+                        repaint()
+                    } else {
+                        done(cameraFailureText((outcome as? CameraCommands.Outcome.Failed)?.code))
+                    }
+                }
+            }
+        }
+        readRow(body, t(R.string.camera_ai_task_label), section.aiTaskName ?: t(R.string.camera_ai_task_default),
+            help = t(R.string.camera_help))
+    }
+
+    /**
+     * A car's reference pictures, with a camera chosen and the car one of this charger's: the row (which
+     * pictures it has) opening the car's reference editor, and their thumbnails under it.
+     */
+    private fun addReference(body: LinearLayout, dash: Dashboard, vehicle: PairedOverview.VehicleCard) {
+        val listed = CameraSetup.references(dash, currentRecord(dash), vehicle.id) ?: return
+        val pictures = adoptedReferences[vehicle.id] ?: listed
+        if (vehicle.sources == null) body.addView(divider())
+        val carName = vehicle.name ?: t(R.string.vehicle_title)
+        valueRow(body, t(R.string.reference_label),
+            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }) {
+            openReferenceEditor(
+                carName, pictures,
+                thumbnail = { picture, done -> thumbnail(vehicle.id, picture, done) },
+                takenAt = { CameraSetup.takenAt(it, ZoneId.systemDefault(), AppLanguageSettings.locale(context)) }
+            ) { kind, done ->
+                val request = if (kind == null) CameraCommands.DeleteReference(vehicle.id, null) else CameraCommands.TakeReference(vehicle.id, kind)
+                cameraCall(request, null) { outcome, _ ->
+                    if (outcome is CameraCommands.Outcome.References) {
+                        adoptedReferences[outcome.vehicleId] = outcome.pictures
+                        done(null)
+                        repaint()
+                    } else {
+                        done(cameraFailureText((outcome as? CameraCommands.Outcome.Failed)?.code))
+                    }
+                }
+            }
+        }
+        if (pictures.isEmpty()) return
+        val row = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.END
+            setPadding(0, dp(4), 0, 0)
+        }
+        for (picture in pictures) {
+            val image = thumbnailView(picture.kind, 64)
+            row.addView(image)
+            thumbnail(vehicle.id, picture) { bitmap ->
+                if (bitmap != null) {
+                    image.setImageBitmap(bitmap)
+                    image.visibility = View.VISIBLE
+                }
+            }
+        }
+        body.addView(row)
+    }
+
+    /** A reference picture's thumbnail: fetched once, kept among the last few, and handed to everyone waiting for it. */
+    private fun thumbnail(vehicleId: String, picture: ReferencePicture, done: (Bitmap?) -> Unit) {
+        val key = "$vehicleId/${picture.kind.wire}/${picture.takenAt}"
+        thumbnails[key]?.let { done(it); return }
+        val waiting = thumbnailWaiters.getOrPut(key) { mutableListOf() }
+        waiting += done
+        if (waiting.size > 1) return
+        cameraCall(CameraCommands.Reference(vehicleId, picture.kind), PictureDecoding.THUMBNAIL_EDGE) { _, bitmap ->
+            bitmap?.let { thumbnails[key] = it }
+            thumbnailWaiters.remove(key).orEmpty().forEach { it(bitmap) }
+        }
     }
 
     // --- Site -----------------------------------------------------------------------------------
@@ -599,5 +722,8 @@ internal class PairedSettingsCards(
 
         /** Longer read-only values go under their label rather than beside it. */
         const val STACK_AFTER_CHARS = 18
+
+        /** How many reference thumbnails are kept (each at most 240 pixels a side). */
+        const val MAX_THUMBNAILS = 12
     }
 }

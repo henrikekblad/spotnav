@@ -33,6 +33,7 @@ import se.sensnology.spotnav.app.StoreAction
 import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
+import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.authority.CommitRoute
 import se.sensnology.spotnav.ha.authority.WriteSubject
 import se.sensnology.spotnav.ha.authority.HaPresentation
@@ -216,6 +217,15 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     }
                     is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
                     CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
+                }
+            }
+            // The camera's frame and the cars' reference pictures, through the charger's own actions;
+            // a picture is decoded off the main thread, and the cards read again after a write.
+            pairedCards.attachCamera { request, maxEdge, done ->
+                session.camera(request, decode = { picture -> maxEdge?.let { PictureDecoding.decode(picture, it) } }) { outcome, bitmap ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@camera
+                    done(outcome, bitmap)
+                    if (outcome is CameraCommands.Outcome.Framed || outcome is CameraCommands.Outcome.References) loadPaired()
                 }
             }
             notificationsCard?.attach(
