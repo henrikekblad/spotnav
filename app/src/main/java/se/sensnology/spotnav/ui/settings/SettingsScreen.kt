@@ -58,6 +58,7 @@ import se.sensnology.spotnav.ui.common.HEADER_CONTROL_GAP_DP
 import se.sensnology.spotnav.ui.common.authorityRefusalText
 import se.sensnology.spotnav.ui.common.authorityStateNote
 import se.sensnology.spotnav.ui.common.card
+import se.sensnology.spotnav.ui.common.chargerName
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.editOnOff
 import se.sensnology.spotnav.ui.common.settingRow
@@ -159,7 +160,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // A paired charger's vehicles, charger, site and solar come after the phone's own settings
         // and right before the Home Assistant card, in the order the Home Assistant card has them.
         // The page is an overview: each area that can be changed from here opens its own dialog.
-        val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content) }
+        val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it)) }
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration

@@ -395,8 +395,9 @@ def language_pass(lang: str, docs: bool) -> None:
             ("app-settings-price", exact(s["section_electricity_price"])),
             ("app-settings-widget", exact(s["section_widget"])),
             ("app-settings-vehicle", r"^Family car$"),
-            ("app-settings-charger", exact(s["section_charger"])),
-            ("app-settings-site", r"^Home$"),
+            # The charger and site cards name their subject after their kind ("Charger · …", "Site · Home").
+            ("app-settings-charger", "^" + re.escape(s["section_charger"]) + " · "),
+            ("app-settings-site", "^" + re.escape(s["site_default_name"]) + " · Home$"),
             ("app-settings-notifications", exact(s["notify_section"])),
             ("app-settings-home-assistant", exact(s["home_assistant"])),
         ]

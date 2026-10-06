@@ -176,3 +176,8 @@ internal object PairedOverview {
     /** The sources the solar dialog starts with: what the site shows as selected. */
     fun solarSelection(site: DashboardSite): Set<String> = site.solarForecastSelected.toSet()
 }
+
+/** A settings card's heading: its kind, and the name of what it is about when there is one ("Charger · HALO"). */
+internal object SettingsHeading {
+    fun named(kind: String, name: String?): String = name?.trim()?.takeIf { it.isNotEmpty() }?.let { "$kind · $it" } ?: kind
+}

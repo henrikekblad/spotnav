@@ -54,7 +54,12 @@ import java.util.Locale
  * Every value is a row; one the webhook lets the app change (a car's figures, the charger's priority
  * and identification, the site's solar settings) opens its own editor and writes that one value.
  */
-internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : ViewScope(scope) {
+internal class PairedSettingsCards(
+    scope: ViewScope,
+    parent: LinearLayout,
+    /** The charger these settings are for, by the name the app shows it under (its heading says so). */
+    private val chargerName: String? = null
+) : ViewScope(scope) {
     private val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private var dashboard: Dashboard? = null
     private var unreachable = false
@@ -347,7 +352,8 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
 
     private fun addChargerCard(dash: Dashboard) {
         val charger = PairedOverview.charger(dash)
-        val card = card(container, t(R.string.section_charger), R.drawable.ic_card_charger)
+        // Which charger, always: with several paired, the heading is what says so.
+        val card = card(container, SettingsHeading.named(t(R.string.section_charger), chargerName ?: dash.chargerName), R.drawable.ic_card_charger)
         if (charger.showsStartStop) {
             readRow(card.body, t(R.string.charger_start_stop_label),
                 t(if (charger.summary?.startStopName != null) R.string.setup_active else R.string.setup_missing))
@@ -461,8 +467,8 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             return
         }
         val summary = PairedOverview.site(site, dashboard?.summary?.site)
-        // The site's own name alone; "Site" only when it has none.
-        val card = card(container, summary.name ?: t(R.string.site_default_name), R.drawable.ic_site)
+        // "Site · its name"; "Site" alone when it has none.
+        val card = card(container, SettingsHeading.named(t(R.string.site_default_name), summary.name), R.drawable.ic_site)
         card.body.addView(muted(tq(R.plurals.site_applies, summary.chargers, summary.chargers), top = 8, bottom = 4))
         summary.setup?.let { setup ->
             setup.mainFuseA?.let { readRow(card.body, t(R.string.site_main_fuse_label), t(R.string.site_main_fuse_value, ampsText(it))) }
