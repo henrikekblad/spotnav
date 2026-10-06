@@ -334,7 +334,12 @@ internal data class Dashboard(
      * Which car is plugged in (`identification`, see [DashboardIdentification]): `null` when nothing is
      * being identified, from an older Home Assistant, or for a block this app cannot read.
      */
-    val identification: DashboardIdentification? = null
+    val identification: DashboardIdentification? = null,
+    /**
+     * Every detected car, whether or not it can charge here (`vehicle_choices`, by name): the cars the
+     * charger's `vehicle_ids` are ticked from. `null` from a Home Assistant that does not state it.
+     */
+    val vehicleChoices: List<DashboardVehicleRef>? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -427,8 +432,19 @@ internal data class Dashboard(
                     ?.let { it.opt("until") as? String }
                     ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() },
                 progress = DashboardProgress.parse(json),
-                identification = DashboardIdentification.parse(json.opt("identification"))
+                identification = DashboardIdentification.parse(json.opt("identification")),
+                vehicleChoices = vehicleChoices(json.opt("vehicle_choices"))
             )
+        }
+
+        /** `vehicle_choices`, read leniently: an entry without an id (or a repeated one) is skipped. */
+        private fun vehicleChoices(raw: Any?): List<DashboardVehicleRef>? {
+            val list = raw as? JSONArray ?: return null
+            return (0 until list.length()).mapNotNull { index ->
+                val row = list.opt(index) as? JSONObject ?: return@mapNotNull null
+                val id = (row.opt("id") as? String)?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+                DashboardVehicleRef(id, (row.opt("name") as? String)?.takeIf { it.isNotBlank() } ?: id)
+            }.distinctBy { it.id }
         }
 
         /**

@@ -2,6 +2,7 @@ package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
+import se.sensnology.spotnav.ha.dashboard.DashboardVehicleRef
 import se.sensnology.spotnav.ha.dashboard.IdentificationSource
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.IdentifyMode
@@ -126,15 +127,16 @@ internal object VehicleIdentification {
     data class Section(val mode: IdentifyMode, val cars: List<Car>)
 
     /**
-     * The section, when Home Assistant states the settings and more than one car is detected (or the
-     * cars here are already limited). The cars are the dashboard's own, as the Home Assistant card lists
-     * them.
+     * The section, when Home Assistant states the settings and there are at least two cars to choose
+     * from. The cars are every detected car (`vehicle_choices`), so one left out can be ticked again; an
+     * older Home Assistant without that list gives the charger's own cars.
      */
     fun section(dashboard: Dashboard, record: HaPlanningSettings?): Section? {
         val stated = record?.identification ?: return null
-        if (dashboard.vehicles.size < 2 && stated.vehicleIds == null) return null
+        val cars = dashboard.vehicleChoices ?: dashboard.vehicles.map { DashboardVehicleRef(it.id, it.name) }
+        if (cars.size < 2) return null
         val ids = stated.vehicleIds
-        return Section(stated.mode, dashboard.vehicles.map { Car(it.id, it.name, ids == null || it.id in ids) })
+        return Section(stated.mode, cars.map { Car(it.id, it.name, ids == null || it.id in ids) })
     }
 
     /**
