@@ -124,10 +124,11 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         // The marks' words: centred under their ticks, on a second level when they would touch.
         val nowWord = bandLabel().apply { text = t(R.string.target_mark_now); visibility = View.INVISIBLE }
         val limitWord = bandLabel().apply { text = t(R.string.target_mark_limit); visibility = View.INVISIBLE }
-        val markRow = FrameLayout(context)
+        val markRow = FrameLayout(context).apply { visibility = View.GONE }
         markRow.addView(nowWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         markRow.addView(limitWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-        container.addView(markRow)
+        // Right under the track, where the band's numbers go for a standalone charger.
+        container.addView(markRow, container.indexOfChild(bandRow))
         var nowAt: Float? = null
         var limitAt: Float? = null
         val placeMarks = {
@@ -143,21 +144,28 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 limitAt?.let { SliderMarks.Mark("limit", SliderTicks.centerAtFraction(it, rail, mirrored), limitWord.width.toFloat()) }
             )
             val placed = SliderMarks.place(marks, markRow.width.toFloat(), dp(6).toFloat()).associateBy { it.key }
+            // One line per level: a word on the second level sits one line lower, and the row is as tall as
+            // its lowest word.
+            val line = maxOf(nowWord.height, limitWord.height).takeIf { it > 0 } ?: nowWord.lineHeight
             for ((key, word) in words) {
                 val at = placed[key]
                 word.visibility = if (at == null) View.INVISIBLE else View.VISIBLE
                 if (at != null) {
                     word.x = at.left
-                    val params = word.layoutParams as FrameLayout.LayoutParams
-                    val top = at.level * word.height
-                    if (params.topMargin != top) { params.topMargin = top; word.layoutParams = params }
+                    word.translationY = (at.level * line).toFloat()
                 }
             }
-            markRow.visibility = if (marks.isEmpty()) View.GONE else View.VISIBLE
+            val levels = (placed.values.maxOfOrNull { it.level } ?: 0) + 1
+            if (markRow.minimumHeight != levels * line) {
+                markRow.minimumHeight = levels * line
+                // Asked for while a layout pass may be running: measured again on the next one.
+                markRow.post { markRow.requestLayout() }
+            }
         }
         onLaidOut(targetSoc) { placeMarks() }
         onLaidOut(nowWord) { placeMarks() }
         onLaidOut(limitWord) { placeMarks() }
+        onLaidOut(markRow) { placeMarks() }
         var storedTargetSocPercent: Int? = profile?.targetSocPercent
         // A paired charger's own words around the slider: what is known now is on the track as marks
         // (above); under it the verdict ("Ingen laddning behövs nu" / "Laddar till bilens gräns, Y %")
@@ -190,6 +198,8 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 nowWord.text = t(if (facts.estimated) R.string.target_mark_now_estimated else R.string.target_mark_now)
                 limitAt = facts.limit?.let { (TargetNeed.chargeCeiling(it) / 100.0).toFloat().coerceIn(0f, 1f) }
                 placeMarks()
+                // Once the words have their sizes for this text, place them again.
+                markRow.post { placeMarks() }
                 val verdict = when (PairedTarget.verdict(facts, target)) {
                     TargetVerdict.NO_NEED -> t(R.string.paired_target_no_need)
                     TargetVerdict.TO_LIMIT -> t(
@@ -223,6 +233,10 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
             refreshValueLabel = { refreshLabel() },
             valueLabel = targetValue,
             applyPaired = { soc, vehicles, picked ->
+                // A paired charger's track has no band, so no row of band numbers under it either.
+                bandRow.visibility = if (soc != null) View.GONE else View.VISIBLE
+                // The marks' words are a paired charger's alone.
+                markRow.visibility = if (soc != null) View.VISIBLE else View.GONE
                 pairedSoc = soc
                 pairedVehicles = vehicles
                 pairedPicked = picked
