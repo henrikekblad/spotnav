@@ -151,10 +151,14 @@ internal class ChargerDashboardController(
             return
         }
         chargerCard.identification.setBusy(true)
-        session.identifyVehicle(vehicleId) { outcome, read ->
+        session.identifyVehicle(vehicleId, admit = { listener.admitDashboard() }) { outcome, read ->
             chargerCard.identification.setBusy(false)
             when (outcome) {
-                is IdentifyVehicle.Outcome.Identified -> read?.let { applyDashboard(it.result, it.detectedPhases) }
+                is IdentifyVehicle.Outcome.Identified -> read?.let {
+                    applyDashboard(it.result, it.detectedPhases)
+                    // The same read is the authority's newest record: Home Assistant wrote the settings.
+                    if (it.result.isSuccess) listener.onResult(it.admission, it.result)
+                }
                 IdentifyVehicle.Outcome.NotPluggedIn -> listener.onVehiclePicked(vehicleId)
                 IdentifyVehicle.Outcome.NotACandidate ->
                     Toast.makeText(context, t(R.string.identify_not_here), Toast.LENGTH_LONG).show()

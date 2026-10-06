@@ -242,12 +242,15 @@ internal class HaSession(
      * Answer which car is plugged in, or correct it, and read the dashboard back when it was taken, so
      * the screen shows the car the charger now plans for.
      */
-    fun identifyVehicle(vehicleId: String, done: (IdentifyVehicle.Outcome, Sent?) -> Unit) {
+    fun identifyVehicle(vehicleId: String, admit: () -> DashboardAdmission?, done: (IdentifyVehicle.Outcome, Sent?) -> Unit) {
         background.execute {
             val outcome = transport.identifyVehicle(vehicleId)
             val read = if (outcome is IdentifyVehicle.Outcome.Identified) {
+                // Home Assistant has written the settings (the car and the revision): the read is
+                // admitted only now, as a command's confirmation read is, so the screen writes against it.
+                val admission = admit()
                 val fetched = runCatching { transport.dashboard() }
-                Sent(fetched.map { it.dashboard }, recorder.record(fetched))
+                Sent(fetched.map { it.dashboard }, recorder.record(fetched), admission)
             } else {
                 null
             }
