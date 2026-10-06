@@ -38,7 +38,7 @@ internal data class NumberSpec(val min: Double, val max: Double, val decimals: I
     /** A value as the field shows it: its own decimals, a dot as the mark (what [check] reads back). */
     fun fieldText(value: Double): String =
         if (decimals == 0) String.format(Locale.ROOT, "%d", value.roundToLong())
-        else String.format(Locale.ROOT, "%.${decimals}f", value).trimEnd('0').trimEnd('.')
+        else String.format(Locale.ROOT, "%.${decimals}f", value)
 }
 
 internal sealed interface NumberCheck {
