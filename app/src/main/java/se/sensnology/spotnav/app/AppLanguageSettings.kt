@@ -54,6 +54,12 @@ object AppLanguageSettings {
         return localizedContext(context).getString(id, *args)
     }
 
+    /**
+     * A string as written in the resources, its format specifiers left in place for the caller to fill:
+     * `text` without arguments still formats, and a template with `%1$d` would throw.
+     */
+    fun template(context: Context, id: Int): String = localizedContext(context).resources.getString(id)
+
     fun quantityText(context: Context, id: Int, quantity: Int, vararg args: Any): String =
         localizedContext(context).resources.getQuantityString(id, quantity, *args)
 

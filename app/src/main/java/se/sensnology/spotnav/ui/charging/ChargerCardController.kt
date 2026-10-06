@@ -376,9 +376,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         val kw = bar.powerKw?.let { ChargeBarText.kw(it, AppLanguageSettings.numberLocale(context)) }
         val words = ChargeBarText.Words(
-            done = t(R.string.charge_bar_done), ofTarget = t(R.string.charge_bar_of_target),
-            ends = t(R.string.charge_bar_ends), charging = t(R.string.charge_bar_charging),
-            chargingPower = t(R.string.charge_bar_charging_power), line = t(R.string.charge_bar_line)
+            done = template(R.string.charge_bar_done), ofTarget = template(R.string.charge_bar_of_target),
+            ends = template(R.string.charge_bar_ends), charging = template(R.string.charge_bar_charging),
+            chargingPower = template(R.string.charge_bar_charging_power), line = template(R.string.charge_bar_line)
         )
         val text = ChargeBarText.line(bar, words, clock, kw, locale)
         line.text = text

@@ -55,6 +55,8 @@ internal open class ViewScope(val activity: Activity, val palette: Palette) {
 
     fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     fun t(id: Int, vararg args: Any) = AppLanguageSettings.text(activity, id, *args)
+    /** A format template as written, for code that fills it itself. */
+    fun template(id: Int) = AppLanguageSettings.template(activity, id)
     fun tq(id: Int, quantity: Int, vararg args: Any) = AppLanguageSettings.quantityText(activity, id, quantity, *args)
 
     /** An amount of energy as every screen writes it: one decimal, in the screen's number locale. */
