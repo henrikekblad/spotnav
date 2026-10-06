@@ -49,14 +49,15 @@ internal object VehicleIdentification {
     /**
      * The charger card's car line: the car planned for, how it was decided (`null`: nothing to say,
      * from a Home Assistant that does not identify, or with nothing being identified), and whether
-     * Byt bil is offered (more than one car to choose from).
+     * Byt bil is offered (more than one car to choose from). With two or more cars and none planned
+     * for yet, [vehicleId] and [name] are `null` ("no car chosen") and Byt bil is how one is chosen.
      */
-    data class CarLine(val vehicleId: String, val name: String, val basis: Basis?, val canSwitch: Boolean)
+    data class CarLine(val vehicleId: String?, val name: String?, val basis: Basis?, val canSwitch: Boolean)
 
     /** The car line of a paired charger, also while the question is open (the banner follows it). */
     fun carLine(dashboard: Dashboard): CarLine? {
-        val id = currentId(dashboard) ?: return null
         val canSwitch = switchChoices(dashboard).choices.size >= 2
+        val id = currentId(dashboard) ?: return if (canSwitch) CarLine(null, null, null, canSwitch = true) else null
         val block = dashboard.identification?.takeIf { advertised(dashboard) && canSwitch }
         val basis = when {
             block == null -> null

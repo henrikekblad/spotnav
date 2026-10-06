@@ -42,7 +42,8 @@ internal object PairedCarLine {
     /** The charger's car and its levels, "EV6 · 89 % → 93 %"; `null` when no car is planned for. */
     fun summary(dashboard: Dashboard, percent: (Int) -> String): String? {
         val line = VehicleIdentification.carLine(dashboard) ?: return null
-        return listOfNotNull(line.name, levelsText(levels(dashboard, line.vehicleId), percent)).joinToString(" · ")
+        val id = line.vehicleId ?: return null
+        return listOfNotNull(line.name ?: id, levelsText(levels(dashboard, id), percent)).joinToString(" · ")
     }
 
     /**

@@ -167,10 +167,12 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
      * [PairedCarLine]), then how it was decided.
      */
     private fun carLineText(held: Dashboard, line: VehicleIdentification.CarLine): CharSequence {
-        val text = SpannableStringBuilder(line.name)
+        // No car planned for yet: the line says so, and Byt bil beside it chooses one.
+        val id = line.vehicleId ?: return t(R.string.vehicle_none)
+        val text = SpannableStringBuilder(line.name ?: id)
         text.setSpan(StyleSpan(Typeface.BOLD), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.setSpan(ForegroundColorSpan(dark), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        PairedCarLine.levelsText(PairedCarLine.levels(held, line.vehicleId), ::percent)?.let { levels ->
+        PairedCarLine.levelsText(PairedCarLine.levels(held, id), ::percent)?.let { levels ->
             val start = text.length + 3
             text.append(" · ").append(levels)
             text.setSpan(ForegroundColorSpan(dark), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
