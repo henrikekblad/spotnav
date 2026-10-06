@@ -520,6 +520,4 @@
   <string name="target_mark_now">now</string>
   <string name="target_mark_now_estimated">≈ now</string>
   <string name="target_mark_limit">limit</string>
-  <string name="paired_target_now">Now %1$s</string>
-  <string name="paired_target_limit">Vehicle charge limit %1$s</string>
 </resources>

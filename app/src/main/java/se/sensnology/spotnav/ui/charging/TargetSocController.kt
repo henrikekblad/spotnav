@@ -17,6 +17,8 @@ import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.planning.ChargeNeed
 import se.sensnology.spotnav.ui.common.LABEL_GAP_DP
 import se.sensnology.spotnav.ui.common.SLIDER_TRACK_DP
+import se.sensnology.spotnav.ui.common.SliderMarks
+import se.sensnology.spotnav.ui.common.SliderTicks
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.slider
@@ -75,6 +77,19 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
             layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
             targetSoc.progressDrawable = layers
         }
+        // A paired car's level now and its own charge limit, as marks on the track with a short word
+        // under each ("nu", "gräns"), as the kWh slider marks "fullt".
+        val nowTick = FullMarkDrawable(dark, dp(2).toFloat(), dp(EnergyController.MARK_REACH_DP).toFloat())
+        val limitTick = FullMarkDrawable(dark, dp(2).toFloat(), dp(EnergyController.MARK_REACH_DP).toFloat())
+        if (layers != null) {
+            for (tick in listOf(nowTick, limitTick)) {
+                val index = layers.addLayer(tick)
+                layers.setLayerInset(index, trackInsets.left, 0, trackInsets.right, 0)
+                layers.setLayerHeight(index, trackHeight)
+                layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+            }
+            targetSoc.progressDrawable = layers
+        }
         // The ends' own numbers, under the track. Decoration around a labelled control:
         val floorLabel = bandLabel()
         val ceilingLabel = bandLabel()
@@ -106,18 +121,52 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         onLaidOut(bandRow) { placeLabels() }
         onLaidOut(floorLabel) { placeLabels() }
         onLaidOut(ceilingLabel) { placeLabels() }
+        // The marks' words: centred under their ticks, on a second level when they would touch.
+        val nowWord = bandLabel().apply { text = t(R.string.target_mark_now); visibility = View.INVISIBLE }
+        val limitWord = bandLabel().apply { text = t(R.string.target_mark_limit); visibility = View.INVISIBLE }
+        val markRow = FrameLayout(context)
+        markRow.addView(nowWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        markRow.addView(limitWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        container.addView(markRow)
+        var nowAt: Float? = null
+        var limitAt: Float? = null
+        val placeMarks = {
+            nowTick.fraction = nowAt
+            limitTick.fraction = limitAt
+            val rail = SliderTicks.rail(
+                targetSoc.width, targetSoc.paddingLeft, targetSoc.paddingRight, targetSoc.thumb?.intrinsicWidth ?: 0, targetSoc.thumbOffset
+            )
+            val words = mapOf("now" to nowWord, "limit" to limitWord)
+            val mirrored = targetSoc.layoutDirection == View.LAYOUT_DIRECTION_RTL
+            val marks = if (rail == null) emptyList() else listOfNotNull(
+                nowAt?.let { SliderMarks.Mark("now", SliderTicks.centerAtFraction(it, rail, mirrored), nowWord.width.toFloat()) },
+                limitAt?.let { SliderMarks.Mark("limit", SliderTicks.centerAtFraction(it, rail, mirrored), limitWord.width.toFloat()) }
+            )
+            val placed = SliderMarks.place(marks, markRow.width.toFloat(), dp(6).toFloat()).associateBy { it.key }
+            for ((key, word) in words) {
+                val at = placed[key]
+                word.visibility = if (at == null) View.INVISIBLE else View.VISIBLE
+                if (at != null) {
+                    word.x = at.left
+                    val params = word.layoutParams as FrameLayout.LayoutParams
+                    val top = at.level * word.height
+                    if (params.topMargin != top) { params.topMargin = top; word.layoutParams = params }
+                }
+            }
+            markRow.visibility = if (marks.isEmpty()) View.GONE else View.VISIBLE
+        }
+        onLaidOut(targetSoc) { placeMarks() }
+        onLaidOut(nowWord) { placeMarks() }
+        onLaidOut(limitWord) { placeMarks() }
         var storedTargetSocPercent: Int? = profile?.targetSocPercent
-        // A paired charger's own words around the slider
-        // Above it one line of what is known ("Nu X % · Bilens laddgräns Y %"); under it the
-        // verdict ("Ingen laddning behövs nu" / "Laddar till bilens gräns, Y %") and the energy the
-        // target needs, recomputed with Home Assistant's own formula as the slider moves (see
-        // [PairedTarget]).
-        val factsLine = pairedLine()
+        // A paired charger's own words around the slider: what is known now is on the track as marks
+        // (above); under it the verdict ("Ingen laddning behövs nu" / "Laddar till bilens gräns, Y %")
+        // and the energy the target needs, recomputed with Home Assistant's own formula as the slider
+        // moves (see [PairedTarget]).
         val verdictLine = pairedLine()
         // At or above the car's own limit the car ends the charge itself: said under the slider.
         val carEndsLine = pairedLine()
         val needLine = pairedLine()
-        container.addView(factsLine, 0)
         container.addView(verdictLine)
         container.addView(carEndsLine)
         container.addView(needLine)
@@ -127,22 +176,20 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         val paintPaired = {
             val soc = pairedSoc
             if (soc == null) {
-                for (line in listOf(factsLine, verdictLine, carEndsLine, needLine)) { line.text = ""; line.visibility = View.GONE }
+                for (line in listOf(verdictLine, carEndsLine, needLine)) { line.text = ""; line.visibility = View.GONE }
+                nowAt = null
+                limitAt = null
+                placeMarks()
             } else {
                 val facts = PairedTarget.facts(soc, pairedVehicles, pairedPicked)
                 val target = targetSoc.progress.toDouble()
                 val locale = AppLanguageSettings.numberLocale(context)
-                val parts = listOfNotNull(
-                    facts.now?.let {
-                        // "Nu ≈ 91 %": Home Assistant's estimate between readings says so.
-                        t(R.string.paired_target_now, (if (facts.estimated) "≈ " else "") + percentText(it, locale))
-                    },
-                    facts.limit?.let {
-                        t(R.string.paired_target_limit, percentText(TargetNeed.chargeCeiling(it).toDouble(), locale))
-                    }
-                )
-                factsLine.text = parts.joinToString(" \u00b7 ")
-                factsLine.visibility = if (parts.isEmpty()) View.GONE else View.VISIBLE
+                // The level now and the car's own limit, as marks on the 0..100 track.
+                nowAt = facts.now?.let { (it / 100.0).toFloat().coerceIn(0f, 1f) }
+                // "≈ nu": Home Assistant's estimate between readings says so.
+                nowWord.text = t(if (facts.estimated) R.string.target_mark_now_estimated else R.string.target_mark_now)
+                limitAt = facts.limit?.let { (TargetNeed.chargeCeiling(it) / 100.0).toFloat().coerceIn(0f, 1f) }
+                placeMarks()
                 val verdict = when (PairedTarget.verdict(facts, target)) {
                     TargetVerdict.NO_NEED -> t(R.string.paired_target_no_need)
                     TargetVerdict.TO_LIMIT -> t(

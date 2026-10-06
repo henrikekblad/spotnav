@@ -506,6 +506,4 @@
   <string name="target_mark_now">nyt</string>
   <string name="target_mark_now_estimated">≈ nyt</string>
   <string name="target_mark_limit">raja</string>
-  <string name="paired_target_now">Nyt %1$s</string>
-  <string name="paired_target_limit">Auton latausraja %1$s</string>
 </resources>

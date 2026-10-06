@@ -47,18 +47,27 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
     private val carLine = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
-        visibility = View.GONE
-        setPadding(0, dp(2), 0, dp(6))
+        setPadding(0, dp(2), 0, dp(2))
     }
     private val carText = TextView(context).apply { textSize = 15f; setTextColor(muted) }
+
+    // How the car was decided, on a line of its own under the car, muted: the same look in every
+    // language and state.
+    private val methodLine = TextView(context).apply {
+        textSize = 13f; setTextColor(muted); setPadding(dp(26), 0, 0, dp(6)); visibility = View.GONE
+    }
+    private val carBlock = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE }
     private val switchAction = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         isClickable = true
         setPadding(dp(8), dp(6), 0, dp(6))
         contentDescription = t(R.string.identify_switch)
-        addView(glyph(R.drawable.ic_swap, muted, 16), LinearLayout.LayoutParams(dp(16), dp(16)).apply { marginEnd = dp(6) })
-        addView(TextView(context).apply { text = t(R.string.identify_switch); textSize = 14f; setTextColor(accent) })
+        // Byt bil reads as the screen's other tappable values do: accent, the same size and weight.
+        addView(glyph(R.drawable.ic_swap, accent, 18), LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(6) })
+        addView(TextView(context).apply {
+            text = t(R.string.identify_switch); textSize = 16f; setTextColor(accent); typeface = Typeface.DEFAULT_BOLD
+        })
         setOnClickListener { openSwitch() }
     }
 
@@ -66,8 +75,10 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         carLine.addView(glyph(R.drawable.ic_ev, muted, 18), LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(8) })
         carLine.addView(carText, weight())
         carLine.addView(switchAction)
+        carBlock.addView(carLine)
+        carBlock.addView(methodLine)
         // The car first, then the open question about it.
-        parent.addView(carLine)
+        parent.addView(carBlock)
         parent.addView(banner, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { topMargin = dp(2); bottomMargin = dp(8) })
@@ -95,8 +106,11 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         val question = held?.let { VehicleIdentification.banner(it) }
         val line = held?.let { VehicleIdentification.carLine(it) }
         paintBanner(question)
-        carLine.visibility = if (line != null) View.VISIBLE else View.GONE
+        carBlock.visibility = if (line != null) View.VISIBLE else View.GONE
         if (line != null && held != null) carText.text = carLineText(held, line)
+        val method = line?.basis?.let { t(basisText(it)) }
+        methodLine.text = method.orEmpty()
+        methodLine.visibility = if (method == null) View.GONE else View.VISIBLE
         // One car at the charger: nothing to change.
         switchAction.visibility = if (line?.canSwitch == true) View.VISIBLE else View.GONE
         switchAction.isEnabled = !busy
@@ -161,7 +175,6 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
             text.append(" · ").append(levels)
             text.setSpan(ForegroundColorSpan(dark), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        line.basis?.let { basis -> text.append(" · ").append(t(basisText(basis))) }
         return text
     }
 

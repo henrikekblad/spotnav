@@ -506,6 +506,4 @@
   <string name="target_mark_now">nå</string>
   <string name="target_mark_now_estimated">≈ nå</string>
   <string name="target_mark_limit">grense</string>
-  <string name="paired_target_now">Nå %1$s</string>
-  <string name="paired_target_limit">Bilens laddegrense %1$s</string>
 </resources>

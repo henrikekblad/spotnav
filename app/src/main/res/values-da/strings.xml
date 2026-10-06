@@ -506,6 +506,4 @@
   <string name="target_mark_now">nu</string>
   <string name="target_mark_now_estimated">≈ nu</string>
   <string name="target_mark_limit">grænse</string>
-  <string name="paired_target_now">Nu %1$s</string>
-  <string name="paired_target_limit">Bilens ladegrænse %1$s</string>
 </resources>
