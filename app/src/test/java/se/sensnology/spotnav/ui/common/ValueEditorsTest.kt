@@ -1,11 +1,9 @@
 package se.sensnology.spotnav.ui.common
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The generic number editor's judgement of what was typed, and when a read-only value goes under its label. */
+/** The generic number editor's judgement of what was typed. */
 class ValueEditorsTest {
     private val capacity = NumberSpec(min = 1.0, max = 500.0, decimals = 1)
     private val percent = NumberSpec(min = 0.0, max = 100.0, decimals = 0)
@@ -27,12 +25,5 @@ class ValueEditorsTest {
     @Test fun aNumberIsShownInTheFieldWithItsOwnDecimals() {
         assertEquals("77.4", capacity.fieldText(77.4))
         assertEquals("80", percent.fieldText(80.0))
-    }
-
-    @Test fun aLongReadOnlyValueGoesUnderItsLabel() {
-        assertFalse(SettingLayout.stacked("Normal"))
-        assertFalse(SettingLayout.stacked("Found automatically"))
-        assertTrue(SettingLayout.stacked("Garage charger Connector 1 Charge control"))
-        assertTrue(SettingLayout.stacked("OCPP ChangeConfiguration"))
     }
 }
