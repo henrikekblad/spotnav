@@ -495,7 +495,7 @@
   <string name="identify_hint_elsewhere">At another charger</string>
   <string name="identify_by_plug_sensor">identified by the car\'s charging cable</string>
   <string name="identify_by_location">identified by position</string>
-  <string name="identify_by_hand">chosen manually</string>
+  <string name="identify_by_hand">selected manually</string>
   <string name="identify_by_assumed">assumed</string>
   <string name="identify_identifying">identifying…</string>
   <string name="identify_vehicles_title">Cars at this charger</string>
