@@ -54,3 +54,28 @@ internal object SliderTicks {
         return centred.coerceIn(containerLeft, maxOf(containerLeft, furthestRight))
     }
 }
+
+/**
+ * The words under a slider's marks ("nu", "gräns", "fullt"): each centred under its own tick and kept
+ * inside the row, taken in track order; a word that would come within the gap of one already placed on
+ * a level goes one level further down, so no two ever overlap.
+ */
+internal object SliderMarks {
+    data class Mark(val key: String, val center: Float, val width: Float)
+
+    data class Placed(val key: String, val left: Float, val level: Int)
+
+    fun place(marks: List<Mark>, containerWidth: Float, gap: Float): List<Placed> {
+        val placed = mutableListOf<Placed>()
+        val widths = marks.associate { it.key to it.width }
+        for (mark in marks.sortedBy { it.center }) {
+            val left = (mark.center - mark.width / 2f).coerceIn(0f, (containerWidth - mark.width).coerceAtLeast(0f))
+            var level = 0
+            while (placed.any { other ->
+                    other.level == level && left < other.left + widths.getValue(other.key) + gap && other.left < left + mark.width + gap
+                }) level++
+            placed += Placed(mark.key, left, level)
+        }
+        return placed
+    }
+}

@@ -24,8 +24,11 @@ import kotlin.math.roundToLong
  * to keep the dialog open with that message under the value.
  */
 
-/** What a number field may hold: the range (never clamped) and how many decimals it keeps. */
-internal data class NumberSpec(val min: Double, val max: Double, val decimals: Int) {
+/**
+ * What a number field may hold: the range (never clamped), how many decimals it keeps, and how many
+ * it always shows ([minDecimals], as the value's own row does).
+ */
+internal data class NumberSpec(val min: Double, val max: Double, val decimals: Int, val minDecimals: Int = 0) {
     /** What was typed, judged: a comma or a dot is the decimal mark, and the value is rounded to [decimals]. */
     fun check(text: String): NumberCheck {
         val number = text.trim().replace(',', '.').toDoubleOrNull()
@@ -35,10 +38,12 @@ internal data class NumberSpec(val min: Double, val max: Double, val decimals: I
         return if (rounded < min || rounded > max) NumberCheck.OutOfRange else NumberCheck.Valid(rounded)
     }
 
-    /** A value as the field shows it: its own decimals, a dot as the mark (what [check] reads back). */
-    fun fieldText(value: Double): String =
-        if (decimals == 0) String.format(Locale.ROOT, "%d", value.roundToLong())
-        else String.format(Locale.ROOT, "%.${decimals}f", value)
+    /** A value as the field shows it: as its row does, in the reader's own decimal mark (what [check] reads back). */
+    fun fieldText(value: Double, locale: Locale): String = java.text.NumberFormat.getNumberInstance(locale).apply {
+        isGroupingUsed = false
+        minimumFractionDigits = minDecimals
+        maximumFractionDigits = decimals
+    }.format(value)
 }
 
 internal sealed interface NumberCheck {
@@ -60,16 +65,37 @@ internal fun ViewScope.editNumber(
     rangeMessage: String,
     help: String? = null,
     noneLabel: String? = null,
+    /** A figure to offer ("Suggestion: 36 öre/kWh"): tapping it fills the field. */
+    suggestion: Double? = null,
     save: (Double?, (String?) -> Unit) -> Unit
 ) {
     val body = editorBody()
+    val locale = se.sensnology.spotnav.app.AppLanguageSettings.numberLocale(context)
+    // What the value is for comes first, above anything to fill in.
+    help?.let { body.addView(muted(it, bottom = 6)) }
     val none = noneLabel?.let { label ->
         CheckBox(context).apply { text = label; textSize = 16f; isChecked = current == null }.also { body.addView(it) }
     }
     val field = EditText(context).apply {
         inputType = InputType.TYPE_CLASS_NUMBER or (if (spec.decimals > 0) InputType.TYPE_NUMBER_FLAG_DECIMAL else 0)
-        current?.let { setText(spec.fieldText(it)) }
+        current?.let { setText(spec.fieldText(it, locale)) }
         setSelectAllOnFocus(true)
+    }
+    suggestion?.let { figure ->
+        val shown = spec.fieldText(figure, locale)
+        body.addView(TextView(context).apply {
+            text = t(R.string.price_suggestion, listOf(shown, unit).filter { it.isNotEmpty() }.joinToString(" "))
+            textSize = 14f
+            setTextColor(accent)
+            setPadding(0, dp(4), 0, dp(4))
+            isClickable = true
+            isFocusable = true
+            setOnClickListener {
+                none?.isChecked = false
+                field.setText(shown)
+                field.requestFocus()
+            }
+        })
     }
     body.addView(LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -81,7 +107,6 @@ internal fun ViewScope.editNumber(
         field.isEnabled = !box.isChecked
         box.setOnCheckedChangeListener { _, checked -> field.isEnabled = !checked }
     }
-    help?.let { body.addView(muted(it, top = 4)) }
     val error = errorLine().also { body.addView(it) }
     openEditor(title, body, error) { done ->
         if (none?.isChecked == true) {

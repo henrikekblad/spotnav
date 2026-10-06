@@ -176,7 +176,7 @@ internal class PairedSettingsCards(
             return
         }
         for (vehicle in vehicles) {
-            val card = card(container, vehicle.name, R.drawable.ic_ev)
+            val card = card(container, SettingsHeading.named(t(R.string.vehicle_title), vehicle.name), R.drawable.ic_ev)
             if (vehicle.planned) card.body.addView(muted(t(R.string.settings_vehicle_planned_here), top = 8))
             readRow(card.body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
             // Each of the car's own figures opens its own editor and writes that one figure.
@@ -234,7 +234,7 @@ internal class PairedSettingsCards(
     }
 
     /** A vehicle field's range as the write checks it, with the editor's decimals. */
-    private fun spec(field: VehicleField, decimals: Int) = NumberSpec(field.min, field.max, decimals)
+    private fun spec(field: VehicleField, decimals: Int) = NumberSpec(field.min, field.max, decimals, minDecimals = decimals)
 
     /**
      * One of a car's figures written alone (`update_vehicle` with that field, compared against the

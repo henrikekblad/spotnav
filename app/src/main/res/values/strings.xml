@@ -49,7 +49,7 @@
   <string name="charge">Charge</string>
   <string name="could_not_fetch">Could not load prices</string>
   <string name="choose_widget">Choose which widget to open</string>
-  <string name="max_charging_periods">Maximum charging periods</string>
+  <string name="max_charging_periods">Max charge periods</string>
   <plurals name="charging_period_count">
     <item quantity="one">%1$d period</item>
     <item quantity="other">%1$d periods</item>
@@ -166,8 +166,6 @@
   <string name="vehicle_none">No vehicle selected</string>
   <string name="vehicle_target">Charge target</string>
   <string name="target_no_limit">No known limit</string>
-  <string name="paired_target_now">Now %1$s</string>
-  <string name="paired_target_limit">Vehicle charge limit %1$s</string>
   <string name="paired_target_no_need">No charging needed now</string>
   <string name="paired_target_to_limit">Charging to the vehicle\'s limit, %1$s</string>
   <string name="car_ends_charge">The car ends the charge itself when it is full or reaches its charge limit (%1$s).</string>
@@ -517,4 +515,11 @@
   <string name="setup_missing">Missing</string>
   <string name="setup_present">Present</string>
   <string name="charger_energy_chosen">Chosen</string>
+  <!-- The price editors' suggestion, and the target slider's marks. -->
+  <string name="price_suggestion">Suggestion: %1$s</string>
+  <string name="target_mark_now">now</string>
+  <string name="target_mark_now_estimated">≈ now</string>
+  <string name="target_mark_limit">limit</string>
+  <string name="paired_target_now">Now %1$s</string>
+  <string name="paired_target_limit">Vehicle charge limit %1$s</string>
 </resources>

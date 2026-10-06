@@ -45,21 +45,27 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
             onTap = if (editable) ({ openArea(areaControls, edit) }) else null)
         val vatSettable = editable && overview.vat != FiscalLine.Included && (market?.vatPercent ?: 0.0) > 0.0
         settingRow(parent, t(R.string.price_row_vat), text(overview.vat), onTap = if (vatSettable) ({
-            editOnOff(t(R.string.price_row_vat), overview.vat is FiscalLine.Figure) { on, done -> edit(PriceEdit.Vat(on), done) }
+            // What VAT is here, above the choice: "VAT 25 %", the area's own rate.
+            val rate = market?.vatPercent?.let { java.text.NumberFormat.getNumberInstance(locale).format(it) }
+            editOnOff(t(R.string.price_row_vat), overview.vat is FiscalLine.Figure, help = rate?.let { t(R.string.vat, it) }) { on, done ->
+                edit(PriceEdit.Vat(on), done)
+            }
         }) else null)
         val unit = market?.minorUnit?.let { "$it/kWh" }.orEmpty()
-        fun fee(label: Int, line: FiscalLine, figure: Double?, make: (Boolean, Double?) -> PriceEdit) {
+        fun fee(label: Int, kind: Fee, line: FiscalLine, figure: Double?, make: (Boolean, Double?) -> PriceEdit) {
             settingRow(parent, t(label), text(line), onTap = if (editable && line != FiscalLine.Included) ({
                 editNumber(
                     title = t(label), spec = FEE, unit = unit,
                     current = figure.takeIf { line !is FiscalLine.Off },
                     rangeMessage = t(R.string.paired_error_number),
-                    noneLabel = t(R.string.price_value_off)
+                    noneLabel = t(R.string.price_value_off),
+                    // The area's own published figure, offered as the old form filled it in.
+                    suggestion = suggestion(market, kind)
                 ) { value, done -> edit(make(value != null, value), done) }
             }) else null)
         }
-        fee(R.string.price_row_tax, overview.tax, taxFigure) { on, value -> PriceEdit.Tax(on, value) }
-        fee(R.string.price_row_transfer, overview.transfer, transferFigure) { on, value -> PriceEdit.Transfer(on, value) }
+        fee(R.string.price_row_tax, Fee.TAX, overview.tax, taxFigure) { on, value -> PriceEdit.Tax(on, value) }
+        fee(R.string.price_row_transfer, Fee.GRID, overview.transfer, transferFigure) { on, value -> PriceEdit.Transfer(on, value) }
     }
 
     /** The area: its picker (with where the prices come from, and a region search where there is one). */
@@ -74,7 +80,17 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
         }
     }
 
+    /** The two fees an area may suggest a figure for. */
+    enum class Fee { TAX, GRID }
+
     companion object {
+        /** The figure [market] suggests for [fee], or `null` when it publishes none. */
+        fun suggestion(market: se.sensnology.spotnav.prices.PriceMarket?, fee: Fee): Double? = when (fee) {
+            Fee.TAX -> market?.suggestedTax
+            Fee.GRID -> market?.suggestedGridFee
+        }
+
+
         /** A fee per kWh in the area's minor unit: never negative, two decimals. */
         val FEE = NumberSpec(min = 0.0, max = 10_000.0, decimals = 2)
 

@@ -49,7 +49,7 @@
   <string name="charge">Oplad</string>
   <string name="could_not_fetch">Priserne kunne ikke hentes</string>
   <string name="choose_widget">Vælg den widget, du vil åbne</string>
-  <string name="max_charging_periods">Maksimalt antal ladeperioder</string>
+  <string name="max_charging_periods">Maks. ladeperioder</string>
   <plurals name="charging_period_count">
     <item quantity="one">%1$d periode</item>
     <item quantity="other">%1$d perioder</item>
@@ -158,8 +158,6 @@
   <string name="vehicle_none">Ingen bil valgt</string>
   <string name="vehicle_target">Lademål</string>
   <string name="target_no_limit">Ingen kendt grænse</string>
-  <string name="paired_target_now">Nu %1$s</string>
-  <string name="paired_target_limit">Bilens ladegrænse %1$s</string>
   <string name="paired_target_no_need">Ingen opladning nødvendig nu</string>
   <string name="paired_target_to_limit">Lader til bilens grænse, %1$s</string>
   <string name="car_ends_charge">Bilen afslutter selv opladningen, når den er fuld eller når sin ladegrænse (%1$s).</string>
@@ -503,4 +501,11 @@
   <string name="setup_missing">Mangler</string>
   <string name="setup_present">Findes</string>
   <string name="charger_energy_chosen">Valgt</string>
+  <!-- The price editors' suggestion, and the target slider's marks. -->
+  <string name="price_suggestion">Forslag: %1$s</string>
+  <string name="target_mark_now">nu</string>
+  <string name="target_mark_now_estimated">≈ nu</string>
+  <string name="target_mark_limit">grænse</string>
+  <string name="paired_target_now">Nu %1$s</string>
+  <string name="paired_target_limit">Bilens ladegrænse %1$s</string>
 </resources>

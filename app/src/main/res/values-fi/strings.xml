@@ -49,7 +49,7 @@
   <string name="charge">Lataa</string>
   <string name="could_not_fetch">Hintoja ei voitu hakea</string>
   <string name="choose_widget">Valitse avattava widget</string>
-  <string name="max_charging_periods">Latausjaksojen enimmäismäärä</string>
+  <string name="max_charging_periods">Latausjaksoja enint.</string>
   <plurals name="charging_period_count">
     <item quantity="one">%1$d jakso</item>
     <item quantity="other">%1$d jaksoa</item>
@@ -158,8 +158,6 @@
   <string name="vehicle_none">Ei autoa valittu</string>
   <string name="vehicle_target">Lataustavoite</string>
   <string name="target_no_limit">Ei tunnettua rajaa</string>
-  <string name="paired_target_now">Nyt %1$s</string>
-  <string name="paired_target_limit">Auton latausraja %1$s</string>
   <string name="paired_target_no_need">Latausta ei tarvita nyt</string>
   <string name="paired_target_to_limit">Ladataan auton rajaan, %1$s</string>
   <string name="car_ends_charge">Auto lopettaa latauksen itse, kun se on täynnä tai saavuttaa latausrajansa (%1$s).</string>
@@ -503,4 +501,11 @@
   <string name="setup_missing">Puuttuu</string>
   <string name="setup_present">Löytyy</string>
   <string name="charger_energy_chosen">Valittu</string>
+  <!-- The price editors' suggestion, and the target slider's marks. -->
+  <string name="price_suggestion">Ehdotus: %1$s</string>
+  <string name="target_mark_now">nyt</string>
+  <string name="target_mark_now_estimated">≈ nyt</string>
+  <string name="target_mark_limit">raja</string>
+  <string name="paired_target_now">Nyt %1$s</string>
+  <string name="paired_target_limit">Auton latausraja %1$s</string>
 </resources>
