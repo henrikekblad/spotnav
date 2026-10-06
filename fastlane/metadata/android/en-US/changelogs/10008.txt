@@ -1,6 +1,7 @@
 - Fill: the kWh slider can fill the car to its limit at every plug-in
 - A "full" mark and a line saying how much fills the battery
 - Waits for each price area's own publication time (UK Agile, Spain PVPC)
+- Start/Stop shows "Starting…"/"Stopping…" while the charger answers
 - A clear note when Home Assistant cannot be reached
 - The widget is no longer squeezed sideways
 - Needs SpotNav for Home Assistant 1.12

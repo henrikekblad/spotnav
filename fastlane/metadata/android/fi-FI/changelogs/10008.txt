@@ -1,6 +1,7 @@
 - Täytä: kWh-liukusäädin voi täyttää auton rajaansa asti joka kytkennällä
 - Merkintä "täynnä" ja rivi siitä, paljonko akun täyttämiseen tarvitaan
 - Odottaa kunkin hinta-alueen omaa julkaisuaikaa (Iso-Britannia, Espanja PVPC)
+- Aloita/Pysäytä näyttää "Käynnistetään…"/"Pysäytetään…", kun laturi vastaa
 - Selkeä ilmoitus, kun Home Assistantiin ei saada yhteyttä
 - Widget ei enää puristu kapeaksi
 - Vaatii SpotNav for Home Assistant 1.12:n

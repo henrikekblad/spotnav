@@ -1,6 +1,7 @@
 - Fyld: kWh-skyderen kan fylde bilen til dens grænse ved hver tilslutning
 - Markering for "fuldt" og en linje om, hvor meget der fylder batteriet
 - Venter på hvert prisområdes egen offentliggørelsestid (Storbritannien, Spanien PVPC)
+- Start/Stop viser "Starter…"/"Stopper…", mens laderen svarer
 - Tydelig besked, når Home Assistant ikke kan nås
 - Widgetten presses ikke længere sammen i bredden
 - Kræver SpotNav til Home Assistant 1.12
