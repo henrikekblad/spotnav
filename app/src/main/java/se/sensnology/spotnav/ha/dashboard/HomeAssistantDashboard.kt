@@ -40,7 +40,15 @@ internal data class DashboardStatus(val lines: List<StatusLine>, val tone: Statu
  * The charger's live facts this app reads: whether the charge is on, and whether a schedule is
  * held.
  */
-internal data class DashboardLive(val charging: Boolean, val scheduleActive: Boolean)
+internal data class DashboardLive(
+    val charging: Boolean,
+    val scheduleActive: Boolean,
+    /**
+     * The charger's own measured current per phase (`measured_current_a`), read leniently: `null` when
+     * Home Assistant states none, or a value that is not a finite, non-negative number.
+     */
+    val measuredCurrentA: Double? = null
+)
 
 /**
  * One charger the instance reports: the config entry id that identifies it, and the entry's current
@@ -97,7 +105,9 @@ internal data class DashboardInstalled(
     val amps: Int?,
     val phases: Int?,
     val origin: String?,
-    val periods: List<DashboardPeriod>
+    val periods: List<DashboardPeriod>,
+    /** The schedule's power as Home Assistant calculated it (`power_kw`), read leniently; `null` when absent. */
+    val powerKw: Double? = null
 )
 
 internal data class DashboardPlan(
@@ -365,7 +375,9 @@ internal data class Dashboard(
                 market = market,
                 plan = plan(obj(json, "plan")),
                 prices = prices(obj(json, "prices")),
-                live = obj(json, "live").let { DashboardLive(bool(it, "charging"), bool(it, "schedule_active")) },
+                live = obj(json, "live").let {
+                    DashboardLive(bool(it, "charging"), bool(it, "schedule_active"), nonNegative(it.opt("measured_current_a")))
+                },
                 settings = optObj(json, "settings")?.let(::settings)?.let { record ->
                     withIncluded(record, market)
                 },
@@ -586,7 +598,10 @@ internal data class Dashboard(
                 )
             },
             installed = optObj(json, "installed")?.let { i ->
-                DashboardInstalled(optInt(i, "amps"), optInt(i, "phases"), optText(i, "origin"), periods(i))
+                DashboardInstalled(
+                    optInt(i, "amps"), optInt(i, "phases"), optText(i, "origin"), periods(i),
+                    powerKw = nonNegative(i.opt("power_kw"))?.takeIf { it > 0.0 }
+                )
             },
             // Read leniently: a count that is not a finite, non-negative number is simply not there.
             deliveredKwh = (json.opt("delivered_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 },
@@ -676,6 +691,10 @@ internal data class Dashboard(
                 activeControlReason = control?.let { optText(it, "reason") }
             )
         }
+
+        /** A lenient number: a finite, non-negative one, else not there (never a refusal of the answer). */
+        private fun nonNegative(raw: Any?): Double? =
+            (raw as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0.0 }
 
         // --- strict readers: a wrong kind is a refusal, an absent optional is null
 
