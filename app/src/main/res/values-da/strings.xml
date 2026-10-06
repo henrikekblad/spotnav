@@ -486,8 +486,7 @@
   <string name="identify_hint_elsewhere">Ved en anden lader</string>
   <string name="identify_by_plug_sensor">identificeret via bilens ladekabel</string>
   <string name="identify_by_location">identificeret via position</string>
-  <string name="identify_by_answer">dit svar</string>
-  <string name="identify_by_manual">dit valg</string>
+  <string name="identify_by_hand">valgt manuelt</string>
   <string name="identify_by_assumed">antaget</string>
   <string name="identify_identifying">identificerer…</string>
   <string name="identify_vehicles_title">Biler ved denne lader</string>

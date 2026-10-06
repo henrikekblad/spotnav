@@ -486,8 +486,7 @@
   <string name="identify_hint_elsewhere">Toisella laturilla</string>
   <string name="identify_by_plug_sensor">tunnistettu auton latauskaapelista</string>
   <string name="identify_by_location">tunnistettu sijainnista</string>
-  <string name="identify_by_answer">vastauksesi</string>
-  <string name="identify_by_manual">valintasi</string>
+  <string name="identify_by_hand">valittu käsin</string>
   <string name="identify_by_assumed">oletettu</string>
   <string name="identify_identifying">tunnistetaan…</string>
   <string name="identify_vehicles_title">Autot tällä laturilla</string>

@@ -155,8 +155,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
     private fun basisText(basis: VehicleIdentification.Basis): Int = when (basis) {
         VehicleIdentification.Basis.PLUG_SENSOR -> R.string.identify_by_plug_sensor
         VehicleIdentification.Basis.LOCATION -> R.string.identify_by_location
-        VehicleIdentification.Basis.ANSWERED -> R.string.identify_by_answer
-        VehicleIdentification.Basis.MANUAL -> R.string.identify_by_manual
+        VehicleIdentification.Basis.CHOSEN_MANUALLY -> R.string.identify_by_hand
         VehicleIdentification.Basis.ASSUMED -> R.string.identify_by_assumed
         VehicleIdentification.Basis.IDENTIFYING -> R.string.identify_identifying
     }

@@ -486,8 +486,7 @@
   <string name="identify_hint_elsewhere">Vid en annan laddare</string>
   <string name="identify_by_plug_sensor">identifierad via bilens laddkabel</string>
   <string name="identify_by_location">identifierad via position</string>
-  <string name="identify_by_answer">ditt svar</string>
-  <string name="identify_by_manual">ditt val</string>
+  <string name="identify_by_hand">vald manuellt</string>
   <string name="identify_by_assumed">antagen</string>
   <string name="identify_identifying">identifierar…</string>
   <string name="identify_vehicles_title">Bilar vid laddaren</string>
