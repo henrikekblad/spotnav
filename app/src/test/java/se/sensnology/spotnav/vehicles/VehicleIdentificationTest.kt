@@ -203,4 +203,18 @@ class VehicleIdentificationTest {
         )
         assertEquals(VehicleIdentification.SourceText.NotFound, VehicleIdentification.sourceText(IdentificationSource(null, null, false, emptyList())))
     }
+
+    @Test fun withIdentificationOffTheBlockNamesNoMethodAndTheLineSaysNone() {
+        // Home Assistant keeps the block while identification is off, with `method: null`.
+        val off = dashboard(block("decided").put("method", JSONObject.NULL)) {
+            getJSONObject("settings").put("identify_mode", "off")
+        }
+        val block = off.identification!!
+        assertNull(block.method)
+        val line = VehicleIdentification.carLine(off)!!
+        assertEquals("vehicle_ev6", line.vehicleId)
+        assertNull(line.basis)
+        assertFalse(VehicleIdentification.assumed(off))
+        assertNull(VehicleIdentification.banner(off))
+    }
 }
