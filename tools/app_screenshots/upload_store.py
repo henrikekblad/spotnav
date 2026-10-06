@@ -3,7 +3,9 @@
 
 One Play edit for all locales: each locale's phone screenshots are replaced by the files in its folder (in
 name order), and the edit is committed with `changesNotSentForReview`, so the new pictures wait in Play
-Console's store listing until they are sent for review there by hand. Nothing else in the listing changes.
+Console's store listing until they are sent for review there by hand. An app whose changes Play sends for
+review automatically refuses that parameter; the edit is then committed without it and goes for review at
+once, so send any draft release for review first. Nothing else in the listing changes.
 
 The repository's locale folders are named as fastlane names them; Play's listing names two of them otherwise
 (en-US is the listing's British English, nb-NO its Norwegian), as the release workflow maps them too.
@@ -117,12 +119,22 @@ def main() -> int:
                     media_body=MediaFileUpload(str(path), mimetype=mime),
                 ).execute()
             print(f"{play}: {len(files)} screenshots uploaded")
-        # Saved in Play Console without being sent for review: that stays a person's step.
-        edits.commit(packageName=PACKAGE, editId=edit_id, changesNotSentForReview=True).execute()
+        # Saved in Play Console without being sent for review: that stays a person's step, unless the app's
+        # changes are sent for review automatically, where Play refuses the parameter.
+        from googleapiclient.errors import HttpError
+
+        try:
+            edits.commit(packageName=PACKAGE, editId=edit_id, changesNotSentForReview=True).execute()
+            sent = False
+        except HttpError as error:
+            if error.resp.status != 400 or "changesNotSentForReview must not be set" not in str(error):
+                raise
+            edits.commit(packageName=PACKAGE, editId=edit_id).execute()
+            sent = True
     except Exception:
         edits.delete(packageName=PACKAGE, editId=edit_id).execute()
         raise
-    print("Saved in Play Console, not sent for review.")
+    print("Committed and sent for review." if sent else "Saved in Play Console, not sent for review.")
     return 0
 
 
