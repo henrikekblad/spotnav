@@ -6,6 +6,7 @@ import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
+import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 
@@ -43,7 +44,12 @@ internal object PairedOverview {
         val capacityReported: Boolean,
         val consumptionKwhPer10km: Double?,
         /** The most phases the car's own charger takes (1 or 3), or `null` when Home Assistant does not say. */
-        val onboardPhases: Int? = null
+        val onboardPhases: Int? = null,
+        /** The car's own target (`null` when never set); shown only when the row [targetStated] it. */
+        val targetPercent: Double? = null,
+        val targetStated: Boolean = false,
+        /** The car's identification sources, or `null` from a Home Assistant without them. */
+        val sources: VehicleIdentificationSources? = null
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -67,7 +73,10 @@ internal object PairedOverview {
                 capacityKwh = PairedVehicles.capacityKwh(dashboard, row, null, null, row.id),
                 capacityReported = !VehicleUpdate.capacityEditable(row),
                 consumptionKwhPer10km = row.consumptionKwhPer10km,
-                onboardPhases = row.onboardPhases
+                onboardPhases = row.onboardPhases,
+                targetPercent = row.targetPercent,
+                targetStated = row.targetStated,
+                sources = row.identification
             )
         }
 

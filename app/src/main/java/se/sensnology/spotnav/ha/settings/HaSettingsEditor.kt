@@ -73,6 +73,12 @@ internal sealed interface HaSettingsEdit {
      * path is kept. Only for a record that states `notifications`.
      */
     data class Notifications(val targets: List<String>, val events: List<String>) : HaSettingsEdit
+
+    /**
+     * How the plugged-in car is found and the cars that can charge here (`null` for every car), as a
+     * whole. Only for a record that states them.
+     */
+    data class Identification(val mode: IdentifyMode, val vehicleIds: List<String>?) : HaSettingsEdit
 }
 
 /** What one edit produced: a full replacement, or the contract's own stable refusal. */
@@ -90,6 +96,11 @@ internal sealed interface HaSettingsEditResult {
 /** One confirmed record plus **one** deliberate edit into a full replacement. */
 internal object HaSettingsEditor {
     fun replacement(confirmed: HaPlanningSettings, edit: HaSettingsEdit): HaSettingsEditResult {
+        // A record that does not state the fields cannot take them: an older Home Assistant would
+        // refuse a body that names them.
+        if (edit is HaSettingsEdit.Identification && confirmed.identification == null) {
+            return HaSettingsEditResult.Refused("invalid_vehicles")
+        }
         val candidate = apply(confirmed, edit)
         return try {
             val validated = HaSettingsCodec.parseBody(HaSettingsCodec.encodeBody(candidate))
@@ -125,6 +136,9 @@ internal object HaSettingsEditor {
                 targets = edit.targets.distinct(),
                 events = HaSettingsCodec.canonicalEvents(edit.events.distinct())
             )
+        )
+        is HaSettingsEdit.Identification -> confirmed.copy(
+            identification = HaIdentificationSettings(edit.mode, edit.vehicleIds)
         )
     }
 

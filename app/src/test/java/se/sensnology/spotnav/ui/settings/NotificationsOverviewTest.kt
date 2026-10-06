@@ -42,7 +42,7 @@ class NotificationsOverviewTest {
 
     private val n6 = HaNotifyService("notify.mobile_app_n6", "N6")
     private val pixel = HaNotifyService("notify.mobile_app_pixel", "Pixel")
-    private val three = NotificationEvent.DEFAULTS.map { it.wire }
+    private val three = NotificationEvent.LOCAL_DEFAULTS.map { it.wire }
 
     private fun ha(targets: List<String>, events: List<String> = three) =
         HaNotificationSettings(targets = targets, events = events, available = listOf(n6, pixel))
@@ -51,20 +51,20 @@ class NotificationsOverviewTest {
 
     @Test fun theHomeAssistantRowNamesNoPhoneOnePhoneOrHowMany() {
         assertEquals("Ingen telefon vald", NotificationsOverview.homeAssistant(ha(emptyList()), sv))
-        assertEquals("N6 · 3 av 7 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), sv))
-        assertEquals("2 telefoner · 3 av 7 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), sv))
+        assertEquals("N6 · 3 av 8 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), sv))
+        assertEquals("2 telefoner · 3 av 8 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), sv))
         assertEquals("No phone chosen", NotificationsOverview.homeAssistant(ha(emptyList()), en))
-        assertEquals("N6 · 3 of 7 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), en))
-        assertEquals("2 phones · 3 of 7 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), en))
+        assertEquals("N6 · 3 of 8 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), en))
+        assertEquals("2 phones · 3 of 8 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), en))
     }
 
     @Test fun aChosenPhoneThatIsGoneIsMarkedAndAnUnknownEventIsNotCounted() {
         val settings = ha(listOf("notify.mobile_app_old"), events = three + "from_the_future")
-        assertEquals("notify.mobile_app_old (hittas inte) · 3 av 7 händelser", NotificationsOverview.homeAssistant(settings, sv))
+        assertEquals("notify.mobile_app_old (hittas inte) · 3 av 8 händelser", NotificationsOverview.homeAssistant(settings, sv))
     }
 
     @Test fun theSpotNavRowIsOffEveryFifteenMinutesOrInstant() {
-        val events = NotificationEvent.DEFAULTS.toSet()
+        val events = NotificationEvent.LOCAL_DEFAULTS.toSet()
         assertEquals("Av", NotificationsOverview.spotNav(false, events, instant = true, texts = sv))
         assertEquals("Var 15:e minut · 3 av 7 händelser", NotificationsOverview.spotNav(true, events, instant = false, texts = sv))
         assertEquals("Direkt · 3 av 7 händelser", NotificationsOverview.spotNav(true, events, instant = true, texts = sv))
@@ -140,7 +140,7 @@ class NotificationsOverviewTest {
         fun run(current: HaNotificationSettings?, choice: NotificationsSave.Choice) = save.save(current, choice) { outcomes += it }
     }
 
-    private val defaults = NotificationEvent.DEFAULTS.toSet()
+    private val defaults = NotificationEvent.LOCAL_DEFAULTS.toSet()
 
     private fun choice(
         homeAssistant: NotificationsSave.HomeAssistantChoice? = null,

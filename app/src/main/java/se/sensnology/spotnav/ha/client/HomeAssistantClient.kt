@@ -58,7 +58,9 @@ internal class WebhookHttpStatusException(
  * (`docs/api.md`, "Withheld settings field"). Every request the app sends names them.
  */
 internal object WebhookReads {
-    val FIELDS: List<String> = listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit")
+    val FIELDS: List<String> = listOf(
+        "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode"
+    )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
 }
@@ -225,6 +227,12 @@ object HomeAssistantClient {
     internal fun updateSiteSettings(settings: HomeAssistantSettings, request: SiteUpdate.Request): SiteUpdate.Outcome {
         val (status, body) = write(settings, request.payload())
         return SiteUpdate.answer(status, body)
+    }
+
+    /** Answer which car is plugged in, or correct it (webhook `identify_vehicle`). Never throws. */
+    internal fun identifyVehicle(settings: HomeAssistantSettings, vehicleId: String): IdentifyVehicle.Outcome {
+        val (status, body) = write(settings, IdentifyVehicle.payload(vehicleId))
+        return IdentifyVehicle.answer(status, body)
     }
 
     /** Change this charger's priority on its site (webhook `update_charger_priority`). */

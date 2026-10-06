@@ -243,6 +243,8 @@ internal object LocalNotifications {
                 val kwh = event.kwh?.takeIf { it > 0 } ?: return start
                 "$start ${t(R.string.notify_planned_kwh, number(kwh, 1))}"
             }
+            // Never one of this phone's own checks; worded all the same should one ever be raised.
+            NotificationEvent.VEHICLE_IDENTIFY -> t(R.string.identify_question)
         }
     }
 }

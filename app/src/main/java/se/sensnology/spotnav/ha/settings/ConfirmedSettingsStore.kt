@@ -50,12 +50,13 @@ internal class ConfirmedSettingsStore(
             settings.revision < existing.revision -> Merge.Stale(existing)
             canonical(settings) == canonical(existing) -> Merge.Unchanged
             // The same choice at the same revision, told again with newer read-only facts (the phones
-            // that exist now) or with `notifications` or `fill_to_limit` stated for the first time:
+            // that exist now) or with `notifications`, `fill_to_limit` or the identification fields stated for the first time:
             // kept as told. A copy that does not state one never takes it away.
             sameChoice(settings, existing) -> {
                 val merged = settings.copy(
                     notifications = settings.notifications ?: existing.notifications,
-                    fillToLimit = settings.fillToLimit ?: existing.fillToLimit
+                    fillToLimit = settings.fillToLimit ?: existing.fillToLimit,
+                    identification = settings.identification ?: existing.identification
                 )
                 if (canonical(merged) == canonical(existing)) Merge.Unchanged else store(localId, merged)
             }
@@ -109,9 +110,10 @@ internal class ConfirmedSettingsStore(
 
     /** Whether two records say the same, the notification phones that exist aside and an unstated choice aside. */
     private fun sameChoice(a: HaPlanningSettings, b: HaPlanningSettings): Boolean {
-        val bare = { it: HaPlanningSettings -> canonical(it.copy(notifications = null, fillToLimit = null)) }
+        val bare = { it: HaPlanningSettings -> canonical(it.copy(notifications = null, fillToLimit = null, identification = null)) }
         if (bare(a) != bare(b)) return false
         if (a.fillToLimit != null && b.fillToLimit != null && a.fillToLimit != b.fillToLimit) return false
+        if (a.identification != null && b.identification != null && a.identification != b.identification) return false
         val left = a.notifications ?: return true
         val right = b.notifications ?: return true
         return left.copy(available = emptyList()) == right.copy(available = emptyList())

@@ -156,7 +156,7 @@
   <string name="forget_widget_message">SpotNav fjerner instansen fra velgeren. Android kan beholde widget-ID-en til launcheren rydder den opp.</string>
   <string name="vehicle_title">Bil</string>
   <string name="vehicle_none">Ingen bil valgt</string>
-  <string name="vehicle_target">Målladningsnivå</string>
+  <string name="vehicle_target">Lademål</string>
   <string name="target_no_limit">Ingen kjent grense</string>
   <string name="paired_target_now">Nå %1$s</string>
   <string name="paired_target_limit">Bilens laddegrense %1$s</string>
@@ -174,8 +174,8 @@
   <string name="pause_choice_next_period">Til neste planlagte periode</string>
   <string name="pause_choice_until_tomorrow">Til i morgen</string>
   <string name="pause_choice_until_resumed">Til jeg gjenopptar</string>
-  <string name="target_description">Målladningsnivå, %1$d %% til %2$d %%</string>
-  <string name="target_description_no_limit">Målladningsnivå, fra %1$d %% og oppover; bilen oppgir ingen grense</string>
+  <string name="target_description">Lademål, %1$d %% til %2$d %%</string>
+  <string name="target_description_no_limit">Lademål, fra %1$d %% og oppover; bilen oppgir ingen grense</string>
   <string name="vehicle_capacity_save">Lagre kapasitet</string>
   <string name="charger_card_phases_label">Faser</string>
   <string name="charger_card_phases_detected">%1$s (lest fra laderen)</string>
@@ -253,7 +253,7 @@
   <string name="authority_reason_tax">ingen elavgift eller forslag</string>
   <string name="authority_reason_transfer">ingen nettavgift eller forslag</string>
   <string name="authority_reason_departure">uleselig avgangstid</string>
-  <string name="authority_reason_target">ingen målladenivå</string>
+  <string name="authority_reason_target">ikke noe lademål</string>
   <string name="authority_reason_presentation">uleselig visningsoppløsning</string>
   <string name="authority_reason_rejected">en verdi beregningen avviser</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
@@ -469,4 +469,45 @@
   <string name="charge_bar_charging">Lader</string>
   <string name="charge_bar_charging_power">Lader · %1$s kW</string>
   <string name="charge_bar_description">Ladingens fremdrift</string>
+  <!-- Which car is plugged in: the question, the car line, Byt bil, and the identification settings. -->
+  <string name="identify_question">Hvilken bil er tilkoblet?</string>
+  <string name="identify_undecided">SpotNav kunne ikke avgjøre det ut fra bilene.</string>
+  <string name="identify_keeps">Svarer ingen, beholdes %1$s.</string>
+  <string name="identify_answer_where">Svar i appen eller i varselet</string>
+  <string name="identify_waiting">venter på svar</string>
+  <string name="identify_answer_failed">Svaret kunne ikke lagres.</string>
+  <string name="identify_not_here">Den bilen kan ikke lade ved denne laderen.</string>
+  <string name="identify_switch">Bytt bil</string>
+  <string name="identify_switch_prompt">Hvilken bil er tilkoblet %1$s?</string>
+  <string name="identify_choose">Velg</string>
+  <string name="identify_hint_plugged_in">Ladekabelen sier tilkoblet</string>
+  <string name="identify_hint_not_plugged_in">Ladekabelen sier ikke tilkoblet</string>
+  <string name="identify_hint_away">Ikke hjemme</string>
+  <string name="identify_hint_elsewhere">Ved en annen lader</string>
+  <string name="identify_by_plug_sensor">identifisert via bilens ladekabel</string>
+  <string name="identify_by_location">identifisert via posisjon</string>
+  <string name="identify_by_answer">ditt svar</string>
+  <string name="identify_by_manual">ditt valg</string>
+  <string name="identify_by_assumed">antatt</string>
+  <string name="identify_identifying">identifiserer…</string>
+  <string name="identify_vehicles_title">Biler ved denne laderen</string>
+  <string name="identify_vehicles_help">Bare disse kan lades og planlegges her. Minst én.</string>
+  <string name="identify_no_vehicle">Velg minst én bil.</string>
+  <string name="identify_mode_title">Identifisering</string>
+  <string name="identify_mode_help">Hvilken bil som er tilkoblet, når flere kan lade her.</string>
+  <string name="identify_mode_automatic">Automatisk</string>
+  <string name="identify_mode_automatic_help">Ut fra bilenes egne pluggsensorer og posisjoner; spør når de ikke strekker til.</string>
+  <string name="identify_mode_ask">Spør alltid</string>
+  <string name="identify_mode_ask_help">Spør ved hver tilkobling.</string>
+  <string name="identify_mode_off">Av</string>
+  <string name="identify_mode_off_help">Beholder bilen du har valgt.</string>
+  <string name="identify_sources_title">Kilder for identifisering</string>
+  <string name="identify_source_plug">Pluggsensor</string>
+  <string name="identify_source_location">Posisjon</string>
+  <string name="identify_source_none">Ingen</string>
+  <string name="identify_source_choose">Velg en</string>
+  <string name="identify_source_not_found">Ingen funnet</string>
+  <string name="identify_sources_help">Leses bare for å se hvilken bil som er tilkoblet. Velges i Home Assistant.</string>
+  <string name="vehicle_target_follows">Følger bilen til alle ladere</string>
+  <string name="vehicle_error_target">Lademålet må være mellom 0 og 100.</string>
 </resources>

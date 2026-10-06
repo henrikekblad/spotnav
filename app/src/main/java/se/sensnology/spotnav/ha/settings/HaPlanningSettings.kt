@@ -97,7 +97,13 @@ data class HaPlanningSettings(
      * planned while no room is known. `null` from a Home Assistant that does not state it, and then it
      * is never offered nor sent.
      */
-    val fillToLimit: Boolean? = null
+    val fillToLimit: Boolean? = null,
+    /**
+     * Which cars can charge here and how the plugged-in one is found (`vehicle_ids` and
+     * `identify_mode`, vehicle identification); `null` from a Home Assistant that does not state them,
+     * and then nothing about it is shown or sent.
+     */
+    val identification: HaIdentificationSettings? = null
 ) {
     /**
      * This record with the read-only facts of [confirmed] carried over: a replacement body never
@@ -109,6 +115,23 @@ data class HaPlanningSettings(
         notifications = notifications?.copy(available = confirmed.notifications?.available.orEmpty())
     )
 }
+
+/** How the car plugged in at a charger more than one car can charge at is found (`identify_mode`). */
+enum class IdentifyMode(val wire: String) {
+    AUTOMATIC("automatic"),
+    ASK("ask"),
+    OFF("off");
+
+    companion object {
+        fun of(wire: Any?): IdentifyMode? = entries.firstOrNull { it.wire == wire }
+    }
+}
+
+/**
+ * The record's identification fields: the [mode], and the cars that can charge here ([vehicleIds],
+ * `null` for every detected car, else one or more different ids).
+ */
+data class HaIdentificationSettings(val mode: IdentifyMode, val vehicleIds: List<String>?)
 
 /** One phone Home Assistant can notify: the Companion app's notify service and the phone's name. */
 data class HaNotifyService(val service: String, val name: String)
@@ -134,11 +157,23 @@ enum class NotificationEvent(val wire: String) {
     CHARGE_STARTED("charge_started"),
     PLUGGED_IN("plugged_in"),
     UNPLUGGED("unplugged"),
-    PLAN_INSTALLED("plan_installed");
+    PLAN_INSTALLED("plan_installed"),
+
+    /** "Which car is plugged in?": a Companion event only; this app shows the question itself. */
+    VEHICLE_IDENTIFY("vehicle_identify");
 
     companion object {
-        /** On until a person turns them off: what needs attention, and the end of a charge. */
-        val DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE)
+        /**
+         * The Companion app's events on until a person turns them off: what needs attention, the end
+         * of a charge, and the question which car is plugged in.
+         */
+        val DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE, VEHICLE_IDENTIFY)
+
+        /** The events this phone's own checks can tell about. */
+        val LOCAL: List<NotificationEvent> = entries.filter { it != VEHICLE_IDENTIFY }
+
+        /** This phone's own checks until a person changes them: what needs attention, and the end of a charge. */
+        val LOCAL_DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE)
 
         fun of(wire: Any?): NotificationEvent? = entries.firstOrNull { it.wire == wire }
     }

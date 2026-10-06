@@ -373,6 +373,8 @@ internal class ChargingScreen(
                 override fun onPendingRefreshChanged() {
                     shell.liveRefreshReconsider?.invoke()
                 }
+
+                override fun onVehiclePicked(vehicleId: String) = pickPairedVehicle(vehicleId)
             }
         )
         startDashboardFetch = { controller.fetchDashboard() }
@@ -490,20 +492,27 @@ internal class ChargingScreen(
         return known.forDriver(driver, targetSoc.progress().toDouble())
     }
 
+    /**
+     * The car the charger plans for, chosen by a person: Home Assistant's own field
+     * (`target.vehicle_id`), written through the ordinary settings write like any other edit (never
+     * stored on this profile). The vehicle card's picker, and Byt bil with no car plugged in.
+     */
+    private fun pickPairedVehicle(picked: String) {
+        pendingVehiclePick = picked
+        val recorded = authority.authority?.remoteSettings
+        val driver = recorded?.driver
+            ?: if (planCard.effectiveDriver() == PlanDriver.TARGET_SOC) HaSettingsDriver.TARGET_SOC else HaSettingsDriver.MANUAL_KWH
+        val target = (recorded?.target ?: HaTargetIntent.EMPTY).copy(vehicleId = picked)
+            .forDriver(driver, targetSoc.progress().toDouble())
+        syncPaired()
+        commitEdit(HaSettingsEdit.Driver(driver, target))
+    }
+
     /** Every control's listener, attached where the authority, the note and `render` all exist. */
     private fun wireControls() {
         // The paired vehicle picker: a choice is Home Assistant's own field, written through the
         // ordinary settings write like any other edit (never stored on this profile).
-        vehicleCard.attachPairedPick { picked ->
-            pendingVehiclePick = picked
-            val recorded = authority.authority?.remoteSettings
-            val driver = recorded?.driver
-                ?: if (planCard.effectiveDriver() == PlanDriver.TARGET_SOC) HaSettingsDriver.TARGET_SOC else HaSettingsDriver.MANUAL_KWH
-            val target = (recorded?.target ?: HaTargetIntent.EMPTY).copy(vehicleId = picked)
-                .forDriver(driver, targetSoc.progress().toDouble())
-            syncPaired()
-            commitEdit(HaSettingsEdit.Driver(driver, target))
-        }
+        vehicleCard.attachPairedPick { picked -> pickPairedVehicle(picked) }
 
         val listener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {

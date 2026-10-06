@@ -156,7 +156,7 @@
   <string name="forget_widget_message">SpotNav poistaa tämän ilmentymän valitsimesta. Android voi säilyttää widget-tunnuksen, kunnes käynnistysohjelma siivoaa sen.</string>
   <string name="vehicle_title">Auto</string>
   <string name="vehicle_none">Ei autoa valittu</string>
-  <string name="vehicle_target">Tavoiteltu lataustaso</string>
+  <string name="vehicle_target">Lataustavoite</string>
   <string name="target_no_limit">Ei tunnettua rajaa</string>
   <string name="paired_target_now">Nyt %1$s</string>
   <string name="paired_target_limit">Auton latausraja %1$s</string>
@@ -174,8 +174,8 @@
   <string name="pause_choice_next_period">Seuraavaan suunniteltuun jaksoon asti</string>
   <string name="pause_choice_until_tomorrow">Huomiseen asti</string>
   <string name="pause_choice_until_resumed">Kunnes jatkan</string>
-  <string name="target_description">Tavoiteltu lataustaso, %1$d %% – %2$d %%</string>
-  <string name="target_description_no_limit">Tavoiteltu lataustaso, %1$d %% tai enemmän; auto ei ilmoita rajaa</string>
+  <string name="target_description">Lataustavoite, %1$d %% – %2$d %%</string>
+  <string name="target_description_no_limit">Lataustavoite, %1$d %% tai enemmän; auto ei ilmoita rajaa</string>
   <string name="vehicle_capacity_save">Tallenna kapasiteetti</string>
   <string name="charger_card_phases_label">Vaiheet</string>
   <string name="charger_card_phases_detected">%1$s (luettu laturilta)</string>
@@ -253,7 +253,7 @@
   <string name="authority_reason_tax">ei sähköveroa tai ehdotusta</string>
   <string name="authority_reason_transfer">ei siirtohintaa tai ehdotusta</string>
   <string name="authority_reason_departure">lähtöaika ei ole luettavissa</string>
-  <string name="authority_reason_target">ei tavoitelaustasoa</string>
+  <string name="authority_reason_target">ei lataustavoitetta</string>
   <string name="authority_reason_presentation">näyttötarkkuus ei kelpaa</string>
   <string name="authority_reason_rejected">arvo, jota laskenta ei hyväksy</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
@@ -469,4 +469,45 @@
   <string name="charge_bar_charging">Ladataan</string>
   <string name="charge_bar_charging_power">Ladataan · %1$s kW</string>
   <string name="charge_bar_description">Latauksen edistyminen</string>
+  <!-- Which car is plugged in: the question, the car line, Byt bil, and the identification settings. -->
+  <string name="identify_question">Mikä auto on kytketty?</string>
+  <string name="identify_undecided">SpotNav ei voinut päätellä sitä autoista.</string>
+  <string name="identify_keeps">Jos kukaan ei vastaa, %1$s pidetään.</string>
+  <string name="identify_answer_where">Vastaa sovelluksessa tai ilmoituksessa</string>
+  <string name="identify_waiting">odottaa vastausta</string>
+  <string name="identify_answer_failed">Vastausta ei voitu tallentaa.</string>
+  <string name="identify_not_here">Tätä autoa ei voi ladata tällä laturilla.</string>
+  <string name="identify_switch">Vaihda auto</string>
+  <string name="identify_switch_prompt">Mikä auto on kytketty laturiin %1$s?</string>
+  <string name="identify_choose">Valitse</string>
+  <string name="identify_hint_plugged_in">Latauskaapeli kertoo: kytketty</string>
+  <string name="identify_hint_not_plugged_in">Latauskaapeli kertoo: ei kytketty</string>
+  <string name="identify_hint_away">Ei kotona</string>
+  <string name="identify_hint_elsewhere">Toisella laturilla</string>
+  <string name="identify_by_plug_sensor">tunnistettu auton latauskaapelista</string>
+  <string name="identify_by_location">tunnistettu sijainnista</string>
+  <string name="identify_by_answer">vastauksesi</string>
+  <string name="identify_by_manual">valintasi</string>
+  <string name="identify_by_assumed">oletettu</string>
+  <string name="identify_identifying">tunnistetaan…</string>
+  <string name="identify_vehicles_title">Autot tällä laturilla</string>
+  <string name="identify_vehicles_help">Vain näitä voi ladata ja suunnitella täällä. Vähintään yksi.</string>
+  <string name="identify_no_vehicle">Valitse vähintään yksi auto.</string>
+  <string name="identify_mode_title">Tunnistus</string>
+  <string name="identify_mode_help">Mikä auto on kytketty, kun useampi voi latautua täällä.</string>
+  <string name="identify_mode_automatic">Automaattinen</string>
+  <string name="identify_mode_automatic_help">Autojen omista pistoketunnistimista ja sijainneista; kysyy, kun ne eivät riitä.</string>
+  <string name="identify_mode_ask">Kysy aina</string>
+  <string name="identify_mode_ask_help">Kysyy jokaisella kytkennällä.</string>
+  <string name="identify_mode_off">Pois</string>
+  <string name="identify_mode_off_help">Pitää valitsemasi auton.</string>
+  <string name="identify_sources_title">Tunnistuksen lähteet</string>
+  <string name="identify_source_plug">Pistoketunnistin</string>
+  <string name="identify_source_location">Sijainti</string>
+  <string name="identify_source_none">Ei mitään</string>
+  <string name="identify_source_choose">Valitse yksi</string>
+  <string name="identify_source_not_found">Ei löytynyt</string>
+  <string name="identify_sources_help">Luetaan vain sen näkemiseksi, mikä auto on kytketty. Valitaan Home Assistantissa.</string>
+  <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
+  <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
 </resources>

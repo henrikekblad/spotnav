@@ -160,7 +160,16 @@ internal data class DashboardVehicle(
      * The most phases the car's own onboard charger takes, 1 or 3; `null` from a Home Assistant that
      * does not state it (which plans as three).
      */
-    val onboardPhases: Int? = null
+    val onboardPhases: Int? = null,
+    /**
+     * The car's own target percent, the same at every charger (`target_percent`, 0-100); `null` when
+     * never set, or not stated ([targetStated]).
+     */
+    val targetPercent: Double? = null,
+    /** Whether the row states `target_percent` at all: only then is a target shown or written for the car. */
+    val targetStated: Boolean = false,
+    /** The car's identification sources (`identification`); `null` from a Home Assistant without them. */
+    val identification: VehicleIdentificationSources? = null
 )
 
 /**
@@ -320,7 +329,12 @@ internal data class Dashboard(
      * Home Assistant's own charge bar (`progress`, see [DashboardProgress]): `null` when it does not say
      * (an older Home Assistant, or a block this app cannot read), [DashboardProgress.None] for no bar.
      */
-    val progress: DashboardProgress? = null
+    val progress: DashboardProgress? = null,
+    /**
+     * Which car is plugged in (`identification`, see [DashboardIdentification]): `null` when nothing is
+     * being identified, from an older Home Assistant, or for a block this app cannot read.
+     */
+    val identification: DashboardIdentification? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -412,7 +426,8 @@ internal data class Dashboard(
                     ?.takeIf { it.opt("active") == true }
                     ?.let { it.opt("until") as? String }
                     ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() },
-                progress = DashboardProgress.parse(json)
+                progress = DashboardProgress.parse(json),
+                identification = DashboardIdentification.parse(json.opt("identification"))
             )
         }
 
@@ -674,7 +689,10 @@ internal data class Dashboard(
             maxPercent = optNum(json, "max_percent"),
             socEntityId = optText(json, "soc_entity_id"),
             socPercent = optNum(json, "soc_percent"),
-            onboardPhases = whole(json.opt("onboard_phases"))?.takeIf { it == 1 || it == 3 }
+            onboardPhases = whole(json.opt("onboard_phases"))?.takeIf { it == 1 || it == 3 },
+            targetPercent = (json.opt("target_percent") as? Number)?.toDouble()?.takeIf { it.isFinite() && it in 0.0..100.0 },
+            targetStated = json.has("target_percent"),
+            identification = VehicleIdentificationSources.parse(json.opt("identification"))
         )
 
         /** The `site` block, as the dashboard and the site write's own answers state it. */

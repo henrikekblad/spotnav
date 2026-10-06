@@ -21,8 +21,8 @@ internal object NotificationsOverview {
     private const val JOIN = " · "
 
     /** "3 of 7 events": the noun agrees with the total. */
-    private fun events(count: Int, texts: NotificationTexts) =
-        NotificationEvent.entries.size.let { total -> texts.quantity(R.plurals.notify_events_count, total, count, total) }
+    private fun events(count: Int, total: Int, texts: NotificationTexts) =
+        texts.quantity(R.plurals.notify_events_count, total, count, total)
 
     /** The Home Assistant app's row: the chosen phones, then the events once a phone is chosen. */
     fun homeAssistant(settings: HaNotificationSettings, texts: NotificationTexts): String {
@@ -33,14 +33,14 @@ internal object NotificationsOverview {
             else -> texts.quantity(R.plurals.notify_phones_count, chosen.size, chosen.size)
         }
         val known = settings.events.count { NotificationEvent.of(it) != null }
-        return phones + JOIN + events(known, texts)
+        return phones + JOIN + events(known, NotificationEvent.entries.size, texts)
     }
 
     /** The SpotNav app's row: off, every 15 minutes or instant, with the events while it is on. */
     fun spotNav(on: Boolean, events: Set<NotificationEvent>, instant: Boolean, texts: NotificationTexts): String {
         if (!on) return texts.text(R.string.notify_app_off)
         val mode = texts.text(if (instant) R.string.notify_app_instant else R.string.notify_app_periodic)
-        return mode + JOIN + events(events.size, texts)
+        return mode + JOIN + events(events.size, NotificationEvent.LOCAL.size, texts)
     }
 
     /** The dialog's help under the SpotNav switches follows the instant switch. */

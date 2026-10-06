@@ -172,10 +172,11 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         ).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
-            fun showNotifications() = notificationsCard?.show(
-                settingsCache.confirmed(settingsProfile.localId)?.notifications,
-                priceControlsEnabled(true, settingsAuthority.authority)
-            )
+            fun showNotifications() {
+                val writable = priceControlsEnabled(true, settingsAuthority.authority)
+                notificationsCard?.show(settingsCache.confirmed(settingsProfile.localId)?.notifications, writable)
+                pairedCards.setIdentificationWritable(writable)
+            }
             fun loadPaired() = session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
@@ -184,6 +185,28 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
                 }
                 showNotifications()
+            }
+            // Which cars can charge here and how the plugged-in one is found: the same settings write.
+            pairedCards.attachIdentification { mode, vehicleIds, done ->
+                when (val route = settingsAuthority.beginWrite(HaSettingsEdit.Identification(mode, vehicleIds))) {
+                    is CommitRoute.Send -> session.updateSettings(route.expectedRevision, route.replacement) { answer ->
+                        if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
+                        val outcome = settingsAuthority.onWriteAnswer(
+                            WriteSubject(settingsProfile.localId, route.operation, route.expectedRevision), answer
+                        )
+                        if (outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
+                        done(
+                            when (answer) {
+                                is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
+                                is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
+                                else -> authorityRefusalText(answer)
+                            }
+                        )
+                        loadPaired()
+                    }
+                    is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
+                    CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
+                }
             }
             notificationsCard?.attach(
                 save = { targets, events, done ->

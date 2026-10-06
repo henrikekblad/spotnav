@@ -37,11 +37,16 @@ internal object HaSettingsCodec {
      * copy, and never part of a replacement body. `notifications` (Home Assistant 1.9) is optional
      * both ways: a body that leaves it out keeps the stored choice, and so is `fill_to_limit`.
      */
-    private val OPTIONAL_KEYS = setOf("departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT)
+    private val OPTIONAL_KEYS = setOf(
+        "departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT, IDENTIFY_MODE, VEHICLE_IDS
+    )
 
     private const val FISCAL_INCLUDED = "fiscal_included"
     private const val NOTIFICATIONS = "notifications"
     private const val FILL_TO_LIMIT = "fill_to_limit"
+    private const val IDENTIFY_MODE = "identify_mode"
+    private const val VEHICLE_IDS = "vehicle_ids"
+    private const val INVALID_VEHICLES = "invalid_vehicles"
 
     /** A notify service as Home Assistant spells one, and how many one charger may name. */
     private val SERVICE: Pattern = Pattern.compile("^[a-z0-9_]{1,100}$")
@@ -121,8 +126,37 @@ internal object HaSettingsCodec {
             target = target(raw.opt("target"), exact),
             fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet(),
             notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision),
-            fillToLimit = nullable(raw.opt(FILL_TO_LIMIT)) { boolean(it, FILL_TO_LIMIT, "invalid_energy") }
+            fillToLimit = nullable(raw.opt(FILL_TO_LIMIT)) { boolean(it, FILL_TO_LIMIT, "invalid_energy") },
+            identification = identification(raw, strict = !withRevision)
         )
+    }
+
+    /**
+     * `identify_mode` and `vehicle_ids`: stated when the record has the mode (the list then defaults
+     * to every car). A replacement body is held to the contract ([strict]: `invalid_vehicles`); an
+     * answer is read leniently, so a shape this app cannot read hides the section, is never sent
+     * back, and never refuses the whole record.
+     */
+    private fun identification(raw: JSONObject, strict: Boolean): HaIdentificationSettings? {
+        if (!raw.has(IDENTIFY_MODE) && !raw.has(VEHICLE_IDS)) return null
+        return try {
+            if (!strict && !(raw.has(IDENTIFY_MODE) && raw.has(VEHICLE_IDS))) refuse(INVALID_VEHICLES, "both fields or neither")
+            val mode = IdentifyMode.of(raw.opt(IDENTIFY_MODE)) ?: refuse(INVALID_VEHICLES, "identify_mode is not a mode")
+            val ids = nullable(raw.opt(VEHICLE_IDS)) { value ->
+                val list = value as? JSONArray ?: refuse(INVALID_VEHICLES, "vehicle_ids must be null or a list")
+                val ids = (0 until list.length()).map { index ->
+                    (list.opt(index) as? String)?.takeIf { it.isNotEmpty() }
+                        ?: refuse(INVALID_VEHICLES, "vehicle_ids must hold vehicle ids")
+                }
+                if (ids.isEmpty() || ids.toSet().size != ids.size) {
+                    refuse(INVALID_VEHICLES, "vehicle_ids must name at least one vehicle, each once")
+                }
+                ids
+            }
+            HaIdentificationSettings(mode, ids)
+        } catch (refusal: HaSettingsFormatException) {
+            if (strict) throw refusal else null
+        }
     }
 
     /**
@@ -350,6 +384,11 @@ internal object HaSettingsCodec {
             // The stored copy keeps the read-only fact; a replacement body never carries it.
             if (withRevision && settings.fiscalIncluded.isNotEmpty()) {
                 put(FISCAL_INCLUDED, JSONArray(HaAreaOverrideComponent.entries.filter { it in settings.fiscalIncluded }.map { it.wire }))
+            }
+            // Stated only when Home Assistant stated them, and then always sent back as they stand.
+            settings.identification?.let { identification ->
+                put(IDENTIFY_MODE, identification.mode.wire)
+                put(VEHICLE_IDS, identification.vehicleIds?.let { JSONArray(it) } ?: JSONObject.NULL)
             }
             // Stated only when Home Assistant stated it; the phones that exist are the stored copy's alone.
             settings.notifications?.let { choice ->

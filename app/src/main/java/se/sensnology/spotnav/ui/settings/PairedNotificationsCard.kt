@@ -114,6 +114,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
             NotificationEvent.PLUGGED_IN -> R.string.notify_event_plugged_in
             NotificationEvent.UNPLUGGED -> R.string.notify_event_unplugged
             NotificationEvent.PLAN_INSTALLED -> R.string.notify_event_plan_installed
+            NotificationEvent.VEHICLE_IDENTIFY -> R.string.identify_question
         }
     )
 
@@ -189,7 +190,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         val help = muted("", top = 2).also { body.addView(it) }
         body.addView(heading(t(R.string.notify_events), top = 10))
         val chosen = local.events
-        val eventBoxes = NotificationEvent.entries.map { event ->
+        val eventBoxes = NotificationEvent.LOCAL.map { event ->
             checkbox(eventName(event), event in chosen).also { body.addView(it) }
         }
         val error = errorView().also { body.addView(it) }
@@ -231,7 +232,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
                     )
                 },
                 spotNavOn = spotNav.on.isChecked,
-                spotNavEvents = NotificationEvent.entries.filterIndexed { index, _ -> spotNav.eventBoxes[index].isChecked }.toSet(),
+                spotNavEvents = NotificationEvent.LOCAL.filterIndexed { index, _ -> spotNav.eventBoxes[index].isChecked }.toSet(),
                 instant = spotNav.instant?.isChecked ?: PushNotifications.enabled(context)
             )
             saveButton.isEnabled = false
