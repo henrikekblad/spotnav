@@ -127,6 +127,8 @@ internal class ChargingScreen(
 
     // Set once the controls exist: called once the whole screen is wired (see show).
     internal var startDashboardFetch: () -> Unit = {}
+    /** Whether the paired dashboard is to be read every few seconds (see ChargerDashboardController.pendingRefresh). */
+    internal var pendingRefresh: () -> Boolean = { false }
     private var refreshControls: () -> Unit = {}
 
     // ---- What Home Assistant's dashboard decides for a paired charger  The last dashboard answer,
@@ -251,6 +253,9 @@ internal class ChargingScreen(
         // Assistant said would end sooner: a status line does not wait for a tap to move on.
         shell.onLiveRefresh = { startDashboardFetch() }
         shell.liveRefreshEnd = { pairedDashboard?.startingUpUntil }
+        // A Start or Stop awaiting the charger's report is read every few seconds instead, so the
+        // buttons return as soon as Home Assistant offers them again.
+        shell.liveRefreshFast = { pendingRefresh() }
         startDashboardFetch()
     }
 
@@ -359,9 +364,14 @@ internal class ChargingScreen(
                     pendingVehiclePick = null
                     syncPaired()
                 }
+
+                override fun onPendingRefreshChanged() {
+                    shell.liveRefreshReconsider?.invoke()
+                }
             }
         )
         startDashboardFetch = { controller.fetchDashboard() }
+        pendingRefresh = { controller.pendingRefresh() }
         refreshControls = { controller.refreshControls() }
     }
 

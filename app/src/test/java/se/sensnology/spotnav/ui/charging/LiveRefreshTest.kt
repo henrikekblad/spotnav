@@ -60,4 +60,44 @@ class LiveRefreshTest {
         assertEquals(0, reads)
         assertEquals(null, timer.delay)
     }
+
+    @Test fun readsEveryFiveSecondsWhileAnActionIsPending() {
+        val timer = FakeTimer()
+        var fast = false
+        var reads = 0
+        val live = LiveRefresh(timer, { t0 }, { null }, fast = { fast }) { reads++ }
+        live.arm()
+        assertEquals(60_000L, timer.delay)
+        fast = true
+        live.reconsider()
+        assertEquals(5_000L, timer.delay)
+        timer.fire()
+        assertEquals(1, reads)
+        assertEquals(5_000L, timer.delay)
+        // Nothing pending any more: back to the minute.
+        fast = false
+        timer.fire()
+        assertEquals(2, reads)
+        assertEquals(60_000L, timer.delay)
+        // A sooner named end still wins over the fast pace only when it is sooner.
+        assertEquals(5_000L, live.delayMs(t0, t0.plusSeconds(20), fast = true))
+        assertEquals(3_000L, live.delayMs(t0, t0.plusSeconds(1), fast = true))
+    }
+
+    @Test fun neverReadsFastOutOfView() {
+        val timer = FakeTimer()
+        var reads = 0
+        val live = LiveRefresh(timer, { t0 }, { null }, fast = { true }) { reads++ }
+        // Not armed: a pending action asks for nothing.
+        live.reconsider()
+        assertEquals(null, timer.delay)
+        live.arm()
+        assertEquals(5_000L, timer.delay)
+        val pending = timer.task
+        live.cancel()
+        live.reconsider()
+        pending?.invoke()
+        assertEquals(0, reads)
+        assertEquals(null, timer.delay)
+    }
 }

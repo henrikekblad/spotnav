@@ -91,6 +91,9 @@ internal class ScreenShell(
     var onLiveRefresh: (() -> Unit)? = null
     var liveRefreshEnd: (() -> java.time.Instant?)? = null
 
+    /** Whether a Start or Stop awaits the charger's report, so the re-read runs every few seconds. */
+    var liveRefreshFast: (() -> Boolean)? = null
+
     /** Set by the Activity: the charging screen calls it when an answer arrives, so a sooner end is kept. */
     var liveRefreshReconsider: (() -> Unit)? = null
     var dayZone: (() -> java.time.ZoneId)? = null

@@ -86,6 +86,7 @@ class WidgetConfigActivity : Activity() {
             },
             now = { Instant.now() },
             nextEnd = { shell.liveRefreshEnd?.invoke() },
+            fast = { shell.liveRefreshFast?.invoke() == true },
             onRefresh = { shell.onLiveRefresh?.invoke() }
         ).also { live -> shell.liveRefreshReconsider = { live.reconsider() } }
     }
@@ -154,6 +155,7 @@ class WidgetConfigActivity : Activity() {
         shell.dayZone = null
         shell.onLiveRefresh = null
         shell.liveRefreshEnd = null
+        shell.liveRefreshFast = null
         shell.onNotificationPermission = null
         dayRollover.cancel()
         liveRefresh.cancel()

@@ -68,6 +68,12 @@ internal class ChargerDashboardController(
 
         /** Home Assistant's dashboard each time one was read (`null` when the read failed). */
         fun onDashboard(dashboard: Dashboard?)
+
+        /**
+         * Whether the dashboard is to be read every few seconds ([pendingRefresh]) changed: a
+         * command was sent, or a read opened or closed the window.
+         */
+        fun onPendingRefreshChanged()
     }
 
     // Home Assistant's dashboard answer (webhook `dashboard`): the one read. Everything below --
@@ -88,7 +94,10 @@ internal class ChargerDashboardController(
         onPrimaryAction = { action -> listener.onPrimaryAction(action) },
         currentSettings = currentSettings,
         sentAction = { pendingWatch.sentAction },
-        onSent = { action -> pendingWatch.onSent(action) },
+        onSent = { action ->
+            pendingWatch.onSent(action)
+            listener.onPendingRefreshChanged()
+        },
         send = { command -> send(command) }
     )
 
@@ -105,6 +114,12 @@ internal class ChargerDashboardController(
         cells.attachTo(chargerCard.body)
         cells.refresh()
     }
+
+    /**
+     * Whether a command the cells sent, or a decision that says one is under way, still asks for
+     * the dashboard every few seconds (at most [ActionPendingWatch.WINDOW_MS] after it began).
+     */
+    fun pendingRefresh(): Boolean = pendingWatch.fast()
 
     /** Put the controls in step with the dashboard now held. */
     fun refreshControls() = cells.refresh()
@@ -139,8 +154,10 @@ internal class ChargerDashboardController(
      */
     private fun applyDashboard(result: Result<Dashboard>, detectedPhases: Int?) {
         dashboard = result.getOrNull()
+        val wasFast = pendingWatch.fast()
         pendingWatch.onControl(dashboard?.control)
         listener.onDashboard(dashboard)
+        if (pendingWatch.fast() != wasFast) listener.onPendingRefreshChanged()
         // The control decision travels with the same dashboard this whole pass is built from, and
         // it is reported *before* the card's own controls refresh below -- so the row and the
         // button can never show two different decisions.
