@@ -107,14 +107,17 @@ internal object VehicleUpdate {
      */
     fun capacityEditable(row: DashboardVehicle): Boolean = !(row.capacitySource == "reported" && row.capacityKwh != null)
 
-    /** One field of a save: the value to write and the value the row showed. */
-    data class FieldChange(val field: VehicleField, val value: Double, val shown: Double?)
+    /** One field of a save: the value to write (`null` clears it, a target only) and the value the row showed. */
+    data class FieldChange(val field: VehicleField, val value: Double?, val shown: Double?)
+
+    /** One value written alone, against what [row] shows for it (the per-value editor's write). */
+    fun single(row: DashboardVehicle, field: VehicleField, value: Double?): FieldChange = FieldChange(field, value, shown(row, field))
 
     /**
      * The request body for one field: the value to write and the value the row showed (`null` when
      * it showed none, which the server compares as "nothing stored").
      */
-    fun payload(vehicleId: String, field: VehicleField, value: Double, shown: Double?): JSONObject =
+    fun payload(vehicleId: String, field: VehicleField, value: Double?, shown: Double?): JSONObject =
         payload(vehicleId, listOf(FieldChange(field, value, shown)))
 
     /** The request body for one or more fields, each compared against what the row showed. */
@@ -126,7 +129,9 @@ internal object VehicleUpdate {
             put("action", "update_vehicle")
             put("api_version", API_VERSION)
             put("vehicle_id", vehicleId)
-            put("changes", JSONObject().also { body -> changes.forEach { body.put(it.field.wire, wireValue(it.field, it.value)) } })
+            put("changes", JSONObject().also { body ->
+                changes.forEach { body.put(it.field.wire, it.value?.let { value -> wireValue(it.field, value) } ?: JSONObject.NULL) }
+            })
             put("expected", JSONObject().also { body ->
                 changes.forEach { body.put(it.field.wire, it.shown?.let { shown -> wireValue(it.field, shown) } ?: JSONObject.NULL) }
             })

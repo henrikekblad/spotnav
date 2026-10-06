@@ -21,6 +21,7 @@ import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.checkbox
+import se.sensnology.spotnav.ui.common.openEditor
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.valueLabel
@@ -91,21 +92,6 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         this.text = text; textSize = 15f; setTextColor(dark); setPadding(0, dp(top), 0, dp(2))
     }
 
-    private fun sectionHeading(text: String, top: Int) = TextView(context).apply {
-        this.text = text; textSize = 17f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
-        setPadding(0, dp(top), 0, dp(2))
-    }
-
-    /** A route's summary under its name: both are long, so the value never shares a line with it. */
-    private fun readRow(parent: LinearLayout, label: String, value: String) {
-        parent.addView(LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(0, dp(5), 0, dp(5))
-            addView(TextView(context).apply { text = label; textSize = 15f; setTextColor(muted) })
-            addView(valueLabel().apply { text = value; gravity = Gravity.START; setTextColor(palette.valueColour(ValueCue.READ_ONLY)) })
-        })
-    }
-
     private fun eventName(event: NotificationEvent) = t(
         when (event) {
             NotificationEvent.PLAN_STOPPED -> R.string.notify_event_plan_stopped
@@ -123,24 +109,19 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         textSize = 13f; setTextColor(ERROR_COLOUR); setPadding(0, dp(4), 0, 0); visibility = View.GONE
     }
 
-    private fun TextView.say(message: String?) {
-        text = message.orEmpty()
-        visibility = if (message == null) View.GONE else View.VISIBLE
-    }
-
     // --- The card ---------------------------------------------------------------------------------
 
     private fun repaint() {
         container.removeAllViews()
-        val card = card(container, t(R.string.notify_section), R.drawable.ic_settings)
+        val card = card(container, t(R.string.notify_section), R.drawable.ic_bell)
         val body = card.body
-        // Both routes open the one dialog that changes them.
-        val open = { openDialog() }
         record?.let { settings ->
-            settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts), onTap = open)
+            settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts),
+                onTap = { openHomeAssistant() })
             if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
         }
-        settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts), onTap = open)
+        settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts),
+            onTap = { openSpotNav() })
         if (local.enabled && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
     }
 
@@ -155,7 +136,6 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
     )
 
     private fun addHomeAssistantSection(body: LinearLayout, settings: HaNotificationSettings): HomeAssistantSection {
-        body.addView(sectionHeading(t(R.string.notify_companion_title), top = 0))
         body.addView(muted(t(R.string.notify_companion_intro)))
         if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), top = 4))
         body.addView(heading(t(R.string.notify_phones), top = 10))
@@ -181,8 +161,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         setPadding(0, dp(6), 0, dp(6))
     }
 
-    private fun addSpotNavSection(body: LinearLayout, top: Int): SpotNavSection {
-        body.addView(sectionHeading(t(R.string.notify_app_title), top = top))
+    private fun addSpotNavSection(body: LinearLayout): SpotNavSection {
         val on = switch(t(R.string.notify_local_toggle), local.enabled).also { body.addView(it) }
         val instant = if (instantOffered()) {
             switch(t(R.string.notify_push_toggle), PushNotifications.enabled(context)).also { body.addView(it) }
@@ -218,48 +197,57 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         turnedOn = { if (LocalNotifications.needsPermission(context)) requestPermission() }
     )
 
-    private fun openDialog() {
-        val settings = record
-        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        val homeAssistant = settings?.let { addHomeAssistantSection(body, it) }
-        val spotNav = addSpotNavSection(body, top = if (homeAssistant == null) 0 else 22)
-        openSaveDialog(t(R.string.notify_section), body) { dialog, saveButton ->
+    /** The Home Assistant app's route, on its own: the phones and the events they hear about. */
+    private fun openHomeAssistant() {
+        val settings = record ?: return
+        val body = editorBody()
+        val section = addHomeAssistantSection(body, settings)
+        openEditor(t(R.string.notify_companion_title), body, section.error) { done ->
             val current = record
+            if (!writable || current == null) return@openEditor done(null)
             val choice = NotificationsSave.Choice(
-                homeAssistant = homeAssistant?.takeIf { writable && current != null }?.let { section ->
-                    NotificationsSave.homeAssistantChoice(
-                        current!!, section.phones, section.phoneBoxes.map { it.isChecked }, section.eventBoxes.map { it.isChecked }
-                    )
-                },
-                spotNavOn = spotNav.on.isChecked,
-                spotNavEvents = NotificationEvent.LOCAL.filterIndexed { index, _ -> spotNav.eventBoxes[index].isChecked }.toSet(),
-                instant = spotNav.instant?.isChecked ?: PushNotifications.enabled(context)
+                homeAssistant = NotificationsSave.homeAssistantChoice(
+                    current, section.phones, section.phoneBoxes.map { it.isChecked }, section.eventBoxes.map { it.isChecked }
+                ),
+                // This phone's own route stays as it is.
+                spotNavOn = local.enabled,
+                spotNavEvents = local.events,
+                instant = PushNotifications.enabled(context)
             )
-            saveButton.isEnabled = false
-            homeAssistant?.error?.say(null)
-            spotNav.error.say(null)
-            saver().save(current, choice) { outcome -> finish(dialog, saveButton, homeAssistant, spotNav, outcome) }
+            saver().save(current, choice) { outcome ->
+                if (isDestroyed) return@save
+                repaint()
+                done(outcome.homeAssistantError)
+            }
         }
     }
 
-    private fun finish(
-        dialog: AlertDialog,
-        saveButton: Button,
-        homeAssistant: HomeAssistantSection?,
-        spotNav: SpotNavSection,
-        outcome: NotificationsSave.Outcome
-    ) {
-        if (isDestroyed) return
-        repaint()
-        if (outcome.saved) {
-            dialog.dismiss()
-            return
+    /** The SpotNav app's route, on its own: on or off, instant or every 15 minutes, and for what. */
+    private fun openSpotNav() {
+        val body = editorBody()
+        val section = addSpotNavSection(body)
+        openEditor(t(R.string.notify_app_title), body, section.error) { done ->
+            val choice = NotificationsSave.Choice(
+                // The Home Assistant app's route is not written from here.
+                homeAssistant = null,
+                spotNavOn = section.on.isChecked,
+                spotNavEvents = NotificationEvent.LOCAL.filterIndexed { index, _ -> section.eventBoxes[index].isChecked }.toSet(),
+                instant = section.instant?.isChecked ?: PushNotifications.enabled(context)
+            )
+            saver().save(record, choice) { outcome ->
+                if (isDestroyed) return@save
+                repaint()
+                val failure = NotificationsOverview.pushFailure(outcome.push)
+                // A failed turn-on leaves instant notifications off: the switch says so.
+                if (failure != null) section.instant?.isChecked = false
+                done(failure?.let { t(it) })
+            }
         }
-        saveButton.isEnabled = true
-        homeAssistant?.error?.say(outcome.homeAssistantError)
-        spotNav.error.say(NotificationsOverview.pushFailure(outcome.push)?.let { t(it) })
-        // A failed turn-on leaves instant notifications off: the switch says so.
-        if (NotificationsOverview.pushFailure(outcome.push) != null) spotNav.instant?.isChecked = false
+    }
+
+    private fun editorBody() = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(22), dp(8), dp(22), 0)
     }
 
     private companion object {

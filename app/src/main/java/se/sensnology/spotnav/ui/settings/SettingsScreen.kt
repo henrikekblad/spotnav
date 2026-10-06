@@ -59,6 +59,7 @@ import se.sensnology.spotnav.ui.common.authorityRefusalText
 import se.sensnology.spotnav.ui.common.authorityStateNote
 import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.chooseOne
+import se.sensnology.spotnav.ui.common.editOnOff
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.label
 import se.sensnology.spotnav.ui.common.settingsSaveTarget
@@ -129,8 +130,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val pairedPrice = if (paired) PairedPriceCard(this) else null
         val localPrice = if (paired) null else LocalPriceCard(this)
         pairedPrice?.add(priceCard.body, old) { values, done -> runFormSave(values, done) }
-        localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { controls ->
-            applyLocalSettings(paired = false, price = controls, intervalMinutes = readInterval(), showChargingPlan = readShowPlan())
+        localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
+            storeIfChanged(WidgetSettings.load(context, widgetId), next)
         }
         // The resolution is this phone's own, paired or not: a row whose choice applies at once.
         var interval = old.intervalMinutes
@@ -478,7 +479,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val languages = AppLanguageSettings.choices
         val language = languages.indexOfFirst { it.code == AppLanguageSettings.selected(context) }.coerceAtLeast(0)
         settingRow(parent, t(R.string.language), t(languages[language].label)) {
-            chooseOne(t(R.string.language), languages.map { t(it.label) }, language) { index ->
+            chooseOne(t(R.string.language), languages.map { t(it.label) }, language) { index, done ->
+                done(null)
                 AppLanguageSettings.save(context, languages[index].code)
                 activity.recreate()
             }
@@ -487,7 +489,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val themeNames = listOf(t(R.string.system), t(R.string.light), t(R.string.dark))
         val theme = themeModes.indexOf(AppThemeSettings.mode(context)).coerceAtLeast(0)
         settingRow(parent, t(R.string.theme), themeNames[theme]) {
-            chooseOne(t(R.string.theme), themeNames, theme) { index ->
+            chooseOne(t(R.string.theme), themeNames, theme) { index, done ->
+                done(null)
                 AppThemeSettings.save(context, themeModes[index])
                 activity.recreate()
             }
@@ -504,7 +507,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             holder.removeAllViews()
             val index = values.indexOf(current()).coerceAtLeast(0)
             settingRow(holder, t(R.string.resolution), names[index]) {
-                chooseOne(t(R.string.resolution), names, index) { chosen -> onChosen(values[chosen]); paint() }
+                chooseOne(t(R.string.resolution), names, index) { chosen, done -> done(null); onChosen(values[chosen]); paint() }
             }
         }
         paint()
@@ -526,12 +529,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         var on = settings.showChargingPlan
         val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         parent.addView(holder)
-        val names = listOf(t(R.string.site_on), t(R.string.site_off))
         fun paint() {
             holder.removeAllViews()
-            settingRow(holder, t(R.string.widget_plan), names[if (on) 0 else 1]) {
-                chooseOne(t(R.string.widget_plan), names, if (on) 0 else 1) { index ->
-                    on = index == 0
+            settingRow(holder, t(R.string.widget_plan), t(if (on) R.string.site_on else R.string.site_off)) {
+                editOnOff(t(R.string.widget_plan), on) { chosen, done ->
+                    done(null)
+                    on = chosen
                     paint()
                     onChange()
                 }

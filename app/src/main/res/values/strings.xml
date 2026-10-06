@@ -303,7 +303,6 @@
   <string name="site_car_first">Car first</string>
   <string name="site_battery_first">Battery first</string>
   <string name="site_forecast_title">Solar forecast sources</string>
-  <string name="site_forecast_none">None selected. Without one, hybrid plans a charge like Cheapest.</string>
   <string name="site_active_title">Active load balancing</string>
   <string name="site_on">On</string>
   <string name="site_off">Off</string>
@@ -312,45 +311,39 @@
   <string name="site_active_reason_measurement">Not available: this site\'s own power measurement is not healthy.</string>
   <string name="site_active_reason_unknown">Not available, for a reason this app does not know yet.</string>
   <string name="site_active_note">Best effort, not a protective device. Turning it off gives any current it had lowered back.</string>
-  <string name="site_active_in_ha">This is changed in Home Assistant, not here.</string>
   <string name="site_error_conflict">Changed elsewhere. The current values are shown.</string>
   <string name="site_error_not_permitted">Home Assistant does not allow this change from the app. Nothing changed.</string>
   <string name="site_error_unavailable">The site is not available right now. Nothing changed.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_dialog_title">Vehicle · %1$s</string>
   <string name="settings_vehicle_planned_here">This charger plans for it</string>
   <string name="vehicle_charge_level_label">Charge level</string>
   <string name="vehicle_charge_level_none">No reading</string>
   <string name="settings_vehicle_none">No vehicle is set up yet.</string>
   <string name="section_charger">Charger</string>
   <string name="charger_current_label">Charging current</string>
-  <string name="charger_current_kept">Not set by SpotNav (the charger keeps its own limit)</string>
-  <string name="charger_current_set">Set by SpotNav, %1$d–%2$d A</string>
+  <string name="charger_current_kept">Not controlled</string>
+  <string name="charger_current_set">Controlled, %1$d–%2$d A</string>
   <string name="charger_start_stop_label">Start and stop</string>
-  <string name="charger_current_ocpp">OCPP ChangeConfiguration</string>
-  <string name="charger_current_number">A number entity: %1$s</string>
-  <string name="charger_current_number_unnamed">A number entity</string>
-  <string name="charger_current_easee">Easee\'s dynamic current limit</string>
+  <string name="charger_current_ocpp">OCPP</string>
+  <string name="charger_current_number_unnamed">Controlled</string>
+  <string name="charger_current_easee">Easee</string>
   <string name="charger_energy_label">Energy register</string>
   <string name="charger_energy_automatic">Found automatically</string>
   <string name="site_main_fuse_label">Main fuse</string>
   <string name="site_measurement_label">Measurement mode</string>
-  <string name="site_measurement_direct">Phase currents measured directly</string>
-  <string name="site_measurement_derived">Phase currents derived from power and voltage</string>
+  <string name="site_measurement_direct">Per phase, direct</string>
+  <string name="site_measurement_derived">Derived</string>
   <string name="site_battery_label">Battery</string>
   <string name="site_main_fuse_value" translatable="false">%1$s A</string>
-  <string name="changed_in_home_assistant">Changed in Home Assistant.</string>
   <string name="site_default_name">Site</string>
   <string name="site_none">This charger has no site.</string>
   <string name="section_solar">Solar</string>
-  <string name="solar_dialog_title">Solar settings</string>
   <string name="priority_label">Priority</string>
   <string name="priority_help">Which charger gets power and solar surplus first on the site</string>
   <string name="priority_first">First</string>
   <string name="priority_normal">Normal</string>
   <string name="priority_last">Last</string>
   <string name="value_none">None</string>
-  <string name="price_dialog_title">Area and taxes</string>
   <string name="price_row_area">Area</string>
   <string name="price_row_vat">VAT</string>
   <string name="price_row_tax">Energy tax</string>
@@ -509,16 +502,19 @@
   <string name="identify_mode_ask_help">Asks at every plug-in.</string>
   <string name="identify_mode_off">Off</string>
   <string name="identify_mode_off_help">Keeps the car you chose.</string>
-  <string name="identify_sources_title">Identification sources</string>
   <string name="identify_source_plug">Plug sensor</string>
   <string name="identify_source_location">Location</string>
   <string name="identify_source_none">None</string>
   <string name="identify_source_choose">Choose one</string>
-  <string name="identify_source_not_found">None found</string>
-  <string name="identify_sources_help">Read only to tell which car is plugged in. Chosen in Home Assistant.</string>
+  <string name="identify_sources_help">Read only to tell which car is plugged in.</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Tap to change</string>
   <string name="identify_vehicles_all">All cars</string>
+  <!-- Settings setup rows as short status values. -->
+  <string name="setup_active">Active</string>
+  <string name="setup_missing">Missing</string>
+  <string name="setup_present">Present</string>
+  <string name="charger_energy_chosen">Chosen</string>
 </resources>

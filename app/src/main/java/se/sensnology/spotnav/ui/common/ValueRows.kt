@@ -149,7 +149,7 @@ internal object SettingRowWords {
 /**
  * One row of the settings screen, drawn as the main screen's value rows are: the label on the left,
  * the value right-aligned at the same size; in the accent colour and tappable when [onTap] changes it
- * (it opens that value's own dialog), in the normal text colour otherwise. [help], when given, is a
+ * (it opens that value's own editor), in the normal text colour otherwise. [help], when given, is a
  * short muted line under the row. The row is one unit to a screen reader (see [SettingRowWords]).
  */
 internal fun ViewScope.settingRow(
@@ -158,27 +158,27 @@ internal fun ViewScope.settingRow(
     value: String,
     help: String? = null,
     onTap: (() -> Unit)? = null
-): ValueRow {
+) {
     val valueView = TextView(context).apply {
         text = value
         textSize = SETTING_TEXT_SP
         typeface = Typeface.DEFAULT_BOLD
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
+    val description = SettingRowWords.description(label, value, onTap != null) { l, v ->
+        t(se.sensnology.spotnav.R.string.setting_row_changeable, l, v)
+    }
     val row = valueRow(parent, label, valueView, onTap)
     row.label?.apply {
         textSize = SETTING_TEXT_SP
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
-    row.view.contentDescription = SettingRowWords.description(label, value, onTap != null) { l, v ->
-        t(se.sensnology.spotnav.R.string.setting_row_changeable, l, v)
-    }
+    row.view.contentDescription = description
     if (help != null) {
         parent.addView(TextView(context).apply {
             text = help; textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(6))
         })
     }
-    return row
 }
 
 /** The size of a settings row's label and value: one size for both. */
