@@ -87,7 +87,10 @@ class AutoControlWireTest {
                 automaticReason = "pause_clear_failed"
             )
         )
-        assertEquals(AutoControl(AutoControl.ACTION_STOP, AutoControl.ACTION_NONE, emptyList()), unsettled)
+        assertEquals(
+            AutoControl(AutoControl.ACTION_STOP, AutoControl.ACTION_NONE, emptyList(), automaticReason = "pause_clear_failed"),
+            unsettled
+        )
         assertEquals(ChargerAction.STOP, unsettled!!.chargerCommand())
         assertNull("the failure offers no invented automatic control", unsettled.plannerControl())
 
@@ -100,8 +103,15 @@ class AutoControlWireTest {
                 automaticReason = "action_pending"
             )
         )
-        assertEquals(AutoControl(AutoControl.ACTION_NONE, AutoControl.ACTION_NONE, emptyList()), pending)
-        assertNull(pending!!.chargerCommand())
+        assertEquals(
+            AutoControl(
+                AutoControl.ACTION_NONE, AutoControl.ACTION_NONE, emptyList(),
+                immediateReason = AutoControl.REASON_ACTION_PENDING, automaticReason = AutoControl.REASON_ACTION_PENDING
+            ),
+            pending
+        )
+        assertTrue("the decision says a Start or Stop is under way", pending!!.actionPending)
+        assertNull(pending.chargerCommand())
         assertNull(pending.plannerControl())
     }
 

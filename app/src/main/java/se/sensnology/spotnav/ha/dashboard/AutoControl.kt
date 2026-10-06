@@ -16,8 +16,22 @@ data class AutoControl(
      */
     val automaticAction: String?,
     /** The choices the automatic pause would accept, in the backend's own order. Empty when none. */
-    val pauseChoices: List<String>
+    val pauseChoices: List<String>,
+    /**
+     * Why the immediate axis offers nothing ([IMMEDIATE_REASONS]), carried with a readable `none`;
+     * `null` beside an action or when the axis could not be read.
+     */
+    val immediateReason: String? = null,
+    /** Why the automatic axis offers nothing ([AUTOMATIC_REASONS]), read the same way. */
+    val automaticReason: String? = null
 ) {
+    /**
+     * Whether either axis says a Start or Stop is under way ([REASON_ACTION_PENDING]): Home
+     * Assistant awaits the charger's report, so neither axis offers anything until it arrives.
+     */
+    val actionPending: Boolean
+        get() = immediateReason == REASON_ACTION_PENDING || automaticReason == REASON_ACTION_PENDING
+
     /** The one **automatic** control this decision offers this app, or `null` when it offers none. */
     internal fun plannerControl(): PlannerControl? = when (automaticAction) {
         ACTION_RESUME -> PlannerControl.RESUME
@@ -62,10 +76,13 @@ data class AutoControl(
         val IMMEDIATE_ACTIONS = setOf(ACTION_START, ACTION_STOP, ACTION_NONE)
         val AUTOMATIC_ACTIONS = setOf(ACTION_PAUSE, ACTION_RESUME, ACTION_NONE)
 
+        /** A Start or Stop awaiting the charger's report, on either axis. */
+        const val REASON_ACTION_PENDING = "action_pending"
+
         /** The reasons each axis may carry in the state where it has no action. */
-        val IMMEDIATE_REASONS = setOf("no_settings", "action_pending")
+        val IMMEDIATE_REASONS = setOf("no_settings", REASON_ACTION_PENDING)
         val AUTOMATIC_REASONS =
-            setOf("no_settings", "pause_unsettled", "pause_clear_failed", "action_pending")
+            setOf("no_settings", "pause_unsettled", "pause_clear_failed", REASON_ACTION_PENDING)
 
         /** The whole pause-choice vocabulary. A choice this build cannot name is not a choice. */
         val PAUSE_CHOICES = setOf(PAUSE_NEXT_PERIOD, PAUSE_UNTIL_TOMORROW, PAUSE_UNTIL_RESUMED)
@@ -92,7 +109,12 @@ data class AutoControl(
             if (immediate == null && automatic == null) return null
             // The choices travel only with a readable automatic axis: an axis this build could not
             // read offers no pause, so it publishes nothing to choose for one either.
-            return AutoControl(immediate, automatic, if (automatic == null) emptyList() else offered)
+            return AutoControl(
+                immediate, automatic, if (automatic == null) emptyList() else offered,
+                // A reason travels only with the readable `none` it explains.
+                immediateReason = if (immediate == ACTION_NONE) immediateReason else null,
+                automaticReason = if (automatic == ACTION_NONE) automaticReason else null
+            )
         }
 
         /** One axis's action, or `null` when the half that describes it is not a decision. */

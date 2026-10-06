@@ -224,5 +224,37 @@ class AutoControlTest {
         )
     }
 
+    @Test
+    fun theReasonTravelsWithTheAxisThatHasNoAction() {
+        // Either axis saying `action_pending` is a Start or Stop under way:
+        val both = AutoControl.of(
+            AutoControl.ACTION_NONE, AutoControl.REASON_ACTION_PENDING,
+            AutoControl.ACTION_NONE, AutoControl.REASON_ACTION_PENDING, emptyList()
+        )!!
+        assertEquals(AutoControl.REASON_ACTION_PENDING, both.immediateReason)
+        assertEquals(AutoControl.REASON_ACTION_PENDING, both.automaticReason)
+        assertTrue(both.actionPending)
+        val automaticOnly = AutoControl.of(
+            AutoControl.ACTION_STOP, null, AutoControl.ACTION_NONE, AutoControl.REASON_ACTION_PENDING, emptyList()
+        )!!
+        assertTrue(automaticOnly.actionPending)
+        val immediateOnly = AutoControl.of(
+            AutoControl.ACTION_NONE, AutoControl.REASON_ACTION_PENDING, AutoControl.ACTION_PAUSE, null,
+            listOf(AutoControl.PAUSE_UNTIL_RESUMED)
+        )!!
+        assertTrue(immediateOnly.actionPending)
+        // Another reason is carried, but it is not a pending action:
+        val noSettings = AutoControl.of(AutoControl.ACTION_NONE, "no_settings", AutoControl.ACTION_NONE, "no_settings", emptyList())!!
+        assertEquals("no_settings", noSettings.immediateReason)
+        assertFalse(noSettings.actionPending)
+        // An axis this build could not read carries no reason either:
+        val unknown = AutoControl.of(AutoControl.ACTION_NONE, "because", AutoControl.ACTION_PAUSE, null, listOf(AutoControl.PAUSE_UNTIL_RESUMED))!!
+        assertNull(unknown.immediateAction)
+        assertNull(unknown.immediateReason)
+        assertFalse(unknown.actionPending)
+        // An actionable decision has nothing pending.
+        assertFalse(chargingAuto.actionPending)
+    }
+
     private fun keys(payload: String): Set<String> = JSONObject(payload).keys().asSequence().toSet()
 }

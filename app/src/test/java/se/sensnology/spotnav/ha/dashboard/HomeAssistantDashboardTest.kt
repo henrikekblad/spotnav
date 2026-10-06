@@ -260,6 +260,10 @@ class HomeAssistantDashboardTest {
         val pending = Dashboard.parse(v1("action_pending")).control!!
         assertNull(pending.chargerCommand())
         assertNull(pending.plannerControl())
+        // ... but says why: a Start awaiting the charger's report.
+        assertEquals(AutoControl.REASON_ACTION_PENDING, pending.immediateReason)
+        assertEquals(AutoControl.REASON_ACTION_PENDING, pending.automaticReason)
+        assertTrue(pending.actionPending)
     }
 
     @Test fun aControlBlockThatCannotBeReadIsNoControlAndCostsNothingElse() {
