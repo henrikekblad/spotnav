@@ -14,8 +14,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
 import se.sensnology.spotnav.R
@@ -378,23 +376,6 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
                 }
             }.apply { isDaemon = true }.start()
         }
-    }
-
-    /** The resolution radio group: a setting of this phone, applied as soon as it is chosen. */
-    fun addResolution(parent: LinearLayout, old: WidgetSettings, onChange: () -> Unit): () -> Int {
-        parent.addView(label(t(R.string.resolution)))
-        val interval = RadioGroup(context).apply { orientation = RadioGroup.HORIZONTAL }
-        val quarterId = View.generateViewId()
-        val hourId = View.generateViewId()
-        interval.addView(RadioButton(context).apply {
-            id = quarterId; text = t(R.string.quarter); isChecked = old.intervalMinutes == PresentationIntervals.QUARTER_HOUR_MINUTES
-        })
-        interval.addView(RadioButton(context).apply {
-            id = hourId; text = t(R.string.hour); isChecked = old.intervalMinutes == PresentationIntervals.HOUR_MINUTES
-        })
-        parent.addView(interval)
-        interval.setOnCheckedChangeListener { _, _ -> onChange() }
-        return { if (interval.checkedRadioButtonId == hourId) PresentationIntervals.HOUR_MINUTES else PresentationIntervals.QUARTER_HOUR_MINUTES }
     }
 
     /** Commit a field when it loses focus or the keyboard's Done is pressed. */

@@ -78,14 +78,14 @@ class NotificationsOverviewTest {
         val names = listOf(
             "notify_companion_title", "notify_companion_intro", "notify_app_title", "notify_local_toggle", "notify_local_help",
             "notify_push_toggle", "notify_push_help", "notify_phones_none", "notify_app_off",
-            "notify_app_periodic", "notify_app_instant", "notify_change"
+            "notify_app_periodic", "notify_app_instant"
         )
         for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi")) {
             val xml = listOf("src/main/res", "app/src/main/res").map { File(it, "$dir/strings.xml") }.first { it.exists() }.readText()
             for (name in names) assertTrue("$dir $name", xml.contains("<string name=\"$name\">"))
             assertTrue("$dir phones", xml.contains("<plurals name=\"notify_phones_count\">"))
             assertTrue("$dir events", xml.contains("<plurals name=\"notify_events_count\">"))
-            for (gone in listOf("notify_events_on", "notify_local_title", "notify_local_events_change")) {
+            for (gone in listOf("notify_events_on", "notify_local_title", "notify_local_events_change", "notify_change")) {
                 assertFalse("$dir $gone", xml.contains("name=\"$gone\""))
             }
         }

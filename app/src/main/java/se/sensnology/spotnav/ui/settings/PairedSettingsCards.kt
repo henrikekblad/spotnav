@@ -33,10 +33,11 @@ import se.sensnology.spotnav.ha.settings.IdentifyMode
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
-import se.sensnology.spotnav.ui.common.checkbox
+import se.sensnology.spotnav.ui.common.chooseMany
+import se.sensnology.spotnav.ui.common.chooseOne
+import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueColour
-import se.sensnology.spotnav.ui.common.valueRow
 import se.sensnology.spotnav.ui.common.weight
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.PairedVehicles
@@ -138,31 +139,13 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
         this.text = text; textSize = 13f; setTextColor(muted); setPadding(0, dp(top), 0, dp(bottom))
     }
 
-    private fun readRow(parent: LinearLayout, label: String, value: String) {
-        if (value.length <= STACK_AFTER_CHARS) {
-            valueRow(parent, label, valueLabel().apply { text = value })
-            return
-        }
-        // A long value (an entity name, a sentence) gets the whole width under its label instead of
-        // being broken inside a word in half a row.
-        parent.addView(LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(0, dp(5), 0, dp(5))
-            addView(TextView(context).apply { text = label; textSize = 15f; setTextColor(muted) })
-            addView(valueLabel().apply { text = value; gravity = Gravity.START; setTextColor(palette.valueColour(ValueCue.READ_ONLY)) })
-        })
-    }
+    /** A value row that cannot be changed here: right-aligned in the normal text colour. */
+    private fun readRow(parent: LinearLayout, label: String, value: String, help: String? = null) =
+        settingRow(parent, label, value, help)
 
-    private fun changeButton(parent: LinearLayout, label: String, enabled: Boolean = true, onClick: () -> Unit) {
-        parent.addView(Button(context).apply {
-            text = label
-            isAllCaps = false
-            isEnabled = enabled
-            setOnClickListener { onClick() }
-        }, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dp(8) })
-    }
+    /** A value row that opens [onTap] (its dialog), or a read-only one while [onTap] is `null`. */
+    private fun valueRow(parent: LinearLayout, label: String, value: String, help: String? = null, onTap: (() -> Unit)?) =
+        settingRow(parent, label, value, help, onTap)
 
     private fun repaint() {
         container.removeAllViews()
@@ -191,28 +174,27 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             val card = card(container, vehicle.name, R.drawable.ic_ev)
             if (vehicle.planned) card.body.addView(muted(t(R.string.settings_vehicle_planned_here), top = 8))
             readRow(card.body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
-            readRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle))
-            readRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
-                ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset))
+            // The car's own figures open its dialog; a battery size the car reports itself is read-only there too.
+            val edit = { openVehicleDialog(vehicle.id) }
+            valueRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle), onTap = edit)
+            valueRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
+                ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset), onTap = edit)
             vehicle.onboardPhases?.let { phases ->
-                readRow(card.body, t(R.string.vehicle_onboard_label), phasesText(phases))
+                valueRow(card.body, t(R.string.vehicle_onboard_label), phasesText(phases), onTap = edit)
             }
             // The car's own charge limit, when it reports one: written to the car where Home Assistant can.
             vehicle.chargeLimit?.let { limit ->
-                readRow(card.body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit))
-                if (vehicle.limitWritable) {
-                    changeButton(card.body, t(R.string.vehicle_limit_set)) { openLimitDialog(vehicle.id, vehicle.name, limit) }
-                }
+                valueRow(card.body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit),
+                    onTap = if (vehicle.limitWritable) ({ openLimitDialog(vehicle.id, vehicle.name, limit) }) else null)
             }
             // The car's own target, the same at every charger (changed in the car's dialog).
             if (vehicle.targetStated) {
-                readRow(card.body, t(R.string.vehicle_target), vehicle.targetPercent
-                    ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset))
-                card.body.addView(muted(t(R.string.vehicle_target_follows), bottom = 4))
+                valueRow(card.body, t(R.string.vehicle_target), vehicle.targetPercent
+                    ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset),
+                    help = t(R.string.vehicle_target_follows), onTap = edit)
             }
             vehicle.sources?.let { addSources(card.body, it) }
             vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
-            changeButton(card.body, t(R.string.settings_vehicle_change)) { openVehicleDialog(vehicle.id) }
         }
     }
 
@@ -519,61 +501,51 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             adoptedIdentification?.let { record.copy(identification = it) } ?: record
         }
         val section = VehicleIdentification.section(dash, record) ?: return
-        val enabled = identificationWritable && !identificationWriting
-        val error = errorView()
-        body.addView(divider())
-        body.addView(subheading(t(R.string.identify_vehicles_title)))
-        body.addView(muted(t(R.string.identify_vehicles_help), bottom = 2))
+        val writable = identificationWritable && !identificationWriting
         val allIds = section.cars.map { it.vehicleId }
-        val boxes = section.cars.map { car ->
-            checkbox(car.name, car.ticked).also { it.isEnabled = enabled; body.addView(it) }
-        }
-        body.addView(divider())
-        body.addView(subheading(t(R.string.identify_mode_title)))
-        body.addView(muted(t(R.string.identify_mode_help), bottom = 2))
-        val group = RadioGroup(context).apply { orientation = LinearLayout.VERTICAL }
-        val radios = IdentifyMode.entries.map { mode ->
-            RadioButton(context).apply {
-                id = View.generateViewId()
-                text = modeName(mode)
-                textSize = 16f
-                isChecked = mode == section.mode
-                isEnabled = enabled
-            }.also { radio ->
-                group.addView(radio)
-                group.addView(muted(modeHelp(mode), bottom = 4).apply { setPadding(dp(32), 0, 0, dp(4)) })
-            }
-        }
-        body.addView(group)
-        if (!identificationWritable) body.addView(muted(t(R.string.settings_paired_read_only), top = 4))
-        identificationNotice?.let { body.addView(muted(it, top = 4)) }
-        body.addView(error)
+        val stored = record?.identification
 
-        fun save() {
-            val ticked = allIds.filterIndexed { index, _ -> boxes[index].isChecked }.toSet()
-            val ids = VehicleIdentification.vehicleIdsFor(allIds, ticked)
-            if (ids != null && ids.isEmpty()) {
-                // At least one car: the last tick stays.
-                boxes.forEachIndexed { index, box -> box.isChecked = section.cars[index].ticked }
-                error.say(t(R.string.identify_no_vehicle))
-                return
-            }
-            val mode = IdentifyMode.entries.getOrNull(radios.indexOfFirst { it.isChecked }) ?: section.mode
-            val stored = record?.identification
-            if (stored != null && stored.mode == mode && stored.vehicleIds == ids) return
-            error.say(null)
+        fun write(mode: IdentifyMode, ids: List<String>?, done: (String?) -> Unit = {}) {
+            if (stored != null && stored.mode == mode && stored.vehicleIds == ids) { done(null); return }
             identificationWriting = true
             identificationNotice = null
-            (boxes + radios).forEach { it.isEnabled = false }
+            repaint()
             writeIdentification(mode, ids) { refusal ->
                 identificationWriting = false
                 if (refusal == null) adoptedIdentification = HaIdentificationSettings(mode, ids)
                 identificationNotice = refusal
+                done(refusal)
                 repaint()
             }
         }
-        boxes.forEach { box -> box.setOnCheckedChangeListener { _, _ -> save() } }
-        radios.forEach { radio -> radio.setOnCheckedChangeListener { _, checked -> if (checked) save() } }
+
+        body.addView(divider())
+        // The cars at this charger: "All cars", or the ticked ones by name; a dialog ticks them.
+        val names = VehicleIdentification.tickedNames(section)
+        valueRow(body, t(R.string.identify_vehicles_title),
+            names?.joinToString(", ") ?: t(R.string.identify_vehicles_all),
+            onTap = if (writable) ({
+                chooseMany(t(R.string.identify_vehicles_title), section.cars.map { it.name }, section.cars.map { it.ticked },
+                    intro = t(R.string.identify_vehicles_help)) { ticks, dialog, say ->
+                    val ids = VehicleIdentification.vehicleIdsFor(allIds, allIds.filterIndexed { index, _ -> ticks[index] }.toSet())
+                    if (ids != null && ids.isEmpty()) {
+                        say(t(R.string.identify_no_vehicle))
+                    } else {
+                        dialog.dismiss()
+                        write(section.mode, ids)
+                    }
+                }
+            }) else null)
+        // How the plugged-in car is found: one of three, each saying what it does.
+        valueRow(body, t(R.string.identify_mode_title), modeName(section.mode), help = t(R.string.identify_mode_help),
+            onTap = if (writable) ({
+                chooseOne(t(R.string.identify_mode_title), IdentifyMode.entries.map { modeName(it) },
+                    IdentifyMode.entries.indexOf(section.mode), helps = IdentifyMode.entries.map { modeHelp(it) }) { index ->
+                    write(IdentifyMode.entries[index], stored?.vehicleIds)
+                }
+            }) else null)
+        if (!identificationWritable) body.addView(muted(t(R.string.settings_paired_read_only), top = 4))
+        identificationNotice?.let { body.addView(muted(it, top = 4)) }
     }
 
     // --- Site -----------------------------------------------------------------------------------
@@ -649,11 +621,10 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
     /** The charger's priority on its site: absent from an older Home Assistant, so then nothing is shown. */
     private fun addPriority(body: LinearLayout) {
         val priority = adoptedPriority ?: dashboard?.chargerPriority ?: return
-        readRow(body, t(R.string.priority_label), priorityName(priority.value))
-        body.addView(muted(t(R.string.priority_help), top = 2))
+        valueRow(body, t(R.string.priority_label), priorityName(priority.value), help = t(R.string.priority_help),
+            onTap = if (priority.writable) ({ openPriorityDialog() }) else null)
         if (!priority.writable) body.addView(muted(t(R.string.site_read_only), top = 4))
         priorityNotice?.let { body.addView(muted(it, top = 4)) }
-        changeButton(body, t(R.string.priority_change), enabled = priority.writable) { openPriorityDialog() }
     }
 
     private fun openPriorityDialog() {
@@ -711,12 +682,12 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
         val chargers = PairedOverview.site(site).chargers
         val card = card(container, t(R.string.section_solar), R.drawable.ic_solar)
         card.body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), top = 8, bottom = 4))
-        readRow(card.body, t(R.string.site_solar_priority), priorityText(summary.priority))
-        readRow(card.body, t(R.string.site_forecast_title),
-            if (summary.forecastTitles.isEmpty()) t(R.string.value_none) else summary.forecastTitles.joinToString(", "))
+        val edit: (() -> Unit)? = if (summary.editable) ({ openSolarDialog() }) else null
+        valueRow(card.body, t(R.string.site_solar_priority), priorityText(summary.priority), onTap = edit)
+        valueRow(card.body, t(R.string.site_forecast_title),
+            if (summary.forecastTitles.isEmpty()) t(R.string.value_none) else summary.forecastTitles.joinToString(", "), onTap = edit)
         if (!summary.editable) card.body.addView(muted(t(R.string.site_read_only), top = 6))
         solarNotice?.let { card.body.addView(muted(it, top = 4)) }
-        changeButton(card.body, t(R.string.solar_change), enabled = summary.editable) { openSolarDialog() }
     }
 
     private fun openSolarDialog() {

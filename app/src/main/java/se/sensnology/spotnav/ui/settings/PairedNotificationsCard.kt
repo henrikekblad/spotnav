@@ -21,6 +21,7 @@ import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.checkbox
+import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.valueLabel
 
@@ -133,15 +134,14 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         container.removeAllViews()
         val card = card(container, t(R.string.notify_section), R.drawable.ic_settings)
         val body = card.body
+        // Both routes open the one dialog that changes them.
+        val open = { openDialog() }
         record?.let { settings ->
-            readRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts))
+            settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts), onTap = open)
             if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
         }
-        readRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts))
+        settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts), onTap = open)
         if (local.enabled && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
-        body.addView(Button(context).apply {
-            text = t(R.string.notify_change); isAllCaps = false; setOnClickListener { openDialog() }
-        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
     }
 
     // --- The dialog -------------------------------------------------------------------------------

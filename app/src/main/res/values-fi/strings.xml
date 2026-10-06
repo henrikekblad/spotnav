@@ -305,7 +305,6 @@
   <string name="site_error_not_permitted">Home Assistant ei salli tätä muutosta sovelluksesta. Mikään ei muuttunut.</string>
   <string name="site_error_unavailable">Kohde ei ole juuri nyt käytettävissä. Mikään ei muuttunut.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_change">Muuta ajoneuvoa</string>
   <string name="settings_vehicle_dialog_title">Ajoneuvo · %1$s</string>
   <string name="settings_vehicle_planned_here">Tämä lataaja suunnittelee sille</string>
   <string name="vehicle_charge_level_label">Varaustaso</string>
@@ -331,16 +330,13 @@
   <string name="site_default_name">Kohde</string>
   <string name="site_none">Tällä laturilla ei ole kohdetta.</string>
   <string name="section_solar">Aurinko</string>
-  <string name="solar_change">Muuta aurinkoasetuksia</string>
   <string name="solar_dialog_title">Aurinkoasetukset</string>
   <string name="priority_label">Prioriteetti</string>
   <string name="priority_help">Mikä laturi saa virtaa ja aurinkoylijäämää ensin kohteessa</string>
-  <string name="priority_change">Muuta prioriteettia</string>
   <string name="priority_first">Ensin</string>
   <string name="priority_normal">Normaali</string>
   <string name="priority_last">Viimeksi</string>
   <string name="value_none">Ei mitään</string>
-  <string name="price_change">Muuta hinta-aluetta ja veroja</string>
   <string name="price_dialog_title">Alue ja verot</string>
   <string name="price_row_area">Alue</string>
   <string name="price_row_vat">ALV</string>
@@ -410,7 +406,6 @@
   <string name="notify_phones">Puhelimet</string>
   <string name="notify_events">Tapahtumat</string>
   <string name="notify_phones_none">Puhelinta ei valittu</string>
-  <string name="notify_change">Muuta ilmoituksia</string>
   <string name="notify_no_phones">Yksikään puhelin, jossa on Home Assistant -sovellus, ei ole kirjautunut tähän Home Assistantiin.</string>
   <string name="notify_missing">%1$s (ei löydy)</string>
   <string name="notify_event_plan_stopped">Lataus pysähtyi tai ei alkanut suunnitellusti</string>
@@ -509,4 +504,7 @@
   <string name="identify_sources_help">Luetaan vain sen näkemiseksi, mikä auto on kytketty. Valitaan Home Assistantissa.</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
+  <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
+  <string name="setting_row_changeable">%1$s, %2$s. Muuta napauttamalla</string>
+  <string name="identify_vehicles_all">Kaikki autot</string>
 </resources>

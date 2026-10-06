@@ -142,6 +142,10 @@ internal object VehicleIdentification {
         return Section(stated.mode, cars.map { Car(it.id, it.name, ids == null || it.id in ids) })
     }
 
+    /** The cars row's value: the ticked cars' names, or `null` when every car is ticked ("All cars"). */
+    fun tickedNames(section: Section): List<String>? =
+        section.cars.takeUnless { cars -> cars.all { it.ticked } }?.filter { it.ticked }?.map { it.name }
+
     /**
      * What a save of the cars writes, as the Home Assistant card does: every listed car ticked is `null`
      * (every detected car, now and later), else the ticked ones in the listed order; none ticked is an

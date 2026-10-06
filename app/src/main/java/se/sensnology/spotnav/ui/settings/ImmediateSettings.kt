@@ -142,6 +142,28 @@ internal data class PriceOverview(
             )
         }
 
+        /**
+         * The same rows for this phone's own price settings (unpaired): the area, and each add-on off,
+         * included in the area's price, or on with its figure (not set when there is none).
+         */
+        fun ofLocal(settings: WidgetSettings, market: (String) -> PriceMarket?): PriceOverview {
+            val areaMarket = settings.area.takeIf { it.isNotEmpty() }?.let(market)
+            val included = HaAreaOverrideComponent.of(areaMarket?.included.orEmpty())
+            val minor = areaMarket?.minorUnit?.let { "$it/kWh" }.orEmpty()
+            fun line(component: HaAreaOverrideComponent, on: Boolean, amount: Double?, unit: String): FiscalLine = when {
+                component in included -> FiscalLine.Included
+                !on -> FiscalLine.Off
+                amount == null || amount == WidgetSettings.NO_SUGGESTION -> FiscalLine.Unset
+                else -> FiscalLine.Figure(amount, unit)
+            }
+            return PriceOverview(
+                area = settings.area.takeIf { it.isNotEmpty() }?.let { areaMarket?.selectorLabel ?: it },
+                vat = line(HaAreaOverrideComponent.VAT, settings.vat, areaMarket?.vatPercent, "%"),
+                tax = line(HaAreaOverrideComponent.TAX, settings.tax, settings.taxMinorUnit, minor),
+                transfer = line(HaAreaOverrideComponent.TRANSFER, settings.transfer, settings.gridFeeMinorUnit, minor)
+            )
+        }
+
         /** A figure as the overview writes it: at most two decimals, in the screen's number locale. */
         fun figureText(line: FiscalLine.Figure, locale: Locale): String {
             val number = NumberFormat.getNumberInstance(locale).apply {

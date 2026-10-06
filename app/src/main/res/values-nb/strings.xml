@@ -305,7 +305,6 @@
   <string name="site_error_not_permitted">Home Assistant tillater ikke denne endringen fra appen. Ingenting ble endret.</string>
   <string name="site_error_unavailable">Anlegget er ikke tilgjengelig akkurat nå. Ingenting ble endret.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_change">Endre kjøretøy</string>
   <string name="settings_vehicle_dialog_title">Kjøretøy · %1$s</string>
   <string name="settings_vehicle_planned_here">Denne laderen planlegger for det</string>
   <string name="vehicle_charge_level_label">Ladenivå</string>
@@ -331,16 +330,13 @@
   <string name="site_default_name">Anlegg</string>
   <string name="site_none">Denne laderen har ikke noe anlegg.</string>
   <string name="section_solar">Sol</string>
-  <string name="solar_change">Endre solinnstillinger</string>
   <string name="solar_dialog_title">Solinnstillinger</string>
   <string name="priority_label">Prioritet</string>
   <string name="priority_help">Hvilken lader som får strøm og solenergioverskudd først på anlegget</string>
-  <string name="priority_change">Endre prioritet</string>
   <string name="priority_first">Først</string>
   <string name="priority_normal">Normal</string>
   <string name="priority_last">Sist</string>
   <string name="value_none">Ingen</string>
-  <string name="price_change">Endre prisområde og avgifter</string>
   <string name="price_dialog_title">Område og avgifter</string>
   <string name="price_row_area">Område</string>
   <string name="price_row_vat">MVA</string>
@@ -410,7 +406,6 @@
   <string name="notify_phones">Telefoner</string>
   <string name="notify_events">Hendelser</string>
   <string name="notify_phones_none">Ingen telefon valgt</string>
-  <string name="notify_change">Endre varsler</string>
   <string name="notify_no_phones">Ingen telefon med Home Assistant-appen er logget inn i denne Home Assistant.</string>
   <string name="notify_missing">%1$s (ikke funnet)</string>
   <string name="notify_event_plan_stopped">Ladingen stoppet eller startet ikke som planlagt</string>
@@ -509,4 +504,7 @@
   <string name="identify_sources_help">Leses bare for å se hvilken bil som er tilkoblet. Velges i Home Assistant.</string>
   <string name="vehicle_target_follows">Følger bilen til alle ladere</string>
   <string name="vehicle_error_target">Lademålet må være mellom 0 og 100.</string>
+  <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
+  <string name="setting_row_changeable">%1$s, %2$s. Trykk for å endre</string>
+  <string name="identify_vehicles_all">Alle biler</string>
 </resources>

@@ -19,8 +19,8 @@ class SettingRowWordsTest {
     @Test fun everyLanguageSaysARowCanBeChanged() {
         for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi")) {
             val xml = listOf("src/main/res", "app/src/main/res").map { File(it, "$directory/strings.xml") }.first { it.exists() }.readText()
-            val text = Regex("<string name=\\"setting_row_changeable\\">(.*?)</string>").find(xml)?.groupValues?.get(1)
-            assertTrue("$directory has setting_row_changeable", text != null && "%1\\$s" in text && "%2\\$s" in text)
+            val text = Regex("<string name=\"setting_row_changeable\">(.*?)</string>").find(xml)?.groupValues?.get(1)
+            assertTrue("$directory has setting_row_changeable", text != null && "%1\$s" in text && "%2\$s" in text)
         }
     }
 }

@@ -317,7 +317,6 @@
   <string name="site_error_not_permitted">Home Assistant does not allow this change from the app. Nothing changed.</string>
   <string name="site_error_unavailable">The site is not available right now. Nothing changed.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_change">Change vehicle</string>
   <string name="settings_vehicle_dialog_title">Vehicle · %1$s</string>
   <string name="settings_vehicle_planned_here">This charger plans for it</string>
   <string name="vehicle_charge_level_label">Charge level</string>
@@ -344,16 +343,13 @@
   <string name="site_default_name">Site</string>
   <string name="site_none">This charger has no site.</string>
   <string name="section_solar">Solar</string>
-  <string name="solar_change">Change solar settings</string>
   <string name="solar_dialog_title">Solar settings</string>
   <string name="priority_label">Priority</string>
   <string name="priority_help">Which charger gets power and solar surplus first on the site</string>
-  <string name="priority_change">Change priority</string>
   <string name="priority_first">First</string>
   <string name="priority_normal">Normal</string>
   <string name="priority_last">Last</string>
   <string name="value_none">None</string>
-  <string name="price_change">Change price area and taxes</string>
   <string name="price_dialog_title">Area and taxes</string>
   <string name="price_row_area">Area</string>
   <string name="price_row_vat">VAT</string>
@@ -423,7 +419,6 @@
   <string name="notify_phones">Phones</string>
   <string name="notify_events">Events</string>
   <string name="notify_phones_none">No phone chosen</string>
-  <string name="notify_change">Change notifications</string>
   <string name="notify_no_phones">No phone with the Home Assistant app is signed in to this Home Assistant.</string>
   <string name="notify_missing">%1$s (not found)</string>
   <string name="notify_event_plan_stopped">Charging stopped or did not start as planned</string>
@@ -523,4 +518,7 @@
   <string name="identify_sources_help">Read only to tell which car is plugged in. Chosen in Home Assistant.</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
+  <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
+  <string name="setting_row_changeable">%1$s, %2$s. Tap to change</string>
+  <string name="identify_vehicles_all">All cars</string>
 </resources>
