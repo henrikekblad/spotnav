@@ -16,8 +16,28 @@ internal enum class PictureKind(val wire: String) {
     }
 }
 
-/** One of a car's reference pictures, as listed (never the picture itself). */
-internal data class ReferencePicture(val kind: PictureKind, val takenAt: String, val colour: Boolean)
+/**
+ * One of a car's reference pictures, as listed (never the picture itself): its kind, when it was taken,
+ * whether it has a colour signature, and whether it was taken with another frame than the one now
+ * ([stale]: it should be taken again).
+ */
+internal data class ReferencePicture(val kind: PictureKind, val takenAt: String, val colour: Boolean, val stale: Boolean = false) {
+    companion object {
+        /** One listed picture, or `null` when it is not one this app can read. */
+        fun parse(raw: Any?): ReferencePicture? {
+            val row = raw as? JSONObject ?: return null
+            val kind = PictureKind.of(row.opt("kind")) ?: return null
+            val takenAt = (row.opt("taken_at") as? String)?.takeIf { it.isNotEmpty() } ?: return null
+            return ReferencePicture(kind, takenAt, row.opt("colour") == true, row.opt("stale") == true)
+        }
+
+        /** A list of pictures, the ones this app cannot read left out; `null` when it is not a list. */
+        fun list(raw: Any?): List<ReferencePicture>? {
+            val list = raw as? JSONArray ?: return null
+            return (0 until list.length()).mapNotNull { parse(list.opt(it)) }
+        }
+    }
+}
 
 /**
  * The dashboard's additive `camera_identification` block (`docs/api.md`, "The camera"): the cameras and
@@ -36,14 +56,7 @@ internal data class DashboardCamera(
             val cameras = entities(block.opt("cameras")) ?: return null
             val aiTasks = entities(block.opt("ai_tasks")) ?: return null
             val byCar = block.opt("references") as? JSONObject ?: return null
-            val references = byCar.keys().asSequence().associateWith { id ->
-                val list = byCar.opt(id) as? JSONArray ?: return null
-                objects(list).mapNotNull { row ->
-                    val kind = PictureKind.of(row.opt("kind")) ?: return@mapNotNull null
-                    val takenAt = (row.opt("taken_at") as? String)?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
-                    ReferencePicture(kind, takenAt, row.opt("colour") == true)
-                }
-            }
+            val references = byCar.keys().asSequence().associateWith { id -> ReferencePicture.list(byCar.opt(id)) ?: return null }
             return DashboardCamera(cameras, aiTasks, references)
         }
 

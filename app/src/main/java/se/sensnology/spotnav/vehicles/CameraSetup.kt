@@ -45,18 +45,6 @@ internal object CameraSetup {
         )
     }
 
-    /** The camera row's choices, in the order shown: each camera, then none (`null`). */
-    fun cameraOptions(section: Section): List<String?> = section.cameras.map { it.entityId } + listOf(null)
-
-    /** Which of [cameraOptions] is chosen; `-1` for a chosen camera that is no longer there. */
-    fun cameraIndex(section: Section): Int = cameraOptions(section).indexOf(section.chosen?.cameraEntityId)
-
-    /** The AI task row's choices: Home Assistant's default (`null`), then each AI task. */
-    fun aiTaskOptions(section: Section): List<String?> = listOf<String?>(null) + section.aiTasks.map { it.entityId }
-
-    /** Which of [aiTaskOptions] is chosen; `-1` for one that is no longer there. */
-    fun aiTaskIndex(section: Section): Int = aiTaskOptions(section).indexOf(section.chosen?.aiTaskEntityId)
-
     /**
      * A car's reference pictures, day first, when a camera is chosen and the car is one of this
      * charger's; `null` (no row) otherwise.

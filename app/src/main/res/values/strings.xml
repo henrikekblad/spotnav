@@ -507,7 +507,6 @@
   <string name="identify_by_camera">identified by the camera</string>
   <string name="camera_label">Camera</string>
   <string name="camera_none">No camera</string>
-  <string name="camera_intro">The camera that sees the parking spot. It compares the car there with each car\'s reference picture.</string>
   <string name="camera_help">The pictures stay in Home Assistant and go only to the AI task you choose; a local model keeps them at home.</string>
   <string name="camera_frame_label">Frame</string>
   <string name="camera_frame_whole">Whole picture</string>
@@ -519,7 +518,6 @@
   <string name="camera_frame_area">Frame around the parking spot.</string>
   <string name="camera_ai_task_label">AI task</string>
   <string name="camera_ai_task_default">Home Assistant\'s default</string>
-  <string name="camera_ai_task_intro">The AI task that compares the pictures. With a local model the pictures never leave your home.</string>
   <string name="camera_error_no_camera">The camera is no longer there.</string>
   <string name="camera_error_no_picture">The camera gave no picture.</string>
   <string name="reference_label">Reference picture</string>
@@ -531,6 +529,7 @@
   <string name="reference_delete">Delete</string>
   <string name="reference_intro">Take the picture while %1$s is parked at the charger. Take the night picture when it is dark.</string>
   <string name="reference_help">A car without a reference picture is not recognised by the camera.</string>
+  <string name="reference_stale">Taken with another frame – take it again</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

@@ -105,8 +105,9 @@ data class HaPlanningSettings(
      */
     val identification: HaIdentificationSettings? = null,
     /**
-     * The charger's camera for identification (`identify_camera`); `null` from a Home Assistant that does
-     * not state it, and then nothing about it is shown or sent.
+     * The charger's camera for identification (`identify_camera`): read-only here (an administrator
+     * chooses it in Home Assistant), kept in the stored copy and never sent; `null` from a Home Assistant
+     * that does not state it, and then nothing about it is shown.
      */
     val camera: HaCameraChoice? = null
 ) {
@@ -117,6 +118,7 @@ data class HaPlanningSettings(
     internal fun withReadOnlyOf(confirmed: HaPlanningSettings): HaPlanningSettings = copy(
         revision = confirmed.revision,
         fiscalIncluded = confirmed.fiscalIncluded,
+        camera = confirmed.camera,
         notifications = notifications?.copy(available = confirmed.notifications?.available.orEmpty())
     )
 }

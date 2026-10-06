@@ -1,6 +1,5 @@
 package se.sensnology.spotnav.ha.client
 
-import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.PictureKind
 import se.sensnology.spotnav.ha.dashboard.ReferencePicture
@@ -35,7 +34,7 @@ internal object CameraCommands {
         }
     }
 
-    /** The chosen camera's whole picture now. */
+    /** The chosen camera's whole picture now (only the charger's own camera: the webhook names no other). */
     data object Snapshot : Request("camera_snapshot")
 
     /** The frame (`null`: the whole picture). */
@@ -131,13 +130,6 @@ internal object CameraCommands {
             is DeleteReference -> request.vehicleId
             else -> return null
         }
-        val list = json.opt("references") as? JSONArray ?: return null
-        val pictures = (0 until list.length()).mapNotNull { index ->
-            val row = list.opt(index) as? JSONObject ?: return@mapNotNull null
-            val kind = PictureKind.of(row.opt("kind")) ?: return@mapNotNull null
-            val takenAt = (row.opt("taken_at") as? String)?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
-            ReferencePicture(kind, takenAt, row.opt("colour") == true)
-        }
-        return Outcome.References(vehicleId, pictures)
+        return ReferencePicture.list(json.opt("references"))?.let { Outcome.References(vehicleId, it) }
     }
 }

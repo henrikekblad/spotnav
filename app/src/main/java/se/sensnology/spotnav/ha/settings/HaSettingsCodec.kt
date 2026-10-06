@@ -164,7 +164,8 @@ internal object HaSettingsCodec {
     }
 
     /**
-     * `identify_camera`: stated when the record has it (`null` is no camera). A replacement body is held
+     * `identify_camera`: stated when the record has it (`null` is no camera); read-only for this app, so
+     * never part of a replacement it sends. A replacement body is held
      * to the contract ([strict]: `invalid_camera`); an answer is read leniently, so a shape this app
      * cannot read hides the camera, is never sent back, and never refuses the whole record.
      */
@@ -428,8 +429,9 @@ internal object HaSettingsCodec {
                 put(IDENTIFY_MODE, identification.mode.wire)
                 put(VEHICLE_IDS, identification.vehicleIds?.let { JSONArray(it) } ?: JSONObject.NULL)
             }
-            // Stated only when Home Assistant stated it, and then always sent back as it stands.
-            settings.camera?.let { choice ->
+            // The camera and its AI task are an administrator's choice in Home Assistant: the stored copy
+            // keeps them as read, and a replacement leaves them out (Home Assistant then keeps them).
+            settings.camera?.takeIf { withRevision }?.let { choice ->
                 put(IDENTIFY_CAMERA, choice.camera?.let { camera ->
                     JSONObject().apply {
                         put("camera_entity_id", camera.cameraEntityId)

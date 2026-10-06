@@ -79,13 +79,6 @@ internal sealed interface HaSettingsEdit {
      * whole. Only for a record that states them.
      */
     data class Identification(val mode: IdentifyMode, val vehicleIds: List<String>?) : HaSettingsEdit
-
-    /**
-     * The charger's camera (`null`: none) and the AI Task entity that compares its pictures (`null`: Home
-     * Assistant's default). The frame stays with its camera: another camera starts with the whole
-     * picture. Only for a record that states `identify_camera`.
-     */
-    data class Camera(val cameraEntityId: String?, val aiTaskEntityId: String?) : HaSettingsEdit
 }
 
 /** What one edit produced: a full replacement, or the contract's own stable refusal. */
@@ -107,9 +100,6 @@ internal object HaSettingsEditor {
         // refuse a body that names them.
         if (edit is HaSettingsEdit.Identification && confirmed.identification == null) {
             return HaSettingsEditResult.Refused("invalid_vehicles")
-        }
-        if (edit is HaSettingsEdit.Camera && confirmed.camera == null) {
-            return HaSettingsEditResult.Refused(HaCameraRules.INVALID_CAMERA)
         }
         val candidate = apply(confirmed, edit)
         return try {
@@ -149,12 +139,6 @@ internal object HaSettingsEditor {
         )
         is HaSettingsEdit.Identification -> confirmed.copy(
             identification = HaIdentificationSettings(edit.mode, edit.vehicleIds)
-        )
-        is HaSettingsEdit.Camera -> confirmed.copy(
-            camera = HaCameraChoice(edit.cameraEntityId?.let { entity ->
-                val current = confirmed.camera?.camera
-                HaCameraSettings(entity, edit.aiTaskEntityId, current?.frame?.takeIf { current.cameraEntityId == entity })
-            })
         )
     }
 
