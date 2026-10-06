@@ -3,6 +3,8 @@ package se.sensnology.spotnav.ui.charging
 import se.sensnology.spotnav.ha.dashboard.ChargeProgressContract
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardProgress
+import se.sensnology.spotnav.ha.dashboard.ProgressBasis
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import java.text.DecimalFormat
@@ -51,6 +53,10 @@ internal data class ChargeBar(
  * The bar from the dashboard alone, never invented: `null` (today's status line only) whenever the
  * dashboard does not carry the numbers.
  *
+ * Home Assistant's own `progress` block decides when it is sent: its bar as stated, or no bar for its
+ * `null`. The rules below are for an older Home Assistant without the block (or one this app cannot
+ * read), and match what Home Assistant decides:
+ *
  * - Shown only while the charge is on (`live.charging`), not while Home Assistant starts up, and not
  *   for a charger that reports no car, a finished car or an error.
  * - It moves while current flows: the charger reports `charging` (or states no connection) and Home
@@ -81,6 +87,11 @@ internal object ChargeBarRule {
 
     fun of(dashboard: Dashboard?, now: Instant): ChargeBar? {
         val held = dashboard ?: return null
+        when (val stated = held.progress) {
+            is DashboardProgress.Bar -> return fromHomeAssistant(stated)
+            DashboardProgress.None -> return null
+            null -> Unit
+        }
         if (!held.live.charging || held.startingUpUntil != null) return null
         if (held.connection in NO_BAR) return null
         val moving = (held.connection == null || held.connection == ConnectionState.CHARGING) &&
@@ -167,6 +178,20 @@ internal object ChargeBarRule {
         if (!fraction.isFinite()) return null
         return floor(fraction * 100.0 + 1e-9).toInt().coerceIn(0, 100)
     }
+
+    /** Home Assistant's own bar, drawn as sent. */
+    private fun fromHomeAssistant(stated: DashboardProgress.Bar): ChargeBar = ChargeBar(
+        basis = when (stated.basis) {
+            ProgressBasis.TARGET -> ChargeBarBasis.TARGET
+            ProgressBasis.ENERGY -> ChargeBarBasis.KWH
+            ProgressBasis.VEHICLE_LIMIT -> ChargeBarBasis.CAR_LIMIT
+            ProgressBasis.OPEN -> ChargeBarBasis.OPEN
+        },
+        percent = stated.percent,
+        endsAt = stated.endsAt,
+        powerKw = stated.powerKw,
+        moving = stated.moving
+    )
 
     /** When [remaining] kWh will have been charged, or `null` when it cannot be said. */
     fun endsAt(held: Dashboard, remaining: Double?, now: Instant): Instant? {

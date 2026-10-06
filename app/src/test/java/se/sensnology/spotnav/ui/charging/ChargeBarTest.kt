@@ -15,7 +15,10 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
 
-/** The charge bar's numbers: each driver, missing data, clamping, solar, the end and its clock. */
+/**
+ * The charge bar's numbers: Home Assistant's own `progress` block when it sends one, else (an older Home
+ * Assistant) each driver, missing data, clamping, solar, the end and its clock.
+ */
 class ChargeBarTest {
     private fun at(text: String): Instant = Instant.parse(text)
 
@@ -29,6 +32,25 @@ class ChargeBarTest {
     private fun JSONObject.charging(connection: String? = "charging") {
         getJSONObject("live").put("charging", true)
         put("connection", JSONObject().put("state", connection ?: "unknown").put("source", JSONObject.NULL))
+    }
+
+    /** A Home Assistant from before the `progress` block: the app's own rules draw the bar. */
+    private fun JSONObject.older() {
+        remove("progress")
+    }
+
+    private fun JSONObject.progress(
+        basis: Any?,
+        percent: Any? = JSONObject.NULL,
+        endsAt: Any? = JSONObject.NULL,
+        powerKw: Any? = JSONObject.NULL,
+        moving: Any? = true
+    ) {
+        put("progress", JSONObject().apply {
+            put("basis", basis); put("percent", percent); put("ends_at", endsAt); put("power_kw", powerKw)
+            put("power_source", if (powerKw == JSONObject.NULL) JSONObject.NULL else "measured"); put("moving", moving)
+            put("start_soc_percent", 40); put("started_at", "2026-09-22T05:00:00+00:00"); put("delivered_kwh", 6.5)
+        })
     }
 
     private fun JSONObject.periods(vararg spans: Pair<String, String>) {
@@ -54,16 +76,17 @@ class ChargeBarTest {
     }
 
     private fun target(edit: JSONObject.() -> Unit = {}): Dashboard =
-        DashboardFixtures.dashboard("target_soc_estimated.json") { charging(); edit() }
+        DashboardFixtures.dashboard("target_soc_estimated.json") { older(); charging(); edit() }
 
     private fun kwh(edit: JSONObject.() -> Unit = {}): Dashboard = DashboardFixtures.dashboard {
+        older()
         charging()
         getJSONObject("plan").put("delivered_kwh", 5.0).put("remaining_kwh", 15.0)
         edit()
     }
 
     private fun started(edit: JSONObject.() -> Unit = {}): Dashboard =
-        DashboardFixtures.dashboard("action_pending.json") { charging(); edit() }
+        DashboardFixtures.dashboard("action_pending.json") { older(); charging(); edit() }
 
     // the target driver: level / target, the end from the need
 
@@ -403,5 +426,92 @@ class ChargeBarTest {
         assertEquals("11", ChargeBarText.kw(11.04, Locale("sv")))
         assertEquals("3,7", ChargeBarText.kw(3.68, Locale("sv")))
         assertEquals("3.7", ChargeBarText.kw(3.68, Locale.ENGLISH))
+    }
+
+    // Home Assistant's own progress block: drawn as sent, the app's rules only for an older Home Assistant
+
+    @Test fun theStopChargingFixtureIsHomeAssistantsOpenBar() {
+        val bar = ChargeBarRule.of(DashboardFixtures.dashboard("stop_charging.json"), kwhNow)!!
+        assertEquals(ChargeBarBasis.OPEN, bar.basis)
+        assertNull(bar.percent)
+        assertNull(bar.endsAt)
+        assertEquals(2.3, bar.powerKw!!, 1e-9)
+        assertTrue(bar.moving)
+    }
+
+    @Test fun homeAssistantsTargetIsDrawnAsSent() {
+        // The app's own rules would say 25 % of a fixed amount here.
+        val bar = ChargeBarRule.of(kwh { progress("target", percent = 62, endsAt = "2026-09-22T12:35:00+00:00", powerKw = 11.0) }, kwhNow)!!
+        assertEquals(ChargeBarBasis.TARGET, bar.basis)
+        assertEquals(62, bar.percent)
+        assertEquals(at("2026-09-22T12:35:00Z"), bar.endsAt)
+        assertEquals(11.0, bar.powerKw!!, 1e-9)
+        assertTrue(bar.moving)
+    }
+
+    @Test fun homeAssistantsEnergyAndVehicleLimitAreDone() {
+        assertEquals(ChargeBarBasis.KWH, ChargeBarRule.of(kwh { progress("energy", percent = 40) }, kwhNow)!!.basis)
+        val limit = ChargeBarRule.of(kwh { progress("vehicle_limit", percent = 75, moving = false) }, kwhNow)!!
+        assertEquals(ChargeBarBasis.CAR_LIMIT, limit.basis)
+        assertEquals(75, limit.percent)
+        assertFalse(limit.moving)
+        assertNull(limit.endsAt)
+    }
+
+    @Test fun homeAssistantsOpenBarHasNoPercent() {
+        val bar = ChargeBarRule.of(kwh { progress("open", percent = 50, powerKw = 7.4) }, kwhNow)!!
+        assertEquals(ChargeBarBasis.OPEN, bar.basis)
+        assertNull(bar.percent)
+        assertEquals(7.4, bar.powerKw!!, 1e-9)
+    }
+
+    @Test fun homeAssistantsNullIsNoBar() {
+        // The app's own rules would draw a bar here; Home Assistant says none.
+        assertNull(ChargeBarRule.of(kwh { put("progress", JSONObject.NULL) }, kwhNow))
+    }
+
+    @Test fun homeAssistantsPercentIsKeptWithinTheBar() {
+        assertEquals(100, ChargeBarRule.of(kwh { progress("energy", percent = 130) }, kwhNow)!!.percent)
+        assertEquals(0, ChargeBarRule.of(kwh { progress("energy", percent = -4) }, kwhNow)!!.percent)
+        assertEquals(57, ChargeBarRule.of(kwh { progress("energy", percent = 57.9) }, kwhNow)!!.percent)
+    }
+
+    @Test fun anUnreadableEndOrPowerIsNoneButTheBarStays() {
+        val bar = ChargeBarRule.of(kwh { progress("target", percent = 62, endsAt = "soon", powerKw = "fast") }, kwhNow)!!
+        assertEquals(62, bar.percent)
+        assertNull(bar.endsAt)
+        assertNull(bar.powerKw)
+    }
+
+    @Test fun aBlockThisAppCannotReadFallsBackToItsOwnRules() {
+        val own = ChargeBarRule.of(kwh(), kwhNow)!!
+        val unreadable = listOf<JSONObject.() -> Unit>(
+            { progress("session_share", percent = 62) },
+            { progress(JSONObject.NULL, percent = 62) },
+            { progress("target") },
+            { progress("energy", percent = "62") },
+            { progress("energy", percent = 62, moving = JSONObject.NULL) },
+            { put("progress", "charging") },
+            { put("progress", JSONArray()) }
+        )
+        for (edit in unreadable) {
+            assertEquals(own, ChargeBarRule.of(kwh(edit), kwhNow))
+        }
+    }
+
+    @Test fun homeAssistantsBarIsWordedAsTheAppsOwn() {
+        val words = ChargeBarText.Words(
+            done = "%d %% klart", ofTarget = "%d %% av målet", ends = "klart ca %s",
+            charging = "Laddar", chargingPower = "Laddar · %s kW", line = "%s · %s"
+        )
+        val sv = Locale("sv")
+        val target = ChargeBarRule.of(kwh { progress("target", percent = 93) }, kwhNow)!!
+        assertEquals("93 % av målet · klart ca 14:35", ChargeBarText.line(target, words, "14:35", null, sv))
+        val limit = ChargeBarRule.of(kwh { progress("vehicle_limit", percent = 62) }, kwhNow)!!
+        assertEquals("62 % klart", ChargeBarText.line(limit, words, null, null, sv))
+        val energy = ChargeBarRule.of(kwh { progress("energy", percent = 40) }, kwhNow)!!
+        assertEquals("40 % klart", ChargeBarText.line(energy, words, null, null, sv))
+        val open = ChargeBarRule.of(kwh { progress("open", powerKw = 11.0) }, kwhNow)!!
+        assertEquals("Laddar · 11 kW", ChargeBarText.line(open, words, null, ChargeBarText.kw(open.powerKw!!, sv), sv))
     }
 }

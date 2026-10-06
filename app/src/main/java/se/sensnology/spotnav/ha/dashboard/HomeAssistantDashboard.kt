@@ -315,7 +315,12 @@ internal data class Dashboard(
      * When Home Assistant's start-up ends at the latest (`starting_up.until` while `active`), read
      * leniently: `null` when it is not starting up or the time cannot be read.
      */
-    val startingUpUntil: java.time.Instant? = null
+    val startingUpUntil: java.time.Instant? = null,
+    /**
+     * Home Assistant's own charge bar (`progress`, see [DashboardProgress]): `null` when it does not say
+     * (an older Home Assistant, or a block this app cannot read), [DashboardProgress.None] for no bar.
+     */
+    val progress: DashboardProgress? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -406,7 +411,8 @@ internal data class Dashboard(
                 startingUpUntil = json.optJSONObject("starting_up")
                     ?.takeIf { it.opt("active") == true }
                     ?.let { it.opt("until") as? String }
-                    ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() }
+                    ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() },
+                progress = DashboardProgress.parse(json)
             )
         }
 
