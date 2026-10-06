@@ -15,7 +15,7 @@ class CarLineWordingTest {
 
     @Test fun aCarAPersonChoseReadsChosenManually() {
         val expected = mapOf(
-            "values" to "chosen manually",
+            "values" to "selected manually",
             "values-sv" to "vald manuellt",
             "values-da" to "valgt manuelt",
             "values-nb" to "valgt manuelt",
