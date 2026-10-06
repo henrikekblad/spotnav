@@ -78,4 +78,15 @@ class PairedCarLineTest {
         assertTrue(PairedTarget.facts(estimated.soc!!, estimated.vehicles, null).estimated)
         assertFalse(PairedTarget.facts(dashboard().soc!!, dashboard().vehicles, null).estimated)
     }
+
+    @Test fun theCarLineOffersTheCarsReReadWhenHomeAssistantCanDoIt() {
+        assertTrue(PairedCarLine.reReadOffered(dashboard()))
+        val without = dashboard { getJSONObject("charger").getJSONObject("capabilities").put("refresh_vehicle", false) }
+        assertFalse(PairedCarLine.reReadOffered(without))
+        val noCar = dashboard {
+            put("target_vehicle_id", JSONObject.NULL)
+            getJSONObject("soc").put("vehicle_id", JSONObject.NULL)
+        }
+        assertFalse(PairedCarLine.reReadOffered(noCar))
+    }
 }
