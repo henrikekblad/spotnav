@@ -42,4 +42,8 @@ internal object PairedCarLine {
         val line = VehicleIdentification.carLine(dashboard) ?: return null
         return listOfNotNull(line.name, levelsText(levels(dashboard, line.vehicleId), percent)).joinToString(" · ")
     }
+
+    /** Whether the car line offers the car's re-read ("uppdatera bilen"): a car, and an integration that can. */
+    fun reReadOffered(dashboard: Dashboard): Boolean =
+        VehicleRefresh.offered(dashboard.capabilities) && VehicleIdentification.carLine(dashboard) != null
 }

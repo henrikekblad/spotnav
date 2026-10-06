@@ -124,6 +124,8 @@ internal class ChargerDashboardController(
         cells.refresh()
         // A person's answer to which car is plugged in, from the banner or Byt bil.
         chargerCard.identification.attachChoose { vehicleId -> identifyVehicle(vehicleId) }
+        // The car's re-read, from the car line (the vehicle card stays out of sight when paired).
+        chargerCard.identification.attachReRead { vehicleId -> reReadVehicle(vehicleId) }
     }
 
     /**
@@ -330,8 +332,10 @@ internal class ChargerDashboardController(
      */
     private fun reReadVehicle(vehicleId: String) {
         vehicleCard.refreshControl.setInFlight(true)
+        chargerCard.identification.setReReading(true)
         session.reReadVehicle(vehicleId) { reRead ->
             vehicleCard.refreshControl.setInFlight(false)
+            chargerCard.identification.setReReading(false)
             VehicleRefresh.message(reRead.answer)?.let { message ->
                 val text = when (message.kind) {
                     VehicleRefresh.Kind.TOO_SOON -> message.retryAfterS

@@ -50,6 +50,7 @@ import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
@@ -185,6 +186,14 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
                 }
                 showNotifications()
+            }
+            // A car's charge limit, written to the car through the integration; the cards read again after it.
+            pairedCards.attachChargeLimit { vehicleId, percent, done ->
+                session.setChargeLimit(vehicleId, percent) { answer ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@setChargeLimit
+                    done(answer)
+                    if (answer == ChargeLimit.Answer.Set) loadPaired()
+                }
             }
             // Which cars can charge here and how the plugged-in one is found: the same settings write.
             pairedCards.attachIdentification { mode, vehicleIds, done ->

@@ -21,7 +21,9 @@ import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ui.common.Spin
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.reReadIcon
 import se.sensnology.spotnav.ui.common.weight
 import se.sensnology.spotnav.vehicles.PairedCarLine
 import se.sensnology.spotnav.vehicles.VehicleIdentification
@@ -62,9 +64,20 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         setOnClickListener { openSwitch() }
     }
 
+    // The car's re-read ("uppdatera bilen", `refresh_vehicle`), where the integration can: the vehicle
+    // card's icon, now on the car line.
+    private var onReRead: (String) -> Unit = {}
+    private var reReading = false
+    private val reReadIcon = reReadIcon().apply {
+        contentDescription = t(R.string.card_reread)
+        setOnClickListener { dashboard?.let { VehicleIdentification.carLine(it) }?.let { line -> onReRead(line.vehicleId) } }
+    }
+    private val reReadSpin = Spin(reReadIcon)
+
     init {
         carLine.addView(glyph(R.drawable.ic_ev, muted, 18), LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(8) })
         carLine.addView(carText, weight())
+        carLine.addView(reReadIcon, LinearLayout.LayoutParams(dp(28), dp(28)).apply { marginStart = dp(4) })
         carLine.addView(switchAction)
         // The car first, then the open question about it.
         parent.addView(carLine)
@@ -76,6 +89,17 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
     /** Set by the screen: the car a person chose, to send as the answer (or correction). */
     fun attachChoose(handler: (String) -> Unit) {
         onChoose = handler
+    }
+
+    /** Set by the screen: re-read this car's own entities. */
+    fun attachReRead(handler: (String) -> Unit) {
+        onReRead = handler
+    }
+
+    /** Whether the car's re-read is on its way: the icon spins and waits. */
+    fun setReReading(inFlight: Boolean) {
+        reReading = inFlight
+        paint()
     }
 
     /** Whether an answer is on its way: the buttons wait for it. */
@@ -99,6 +123,10 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         if (line != null && held != null) carText.text = carLineText(held, line)
         // One car at the charger: nothing to change.
         switchAction.visibility = if (line?.canSwitch == true) View.VISIBLE else View.GONE
+        reReadIcon.visibility = if (held != null && PairedCarLine.reReadOffered(held)) View.VISIBLE else View.GONE
+        reReadIcon.isEnabled = !reReading
+        reReadIcon.imageTintList = ColorStateList.valueOf(if (reReading) muted else accent)
+        reReadSpin.set(reReading)
         switchAction.isEnabled = !busy
         switchAction.alpha = if (busy) 0.5f else 1f
     }

@@ -38,6 +38,7 @@ import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.valueRow
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 import se.sensnology.spotnav.vehicles.VehicleIdentification
@@ -72,6 +73,14 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
 
     private var writePriority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
+
+    // A car's charge limit, written to the car through the integration (`set_charge_limit`).
+    private var writeLimit: (String, Int, (ChargeLimit.Answer) -> Unit) -> Unit = { _, _, done -> done(ChargeLimit.Answer.Failed) }
+
+    /** Where a car's charge limit is written (the screen owns the connection). */
+    fun attachChargeLimit(write: (String, Int, (ChargeLimit.Answer) -> Unit) -> Unit) {
+        writeLimit = write
+    }
 
     // Which cars can charge here and how the plugged-in one is found: the settings record's own fields,
     // written through the ordinary settings write (the screen owns it), and whether it can be written.
@@ -188,6 +197,13 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             vehicle.onboardPhases?.let { phases ->
                 readRow(card.body, t(R.string.vehicle_onboard_label), phasesText(phases))
             }
+            // The car's own charge limit, when it reports one: written to the car where Home Assistant can.
+            vehicle.chargeLimit?.let { limit ->
+                readRow(card.body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit))
+                if (vehicle.limitWritable) {
+                    changeButton(card.body, t(R.string.vehicle_limit_set)) { openLimitDialog(vehicle.id, vehicle.name, limit) }
+                }
+            }
             // The car's own target, the same at every charger (changed in the car's dialog).
             if (vehicle.targetStated) {
                 readRow(card.body, t(R.string.vehicle_target), vehicle.targetPercent
@@ -197,6 +213,46 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             vehicle.sources?.let { addSources(card.body, it) }
             vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
             changeButton(card.body, t(R.string.settings_vehicle_change)) { openVehicleDialog(vehicle.id) }
+        }
+    }
+
+    /** The car's charge limit: a whole percent, written to the car through the integration. */
+    private fun openLimitDialog(vehicleId: String, name: String, shown: Int) {
+        val body = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val field = numberInput(shown.toDouble(), "%")
+        field.input.inputType = InputType.TYPE_CLASS_NUMBER
+        field.input.setText(String.format(Locale.ROOT, "%d", shown))
+        body.addView(field.view)
+        body.addView(muted(t(R.string.vehicle_limit_hint), top = 2))
+        openSaveDialog(t(R.string.settings_vehicle_dialog_title, name), body) { dialog, save ->
+            val percent = field.input.text.toString().trim().toIntOrNull()
+            if (percent == null || percent !in 1..100) {
+                field.error.say(t(R.string.paired_error_number))
+                return@openSaveDialog
+            }
+            if (percent == shown) {
+                dialog.dismiss()
+                return@openSaveDialog
+            }
+            field.error.say(null)
+            save.isEnabled = false
+            writeLimit(vehicleId, percent) { answer ->
+                val message = ChargeLimit.message(answer)
+                if (message == null) {
+                    vehicleNotices.remove(vehicleId)
+                    dialog.dismiss()
+                    repaint()
+                } else {
+                    save.isEnabled = true
+                    field.error.say(
+                        when (message.kind) {
+                            ChargeLimit.Kind.TOO_SOON -> message.retryAfterS?.let { t(R.string.vehicle_limit_too_soon, it) }
+                                ?: t(R.string.vehicle_card_reread_too_soon_shortly)
+                            ChargeLimit.Kind.FAILED -> t(R.string.vehicle_limit_failed)
+                        }
+                    )
+                }
+            }
         }
     }
 

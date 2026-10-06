@@ -49,7 +49,11 @@ internal object PairedOverview {
         val targetPercent: Double? = null,
         val targetStated: Boolean = false,
         /** The car's identification sources, or `null` from a Home Assistant without them. */
-        val sources: VehicleIdentificationSources? = null
+        val sources: VehicleIdentificationSources? = null,
+        /** The car's own charge limit (whole percent), when it reports one. */
+        val chargeLimit: Int? = null,
+        /** Whether Home Assistant can write that limit to the car (`set_charge_limit`). */
+        val limitWritable: Boolean = false
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -76,7 +80,9 @@ internal object PairedOverview {
                 onboardPhases = row.onboardPhases,
                 targetPercent = row.targetPercent,
                 targetStated = row.targetStated,
-                sources = row.identification
+                sources = row.identification,
+                chargeLimit = row.maxPercent?.takeIf { it.isFinite() }?.toInt(),
+                limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true
             )
         }
 
