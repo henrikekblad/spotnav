@@ -47,6 +47,15 @@ class DashboardCameraTest {
         assertNull(camera.references["vehicle_other"])
     }
 
+    @Test fun aPictureTakenWithAnotherFrameIsMarkedStale() {
+        val stale = block().apply {
+            getJSONObject("references").getJSONArray("vehicle_ev6").getJSONObject(0).put("stale", true)
+            getJSONObject("references").getJSONArray("vehicle_ev6").getJSONObject(1).put("stale", "yes")
+        }
+        val pictures = DashboardFixtures.dashboard { put("camera_identification", stale) }.cameraIdentification!!.references["vehicle_ev6"]!!
+        assertEquals(listOf(true, false), pictures.map { it.stale })
+    }
+
     @Test fun anEntryThisAppCannotReadIsLeftOutAndABlockItCannotReadIsNone() {
         val odd = block().apply {
             getJSONArray("cameras").put(JSONObject().put("name", "No id")).put("camera.bare")

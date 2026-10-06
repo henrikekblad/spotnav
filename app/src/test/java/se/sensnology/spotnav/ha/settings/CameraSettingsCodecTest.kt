@@ -16,8 +16,9 @@ import se.sensnology.spotnav.testing.SettingsFixtures.response
 
 /**
  * The settings record's `identify_camera` (the charger's camera for identification): withheld from an
- * app that does not ask, so this app asks; read when stated, sent back as read, changed only by the
- * camera edit (the frame stays with its camera), and absent from an older Home Assistant.
+ * app that does not ask, so this app asks; read and kept when stated, never sent in a replacement (the
+ * camera and its AI task are an administrator's choice in Home Assistant), and absent from an older Home
+ * Assistant.
  */
 class CameraSettingsCodecTest {
     private fun camera(entity: Any? = "camera.norr", aiTask: Any? = JSONObject.NULL, frame: Any? = JSONObject.NULL): JSONObject =
@@ -47,23 +48,23 @@ class CameraSettingsCodecTest {
         assertEquals(HaCameraChoice(null), dashboard.settings!!.camera)
     }
 
-    @Test fun aCameraWithItsAiTaskAndFrameIsReadAndSentBackAsRead() {
+    @Test fun aCameraWithItsAiTaskAndFrameIsReadAndKeptButNeverSentInAReplacement() {
         val record = HaSettingsCodec.parseResponse(withCamera(camera(aiTask = "ai_task.ollama", frame = frame())))
         assertEquals(
             HaCameraChoice(HaCameraSettings("camera.norr", "ai_task.ollama", CameraFrame(0.5, 0.25, 0.4, 0.5))),
             record.camera
         )
-        val body = HaSettingsCodec.encodeBody(record).getJSONObject("identify_camera")
-        assertEquals("camera.norr", body.getString("camera_entity_id"))
-        assertEquals("ai_task.ollama", body.getString("ai_task_entity_id"))
-        assertEquals(0.4, body.getJSONObject("frame").getDouble("w"), 0.0)
+        // The camera and the AI task are an administrator's choice in Home Assistant: a replacement from
+        // the app leaves the field out, and Home Assistant keeps it.
+        assertFalse(HaSettingsCodec.encodeBody(record).has("identify_camera"))
+        // The stored copy keeps it as read.
+        val stored = HaSettingsCodec.encode(record).getJSONObject("identify_camera")
+        assertEquals("camera.norr", stored.getString("camera_entity_id"))
+        assertEquals(0.4, stored.getJSONObject("frame").getDouble("w"), 0.0)
         assertEquals(record, HaSettingsCodec.parseStored(HaSettingsCodec.encode(record)))
-        // No camera is stated as `null`, and sent back as `null`.
-        val none = HaSettingsCodec.encodeBody(HaSettingsCodec.parseResponse(withCamera()))
-        assertTrue(none.has("identify_camera") && none.isNull("identify_camera"))
-        // The default AI task and the whole picture are `null` too.
-        val bare = HaSettingsCodec.encodeBody(HaSettingsCodec.parseResponse(withCamera(camera()))).getJSONObject("identify_camera")
-        assertTrue(bare.isNull("ai_task_entity_id") && bare.isNull("frame"))
+        val none = HaSettingsCodec.parseResponse(withCamera())
+        assertTrue(HaSettingsCodec.encode(none).isNull("identify_camera"))
+        assertEquals(none, HaSettingsCodec.parseStored(HaSettingsCodec.encode(none)))
     }
 
     @Test fun anAnswerWithoutItStatesNothingAndWritesNothingBack() {
@@ -96,35 +97,11 @@ class CameraSettingsCodecTest {
         }
     }
 
-    @Test fun theCameraEditKeepsTheFrameWithItsCameraAndEveryOtherEditKeepsTheCamera() {
+    @Test fun everyEditKeepsTheCameraHomeAssistantStated() {
         val record = HaSettingsCodec.parseResponse(withCamera(camera(aiTask = "ai_task.ollama", frame = frame())))
-        val framed = CameraFrame(0.5, 0.25, 0.4, 0.5)
-        // Another AI task: the camera and its frame stay.
-        assertEquals(
-            HaCameraChoice(HaCameraSettings("camera.norr", null, framed)),
-            ready(record, HaSettingsEdit.Camera("camera.norr", null)).camera
-        )
-        // Another camera starts with the whole picture, and keeps the AI task chosen.
-        assertEquals(
-            HaCameraChoice(HaCameraSettings("camera.entre", "ai_task.ollama", null)),
-            ready(record, HaSettingsEdit.Camera("camera.entre", "ai_task.ollama")).camera
-        )
-        assertEquals(HaCameraChoice(null), ready(record, HaSettingsEdit.Camera(null, null)).camera)
         assertEquals(record.camera, ready(record, HaSettingsEdit.Amps(10)).camera)
         assertEquals(record.camera, ready(record, HaSettingsEdit.Identification(IdentifyMode.ASK, null)).camera)
-    }
-
-    @Test fun theEditIsRefusedForARecordWithoutTheFieldOrWithABadEntity() {
-        val older = HaSettingsCodec.parseResponse(response(revision = 3))
-        assertEquals(
-            HaSettingsEditResult.Refused("invalid_camera"),
-            HaSettingsEditor.replacement(older, HaSettingsEdit.Camera("camera.norr", null))
-        )
-        val record = HaSettingsCodec.parseResponse(withCamera())
-        assertEquals(
-            HaSettingsEditResult.Refused("invalid_camera"),
-            HaSettingsEditor.replacement(record, HaSettingsEdit.Camera("light.norr", null))
-        )
+        assertFalse(HaSettingsCodec.encodeBody(ready(record, HaSettingsEdit.Amps(10))).has("identify_camera"))
     }
 
     @Test fun theStoredCopyTakesItWhenItIsFirstStatedAndNeverLosesIt() {

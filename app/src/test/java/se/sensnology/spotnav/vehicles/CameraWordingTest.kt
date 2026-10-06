@@ -42,6 +42,8 @@ class CameraWordingTest {
             "Ta referansebilde nå", "Ota vertailukuva nyt")
         expect("reference_take_night", "Take night picture", "Ta nattbild", "Tag natbillede", "Ta nattbilde", "Ota yökuva")
         expect("reference_delete", "Delete", "Ta bort", "Slet", "Slett", "Poista")
+        expect("reference_stale", "Taken with another frame – take it again", "Tagen med en annan ruta – ta om",
+            "Taget med en anden ramme – tag det igen", "Tatt med en annen ramme – ta det på nytt", "Otettu toisella rajauksella – ota uudelleen")
         // The car's name is filled in by the app: one placeholder in every language.
         for (directory in directories) {
             assertTrue(directory, text(directory, "reference_intro")!!.contains("%1\$s"))

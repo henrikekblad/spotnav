@@ -48,13 +48,11 @@ class CameraSetupTest {
         assertNull(CameraSetup.references(older, older.settings, "vehicle_ev6"))
     }
 
-    @Test fun noCameraIsOneRowThatOffersEachCameraAndNone() {
+    @Test fun noCameraIsOneRowThatSaysSo() {
         val dash = dashboard()
         val section = CameraSetup.section(dash, dash.settings)!!
         assertNull(section.chosen)
         assertNull(section.cameraName)
-        assertEquals(listOf("camera.norr", "camera.entre", null), CameraSetup.cameraOptions(section))
-        assertEquals(2, CameraSetup.cameraIndex(section))
         // No camera, no reference pictures to take.
         assertNull(CameraSetup.references(dash, dash.settings, "vehicle_ev6"))
     }
@@ -63,18 +61,14 @@ class CameraSetupTest {
         val dash = dashboard(chosen())
         val section = CameraSetup.section(dash, dash.settings)!!
         assertEquals("Norr", section.cameraName)
-        assertEquals(0, CameraSetup.cameraIndex(section))
         assertFalse(section.frameDrawn)
-        // Home Assistant's default AI task first, then each one there is.
+        // Home Assistant's default AI task.
         assertNull(section.aiTaskName)
-        assertEquals(listOf(null, "ai_task.ollama"), CameraSetup.aiTaskOptions(section))
-        assertEquals(0, CameraSetup.aiTaskIndex(section))
 
         val framed = dashboard(chosen(aiTask = "ai_task.ollama", frame = JSONObject().put("x", 0.5).put("y", 0.2).put("w", 0.4).put("h", 0.5)))
         val drawn = CameraSetup.section(framed, framed.settings)!!
         assertTrue(drawn.frameDrawn)
         assertEquals("Ollama qwen3-vl", drawn.aiTaskName)
-        assertEquals(1, CameraSetup.aiTaskIndex(drawn))
         // The whole picture drawn as a frame reads as the whole picture.
         val whole = dashboard(chosen(frame = JSONObject().put("x", 0).put("y", 0).put("w", 1).put("h", 1)))
         assertFalse(CameraSetup.section(whole, whole.settings)!!.frameDrawn)
@@ -85,8 +79,6 @@ class CameraSetupTest {
         val section = CameraSetup.section(dash, dash.settings)!!
         assertEquals("camera.gone", section.cameraName)
         assertEquals("ai_task.gone", section.aiTaskName)
-        assertEquals(-1, CameraSetup.cameraIndex(section))
-        assertEquals(-1, CameraSetup.aiTaskIndex(section))
     }
 
     @Test fun eachCarOfTheChargerHasItsReferencePicturesWithACameraChosen() {
@@ -96,6 +88,7 @@ class CameraSetupTest {
             listOf(ReferencePicture(PictureKind.DAY, "2026-10-07T12:12:00+00:00", true)),
             CameraSetup.references(dash, dash.settings, "vehicle_ev6")
         )
+        assertFalse(CameraSetup.references(dash, dash.settings, "vehicle_ev6")!!.single().stale)
         assertEquals(emptyList<ReferencePicture>(), CameraSetup.references(dash, dash.settings, "vehicle_niro"))
         // A car that is not this charger's has no row.
         assertNull(CameraSetup.references(dash, dash.settings, "vehicle_other"))
