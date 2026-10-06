@@ -66,8 +66,9 @@ class VehicleIdentificationTest {
         for ((method, basis) in listOf(
             "plug_sensor" to VehicleIdentification.Basis.PLUG_SENSOR,
             "location" to VehicleIdentification.Basis.LOCATION,
-            "answered" to VehicleIdentification.Basis.ANSWERED,
-            "manual" to VehicleIdentification.Basis.MANUAL,
+            // An answer and a choice in the settings read the same on the line: chosen manually.
+            "answered" to VehicleIdentification.Basis.CHOSEN_MANUALLY,
+            "manual" to VehicleIdentification.Basis.CHOSEN_MANUALLY,
             "assumed" to VehicleIdentification.Basis.ASSUMED
         )) {
             val line = VehicleIdentification.carLine(dashboard(block("decided", method = method)))!!
