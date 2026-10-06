@@ -54,6 +54,11 @@ jobs:
   release:
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
+    # One release run per tag: GitHub has delivered a tag push twice, and two runs uploading the same
+    # bundle to Play collide ("This edit has expired"). The later run cancels the earlier one.
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: true
     permissions:
       contents: write
     env:
