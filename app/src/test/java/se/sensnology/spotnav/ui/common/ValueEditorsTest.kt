@@ -25,5 +25,7 @@ class ValueEditorsTest {
     @Test fun aNumberIsShownInTheFieldWithItsOwnDecimals() {
         assertEquals("77.4", capacity.fieldText(77.4))
         assertEquals("80", percent.fieldText(80.0))
+        // A figure keeps its decimal, as the row shows it ("2.0 kWh/10 km").
+        assertEquals("2.0", capacity.fieldText(2.0))
     }
 }
