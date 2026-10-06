@@ -40,13 +40,29 @@ class ManualPauseTest {
         assertEquals("resume", start.params["ends"])
     }
 
-    @Test fun anotherPauseCarriesNoActionAndReadsAsBefore() {
+    @Test fun anotherPauseCarriesNoActionAndIsTheSchedulesPause() {
         val line = dashboard("resume_active").status.lines.single()
         assertEquals("until_resumed", line.params["choice"])
         assertNull(line.params["action"])
         assertNull(line.params["ends"])
-        assertEquals("Paused until you resume.", say(line, "en"))
-        assertEquals("Pausad tills du återupptar.", say(line, "sv"))
+        assertEquals("Schedule paused until you resume.", say(line, "en"))
+        assertEquals("Schema pausat tills du återupptar.", say(line, "sv"))
+    }
+
+    @Test fun aScheduledPauseSaysItIsTheSchedulesInEveryLanguage() {
+        val until = StatusLine("paused", mapOf("until" to "2026-09-22T20:00:00+00:00", "choice" to "until_time", "action" to null, "ends" to null))
+        val open = StatusLine("paused", mapOf("until" to null, "choice" to "until_resumed", "action" to null, "ends" to null))
+        val expected = mapOf(
+            "sv" to ("Schema pausat till 22:00." to "Schema pausat tills du återupptar."),
+            "en" to ("Schedule paused until 22:00." to "Schedule paused until you resume."),
+            "nb" to ("Skjema pauset til 22:00." to "Skjema pauset til du gjenopptar."),
+            "da" to ("Skema sat på pause til 22:00." to "Skema sat på pause, indtil du genoptager."),
+            "fi" to ("Aikataulu keskeytetty 22:00 asti." to "Aikataulu keskeytetty, kunnes jatkat.")
+        )
+        for ((language, words) in expected) {
+            assertEquals(language, words.first, say(until, language))
+            assertEquals(language, words.second, say(open, language))
+        }
     }
 
     @Test fun theFixturesAreWordedAsTheCardWordsThem() {
