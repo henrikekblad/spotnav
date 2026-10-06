@@ -122,6 +122,26 @@ class DashboardIdentificationTest {
         assertEquals(emptyList<IdentificationEvidence>(), block.evidence)
     }
 
+    @Test fun everyDetectedCarIsReadFromTheChoicesAndAnUnreadableEntryIsSkipped() {
+        val dashboard = DashboardFixtures.dashboard("target_soc_two_vehicles.json")
+        assertEquals(
+            listOf(DashboardVehicleRef("vehicle_ev6", "EV6"), DashboardVehicleRef("vehicle_niro", "Niro")),
+            dashboard.vehicleChoices
+        )
+        val messy = DashboardFixtures.dashboard("target_soc_two_vehicles.json") {
+            put(
+                "vehicle_choices", JSONArray()
+                    .put("vehicle_ev6")
+                    .put(JSONObject().put("name", "No id"))
+                    .put(JSONObject().put("id", "vehicle_niro"))
+                    .put(JSONObject().put("id", "vehicle_niro").put("name", "Twice"))
+            )
+        }
+        assertEquals(listOf(DashboardVehicleRef("vehicle_niro", "vehicle_niro")), messy.vehicleChoices)
+        assertNull(DashboardFixtures.dashboard("target_soc_two_vehicles.json") { remove("vehicle_choices") }.vehicleChoices)
+        assertNull(DashboardFixtures.dashboard("target_soc_two_vehicles.json") { put("vehicle_choices", "all") }.vehicleChoices)
+    }
+
     @Test fun aVehicleRowsSourcesAreReadWithTheirCandidates() {
         val sources = JSONObject()
             .put(

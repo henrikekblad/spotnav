@@ -133,7 +133,30 @@ class VehicleIdentificationTest {
         assertEquals(IdentifyMode.OFF, limited.mode)
         assertEquals(listOf(false, true), limited.cars.map { it.ticked })
         // One car and nothing restricted: there is nothing to identify.
-        val one = dashboard { getJSONArray("vehicles").remove(1) }
+        val one = dashboard { getJSONArray("vehicles").remove(1); getJSONArray("vehicle_choices").remove(1) }
+        assertNull(VehicleIdentification.section(one, one.settings))
+    }
+
+    @Test fun theCarsAreEveryDetectedCarSoOneLeftOutCanBeTickedAgain() {
+        // `vehicles` names only the charger's cars; `vehicle_choices` every detected car.
+        val limited = dashboard {
+            getJSONObject("settings").put("vehicle_ids", JSONArray().put("vehicle_niro"))
+            getJSONArray("vehicles").remove(0)
+        }
+        val section = VehicleIdentification.section(limited, limited.settings)!!
+        assertEquals(listOf("vehicle_ev6" to false, "vehicle_niro" to true), section.cars.map { it.vehicleId to it.ticked })
+        assertEquals(listOf("EV6", "Niro"), section.cars.map { it.name })
+        // Ticking every car is every car.
+        assertNull(VehicleIdentification.vehicleIdsFor(section.cars.map { it.vehicleId }, setOf("vehicle_ev6", "vehicle_niro")))
+    }
+
+    @Test fun anOlderHomeAssistantWithoutTheChoicesListsTheChargersCars() {
+        val older = dashboard { remove("vehicle_choices") }
+        assertEquals(listOf("vehicle_ev6", "vehicle_niro"), VehicleIdentification.section(older, older.settings)!!.cars.map { it.vehicleId })
+        val one = dashboard {
+            put("vehicle_choices", JSONArray().put(JSONObject().put("id", "vehicle_ev6").put("name", "EV6")))
+        }
+        // Fewer than two cars to choose from: no section.
         assertNull(VehicleIdentification.section(one, one.settings))
     }
 
