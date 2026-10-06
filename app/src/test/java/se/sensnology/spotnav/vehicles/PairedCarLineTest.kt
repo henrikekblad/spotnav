@@ -97,4 +97,12 @@ class PairedCarLineTest {
         assertFalse(PairedCarLine.saysCarReRead(VehicleRefresh.Answer.TooSoon(30)))
         assertTrue(PairedCarLine.saysCarReRead(VehicleRefresh.Answer.Failed))
     }
+
+    @Test fun aTargetAboveTheCarsLimitReadsAsTheLimitOnTheCarLine() {
+        val limited = dashboard {
+            getJSONObject("soc").put("vehicle_max_percent", 70.0)
+            getJSONArray("vehicles").getJSONObject(0).put("max_percent", 70.0)
+        }
+        assertEquals("40 % → 70 %", PairedCarLine.levelsText(PairedCarLine.levels(limited, "vehicle_ev6"), percent))
+    }
 }
