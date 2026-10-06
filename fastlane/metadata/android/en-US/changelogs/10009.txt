@@ -1,0 +1,1 @@
+- A progress bar while charging: how far the charge has come and when it is expected to be done

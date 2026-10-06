@@ -1,0 +1,1 @@
+- Edistymispalkki latauksen aikana: kuinka pitkällä lataus on ja milloin sen odotetaan valmistuvan

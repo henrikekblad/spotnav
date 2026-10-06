@@ -1,0 +1,1 @@
+- En statuslinje under opladning: hvor langt opladningen er nået, og hvornår den ventes at være færdig
