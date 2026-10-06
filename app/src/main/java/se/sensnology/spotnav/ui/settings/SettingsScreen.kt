@@ -175,7 +175,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             val session = shell.haSession(settingsProfile)
             fun showNotifications() {
                 val writable = priceControlsEnabled(true, settingsAuthority.authority)
-                notificationsCard?.show(settingsCache.confirmed(settingsProfile.localId)?.notifications, writable)
+                val confirmed = settingsCache.confirmed(settingsProfile.localId)
+                notificationsCard?.show(confirmed?.notifications, writable, identifies = confirmed?.let { it.identification != null })
                 pairedCards.setIdentificationWritable(writable)
             }
             fun loadPaired() = session.peekDashboard { dashboard ->

@@ -48,6 +48,8 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
     private val local = LocalNotificationStore.forContext(context)
     private var record: HaNotificationSettings? = null
     private var writable = false
+    // Whether the record states identification, so its event is offered (see NotificationEvent.offered).
+    private var identifies: Boolean? = null
 
     private var save: (List<String>, List<String>, (String?) -> Unit) -> Unit = { _, _, done -> done(null) }
     private var requestPermission: () -> Unit = {}
@@ -68,9 +70,10 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
     }
 
     /** Paint the confirmed record's choice (`null`: Home Assistant does not state one). */
-    fun show(notifications: HaNotificationSettings?, writable: Boolean) {
+    fun show(notifications: HaNotificationSettings?, writable: Boolean, identifies: Boolean? = null) {
         record = notifications
         this.writable = writable
+        this.identifies = identifies
         repaint()
     }
 
@@ -116,7 +119,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         val card = card(container, t(R.string.notify_section), R.drawable.ic_bell)
         val body = card.body
         record?.let { settings ->
-            settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts),
+            settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts, identifies),
                 onTap = { openHomeAssistant() })
             if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
         }
@@ -146,7 +149,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
                 .also { it.isEnabled = writable; body.addView(it) }
         }
         body.addView(heading(t(R.string.notify_events), top = 10))
-        val eventBoxes = NotificationEvent.entries.map { event ->
+        val eventBoxes = NotificationEvent.offered(settings, identifies).map { event ->
             checkbox(eventName(event), event.wire in settings.events).also { it.isEnabled = writable; body.addView(it) }
         }
         val error = errorView().also { body.addView(it) }
@@ -207,7 +210,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
             if (!writable || current == null) return@openEditor done(null)
             val choice = NotificationsSave.Choice(
                 homeAssistant = NotificationsSave.homeAssistantChoice(
-                    current, section.phones, section.phoneBoxes.map { it.isChecked }, section.eventBoxes.map { it.isChecked }
+                    current, section.phones, section.phoneBoxes.map { it.isChecked }, section.eventBoxes.map { it.isChecked }, identifies
                 ),
                 // This phone's own route stays as it is.
                 spotNavOn = local.enabled,

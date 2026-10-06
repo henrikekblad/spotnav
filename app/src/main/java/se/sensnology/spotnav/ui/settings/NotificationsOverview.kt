@@ -25,15 +25,16 @@ internal object NotificationsOverview {
         texts.quantity(R.plurals.notify_events_count, total, count, total)
 
     /** The Home Assistant app's row: the chosen phones, then the events once a phone is chosen. */
-    fun homeAssistant(settings: HaNotificationSettings, texts: NotificationTexts): String {
+    fun homeAssistant(settings: HaNotificationSettings, texts: NotificationTexts, identifies: Boolean? = null): String {
         val chosen = NotificationPhones.of(settings).filter { it.chosen }
         val phones = when (chosen.size) {
             0 -> return texts.text(R.string.notify_phones_none)
             1 -> chosen[0].let { if (it.missing) texts.text(R.string.notify_missing, it.name) else it.name }
             else -> texts.quantity(R.plurals.notify_phones_count, chosen.size, chosen.size)
         }
-        val known = settings.events.count { NotificationEvent.of(it) != null }
-        return phones + JOIN + events(known, NotificationEvent.entries.size, texts)
+        val offered = NotificationEvent.offered(settings, identifies)
+        val known = settings.events.count { NotificationEvent.of(it) in offered }
+        return phones + JOIN + events(known, offered.size, texts)
     }
 
     /** The SpotNav app's row: off, every 15 minutes or instant, with the events while it is on. */
@@ -134,11 +135,13 @@ internal class NotificationsSave(
             current: HaNotificationSettings,
             phones: List<NotificationPhones.Phone>,
             phoneTicked: List<Boolean>,
-            eventTicked: List<Boolean>
+            /** One tick per [NotificationEvent.offered] event, in its order. */
+            eventTicked: List<Boolean>,
+            identifies: Boolean? = null
         ) = HomeAssistantChoice(
             targets = phones.filterIndexed { index, _ -> phoneTicked[index] }.map { it.service },
-            events = NotificationEvent.entries.filterIndexed { index, _ -> eventTicked[index] }.map { it.wire } +
-                current.events.filter { NotificationEvent.of(it) == null }
+            events = NotificationEvent.offered(current, identifies).filterIndexed { index, _ -> eventTicked.getOrElse(index) { false } }
+                .map { it.wire } + current.events.filter { NotificationEvent.of(it) == null }
         )
     }
 }

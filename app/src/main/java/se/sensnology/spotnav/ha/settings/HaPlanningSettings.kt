@@ -176,6 +176,17 @@ enum class NotificationEvent(val wire: String) {
         val LOCAL_DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE)
 
         fun of(wire: Any?): NotificationEvent? = entries.firstOrNull { it.wire == wire }
+
+        /**
+         * The events [settings]' Home Assistant takes: every one, except "which car is plugged in?" for
+         * a Home Assistant that does not identify cars (a released one refuses it). [identifies] is
+         * whether the record states identification; unknown, the choice itself tells (an identifying
+         * Home Assistant has it on by default).
+         */
+        fun offered(settings: HaNotificationSettings, identifies: Boolean? = null): List<NotificationEvent> {
+            val withIdentify = identifies ?: (VEHICLE_IDENTIFY.wire in settings.events)
+            return entries.filter { it != VEHICLE_IDENTIFY || withIdentify }
+        }
     }
 }
 

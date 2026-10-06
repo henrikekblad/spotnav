@@ -49,18 +49,20 @@ class NotificationsOverviewTest {
 
     // --- The card's summary -----------------------------------------------------------------------
 
+    // These records do not have "which car is plugged in?" on: a Home Assistant without identification,
+    // which takes seven events.
     @Test fun theHomeAssistantRowNamesNoPhoneOnePhoneOrHowMany() {
         assertEquals("Ingen telefon vald", NotificationsOverview.homeAssistant(ha(emptyList()), sv))
-        assertEquals("N6 · 3 av 8 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), sv))
-        assertEquals("2 telefoner · 3 av 8 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), sv))
+        assertEquals("N6 · 3 av 7 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), sv))
+        assertEquals("2 telefoner · 3 av 7 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), sv))
         assertEquals("No phone chosen", NotificationsOverview.homeAssistant(ha(emptyList()), en))
-        assertEquals("N6 · 3 of 8 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), en))
-        assertEquals("2 phones · 3 of 8 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), en))
+        assertEquals("N6 · 3 of 7 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), en))
+        assertEquals("2 phones · 3 of 7 events", NotificationsOverview.homeAssistant(ha(listOf(n6.service, pixel.service)), en))
     }
 
     @Test fun aChosenPhoneThatIsGoneIsMarkedAndAnUnknownEventIsNotCounted() {
         val settings = ha(listOf("notify.mobile_app_old"), events = three + "from_the_future")
-        assertEquals("notify.mobile_app_old (hittas inte) · 3 av 8 händelser", NotificationsOverview.homeAssistant(settings, sv))
+        assertEquals("notify.mobile_app_old (hittas inte) · 3 av 7 händelser", NotificationsOverview.homeAssistant(settings, sv))
     }
 
     @Test fun theSpotNavRowIsOffEveryFifteenMinutesOrInstant() {
