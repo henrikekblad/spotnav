@@ -94,7 +94,10 @@ internal object PushNotifications {
 
     /** A push message arrived: run the check now, after a test notification when it is a test. */
     fun onMessage(context: Context, data: Map<String, String>) {
-        when (PushWake.action(data, enabled(context))) {
+        val action = PushWake.action(data, enabled(context))
+        // The charging screen in view reads its charger at once, beside the notification check.
+        PushWakeListener.deliver(action)
+        when (action) {
             PushWake.Action.NONE -> return
             PushWake.Action.CHECK -> LocalNotifications.checkNow(context)
             PushWake.Action.TEST_AND_CHECK -> {
