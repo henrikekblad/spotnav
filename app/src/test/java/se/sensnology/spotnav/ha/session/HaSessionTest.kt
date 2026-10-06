@@ -202,6 +202,21 @@ class HaSessionTest {
         assertEquals(VehicleRefresh.Answer.Failed, refusedDone!!.answer)
     }
 
+    @Test fun theChargersReReadAsksForTheCarFirstAndThenReadsTheDashboardWhateverTheCarSaid() {
+        for (answer in listOf(VehicleRefresh.Answer.Refreshed, VehicleRefresh.Answer.TooSoon(30), VehicleRefresh.Answer.Failed)) {
+            val rig = Rig(FakeTransport().apply { refreshAnswer = answer })
+            var got: Pair<VehicleRefresh.Answer, HaSession.Read>? = null
+            rig.session.reReadWithVehicle("car", admit = { rig.transport.calls += "admit"; admission }) { carAnswer, read ->
+                got = carAnswer to read
+            }
+            // One read, admitted after the car's re-read, so it sees what the car said.
+            assertEquals(listOf("refresh:car", "admit", "dashboard"), rig.transport.calls)
+            assertEquals(answer, got!!.first)
+            assertSame(admission, got!!.second.admission)
+            assertTrue(got!!.second.result.isSuccess)
+        }
+    }
+
     @Test fun aChargeLimitWriteIsNotFollowedByARead() {
         val rig = Rig()
         var answer: ChargeLimit.Answer? = null

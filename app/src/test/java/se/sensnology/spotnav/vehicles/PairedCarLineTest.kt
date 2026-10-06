@@ -79,14 +79,22 @@ class PairedCarLineTest {
         assertFalse(PairedTarget.facts(dashboard().soc!!, dashboard().vehicles, null).estimated)
     }
 
-    @Test fun theCarLineOffersTheCarsReReadWhenHomeAssistantCanDoIt() {
-        assertTrue(PairedCarLine.reReadOffered(dashboard()))
+    @Test fun theChargersReReadAlsoReReadsThePlannedCarWhenHomeAssistantCanDoIt() {
+        assertEquals("vehicle_ev6", PairedCarLine.carToReRead(dashboard()))
         val without = dashboard { getJSONObject("charger").getJSONObject("capabilities").put("refresh_vehicle", false) }
-        assertFalse(PairedCarLine.reReadOffered(without))
+        assertNull(PairedCarLine.carToReRead(without))
         val noCar = dashboard {
             put("target_vehicle_id", JSONObject.NULL)
             getJSONObject("soc").put("vehicle_id", JSONObject.NULL)
         }
-        assertFalse(PairedCarLine.reReadOffered(noCar))
+        assertNull(PairedCarLine.carToReRead(noCar))
+        assertNull(PairedCarLine.carToReRead(null))
+    }
+
+    @Test fun onTheChargersReReadOnlyARealFailureOfTheCarIsSaid() {
+        assertFalse(PairedCarLine.saysCarReRead(VehicleRefresh.Answer.Refreshed))
+        // "Try again in N s" is Home Assistant's own pace, not news on this combined re-read.
+        assertFalse(PairedCarLine.saysCarReRead(VehicleRefresh.Answer.TooSoon(30)))
+        assertTrue(PairedCarLine.saysCarReRead(VehicleRefresh.Answer.Failed))
     }
 }
