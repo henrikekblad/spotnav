@@ -102,10 +102,74 @@ class ChargeBarTest {
         assertEquals(at("2026-09-22T12:30:00Z"), bar.endsAt)
     }
 
-    @Test fun outsideTheWindowsTheEndIsAStraightLine() {
+    // a charge the plan does not drive now: the car's own limit, whatever the driver
+
+    private fun JSONObject.statusLines(vararg lines: JSONObject) {
+        put("status", JSONObject().put("tone", "normal").put("lines", JSONArray().apply { lines.forEach { put(it) } }))
+    }
+
+    private fun line(code: String, vararg params: Pair<String, Any?>) = JSONObject().put("code", code).put(
+        "params", JSONObject().apply { params.forEach { (key, value) -> put(key, value ?: JSONObject.NULL) } }
+    )
+
+    @Test fun aChargeUnderAScheduledPauseCountsToTheCarsLimitNotTheTarget() {
+        // The schedule paused until tomorrow, the car charging anyway, and no window now: the
+        // owner's screen, which showed "96 % av målet" for a car at 89 % charging to its 100 %.
         val now = at("2026-09-22T07:00:00Z")
-        val bar = ChargeBarRule.of(target(), now)!!
-        close(now.plus(hours(4.22, 2.3)), bar.endsAt)
+        val bar = ChargeBarRule.of(target {
+            soc(89.0, room = 9.4, need = 0.0, target = 93.0)
+            statusLines(
+                line("paused", "until" to "2026-09-22T22:00:00+00:00", "choice" to "until_tomorrow", "action" to null, "ends" to null),
+                line("charging_now", "until" to null)
+            )
+        }, now)!!
+        assertEquals(ChargeBarBasis.CAR_LIMIT, bar.basis)
+        assertEquals(89, bar.percent)
+        close(now.plus(hours(9.4, 2.3)), bar.endsAt)
+    }
+
+    @Test fun outsideTheWindowsTheTargetGivesWayToTheCarsLimit() {
+        val now = at("2026-09-22T07:00:00Z")
+        val bar = ChargeBarRule.of(target { soc(75.1, max = 90.0, room = 12.0, need = 4.22, target = 80.0) }, now)!!
+        assertEquals(ChargeBarBasis.CAR_LIMIT, bar.basis)
+        assertEquals(83, bar.percent)
+        close(now.plus(hours(12.0, 2.3)), bar.endsAt)
+    }
+
+    @Test fun aPausedScheduleDoesNotDriveTheChargeEvenInsideAWindow() {
+        val bar = ChargeBarRule.of(target {
+            soc(60.0, room = 30.0, need = 15.0, target = 80.0)
+            statusLines(line("paused", "until" to null, "choice" to "until_resumed", "action" to null, "ends" to null))
+        }, inWindow)!!
+        assertEquals(ChargeBarBasis.CAR_LIMIT, bar.basis)
+        assertEquals(60, bar.percent)
+        // The straight line from now, not the schedule's windows.
+        close(inWindow.plus(hours(30.0, 2.3)), bar.endsAt)
+    }
+
+    @Test fun anAmountOutsideThePlanWithNoLevelIsTheOpenBar() {
+        val bar = ChargeBarRule.of(kwh { getJSONObject("plan").put("installed", JSONObject.NULL) }, kwhNow)!!
+        assertEquals(ChargeBarBasis.OPEN, bar.basis)
+        assertNull(bar.percent)
+        assertNull(bar.endsAt)
+    }
+
+    @Test fun aSunChargeOutsideThePlanCountsToTheLimitWithoutAnEnd() {
+        for (strategy in listOf("solar", "hybrid")) {
+            val bar = ChargeBarRule.of(kwh {
+                getJSONObject("settings").put("strategy", strategy)
+                getJSONObject("plan").put("installed", JSONObject.NULL)
+                soc(40.0, room = 40.0)
+            }, kwhNow)!!
+            assertEquals(strategy, ChargeBarBasis.CAR_LIMIT, bar.basis)
+            assertEquals(40, bar.percent)
+            assertNull(strategy, bar.endsAt)
+        }
+    }
+
+    @Test fun theConnectionLineIsHiddenWhileTheBarSaysItCharges() {
+        assertFalse(ChargeBarLayout.connectionLineShown(ChargeBarRule.of(kwh(), kwhNow)))
+        assertTrue(ChargeBarLayout.connectionLineShown(null))
     }
 
     @Test fun aLevelAboveTheTargetIsHundredAndHasNoEnd() {
@@ -168,7 +232,8 @@ class ChargeBarTest {
 
     @Test fun withNoPowerKnownThereIsAPercentButNoEnd() {
         val bar = ChargeBarRule.of(kwh {
-            put("plan", getJSONObject("plan").put("installed", JSONObject.NULL).put("proposal", JSONObject.NULL))
+            getJSONObject("plan").getJSONObject("installed").put("amps", JSONObject.NULL).put("power_kw", JSONObject.NULL)
+            getJSONObject("plan").put("proposal", JSONObject.NULL)
             getJSONObject("settings").put("amps", JSONObject.NULL)
         }, kwhNow)!!
         assertEquals(25, bar.percent)

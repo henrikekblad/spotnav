@@ -55,14 +55,16 @@ internal data class ChargeBar(
  *   for a charger that reports no car, a finished car or an error.
  * - It moves while current flows: the charger reports `charging` (or states no connection) and Home
  *   Assistant does not see a car that takes no current. Otherwise it stands still and states no end.
- * - A person's Start (the `paused` line with `choice` `manual` and `action` `start`) charges to the
- *   car's own limit: level / limit (else 100 %), the end from the battery's room; with no level, the
- *   open bar and the power.
- * - A target: level / target (the dashboard carries no level at plug-in, so never a session share),
- *   the end from `soc.need_kwh`.
- * - Fill: level / the car's limit, the end from `soc.room_kwh`.
- * - A fixed amount: `plan.delivered_kwh` / (`delivered_kwh` + `remaining_kwh`), else / the requested
- *   amount; nothing without `delivered_kwh`.
+ * - A charge the plan does not drive now (no installed window holds now, or any pause stands: a
+ *   person's Start, a scheduled pause, a charge the charger began itself, a sun charge) goes to the
+ *   car's own limit: level / limit (else 100 %), the end from the battery's room (none for a sun
+ *   charge that is not a person's Start); with no level, the open bar and the power.
+ * - Only while the plan drives the charge does the driver count:
+ *   - a target: level / target (the dashboard carries no level at plug-in, so never a session
+ *     share), the end from `soc.need_kwh`;
+ *   - Fill: level / the car's limit, the end from `soc.room_kwh`;
+ *   - a fixed amount: `plan.delivered_kwh` / (`delivered_kwh` + `remaining_kwh`), else / the
+ *     requested amount; nothing without `delivered_kwh`.
  * - The percent is rounded down and kept within 0-100.
  * - The end: the remaining energy at the measured current (x phases x 230 V, 400 V between phases on
  *   three), else the installed schedule's power, else its current, else the proposal's power, else
@@ -83,9 +85,10 @@ internal object ChargeBarRule {
         if (held.connection in NO_BAR) return null
         val moving = (held.connection == null || held.connection == ConnectionState.CHARGING) &&
             !ChargeProgressContract.advisory(held.chargeProgress)
-        if (personStarted(held)) return personStart(held, now, moving)
+        val follows = held.settings?.strategy.let { it == HaSettingsStrategy.SOLAR || it == HaSettingsStrategy.HYBRID }
+        val started = personStarted(held)
+        if (started || !planDrives(held, now)) return toOwnLimit(held, now, moving, endKnown = started || !follows)
         val settings = held.settings ?: return null
-        val follows = settings.strategy == HaSettingsStrategy.SOLAR || settings.strategy == HaSettingsStrategy.HYBRID
         val soc = held.soc
         val (basis, fraction, remaining) = when {
             settings.driver == HaSettingsDriver.TARGET_SOC -> {
@@ -116,7 +119,21 @@ internal object ChargeBarRule {
         it.code == PAUSED_LINE && it.params["choice"] == MANUAL && it.params["action"] == START
     }
 
-    private fun personStart(held: Dashboard, now: Instant, moving: Boolean): ChargeBar {
+    /**
+     * Whether the plan drives the charge now: an installed window holds now and no pause (a person's
+     * Start or Stop, or a scheduled pause) stands in its way. Any other running charge -- a Start, a
+     * charge under a paused schedule, one the charger began itself, a sun charge -- goes to the car's
+     * own limit.
+     */
+    fun planDrives(held: Dashboard, now: Instant): Boolean {
+        if (held.status.lines.any { it.code == PAUSED_LINE }) return false
+        return held.plan.installed?.periods.orEmpty().any { period ->
+            !now.isBefore(period.start.toInstant()) && now.isBefore(period.end.toInstant())
+        }
+    }
+
+    /** The bar for a charge to the car's own limit; [endKnown] is false for a charge that follows the sun. */
+    private fun toOwnLimit(held: Dashboard, now: Instant, moving: Boolean, endKnown: Boolean): ChargeBar {
         val soc = held.soc
         val level = soc?.value
         if (level == null) {
@@ -130,7 +147,7 @@ internal object ChargeBarRule {
         }
         return ChargeBar(
             ChargeBarBasis.CAR_LIMIT, percent(level / ceiling),
-            if (moving) endsAt(held, room, now) else null, null, moving
+            if (moving && endKnown) endsAt(held, room, now) else null, null, moving
         )
     }
 
@@ -240,6 +257,12 @@ internal object ChargeBarText {
     /** A power in kW with one decimal in the screen's number locale, a whole number without ",0". */
     fun kw(powerKw: Double, locale: Locale): String =
         DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale)).format(Math.round(powerKw * 10.0) / 10.0)
+}
+
+/** What the card shows beside the bar. */
+internal object ChargeBarLayout {
+    /** The connection line ("Laddar") only while no bar says the same. */
+    fun connectionLineShown(bar: ChargeBar?): Boolean = bar == null
 }
 
 /** Whether the bar's sheen moves: only while current flows and the system lets things move. */
