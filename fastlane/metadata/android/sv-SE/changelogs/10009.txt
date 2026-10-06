@@ -1,1 +1,2 @@
 - En förloppsindikator under laddning: hur långt laddningen kommit och när den väntas vara klar
+- Snabbare uppdatering efter Start/Stopp; prioritet ligger nu under laddaren

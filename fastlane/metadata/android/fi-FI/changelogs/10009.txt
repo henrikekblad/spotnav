@@ -1,1 +1,2 @@
 - Edistymispalkki latauksen aikana: kuinka pitkällä lataus on ja milloin sen odotetaan valmistuvan
+- Nopeampi päivitys Aloita/Pysäytä-painalluksen jälkeen; prioriteetti on nyt laturin alla

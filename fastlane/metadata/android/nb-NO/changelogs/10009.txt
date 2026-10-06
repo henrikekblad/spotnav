@@ -1,1 +1,2 @@
 - En fremdriftslinje under lading: hvor langt ladingen har kommet og når den ventes å være ferdig
+- Raskere oppdatering etter Start/Stopp; prioritet ligger nå under laderen
