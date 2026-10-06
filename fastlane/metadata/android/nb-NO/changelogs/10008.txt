@@ -1,0 +1,6 @@
+- Fyll: kWh-glidebryteren kan fylle bilen til grensen ved hver tilkobling
+- Markering for "fullt" og en linje om hvor mye som fyller batteriet
+- Venter på hvert prisområdes egen publiseringstid (Storbritannia, Spania PVPC)
+- Tydelig beskjed når Home Assistant ikke kan nås
+- Widgeten presses ikke lenger sammen i bredden
+- Krever SpotNav for Home Assistant 1.12

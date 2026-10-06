@@ -1,0 +1,6 @@
+- Fyll: kWh-reglaget kan fylla bilen till dess gräns vid varje inkoppling
+- Markering för "fullt" och en rad om hur mycket som fyller batteriet
+- Väntar på varje prisområdes egen publiceringstid (Storbritannien, Spanien PVPC)
+- Tydligt besked när Home Assistant inte kan nås
+- Widgeten trycks inte längre ihop på bredden
+- Kräver SpotNav för Home Assistant 1.12
