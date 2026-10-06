@@ -103,7 +103,12 @@ data class HaPlanningSettings(
      * `identify_mode`, vehicle identification); `null` from a Home Assistant that does not state them,
      * and then nothing about it is shown or sent.
      */
-    val identification: HaIdentificationSettings? = null
+    val identification: HaIdentificationSettings? = null,
+    /**
+     * The charger's camera for identification (`identify_camera`); `null` from a Home Assistant that does
+     * not state it, and then nothing about it is shown or sent.
+     */
+    val camera: HaCameraChoice? = null
 ) {
     /**
      * This record with the read-only facts of [confirmed] carried over: a replacement body never

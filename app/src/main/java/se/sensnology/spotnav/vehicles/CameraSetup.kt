@@ -1,0 +1,76 @@
+package se.sensnology.spotnav.vehicles
+
+import se.sensnology.spotnav.ha.dashboard.CameraEntity
+import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.ReferencePicture
+import se.sensnology.spotnav.ha.settings.HaCameraSettings
+import se.sensnology.spotnav.ha.settings.HaPlanningSettings
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+/**
+ * What Settings shows of the charger's camera for identification, decided from one dashboard and the
+ * record, as the Home Assistant card does: the camera, and with one chosen its frame and its AI task;
+ * each of the charger's cars its reference pictures. A Home Assistant that offers no camera (no
+ * `camera_identification` block) or does not state `identify_camera` shows none of it.
+ */
+internal object CameraSetup {
+    /**
+     * The charger's camera rows: the cameras to choose from, the one chosen (`null`: none) and its name,
+     * the AI tasks to choose from and the chosen one's name (`null`: Home Assistant's default), and
+     * whether a frame is drawn (else the whole picture is compared).
+     */
+    data class Section(
+        val cameras: List<CameraEntity>,
+        val chosen: HaCameraSettings?,
+        val cameraName: String?,
+        val aiTasks: List<CameraEntity>,
+        val aiTaskName: String?,
+        val frameDrawn: Boolean
+    )
+
+    fun section(dashboard: Dashboard, record: HaPlanningSettings?): Section? {
+        val block = dashboard.cameraIdentification ?: return null
+        val stated = record?.camera ?: return null
+        val chosen = stated.camera
+        return Section(
+            cameras = block.cameras,
+            chosen = chosen,
+            cameraName = chosen?.let { camera -> block.cameras.firstOrNull { it.entityId == camera.cameraEntityId }?.name ?: camera.cameraEntityId },
+            aiTasks = block.aiTasks,
+            aiTaskName = chosen?.aiTaskEntityId?.let { id -> block.aiTasks.firstOrNull { it.entityId == id }?.name ?: id },
+            frameDrawn = chosen != null && !CameraFrames.isWhole(chosen.frame)
+        )
+    }
+
+    /** The camera row's choices, in the order shown: each camera, then none (`null`). */
+    fun cameraOptions(section: Section): List<String?> = section.cameras.map { it.entityId } + listOf(null)
+
+    /** Which of [cameraOptions] is chosen; `-1` for a chosen camera that is no longer there. */
+    fun cameraIndex(section: Section): Int = cameraOptions(section).indexOf(section.chosen?.cameraEntityId)
+
+    /** The AI task row's choices: Home Assistant's default (`null`), then each AI task. */
+    fun aiTaskOptions(section: Section): List<String?> = listOf<String?>(null) + section.aiTasks.map { it.entityId }
+
+    /** Which of [aiTaskOptions] is chosen; `-1` for one that is no longer there. */
+    fun aiTaskIndex(section: Section): Int = aiTaskOptions(section).indexOf(section.chosen?.aiTaskEntityId)
+
+    /**
+     * A car's reference pictures, day first, when a camera is chosen and the car is one of this
+     * charger's; `null` (no row) otherwise.
+     */
+    fun references(dashboard: Dashboard, record: HaPlanningSettings?, vehicleId: String): List<ReferencePicture>? {
+        val block = dashboard.cameraIdentification ?: return null
+        record?.camera?.camera ?: return null
+        return block.references[vehicleId]
+    }
+
+    /** When a picture was taken, as its caption says it ("Wed 7 Oct 14:12"), in [zone]; as sent when unreadable. */
+    fun takenAt(iso: String, zone: ZoneId, locale: Locale): String = try {
+        OffsetDateTime.parse(iso).atZoneSameInstant(zone).format(DateTimeFormatter.ofPattern("EEE d MMM HH:mm", locale))
+    } catch (failure: Exception) {
+        iso
+    }
+}

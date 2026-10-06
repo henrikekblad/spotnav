@@ -59,7 +59,8 @@ internal class WebhookHttpStatusException(
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
-        "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode"
+        "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
+        "identify_camera"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
@@ -233,6 +234,12 @@ object HomeAssistantClient {
     internal fun identifyVehicle(settings: HomeAssistantSettings, vehicleId: String): IdentifyVehicle.Outcome {
         val (status, body) = write(settings, IdentifyVehicle.payload(vehicleId))
         return IdentifyVehicle.answer(status, body)
+    }
+
+    /** One of the camera's actions (snapshot, frame, reference pictures). Never throws. */
+    internal fun camera(settings: HomeAssistantSettings, request: CameraCommands.Request): CameraCommands.Outcome {
+        val (status, body) = write(settings, request.payload())
+        return CameraCommands.answer(request, status, body)
     }
 
     /** Change this charger's priority on its site (webhook `update_charger_priority`). */

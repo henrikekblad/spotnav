@@ -31,7 +31,10 @@ internal data class DashboardIdentification(
         LOCATION("location"),
         ANSWERED("answered"),
         MANUAL("manual"),
-        ASSUMED("assumed")
+        ASSUMED("assumed"),
+
+        /** The charger's camera recognised the car. */
+        CAMERA("camera")
     }
 
     /** The verdict the last look reached for [vehicleId], or `null` when it states none. */

@@ -189,6 +189,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         VehicleIdentification.Basis.CHOSEN_MANUALLY -> R.string.identify_by_hand
         VehicleIdentification.Basis.ASSUMED -> R.string.identify_by_assumed
         VehicleIdentification.Basis.IDENTIFYING -> R.string.identify_identifying
+        VehicleIdentification.Basis.CAMERA -> R.string.identify_by_camera
     }
 
     private fun hintText(hint: VehicleIdentification.Hint): Int = when (hint) {

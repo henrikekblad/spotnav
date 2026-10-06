@@ -38,7 +38,7 @@ internal object HaSettingsCodec {
      * both ways: a body that leaves it out keeps the stored choice, and so is `fill_to_limit`.
      */
     private val OPTIONAL_KEYS = setOf(
-        "departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT, IDENTIFY_MODE, VEHICLE_IDS
+        "departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT, IDENTIFY_MODE, VEHICLE_IDS, IDENTIFY_CAMERA
     )
 
     private const val FISCAL_INCLUDED = "fiscal_included"
@@ -46,6 +46,9 @@ internal object HaSettingsCodec {
     private const val FILL_TO_LIMIT = "fill_to_limit"
     private const val IDENTIFY_MODE = "identify_mode"
     private const val VEHICLE_IDS = "vehicle_ids"
+    private const val IDENTIFY_CAMERA = "identify_camera"
+    private val CAMERA_KEYS = setOf("camera_entity_id", "ai_task_entity_id", "frame")
+    private val FRAME_KEYS = setOf("x", "y", "w", "h")
     private const val INVALID_VEHICLES = "invalid_vehicles"
 
     /** A notify service as Home Assistant spells one, and how many one charger may name. */
@@ -127,7 +130,8 @@ internal object HaSettingsCodec {
             fiscalIncluded = if (withRevision) fiscalIncluded(raw.opt(FISCAL_INCLUDED)) else emptySet(),
             notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision),
             fillToLimit = nullable(raw.opt(FILL_TO_LIMIT)) { boolean(it, FILL_TO_LIMIT, "invalid_energy") },
-            identification = identification(raw, strict = !withRevision)
+            identification = identification(raw, strict = !withRevision),
+            camera = camera(raw, strict = !withRevision)
         )
     }
 
@@ -157,6 +161,40 @@ internal object HaSettingsCodec {
         } catch (refusal: HaSettingsFormatException) {
             if (strict) throw refusal else null
         }
+    }
+
+    /**
+     * `identify_camera`: stated when the record has it (`null` is no camera). A replacement body is held
+     * to the contract ([strict]: `invalid_camera`); an answer is read leniently, so a shape this app
+     * cannot read hides the camera, is never sent back, and never refuses the whole record.
+     */
+    private fun camera(raw: JSONObject, strict: Boolean): HaCameraChoice? {
+        if (!raw.has(IDENTIFY_CAMERA)) return null
+        return try {
+            HaCameraChoice(nullable(raw.opt(IDENTIFY_CAMERA)) { value ->
+                val json = value as? JSONObject ?: refuse(HaCameraRules.INVALID_CAMERA, "identify_camera must be null or an object")
+                requireKeys(json, CAMERA_KEYS, IDENTIFY_CAMERA, exact = strict, code = HaCameraRules.INVALID_CAMERA)
+                val camera = HaCameraSettings(
+                    cameraEntityId = json.opt("camera_entity_id") as? String
+                        ?: refuse(HaCameraRules.INVALID_CAMERA, "camera_entity_id must be a camera"),
+                    aiTaskEntityId = nullable(json.opt("ai_task_entity_id")) {
+                        it as? String ?: refuse(HaCameraRules.INVALID_CAMERA, "ai_task_entity_id must be an AI Task entity or null")
+                    },
+                    frame = nullable(json.opt("frame")) { frame(it, strict) }
+                )
+                camera.takeIf { HaCameraRules.valid(it) } ?: refuse(HaCameraRules.INVALID_CAMERA, "identify_camera is not a camera")
+            })
+        } catch (refusal: HaSettingsFormatException) {
+            if (strict) throw refusal else null
+        }
+    }
+
+    /** A frame: four fractions, inside the picture and at least the least size each way. */
+    private fun frame(raw: Any, strict: Boolean): CameraFrame {
+        val json = raw as? JSONObject ?: refuse(HaCameraRules.INVALID_CAMERA, "frame must be an object or null")
+        requireKeys(json, FRAME_KEYS, "frame", exact = strict, code = HaCameraRules.INVALID_CAMERA)
+        val (x, y, w, h) = listOf("x", "y", "w", "h").map { number(json.opt(it), "frame.$it", HaCameraRules.INVALID_CAMERA) }
+        return CameraFrame(x, y, w, h)
     }
 
     /**
@@ -275,13 +313,13 @@ internal object HaSettingsCodec {
      * also has no unknown key; a response keeps the contract's way of growing, so an added field is
      * ignored and never refuses the answer.
      */
-    private fun requireKeys(json: JSONObject, keys: Set<String>, what: String, exact: Boolean) {
+    private fun requireKeys(json: JSONObject, keys: Set<String>, what: String, exact: Boolean, code: String? = null) {
         val present = json.keys().asSequence().toSet()
         val missing = keys - present
-        if (missing.isNotEmpty()) refuse("missing_field", "$what is missing ${missing.sorted()}")
+        if (missing.isNotEmpty()) refuse(code ?: "missing_field", "$what is missing ${missing.sorted()}")
         if (!exact) return
         val unknown = present - keys - OPTIONAL_KEYS
-        if (unknown.isNotEmpty()) refuse("unknown_field", "$what has unknown fields ${unknown.sorted()}")
+        if (unknown.isNotEmpty()) refuse(code ?: "unknown_field", "$what has unknown fields ${unknown.sorted()}")
     }
 
     private fun <T> nullable(raw: Any?, read: (Any) -> T): T? =
@@ -389,6 +427,18 @@ internal object HaSettingsCodec {
             settings.identification?.let { identification ->
                 put(IDENTIFY_MODE, identification.mode.wire)
                 put(VEHICLE_IDS, identification.vehicleIds?.let { JSONArray(it) } ?: JSONObject.NULL)
+            }
+            // Stated only when Home Assistant stated it, and then always sent back as it stands.
+            settings.camera?.let { choice ->
+                put(IDENTIFY_CAMERA, choice.camera?.let { camera ->
+                    JSONObject().apply {
+                        put("camera_entity_id", camera.cameraEntityId)
+                        putNullable("ai_task_entity_id", camera.aiTaskEntityId)
+                        putNullable("frame", camera.frame?.let { frame ->
+                            JSONObject().put("x", frame.x).put("y", frame.y).put("w", frame.w).put("h", frame.h)
+                        })
+                    }
+                } ?: JSONObject.NULL)
             }
             // Stated only when Home Assistant stated it; the phones that exist are the stored copy's alone.
             settings.notifications?.let { choice ->
