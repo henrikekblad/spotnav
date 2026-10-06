@@ -94,6 +94,9 @@ internal class ScreenShell(
     /** Whether a Start or Stop awaits the charger's report, so the re-read runs every few seconds. */
     var liveRefreshFast: (() -> Boolean)? = null
 
+    /** Whether a charge runs with its bar on screen, so the re-read runs every half minute. */
+    var liveRefreshCharging: (() -> Boolean)? = null
+
     /** Set by the Activity: the charging screen calls it when an answer arrives, so a sooner end is kept. */
     var liveRefreshReconsider: (() -> Unit)? = null
     var dayZone: (() -> java.time.ZoneId)? = null

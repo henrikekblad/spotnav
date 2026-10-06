@@ -129,6 +129,9 @@ internal class ChargingScreen(
     internal var startDashboardFetch: () -> Unit = {}
     /** Whether the paired dashboard is to be read every few seconds (see ChargerDashboardController.pendingRefresh). */
     internal var pendingRefresh: () -> Boolean = { false }
+
+    /** Whether the charge bar shows, so the dashboard is read every half minute (see LiveRefresh). */
+    internal var chargeBarShown: () -> Boolean = { false }
     private var refreshControls: () -> Unit = {}
 
     // ---- What Home Assistant's dashboard decides for a paired charger  The last dashboard answer,
@@ -256,6 +259,8 @@ internal class ChargingScreen(
         // A Start or Stop awaiting the charger's report is read every few seconds instead, so the
         // buttons return as soon as Home Assistant offers them again.
         shell.liveRefreshFast = { pendingRefresh() }
+        // A running charge is read every half minute, as the Home Assistant card reads it.
+        shell.liveRefreshCharging = { chargeBarShown() }
         startDashboardFetch()
     }
 
@@ -372,6 +377,7 @@ internal class ChargingScreen(
         )
         startDashboardFetch = { controller.fetchDashboard() }
         pendingRefresh = { controller.pendingRefresh() }
+        chargeBarShown = { controller.chargeBarShown() }
         refreshControls = { controller.refreshControls() }
     }
 

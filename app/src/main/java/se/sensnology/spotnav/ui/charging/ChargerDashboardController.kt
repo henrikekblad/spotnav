@@ -70,8 +70,9 @@ internal class ChargerDashboardController(
         fun onDashboard(dashboard: Dashboard?)
 
         /**
-         * Whether the dashboard is to be read every few seconds ([pendingRefresh]) changed: a
-         * command was sent, or a read opened or closed the window.
+         * The pace the dashboard is to be read at changed: every few seconds ([pendingRefresh]) after
+         * a command or while one is pending, or every half minute while the charge bar shows
+         * ([chargeBarShown]).
          */
         fun onPendingRefreshChanged()
     }
@@ -120,6 +121,11 @@ internal class ChargerDashboardController(
      * the dashboard every few seconds (at most [ActionPendingWatch.WINDOW_MS] after it began).
      */
     fun pendingRefresh(): Boolean = pendingWatch.fast()
+
+    /** Whether the charge bar shows, so the dashboard is read at the running charge's pace. */
+    fun chargeBarShown(): Boolean = barShown
+
+    private var barShown = false
 
     /** Put the controls in step with the dashboard now held. */
     fun refreshControls() = cells.refresh()
@@ -187,6 +193,11 @@ internal class ChargerDashboardController(
         val now = java.time.Instant.now()
         val bar = ChargeBarRule.of(dashboard, now)
         chargerCard.showChargeBar(bar, now)
+        // A running charge is read every half minute, the rest every minute: a change of pace is news.
+        if ((bar != null) != barShown) {
+            barShown = bar != null
+            listener.onPendingRefreshChanged()
+        }
         // The bar and the status already say it charges: the connection line stands down meanwhile.
         chargerCard.showVehicleLine(vehicleLineText(dashboard).takeIf { ChargeBarLayout.connectionLineShown(bar) }, if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
         // Home Assistant's own status block words the line (see HaStatusText):

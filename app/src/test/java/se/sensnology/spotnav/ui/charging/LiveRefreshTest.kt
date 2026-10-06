@@ -100,4 +100,44 @@ class LiveRefreshTest {
         assertEquals(0, reads)
         assertEquals(null, timer.delay)
     }
+
+    @Test fun readsEveryHalfMinuteWhileAChargeRuns() {
+        val timer = FakeTimer()
+        var charging = false
+        val live = LiveRefresh(timer, { t0 }, { null }, charging = { charging }) {}
+        live.arm()
+        assertEquals(60_000L, timer.delay)
+        charging = true
+        live.reconsider()
+        assertEquals(30_000L, timer.delay)
+        // A pending action is quicker still, and a sooner named end wins over both.
+        assertEquals(5_000L, live.delayMs(t0, null, fast = true, charging = true))
+        assertEquals(12_000L, live.delayMs(t0, t0.plusSeconds(10), charging = true))
+        charging = false
+        timer.fire()
+        assertEquals(60_000L, timer.delay)
+    }
+
+    @Test fun aWakeReadsAtOnceAndStartsTheWaitAfresh() {
+        val timer = FakeTimer()
+        var reads = 0
+        var clock = t0
+        val live = LiveRefresh(timer, { clock }, { null }) { reads++ }
+        live.arm()
+        clock = clock.plusSeconds(40)
+        live.readNow()
+        assertEquals(1, reads)
+        assertEquals(60_000L, timer.delay)
+    }
+
+    @Test fun aWakeOutOfViewReadsNothing() {
+        val timer = FakeTimer()
+        var reads = 0
+        val live = LiveRefresh(timer, { t0 }, { null }) { reads++ }
+        live.readNow()
+        live.arm(); live.cancel()
+        live.readNow()
+        assertEquals(0, reads)
+        assertEquals(null, timer.delay)
+    }
 }
