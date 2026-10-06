@@ -8,6 +8,8 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
+import se.sensnology.spotnav.ha.client.CameraCommands
+import se.sensnology.spotnav.ha.client.CameraPicture
 import se.sensnology.spotnav.ha.client.FetchedDashboard
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.SiteUpdate
@@ -67,18 +69,26 @@ class HaSessionTest {
             calls += "site"
             return SiteUpdate.Outcome.Failed(null)
         }
+
+        var cameraAnswer: CameraCommands.Outcome = CameraCommands.Outcome.Failed(null)
+
+        override fun camera(request: CameraCommands.Request): CameraCommands.Outcome {
+            calls += "camera:${request.action}"
+            return cameraAnswer
+        }
     }
 
     private class Scheduled(val delayMs: Long, val block: () -> Unit)
 
     private class Rig(val transport: FakeTransport = FakeTransport()) {
         var current = true
+        var inBackground = false
         val recorded = mutableListOf<Result<FetchedDashboard>>()
         val scheduled = mutableListOf<Scheduled>()
         val session = HaSession(
             transport = transport,
             recorder = { result -> recorded += result; if (result.isSuccess) 3 else null },
-            background = { it.run() },
+            background = { inBackground = true; it.run(); inBackground = false },
             mainThread = { block -> if (current) block() },
             schedule = { delayMs, block -> scheduled += Scheduled(delayMs) { if (current) block() } }
         )
@@ -247,5 +257,26 @@ class HaSessionTest {
         assertEquals(listOf("vehicle:car", "site"), rig.transport.calls)
         assertNotNull(vehicle)
         assertNotNull(site)
+    }
+
+    @Test fun aCameraPictureIsDecodedOnTheBackgroundAndHandedOnWithItsAnswer() {
+        val picture = CameraPicture(byteArrayOf(1, 2, 3), 1920, 1080)
+        val rig = Rig(FakeTransport().apply { cameraAnswer = CameraCommands.Outcome.Picture(picture) })
+        var decodedWhere: Boolean? = null
+        var got: Pair<CameraCommands.Outcome, String?>? = null
+        rig.session.camera(CameraCommands.Snapshot, decode = { decodedWhere = rig.inBackground; "${it.width}x${it.height}" }) { outcome, decoded ->
+            got = outcome to decoded
+        }
+        assertEquals(listOf("camera:camera_snapshot"), rig.transport.calls)
+        assertEquals(true, decodedWhere)
+        assertEquals("1920x1080", got!!.second)
+
+        // No picture, nothing to decode; a decode that fails hands on none.
+        val refused = Rig(FakeTransport().apply { cameraAnswer = CameraCommands.Outcome.Failed("spotnav_no_picture") })
+        refused.session.camera(CameraCommands.Snapshot, decode = { error("never") }) { outcome, decoded -> got = outcome to decoded }
+        assertEquals(CameraCommands.Outcome.Failed("spotnav_no_picture") to null, got)
+        val broken = Rig(FakeTransport().apply { cameraAnswer = CameraCommands.Outcome.Picture(picture) })
+        broken.session.camera(CameraCommands.Snapshot, decode = { error("not a jpeg") }) { outcome, decoded -> got = outcome to decoded }
+        assertNull(got!!.second)
     }
 }
