@@ -178,6 +178,27 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(status)
 
+        // The charge's progress, right under the status that says it charges: a slim bar and one line
+        // ("62 % klart · klart ca 14:35"), there only while a charge is on and the dashboard carries
+        // its numbers (see ChargeBarRule).
+        val chargeBarView = ChargeBarView(context).apply {
+            colours(track = (muted and 0x00FFFFFF) or TRACK_ALPHA, fill = accent)
+            setPadding(0, dp(4), 0, dp(2))
+        }
+        val chargeBarLine = TextView(context).apply {
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(2), 0, dp(6))
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        val chargeBarBlock = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = View.GONE
+            addView(chargeBarView)
+            addView(chargeBarLine)
+        }
+        card.body.addView(chargeBarBlock)
+
         // The vehicle-side advisory: one sentence, and only when the integration observes that a
         // charge it started is not being taken by the car (see ChargeProgressContract).
         val advisory = TextView(context).apply {
@@ -279,6 +300,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         return ChargerCard(
             body = card.body,
             status = status,
+            showChargeBar = { bar, now -> paintChargeBar(bar, now, chargeBarBlock, chargeBarView, chargeBarLine) },
             advisory = advisory,
             vehicleLine = vehicleLine,
             connection = connection,
@@ -336,6 +358,33 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 renderPairedPhases()
             }
         )
+    }
+
+    /** The bar and its line, or neither when there is no bar. */
+    private fun paintChargeBar(bar: ChargeBar?, now: java.time.Instant, block: View, view: ChargeBarView, line: TextView) {
+        if (bar == null) {
+            view.show(null, animate = false)
+            block.visibility = View.GONE
+            return
+        }
+        val locale = AppLanguageSettings.locale(context)
+        val clock = bar.endsAt?.let { end ->
+            ChargeBarText.clock(
+                end, now, java.time.ZoneId.systemDefault(),
+                android.text.format.DateFormat.is24HourFormat(context), locale
+            )
+        }
+        val kw = bar.powerKw?.let { ChargeBarText.kw(it, AppLanguageSettings.numberLocale(context)) }
+        val words = ChargeBarText.Words(
+            done = t(R.string.charge_bar_done), ofTarget = t(R.string.charge_bar_of_target),
+            ends = t(R.string.charge_bar_ends), charging = t(R.string.charge_bar_charging),
+            chargingPower = t(R.string.charge_bar_charging_power), line = t(R.string.charge_bar_line)
+        )
+        val text = ChargeBarText.line(bar, words, clock, kw, locale)
+        line.text = text
+        view.contentDescription = t(R.string.charge_bar_description) + ", " + text
+        view.show(bar.percent?.let { it / 100f }, ChargeBarMotion.animate(bar, android.animation.ValueAnimator.areAnimatorsEnabled()))
+        block.visibility = View.VISIBLE
     }
 
     /** One row's label in the charger card's selector. */
@@ -427,6 +476,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         const val DEFAULT_MIN_AMPS = 6
         const val DEFAULT_MAX_AMPS = 16
 
+        /** The bar's track: the muted colour, faint, so the accent share reads in both themes. */
+        const val TRACK_ALPHA = 0x40000000
+
         // The stops labelled under each slider, with the value each one stands at in that slider's
         // own units -- the same units and the same min/max its `slider(...)` call uses, because the
         // value is what has to line up with the thumb (see `TickRow` and SliderTicks).
@@ -445,6 +497,8 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
 internal class ChargerCard(
     val body: LinearLayout,
     val status: TextView,
+    /** Show the charge bar for the dashboard read at `now`, or hide it (`null`). */
+    val showChargeBar: (ChargeBar?, java.time.Instant) -> Unit,
     /**
      * The vehicle-side advisory (see [ChargeProgressContract]), and the only line on this card that
      * speaks about the *car*: written by [showAdvisory] from the integration's own observation,
