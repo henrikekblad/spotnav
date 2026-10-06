@@ -168,6 +168,13 @@ class VehicleIdentificationTest {
         assertNull(VehicleIdentification.section(one, one.settings))
     }
 
+    @Test fun theCarsRowNamesTheTickedCarsOrSaysEveryCar() {
+        val dash = dashboard()
+        assertNull(VehicleIdentification.tickedNames(VehicleIdentification.section(dash, dash.settings)!!))
+        val some = dashboard { getJSONObject("settings").put("vehicle_ids", JSONArray().put("vehicle_niro")) }
+        assertEquals(listOf("Niro"), VehicleIdentification.tickedNames(VehicleIdentification.section(some, some.settings)!!))
+    }
+
     @Test fun savingTheCarsWritesEveryCarAsNullAndNeverNone() {
         val all = listOf("vehicle_ev6", "vehicle_niro")
         assertNull(VehicleIdentification.vehicleIdsFor(all, setOf("vehicle_niro", "vehicle_ev6")))
