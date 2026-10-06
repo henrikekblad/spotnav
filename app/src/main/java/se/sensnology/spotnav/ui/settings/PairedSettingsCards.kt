@@ -176,7 +176,13 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             readRow(card.body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
             // The car's own figures open its dialog; a battery size the car reports itself is read-only there too.
             val edit = { openVehicleDialog(vehicle.id) }
-            valueRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle), onTap = edit)
+            // A battery size the car reports itself cannot be typed: read-only, saying so under it.
+            if (vehicle.capacityReported && vehicle.capacityKwh != null) {
+                readRow(card.body, t(R.string.vehicle_card_capacity_label), t(R.string.vehicle_card_capacity_value, vehicle.capacityKwh),
+                    help = t(R.string.vehicle_capacity_reported))
+            } else {
+                valueRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle), onTap = edit)
+            }
             valueRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
                 ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset), onTap = edit)
             vehicle.onboardPhases?.let { phases ->

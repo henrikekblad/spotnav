@@ -170,7 +170,6 @@ internal fun ViewScope.settingRow(
         textSize = SETTING_TEXT_SP
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
-    row.view.minimumHeight = dp(if (onTap != null) 44 else 32)
     row.view.contentDescription = SettingRowWords.description(label, value, onTap != null) { l, v ->
         t(se.sensnology.spotnav.R.string.setting_row_changeable, l, v)
     }
