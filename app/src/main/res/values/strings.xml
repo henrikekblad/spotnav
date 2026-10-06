@@ -476,4 +476,11 @@
   <string name="notify_unplugged">The car is unplugged.</string>
   <string name="notify_plan_installed">New plan: charging from %1$s.</string>
   <string name="notify_planned_kwh">%1$s kWh planned.</string>
+  <string name="charge_bar_done">%1$d %% done</string>
+  <string name="charge_bar_of_target">%1$d %% of target</string>
+  <string name="charge_bar_ends">done about %1$s</string>
+  <string name="charge_bar_charging">Charging</string>
+  <string name="charge_bar_charging_power">Charging · %1$s kW</string>
+  <string name="charge_bar_description">Charge progress</string>
+  <string name="charge_bar_line" translatable="false">%1$s · %2$s</string>
 </resources>

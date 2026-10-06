@@ -463,4 +463,10 @@
   <string name="notify_unplugged">Bilen är urkopplad.</string>
   <string name="notify_plan_installed">Ny plan: laddar från %1$s.</string>
   <string name="notify_planned_kwh">%1$s kWh planerat.</string>
+  <string name="charge_bar_done">%1$d %% klart</string>
+  <string name="charge_bar_of_target">%1$d %% av målet</string>
+  <string name="charge_bar_ends">klart ca %1$s</string>
+  <string name="charge_bar_charging">Laddar</string>
+  <string name="charge_bar_charging_power">Laddar · %1$s kW</string>
+  <string name="charge_bar_description">Laddningens förlopp</string>
 </resources>

@@ -212,6 +212,31 @@ internal object ChargeBarText {
         return DateTimeFormatter.ofPattern(pattern, locale).format(end)
     }
 
+    /** The translated templates the line is put together from (`charge_bar_*`). */
+    class Words(
+        val done: String,
+        val ofTarget: String,
+        val ends: String,
+        val charging: String,
+        val chargingPower: String,
+        val line: String
+    )
+
+    /**
+     * The line under the bar: "62 % klart · klart ca 14:35", "93 % av målet", or "Laddar · 11 kW";
+     * [clock] and [kw] are the already written end and power, `null` when there is none.
+     */
+    fun line(bar: ChargeBar, words: Words, clock: String?, kw: String?, locale: Locale): String {
+        val percent = bar.percent
+        val head = when {
+            percent == null -> if (kw != null) words.chargingPower.format(locale, kw) else words.charging
+            bar.basis == ChargeBarBasis.TARGET -> words.ofTarget.format(locale, percent)
+            else -> words.done.format(locale, percent)
+        }
+        val end = clock?.let { words.ends.format(locale, it) } ?: return head
+        return words.line.format(locale, head, end)
+    }
+
     /** A power in kW with one decimal in the screen's number locale, a whole number without ",0". */
     fun kw(powerKw: Double, locale: Locale): String =
         DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale)).format(Math.round(powerKw * 10.0) / 10.0)
