@@ -188,7 +188,8 @@ internal fun ViewScope.chooseMany(
 
 /**
  * The one dialog shell: [body], Cancel, and Save (or [positive]) that stays open while the write is
- * on its way and closes when it took; a message keeps it open with the message shown.
+ * on its way and closes when it took; a message keeps it open with the message shown. The dialog is
+ * handed back for a body whose own buttons close it.
  */
 internal fun ViewScope.openEditor(
     title: String,
@@ -196,7 +197,7 @@ internal fun ViewScope.openEditor(
     error: TextView,
     positive: String = t(R.string.paired_save),
     onSave: (done: (String?) -> Unit) -> Unit
-) {
+): AlertDialog {
     val dialog = AlertDialog.Builder(context)
         .setTitle(title)
         .setView(ScrollView(context).apply { addView(body) })
@@ -219,14 +220,17 @@ internal fun ViewScope.openEditor(
             }
         }
     }
+    return dialog
 }
 
-private fun ViewScope.editorBody() = LinearLayout(context).apply {
+/** An editor's body: the parts of one value, padded as the dialog's title is. */
+internal fun ViewScope.editorBody() = LinearLayout(context).apply {
     orientation = LinearLayout.VERTICAL
     setPadding(dp(22), dp(8), dp(22), 0)
 }
 
-private fun ViewScope.errorLine() = TextView(context).apply {
+/** The line under a value that says why it was not saved; hidden until then. */
+internal fun ViewScope.errorLine() = TextView(context).apply {
     textSize = 13f; setTextColor(ERROR_RED); setPadding(0, dp(4), 0, 0); visibility = View.GONE
 }
 
