@@ -183,8 +183,10 @@ internal class ChargerDashboardController(
         )
         // The charge's progress under the status, from the same dashboard (see ChargeBarRule).
         val now = java.time.Instant.now()
-        chargerCard.showChargeBar(ChargeBarRule.of(dashboard, now), now)
-        chargerCard.showVehicleLine(vehicleLineText(dashboard), if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
+        val bar = ChargeBarRule.of(dashboard, now)
+        chargerCard.showChargeBar(bar, now)
+        // The bar and the status already say it charges: the connection line stands down meanwhile.
+        chargerCard.showVehicleLine(vehicleLineText(dashboard).takeIf { ChargeBarLayout.connectionLineShown(bar) }, if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
         // Home Assistant's own status block words the line (see HaStatusText):
         val held = dashboard
         if (held != null) {
