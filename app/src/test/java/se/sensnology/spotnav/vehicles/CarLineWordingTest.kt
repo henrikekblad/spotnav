@@ -28,4 +28,17 @@ class CarLineWordingTest {
             assertFalse(directory, xml(directory).contains("name=\"identify_by_manual\""))
         }
     }
+
+    @Test fun thePlanningCardsTargetIsLaddmalInEveryLanguage() {
+        val expected = mapOf(
+            "values" to "Charge target", "values-sv" to "Laddmål", "values-da" to "Lademål",
+            "values-nb" to "Lademål", "values-fi" to "Lataustavoite"
+        )
+        for ((directory, words) in expected) {
+            assertEquals(directory, words, text(directory, "vehicle_target"))
+            for (old in listOf("Målladdningsnivå", "Målladningsniveau", "Målladningsnivå", "Tavoiteltu lataustaso", "Target state of charge")) {
+                assertFalse("$directory still says $old", xml(directory).contains(old))
+            }
+        }
+    }
 }

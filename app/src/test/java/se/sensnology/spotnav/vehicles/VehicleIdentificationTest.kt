@@ -42,7 +42,10 @@ class VehicleIdentificationTest {
     @Test fun anOlderHomeAssistantShowsNothingNewAndKeepsThePicker() {
         val dash = older()
         assertFalse(VehicleIdentification.advertised(dash))
-        assertNull(VehicleIdentification.carLine(dash))
+        // The car line is there, but says nothing of how the car was decided.
+        val line = VehicleIdentification.carLine(dash)!!
+        assertNull(line.basis)
+        assertTrue(line.canSwitch)
         assertNull(VehicleIdentification.banner(dash))
         assertFalse(VehicleIdentification.replacesPicker(dash))
         assertNull(VehicleIdentification.section(dash, dash.settings))
@@ -55,8 +58,8 @@ class VehicleIdentificationTest {
         assertEquals("EV6", banner.keptName)
         assertTrue(banner.carsCouldNotTell)
         assertTrue(VehicleIdentification.waitingForAnswer(dash))
-        // While it asks, the banner stands in for the car line.
-        assertNull(VehicleIdentification.carLine(dash))
+        // While it asks, the car line stays above the banner, saying the car is assumed.
+        assertEquals(VehicleIdentification.Basis.ASSUMED, VehicleIdentification.carLine(dash)!!.basis)
         // "Always ask" asks without the cars having tried.
         val ask = dashboard(block("asking")) { getJSONObject("settings").put("identify_mode", "ask") }
         assertFalse(VehicleIdentification.banner(ask)!!.carsCouldNotTell)
@@ -84,13 +87,17 @@ class VehicleIdentificationTest {
         val line = VehicleIdentification.carLine(dashboard())!!
         assertEquals("vehicle_ev6", line.vehicleId)
         assertNull(line.basis)
-        // One car at the charger: nothing to identify, nothing to change.
-        val one = dashboard {
+        assertTrue(line.canSwitch)
+        // One car at the charger: the car and its levels, nothing to identify and nothing to change.
+        val one = dashboard(block("decided", method = "plug_sensor")) {
             getJSONObject("settings").put("vehicle_ids", JSONArray().put("vehicle_ev6"))
-            val rows = getJSONArray("vehicles")
-            rows.remove(1)
+            getJSONArray("vehicles").remove(1)
+            put("identification", JSONObject.NULL)
         }
-        assertNull(VehicleIdentification.carLine(one))
+        val single = VehicleIdentification.carLine(one)!!
+        assertEquals("EV6", single.name)
+        assertNull(single.basis)
+        assertFalse(single.canSwitch)
     }
 
     @Test fun bytBilOffersTheCandidatesWithTheirEvidenceAndTheCurrentCarChosen() {
