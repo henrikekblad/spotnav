@@ -169,8 +169,11 @@ internal class ChargingScreen(
             objectCards, settings, resolvedChargerProfile, shareRow, onOpenHistory = { shell.navigate(Screen.HISTORY) }
         ) { rebuild() }
         connection = chargerCard.connection
-        // The vehicle card is the second of the two, and the one that exists in every state.
+        // The vehicle card is the second of the two. Paired with Home Assistant the car is the charger
+        // card's car line instead (the car Home Assistant plans for, its levels and Byt bil), and its
+        // details live in Settings: the card is kept for its facts and stays out of sight.
         vehicleCard = VehicleCardController(this).add(objectCards, settings, resolvedChargerProfile, shareRow)
+        if (resolvedChargerProfile?.configured == true) vehicleCard.body.visibility = View.GONE
         profileStore = ChargerProfileStore.forContext(applicationContext)
         profileId = resolvedChargerProfile?.localId
         strategyUi = strategyFace(null)
@@ -286,9 +289,10 @@ internal class ChargingScreen(
             connection.refreshValueLabel()
         }
         val picked = pendingVehiclePick ?: recordVehicle
-        // The vehicle card reads Home Assistant's dashboard as soon as one has arrived for a paired
-        // charger, even in the moment before the authority has resolved:
-        vehicleCard.applyPaired(held ?: pairedDashboard.takeIf { authorityProfile != null && authority.authority == null }, picked)
+        // The vehicle card reads Home Assistant's dashboard whenever one has arrived for a paired
+        // charger (also before the authority has resolved): its car is the one Home Assistant plans
+        // for, never one saved in this app.
+        vehicleCard.applyPaired(held ?: pairedDashboard.takeIf { authorityProfile != null }, picked)
         planCard.applyPaired(held, picked)
         chargerCard.showPairedPhases(held?.chargingPhases)
         chargerCard.showHistory((held ?: pairedDashboard.takeIf { authorityProfile != null })?.sessionsSummary)

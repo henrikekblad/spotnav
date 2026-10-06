@@ -132,6 +132,11 @@ internal class ChargerDashboardController(
      * choice is the planned car instead (the screen's settings write, as the picker made it).
      */
     private fun identifyVehicle(vehicleId: String) {
+        // A Home Assistant that does not identify: the choice is the planned car, as the picker made it.
+        if (dashboard?.let { VehicleIdentification.identifies(it) } != true) {
+            listener.onVehiclePicked(vehicleId)
+            return
+        }
         chargerCard.identification.setBusy(true)
         session.identifyVehicle(vehicleId) { outcome, read ->
             chargerCard.identification.setBusy(false)

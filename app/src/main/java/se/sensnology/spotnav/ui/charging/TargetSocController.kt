@@ -133,7 +133,10 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 val target = targetSoc.progress.toDouble()
                 val locale = AppLanguageSettings.numberLocale(context)
                 val parts = listOfNotNull(
-                    facts.now?.let { t(R.string.paired_target_now, percentText(it, locale)) },
+                    facts.now?.let {
+                        // "Nu ≈ 91 %": Home Assistant's estimate between readings says so.
+                        t(R.string.paired_target_now, (if (facts.estimated) "≈ " else "") + percentText(it, locale))
+                    },
                     facts.limit?.let {
                         t(R.string.paired_target_limit, percentText(TargetNeed.chargeCeiling(it).toDouble(), locale))
                     }

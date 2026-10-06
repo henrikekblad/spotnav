@@ -70,7 +70,9 @@ internal data class PairedTargetFacts(
     val statedTarget: Double?,
     val statedNeedKwh: Double?,
     /** True when the picked vehicle is not the one the `soc` block resolved. */
-    val other: Boolean
+    val other: Boolean,
+    /** Whether [now] is Home Assistant's estimate between readings ("≈"). */
+    val estimated: Boolean = false
 )
 
 /** The paired plan editor's rules, from the dashboard, as the card's settings editor states them. */
@@ -95,7 +97,8 @@ internal object PairedTarget {
             efficiency = soc.efficiency,
             statedTarget = soc.targetPercent,
             statedNeedKwh = soc.needKwh,
-            other = other
+            other = other,
+            estimated = !other && soc.value != null && soc.estimated
         )
     }
 

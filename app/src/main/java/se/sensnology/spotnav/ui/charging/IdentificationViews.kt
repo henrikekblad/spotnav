@@ -23,12 +23,14 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.PairedCarLine
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 
 /**
- * The charger card's part in "which car is plugged in?": the banner with the open question (one
- * button per car, the first tap is the answer), and otherwise the car line, which says how the car
- * was decided and offers Byt bil to every user. Both send the chosen car through [onChoose].
+ * The car on a paired charger's card: the car line (the car, its levels, how it was decided, and Byt
+ * bil for every user where more than one car can charge), and under it the banner with the open
+ * question (one button per car, the first tap is the answer). Both send the chosen car through
+ * [onChoose].
  */
 internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : ViewScope(scope) {
     private var dashboard: Dashboard? = null
@@ -64,10 +66,11 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         carLine.addView(glyph(R.drawable.ic_ev, muted, 18), LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(8) })
         carLine.addView(carText, weight())
         carLine.addView(switchAction)
+        // The car first, then the open question about it.
+        parent.addView(carLine)
         parent.addView(banner, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { topMargin = dp(2); bottomMargin = dp(8) })
-        parent.addView(carLine)
     }
 
     /** Set by the screen: the car a person chose, to send as the answer (or correction). */
@@ -93,7 +96,9 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         val line = held?.let { VehicleIdentification.carLine(it) }
         paintBanner(question)
         carLine.visibility = if (line != null) View.VISIBLE else View.GONE
-        if (line != null) carText.text = carLineText(line)
+        if (line != null && held != null) carText.text = carLineText(held, line)
+        // One car at the charger: nothing to change.
+        switchAction.visibility = if (line?.canSwitch == true) View.VISIBLE else View.GONE
         switchAction.isEnabled = !busy
         switchAction.alpha = if (busy) 0.5f else 1f
     }
@@ -143,14 +148,25 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         })
     }
 
-    /** "EV6 · identifierad via bilens laddkabel": the name in bold, then how it was decided. */
-    private fun carLineText(line: VehicleIdentification.CarLine): CharSequence {
+    /**
+     * "EV6 · 89 % → 93 % · identifierad via bilens laddkabel": the name in bold, its levels (see
+     * [PairedCarLine]), then how it was decided.
+     */
+    private fun carLineText(held: Dashboard, line: VehicleIdentification.CarLine): CharSequence {
         val text = SpannableStringBuilder(line.name)
         text.setSpan(StyleSpan(Typeface.BOLD), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.setSpan(ForegroundColorSpan(dark), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        PairedCarLine.levelsText(PairedCarLine.levels(held, line.vehicleId), ::percent)?.let { levels ->
+            val start = text.length + 3
+            text.append(" · ").append(levels)
+            text.setSpan(ForegroundColorSpan(dark), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
         line.basis?.let { basis -> text.append(" · ").append(t(basisText(basis))) }
         return text
     }
+
+    /** A whole percent as the cards write one ("89 %"). */
+    private fun percent(value: Int): String = t(R.string.vehicle_card_soc_value, value)
 
     private fun basisText(basis: VehicleIdentification.Basis): Int = when (basis) {
         VehicleIdentification.Basis.PLUG_SENSOR -> R.string.identify_by_plug_sensor

@@ -79,15 +79,34 @@ internal fun ViewScope.card(parent: LinearLayout, title: String, marker: Int, sh
     return Card(header = header, heading = heading, title = titleView, body = body)
 }
 
-/** The adapter a card's header uses when its title gives way to a selector. */
-internal fun ViewScope.headerSpinnerAdapter(items: List<String>, isRowEnabled: (Int) -> Boolean = { true }) =
+/**
+ * The adapter a card's header uses when its title gives way to a selector. A row may carry a second,
+ * smaller line in the drop-down ([subtitle], read when the drop-down opens); the title shows the
+ * first line alone.
+ */
+internal fun ViewScope.headerSpinnerAdapter(
+    items: List<String>,
+    isRowEnabled: (Int) -> Boolean = { true },
+    subtitle: (Int) -> String? = { null }
+) =
     object : ArrayAdapter<String>(context, R.layout.card_title_spinner, items) {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
             super.getView(position, convertView, parent).apply { (this as TextView).setTextColor(dark) }
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View =
             super.getDropDownView(position, convertView, parent).apply {
-                (this as TextView).setTextColor(if (isRowEnabled(position)) dark else muted)
+                val row = this as TextView
+                row.setTextColor(if (isRowEnabled(position)) dark else muted)
+                val second = subtitle(position)
+                row.text = if (second.isNullOrEmpty()) items[position] else android.text.SpannableStringBuilder(items[position]).apply {
+                    append('\n')
+                    val start = length
+                    append(second)
+                    setSpan(android.text.style.RelativeSizeSpan(0.8f), start, length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(android.text.style.ForegroundColorSpan(muted), start, length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                row.isSingleLine = false
+                row.maxLines = 2
             }
 
         override fun isEnabled(position: Int) = isRowEnabled(position)

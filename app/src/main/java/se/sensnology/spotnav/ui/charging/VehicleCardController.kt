@@ -195,7 +195,9 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
         // What the card is showing: the vehicles the instance last reported, and the capabilities
         // that arrived with them.
         var shown = VehicleCardState.NOTHING_FETCHED
-        var selectedVehicleId: String? = profile?.selectedVehicleId
+        // The car this app saved is an unpaired charger's alone: a paired charger's car is Home
+        // Assistant's (see `applyPaired`), so the saved one is never read for it.
+        var selectedVehicleId: String? = profile?.selectedVehicleId?.takeUnless { profile.configured }
         // Who the card is about, and what capacity is remembered for it:
         var factsListener: ((VehicleStatus?, Double?) -> Unit)? = null
         // The spinner's own listener fires while its adapter and selection are being rebuilt;

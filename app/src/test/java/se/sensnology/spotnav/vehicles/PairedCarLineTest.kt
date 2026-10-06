@@ -33,10 +33,15 @@ class PairedCarLineTest {
     @Test fun anEstimatedLevelIsMarkedAndNoLevelIsADash() {
         val estimated = dashboard { getJSONObject("soc").put("estimated", true) }
         assertEquals("≈ 40 % → 80 %", PairedCarLine.levelsText(PairedCarLine.levels(estimated, "vehicle_ev6"), percent))
-        val none = dashboard { getJSONObject("soc").put("value", JSONObject.NULL) }
+        // No level anywhere: neither the `soc` block nor the car's own row reads one.
+        val none = dashboard {
+            getJSONObject("soc").put("value", JSONObject.NULL)
+            getJSONArray("vehicles").getJSONObject(0).put("soc_percent", JSONObject.NULL)
+        }
         assertEquals("– → 80 %", PairedCarLine.levelsText(PairedCarLine.levels(none, "vehicle_ev6"), percent))
         val noneKwh = dashboard {
             getJSONObject("soc").put("value", JSONObject.NULL)
+            getJSONArray("vehicles").getJSONObject(0).put("soc_percent", JSONObject.NULL)
             getJSONObject("settings").put("driver", "manual_kwh")
         }
         assertNull(PairedCarLine.levelsText(PairedCarLine.levels(noneKwh, "vehicle_ev6"), percent))

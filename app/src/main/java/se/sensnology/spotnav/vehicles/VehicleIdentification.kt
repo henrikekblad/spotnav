@@ -46,18 +46,18 @@ internal object VehicleIdentification {
     /** How the car on the car line was decided, in the words the line uses. */
     enum class Basis { PLUG_SENSOR, LOCATION, CHOSEN_MANUALLY, ASSUMED, IDENTIFYING }
 
-    /** The charger card's car line: the car planned for, how it was decided (`null`: nothing to say), and Byt bil. */
-    data class CarLine(val vehicleId: String, val name: String, val basis: Basis?)
-
     /**
-     * The car line, at a charger more than one car can charge at; while the question is open the
-     * banner stands in for it.
+     * The charger card's car line: the car planned for, how it was decided (`null`: nothing to say,
+     * from a Home Assistant that does not identify, or with nothing being identified), and whether
+     * Byt bil is offered (more than one car to choose from).
      */
+    data class CarLine(val vehicleId: String, val name: String, val basis: Basis?, val canSwitch: Boolean)
+
+    /** The car line of a paired charger, also while the question is open (the banner follows it). */
     fun carLine(dashboard: Dashboard): CarLine? {
-        if (!advertised(dashboard) || banner(dashboard) != null) return null
-        if (switchChoices(dashboard).choices.size < 2) return null
         val id = currentId(dashboard) ?: return null
-        val block = dashboard.identification
+        val canSwitch = switchChoices(dashboard).choices.size >= 2
+        val block = dashboard.identification?.takeIf { advertised(dashboard) && canSwitch }
         val basis = when {
             block == null -> null
             block.state == DashboardIdentification.State.WAITING -> Basis.IDENTIFYING
@@ -70,7 +70,7 @@ internal object VehicleIdentification {
                 null -> null
             }
         }
-        return CarLine(id, nameOf(dashboard, id) ?: id, basis)
+        return CarLine(id, nameOf(dashboard, id) ?: id, basis, canSwitch)
     }
 
     /** Whether the car the vehicle card shows was only assumed (nobody answered, nothing decided it). */
@@ -79,6 +79,9 @@ internal object VehicleIdentification {
 
     /** Whether Byt bil on the charger card stands in for the vehicle card's own picker. */
     fun replacesPicker(dashboard: Dashboard): Boolean = advertised(dashboard)
+
+    /** Whether Byt bil answers through `identify_vehicle` (else it is the planned car's settings write). */
+    fun identifies(dashboard: Dashboard): Boolean = advertised(dashboard)
 
     /** What a car's own report says, as Byt bil's hint under its name. */
     enum class Hint {
