@@ -76,4 +76,14 @@ class IdentifyVehicleTest {
         val outcome = VehicleUpdate.answer(400, answer.toString()) as VehicleUpdate.Outcome.Refused
         assertEquals(VehicleFieldIssue.OUT_OF_RANGE, outcome.issues[VehicleField.TARGET])
     }
+
+    @Test fun oneValueIsWrittenAloneAndATargetCanBeCleared() {
+        val one = VehicleUpdate.single(row(), VehicleField.CONSUMPTION, 1.6)
+        val body = VehicleUpdate.payload("ev6", listOf(one))
+        assertEquals(setOf("consumption_kwh_per_10km"), body.getJSONObject("changes").keys().asSequence().toSet())
+        assertEquals(1.8, body.getJSONObject("expected").getDouble("consumption_kwh_per_10km"), 0.0)
+        val cleared = VehicleUpdate.payload("ev6", listOf(VehicleUpdate.single(row(), VehicleField.TARGET, null)))
+        assertTrue(cleared.getJSONObject("changes").isNull("target_percent"))
+        assertEquals(80, cleared.getJSONObject("expected").get("target_percent"))
+    }
 }
