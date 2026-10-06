@@ -22,10 +22,12 @@ internal object PairedCarLine {
         } else {
             row?.targetPercent
         }
+        // What the charge really aims for: never above the car's own limit.
+        val limit = soc?.vehicleMaxPercent ?: row?.maxPercent
         return Levels(
             now = now?.let { SocDisplay.wholePercent(it) },
             estimated = soc != null && soc.value != null && soc.estimated,
-            target = target?.let { SocDisplay.wholePercent(it) },
+            target = target?.let { TargetNeed.effectiveTarget(it, limit) },
             targetMode = dashboard.settings?.driver == HaSettingsDriver.TARGET_SOC
         )
     }

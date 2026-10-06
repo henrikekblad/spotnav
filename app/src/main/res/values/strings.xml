@@ -183,7 +183,6 @@
   <string name="target_description">Charge target, %1$d %% to %2$d %%</string>
   <string name="target_description_no_limit">Charge target, from %1$d %% and up; the car reports no limit</string>
   <string name="percent_label" translatable="false">%1$d %%</string>
-  <string name="percent_value_decimal" translatable="false">%1$.1f %%</string>
   <string name="vehicle_capacity_save">Save capacity</string>
   <string name="charger_card_phases_label">Phases</string>
   <string name="charger_card_phases_detected">%1$s (read from the charger)</string>

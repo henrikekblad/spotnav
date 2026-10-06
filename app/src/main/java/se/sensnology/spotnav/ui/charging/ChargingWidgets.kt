@@ -17,15 +17,21 @@ internal fun ViewScope.pairedLine() = TextView(context).apply {
     setPadding(0, dp(2), 0, dp(2))
 }
 
-/** A percent as the card writes it: at most one decimal, in the reader's own number format. */
-internal fun ViewScope.percentText(value: Double, locale: java.util.Locale): String {
-    val format = java.text.NumberFormat.getNumberInstance(locale).apply {
-        maximumFractionDigits = 1
-        minimumFractionDigits = 0
+/** A percent as the card writes it: whole when it is whole ("80 %"), else one decimal, in the reader's own number format. */
+internal object PercentFormat {
+    fun text(value: Double, locale: java.util.Locale): String {
+        val format = java.text.NumberFormat.getNumberInstance(locale).apply {
+            maximumFractionDigits = 1
+            minimumFractionDigits = 0
+        }
+        // A no-break space: "80 %" never breaks between the figure and its sign at the end of a line.
+        return "${format.format(value)}\u00A0%"
     }
-    // A no-break space: "80 %" never breaks between the figure and its sign at the end of a line.
-    return "${format.format(value)}\u00A0%"
 }
+
+/** [PercentFormat] in the screen's own number format. */
+@Suppress("UnusedReceiverParameter")
+internal fun ViewScope.percentText(value: Double, locale: java.util.Locale): String = PercentFormat.text(value, locale)
 
 internal fun ViewScope.bandLabel() = TextView(context).apply {
     textSize = 12f

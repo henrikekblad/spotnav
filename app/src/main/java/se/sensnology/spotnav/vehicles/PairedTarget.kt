@@ -106,7 +106,9 @@ internal object PairedTarget {
         val now = facts.now
         return when {
             now != null && TargetNeed.effectiveTarget(target, facts.limit) <= now -> TargetVerdict.NO_NEED
-            facts.limit != null && TargetNeed.roundedAbove(target, facts.limit) -> TargetVerdict.TO_LIMIT
+            // At or above the car's own limit the charge ends there: said once, as the limit line.
+            facts.limit != null && TargetNeed.effectiveTarget(target, facts.limit) == TargetNeed.chargeCeiling(facts.limit) ->
+                TargetVerdict.TO_LIMIT
             else -> TargetVerdict.NONE
         }
     }
