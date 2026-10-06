@@ -351,6 +351,8 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             })
         }
         card.body.addView(muted(t(R.string.changed_in_home_assistant), top = 6))
+        // The priority is this charger's own setting (its place among the site's chargers), as in the card.
+        addPriority(card.body)
     }
 
     // --- Site -----------------------------------------------------------------------------------
@@ -401,7 +403,6 @@ internal class PairedSettingsCards(scope: ViewScope, parent: LinearLayout) : Vie
             listOfNotNull(reason, t(R.string.site_active_in_ha), t(R.string.site_active_note)).joinToString(" "),
             top = 6
         ))
-        addPriority(card.body)
     }
 
     // --- Charger priority -----------------------------------------------------------------------

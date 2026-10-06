@@ -84,13 +84,13 @@ paired, area and taxes are Home Assistant's and are changed through it.
 
 **Vehicle**: the car this charger plans for, and its properties.
 
-<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled" width="420">
+<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, and the charger's priority" width="420">
 
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy.
+**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, and the charger's priority among the site's chargers.
 
-<img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery, active load balancing and priority" width="420">
+<img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
 
-**Site**: the main fuse and how the site's load is measured, load balancing and the charger's priority.
+**Site**: the main fuse and how the site's load is measured, and load balancing.
 
 <img src="images/app-settings-notifications.png" alt="Notifications card: via the Home Assistant app and via the SpotNav app" width="420">
 
