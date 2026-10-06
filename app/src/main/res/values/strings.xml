@@ -146,6 +146,9 @@
   <string name="bar_state_schedule_paused">paused</string>
   <string name="bar_pause">Pause</string>
   <string name="bar_resume">Resume</string>
+  <string name="bar_starting">Starting…</string>
+  <string name="bar_stopping">Stopping…</string>
+  <string name="bar_waiting_for_charger">Waiting for the charger</string>
   <string name="charger_generic_name">Home Assistant charger</string>
   <string name="widget_charger_title">Charger</string>
   <string name="widget_charger_none">No charger</string>

@@ -138,6 +138,9 @@
   <string name="bar_state_schedule_paused">pauset</string>
   <string name="bar_pause">Pause</string>
   <string name="bar_resume">Genoptag</string>
+  <string name="bar_starting">Starter…</string>
+  <string name="bar_stopping">Stopper…</string>
+  <string name="bar_waiting_for_charger">Venter på laderen</string>
   <string name="charger_generic_name">Home Assistant-oplader</string>
   <string name="widget_charger_title">Oplader</string>
   <string name="widget_charger_none">Ingen oplader</string>

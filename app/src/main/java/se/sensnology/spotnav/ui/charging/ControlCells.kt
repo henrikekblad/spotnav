@@ -12,6 +12,7 @@ import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.PlannerCommands
 import se.sensnology.spotnav.ha.dashboard.PlannerControl
+import se.sensnology.spotnav.ui.common.ControlCell
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.controlCell
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -37,11 +38,21 @@ internal class ControlCells(
      */
     private val onPrimaryAction: (ChargerAction?) -> Unit,
     private val currentSettings: () -> WidgetSettings,
+    /**
+     * The Start or Stop this app last sent, while it may still be awaiting the charger's report:
+     * it names what is under way (see [ControlFaces.pending]).
+     */
+    private val sentAction: () -> ChargerAction?,
+    /** Told of each command a cell sends, before it goes: the Start or Stop, or `null` for the planner's. */
+    private val onSent: (ChargerAction?) -> Unit,
     private val send: (HomeAssistantCommand) -> Unit
 ) : ViewScope(scope) {
     private val actionCell = controlCell()
     private val plannerCell = controlCell()
     private val controlBar = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+
+    /** The automatic control last offered, so a pending action keeps its caption on the cell. */
+    private var shownPlanner: PlannerControl? = null
 
     init {
         controlBar.addView(actionCell.view, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(4) })
@@ -51,9 +62,13 @@ internal class ControlCells(
             when (immediateAction()) {
                 ChargerAction.START -> {
                     val value = currentSettings()
+                    onSent(ChargerAction.START)
                     send(HomeAssistantCommand("start", amps = value.chargingAmps, phases = value.chargingPhases))
                 }
-                ChargerAction.STOP -> send(HomeAssistantCommand("stop"))
+                ChargerAction.STOP -> {
+                    onSent(ChargerAction.STOP)
+                    send(HomeAssistantCommand("stop"))
+                }
                 else -> Unit
             }
         }
@@ -67,17 +82,21 @@ internal class ControlCells(
                     val choices = dashboard()?.control?.pauseChoices.orEmpty()
                     when (choices.size) {
                         0 -> Unit
-                        1 -> send(PlannerCommands.pause(choices[0]))
+                        1 -> { onSent(null); send(PlannerCommands.pause(choices[0])) }
                         else -> AlertDialog.Builder(context)
                             .setTitle(t(R.string.pause_dialog_title))
                             .setItems(choices.map { pauseChoiceText(it) }.toTypedArray()) { _, which ->
+                                onSent(null)
                                 send(PlannerCommands.pause(choices[which]))
                             }
                             .setNegativeButton(android.R.string.cancel, null)
                             .show()
                     }
                 }
-                PlannerControl.RESUME -> send(PlannerCommands.resume())
+                PlannerControl.RESUME -> {
+                    onSent(null)
+                    send(PlannerCommands.resume())
+                }
             }
         }
     }
@@ -99,47 +118,38 @@ internal class ControlCells(
         return control.chargerCommand()
     }
 
-    /** What Home Assistant *holds* is the status line's to say, not this stack's. */
+    /**
+     * What Home Assistant *holds* is the status line's to say, not this stack's. While a Start or
+     * Stop awaits the charger's report (`action_pending`), the cells stay, disabled, saying what is
+     * under way rather than vanishing until the next read.
+     */
     fun refresh() {
         // The one action this charger's state calls for, computed once and shared:
         val action = immediateAction()
         onPrimaryAction(action)
-        when (action) {
-            null -> actionCell.view.visibility = View.GONE
-            // The caption states the state the offered action implies: a Stop on offer means a
-            // charge is running.
-            ChargerAction.START -> actionCell.show(
-                caption = t(R.string.bar_caption_charge_now), icon = R.drawable.ic_play,
-                action = t(R.string.bar_start),
-                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_not_charging)}. ${t(R.string.home_assistant_start)}",
-                // A person's Start pauses Auto until the car is full or unplugged (Home Assistant 1.11).
-                help = t(R.string.home_assistant_start_help)
-            )
-            ChargerAction.STOP -> actionCell.show(
-                caption = t(R.string.bar_caption_charging), icon = R.drawable.ic_stop,
-                action = t(R.string.bar_stop),
-                description = "${t(R.string.bar_axis_charging)}: ${t(R.string.bar_state_charging)}. ${t(R.string.home_assistant_stop)}",
-                // A person's Stop pauses Auto until the car is unplugged.
-                help = t(R.string.home_assistant_stop_help)
-            )
-        }
+        val held = dashboard()
+        val pending = ControlFaces.pending(held?.control, sentAction(), held?.chargingEnabled)
+        show(actionCell, ControlFaces.action(action, pending))
         // The automatic control:
-        when (automaticControl()) {
-            null -> plannerCell.view.visibility = View.GONE
-            // A Pause on offer means the schedule is running, a Resume that it is paused.
-            PlannerControl.PAUSE -> plannerCell.show(
-                caption = t(R.string.bar_caption_schedule_active), icon = R.drawable.ic_pause,
-                action = t(R.string.bar_pause),
-                description = "${t(R.string.bar_axis_schedule)}: ${t(R.string.bar_state_schedule_active)}. ${t(R.string.home_assistant_pause_automatic)}"
-            )
-            PlannerControl.RESUME -> plannerCell.show(
-                caption = t(R.string.bar_caption_schedule_paused), icon = R.drawable.ic_play,
-                action = t(R.string.bar_resume),
-                description = "${t(R.string.bar_axis_schedule)}: ${t(R.string.bar_state_schedule_paused)}. ${t(R.string.home_assistant_resume_automatic)}"
-            )
-        }
+        val planner = automaticControl()
+        // Kept only across a pending action: a control withdrawn for any other reason is forgotten.
+        if (planner != null) shownPlanner = planner else if (pending == null) shownPlanner = null
+        show(plannerCell, ControlFaces.planner(planner, pending != null, shownPlanner))
         controlBar.visibility =
             if (actionCell.view.visibility == View.VISIBLE || plannerCell.view.visibility == View.VISIBLE) View.VISIBLE else View.GONE
+    }
+
+    private fun show(cell: ControlCell, face: CellFace?) {
+        if (face == null) {
+            cell.view.visibility = View.GONE
+            return
+        }
+        cell.show(
+            caption = t(face.caption), icon = face.icon, action = t(face.action),
+            description = "${t(face.axis)}: ${t(face.state)}. ${t(face.outcome)}",
+            help = face.help?.let { t(it) },
+            enabled = face.enabled
+        )
     }
 
     /** A pause choice in a person's words (the choice vocabulary is closed, see [AutoControl.PAUSE_CHOICES]). */

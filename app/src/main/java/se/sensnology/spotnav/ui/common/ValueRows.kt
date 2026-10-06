@@ -80,14 +80,24 @@ internal fun Palette.valueColour(cue: ValueCue) = when (cue) {
  * stating the state, and below it an icon and the action.
  */
 internal class ControlCell(val view: LinearLayout, private val caption: TextView, private val icon: ImageView, private val action: TextView) {
-    /** [help], when given, says what the action does: read out after [description], and shown on a long press. */
-    fun show(caption: String, icon: Int, action: String, description: String, help: String? = null) {
+    /**
+     * [help], when given, says what the action does: read out after [description], and shown on a
+     * long press. A cell not [enabled] is shown dimmed and cannot be tapped.
+     */
+    fun show(caption: String, icon: Int, action: String, description: String, help: String? = null, enabled: Boolean = true) {
         this.caption.text = caption
         this.icon.setImageResource(icon)
         this.action.text = action
         view.contentDescription = if (help == null) description else "$description. $help"
         view.tooltipText = help
+        view.isEnabled = enabled
+        view.isClickable = enabled
+        view.alpha = if (enabled) 1f else DISABLED_ALPHA
         view.visibility = View.VISIBLE
+    }
+
+    private companion object {
+        const val DISABLED_ALPHA = 0.5f
     }
 }
 

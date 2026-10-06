@@ -138,6 +138,9 @@
   <string name="bar_state_schedule_paused">tauolla</string>
   <string name="bar_pause">Keskeytä</string>
   <string name="bar_resume">Jatka</string>
+  <string name="bar_starting">Käynnistetään…</string>
+  <string name="bar_stopping">Pysäytetään…</string>
+  <string name="bar_waiting_for_charger">Odotetaan laturia</string>
   <string name="charger_generic_name">Home Assistant -laturi</string>
   <string name="widget_charger_title">Laturi</string>
   <string name="widget_charger_none">Ei laturia</string>

@@ -77,12 +77,18 @@ internal class ChargerDashboardController(
     // The connection line lives on the charger card, as the card's own fact about Home Assistant.
     private val status = chargerCard.status
 
+    // A command the cells sent, or a decision that says one is under way, until the axes offer an
+    // action again: it names what the cells show meanwhile.
+    private val pendingWatch = ActionPendingWatch { java.time.Instant.now() }
+
     private val cells = ControlCells(
         scope = this,
         dashboard = { dashboard },
         automaticControl = { listener.automaticControl() },
         onPrimaryAction = { action -> listener.onPrimaryAction(action) },
         currentSettings = currentSettings,
+        sentAction = { pendingWatch.sentAction },
+        onSent = { action -> pendingWatch.onSent(action) },
         send = { command -> send(command) }
     )
 
@@ -133,6 +139,7 @@ internal class ChargerDashboardController(
      */
     private fun applyDashboard(result: Result<Dashboard>, detectedPhases: Int?) {
         dashboard = result.getOrNull()
+        pendingWatch.onControl(dashboard?.control)
         listener.onDashboard(dashboard)
         // The control decision travels with the same dashboard this whole pass is built from, and
         // it is reported *before* the card's own controls refresh below -- so the row and the

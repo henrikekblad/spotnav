@@ -138,6 +138,9 @@
   <string name="bar_state_schedule_paused">pausat</string>
   <string name="bar_pause">Pausa</string>
   <string name="bar_resume">Återuppta</string>
+  <string name="bar_starting">Startar…</string>
+  <string name="bar_stopping">Stoppar…</string>
+  <string name="bar_waiting_for_charger">Väntar på laddaren</string>
   <string name="charger_generic_name">Home Assistant-laddare</string>
   <string name="widget_charger_title">Laddare</string>
   <string name="widget_charger_none">Ingen laddare</string>
