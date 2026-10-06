@@ -43,7 +43,16 @@ internal object PairedCarLine {
         return listOfNotNull(line.name, levelsText(levels(dashboard, line.vehicleId), percent)).joinToString(" · ")
     }
 
-    /** Whether the car line offers the car's re-read ("uppdatera bilen"): a car, and an integration that can. */
-    fun reReadOffered(dashboard: Dashboard): Boolean =
-        VehicleRefresh.offered(dashboard.capabilities) && VehicleIdentification.carLine(dashboard) != null
+    /**
+     * The car the charger card's re-read also re-reads (`refresh_vehicle`): the planned car, where the
+     * integration can; `null` otherwise, and then the re-read is the dashboard's alone.
+     */
+    fun carToReRead(dashboard: Dashboard?): String? {
+        val held = dashboard ?: return null
+        if (!VehicleRefresh.offered(held.capabilities)) return null
+        return VehicleIdentification.carLine(held)?.vehicleId
+    }
+
+    /** Whether the car's part of that re-read is said: only a real failure, never Home Assistant's own pace. */
+    fun saysCarReRead(answer: VehicleRefresh.Answer): Boolean = answer == VehicleRefresh.Answer.Failed
 }

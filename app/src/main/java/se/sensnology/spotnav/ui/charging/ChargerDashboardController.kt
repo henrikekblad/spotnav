@@ -20,6 +20,7 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.vehicles.ChargeLimit
+import se.sensnology.spotnav.vehicles.PairedCarLine
 import se.sensnology.spotnav.vehicles.VehicleCardState
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 import se.sensnology.spotnav.vehicles.VehicleRefresh
@@ -111,10 +112,22 @@ internal class ChargerDashboardController(
     )
 
     init {
-        // The charger's own re-read: the same fetch, asked for by hand.
+        // The charger's own re-read: the same fetch, asked for by hand, after re-reading the planned
+        // car where the integration can (the vehicle card stays out of sight when paired).
         chargerCard.reRead.attachRequest {
             chargerCard.reRead.setInFlight(true)
-            fetchDashboard()
+            val car = PairedCarLine.carToReRead(dashboard)
+            if (car == null) {
+                fetchDashboard()
+            } else {
+                session.reReadWithVehicle(car, admit = { listener.admitDashboard() }) { answer, read ->
+                    // "Try again in N s" is Home Assistant's pace and stays unsaid; a real failure is said.
+                    if (PairedCarLine.saysCarReRead(answer)) {
+                        Toast.makeText(context, t(R.string.vehicle_card_reread_failed), Toast.LENGTH_SHORT).show()
+                    }
+                    showRead(read)
+                }
+            }
         }
         // The card draws the control; the screen owns the connection, so it is the screen that gets
         // asked to do the asking.
@@ -124,8 +137,6 @@ internal class ChargerDashboardController(
         cells.refresh()
         // A person's answer to which car is plugged in, from the banner or Byt bil.
         chargerCard.identification.attachChoose { vehicleId -> identifyVehicle(vehicleId) }
-        // The car's re-read, from the car line (the vehicle card stays out of sight when paired).
-        chargerCard.identification.attachReRead { vehicleId -> reReadVehicle(vehicleId) }
     }
 
     /**
@@ -332,10 +343,8 @@ internal class ChargerDashboardController(
      */
     private fun reReadVehicle(vehicleId: String) {
         vehicleCard.refreshControl.setInFlight(true)
-        chargerCard.identification.setReReading(true)
         session.reReadVehicle(vehicleId) { reRead ->
             vehicleCard.refreshControl.setInFlight(false)
-            chargerCard.identification.setReReading(false)
             VehicleRefresh.message(reRead.answer)?.let { message ->
                 val text = when (message.kind) {
                     VehicleRefresh.Kind.TOO_SOON -> message.retryAfterS

@@ -175,6 +175,21 @@ internal class HaSession(
         }
     }
 
+    /**
+     * The charger card's re-read: re-read the planned car's own entities first, then read the
+     * dashboard as an ordinary read does (admitted after the car's re-read, so it sees what the car
+     * said), whatever the car answered.
+     */
+    fun reReadWithVehicle(vehicleId: String, admit: () -> DashboardAdmission?, done: (VehicleRefresh.Answer, Read) -> Unit) {
+        background.execute {
+            val answer = transport.refreshVehicle(vehicleId)
+            val admission = admit()
+            val fetched = runCatching { transport.dashboard() }
+            val phases = recorder.record(fetched)
+            mainThread { done(answer, Read(admission, fetched.map { it.dashboard }, phases)) }
+        }
+    }
+
     /** Write one vehicle's charge limit. */
     fun setChargeLimit(vehicleId: String, percent: Int, done: (ChargeLimit.Answer) -> Unit) {
         background.execute {
