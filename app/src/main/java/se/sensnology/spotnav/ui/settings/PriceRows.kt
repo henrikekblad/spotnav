@@ -56,7 +56,10 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
             settingRow(parent, t(label), text(line), onTap = if (editable && line != FiscalLine.Included) ({
                 editNumber(
                     title = t(label), spec = FEE, unit = unit,
-                    current = figure.takeIf { line !is FiscalLine.Off },
+                    current = figure,
+                    // Only a fee that is off starts with its Off box ticked; one that is on with no
+                    // figure yet starts clear, so an unchanged save never turns it off.
+                    noneChecked = startsOff(line),
                     rangeMessage = t(R.string.paired_error_number),
                     noneLabel = t(R.string.price_value_off),
                     // The area's own published figure, offered as the old form filled it in.
@@ -84,6 +87,9 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
     enum class Fee { TAX, GRID }
 
     companion object {
+        /** Whether a fee's editor opens with its Off box ticked: only when the fee is off. */
+        fun startsOff(line: FiscalLine): Boolean = line is FiscalLine.Off
+
         /** The figure [market] suggests for [fee], or `null` when it publishes none. */
         fun suggestion(market: se.sensnology.spotnav.prices.PriceMarket?, fee: Fee): Double? = when (fee) {
             Fee.TAX -> market?.suggestedTax

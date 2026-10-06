@@ -65,6 +65,8 @@ internal fun ViewScope.editNumber(
     rangeMessage: String,
     help: String? = null,
     noneLabel: String? = null,
+    /** Whether the "none" box starts ticked (by default, when there is no [current] value). */
+    noneChecked: Boolean = current == null,
     /** A figure to offer ("Suggestion: 36 öre/kWh"): tapping it fills the field. */
     suggestion: Double? = null,
     save: (Double?, (String?) -> Unit) -> Unit
@@ -74,7 +76,7 @@ internal fun ViewScope.editNumber(
     // What the value is for comes first, above anything to fill in.
     help?.let { body.addView(muted(it, bottom = 6)) }
     val none = noneLabel?.let { label ->
-        CheckBox(context).apply { text = label; textSize = 16f; isChecked = current == null }.also { body.addView(it) }
+        CheckBox(context).apply { text = label; textSize = 16f; isChecked = noneChecked }.also { body.addView(it) }
     }
     val field = EditText(context).apply {
         inputType = InputType.TYPE_CLASS_NUMBER or (if (spec.decimals > 0) InputType.TYPE_NUMBER_FLAG_DECIMAL else 0)
