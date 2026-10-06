@@ -55,14 +55,49 @@ class ActionPendingWatchTest {
         watch.onControl(pending)
         later(5); watch.onControl(pending)
         assertTrue(watch.fast())
-        // The charger reported: the immediate axis offers Stop again.
+        // The charger reported: the immediate axis offers Stop again, and the cells are themselves.
         later(5); watch.onControl(offersStop)
-        assertFalse(watch.fast())
         assertNull(watch.sentAction)
+        // ... but the charge has not begun yet: the fast reads wait for it.
+        watch.onCharging(false)
+        assertTrue(watch.fast())
+        later(40); watch.onCharging(true)
+        assertFalse(watch.fast())
     }
 
-    @Test fun theyEndFortyFiveSecondsAfterTheCommand() {
+    @Test fun aStopWaitsForTheChargeToEnd() {
         watch.onSent(ChargerAction.STOP)
+        watch.onControl(offersStart)
+        watch.onCharging(true)
+        assertTrue(watch.fast())
+        later(10); watch.onCharging(false)
+        assertFalse(watch.fast())
+    }
+
+    @Test fun aFailedReadSaysNothingOfTheOutcome() {
+        watch.onSent(ChargerAction.START)
+        watch.onControl(offersStop)
+        watch.onCharging(null)
+        assertTrue(watch.fast())
+    }
+
+    @Test fun theOutcomeIsAwaitedAtMostTwoMinutes() {
+        watch.onSent(ChargerAction.START)
+        watch.onControl(offersStop)
+        later(119); watch.onCharging(false)
+        assertTrue(watch.fast())
+        later(1)
+        assertFalse(watch.fast())
+    }
+
+    @Test fun aPauseOrResumeAwaitsNoChargeOutcome() {
+        watch.onSent(null)
+        watch.onControl(offersStart)
+        assertFalse(watch.fast())
+    }
+
+    @Test fun thePendingWindowEndsFortyFiveSecondsAfterTheDashboardSaidPending() {
+        watch.onControl(pending)
         later(44); watch.onControl(pending)
         assertTrue(watch.fast())
         later(1)
@@ -74,7 +109,7 @@ class ActionPendingWatchTest {
 
     @Test fun aNewCommandAfterAnEndedWindowStartsAnother() {
         watch.onSent(ChargerAction.START)
-        later(60)
+        later(130)
         assertFalse(watch.fast())
         watch.onSent(ChargerAction.STOP)
         assertTrue(watch.fast())

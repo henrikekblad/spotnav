@@ -156,6 +156,8 @@ internal class ChargerDashboardController(
         dashboard = result.getOrNull()
         val wasFast = pendingWatch.fast()
         pendingWatch.onControl(dashboard?.control)
+        // A failed read says nothing of whether the sent Start or Stop has taken effect.
+        pendingWatch.onCharging(dashboard?.live?.charging)
         listener.onDashboard(dashboard)
         if (pendingWatch.fast() != wasFast) listener.onPendingRefreshChanged()
         // The control decision travels with the same dashboard this whole pass is built from, and
