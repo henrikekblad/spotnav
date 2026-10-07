@@ -559,8 +559,7 @@ internal class PairedSettingsCards(
         if (vehicle.sources == null) body.addView(divider())
         val carName = vehicle.name ?: t(R.string.vehicle_title)
         valueRow(body, t(R.string.reference_label),
-            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) },
-            help = staleText(pictures)) {
+            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }) {
             openReferenceEditor(
                 carName, pictures,
                 thumbnail = { picture, done -> thumbnail(vehicle.id, picture, done) },

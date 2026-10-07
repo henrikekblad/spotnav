@@ -512,9 +512,6 @@
   <string name="reference_delete">Ta bort</string>
   <string name="reference_intro">Ta bilden när %1$s står parkerad vid laddaren. Ta nattbilden när det är mörkt.</string>
   <string name="reference_help">En bil utan referensbild känns inte igen av kameran.</string>
-  <string name="reference_stale">tagen innan beskärningen ändrades – ta en ny</string>
-  <string name="reference_night_picture">Nattbild</string>
-  <string name="reference_day_picture">Dagbild</string>
   <string name="vehicle_target_follows">Följer bilen till alla laddare</string>
   <string name="vehicle_error_target">Laddmålet måste vara mellan 0 och 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

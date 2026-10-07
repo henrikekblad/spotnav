@@ -512,9 +512,6 @@
   <string name="reference_delete">Poista</string>
   <string name="reference_intro">Ota kuva, kun %1$s on pysäköity laturille. Ota yökuva, kun on pimeää.</string>
   <string name="reference_help">Kamera ei tunnista autoa, jolla ei ole vertailukuvaa.</string>
-  <string name="reference_stale">otettu ennen rajauksen muutosta – ota uusi</string>
-  <string name="reference_night_picture">Yökuva</string>
-  <string name="reference_day_picture">Päiväkuva</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

@@ -18,17 +18,17 @@ internal enum class PictureKind(val wire: String) {
 
 /**
  * One of a car's reference pictures, as listed (never the picture itself): its kind, when it was taken,
- * whether it has a colour signature, and whether it was taken with another frame than the one now
- * ([stale]: it should be taken again).
+ * and whether it has a colour signature. Home Assistant crops a picture when it compares it, so none is
+ * ever out of date (an older one's `stale` mark is ignored).
  */
-internal data class ReferencePicture(val kind: PictureKind, val takenAt: String, val colour: Boolean, val stale: Boolean = false) {
+internal data class ReferencePicture(val kind: PictureKind, val takenAt: String, val colour: Boolean) {
     companion object {
         /** One listed picture, or `null` when it is not one this app can read. */
         fun parse(raw: Any?): ReferencePicture? {
             val row = raw as? JSONObject ?: return null
             val kind = PictureKind.of(row.opt("kind")) ?: return null
             val takenAt = (row.opt("taken_at") as? String)?.takeIf { it.isNotEmpty() } ?: return null
-            return ReferencePicture(kind, takenAt, row.opt("colour") == true, row.opt("stale") == true)
+            return ReferencePicture(kind, takenAt, row.opt("colour") == true)
         }
 
         /** A list of pictures, the ones this app cannot read left out; `null` when it is not a list. */

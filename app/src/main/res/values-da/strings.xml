@@ -512,9 +512,6 @@
   <string name="reference_delete">Slet</string>
   <string name="reference_intro">Tag billedet, mens %1$s holder parkeret ved laderen. Tag natbilledet, når det er mørkt.</string>
   <string name="reference_help">En bil uden referencebillede genkendes ikke af kameraet.</string>
-  <string name="reference_stale">taget før beskæringen blev ændret – tag et nyt</string>
-  <string name="reference_night_picture">Natbillede</string>
-  <string name="reference_day_picture">Dagbillede</string>
   <string name="vehicle_target_follows">Følger bilen til alle ladere</string>
   <string name="vehicle_error_target">Lademålet skal være mellem 0 og 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

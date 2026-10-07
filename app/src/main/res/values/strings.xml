@@ -525,9 +525,6 @@
   <string name="reference_delete">Delete</string>
   <string name="reference_intro">Take the picture while %1$s is parked at the charger. Take the night picture when it is dark.</string>
   <string name="reference_help">A car without a reference picture is not recognised by the camera.</string>
-  <string name="reference_stale">taken before the crop was changed – take a new one</string>
-  <string name="reference_night_picture">Night picture</string>
-  <string name="reference_day_picture">Day picture</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

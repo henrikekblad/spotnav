@@ -28,7 +28,6 @@ import se.sensnology.spotnav.ui.common.editorBody
 import se.sensnology.spotnav.ui.common.errorLine
 import se.sensnology.spotnav.ui.common.openEditor
 import se.sensnology.spotnav.vehicles.CameraFrames
-import se.sensnology.spotnav.vehicles.CameraSetup
 
 /**
  * The camera's two editors on the Settings page, as the Home Assistant card has them: the frame editor
@@ -206,14 +205,6 @@ internal fun ViewScope.openFrameEditor(
 internal fun ViewScope.pictureKindText(kind: PictureKind): String =
     t(if (kind == PictureKind.DAY) R.string.reference_day else R.string.reference_night)
 
-/** A picture's name ("Dagbild"), as a line about it says it. */
-internal fun ViewScope.pictureName(kind: PictureKind): String =
-    t(if (kind == PictureKind.DAY) R.string.reference_day_picture else R.string.reference_night_picture)
-
-/** What is said of the car's pictures taken before the crop changed, or `null`. */
-internal fun ViewScope.staleText(pictures: List<ReferencePicture>): String? =
-    CameraSetup.staleLine(pictures, { pictureName(it) }, t(R.string.reference_stale))
-
 /** A thumbnail as the Settings page shows one: [heightDp] high, its width as the picture's. */
 internal fun ViewScope.thumbnailView(kind: PictureKind, heightDp: Int): ImageView = ImageView(context).apply {
     contentDescription = pictureKindText(kind)
@@ -225,7 +216,7 @@ internal fun ViewScope.thumbnailView(kind: PictureKind, heightDp: Int): ImageVie
 
 /**
  * A car's reference pictures: each with its thumbnail ([thumbnail] fills it when it has one) and when it
- * was taken ([takenAt]), a picture taken before the crop changed marked to be taken again; "Take reference
+ * was taken ([takenAt]); "Take reference
  * picture now" as the dialog's own button, "Take night picture" and, with any picture, Delete. [act]
  * takes a picture now (a kind) or deletes the car's pictures (`null`), answering `null` when it took or
  * the words to show; a button that took closes the dialog.
@@ -246,7 +237,6 @@ internal fun ViewScope.openReferenceEditor(
             val image = thumbnailView(picture.kind, 72)
             column.addView(image)
             column.addView(mutedText("${pictureKindText(picture.kind)} · ${takenAt(picture.takenAt)}", top = 2))
-            if (picture.stale) column.addView(mutedText(staleText(listOf(picture)).orEmpty()))
             row.addView(column)
             thumbnail(picture) { bitmap ->
                 if (bitmap != null) {

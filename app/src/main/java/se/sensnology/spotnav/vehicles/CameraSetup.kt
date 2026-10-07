@@ -2,7 +2,6 @@ package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.dashboard.CameraEntity
 import se.sensnology.spotnav.ha.dashboard.Dashboard
-import se.sensnology.spotnav.ha.dashboard.PictureKind
 import se.sensnology.spotnav.ha.dashboard.ReferencePicture
 import se.sensnology.spotnav.ha.settings.HaCameraSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -50,14 +49,6 @@ internal object CameraSetup {
         record?.camera?.camera ?: return null
         return block.references[vehicleId]
     }
-
-    /**
-     * The line under a car's reference picture row for each picture taken before the crop changed
-     * ("Nattbild: tagen innan beskärningen ändrades – ta en ny."), as the Home Assistant card words it;
-     * `null` when none was.
-     */
-    fun staleLine(pictures: List<ReferencePicture>, name: (PictureKind) -> String, stale: String): String? =
-        pictures.filter { it.stale }.map { "${name(it.kind)}: $stale." }.takeIf { it.isNotEmpty() }?.joinToString(" ")
 
     /** When a picture was taken, as its caption says it ("Wed 7 Oct 14:12"), in [zone]; as sent when unreadable. */
     fun takenAt(iso: String, zone: ZoneId, locale: Locale): String = try {
