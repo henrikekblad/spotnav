@@ -69,3 +69,22 @@ object ChargeLimit {
         }
     }
 }
+
+/**
+ * The percents the car's own charge limit can be written to, as the vehicle row states them
+ * (`charge_limit_range`): [min]..[max] in steps of [step], the limit entity's own.
+ */
+data class ChargeLimitRange(val min: Double, val max: Double, val step: Double) {
+    companion object {
+        /** `{"min", "max", "step"}` with `0 < min < max <= 100` and a positive step, else `null` (unknown). */
+        fun parse(raw: Any?): ChargeLimitRange? {
+            val json = raw as? JSONObject ?: return null
+            fun number(key: String): Double? =
+                (json.opt(key) as? Number)?.toDouble()?.takeIf { it.isFinite() && it > 0.0 && it <= 100.0 }
+            val min = number("min") ?: return null
+            val max = number("max") ?: return null
+            val step = number("step") ?: return null
+            return if (min < max) ChargeLimitRange(min, max, step) else null
+        }
+    }
+}

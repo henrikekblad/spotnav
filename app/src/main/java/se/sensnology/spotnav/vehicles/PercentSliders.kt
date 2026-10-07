@@ -75,3 +75,30 @@ internal object FloorSlider {
     fun markText(template: String, percent: Int, locale: Locale = Locale.ROOT): String =
         String.format(locale, template, percent)
 }
+
+/**
+ * The car's own charge limit as its editor's slider sets it: the range and step its integration takes
+ * ([ChargeLimitRange]), else 1..100 in whole percent. The slider's progress is the stop's index from the bottom.
+ * It opens at the limit the car reports (the nearest stop inside the range), and nothing is written until it is
+ * moved.
+ */
+internal object LimitSlider {
+    val FALLBACK = ChargeLimitRange(1.0, 100.0, 1.0)
+
+    /** The slider's range and step: the car's limit's own, else [FALLBACK]. */
+    fun stops(range: ChargeLimitRange?): ChargeLimitRange = range ?: FALLBACK
+
+    /** The last stop's index: the last whole step not past the top. */
+    fun last(stops: ChargeLimitRange): Int = floor((stops.max - stops.min) / stops.step + 1e-9).toInt()
+
+    /** The percent at a stop, clamped to the ends. */
+    fun at(stops: ChargeLimitRange, index: Int): Int =
+        (stops.min + index.coerceIn(0, last(stops)) * stops.step).roundToInt()
+
+    /** The stop nearest [value], inside the range. */
+    fun index(stops: ChargeLimitRange, value: Int): Int =
+        ((value - stops.min) / stops.step).roundToInt().coerceIn(0, last(stops))
+
+    /** What Save writes, or `null` for nothing: never for a slider only drawn, or moved back to the car's limit. */
+    fun toWrite(current: Int, moved: Boolean, value: Int): Int? = if (!moved || value == current) null else value
+}

@@ -190,6 +190,7 @@
   <string name="vehicle_card_limit_label">Laadlimiet</string>
   <string name="vehicle_limit_set">Limiet instellen</string>
   <string name="vehicle_limit_hint">Geschreven via de integratie van de auto; gaat in zodra de auto hem de volgende keer leest</string>
+  <string name="vehicle_limit_slider">Laadlimiet, procent</string>
   <string name="vehicle_limit_too_soon">Probeer het over %1$d s opnieuw</string>
   <string name="vehicle_limit_failed">Kon de limiet niet instellen</string>
   <string name="vehicle_card_capacity_label">Batterijcapaciteit</string>

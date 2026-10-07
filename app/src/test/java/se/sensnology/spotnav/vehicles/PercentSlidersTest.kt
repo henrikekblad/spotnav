@@ -76,4 +76,36 @@ class PercentSlidersTest {
         assertEquals("min 30 %", FloorSlider.markText("min %1\$d %%", 30))
         assertEquals("laddmål 50 %", FloorSlider.markText("laddmål %1\$d %%", 50))
     }
+
+    @Test fun theLimitsStopsAreTheRangeAndStepTheCarsLimitTakes() {
+        val kia = LimitSlider.stops(ChargeLimitRange(50.0, 100.0, 10.0))
+        assertEquals(5, LimitSlider.last(kia))
+        assertEquals(50, LimitSlider.at(kia, 0))
+        assertEquals(80, LimitSlider.at(kia, 3))
+        assertEquals(100, LimitSlider.at(kia, 5))
+        assertEquals(100, LimitSlider.at(kia, 9))
+        assertEquals(3, LimitSlider.index(kia, 80))
+        // A limit between stops, or outside the range, opens at the nearest stop inside it.
+        assertEquals(3, LimitSlider.index(kia, 84))
+        assertEquals(4, LimitSlider.index(kia, 86))
+        assertEquals(0, LimitSlider.index(kia, 30))
+        // A range whose top is not a whole step from its bottom ends at the last whole step.
+        val uneven = LimitSlider.stops(ChargeLimitRange(50.0, 95.0, 10.0))
+        assertEquals(4, LimitSlider.last(uneven))
+        assertEquals(90, LimitSlider.at(uneven, LimitSlider.index(uneven, 95)))
+    }
+
+    @Test fun theLimitFallsBackToOneToAHundredInWholePercentOnlyWhenUnknown() {
+        val fallback = LimitSlider.stops(null)
+        assertEquals(ChargeLimitRange(1.0, 100.0, 1.0), fallback)
+        assertEquals(99, LimitSlider.last(fallback))
+        assertEquals(72, LimitSlider.at(fallback, LimitSlider.index(fallback, 72)))
+    }
+
+    @Test fun theLimitIsNeverWrittenForASliderOnlyDrawnOrMovedBack() {
+        assertNull(LimitSlider.toWrite(current = 90, moved = false, value = 90))
+        assertNull(LimitSlider.toWrite(current = 90, moved = false, value = 80))
+        assertNull(LimitSlider.toWrite(current = 90, moved = true, value = 90))
+        assertEquals(80, LimitSlider.toWrite(current = 90, moved = true, value = 80))
+    }
 }

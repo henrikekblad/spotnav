@@ -194,6 +194,7 @@
   <string name="vehicle_card_limit_label">Límite de carga</string>
   <string name="vehicle_limit_set">Fijar límite</string>
   <string name="vehicle_limit_hint">Se escribe a través de la integración del coche; surte efecto la próxima vez que el coche lo lea</string>
+  <string name="vehicle_limit_slider">Límite de carga, porcentaje</string>
   <string name="vehicle_limit_too_soon">Inténtalo de nuevo en %1$d s</string>
   <string name="vehicle_limit_failed">No se ha podido fijar el límite</string>
   <string name="vehicle_card_capacity_label">Capacidad de la batería</string>

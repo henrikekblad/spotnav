@@ -139,7 +139,10 @@ opens at the target it is planned with, marked **(default)**, and nothing is sav
 **Minimum charge level** (Off, or 10 to 80 %, with a Home Assistant that has it) is the car's own too: its slider
 starts at Off, goes in steps of 5, and stops at the charge target, the track beyond it hatched. Below it Home
 Assistant charges at once at full current, whatever the strategy, unless you paused or stopped the charge. It needs
-the car's charge level, and says so beside the value when the car has no level sensor.
+the car's charge level, and says so beside the value when the car has no level sensor. **Charge limit** is the limit
+the car reports; where Home Assistant can write it, tapping it opens a slider over the range and step the car's
+integration takes (50 to 100 % in steps of 10 on a Kia, for example; 1 to 100 % when Home Assistant does not say),
+the value shown large above it. Nothing is written unless you move the slider, and at most once a minute per car.
 
 <img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the cars at this charger, identification and the camera" width="420">
 

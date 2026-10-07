@@ -197,6 +197,7 @@
   <string name="vehicle_card_limit_value" translatable="false">%1$d %%</string>
   <string name="vehicle_limit_set">Set limit</string>
   <string name="vehicle_limit_hint">Written through the car\'s integration; it takes effect when the car next reads it</string>
+  <string name="vehicle_limit_slider">Charge limit, percent</string>
   <string name="vehicle_limit_too_soon">Try again in %1$d s</string>
   <string name="vehicle_limit_failed">Couldn\'t set the limit</string>
   <string name="vehicle_card_capacity_label">Battery capacity</string>

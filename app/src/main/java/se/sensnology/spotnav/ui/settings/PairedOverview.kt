@@ -7,6 +7,7 @@ import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
+import se.sensnology.spotnav.vehicles.ChargeLimitRange
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 
@@ -80,7 +81,9 @@ internal object PairedOverview {
         /** The car's own charge limit (whole percent), when it reports one. */
         val chargeLimit: Int? = null,
         /** Whether Home Assistant can write that limit to the car (`set_charge_limit`). */
-        val limitWritable: Boolean = false
+        val limitWritable: Boolean = false,
+        /** What that limit can be written to; `null` when Home Assistant does not say. */
+        val limitRange: ChargeLimitRange? = null
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -112,7 +115,8 @@ internal object PairedOverview {
                 minNeedsLevel = row.socEntityId == null && sensorName == null,
                 sources = row.identification,
                 chargeLimit = row.maxPercent?.takeIf { it.isFinite() }?.toInt(),
-                limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true
+                limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true,
+                limitRange = row.chargeLimitRange
             )
         }
 
