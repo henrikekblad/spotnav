@@ -1,0 +1,7 @@
+- Hvilken bil er tilkoblet? Spørsmålet kommer som et SpotNav-varsel med en knapp per bil
+- Laderkortet viser bilen, hvordan den ble valgt, og ⇄ Bytt bil
+- Hver bil har sitt eget lademål
+- Status: "Identifiserer bilen…" og "Venter på svar"
+- Kamera: beskjær bilde av ladeplassen, referansebilder dag og natt per bil
+- Nye kompakte innstillinger: én rad per verdi, faner for ladere og biler
+- Krever SpotNav for Home Assistant 1.13

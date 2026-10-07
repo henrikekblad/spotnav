@@ -1,0 +1,7 @@
+- Which car is plugged in? Asked in a SpotNav notification with a button per car
+- The charger card shows the car, how it was decided and ⇄ Change car
+- Each car keeps its own charge target
+- Status: "Identifying the car…" and "Waiting for an answer"
+- Camera: crop the parking spot, day and night reference pictures per car
+- New compact settings screens: one row per value, tabs for chargers and cars
+- Needs SpotNav for Home Assistant 1.13

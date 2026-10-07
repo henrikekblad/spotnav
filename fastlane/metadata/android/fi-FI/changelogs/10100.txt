@@ -1,0 +1,7 @@
+- Mikä auto on kytketty? Kysymys tulee SpotNav-ilmoituksena, jossa on painike kullekin autolle
+- Laturikortti näyttää auton, miten se valittiin, ja ⇄ Vaihda auto
+- Jokaisella autolla on oma lataustavoitteensa
+- Tila: "Tunnistetaan autoa…" ja "Odotetaan vastausta"
+- Kamera: rajaa latauspaikan kuva, päivä- ja yövertailukuvat autoittain
+- Uudet tiiviit asetukset: yksi rivi arvoa kohden, välilehdet latureille ja autoille
+- Vaatii SpotNav for Home Assistant 1.13:n
