@@ -25,6 +25,16 @@ class NotificationRulesTest {
     private val t0 = Instant.parse("2026-09-22T06:00:00Z")
     private val all = NotificationEvent.entries.toSet()
 
+    /**
+     * The idle charger's dashboard with its installed window stated here (06:45-15:30), not taken from how the
+     * fixture's plan happens to fall (Home Assistant's automatic charge periods may split it).
+     */
+    private fun startIdle(): JSONObject = HaFixtures.json("dashboard/start_idle.json").apply {
+        getJSONObject("plan").getJSONObject("installed").put("periods", org.json.JSONArray().put(
+            JSONObject().put("start", "2026-09-22T06:45:00+00:00").put("end", "2026-09-22T15:30:00+00:00")
+        ))
+    }
+
     private fun snap(
         at: Instant = t0,
         charging: Boolean = false,
@@ -148,7 +158,7 @@ class NotificationRulesTest {
     }
 
     @Test fun aDashboardBecomesASnapshotInTheMarketsClock() {
-        val dashboard = Dashboard.parse(HaFixtures.json("dashboard/start_idle.json"))
+        val dashboard = Dashboard.parse(startIdle())
         val zone = ZoneId.of("UTC")
         val before = NotificationRules.snapshot(dashboard, Instant.parse("2026-09-22T06:00:00Z"), zone)
         assertFalse(before.windowOpen)
@@ -164,11 +174,11 @@ class NotificationRulesTest {
         assertEquals("17:30", inWindow.windowEnd)
         assertEquals("not_started", inWindow.stopReason)
         // Paused by a person: no fault.
-        val paused = JSONObject(HaFixtures.json("dashboard/start_idle.json").toString())
+        val paused = JSONObject(startIdle().toString())
         paused.getJSONObject("status").getJSONArray("lines").put(JSONObject().put("code", "paused").put("params", JSONObject()))
         assertNull(NotificationRules.snapshot(Dashboard.parse(paused), Instant.parse("2026-09-22T07:00:00Z"), zone).stopReason)
         // An unplugged car: no fault either.
-        val unplugged = JSONObject(HaFixtures.json("dashboard/start_idle.json").toString())
+        val unplugged = JSONObject(startIdle().toString())
         unplugged.put("connection", JSONObject().put("state", "disconnected").put("source", JSONObject.NULL))
         val out = NotificationRules.snapshot(Dashboard.parse(unplugged), Instant.parse("2026-09-22T07:00:00Z"), zone)
         assertEquals(false, out.connected)
@@ -176,14 +186,14 @@ class NotificationRulesTest {
     }
 
     private fun idleWith(code: String, params: JSONObject = JSONObject()): Dashboard {
-        val json = HaFixtures.json("dashboard/start_idle.json")
+        val json = startIdle()
         json.getJSONObject("status").getJSONArray("lines").put(JSONObject().put("code", code).put("params", params))
         return Dashboard.parse(json)
     }
 
     @Test fun aChargerThatIgnoresAPersonsStopIsToldOnceUnderPlanStopped() {
         val zone = ZoneId.of("UTC")
-        val quiet = NotificationRules.snapshot(Dashboard.parse(HaFixtures.json("dashboard/start_idle.json")), Instant.parse("2026-09-22T06:00:00Z"), zone)
+        val quiet = NotificationRules.snapshot(Dashboard.parse(startIdle()), Instant.parse("2026-09-22T06:00:00Z"), zone)
         // Even outside a window and inside the grace time: the Stop is the person's, the charging is the fault.
         val ignored = NotificationRules.snapshot(idleWith("charger_ignores_stop"), Instant.parse("2026-09-22T06:05:00Z"), zone)
         assertEquals("charger_ignores_stop", ignored.stopReason)
@@ -202,7 +212,7 @@ class NotificationRulesTest {
     }
 
     @Test fun aPersonsManualStopPauseIsNeverAStoppedUnexpectedly() {
-        val json = HaFixtures.json("dashboard/start_idle.json")
+        val json = startIdle()
         val manual = HaFixtures.json("dashboard/manual_stop.json")
         json.put("status", manual.getJSONObject("status"))
         json.put("control", manual.getJSONObject("control"))
@@ -212,7 +222,7 @@ class NotificationRulesTest {
     }
 
     @Test fun aChargeTheCarEndsAtItsOwnLimitIsNoFaultWhenItStops() {
-        val full = HaFixtures.json("dashboard/start_idle.json")
+        val full = startIdle()
         full.getJSONObject("status").getJSONArray("lines")
             .put(JSONObject().put("code", "charging_to_vehicle_limit").put("params", JSONObject().put("percent", 100)))
         val snapshot = NotificationRules.snapshot(Dashboard.parse(full), Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
@@ -220,7 +230,7 @@ class NotificationRulesTest {
     }
 
     @Test fun aCarFinishingPastTheLastWindowIsNoFaultWhenItStops() {
-        val finishing = HaFixtures.json("dashboard/start_idle.json")
+        val finishing = startIdle()
         finishing.getJSONObject("status").getJSONArray("lines")
             .put(JSONObject().put("code", "topping_off").put("params", JSONObject().put("until", "2026-09-22T07:40:00+00:00")))
         val snapshot = NotificationRules.snapshot(Dashboard.parse(finishing), Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
@@ -228,7 +238,7 @@ class NotificationRulesTest {
     }
 
     @Test fun aDeadlineTooShortIsAtRiskAndAMetNeedIsNoFault() {
-        val json = HaFixtures.json("dashboard/start_idle.json")
+        val json = startIdle()
         json.getJSONObject("planning").put("reason", "deadline_too_short")
         json.getJSONObject("plan").put("remaining_kwh", 0.0).put("delivered_kwh", 20.0)
         val snapshot = NotificationRules.snapshot(Dashboard.parse(json), Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))

@@ -260,7 +260,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         }
         val periodsReading = valueLabel()
         var periodsDialog: AlertDialog? = null
-        valueRow(card.body, t(R.string.max_charging_periods), periodsReading) {
+        val periodsRow = valueRow(card.body, t(R.string.max_charging_periods), periodsReading) {
             periodsDialog = showValuePopover(periodsDialog, PopoverSpec(
                 eyebrow = t(R.string.popover_eyebrow_plan),
                 title = t(R.string.max_charging_periods),
@@ -385,6 +385,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             refreshDriver = { refreshDriver() },
             nothingToCharge = { driverInForce, targetPercent -> nothingToCharge(driverInForce, targetPercent) },
             periods = periods,
+            periodsRow = periodsRow.view,
             refreshPeriodsLabel = refreshPeriodsLabel,
             useDeparture = useDeparture,
             departurePicker = departurePicker,
@@ -610,6 +611,8 @@ internal class PlanCard(
     val refreshDriver: () -> Unit,
     val nothingToCharge: (PlanDriver, Int?) -> Boolean,
     val periods: SeekBar,
+    /** The periods' value row: the phone's own plan only (Home Assistant's are a charger setting). */
+    val periodsRow: View,
     val refreshPeriodsLabel: () -> Unit,
     val useDeparture: CheckBox,
     val departurePicker: Button,

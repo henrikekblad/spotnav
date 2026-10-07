@@ -131,7 +131,7 @@ class DashboardChartTest {
 
     @Test fun theTargetSocFixtureStatesItsFiguresToo() {
         val f = DashboardChart.figures(fixture("target_soc_estimated"))!!
-        assertEquals(82.9205950375, f.costMajor!!, 1e-9)
+        assertEquals(62.548023037499995, f.costMajor!!, 1e-9)
         assertEquals(34.5, f.energyKwh!!, 1e-9)
         assertEquals(17.25, f.distanceMil!!, 1e-9)
     }

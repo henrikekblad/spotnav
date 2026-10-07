@@ -58,7 +58,7 @@ class HomeAssistantDashboardTest {
         val d = Dashboard.parse(v1("target_soc_estimated"))
         assertEquals(StatusTone.NORMAL, d.status.tone)
         assertEquals(listOf("auto_planned", "plan_energy", "plan_cost", "plan_distance"), d.status.lines.map { it.code })
-        assertEquals(8292.0, d.status.lines[2].params["amount_minor"])
+        assertEquals(6255.0, d.status.lines[2].params["amount_minor"])
         assertTrue(d.capabilities.refreshVehicle)
         assertTrue(d.capabilities.setChargeLimit)
         assertEquals(6, d.currentRange.minA)
@@ -69,7 +69,8 @@ class HomeAssistantDashboardTest {
         assertEquals("SEK", proposal.costCurrency)
         assertFalse(proposal.unpriced)
         assertEquals(60, proposal.pricedSlots)
-        assertEquals(1, proposal.periods.size.coerceAtLeast(1))
+        // Automatic charge periods: the cheapest plan counting each start, here two periods.
+        assertEquals(2, proposal.periods.size)
         val soc = d.soc!!
         assertEquals(75.1, soc.value!!, 1e-9)
         assertTrue(soc.estimated)
