@@ -228,4 +228,17 @@ class PairedOverviewTest {
         assertFalse(PairedOverview.saysChargers(1))
         assertTrue(PairedOverview.saysChargers(2))
     }
+
+    @Test fun severalPairedChargersAreTabsWithTheMainScreensChargerFirstChosen() {
+        val chargers = listOf("garage", "uppfart")
+        // The charger the main screen shows is the tab chosen when Settings opens.
+        assertEquals("uppfart", PairedOverview.selectedChargerTab(chargers, chosen = null, shown = "uppfart"))
+        // A tab chosen in Settings stays chosen while that charger is paired.
+        assertEquals("garage", PairedOverview.selectedChargerTab(chargers, chosen = "garage", shown = "uppfart"))
+        assertEquals("uppfart", PairedOverview.selectedChargerTab(chargers, chosen = "removed", shown = "uppfart"))
+        // Nothing shown on the main screen: no charger's settings, so no tabs to choose between.
+        assertNull(PairedOverview.selectedChargerTab(chargers, chosen = null, shown = null))
+        // One charger is no tabs.
+        assertNull(PairedOverview.selectedChargerTab(listOf("garage"), chosen = null, shown = "garage"))
+    }
 }
