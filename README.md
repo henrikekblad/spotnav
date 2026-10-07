@@ -13,7 +13,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 ## Features
 
 - Today and tomorrow overlaid on one chart, with the current interval, minimum, maximum and current price highlighted.
-- Day-ahead prices for 26 European countries, 15-minute or hourly, in the local currency (EUR, SEK, NOK, DKK, PLN, CZK, HUF, RON, CHF, GBP).
+- Day-ahead prices for 26 European countries, shown as each area publishes them (15, 30 or 60 minutes), in the local currency (EUR, SEK, NOK, DKK, PLN, CZK, HUF, RON, CHF, GBP).
 - Optional VAT, electricity tax and grid fee.
 - Colour-coded price table.
 - EV charging planner: charging current, phases, energy, vehicle consumption, departure time and up to eight charging periods, with the chosen periods shaded in the widget.
@@ -24,7 +24,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 
 1. Install SpotNav from [Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav), or download the APK from [Releases](../../releases).
 2. Install it and add **SpotNav** from the Android widget picker.
-3. Choose language, price area, resolution and any taxes or fees. Tap the widget to open the price table and the EV planner.
+3. Choose language, price area and any taxes or fees. Tap the widget to open the price table and the EV planner.
 
 ## EV charging planner
 

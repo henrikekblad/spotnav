@@ -3,7 +3,7 @@ SpotNav zeigt Strom-Spotpreise als Widget auf dem Startbildschirm und in einer f
 PREISE
 - Heute und morgen in einem 24-Stunden-Diagramm, mit markiertem aktuellem Intervall, Minimum, Maximum und aktuellem Preis.
 - Preiszonen in den nordischen und baltischen Ländern, Deutschland und den Niederlanden.
-- 15-Minuten-Preise oder Stundenmittel in der Landeswährung.
+- Preise so, wie jedes Gebiet sie veröffentlicht, je 15, 30 oder 60 Minuten, in der Landeswährung.
 - Optional MwSt., Stromsteuer und Netzentgelt. Die vorgeschlagenen Steuerwerte sind änderbar; prüfe sie anhand deines eigenen Vertrags.
 - Widget mit anpassbarer Größe, lokaler Cache bei Netzwerkfehlern und automatische Prüfung auf die Preise für morgen.
 - Verfügbar auf Englisch, Schwedisch, Norwegisch, Dänisch, Finnisch, Deutsch, Niederländisch, Spanisch und Französisch.
