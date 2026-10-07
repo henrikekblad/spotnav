@@ -24,6 +24,8 @@ import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.weight
 import se.sensnology.spotnav.vehicles.PairedCarLine
+import se.sensnology.spotnav.notify.IdentifyNotice
+import se.sensnology.spotnav.notify.InAppQuestion
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 
 /**
@@ -104,6 +106,8 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
     private fun paint() {
         val held = dashboard
         val question = held?.let { VehicleIdentification.banner(it) }
+        // The question in view: the background check does not post it as a notification too.
+        InAppQuestion.banner = if (question != null) held.identification?.let(IdentifyNotice::key) else null
         val line = held?.let { VehicleIdentification.carLine(it) }
         paintBanner(question)
         carBlock.visibility = if (line != null) View.VISIBLE else View.GONE
@@ -189,6 +193,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         VehicleIdentification.Basis.CHOSEN_MANUALLY -> R.string.identify_by_hand
         VehicleIdentification.Basis.ASSUMED -> R.string.identify_by_assumed
         VehicleIdentification.Basis.IDENTIFYING -> R.string.identify_identifying
+        VehicleIdentification.Basis.CAMERA -> R.string.identify_by_camera
     }
 
     private fun hintText(hint: VehicleIdentification.Hint): Int = when (hint) {

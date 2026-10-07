@@ -196,7 +196,8 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 placeMarks()
                 // Once the words have their sizes for this text, place them again.
                 markRow.post { placeMarks() }
-                val verdict = when (PairedTarget.verdict(facts, target)) {
+                val verdictKind = PairedTarget.verdict(facts, target)
+                val verdict = when (verdictKind) {
                     TargetVerdict.NO_NEED -> t(R.string.paired_target_no_need)
                     TargetVerdict.TO_LIMIT -> t(
                         R.string.paired_target_to_limit,
@@ -211,7 +212,8 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                     R.string.paired_need,
                     kwh?.let { String.format(locale, "%.1f kWh", it) } ?: t(R.string.paired_need_unknown)
                 )
-                needLine.visibility = View.VISIBLE
+                // "Ingen laddning behövs nu" says it all: no "0,0 kWh" under it.
+                needLine.visibility = if (PairedTarget.showsNeed(verdictKind)) View.VISIBLE else View.GONE
             }
         }
         val refreshLabel = {

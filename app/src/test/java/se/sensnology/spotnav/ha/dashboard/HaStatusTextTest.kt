@@ -193,6 +193,24 @@ class HaStatusTextTest {
         assertEquals("Väntar på timmar som brukar vara billigare, planerar då.", say("sv", emptyMap()))
     }
 
+    @Test fun theIdentificationLinesAreWordedAsTheCardWordsThemAheadOfThePlan() {
+        fun headline(code: String, language: String) = HaStatusText.render(
+            DashboardStatus(
+                listOf(StatusLine(code, emptyMap()), StatusLine("waiting_for_tomorrow", emptyMap())),
+                StatusTone.NORMAL
+            ),
+            format(language), now
+        )
+        assertEquals("Identifierar bilen… · Väntar på morgondagens priser.", headline("identifying_vehicle", "sv"))
+        assertTrue(headline("asking_vehicle", "sv")!!.startsWith("Väntar på svar: vilken bil är inkopplad? · "))
+        assertTrue(headline("identifying_vehicle", "en")!!.startsWith("Identifying the car… · "))
+        assertTrue(headline("asking_vehicle", "en")!!.startsWith("Waiting for an answer: which car is plugged in? · "))
+        for (language in listOf("da", "nb", "fi")) {
+            assertFalse(headline("identifying_vehicle", language)!!.contains("Home Assistant"))
+            assertFalse(headline("asking_vehicle", language)!!.contains("Home Assistant"))
+        }
+    }
+
     @Test fun theHoldCodesAreWorded() {
         fun say(code: String, params: Map<String, Any?> = emptyMap()) =
             HaStatusText.line(StatusLine(code, params), format("en"), now)

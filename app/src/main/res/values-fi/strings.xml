@@ -301,7 +301,6 @@
   <string name="site_error_not_permitted">Home Assistant ei salli tätä muutosta sovelluksesta. Mikään ei muuttunut.</string>
   <string name="site_error_unavailable">Kohde ei ole juuri nyt käytettävissä. Mikään ei muuttunut.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">Tämä lataaja suunnittelee sille</string>
   <string name="vehicle_charge_level_label">Varaustaso</string>
   <string name="vehicle_charge_level_none">Ei lukemaa</string>
   <string name="settings_vehicle_none">Ajoneuvoa ei ole vielä asetettu.</string>
@@ -462,6 +461,9 @@
   <string name="identify_answer_where">Vastaa sovelluksessa tai ilmoituksessa</string>
   <string name="identify_waiting">odottaa vastausta</string>
   <string name="identify_answer_failed">Vastausta ei voitu tallentaa.</string>
+  <string name="notify_identify_chosen">%1$s · valittu</string>
+  <string name="notify_identify_failed">Vastaaminen epäonnistui – avaa SpotNav</string>
+  <string name="notify_identify_open">Avaa SpotNav</string>
   <string name="identify_not_here">Tätä autoa ei voi ladata tällä laturilla.</string>
   <string name="identify_switch">Vaihda auto</string>
   <string name="identify_switch_prompt">Mikä auto on kytketty laturiin %1$s?</string>
@@ -490,7 +492,34 @@
   <string name="identify_source_location">Sijainti</string>
   <string name="identify_source_none">Ei mitään</string>
   <string name="identify_source_choose">Valitse yksi</string>
-  <string name="identify_sources_help">Luetaan vain sen näkemiseksi, mikä auto on kytketty.</string>
+  <string name="identify_by_camera">tunnistettu kameralla</string>
+  <string name="camera_label">Kamera</string>
+  <string name="camera_none">Ei kameraa</string>
+  <string name="camera_help">Kuvat pysyvät Home Assistantissa ja menevät vain valitsemallesi AI-tehtävälle; paikallinen malli pitää ne kotona.</string>
+  <string name="camera_frame_label">Rajaa latauspaikan kuva</string>
+  <string name="camera_frame_whole">Koko kuva</string>
+  <string name="camera_frame_cropped">Rajattu</string>
+  <string name="camera_frame_intro">Vedä valinta latauspaikan ympärille: siirrä sitä tai vedä kulmasta. Vain valinnan sisältöä verrataan.</string>
+  <string name="camera_frame_loading">Haetaan kuvaa kamerasta…</string>
+  <string name="camera_frame_retry">Yritä uudelleen</string>
+  <string name="camera_frame_preview">Tätä verrataan:</string>
+  <string name="camera_frame_area">Valinta latauspaikan ympärillä.</string>
+  <string name="camera_error_no_camera">Kameraa ei enää ole.</string>
+  <string name="camera_error_no_picture">Kamera ei antanut kuvaa.</string>
+  <string name="reference_label">Vertailukuva</string>
+  <string name="reference_title">Vertailukuva — %1$s</string>
+  <string name="reference_none">Ei kuvaa</string>
+  <string name="reference_day">Päivä</string>
+  <string name="reference_night">Yö</string>
+  <string name="reference_empty">Ei kuvaa</string>
+  <string name="reference_take_day">Ota päiväkuva</string>
+  <string name="reference_take_night">Ota yökuva</string>
+  <string name="reference_retake">Ota uudelleen</string>
+  <string name="reference_taking">Otetaan kuvaa…</string>
+  <string name="reference_delete">Poista</string>
+  <string name="reference_intro">Ota kuva, kun auto on pysäköity laturille.</string>
+  <string name="reference_help">Kamera ei tunnista autoa, jolla ei ole vertailukuvaa.</string>
+  <string name="reference_close">Sulje</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

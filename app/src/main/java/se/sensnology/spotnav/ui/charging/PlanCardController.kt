@@ -37,6 +37,8 @@ import se.sensnology.spotnav.ui.common.chartDescription
 import se.sensnology.spotnav.ui.common.checkbox
 import se.sensnology.spotnav.ui.common.compactIconAction
 import se.sensnology.spotnav.ui.common.expandActionTarget
+import se.sensnology.spotnav.ui.common.textTabs
+import se.sensnology.spotnav.ui.common.textTabsLayoutParams
 import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.popoverControl
 import se.sensnology.spotnav.ui.common.readoutLines
@@ -84,36 +86,13 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         // The driver choice, in the header row: a compact text toggle "kWh | Mål", the chosen one in the
         // accent colour and underlined. Each word keeps a 48 dp touch target but draws no box, so the
         // heading row stays as tall as its title. Only present when both modes can actually work.
-        fun option(label: String) = TextView(context).apply {
-            text = label
-            textSize = 15f
-            isClickable = true
-            isFocusable = true
-            gravity = Gravity.CENTER
-            minimumHeight = dp(48)
-            minimumWidth = dp(48)
-            setPadding(dp(6), 0, dp(6), 0)
-        }
-        val kwhOption = option(t(R.string.driver_kwh))
-        // The short name, and only here: the slider it drives keeps the full label.
-        val targetOption = option(t(R.string.driver_target_soc))
-        val driverChoice = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.END or Gravity.CENTER_VERTICAL
-            visibility = View.GONE
-            addView(kwhOption, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
-            addView(TextView(context).apply {
-                text = "|"; textSize = 15f; setTextColor(muted)
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            })
-            addView(targetOption, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
-        }
-        // The slack belongs to the header's own heading row (which is weighted), not to a spacer of
-        // its own and not to the stroked control:
-        // The 48 dp targets reach over the header's edges instead of making the row taller.
-        card.header.addView(driverChoice, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = -dp(14); bottomMargin = -dp(14) })
+        // The short name, and only here: the slider it drives keeps the full label. Its words are styled
+        // by the chosen driver below; their clicks are the screen's (see [PlanCard]).
+        val driverTabs = textTabs(listOf(t(R.string.driver_kwh), t(R.string.driver_target_soc)), selected = 0, host = card.body) {}
+        val kwhOption = driverTabs.words[0]
+        val targetOption = driverTabs.words[1]
+        val driverChoice = driverTabs.row.apply { visibility = View.GONE }
+        card.header.addView(driverChoice, textTabsLayoutParams())
 
         // The driver slot: one control at a time, in the same place -- the energy control in kWh
         // mode, the target slider in target-SoC mode.

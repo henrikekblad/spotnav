@@ -339,7 +339,12 @@ internal data class Dashboard(
      * Every detected car, whether or not it can charge here (`vehicle_choices`, by name): the cars the
      * charger's `vehicle_ids` are ticked from. `null` from a Home Assistant that does not state it.
      */
-    val vehicleChoices: List<DashboardVehicleRef>? = null
+    val vehicleChoices: List<DashboardVehicleRef>? = null,
+    /**
+     * The camera for identification (`camera_identification`, see [DashboardCamera]): `null` where Home
+     * Assistant offers no camera, from an older one, or for a block this app cannot read.
+     */
+    val cameraIdentification: DashboardCamera? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -433,7 +438,8 @@ internal data class Dashboard(
                     ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() },
                 progress = DashboardProgress.parse(json),
                 identification = DashboardIdentification.parse(json.opt("identification")),
-                vehicleChoices = vehicleChoices(json.opt("vehicle_choices"))
+                vehicleChoices = vehicleChoices(json.opt("vehicle_choices")),
+                cameraIdentification = DashboardCamera.parse(json.opt("camera_identification"))
             )
         }
 

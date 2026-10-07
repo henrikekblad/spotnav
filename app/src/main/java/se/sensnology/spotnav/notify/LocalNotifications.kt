@@ -22,8 +22,10 @@ import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.push.PushNotifications
+import se.sensnology.spotnav.vehicles.VehicleIdentification
 import java.text.NumberFormat
 import java.time.Instant
 import java.util.concurrent.Executors
@@ -132,7 +134,20 @@ internal object LocalNotifications {
     /** One profile was unpaired: its snapshot goes, and the check stops when nothing is paired. */
     fun onProfileForgotten(context: Context, localId: String) {
         LocalNotificationStore.forContext(context).forget(localId)
+        IdentifyNotifications.cancel(context.applicationContext, localId)
         sync(context)
+    }
+
+    /**
+     * What one dashboard read for [localId] says of identification, wherever the app reads it (this
+     * check, a screen's read, Settings): remembered, and Home Assistant registered again when it
+     * changed, so the question is offered and registered at once rather than after the next check.
+     */
+    fun observeIdentification(context: Context, localId: String, dashboard: Dashboard) {
+        val app = context.applicationContext
+        if (LocalNotificationStore.forContext(app).observeIdentifies(localId, VehicleIdentification.advertised(dashboard))) {
+            PushNotifications.sync(app)
+        }
     }
 
     /** One background check of every paired charger. Never throws. */
@@ -145,21 +160,26 @@ internal object LocalNotifications {
             return
         }
         val chosen = store.events
+        var identifyingChanged = false
         for (profile in profiles) {
             val dashboard = runCatching {
                 HomeAssistantClient.dashboard(profile.toHomeAssistantSettings(), connectTimeoutMs = 10_000, readTimeoutMs = 20_000)
             }.getOrNull() ?: continue
+            // Whether this Home Assistant takes the question as an instant-notification event.
+            if (store.observeIdentifies(profile.localId, VehicleIdentification.advertised(dashboard))) identifyingChanged = true
             val current = NotificationRules.snapshot(dashboard, now)
             val derivation = NotificationRules.derive(store.snapshot(profile.localId), current, chosen, store.lastSent(profile.localId))
             store.remember(profile.localId, current, derivation.lastSent)
-            if (derivation.events.isEmpty() || !allowed(app)) continue
             val name = dashboard.chargerName?.trim()?.takeIf { it.isNotEmpty() }
                 ?: profile.label(AppLanguageSettings.text(app, R.string.section_charger))
+            IdentifyNotifications.follow(app, store, profile.localId, name, dashboard, NotificationEvent.VEHICLE_IDENTIFY in chosen)
+            if (derivation.events.isEmpty() || !allowed(app)) continue
             derivation.events.forEach { post(app, profile.localId, name, it) }
         }
+        if (identifyingChanged) PushNotifications.sync(app)
     }
 
-    private fun ensureChannels(context: Context) {
+    fun ensureChannels(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(
             NotificationChannel(
@@ -177,7 +197,7 @@ internal object LocalNotifications {
         )
     }
 
-    private fun openApp(context: Context): PendingIntent = PendingIntent.getActivity(
+    fun openApp(context: Context): PendingIntent = PendingIntent.getActivity(
         context, 0,
         Intent(context, LauncherActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -243,7 +263,7 @@ internal object LocalNotifications {
                 val kwh = event.kwh?.takeIf { it > 0 } ?: return start
                 "$start ${t(R.string.notify_planned_kwh, number(kwh, 1))}"
             }
-            // Never one of this phone's own checks; worded all the same should one ever be raised.
+            // Posted on its own, with car buttons (IdentifyNotifications); worded all the same.
             NotificationEvent.VEHICLE_IDENTIFY -> t(R.string.identify_question)
         }
     }

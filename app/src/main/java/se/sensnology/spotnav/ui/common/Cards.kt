@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
@@ -170,7 +171,30 @@ internal fun ViewScope.expandActionTarget(body: LinearLayout, action: View, grap
     )
     // Handed to the framework, which forwards the touches and lets a screen reader see the enlarged
     // target it is: accessibility draws its own focus rectangle from that.
-    body.touchDelegate = TouchDelegate(rect, action)
+    setTouchTarget(body, action, rect)
+}
+
+/**
+ * The touch delegates one view holds: the framework takes one per view, so this one hands each touch
+ * to whichever of its own the touch began in. Each target view has one rectangle, replaced when set
+ * again (after a new layout).
+ */
+private class TouchTargets(host: View) : TouchDelegate(Rect(), host) {
+    val byTarget = LinkedHashMap<View, TouchDelegate>()
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        var handled = false
+        for (delegate in byTarget.values.toList()) {
+            if (delegate.onTouchEvent(event)) handled = true
+        }
+        return handled
+    }
+}
+
+/** Let touches inside [rect] (in [host]'s coordinates) go to [target], beside [host]'s other such targets. */
+internal fun setTouchTarget(host: View, target: View, rect: Rect) {
+    val targets = host.touchDelegate as? TouchTargets ?: TouchTargets(host).also { host.touchDelegate = it }
+    targets.byTarget[target] = TouchDelegate(rect, target)
 }
 
 /**

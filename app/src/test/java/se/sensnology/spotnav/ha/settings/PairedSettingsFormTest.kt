@@ -540,28 +540,48 @@ class PairedSettingsFormTest {
     }
 
     @Test
-    fun a409ShowsTheServersRecordAndLeavesTheChoiceToThePerson() {
+    fun oneSaveOfVatWritesItEvenWhenTheRevisionMovedMeanwhile() {
+        // Home Assistant moves the revision on its own (a pause stored, a car's target taken over), so the
+        // record this screen shows is often one behind: the first Save meets a conflict.
         val authority = pairedController()
         val server = record.copy(revision = 9, amps = 8)
-        val transport = RecordingTransport { SettingsUpdate.Outcome.Conflict(server) }
+        val vatOn = { fresh: HaPlanningSettings -> SettingsFormValues("SE4", vat = false, tax = true, taxFigure = 0.0, transfer = true, transferFigure = 5.5).let {
+            assertEquals("the edit is built on the server's record", 9, fresh.revision)
+            it
+        } }
+        val committed = server.copy(revision = 10)
+        var answers = listOf<SettingsUpdate.Outcome>(SettingsUpdate.Outcome.Conflict(server), SettingsUpdate.Outcome.Updated(committed))
+        val transport = RecordingTransport { answers.first().also { answers = answers.drop(1) } }
+        val values = SettingsFormValues("SE4", vat = false, tax = true, taxFigure = 0.0, transfer = true, transferFigure = 5.5)
+
+        val save = SettingsFormSession.save(authority, values, replay = vatOn) { SettingsSaveTarget { decision -> transport.call(decision) } }
+            as FormSaveOutcome.Sent
+
+        assertEquals("the one value is sent once more, on the server's record", 2, transport.calls.size)
+        val again = transport.calls[1]
+        assertEquals(9, again.expectedRevision)
+        assertEquals("what changed elsewhere is kept", 8, again.replacement.amps)
+        assertEquals(HaFiscalValue.OFF, again.replacement.overrides.first { it.areaId == "SE4" }.vat)
+        assertEquals("and the row shows what was written", committed, (save.outcome as WriteOutcome.Applied).authority.remoteSettings)
+    }
+
+    @Test
+    fun aSecondConflictInARowShowsTheServersRecordAndSendsNoMore() {
+        val authority = pairedController()
+        val server = record.copy(revision = 9, amps = 8)
+        val transport = RecordingTransport { SettingsUpdate.Outcome.Conflict(server.copy(revision = 9 + it.expectedRevision - 4)) }
         val values = SettingsFormValues("NO1", vat = true, tax = false, taxFigure = null, transfer = false, transferFigure = null)
 
-        val save = pressSave(authority, values, transport) as FormSaveOutcome.Sent
+        val save = SettingsFormSession.save(authority, values, replay = { values }) { SettingsSaveTarget { decision -> transport.call(decision) } }
+            as FormSaveOutcome.Sent
 
-        assertEquals(1, transport.calls.size)
+        assertEquals(2, transport.calls.size)
+        assertTrue(save.answer is SettingsUpdate.Outcome.Conflict)
         assertEquals(
             "the server's record is what is shown",
-            server,
+            (save.answer as SettingsUpdate.Outcome.Conflict).current,
             (save.outcome as WriteOutcome.Applied).authority.remoteSettings
         )
-
-        // The second attempt, on the same screen.
-        val retryTransport = RecordingTransport { SettingsUpdate.Outcome.Updated(server.copy(revision = 10)) }
-        val retried = pressSave(authority, values, retryTransport) as FormSaveOutcome.Sent
-        assertEquals(1, retryTransport.calls.size)
-        assertEquals(9, retried.decision.expectedRevision)
-        assertTrue("a new operation supersedes the old one", retried.decision.operation > save.decision.operation)
-        assertEquals("NO1", retried.decision.replacement.areaId)
     }
 
     @Test

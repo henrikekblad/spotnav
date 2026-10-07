@@ -58,6 +58,10 @@
             android:name=".notify.LocalNotificationJob"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- A car button of this phone's own question which car is plugged in. -->
+        <receiver
+            android:name=".notify.IdentifyAnswerReceiver"
+            android:exported="false" />
         <receiver
             android:name=".widget.PriceWidgetProvider"
             android:exported="true">

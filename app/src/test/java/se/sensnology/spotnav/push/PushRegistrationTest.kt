@@ -151,4 +151,23 @@ class PushRegistrationTest {
         assertNull(f.store.sent("a"))
         assertEquals(setOf("b", "c"), f.store.known)
     }
+
+    @Test
+    fun theQuestionWhichCarIsPluggedInGoesOnlyToAHomeAssistantThatIdentifies() {
+        val f = Fakes()
+        f.local = PushRegistration.Local(
+            enabled = true, profiles = listOf("a", "b"), events = listOf("plan_stopped", "vehicle_identify"), identifying = setOf("b")
+        )
+        assertEquals(PushRegistration.Result.ON, f.registration.enable())
+        // A Home Assistant without identification refuses an event it does not know.
+        assertEquals(
+            listOf(Triple("a", "ref-for-token-1", listOf("plan_stopped")), Triple("b", "ref-for-token-1", listOf("plan_stopped", "vehicle_identify"))),
+            f.haCalls
+        )
+        // Once "a" is found to identify, it is told again.
+        f.local = f.local.copy(identifying = setOf("a", "b"))
+        f.registration.sync()
+        assertEquals(Triple("a", "ref-for-token-1", listOf("plan_stopped", "vehicle_identify")), f.haCalls.last())
+        assertEquals(3, f.haCalls.size)
+    }
 }

@@ -102,6 +102,9 @@ internal object PairedTarget {
         )
     }
 
+    /** Whether the energy the target needs is said under the verdict: not when no charging is needed. */
+    fun showsNeed(verdict: TargetVerdict): Boolean = verdict != TargetVerdict.NO_NEED
+
     fun verdict(facts: PairedTargetFacts, target: Double): TargetVerdict {
         val now = facts.now
         return when {

@@ -161,4 +161,10 @@ class PairedTargetTest {
         assertEquals(6..32, PairedTarget.ampsRange(dashboard("target_soc_two_vehicles")))
         assertEquals(6..16, PairedTarget.ampsRange(dashboard("charger_states_its_maximum")))
     }
+
+    @Test fun theNeedIsNotSaidWhenNoChargingIsNeeded() {
+        assertFalse(PairedTarget.showsNeed(TargetVerdict.NO_NEED))
+        assertTrue(PairedTarget.showsNeed(TargetVerdict.TO_LIMIT))
+        assertTrue(PairedTarget.showsNeed(TargetVerdict.NONE))
+    }
 }

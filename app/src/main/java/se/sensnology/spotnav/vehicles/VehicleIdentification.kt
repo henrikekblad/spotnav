@@ -44,7 +44,7 @@ internal object VehicleIdentification {
         advertised(dashboard) && dashboard.identification?.state == DashboardIdentification.State.ASKING
 
     /** How the car on the car line was decided, in the words the line uses. */
-    enum class Basis { PLUG_SENSOR, LOCATION, CHOSEN_MANUALLY, ASSUMED, IDENTIFYING }
+    enum class Basis { PLUG_SENSOR, LOCATION, CHOSEN_MANUALLY, ASSUMED, IDENTIFYING, CAMERA }
 
     /**
      * The charger card's car line: the car planned for, how it was decided (`null`: nothing to say,
@@ -68,6 +68,7 @@ internal object VehicleIdentification {
                 // A person's answer and a choice in the settings read the same: chosen manually.
                 DashboardIdentification.Method.ANSWERED, DashboardIdentification.Method.MANUAL -> Basis.CHOSEN_MANUALLY
                 DashboardIdentification.Method.ASSUMED -> Basis.ASSUMED
+                DashboardIdentification.Method.CAMERA -> Basis.CAMERA
                 null -> null
             }
         }

@@ -42,7 +42,7 @@ class NotificationsOverviewTest {
 
     private val n6 = HaNotifyService("notify.mobile_app_n6", "N6")
     private val pixel = HaNotifyService("notify.mobile_app_pixel", "Pixel")
-    private val three = NotificationEvent.LOCAL_DEFAULTS.map { it.wire }
+    private val three = listOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.PLAN_AT_RISK, NotificationEvent.CHARGE_COMPLETE).map { it.wire }
 
     private fun ha(targets: List<String>, events: List<String> = three) =
         HaNotificationSettings(targets = targets, events = events, available = listOf(n6, pixel))
@@ -74,6 +74,8 @@ class NotificationsOverviewTest {
         assertEquals("Every 15 minutes · 1 of 7 events",
             NotificationsOverview.spotNav(true, setOf(NotificationEvent.PLAN_STOPPED), instant = false, texts = en))
         assertEquals("Instant · 3 of 7 events", NotificationsOverview.spotNav(true, events, instant = true, texts = en))
+        // Where Home Assistant identifies cars, the question counts too.
+        assertEquals("Instant · 4 of 8 events", NotificationsOverview.spotNav(true, events, instant = true, texts = en, identifies = true))
     }
 
     @Test fun everyLocaleHasTheNewWordingAndNoneOfTheOld() {

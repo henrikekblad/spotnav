@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.ha.session
 
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
+import se.sensnology.spotnav.ha.client.CameraCommands
+import se.sensnology.spotnav.ha.client.CameraPicture
 import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.FetchedDashboard
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
@@ -47,6 +49,9 @@ internal interface HaTransport {
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
+    /** One of the camera's actions; never throws. */
+    fun camera(request: CameraCommands.Request): CameraCommands.Outcome = CameraCommands.Outcome.Failed(null)
+
     /** One month of charge history as a CSV text; never throws. */
     fun sessionsCsv(month: YearMonth): SessionsOutcome<SessionsCsv> = SessionsOutcome.Failed
 }
@@ -76,6 +81,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun identifyVehicle(vehicleId: String) = HomeAssistantClient.identifyVehicle(connection, vehicleId)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
+
+    override fun camera(request: CameraCommands.Request) = HomeAssistantClient.camera(connection, request)
 
     override fun sessionsCsv(month: YearMonth) = HomeAssistantClient.sessionsCsv(connection, month)
 }
@@ -255,6 +262,19 @@ internal class HaSession(
                 null
             }
             mainThread { done(outcome, read) }
+        }
+    }
+
+    /**
+     * One of the camera's actions. A picture it answers with is handed to [decode] on the background
+     * executor too (a camera's picture is large), and what that made is handed on with the outcome:
+     * `null` without a picture, or when [decode] failed.
+     */
+    fun <T> camera(request: CameraCommands.Request, decode: (CameraPicture) -> T?, done: (CameraCommands.Outcome, T?) -> Unit) {
+        background.execute {
+            val outcome = transport.camera(request)
+            val decoded = (outcome as? CameraCommands.Outcome.Picture)?.let { runCatching { decode(it.picture) }.getOrNull() }
+            mainThread { done(outcome, decoded) }
         }
     }
 

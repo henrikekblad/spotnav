@@ -19,6 +19,28 @@ import se.sensnology.spotnav.vehicles.SocDisplay
  * and WebSocket-only), so the charger and site cards state only what the dashboard itself knows.
  */
 internal object PairedOverview {
+    /**
+     * The car tab chosen in Settings' one car card: [current] while that car is still there, else the
+     * car planned for, else the first; `null` for one car or none (no tabs).
+     */
+    fun selectedTab(cars: List<VehicleCard>, current: String?): String? {
+        if (cars.size < 2) return null
+        return cars.firstOrNull { it.id == current }?.id ?: cars.firstOrNull { it.planned }?.id ?: cars.first().id
+    }
+
+    /**
+     * The charger tab chosen in Settings with several paired chargers ([chargers], by profile id):
+     * [chosen] while that charger is still paired, else the one the main screen shows ([shown]); `null`
+     * for one charger, or with none shown (no charger's settings to show).
+     */
+    fun selectedChargerTab(chargers: List<String>, chosen: String?, shown: String?): String? {
+        if (chargers.size < 2 || shown == null) return null
+        return chosen?.takeIf { it in chargers } ?: shown.takeIf { it in chargers }
+    }
+
+    /** Whether the site and solar cards say how many chargers they apply to: only when there are several. */
+    fun saysChargers(chargers: Int): Boolean = chargers > 1
+
     /** What the vehicle's charge-level row shows. */
     sealed interface ChargeLevel {
         /** The car's state of charge as last read, whole percent. */

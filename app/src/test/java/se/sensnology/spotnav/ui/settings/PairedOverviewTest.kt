@@ -211,4 +211,34 @@ class PairedOverviewTest {
             assertFalse(name, Regex("\\b(sensor|switch|number|select|binary_sensor)\\.[a-z0-9_]+").containsMatchIn(shown))
         }
     }
+
+    @Test fun severalCarsAreTabsOfOneCardWithThePlannedCarFirstChosen() {
+        val cards = PairedOverview.vehicles(twoVehicles)
+        val planned = cards.firstOrNull { it.planned }?.id ?: cards[0].id
+        assertEquals(planned, PairedOverview.selectedTab(cards, null))
+        // A tab once chosen stays chosen while the car is there.
+        assertEquals("vehicle_niro", PairedOverview.selectedTab(cards, "vehicle_niro"))
+        assertEquals(planned, PairedOverview.selectedTab(cards, "vehicle_gone"))
+        // One car is no tabs.
+        assertNull(PairedOverview.selectedTab(cards.take(1), null))
+        assertNull(PairedOverview.selectedTab(emptyList(), null))
+    }
+
+    @Test fun aSiteOrSolarCardSaysWhichChargersItAppliesToOnlyWhenThereAreSeveral() {
+        assertFalse(PairedOverview.saysChargers(1))
+        assertTrue(PairedOverview.saysChargers(2))
+    }
+
+    @Test fun severalPairedChargersAreTabsWithTheMainScreensChargerFirstChosen() {
+        val chargers = listOf("garage", "uppfart")
+        // The charger the main screen shows is the tab chosen when Settings opens.
+        assertEquals("uppfart", PairedOverview.selectedChargerTab(chargers, chosen = null, shown = "uppfart"))
+        // A tab chosen in Settings stays chosen while that charger is paired.
+        assertEquals("garage", PairedOverview.selectedChargerTab(chargers, chosen = "garage", shown = "uppfart"))
+        assertEquals("uppfart", PairedOverview.selectedChargerTab(chargers, chosen = "removed", shown = "uppfart"))
+        // Nothing shown on the main screen: no charger's settings, so no tabs to choose between.
+        assertNull(PairedOverview.selectedChargerTab(chargers, chosen = null, shown = null))
+        // One charger is no tabs.
+        assertNull(PairedOverview.selectedChargerTab(listOf("garage"), chosen = null, shown = "garage"))
+    }
 }
