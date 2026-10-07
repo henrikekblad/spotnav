@@ -41,6 +41,13 @@ class CameraSettingsCodecTest {
         }
     }
 
+    @Test fun everyRequestAsksForTheIdentificationStatusLines() {
+        for (command in listOf(HomeAssistantCommand("dashboard"), HomeAssistantCommand("settings"))) {
+            val reads = JSONObject(HomeAssistantClient.payload(command)).getJSONArray("reads")
+            assertTrue(List(reads.length()) { reads.getString(it) }.contains("identification_status"))
+        }
+    }
+
     @Test fun theVendoredAnswersStateNoCamera() {
         val record = HaSettingsCodec.parseResponse(HaFixtures.json("settings/v1/success.json").getJSONObject("settings"))
         assertEquals(HaCameraChoice(null), record.camera)
