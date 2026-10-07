@@ -41,7 +41,8 @@ APP_HA_URL = f"http://localhost:{APP_HA_PORT}"
 RES = REPO / "app" / "src"
 
 #: The app's languages and the fastlane locale folder each one's store pictures go in.
-STORE_LOCALES = {"en": "en-US", "sv": "sv-SE", "nb": "nb-NO", "da": "da-DK", "fi": "fi-FI"}
+STORE_LOCALES = {"en": "en-US", "sv": "sv-SE", "nb": "nb-NO", "da": "da-DK", "fi": "fi-FI",
+                 "de": "de-DE", "nl": "nl-NL", "es": "es-ES", "fr": "fr-FR"}
 
 #: The screen's fixed parts: the status bar above the app and the gesture bar below it.
 STATUS_BAR = 63
