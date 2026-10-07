@@ -3,12 +3,15 @@ package se.sensnology.spotnav.ui.settings
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowInsets
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -53,6 +56,23 @@ private fun ViewScope.plainButton(label: String, onClick: () -> Unit) = Button(c
     isAllCaps = false
     setOnClickListener { onClick() }
 }
+
+/** A dialog's text button, as AlertDialog draws Cancel and Save: no box, the accent colour. */
+private fun ViewScope.dialogButton(label: String, onClick: () -> Unit) =
+    Button(context, null, android.R.attr.buttonBarButtonStyle).apply {
+        text = label
+        setTextColor(accent)
+        setOnClickListener { onClick() }
+    }
+
+/** The status and navigation bars' room, on every Android version this app runs on. */
+@Suppress("DEPRECATION")
+private fun systemBars(insets: WindowInsets): Rect =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()).let { Rect(it.left, it.top, it.right, it.bottom) }
+    } else {
+        Rect(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
+    }
 
 /**
  * The frame editor, full screen: [load] fetches the camera's picture now (decoded), [save] writes the
@@ -131,11 +151,11 @@ internal fun ViewScope.openFrameEditor(
     val error = errorLine()
     page.addView(error)
     lateinit var saveButton: Button
-    saveButton = plainButton(t(R.string.paired_save)) {
+    saveButton = dialogButton(t(R.string.paired_save)) {
         if (picture.bitmap == null) {
             error.text = t(R.string.camera_frame_loading)
             error.visibility = View.VISIBLE
-            return@plainButton
+            return@dialogButton
         }
         saveButton.isEnabled = false
         error.visibility = View.GONE
@@ -150,17 +170,25 @@ internal fun ViewScope.openFrameEditor(
             }
         }
     }
+    // Cancel and Save as every other editor has them: text buttons at the bottom right.
     page.addView(LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.END
         setPadding(0, dp(12), 0, 0)
-        addView(plainButton(t(android.R.string.cancel)) { dialog.dismiss() })
+        addView(dialogButton(t(android.R.string.cancel)) { dialog.dismiss() })
         addView(saveButton)
     })
-    dialog.setContentView(ScrollView(context).apply {
+    val scroller = ScrollView(context).apply {
         setBackgroundColor(appBackground)
         addView(page)
-    })
+    }
+    // The page keeps clear of the status and navigation bars (the window is drawn edge to edge).
+    scroller.setOnApplyWindowInsetsListener { view, insets ->
+        val bars = systemBars(insets)
+        view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+        insets
+    }
+    dialog.setContentView(scroller)
     dialog.window?.apply {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         setBackgroundDrawable(ColorDrawable(appBackground))
