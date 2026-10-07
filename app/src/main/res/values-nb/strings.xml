@@ -301,7 +301,6 @@
   <string name="site_error_not_permitted">Home Assistant tillater ikke denne endringen fra appen. Ingenting ble endret.</string>
   <string name="site_error_unavailable">Anlegget er ikke tilgjengelig akkurat nå. Ingenting ble endret.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">Denne laderen planlegger for det</string>
   <string name="vehicle_charge_level_label">Ladenivå</string>
   <string name="vehicle_charge_level_none">Ingen avlesning</string>
   <string name="settings_vehicle_none">Ingen kjøretøy er satt opp ennå.</string>
@@ -490,21 +489,18 @@
   <string name="identify_source_location">Posisjon</string>
   <string name="identify_source_none">Ingen</string>
   <string name="identify_source_choose">Velg en</string>
-  <string name="identify_sources_help">Leses bare for å se hvilken bil som er tilkoblet.</string>
   <string name="identify_by_camera">identifisert via kamera</string>
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Ingen kamera</string>
   <string name="camera_help">Bildene blir i Home Assistant og sendes bare til AI-oppgaven du velger; en lokal modell holder dem hjemme.</string>
-  <string name="camera_frame_label">Ramme</string>
+  <string name="camera_frame_label">Beskjær bilde av ladeplassen</string>
   <string name="camera_frame_whole">Hele bildet</string>
-  <string name="camera_frame_drawn">Tegnet</string>
+  <string name="camera_frame_cropped">Beskåret</string>
   <string name="camera_frame_intro">Dra rammen rundt parkeringsplassen: flytt den, eller dra i et hjørne. Bare det som er innenfor, sammenlignes.</string>
   <string name="camera_frame_loading">Henter et bilde fra kameraet…</string>
   <string name="camera_frame_retry">Prøv igjen</string>
   <string name="camera_frame_preview">Dette sammenlignes:</string>
   <string name="camera_frame_area">Ramme rundt parkeringsplassen.</string>
-  <string name="camera_ai_task_label">AI-oppgave</string>
-  <string name="camera_ai_task_default">Home Assistants standard</string>
   <string name="camera_error_no_camera">Kameraet finnes ikke lenger.</string>
   <string name="camera_error_no_picture">Kameraet ga ikke noe bilde.</string>
   <string name="reference_label">Referansebilde</string>

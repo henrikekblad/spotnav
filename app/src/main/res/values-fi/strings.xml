@@ -301,7 +301,6 @@
   <string name="site_error_not_permitted">Home Assistant ei salli tätä muutosta sovelluksesta. Mikään ei muuttunut.</string>
   <string name="site_error_unavailable">Kohde ei ole juuri nyt käytettävissä. Mikään ei muuttunut.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">Tämä lataaja suunnittelee sille</string>
   <string name="vehicle_charge_level_label">Varaustaso</string>
   <string name="vehicle_charge_level_none">Ei lukemaa</string>
   <string name="settings_vehicle_none">Ajoneuvoa ei ole vielä asetettu.</string>
@@ -490,21 +489,18 @@
   <string name="identify_source_location">Sijainti</string>
   <string name="identify_source_none">Ei mitään</string>
   <string name="identify_source_choose">Valitse yksi</string>
-  <string name="identify_sources_help">Luetaan vain sen näkemiseksi, mikä auto on kytketty.</string>
   <string name="identify_by_camera">tunnistettu kameralla</string>
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Ei kameraa</string>
   <string name="camera_help">Kuvat pysyvät Home Assistantissa ja menevät vain valitsemallesi AI-tehtävälle; paikallinen malli pitää ne kotona.</string>
-  <string name="camera_frame_label">Rajaus</string>
+  <string name="camera_frame_label">Rajaa kuva latauspaikasta</string>
   <string name="camera_frame_whole">Koko kuva</string>
-  <string name="camera_frame_drawn">Piirretty</string>
+  <string name="camera_frame_cropped">Rajattu</string>
   <string name="camera_frame_intro">Vedä rajaus pysäköintipaikan ympärille: siirrä sitä tai vedä kulmasta. Vain rajauksen sisältöä verrataan.</string>
   <string name="camera_frame_loading">Haetaan kuvaa kamerasta…</string>
   <string name="camera_frame_retry">Yritä uudelleen</string>
   <string name="camera_frame_preview">Tätä verrataan:</string>
   <string name="camera_frame_area">Rajaus pysäköintipaikan ympärillä.</string>
-  <string name="camera_ai_task_label">AI-tehtävä</string>
-  <string name="camera_ai_task_default">Home Assistantin oletus</string>
   <string name="camera_error_no_camera">Kameraa ei enää ole.</string>
   <string name="camera_error_no_picture">Kamera ei antanut kuvaa.</string>
   <string name="reference_label">Vertailukuva</string>

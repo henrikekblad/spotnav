@@ -35,6 +35,7 @@ import se.sensnology.spotnav.ha.settings.HaCameraChoice
 import se.sensnology.spotnav.ha.settings.HaIdentificationSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.IdentifyMode
+import se.sensnology.spotnav.ui.charging.styleSegment
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
@@ -110,6 +111,9 @@ internal class PairedSettingsCards(
     private var cameraCall: (CameraCommands.Request, Int?, (CameraCommands.Outcome, Bitmap?) -> Unit) -> Unit =
         { _, _, done -> done(CameraCommands.Outcome.Failed(null), null) }
     private var adoptedCamera: HaCameraChoice? = null
+
+    /** The car tab chosen in the car card (several cars only). */
+    private var selectedCar: String? = null
     private val adoptedReferences = mutableMapOf<String, List<ReferencePicture>>()
     private val thumbnails = object : LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Bitmap>?): Boolean = size > MAX_THUMBNAILS
@@ -201,63 +205,117 @@ internal class PairedSettingsCards(
             card.body.addView(muted(t(R.string.settings_vehicle_none), top = 8))
             return
         }
-        for (vehicle in vehicles) {
+        // One car is "Bil · EV6"; several are one "Bil" card with a tab per car, the chosen car's rows below.
+        val selected = PairedOverview.selectedTab(vehicles, selectedCar)
+        selectedCar = selected
+        if (selected == null) {
+            val vehicle = vehicles.first()
             val card = card(container, SettingsHeading.named(t(R.string.vehicle_title), vehicle.name), R.drawable.ic_ev)
-            if (vehicle.planned) card.body.addView(muted(t(R.string.settings_vehicle_planned_here), top = 8))
-            readRow(card.body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
-            // Each of the car's own figures opens its own editor and writes that one figure.
-            if (vehicle.capacityReported && vehicle.capacityKwh != null) {
-                // A battery size the car reports itself cannot be typed: read-only, saying so under it.
-                readRow(card.body, t(R.string.vehicle_card_capacity_label), t(R.string.vehicle_card_capacity_value, vehicle.capacityKwh),
-                    help = t(R.string.vehicle_capacity_reported))
-            } else {
-                valueRow(card.body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle)) {
-                    editNumber(t(R.string.vehicle_card_capacity_label), spec(VehicleField.CAPACITY, 1), "kWh", vehicle.capacityKwh,
-                        t(R.string.vehicle_error_capacity), help = t(R.string.vehicle_card_capacity_note)) { value, done ->
-                        writeOne(vehicle.id, VehicleField.CAPACITY, value, done)
-                    }
-                }
-            }
-            valueRow(card.body, t(R.string.consumption), vehicle.consumptionKwhPer10km
-                ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset)) {
-                editNumber(t(R.string.consumption), spec(VehicleField.CONSUMPTION, 1), "kWh/10 km", vehicle.consumptionKwhPer10km,
-                    t(R.string.vehicle_error_consumption), help = t(R.string.vehicle_card_consumption_note)) { value, done ->
-                    writeOne(vehicle.id, VehicleField.CONSUMPTION, value, done)
-                }
-            }
-            vehicle.onboardPhases?.let { phases ->
-                valueRow(card.body, t(R.string.vehicle_onboard_label), phasesText(phases)) {
-                    chooseOne(t(R.string.vehicle_onboard_label), listOf(phasesText(1), phasesText(3)), if (phases == 1) 0 else 1,
-                        intro = t(R.string.vehicle_onboard_note)) { index, done ->
-                        writeOne(vehicle.id, VehicleField.ONBOARD_PHASES, if (index == 0) 1.0 else 3.0, done)
-                    }
-                }
-            }
-            // The car's own charge limit, when it reports one: written to the car where Home Assistant can.
-            vehicle.chargeLimit?.let { limit ->
-                valueRow(card.body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit),
-                    onTap = if (vehicle.limitWritable) ({
-                        editNumber(t(R.string.vehicle_card_limit_label), NumberSpec(1.0, 100.0, 0), "%", limit.toDouble(),
-                            t(R.string.paired_error_number), help = t(R.string.vehicle_limit_hint)) { value, done ->
-                            writeChargeLimit(vehicle.id, value!!.toInt(), limit, done)
-                        }
-                    }) else null)
-            }
-            // The car's own target, the same at every charger; it can also be cleared.
-            if (vehicle.targetStated) {
-                valueRow(card.body, t(R.string.vehicle_target), vehicle.targetPercent
-                    ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset),
-                    help = t(R.string.vehicle_target_follows)) {
-                    editNumber(t(R.string.vehicle_target), NumberSpec(0.0, 100.0, 0), "%", vehicle.targetPercent,
-                        t(R.string.vehicle_error_target), noneLabel = t(R.string.paired_value_unset)) { value, done ->
-                        writeOne(vehicle.id, VehicleField.TARGET, value, done)
-                    }
-                }
-            }
-            vehicle.sources?.let { addSources(card.body, it) }
-            addReference(card.body, dash, vehicle)
-            vehicleNotices[vehicle.id]?.let { card.body.addView(muted(it, top = 4)) }
+            addVehicleRows(card.body, dash, vehicle)
+            return
         }
+        val card = card(container, t(R.string.vehicle_title), R.drawable.ic_ev)
+        card.header.addView(carTabs(vehicles, selected), LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { topMargin = -dp(14); bottomMargin = -dp(14) })
+        addVehicleRows(card.body, dash, vehicles.first { it.id == selected })
+    }
+
+    /**
+     * The car tabs in the car card's header, a compact text row like the main screen's "kWh | Mål": each
+     * car's name, the chosen one in the accent colour and underlined, each a 48 dp target; the last ends
+     * where the rows' values end.
+     */
+    private fun carTabs(vehicles: List<PairedOverview.VehicleCard>, selected: String): View {
+        val row = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.END or Gravity.CENTER_VERTICAL
+        }
+        vehicles.forEachIndexed { index, vehicle ->
+            if (index > 0) row.addView(TextView(context).apply {
+                text = "|"; textSize = 15f; setTextColor(muted)
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            })
+            val last = index == vehicles.lastIndex
+            val tab = TextView(context).apply {
+                text = vehicle.name ?: t(R.string.vehicle_title)
+                textSize = 15f
+                isClickable = true
+                isFocusable = true
+                minimumHeight = dp(48)
+                minimumWidth = dp(48)
+                maxLines = 1
+                gravity = if (last) Gravity.END or Gravity.CENTER_VERTICAL else Gravity.CENTER
+                setPadding(dp(6), 0, if (last) 0 else dp(6), 0)
+                setOnClickListener {
+                    if (selectedCar != vehicle.id) {
+                        selectedCar = vehicle.id
+                        repaint()
+                    }
+                }
+            }
+            styleSegment(tab, vehicle.id == selected)
+            row.addView(tab, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
+        }
+        return row
+    }
+
+    /** One car's rows: its level, its own figures, its target, its sources and its reference pictures. */
+    private fun addVehicleRows(body: LinearLayout, dash: Dashboard, vehicle: PairedOverview.VehicleCard) {
+        readRow(body, t(R.string.vehicle_charge_level_label), chargeLevelText(vehicle))
+        // Each of the car's own figures opens its own editor and writes that one figure.
+        if (vehicle.capacityReported && vehicle.capacityKwh != null) {
+            // A battery size the car reports itself cannot be typed: read-only, saying so under it.
+            readRow(body, t(R.string.vehicle_card_capacity_label), t(R.string.vehicle_card_capacity_value, vehicle.capacityKwh),
+                help = t(R.string.vehicle_capacity_reported))
+        } else {
+            valueRow(body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle)) {
+                editNumber(t(R.string.vehicle_card_capacity_label), spec(VehicleField.CAPACITY, 1), "kWh", vehicle.capacityKwh,
+                    t(R.string.vehicle_error_capacity), help = t(R.string.vehicle_card_capacity_note)) { value, done ->
+                    writeOne(vehicle.id, VehicleField.CAPACITY, value, done)
+                }
+            }
+        }
+        valueRow(body, t(R.string.consumption), vehicle.consumptionKwhPer10km
+            ?.let { t(R.string.consumption_value, it) } ?: t(R.string.paired_value_unset)) {
+            editNumber(t(R.string.consumption), spec(VehicleField.CONSUMPTION, 1), "kWh/10 km", vehicle.consumptionKwhPer10km,
+                t(R.string.vehicle_error_consumption), help = t(R.string.vehicle_card_consumption_note)) { value, done ->
+                writeOne(vehicle.id, VehicleField.CONSUMPTION, value, done)
+            }
+        }
+        vehicle.onboardPhases?.let { phases ->
+            valueRow(body, t(R.string.vehicle_onboard_label), phasesText(phases)) {
+                chooseOne(t(R.string.vehicle_onboard_label), listOf(phasesText(1), phasesText(3)), if (phases == 1) 0 else 1,
+                    intro = t(R.string.vehicle_onboard_note)) { index, done ->
+                    writeOne(vehicle.id, VehicleField.ONBOARD_PHASES, if (index == 0) 1.0 else 3.0, done)
+                }
+            }
+        }
+        // The car's own charge limit, when it reports one: written to the car where Home Assistant can.
+        vehicle.chargeLimit?.let { limit ->
+            valueRow(body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit),
+                onTap = if (vehicle.limitWritable) ({
+                    editNumber(t(R.string.vehicle_card_limit_label), NumberSpec(1.0, 100.0, 0), "%", limit.toDouble(),
+                        t(R.string.paired_error_number), help = t(R.string.vehicle_limit_hint)) { value, done ->
+                        writeChargeLimit(vehicle.id, value!!.toInt(), limit, done)
+                    }
+                }) else null)
+        }
+        // The car's own target, the same at every charger; it can also be cleared.
+        if (vehicle.targetStated) {
+            valueRow(body, t(R.string.vehicle_target), vehicle.targetPercent
+                ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset)) {
+                // That the target follows the car to every charger is said in its editor.
+                editNumber(t(R.string.vehicle_target), NumberSpec(0.0, 100.0, 0), "%", vehicle.targetPercent,
+                    t(R.string.vehicle_error_target), help = t(R.string.vehicle_target_follows),
+                    noneLabel = t(R.string.paired_value_unset)) { value, done ->
+                    writeOne(vehicle.id, VehicleField.TARGET, value, done)
+                }
+            }
+        }
+        vehicle.sources?.let { addSources(body, it) }
+        addReference(body, dash, vehicle)
+        vehicleNotices[vehicle.id]?.let { body.addView(muted(it, top = 4)) }
     }
 
     /** A vehicle field's range as the write checks it, with the editor's decimals. */
@@ -305,12 +363,11 @@ internal class PairedSettingsCards(
         }
     }
 
-    /** A car's identification sources: read-only, with the one line that says what they are for. */
+    /** A car's identification sources: read-only. */
     private fun addSources(body: LinearLayout, sources: VehicleIdentificationSources) {
         body.addView(divider())
         sources.plug?.let { readRow(body, t(R.string.identify_source_plug), sourceText(it)) }
         sources.location?.let { readRow(body, t(R.string.identify_source_location), sourceText(it)) }
-        body.addView(muted(t(R.string.identify_sources_help), top = 2))
     }
 
     private fun sourceText(source: IdentificationSource): String = when (val text = VehicleIdentification.sourceText(source)) {
@@ -461,10 +518,11 @@ internal class PairedSettingsCards(
                 }
             }) else null)
         // How the plugged-in car is found: one of three, each saying what it does.
-        valueRow(body, t(R.string.identify_mode_title), modeName(section.mode), help = t(R.string.identify_mode_help),
+        valueRow(body, t(R.string.identify_mode_title), modeName(section.mode),
             onTap = if (writable) ({
                 chooseOne(t(R.string.identify_mode_title), IdentifyMode.entries.map { modeName(it) },
-                    IdentifyMode.entries.indexOf(section.mode), helps = IdentifyMode.entries.map { modeHelp(it) }) { index, done ->
+                    IdentifyMode.entries.indexOf(section.mode), helps = IdentifyMode.entries.map { modeHelp(it) },
+                    intro = t(R.string.identify_mode_help)) { index, done ->
                     write(IdentifyMode.entries[index], stored?.vehicleIds, done)
                 }
             }) else null)
@@ -482,9 +540,10 @@ internal class PairedSettingsCards(
     // --- The camera -------------------------------------------------------------------------------
 
     /**
-     * The charger's camera under its identification, where Home Assistant offers one: the camera and its
-     * AI task as chosen in Home Assistant (read-only here), and with a camera chosen its frame, which
-     * opens the frame editor and is saved through `save_camera_frame`.
+     * The charger's camera under its identification, where Home Assistant offers one: the camera as
+     * chosen in Home Assistant (read-only here; its AI task is the Home Assistant card's alone), and with
+     * a camera chosen how its picture is cropped, which opens the frame editor and is saved through
+     * `save_camera_frame`. The privacy line goes under the last row.
      */
     private fun addCamera(body: LinearLayout, dash: Dashboard, record: HaPlanningSettings?) {
         val section = CameraSetup.section(dash, record) ?: return
@@ -493,7 +552,7 @@ internal class PairedSettingsCards(
             help = if (chosen == null) t(R.string.camera_help) else null)
         if (chosen == null) return
         valueRow(body, t(R.string.camera_frame_label),
-            t(if (section.frameDrawn) R.string.camera_frame_drawn else R.string.camera_frame_whole)) {
+            t(if (section.frameDrawn) R.string.camera_frame_cropped else R.string.camera_frame_whole), help = t(R.string.camera_help)) {
             openFrameEditor(chosen.frame, load = { done -> cameraCall(CameraCommands.Snapshot, PictureDecoding.SNAPSHOT_EDGE, done) }) { frame, done ->
                 cameraCall(CameraCommands.SaveFrame(frame), null) { outcome, _ ->
                     if (outcome is CameraCommands.Outcome.Framed) {
@@ -506,8 +565,6 @@ internal class PairedSettingsCards(
                 }
             }
         }
-        readRow(body, t(R.string.camera_ai_task_label), section.aiTaskName ?: t(R.string.camera_ai_task_default),
-            help = t(R.string.camera_help))
     }
 
     /**
@@ -592,7 +649,9 @@ internal class PairedSettingsCards(
         val summary = PairedOverview.site(site, dashboard?.summary?.site)
         // "Site · its name"; "Site" alone when it has none.
         val card = card(container, SettingsHeading.named(t(R.string.site_default_name), summary.name), R.drawable.ic_site)
-        card.body.addView(muted(tq(R.plurals.site_applies, summary.chargers, summary.chargers), top = 8, bottom = 4))
+        if (PairedOverview.saysChargers(summary.chargers)) {
+            card.body.addView(muted(tq(R.plurals.site_applies, summary.chargers, summary.chargers), top = 8, bottom = 4))
+        }
         summary.setup?.let { setup ->
             setup.mainFuseA?.let { readRow(card.body, t(R.string.site_main_fuse_label), t(R.string.site_main_fuse_value, ampsText(it))) }
             setup.measurementMode?.let { mode ->
@@ -640,7 +699,7 @@ internal class PairedSettingsCards(
     /** The charger's priority on its site: absent from an older Home Assistant, so then nothing is shown. */
     private fun addPriority(body: LinearLayout) {
         val priority = adoptedPriority ?: dashboard?.chargerPriority ?: return
-        valueRow(body, t(R.string.priority_label), priorityName(priority.value), help = t(R.string.priority_help),
+        valueRow(body, t(R.string.priority_label), priorityName(priority.value),
             onTap = if (priority.writable) ({
                 chooseOne(t(R.string.priority_label), priority.choices.map { priorityName(it) },
                     priority.choices.indexOf(priority.value), intro = t(R.string.priority_help)) { index, done ->
@@ -675,7 +734,7 @@ internal class PairedSettingsCards(
         val summary = PairedOverview.solar(site)
         val chargers = PairedOverview.site(site).chargers
         val card = card(container, t(R.string.section_solar), R.drawable.ic_solar)
-        card.body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), top = 8, bottom = 4))
+        if (PairedOverview.saysChargers(chargers)) card.body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), top = 8, bottom = 4))
         valueRow(card.body, t(R.string.site_solar_priority), priorityText(summary.priority), onTap = if (summary.editable) ({
             chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
                 SiteFacts.PRIORITIES.indexOf(site.solarPriority)) { index, done ->

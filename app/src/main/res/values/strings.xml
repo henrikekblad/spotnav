@@ -312,7 +312,6 @@
   <string name="site_error_not_permitted">Home Assistant does not allow this change from the app. Nothing changed.</string>
   <string name="site_error_unavailable">The site is not available right now. Nothing changed.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">This charger plans for it</string>
   <string name="vehicle_charge_level_label">Charge level</string>
   <string name="vehicle_charge_level_none">No reading</string>
   <string name="settings_vehicle_none">No vehicle is set up yet.</string>
@@ -503,21 +502,18 @@
   <string name="identify_source_location">Location</string>
   <string name="identify_source_none">None</string>
   <string name="identify_source_choose">Choose one</string>
-  <string name="identify_sources_help">Read only to tell which car is plugged in.</string>
   <string name="identify_by_camera">identified by the camera</string>
   <string name="camera_label">Camera</string>
   <string name="camera_none">No camera</string>
   <string name="camera_help">The pictures stay in Home Assistant and go only to the AI task you choose; a local model keeps them at home.</string>
-  <string name="camera_frame_label">Frame</string>
+  <string name="camera_frame_label">Crop parking spot</string>
   <string name="camera_frame_whole">Whole picture</string>
-  <string name="camera_frame_drawn">Drawn</string>
+  <string name="camera_frame_cropped">Cropped</string>
   <string name="camera_frame_intro">Drag the frame around the parking spot: move it, or drag a corner. Only what is inside is compared.</string>
   <string name="camera_frame_loading">Fetching a picture from the camera…</string>
   <string name="camera_frame_retry">Try again</string>
   <string name="camera_frame_preview">What is compared:</string>
   <string name="camera_frame_area">Frame around the parking spot.</string>
-  <string name="camera_ai_task_label">AI task</string>
-  <string name="camera_ai_task_default">Home Assistant\'s default</string>
   <string name="camera_error_no_camera">The camera is no longer there.</string>
   <string name="camera_error_no_picture">The camera gave no picture.</string>
   <string name="reference_label">Reference picture</string>

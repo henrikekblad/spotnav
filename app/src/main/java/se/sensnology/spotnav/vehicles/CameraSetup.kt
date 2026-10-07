@@ -12,22 +12,19 @@ import java.util.Locale
 
 /**
  * What Settings shows of the charger's camera for identification, decided from one dashboard and the
- * record, as the Home Assistant card does: the camera, and with one chosen its frame and its AI task;
+ * record: the camera, and with one chosen its frame (the AI task is the Home Assistant card's alone);
  * each of the charger's cars its reference pictures. A Home Assistant that offers no camera (no
  * `camera_identification` block) or does not state `identify_camera` shows none of it.
  */
 internal object CameraSetup {
     /**
-     * The charger's camera rows: the cameras to choose from, the one chosen (`null`: none) and its name,
-     * the AI tasks to choose from and the chosen one's name (`null`: Home Assistant's default), and
-     * whether a frame is drawn (else the whole picture is compared).
+     * The charger's camera rows: the cameras there are, the one chosen (`null`: none) and its name, and
+     * whether the picture is cropped (else the whole picture is compared).
      */
     data class Section(
         val cameras: List<CameraEntity>,
         val chosen: HaCameraSettings?,
         val cameraName: String?,
-        val aiTasks: List<CameraEntity>,
-        val aiTaskName: String?,
         val frameDrawn: Boolean
     )
 
@@ -39,8 +36,6 @@ internal object CameraSetup {
             cameras = block.cameras,
             chosen = chosen,
             cameraName = chosen?.let { camera -> block.cameras.firstOrNull { it.entityId == camera.cameraEntityId }?.name ?: camera.cameraEntityId },
-            aiTasks = block.aiTasks,
-            aiTaskName = chosen?.aiTaskEntityId?.let { id -> block.aiTasks.firstOrNull { it.entityId == id }?.name ?: id },
             frameDrawn = chosen != null && !CameraFrames.isWhole(chosen.frame)
         )
     }

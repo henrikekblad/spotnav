@@ -301,7 +301,6 @@
   <string name="site_error_not_permitted">Home Assistant tillader ikke denne ændring fra appen. Intet blev ændret.</string>
   <string name="site_error_unavailable">Anlægget er ikke tilgængeligt lige nu. Intet blev ændret.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">Denne oplader planlægger for det</string>
   <string name="vehicle_charge_level_label">Ladeniveau</string>
   <string name="vehicle_charge_level_none">Ingen aflæsning</string>
   <string name="settings_vehicle_none">Der er endnu ikke sat noget køretøj op.</string>
@@ -490,21 +489,18 @@
   <string name="identify_source_location">Position</string>
   <string name="identify_source_none">Ingen</string>
   <string name="identify_source_choose">Vælg en</string>
-  <string name="identify_sources_help">Læses kun for at se, hvilken bil der er tilsluttet.</string>
   <string name="identify_by_camera">identificeret via kamera</string>
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Intet kamera</string>
   <string name="camera_help">Billederne bliver i Home Assistant og sendes kun til den AI-opgave, du vælger; en lokal model holder dem hjemme.</string>
-  <string name="camera_frame_label">Ramme</string>
+  <string name="camera_frame_label">Beskær billede af ladepladsen</string>
   <string name="camera_frame_whole">Hele billedet</string>
-  <string name="camera_frame_drawn">Tegnet</string>
+  <string name="camera_frame_cropped">Beskåret</string>
   <string name="camera_frame_intro">Træk rammen omkring parkeringspladsen: flyt den, eller træk i et hjørne. Kun det indenfor sammenlignes.</string>
   <string name="camera_frame_loading">Henter et billede fra kameraet…</string>
   <string name="camera_frame_retry">Prøv igen</string>
   <string name="camera_frame_preview">Det her sammenlignes:</string>
   <string name="camera_frame_area">Ramme omkring parkeringspladsen.</string>
-  <string name="camera_ai_task_label">AI-opgave</string>
-  <string name="camera_ai_task_default">Home Assistants standard</string>
   <string name="camera_error_no_camera">Kameraet findes ikke længere.</string>
   <string name="camera_error_no_picture">Kameraet gav intet billede.</string>
   <string name="reference_label">Referencebillede</string>

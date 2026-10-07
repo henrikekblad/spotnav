@@ -301,7 +301,6 @@
   <string name="site_error_not_permitted">Home Assistant tillåter inte den här ändringen från appen. Inget ändrades.</string>
   <string name="site_error_unavailable">Anläggningen är inte tillgänglig just nu. Inget ändrades.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_planned_here">Laddaren planerar för det här fordonet</string>
   <string name="vehicle_charge_level_label">Laddnivå</string>
   <string name="vehicle_charge_level_none">Ingen avläsning</string>
   <string name="settings_vehicle_none">Inget fordon är inställt ännu.</string>
@@ -490,21 +489,18 @@
   <string name="identify_source_location">Position</string>
   <string name="identify_source_none">Ingen</string>
   <string name="identify_source_choose">Välj en</string>
-  <string name="identify_sources_help">Läses bara för att se vilken bil som är inkopplad.</string>
   <string name="identify_by_camera">identifierad via kamera</string>
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Ingen kamera</string>
   <string name="camera_help">Bilderna stannar i Home Assistant och skickas bara till AI-uppgiften du väljer; en lokal modell håller dem hemma.</string>
-  <string name="camera_frame_label">Ruta</string>
+  <string name="camera_frame_label">Beskär bild laddplats</string>
   <string name="camera_frame_whole">Hela bilden</string>
-  <string name="camera_frame_drawn">Ritad</string>
+  <string name="camera_frame_cropped">Beskuren</string>
   <string name="camera_frame_intro">Dra rutan runt parkeringsplatsen: flytta den eller dra i ett hörn. Bara det som är innanför jämförs.</string>
   <string name="camera_frame_loading">Hämtar en bild från kameran…</string>
   <string name="camera_frame_retry">Försök igen</string>
   <string name="camera_frame_preview">Det här jämförs:</string>
   <string name="camera_frame_area">Ruta runt parkeringsplatsen.</string>
-  <string name="camera_ai_task_label">AI-uppgift</string>
-  <string name="camera_ai_task_default">Home Assistants standard</string>
   <string name="camera_error_no_camera">Kameran finns inte längre.</string>
   <string name="camera_error_no_picture">Kameran gav ingen bild.</string>
   <string name="reference_label">Referensbild</string>
