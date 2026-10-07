@@ -289,7 +289,7 @@
   <string name="paired_save">Enregistrer</string>
   <string name="paired_value_unset">Non indiqué</string>
   <plurals name="site_applies">
-    <item quantity="one">S\'applique à la borne de cette installation.</item>
+    <item quantity="one">S\'applique à %1$d borne de cette installation.</item>
     <item quantity="many">S\'applique aux %1$d bornes de cette installation.</item>
     <item quantity="other">S\'applique aux %1$d bornes de cette installation.</item>
   </plurals>
