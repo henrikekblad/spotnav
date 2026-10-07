@@ -84,19 +84,21 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         // The driver choice, in the header row: a compact text toggle "kWh | Mål", the chosen one in the
         // accent colour and underlined. Each word keeps a 48 dp touch target but draws no box, so the
         // heading row stays as tall as its title. Only present when both modes can actually work.
-        fun option(label: String) = TextView(context).apply {
+        fun option(label: String, last: Boolean = false) = TextView(context).apply {
             text = label
             textSize = 15f
             isClickable = true
             isFocusable = true
-            gravity = Gravity.CENTER
             minimumHeight = dp(48)
             minimumWidth = dp(48)
-            setPadding(dp(6), 0, dp(6), 0)
+            // The last word ends where the rows' values end: its 48 dp reach lies to its left, not as
+            // padding past the edge.
+            gravity = if (last) Gravity.END or Gravity.CENTER_VERTICAL else Gravity.CENTER
+            setPadding(dp(6), 0, if (last) 0 else dp(6), 0)
         }
         val kwhOption = option(t(R.string.driver_kwh))
         // The short name, and only here: the slider it drives keeps the full label.
-        val targetOption = option(t(R.string.driver_target_soc))
+        val targetOption = option(t(R.string.driver_target_soc), last = true)
         val driverChoice = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.END or Gravity.CENTER_VERTICAL
