@@ -201,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Prøv igen om lidt</string>
   <string name="vehicle_card_reread_failed">Home Assistant kunne ikke læse bilen igen</string>
   <string name="card_planning_title">Planlægning</string>
+  <string name="card_planning_title_for">Planlægning for %1$s</string>
+  <string name="charge_by_label">Oplad efter</string>
+  <string name="charge_by_energy">Energi · kWh</string>
+  <string name="charge_by_target">Mål-SoC · %%</string>
   <string name="card_charging_plan_title">Ladeplan</string>
   <string name="popover_eyebrow_plan">PLANINDSTILLING</string>
   <string name="plan_card_departure_label">Afgang</string>
@@ -222,7 +226,6 @@
   <string name="widget_settings_none">Ingen widget er åben. Hver widget har sin egen indstilling; tryk på en widget på startskærmen for at ændre den.</string>
   <string name="nothing_to_charge">Intet at oplade</string>
   <string name="nothing_to_charge_note">Målet er på eller under bilens nuværende niveau. Hæv målet for at planlægge en opladning.</string>
-  <string name="driver_target_soc">Mål</string>
   <string name="charge_progress_vehicle_not_requesting_current">Opladningen blev startet, men køretøjet anmoder ikke om strøm. Kontrollér køretøjets opladningsindstillinger, eller tilslut kablet igen.</string>
   <string name="instance_pairing_open_ha">Åbn Home Assistant for at godkende</string>
   <string name="instance_pairing_open_failed">Ingen app på telefonen kunne åbne adressen.</string>

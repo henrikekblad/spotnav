@@ -40,6 +40,7 @@ import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.addMainHeader
+import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.haSession
 import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
@@ -510,6 +511,14 @@ internal class ChargingScreen(
         commitEdit(HaSettingsEdit.Driver(driver, target))
     }
 
+    /** One "Charge by" choice: the card follows at once, and the record is written like any other edit. */
+    private fun chooseChargeBy(chosen: PlanDriver) {
+        if (authorityApplying) return
+        planCard.setDriver(chosen)
+        val driver = if (chosen == PlanDriver.TARGET_SOC) HaSettingsDriver.TARGET_SOC else HaSettingsDriver.MANUAL_KWH
+        commitEdit(HaSettingsEdit.Driver(driver, targetIntentFor(driver)))
+    }
+
     /** Every control's listener, attached where the authority, the note and `render` all exist. */
     private fun wireControls() {
         // The paired vehicle picker: a choice is Home Assistant's own field, written through the
@@ -643,20 +652,18 @@ internal class ChargingScreen(
             planCard.refreshDepartureLabel()
             commitDeparture(checked, planCard.departureDate())
         }
-        planCard.kwhOption.setOnClickListener {
-            if (authorityApplying) return@setOnClickListener
-            planCard.setDriver(PlanDriver.KWH)
-            commitEdit(HaSettingsEdit.Driver(HaSettingsDriver.MANUAL_KWH, targetIntentFor(HaSettingsDriver.MANUAL_KWH)))
-        }
-        planCard.targetOption.setOnClickListener {
-            if (authorityApplying) return@setOnClickListener
-            planCard.setDriver(PlanDriver.TARGET_SOC)
-            commitEdit(
-                HaSettingsEdit.Driver(
-                    HaSettingsDriver.TARGET_SOC,
-                    targetIntentFor(HaSettingsDriver.TARGET_SOC)
-                )
-            )
+        // "Charge by": the generic one-value chooser, between energy and the target.
+        planCard.chargeBy.tap {
+            if (authorityApplying) return@tap
+            val choices = PlanCardFace.CHARGE_BY_CHOICES
+            chooseOne(
+                t(R.string.charge_by_label),
+                choices.map { chargeByText(it) },
+                choices.indexOf(planCard.effectiveDriver())
+            ) { index, done ->
+                done(null)
+                chooseChargeBy(choices[index])
+            }
         }
         // Attached here, where both cards and `render` exist.
         vehicleCard.attachFactsListener { vehicle, capacityKwh ->

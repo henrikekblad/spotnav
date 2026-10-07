@@ -209,10 +209,11 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 val target = targetSoc.progress.toDouble()
                 val locale = AppLanguageSettings.numberLocale(context)
                 // The level now and the car's own limit, as marks on the 0..100 track.
-                nowAt = facts.now?.let { (it / 100.0).toFloat().coerceIn(0f, 1f) }
+                nowAt = PairedTarget.nowMark(facts)
                 // "≈ nu": Home Assistant's estimate between readings says so.
                 nowWord.text = t(if (facts.estimated) R.string.target_mark_now_estimated else R.string.target_mark_now)
-                limitAt = facts.limit?.let { (TargetNeed.chargeCeiling(it) / 100.0).toFloat().coerceIn(0f, 1f) }
+                // The limit only below 100 %: the track's end already says the rest.
+                limitAt = PairedTarget.limitMark(facts)
                 // The car's minimum, no further than the target being chosen.
                 val floor = FloorSlider.segment(facts.minPercent, target)
                 floorBand.to = floor?.end

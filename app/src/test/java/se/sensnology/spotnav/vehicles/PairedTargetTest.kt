@@ -180,4 +180,26 @@ class PairedTargetTest {
         assertTrue(PairedTarget.showsNeed(TargetVerdict.TO_LIMIT))
         assertTrue(PairedTarget.showsNeed(TargetVerdict.NONE))
     }
+
+    // the marks on the slider
+
+    private fun facts(now: Double? = 40.0, limit: Double?) =
+        PairedTargetFacts(now, limit, 77.0, 0.9, null, null, other = false)
+
+    @Test fun theLimitIsMarkedAtTheWholePercentTheCarStopsAtWhenBelow100() {
+        assertEquals(0.8f, PairedTarget.limitMark(facts(limit = 80.6))!!, 1e-6f)
+        assertEquals(0.99f, PairedTarget.limitMark(facts(limit = 99.5))!!, 1e-6f)
+    }
+
+    @Test fun aLimitOf100OrNoneIsNotMarked() {
+        assertNull(PairedTarget.limitMark(facts(limit = 100.0)))
+        assertNull(PairedTarget.limitMark(facts(limit = 120.0)))
+        assertNull(PairedTarget.limitMark(facts(limit = null)))
+    }
+
+    @Test fun theLevelNowIsMarkedOnTheTrack() {
+        assertEquals(0.45f, PairedTarget.nowMark(facts(now = 45.0, limit = null))!!, 1e-6f)
+        assertEquals(1f, PairedTarget.nowMark(facts(now = 104.0, limit = null))!!, 1e-6f)
+        assertNull(PairedTarget.nowMark(facts(now = null, limit = null)))
+    }
 }

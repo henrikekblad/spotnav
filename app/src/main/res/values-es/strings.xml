@@ -209,6 +209,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Inténtalo de nuevo en breve</string>
   <string name="vehicle_card_reread_failed">Home Assistant no pudo releer este coche</string>
   <string name="card_planning_title">Planificación</string>
+  <string name="card_planning_title_for">Planificación para %1$s</string>
+  <string name="charge_by_label">Cargar por</string>
+  <string name="charge_by_energy">Energía · kWh</string>
+  <string name="charge_by_target">SoC objetivo · %%</string>
   <string name="card_charging_plan_title">Plan de carga</string>
   <string name="popover_eyebrow_plan">AJUSTE DEL PLAN</string>
   <string name="plan_card_departure_label">Salida</string>
@@ -227,7 +231,6 @@
   <string name="plan_card_periods_note">El plan se divide como máximo en este número de ventanas de carga.</string>
   <string name="nothing_to_charge">Nada que cargar</string>
   <string name="nothing_to_charge_note">El objetivo está en el nivel actual del coche o por debajo. Sube el objetivo para planificar una carga.</string>
-  <string name="driver_target_soc">Objetivo</string>
   <string name="instance_pairing_open_ha">Abrir Home Assistant para aprobar</string>
   <string name="instance_pairing_open_failed">Ninguna app de este teléfono pudo abrir esa dirección.</string>
   <string name="area_unavailable">La zona %1$s ya no está disponible en el servicio de precios</string>

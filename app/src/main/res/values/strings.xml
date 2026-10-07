@@ -214,6 +214,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Try again shortly</string>
   <string name="vehicle_card_reread_failed">Home Assistant could not re-read this car</string>
   <string name="card_planning_title">Planning</string>
+  <string name="card_planning_title_for">Planning for %1$s</string>
+  <string name="charge_by_label">Charge by</string>
+  <string name="charge_by_energy">Energy · kWh</string>
+  <string name="charge_by_target">Target SoC · %%</string>
   <string name="card_charging_plan_title">Charging plan</string>
   <string name="popover_eyebrow_plan">PLAN SETTING</string>
   <string name="plan_card_departure_label">Departure</string>
@@ -232,8 +236,6 @@
   <string name="plan_card_periods_note">The plan is split into at most this many charging windows.</string>
   <string name="nothing_to_charge">Nothing to charge</string>
   <string name="nothing_to_charge_note">The target is at or below the car\'s current level. Raise the target to plan a charge.</string>
-  <string name="driver_target_soc">Target</string>
-  <string name="driver_kwh" translatable="false">kWh</string>
   <string name="instance_pairing_open_ha">Open Home Assistant to approve</string>
   <string name="instance_pairing_open_failed">No app on this phone could open that address.</string>
   <string name="area_unavailable">Area %1$s is no longer available from the price service</string>
