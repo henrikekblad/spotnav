@@ -26,17 +26,20 @@ once. The app gets one webhook ID per charger, never a Home Assistant password o
 
 <img src="images/app-main.png" alt="Main screen paired with Home Assistant: the charger card with its status line, charging current and charge history, Start and Pause buttons; the vehicle card with charge level, limit and capacity; and the top of the planning card" width="360">
 &nbsp;
-<img src="images/app-planning.png" alt="Planning card with charging strategy, departure, charging periods and the energy slider with its full mark, above the charging plan card with the price chart, cost, energy, range and the planned period" width="360">
+<img src="images/app-planning.png" alt="Planning card titled with the car, with the Charge by row, charging strategy, departure and the energy slider with its full mark, above the charging plan card with the price chart, cost, energy, range and the planned period" width="360">
 
 With Home Assistant paired, the main screen is the charger as Home Assistant runs it:
 
 - **Charger**: what is happening and why, the connection, charging current and phases, this month's
-  charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule.
+  charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule. The status line
+  words what Home Assistant reports, for example *Charging to the minimum level (30 %)* while a car below its
+  minimum charge level charges, or, on Solar with no car plugged in, *Solar · surplus available (4.2 kW)* while
+  the sun would start a charge and *Solar · no car plugged in* otherwise.
 - **Vehicle**: charge level, charge limit, battery capacity, consumption and onboard charger, as the
   car reports them or as you set them.
 - **Planning**: titled with the car Home Assistant plans for (**Planning for EV6**; just **Planning** while no car
-  is known). **Charge by** chooses **Energy · kWh** or **Target SoC · %**, then come the strategy, departure, and the
-  energy to add or the target charge level. The slider
+  is known). **Charge by** is one row showing **Energy · kWh** or **Target SoC · %**; tap the value to switch. Then
+  come the strategy, departure, and the energy to add or the target charge level. The slider
   marks where the battery is full. How the charge is split into periods is a charger setting, **Settings →
   Charger → Charge periods**: **Automatic** (the default: the cheapest hours, split only where the saving is worth
   another start, each period at least 30 minutes) or **1 period** to **8 periods**, the most a plan may use.
@@ -46,8 +49,11 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
 
 With **Charge by** set to **Target SoC · %** instead of **Energy · kWh**, you set the charge level to reach; the app works out
 the energy from the car's charge level and battery. **Charge by** is there only when a target can work: when the car's
-charge level is known (with the phone's own plan, also its battery capacity). The slider marks the car's level now and its charge limit (only below 100 %), and, when the car
-has a minimum charge level, shades the track from 0 to it in a darker tone with **min 30 %** under it.
+charge level is known (with the phone's own plan, also its battery capacity). The car's level now, its charge limit
+and how old the reading is share one line above the slider. The slider marks the car's level now (**now**, or **≈ now**
+when estimated) and its charge limit (**limit**, only below 100 %), and, when the car has a minimum charge level,
+shades the track from 0 to it in a darker tone with **min 30 %** under it. A target that is already met, or one at
+the car's own limit, is said once instead of an energy of 0.0 kWh.
 
 ## Which car is plugged in?
 
@@ -86,7 +92,8 @@ In **Settings → Charger**, the same settings as in the card:
 
 <img src="images/app-camera-frame.png" alt="Crop parking spot: the camera's picture with the selection around the parking bay, and what is compared" width="360">
 
-In **Settings → Vehicle**, each car has its **Reference picture**: a **Day** and a **Night** slot. With the car
+In **Settings → Vehicle**, each car has its **Reference picture**, shown as two equal tiles, **Day** and **Night**,
+each cropped as it is compared; tap either to open the reference dialog. With the car
 parked at the charger, **Take day picture** (and, in the dark, **Take night picture** for the camera's infrared);
 over a picture the button is **Retake**, and **Delete** removes only that picture. **Close** closes the dialog.
 A car without a reference picture is never recognised by the camera.
@@ -135,7 +142,7 @@ Home Assistant's and are changed through it.
 
 **Widget**: settings of the widget the app was opened from.
 
-<img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and reference picture" width="420">
+<img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, charge limit, charge target, minimum charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and the day and night reference picture tiles" width="420">
 
 **Vehicle**: the car this charger plans for, and its properties. With two or more cars the card has a tab per car;
 each car has its own plug sensor, location and reference picture. **Charge target** is the car's own, the same at
@@ -149,9 +156,9 @@ the car reports; where Home Assistant can write it, tapping it opens a slider ov
 integration takes (50 to 100 % in steps of 10 on a Kia, for example; 1 to 100 % when Home Assistant does not say),
 the value shown large above it. Nothing is written unless you move the slider, and at most once a minute per car.
 
-<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the cars at this charger, identification and the camera" width="420">
+<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the charge periods, the cars at this charger, identification and the camera" width="420">
 
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)).
+**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)).
 
 <img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
 
