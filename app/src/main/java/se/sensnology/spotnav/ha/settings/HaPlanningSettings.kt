@@ -166,7 +166,10 @@ enum class NotificationEvent(val wire: String) {
     UNPLUGGED("unplugged"),
     PLAN_INSTALLED("plan_installed"),
 
-    /** "Which car is plugged in?": a Companion event only; this app shows the question itself. */
+    /**
+     * "Which car is plugged in?": the Companion app's question, and this phone's own where Home
+     * Assistant identifies cars (see [IdentifyNotice][se.sensnology.spotnav.notify.IdentifyNotice]).
+     */
     VEHICLE_IDENTIFY("vehicle_identify");
 
     companion object {
@@ -177,10 +180,25 @@ enum class NotificationEvent(val wire: String) {
         val DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE, VEHICLE_IDENTIFY)
 
         /** The events this phone's own checks can tell about. */
-        val LOCAL: List<NotificationEvent> = entries.filter { it != VEHICLE_IDENTIFY }
+        val LOCAL: List<NotificationEvent> = entries
 
-        /** This phone's own checks until a person changes them: what needs attention, and the end of a charge. */
-        val LOCAL_DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE)
+        /**
+         * This phone's own checks until a person changes them: what needs attention, the end of a
+         * charge, and the question which car is plugged in.
+         */
+        val LOCAL_DEFAULTS: List<NotificationEvent> = listOf(PLAN_STOPPED, PLAN_AT_RISK, CHARGE_COMPLETE, VEHICLE_IDENTIFY)
+
+        /** This phone's own events a charger's settings offer: the question only where Home Assistant [identifies]. */
+        fun localOffered(identifies: Boolean): List<NotificationEvent> =
+            LOCAL.filter { it != VEHICLE_IDENTIFY || identifies }
+
+        /**
+         * What a save of this phone's events chooses: the [ticked] ones of [offered], and an event not
+         * offered (the question, at a charger that does not identify) kept as it was in [previous].
+         */
+        fun localChoice(offered: List<NotificationEvent>, ticked: List<Boolean>, previous: Set<NotificationEvent>): Set<NotificationEvent> =
+            offered.filterIndexed { index, _ -> ticked.getOrElse(index) { false } }.toSet() +
+                previous.filter { it !in offered }.toSet()
 
         fun of(wire: Any?): NotificationEvent? = entries.firstOrNull { it.wire == wire }
 

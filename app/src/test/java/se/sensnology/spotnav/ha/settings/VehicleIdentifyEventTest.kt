@@ -9,7 +9,7 @@ import se.sensnology.spotnav.testing.FakeKeyValueStore
 
 /**
  * The notification event `vehicle_identify` ("Which car is plugged in?"): one of the Companion app's
- * events, on by default, and never one of this phone's own checks (the app shows the question itself).
+ * events, on by default, and one of this phone's own where Home Assistant identifies cars.
  */
 class VehicleIdentifyEventTest {
     @Test fun itIsACompanionEventOnByDefault() {
@@ -21,11 +21,37 @@ class VehicleIdentifyEventTest {
         )
     }
 
-    @Test fun thisPhonesOwnChecksNeverOfferIt() {
-        assertFalse(NotificationEvent.VEHICLE_IDENTIFY in NotificationEvent.LOCAL)
+    @Test fun thisPhonesOwnChecksOfferItOnByDefaultWhereHomeAssistantIdentifies() {
+        assertTrue(NotificationEvent.VEHICLE_IDENTIFY in NotificationEvent.LOCAL)
         assertEquals(
-            setOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.PLAN_AT_RISK, NotificationEvent.CHARGE_COMPLETE),
+            setOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.PLAN_AT_RISK, NotificationEvent.CHARGE_COMPLETE, NotificationEvent.VEHICLE_IDENTIFY),
             LocalNotificationStore(FakeKeyValueStore()).events
+        )
+        assertTrue(NotificationEvent.VEHICLE_IDENTIFY in NotificationEvent.localOffered(identifies = true))
+        assertFalse(NotificationEvent.VEHICLE_IDENTIFY in NotificationEvent.localOffered(identifies = false))
+        assertEquals(7, NotificationEvent.localOffered(identifies = false).size)
+    }
+
+    @Test fun aChoiceStoredBeforeTheQuestionExistedHasItOn() {
+        val kv = FakeKeyValueStore()
+        kv.putString("events", "[\"plan_stopped\"]")
+        assertEquals(setOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.VEHICLE_IDENTIFY), LocalNotificationStore(kv).events)
+        // A choice made since keeps it off.
+        val store = LocalNotificationStore(kv)
+        store.events = setOf(NotificationEvent.PLAN_STOPPED)
+        assertEquals(setOf(NotificationEvent.PLAN_STOPPED), store.events)
+    }
+
+    @Test fun aSaveWhereTheQuestionIsNotOfferedKeepsItAsItWas() {
+        val offered = NotificationEvent.localOffered(identifies = false)
+        val ticked = offered.map { it == NotificationEvent.PLAN_STOPPED }
+        assertEquals(
+            setOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.VEHICLE_IDENTIFY),
+            NotificationEvent.localChoice(offered, ticked, previous = setOf(NotificationEvent.VEHICLE_IDENTIFY, NotificationEvent.UNPLUGGED))
+        )
+        assertEquals(
+            setOf(NotificationEvent.PLAN_STOPPED),
+            NotificationEvent.localChoice(offered, ticked, previous = emptySet())
         )
     }
 }

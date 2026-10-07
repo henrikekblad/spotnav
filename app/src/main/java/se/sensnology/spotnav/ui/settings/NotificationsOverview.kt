@@ -37,11 +37,15 @@ internal object NotificationsOverview {
         return phones + JOIN + events(known, offered.size, texts)
     }
 
-    /** The SpotNav app's row: off, every 15 minutes or instant, with the events while it is on. */
-    fun spotNav(on: Boolean, events: Set<NotificationEvent>, instant: Boolean, texts: NotificationTexts): String {
+    /**
+     * The SpotNav app's row: off, every 15 minutes or instant, with the events while it is on, counted
+     * among those this charger offers (the question which car only where Home Assistant [identifies]).
+     */
+    fun spotNav(on: Boolean, events: Set<NotificationEvent>, instant: Boolean, texts: NotificationTexts, identifies: Boolean = false): String {
         if (!on) return texts.text(R.string.notify_app_off)
         val mode = texts.text(if (instant) R.string.notify_app_instant else R.string.notify_app_periodic)
-        return mode + JOIN + events(events.size, NotificationEvent.LOCAL.size, texts)
+        val offered = NotificationEvent.localOffered(identifies)
+        return mode + JOIN + events(events.count { it in offered }, offered.size, texts)
     }
 
     /** The dialog's help under the SpotNav switches follows the instant switch. */
