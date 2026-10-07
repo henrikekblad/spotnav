@@ -504,14 +504,19 @@
   <string name="camera_error_no_camera">Kameraet finnes ikke lenger.</string>
   <string name="camera_error_no_picture">Kameraet ga ikke noe bilde.</string>
   <string name="reference_label">Referansebilde</string>
+  <string name="reference_title">Referansebilde — %1$s</string>
   <string name="reference_none">Ingen</string>
   <string name="reference_day">Dag</string>
   <string name="reference_night">Natt</string>
-  <string name="reference_take">Ta referansebilde nå</string>
+  <string name="reference_empty">Ikke noe bilde</string>
+  <string name="reference_take_day">Ta dagbilde</string>
   <string name="reference_take_night">Ta nattbilde</string>
+  <string name="reference_retake">Ta på nytt</string>
+  <string name="reference_taking">Tar bildet…</string>
   <string name="reference_delete">Slett</string>
-  <string name="reference_intro">Ta bildet mens %1$s står parkert ved laderen. Ta nattbildet når det er mørkt.</string>
+  <string name="reference_intro">Ta bildet mens bilen står ved laderen.</string>
   <string name="reference_help">En bil uten referansebilde blir ikke gjenkjent av kameraet.</string>
+  <string name="reference_close">Lukk</string>
   <string name="vehicle_target_follows">Følger bilen til alle ladere</string>
   <string name="vehicle_error_target">Lademålet må være mellom 0 og 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

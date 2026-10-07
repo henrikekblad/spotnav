@@ -564,15 +564,16 @@ internal class PairedSettingsCards(
                 carName, pictures,
                 thumbnail = { picture, done -> thumbnail(vehicle.id, picture, done) },
                 takenAt = { CameraSetup.takenAt(it, ZoneId.systemDefault(), AppLanguageSettings.locale(context)) }
-            ) { kind, done ->
-                val request = if (kind == null) CameraCommands.DeleteReference(vehicle.id, null) else CameraCommands.TakeReference(vehicle.id, kind)
+            ) { kind, delete, done ->
+                val request = if (delete) CameraCommands.DeleteReference(vehicle.id, kind) else CameraCommands.TakeReference(vehicle.id, kind)
                 cameraCall(request, null) { outcome, _ ->
                     if (outcome is CameraCommands.Outcome.References) {
+                        // The editor stays open and shows the answer; the page behind it shows it too.
                         adoptedReferences[outcome.vehicleId] = outcome.pictures
-                        done(null)
+                        done(ReferenceAnswer.Pictures(outcome.pictures))
                         repaint()
                     } else {
-                        done(cameraFailureText((outcome as? CameraCommands.Outcome.Failed)?.code))
+                        done(ReferenceAnswer.Refused(cameraFailureText((outcome as? CameraCommands.Outcome.Failed)?.code)))
                     }
                 }
             }

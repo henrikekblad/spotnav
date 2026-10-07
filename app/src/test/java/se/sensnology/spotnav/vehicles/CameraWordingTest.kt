@@ -59,9 +59,16 @@ class CameraWordingTest {
 
     @Test fun aCarsReferencePictureIsWordedAsInTheCard() {
         expect("reference_label", "Reference picture", "Referensbild", "Referencebillede", "Referansebilde", "Vertailukuva")
-        expect("reference_take", "Take reference picture now", "Ta referensbild nu", "Tag referencebillede nu",
-            "Ta referansebilde nå", "Ota vertailukuva nyt")
+        expect("reference_title", "Reference picture — %1\$s", "Referensbild — %1\$s", "Referencebillede — %1\$s",
+            "Referansebilde — %1\$s", "Vertailukuva — %1\$s")
+        expect("reference_intro", "Take the picture while the car is parked at the charger.",
+            "Ta bilden när bilen står vid laddaren.", "Tag billedet, mens bilen holder ved laderen.",
+            "Ta bildet mens bilen står ved laderen.", "Ota kuva, kun auto on pysäköity laturille.")
+        expect("reference_empty", "No picture", "Ingen bild", "Intet billede", "Ikke noe bilde", "Ei kuvaa")
+        expect("reference_take_day", "Take day picture", "Ta dagbild", "Tag dagbillede", "Ta dagbilde", "Ota päiväkuva")
         expect("reference_take_night", "Take night picture", "Ta nattbild", "Tag natbillede", "Ta nattbilde", "Ota yökuva")
+        expect("reference_retake", "Retake", "Ta om", "Tag igen", "Ta på nytt", "Ota uudelleen")
+        expect("reference_close", "Close", "Stäng", "Luk", "Lukk", "Sulje")
         expect("reference_delete", "Delete", "Ta bort", "Slet", "Slett", "Poista")
         // A reference picture is cropped when it is compared, so none is ever out of date: no such line.
         for (directory in directories) {
@@ -69,9 +76,9 @@ class CameraWordingTest {
                 assertFalse("$directory still has $gone", xml(directory).contains("name=\"$gone\""))
             }
         }
-        // The car's name is filled in by the app: one placeholder in every language.
+        // The dialog's own button was "Take reference picture now"; each slot has its own button now.
         for (directory in directories) {
-            assertTrue(directory, text(directory, "reference_intro")!!.contains("%1\$s"))
+            assertFalse("$directory still has reference_take", xml(directory).contains("name=\"reference_take\""))
         }
     }
 }

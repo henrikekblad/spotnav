@@ -517,14 +517,19 @@
   <string name="camera_error_no_camera">The camera is no longer there.</string>
   <string name="camera_error_no_picture">The camera gave no picture.</string>
   <string name="reference_label">Reference picture</string>
+  <string name="reference_title">Reference picture — %1$s</string>
   <string name="reference_none">None</string>
   <string name="reference_day">Day</string>
   <string name="reference_night">Night</string>
-  <string name="reference_take">Take reference picture now</string>
+  <string name="reference_empty">No picture</string>
+  <string name="reference_take_day">Take day picture</string>
   <string name="reference_take_night">Take night picture</string>
+  <string name="reference_retake">Retake</string>
+  <string name="reference_taking">Taking the picture…</string>
   <string name="reference_delete">Delete</string>
-  <string name="reference_intro">Take the picture while %1$s is parked at the charger. Take the night picture when it is dark.</string>
+  <string name="reference_intro">Take the picture while the car is parked at the charger.</string>
   <string name="reference_help">A car without a reference picture is not recognised by the camera.</string>
+  <string name="reference_close">Close</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

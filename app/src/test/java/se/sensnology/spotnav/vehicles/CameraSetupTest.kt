@@ -7,6 +7,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.dashboard.CameraEntity
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.PictureKind
@@ -116,5 +117,24 @@ class CameraSetupTest {
             listOf(CameraEntity("camera.norr", "Norr"), CameraEntity("camera.entre", "Entré")),
             CameraSetup.section(dash, dash.settings)!!.cameras
         )
+    }
+
+    @Test fun aCarsReferenceEditorHasADayAndANightSlotEachWithItsOwnButton() {
+        val empty = CameraSetup.slots(emptyList())
+        assertEquals(listOf(PictureKind.DAY, PictureKind.NIGHT), empty.map { it.kind })
+        assertEquals(listOf(R.string.reference_take_day, R.string.reference_take_night), empty.map { it.takeLabel })
+        assertEquals(listOf(false, false), empty.map { it.canDelete })
+
+        val day = ReferencePicture(PictureKind.DAY, "2026-10-07T10:14:00+02:00", true)
+        val dayOnly = CameraSetup.slots(listOf(day))
+        assertEquals(day, dayOnly[0].picture)
+        assertEquals(listOf(R.string.reference_retake, R.string.reference_take_night), dayOnly.map { it.takeLabel })
+        assertEquals(listOf(true, false), dayOnly.map { it.canDelete })
+
+        val night = ReferencePicture(PictureKind.NIGHT, "2026-10-06T22:40:00+02:00", false)
+        val both = CameraSetup.slots(listOf(night, day))
+        assertEquals(listOf(day, night), both.map { it.picture })
+        assertEquals(listOf(R.string.reference_retake, R.string.reference_retake), both.map { it.takeLabel })
+        assertEquals(listOf(true, true), both.map { it.canDelete })
     }
 }

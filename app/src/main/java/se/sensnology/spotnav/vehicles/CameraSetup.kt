@@ -1,7 +1,9 @@
 package se.sensnology.spotnav.vehicles
 
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.dashboard.CameraEntity
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.PictureKind
 import se.sensnology.spotnav.ha.dashboard.ReferencePicture
 import se.sensnology.spotnav.ha.settings.HaCameraSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -49,6 +51,25 @@ internal object CameraSetup {
         record?.camera?.camera ?: return null
         return block.references[vehicleId]
     }
+
+    /**
+     * One slot of a car's reference editor, day or night: its picture (`null`: none yet), the words on
+     * its one button ("Take day picture", "Take night picture", or "Retake" over a picture), and whether
+     * it offers Delete, which removes that picture alone.
+     */
+    data class Slot(val kind: PictureKind, val picture: ReferencePicture?) {
+        val takeLabel: Int
+            get() = when {
+                picture != null -> R.string.reference_retake
+                kind == PictureKind.DAY -> R.string.reference_take_day
+                else -> R.string.reference_take_night
+            }
+        val canDelete: Boolean get() = picture != null
+    }
+
+    /** The editor's two slots, day then night, from the car's pictures. */
+    fun slots(pictures: List<ReferencePicture>): List<Slot> =
+        listOf(PictureKind.DAY, PictureKind.NIGHT).map { kind -> Slot(kind, pictures.firstOrNull { it.kind == kind }) }
 
     /** When a picture was taken, as its caption says it ("Wed 7 Oct 14:12"), in [zone]; as sent when unreadable. */
     fun takenAt(iso: String, zone: ZoneId, locale: Locale): String = try {

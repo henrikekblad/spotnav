@@ -504,14 +504,19 @@
   <string name="camera_error_no_camera">Kameraa ei enää ole.</string>
   <string name="camera_error_no_picture">Kamera ei antanut kuvaa.</string>
   <string name="reference_label">Vertailukuva</string>
+  <string name="reference_title">Vertailukuva — %1$s</string>
   <string name="reference_none">Ei kuvaa</string>
   <string name="reference_day">Päivä</string>
   <string name="reference_night">Yö</string>
-  <string name="reference_take">Ota vertailukuva nyt</string>
+  <string name="reference_empty">Ei kuvaa</string>
+  <string name="reference_take_day">Ota päiväkuva</string>
   <string name="reference_take_night">Ota yökuva</string>
+  <string name="reference_retake">Ota uudelleen</string>
+  <string name="reference_taking">Otetaan kuvaa…</string>
   <string name="reference_delete">Poista</string>
-  <string name="reference_intro">Ota kuva, kun %1$s on pysäköity laturille. Ota yökuva, kun on pimeää.</string>
+  <string name="reference_intro">Ota kuva, kun auto on pysäköity laturille.</string>
   <string name="reference_help">Kamera ei tunnista autoa, jolla ei ole vertailukuvaa.</string>
+  <string name="reference_close">Sulje</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
