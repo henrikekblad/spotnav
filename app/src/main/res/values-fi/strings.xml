@@ -16,9 +16,6 @@
   <string name="system">Järjestelmän oletus</string>
   <string name="light">Vaalea</string>
   <string name="dark">Tumma</string>
-  <string name="resolution">Tarkkuus</string>
-  <string name="quarter">15 minuuttia</string>
-  <string name="hour">Tuntikeskiarvo</string>
   <string name="vat">Lisää ALV %1$s %%</string>
   <string name="vat_zero">ALV (0 %% alueella %1$s)</string>
   <string name="tax">Lisää sähkövero</string>
@@ -75,7 +72,7 @@
   <string name="duration_hours_minutes">%1$d h %2$d min</string>
   <string name="charging_too_long">Lataus kestää noin %1$s. Vähennä energiaa, nosta virtaa tai poista lähtöaika käytöstä suunnitellaksesi usealle vuorokaudelle.</string>
   <string name="table_title">%1$s · %2$d minuutin hinnat · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Järjestelmän oletus</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
@@ -256,7 +253,6 @@
   <string name="authority_reason_transfer">ei siirtohintaa tai ehdotusta</string>
   <string name="authority_reason_departure">lähtöaika ei ole luettavissa</string>
   <string name="authority_reason_target">ei lataustavoitetta</string>
-  <string name="authority_reason_presentation">näyttötarkkuus ei kelpaa</string>
   <string name="authority_reason_rejected">arvo, jota laskenta ei hyväksy</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Halvin</string>

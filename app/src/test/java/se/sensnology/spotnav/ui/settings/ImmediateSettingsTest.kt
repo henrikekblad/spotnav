@@ -15,12 +15,12 @@ import java.util.Locale
 class ImmediateSettingsTest {
     private val stored = WidgetSettings(
         area = "SE4", vat = false, tax = false, transfer = false,
-        taxMinorUnit = 10.0, gridFeeMinorUnit = 20.0, intervalMinutes = 15, showChargingPlan = false
+        taxMinorUnit = 10.0, gridFeeMinorUnit = 20.0, showChargingPlan = false
     )
 
     private val draft = LocalSettingsDraft(
         area = "SE4", vat = false, tax = false, taxText = "10.0",
-        transfer = false, transferText = "20.0", intervalMinutes = 15, showChargingPlan = false
+        transfer = false, transferText = "20.0", showChargingPlan = false
     )
 
     @Test
@@ -33,11 +33,11 @@ class ImmediateSettingsTest {
     @Test
     fun eachUnpairedControlAppliesOnItsOwn() {
         val result = ImmediateSettings.apply(
-            stored, draft.copy(area = "NO1", vat = true, tax = true, transfer = true, intervalMinutes = 60, showChargingPlan = true),
+            stored, draft.copy(area = "NO1", vat = true, tax = true, transfer = true, showChargingPlan = true),
             paired = false
         )
         assertEquals(
-            stored.copy(area = "NO1", vat = true, tax = true, transfer = true, intervalMinutes = 60, showChargingPlan = true),
+            stored.copy(area = "NO1", vat = true, tax = true, transfer = true, showChargingPlan = true),
             result.settings
         )
     }
@@ -71,13 +71,13 @@ class ImmediateSettingsTest {
     }
 
     @Test
-    fun aPairedPhoneTakesOnlyItsOwnTwoFieldsFromTheDraft() {
+    fun aPairedPhoneTakesOnlyItsOwnFieldFromTheDraft() {
         val result = ImmediateSettings.apply(
             stored,
-            draft.copy(area = "NO1", vat = true, taxText = "abc", intervalMinutes = 60, showChargingPlan = true),
+            draft.copy(area = "NO1", vat = true, taxText = "abc", showChargingPlan = true),
             paired = true
         )
-        assertEquals(stored.copy(intervalMinutes = 60, showChargingPlan = true), result.settings)
+        assertEquals(stored.copy(showChargingPlan = true), result.settings)
         assertTrue(result.invalid.isEmpty())
     }
 

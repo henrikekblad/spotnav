@@ -197,19 +197,6 @@ internal object CostLabel {
         }
 }
 
-/** Which display intervals the settings screen offers. */
-internal object PresentationIntervals {
-    const val QUARTER_HOUR_MINUTES = 15
-    const val HOUR_MINUTES = 60
-
-    /** Every interval a widget may be set to, in the order the form offers them. */
-    val all: List<Int> = listOf(QUARTER_HOUR_MINUTES, HOUR_MINUTES)
-
-    /** Whether [minutes] may be shown for a day whose document carried [sourceResMinutes]. */
-    @Suppress("UNUSED_PARAMETER") // deliberate: see above, reading it is the bug
-    fun isAvailable(minutes: Int, sourceResMinutes: Int? = null): Boolean = minutes in all
-}
-
 /**
  * Whether the price controls may be edited: an unpaired phone owns its own settings and always may;
  * a paired one only when its authority allows a write (none before the first answer).

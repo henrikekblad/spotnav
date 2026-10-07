@@ -283,31 +283,6 @@ class SettingsAreaStateTest {
         }
     }
 
-    // both intervals, for every source resolution
-
-    @Test
-    fun theQuarterHourViewStaysAvailableForAnHourlySourceDay() {
-        // NO1's day document is published at res = 60, and the repository lays those positions out
-        // on the quarter-hour grid; the option that shows them must not be withdrawn because the
-        // *source* is coarse.
-        assertTrue(PresentationIntervals.isAvailable(PresentationIntervals.QUARTER_HOUR_MINUTES, sourceResMinutes = 60))
-        assertTrue(PresentationIntervals.isAvailable(PresentationIntervals.HOUR_MINUTES, sourceResMinutes = 60))
-        // An unknown resolution narrows nothing either.
-        assertTrue(PresentationIntervals.isAvailable(PresentationIntervals.QUARTER_HOUR_MINUTES, sourceResMinutes = null))
-    }
-
-    @Test
-    fun everyOfferedIntervalIsAvailableForEverySourceResolution() {
-        for (minutes in PresentationIntervals.all) {
-            for (source in listOf(null, 15, 60, 1440)) {
-                assertTrue("$minutes minutes vs source $source", PresentationIntervals.isAvailable(minutes, source))
-            }
-        }
-        assertEquals(listOf(15, 60), PresentationIntervals.all)
-        // A resolution the app has never offered is still not on offer:
-        assertFalse(PresentationIntervals.isAvailable(30, sourceResMinutes = 30))
-    }
-
     // fiscal suggestion states
 
     @Test

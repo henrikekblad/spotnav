@@ -16,9 +16,6 @@
   <string name="system">Systemstandard</string>
   <string name="light">Lyst</string>
   <string name="dark">Mørkt</string>
-  <string name="resolution">Opløsning</string>
-  <string name="quarter">15 minutter</string>
-  <string name="hour">Timegennemsnit</string>
   <string name="vat">Tilføj %1$s %% moms</string>
   <string name="vat_zero">Moms (0 %% i %1$s)</string>
   <string name="tax">Tilføj elafgift</string>
@@ -75,7 +72,7 @@
   <string name="duration_hours_minutes">%1$d t %2$d min</string>
   <string name="charging_too_long">Opladningen tager cirka %1$s. Reducer energimængden, øg strømmen eller deaktiver afgangstiden for at planlægge over flere døgn.</string>
   <string name="table_title">%1$s · %2$d-minutterspriser · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Systemstandard</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
@@ -256,7 +253,6 @@
   <string name="authority_reason_transfer">ingen netafgift eller forslag</string>
   <string name="authority_reason_departure">afgangstid kan ikke læses</string>
   <string name="authority_reason_target">intet lademål</string>
-  <string name="authority_reason_presentation">visningsopløsning kan ikke bruges</string>
   <string name="authority_reason_rejected">en værdi beregningen afviser</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Billigst</string>
