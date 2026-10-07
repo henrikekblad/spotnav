@@ -84,7 +84,7 @@ class NotificationsOverviewTest {
             "notify_push_toggle", "notify_push_help", "notify_phones_none", "notify_app_off",
             "notify_app_periodic", "notify_app_instant"
         )
-        for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi")) {
+        for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             val xml = listOf("src/main/res", "app/src/main/res").map { File(it, "$dir/strings.xml") }.first { it.exists() }.readText()
             for (name in names) assertTrue("$dir $name", xml.contains("<string name=\"$name\">"))
             assertTrue("$dir phones", xml.contains("<plurals name=\"notify_phones_count\">"))

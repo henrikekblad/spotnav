@@ -548,4 +548,15 @@ class HaStatusTextTest {
         assertEquals(say("en", "price_data_invalid"), HaStatusText.line(StatusLine("price_data_invalid", emptyMap()), format("en"), now))
         assertEquals("No charging plan could be calculated with the data available right now.", say("en", "something_new"))
     }
+
+    @Test fun theNewLanguagesNameWeekdaysInThePluralTheirSentencesTake() {
+        assertEquals("Sonntage", HaStatusText.weekdayPlural("de", 7.0))
+        assertEquals("Mittwoche", HaStatusText.weekdayPlural("de", 3.0))
+        assertEquals("zondagen", HaStatusText.weekdayPlural("nl", 7.0))
+        assertEquals("domingos", HaStatusText.weekdayPlural("es", 7.0))
+        assertEquals("lunes", HaStatusText.weekdayPlural("es", 1.0))
+        assertEquals("sábados", HaStatusText.weekdayPlural("es", 6.0))
+        assertEquals("dimanches", HaStatusText.weekdayPlural("fr", 7.0))
+        assertEquals(null, HaStatusText.weekdayPlural("fr", 8.0))
+    }
 }

@@ -6,7 +6,7 @@ PRICES
 - 15-minute prices or hourly averages, in the local currency.
 - Optional VAT, electricity tax and grid fee. Suggested tax values can be edited; check them against your own agreement.
 - Resizable widget, a local cache for network failures and automatic checks for tomorrow's prices.
-- Available in English, Swedish, Norwegian, Danish and Finnish.
+- Available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
 
 EV CHARGING PLANNER
 - Set single-phase or three-phase charging, current, energy to add, vehicle consumption, departure time and up to eight charging periods.

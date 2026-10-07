@@ -1,0 +1,28 @@
+SpotNav toont de spotprijzen voor stroom als widget op je startscherm en in een prijstabel met kleurcodes, en helpt je het laden van je elektrische auto te plannen op de goedkoopste uren.
+
+PRIJZEN
+- Vandaag en morgen in één 24-uursgrafiek, met het huidige interval, de laagste, hoogste en huidige prijs gemarkeerd.
+- Prijszones in de Noordse en Baltische landen, Duitsland en Nederland.
+- Kwartierprijzen of uurgemiddelden, in de lokale valuta.
+- Optioneel btw, energiebelasting en nettarief. Voorgestelde belastingwaarden zijn aan te passen; controleer ze met je eigen contract.
+- Schaalbare widget, een lokale cache bij netwerkstoringen en automatische controle op de prijzen van morgen.
+- Beschikbaar in het Engels, Zweeds, Noors, Deens, Fins, Duits, Nederlands, Spaans en Frans.
+
+LAADPLANNER VOOR ELEKTRISCHE AUTO'S
+- Stel eenfase- of driefaseladen in, de laadstroom, de energie die erbij moet, het verbruik van het voertuig, de vertrektijd en tot acht laadperiodes.
+- De app kiest de goedkoopste combinatie van kwartieren en toont kosten en bereik. De gekozen periodes worden in de widget gemarkeerd.
+- Plannen gebruiken alleen gepubliceerde prijzen. Als het laadvenster de prijzen van morgen nodig heeft voordat die bekend zijn (rond 13:00 CET), wacht de app daarop en koopt nu alleen wat niet tot het vertrek kan wachten. Laadverliezen en de laadcurve van het voertuig worden niet meegerekend.
+
+HOME ASSISTANT (OPTIONEEL)
+- Koppel de app via de SpotNav-integratie aan je Home Assistant om laadinstellingen vanaf je telefoon te bekijken en te wijzigen.
+- Laadsturing, planning op zon en hybride, en load balancing draaien in de SpotNav-integratie voor Home Assistant, die apart wordt geïnstalleerd. De app hoeft niet online te blijven om het schema te laten lopen.
+- De app krijgt één webhook-ID per laadpaal, nooit een wachtwoord of token van Home Assistant.
+- Alles behalve de Home Assistant-functies werkt zonder koppeling.
+
+GEGEVENS EN PRIVACY
+- De prijzen zijn day-aheadprijzen van ENTSO-E, gepubliceerd door de SpotNav-relay, met valuta omgerekend tegen wisselkoersen van de ECB. De getoonde prijs is een spotprijs; btw, belasting en kosten worden alleen toegevoegd als je dat inschakelt.
+- Geen account, geen advertenties, geen analytics. De ontwikkelaar ontvangt geen gegevens van de app.
+- De app vraagt prijzen op bij de relay (prijszone en datum) en praat, als hij gekoppeld is, alleen met je eigen Home Assistant.
+- Privacybeleid: https://spotnav.sensnology.se/privacy
+
+SpotNav is niet verbonden aan ENTSO-E, de ECB, Nord Pool, energieleveranciers of netbeheerders. Prijzen en laadberekeningen zijn alleen een richtlijn; controleer ze met je contract en factuur.

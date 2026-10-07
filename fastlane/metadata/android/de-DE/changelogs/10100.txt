@@ -1,0 +1,7 @@
+- Welches Auto ist angeschlossen? Gefragt in einer SpotNav-Benachrichtigung mit einer Schaltfläche pro Auto
+- Die Ladestationskarte zeigt das Auto, wie es erkannt wurde, und ⇄ Auto wechseln
+- Jedes Auto behält sein eigenes Ladeziel
+- Status: „Auto wird erkannt…“ und „Warten auf eine Antwort“
+- Kamera: Stellplatz zuschneiden, Referenzbilder für Tag und Nacht pro Auto
+- Kompakte Einstellungsseiten: eine Zeile pro Wert, Tabs für Ladestationen und Autos
+- Benötigt SpotNav für Home Assistant 1.13

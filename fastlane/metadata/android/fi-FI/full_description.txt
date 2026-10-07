@@ -6,7 +6,7 @@ HINNAT
 - 15 minuutin hinnat tai tuntikeskiarvot paikallisessa valuutassa.
 - Valinnainen arvonlisävero, sähkövero ja siirtomaksu. Ehdotettuja veroarvoja voi muokata; tarkista ne omasta sopimuksestasi.
 - Kokoa muuttava widget, paikallinen välimuisti verkkovikojen varalle ja huomisen hintojen automaattinen tarkistus.
-- Saatavilla suomeksi, ruotsiksi, norjaksi, tanskaksi ja englanniksi.
+- Saatavilla suomeksi, ruotsiksi, norjaksi, tanskaksi, englanniksi, saksaksi, hollanniksi, espanjaksi ja ranskaksi.
 
 SÄHKÖAUTON LATAUKSEN SUUNNITTELIJA
 - Valitse yksi- tai kolmivaihelataus, virta, ladattava energia, auton kulutus, lähtöaika ja enintään kahdeksan latausjaksoa.

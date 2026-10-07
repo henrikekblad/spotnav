@@ -10,7 +10,7 @@ class SettingsWordingTest {
         listOf("src/main/res", "app/src/main/res").map { File(it, "$directory/strings.xml") }.first { it.exists() }.readText()
 
     @Test fun noLanguageCarriesTheReadOnlyNotes() {
-        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi")) {
+        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             val strings = xml(directory)
             // Gone too: the planned car's line, what the sources are read for (the Home Assistant card's
             // alone) and the AI task (chosen in that card).

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Mode test</string>
+  <string name="test_mode_intro">Affichez les écrans qu\'une vraie borne ne peut pas produire, avec un Home Assistant simulé sur votre réseau. Vos propres bornes sont mises de côté tant que le mode test est actif, puis restaurées exactement comme elles étaient lorsque vous le quittez.</string>
+  <string name="test_mode_discover">Rechercher des serveurs simulés</string>
+  <string name="test_mode_discovering">Recherche de serveurs simulés…</string>
+  <string name="test_mode_none_found">Aucun serveur simulé n\'a répondu. Lancez tools/fake_ha.py ou saisissez son adresse ci-dessous.</string>
+  <string name="test_mode_found">Serveurs simulés trouvés : %1$d</string>
+  <string name="test_mode_manual_label">Adresse du serveur simulé</string>
+  <string name="test_mode_manual_fetch">Récupérer les scénarios</string>
+  <string name="test_mode_unreachable">Impossible de joindre %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s a répondu, mais ne propose aucun scénario.</string>
+  <string name="test_mode_enter">Activer le mode test</string>
+  <string name="test_mode_leave">Quitter le mode test</string>
+  <string name="test_mode_on">Le mode test est actif</string>
+  <string name="test_mode_off">Vos bornes sont de retour</string>
+  <string name="test_mode_nothing_to_restore">Rien à restaurer : aucun instantané trouvé</string>
+  <string name="test_mode_already_on">Le mode test est déjà actif</string>
+  <string name="test_mode_banner">MODE TEST – pas vos vraies bornes</string>
+  <string name="test_mode_not_a_mock">%1$s n\'est pas un serveur simulé avec lequel cette application peut communiquer. Utilisez HTTPS ou une adresse HTTP privée.</string>
+</resources>

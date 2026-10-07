@@ -6,7 +6,7 @@ PRISER
 - Kvartspriser eller timmedelvärden, i lokal valuta.
 - Valfri moms, energiskatt och nätavgift. Föreslagna skattevärden kan ändras; kontrollera dem mot ditt eget avtal.
 - Widget som går att ändra storlek på, lokal cache vid nätverksfel och automatisk kontroll av morgondagens priser.
-- Finns på svenska, norska, danska, finska och engelska.
+- Finns på svenska, norska, danska, finska, engelska, tyska, nederländska, spanska och franska.
 
 LADDPLANERARE FÖR ELBIL
 - Ställ in enfas- eller trefasladdning, ström, energi att ladda, bilens förbrukning, avresetid och upp till åtta laddperioder.

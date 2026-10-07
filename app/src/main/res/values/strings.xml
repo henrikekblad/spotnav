@@ -84,6 +84,10 @@
   <string name="language_norwegian">Norsk</string>
   <string name="language_danish">Dansk</string>
   <string name="language_finnish">Suomi</string>
+  <string name="language_german">Deutsch</string>
+  <string name="language_dutch">Nederlands</string>
+  <string name="language_spanish">Español</string>
+  <string name="language_french">Français</string>
   <string name="language_english">English</string>
   <string name="section_general">General</string>
   <string name="section_electricity_price">Electricity price</string>

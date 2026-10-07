@@ -1,0 +1,28 @@
+SpotNav zeigt Strom-Spotpreise als Widget auf dem Startbildschirm und in einer farbcodierten Preistabelle und hilft dir, das Laden deines Elektroautos in die günstigsten Stunden zu legen.
+
+PREISE
+- Heute und morgen in einem 24-Stunden-Diagramm, mit markiertem aktuellem Intervall, Minimum, Maximum und aktuellem Preis.
+- Preiszonen in den nordischen und baltischen Ländern, Deutschland und den Niederlanden.
+- 15-Minuten-Preise oder Stundenmittel in der Landeswährung.
+- Optional MwSt., Stromsteuer und Netzentgelt. Die vorgeschlagenen Steuerwerte sind änderbar; prüfe sie anhand deines eigenen Vertrags.
+- Widget mit anpassbarer Größe, lokaler Cache bei Netzwerkfehlern und automatische Prüfung auf die Preise für morgen.
+- Verfügbar auf Englisch, Schwedisch, Norwegisch, Dänisch, Finnisch, Deutsch, Niederländisch, Spanisch und Französisch.
+
+LADEPLANER FÜR ELEKTROAUTOS
+- Lege einphasiges oder dreiphasiges Laden, Ladestrom, zu ladende Energie, Verbrauch des Fahrzeugs, Abfahrtszeit und bis zu acht Ladeperioden fest.
+- Die App wählt die günstigste Kombination von Viertelstunden und zeigt Kosten und Reichweite. Die gewählten Perioden werden im Widget hervorgehoben.
+- Pläne nutzen nur veröffentlichte Preise. Braucht das Ladefenster die Preise für morgen, bevor sie da sind (gegen 13:00 MEZ), wartet die App darauf und kauft jetzt nur, was bis zur Abfahrt nicht warten kann. Ladeverluste und die Ladekurve des Fahrzeugs werden nicht berücksichtigt.
+
+HOME ASSISTANT (OPTIONAL)
+- Kopple die App über die SpotNav-Integration mit deinem Home Assistant, um Ladeeinstellungen vom Telefon aus zu sehen und zu ändern.
+- Ladesteuerung, Solar- und Hybrid-Planung sowie Lastmanagement laufen in der SpotNav-Integration für Home Assistant, die separat installiert wird. Die App muss nicht online bleiben, damit der Zeitplan läuft.
+- Die App erhält eine Webhook-ID pro Ladestation, nie ein Home-Assistant-Passwort oder -Token.
+- Alles außer den Home-Assistant-Funktionen funktioniert ohne Kopplung.
+
+DATEN UND DATENSCHUTZ
+- Die Preise sind Day-Ahead-Preise von ENTSO-E, veröffentlicht vom SpotNav-Relay, mit Währungen umgerechnet zu EZB-Wechselkursen. Der angezeigte Preis ist ein Spotpreis; MwSt., Steuern und Entgelte werden nur hinzugefügt, wenn du sie aktivierst.
+- Kein Konto, keine Werbung, keine Analyse. Der Entwickler erhält keine Daten aus der App.
+- Die App fragt Preise beim Relay ab (Preiszone und Datum) und spricht, wenn gekoppelt, nur mit deinem eigenen Home Assistant.
+- Datenschutzerklärung: https://spotnav.sensnology.se/privacy
+
+SpotNav steht in keiner Verbindung zu ENTSO-E, der EZB, Nord Pool, Stromanbietern oder Netzbetreibern. Preise und Ladeberechnungen dienen nur zur Orientierung; prüfe sie anhand deines Vertrags und deiner Rechnung.

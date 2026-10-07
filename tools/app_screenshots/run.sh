@@ -8,7 +8,7 @@
 # SpotNavDocs emulator from a wiped state, installs a debug build pointed at the relay stub, pairs it,
 # drives it and writes docs/images/app-*.png and the Play store set under fastlane/metadata/android.
 # --keep leaves Home Assistant and the emulator running (Ctrl-C ends them); --sv also writes Swedish
-# documentation pictures (docs/images/sv/); --langs limits the store languages (default: all five).
+# documentation pictures (docs/images/sv/); --langs limits the store languages (default: all nine).
 # With shot names only those are written.
 set -euo pipefail
 
@@ -30,7 +30,7 @@ HA_PORT=8129
 STUB_PORT=8130
 KEEP=0
 DOCS_LANGS=(en)
-LANGS=(en sv nb da fi)
+LANGS=(en sv nb da fi de nl es fr)
 SHOTS=()
 while [ $# -gt 0 ]; do
   case "$1" in

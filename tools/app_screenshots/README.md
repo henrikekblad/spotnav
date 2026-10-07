@@ -5,7 +5,7 @@ Takes the app's documentation pictures (`docs/images/app-*.png`) and the Google 
 throwaway Home Assistant that runs only on this machine. No phone, real Home Assistant, relay or account
 is involved.
 
-    tools/app_screenshots/run.sh                    # everything: docs in English, store set in five languages
+    tools/app_screenshots/run.sh                    # everything: docs in English, store set in nine languages
     tools/app_screenshots/run.sh --sv               # also Swedish docs pictures, in docs/images/sv/
     tools/app_screenshots/run.sh --langs "en sv"    # store set for these languages only
     tools/app_screenshots/run.sh app-main store-widget   # only the named pictures
@@ -14,7 +14,7 @@ is involved.
 Needs the Home Assistant repository next to this one (`../elpris-home-assistant`, or `HA_REPO=...`),
 `node` 22 or newer, `python3`, and the Android SDK in `~/Android/Sdk` (or `ANDROID_SDK_ROOT`) with the
 emulator and the `android-36` `google_apis_playstore` `x86_64` system image. A run takes about
-twenty minutes, most of it the five language passes.
+thirty-five minutes, most of it the nine language passes.
 
 ## What it does
 
@@ -67,8 +67,8 @@ Documentation (English; `--sv` adds `docs/images/sv/`): `app-standalone`, `app-p
 `app-reference-picture`, `app-history`, `app-identifying`, `app-identified`, `app-identify-question`.
 Whole screens lose the status and gesture bars; settings sections are cropped to their card.
 
-Store (each of en-US, sv-SE, nb-NO, da-DK, fi-FI, with the app in that language; whole 1080x2160
-screens): `1_main`, `2_plan`, `3_price_table`, `4_widget`, `5_settings`, `6_history`, `7_identify` (the question
+Store (each of en-US, sv-SE, nb-NO, da-DK, fi-FI, de-DE, nl-NL, es-ES, fr-FR, with the app in that
+language; whole 1080x2160 screens): `1_main`, `2_plan`, `3_price_table`, `4_widget`, `5_settings`, `6_history`, `7_identify` (the question
 which car is plugged in). A full run first
 removes the numbered pictures already in those folders, so a folder holds exactly one set.
 

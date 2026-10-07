@@ -419,7 +419,7 @@ class ChargingStrategyUiTest {
 
     @Test
     fun theStrategyCopyIsLocalizedInEveryLocaleAndNamesNoWireValue() {
-        val locales = listOf("values", "values-sv", "values-nb", "values-da", "values-fi")
+        val locales = listOf("values", "values-sv", "values-nb", "values-da", "values-fi", "values-de", "values-nl", "values-es", "values-fr")
         val keys = listOf(
             "strategy_title_cheapest", "strategy_title_solar", "strategy_title_hybrid",
             "strategy_field_label",

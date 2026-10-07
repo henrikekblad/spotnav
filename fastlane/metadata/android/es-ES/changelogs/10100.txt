@@ -1,0 +1,7 @@
+- ¿Qué coche está enchufado? Notificación de SpotNav con un botón por coche
+- La tarjeta del cargador muestra el coche, cómo se decidió y ⇄ Cambiar coche
+- Cada coche conserva su propio objetivo de carga
+- Estado: «Identificando el coche…» y «Esperando respuesta»
+- Cámara: recorta la plaza, imágenes de referencia de día y de noche por coche
+- Nuevas pantallas de ajustes compactas: una fila por valor, pestañas para cargadores y coches
+- Requiere SpotNav para Home Assistant 1.13

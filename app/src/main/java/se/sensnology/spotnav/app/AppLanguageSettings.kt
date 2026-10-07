@@ -18,7 +18,11 @@ object AppLanguageSettings {
         Choice("nb", R.string.language_norwegian),
         Choice("da", R.string.language_danish),
         Choice("fi", R.string.language_finnish),
-        Choice("en", R.string.language_english)
+        Choice("en", R.string.language_english),
+        Choice("de", R.string.language_german),
+        Choice("es", R.string.language_spanish),
+        Choice("fr", R.string.language_french),
+        Choice("nl", R.string.language_dutch)
     )
 
     fun selected(context: Context): String = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -32,12 +36,14 @@ object AppLanguageSettings {
         val selected = selected(context)
         if (selected != SYSTEM) return selected
         return when (context.resources.configuration.locales[0].language.lowercase()) {
-            "sv" -> "sv"; "no", "nb", "nn" -> "nb"; "da" -> "da"; "fi" -> "fi"; else -> "en"
+            "sv" -> "sv"; "no", "nb", "nn" -> "nb"; "da" -> "da"; "fi" -> "fi"
+            "de" -> "de"; "nl" -> "nl"; "es" -> "es"; "fr" -> "fr"; else -> "en"
         }
     }
 
     fun region(context: Context): String = when (selected(context)) {
         "sv" -> "SE"; "nb" -> "NO"; "da" -> "DK"; "fi" -> "FI"
+        "de" -> "DE"; "nl" -> "NL"; "es" -> "ES"; "fr" -> "FR"
         else -> context.resources.configuration.locales[0].country
     }
 

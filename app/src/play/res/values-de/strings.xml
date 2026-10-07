@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="store_action">Auf GitHub mitwirken</string>
+  <string name="store_action_unavailable">Kein Browser verfügbar, um die Quellcode-Seite zu öffnen</string>
+</resources>
