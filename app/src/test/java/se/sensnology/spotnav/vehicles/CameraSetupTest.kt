@@ -83,7 +83,6 @@ class CameraSetupTest {
             listOf(ReferencePicture(PictureKind.DAY, "2026-10-07T12:12:00+00:00", true)),
             CameraSetup.references(dash, dash.settings, "vehicle_ev6")
         )
-        assertFalse(CameraSetup.references(dash, dash.settings, "vehicle_ev6")!!.single().stale)
         assertEquals(emptyList<ReferencePicture>(), CameraSetup.references(dash, dash.settings, "vehicle_niro"))
         // A car that is not this charger's has no row.
         assertNull(CameraSetup.references(dash, dash.settings, "vehicle_other"))
@@ -116,19 +115,6 @@ class CameraSetupTest {
         assertEquals(
             listOf(CameraEntity("camera.norr", "Norr"), CameraEntity("camera.entre", "Entré")),
             CameraSetup.section(dash, dash.settings)!!.cameras
-        )
-    }
-
-    @Test fun aPictureTakenBeforeTheCropChangedIsNamedWithWhatToDo() {
-        val name = { kind: PictureKind -> if (kind == PictureKind.DAY) "Dagbild" else "Nattbild" }
-        val stale = "tagen innan beskärningen ändrades – ta en ny"
-        val day = ReferencePicture(PictureKind.DAY, "2026-10-07T12:12:00+00:00", true)
-        val night = ReferencePicture(PictureKind.NIGHT, "2026-10-06T22:40:00+00:00", false, stale = true)
-        assertNull(CameraSetup.staleLine(listOf(day), name, stale))
-        assertEquals("Nattbild: tagen innan beskärningen ändrades – ta en ny.", CameraSetup.staleLine(listOf(day, night), name, stale))
-        assertEquals(
-            "Dagbild: tagen innan beskärningen ändrades – ta en ny. Nattbild: tagen innan beskärningen ändrades – ta en ny.",
-            CameraSetup.staleLine(listOf(day.copy(stale = true), night), name, stale)
         )
     }
 }

@@ -63,11 +63,12 @@ class CameraWordingTest {
             "Ta referansebilde nå", "Ota vertailukuva nyt")
         expect("reference_take_night", "Take night picture", "Ta nattbild", "Tag natbillede", "Ta nattbilde", "Ota yökuva")
         expect("reference_delete", "Delete", "Ta bort", "Slet", "Slett", "Poista")
-        expect("reference_stale", "taken before the crop was changed – take a new one", "tagen innan beskärningen ändrades – ta en ny",
-            "taget før beskæringen blev ændret – tag et nyt", "tatt før beskjæringen ble endret – ta et nytt",
-            "otettu ennen rajauksen muutosta – ota uusi")
-        expect("reference_day_picture", "Day picture", "Dagbild", "Dagbillede", "Dagbilde", "Päiväkuva")
-        expect("reference_night_picture", "Night picture", "Nattbild", "Natbillede", "Nattbilde", "Yökuva")
+        // A reference picture is cropped when it is compared, so none is ever out of date: no such line.
+        for (directory in directories) {
+            for (gone in listOf("reference_stale", "reference_day_picture", "reference_night_picture")) {
+                assertFalse("$directory still has $gone", xml(directory).contains("name=\"$gone\""))
+            }
+        }
         // The car's name is filled in by the app: one placeholder in every language.
         for (directory in directories) {
             assertTrue(directory, text(directory, "reference_intro")!!.contains("%1\$s"))
