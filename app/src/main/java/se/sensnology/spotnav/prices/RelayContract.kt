@@ -418,7 +418,7 @@ internal object RelayDayPoints {
             val rowStart = base.plus((index * document.resMinutes).toLong(), ChronoUnit.MINUTES)
             for (step in 0 until perRow) {
                 val instant = rowStart.plus(step * STEP_MINUTES, ChronoUnit.MINUTES)
-                out.add(PricePoint(instant.atZone(zone).toOffsetDateTime(), euro * document.fxRate))
+                out.add(PricePoint(instant.atZone(zone).toOffsetDateTime(), euro * document.fxRate, document.resMinutes))
             }
         }
         return out

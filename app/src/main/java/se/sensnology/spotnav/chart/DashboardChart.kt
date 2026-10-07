@@ -67,9 +67,11 @@ internal object DashboardChart {
             val effective = interval.effectivePrice ?: return@flatMap emptyList()
             // A half-hour or an hour (Great Britain's 30-minute rows, an hourly market) is drawn as
             // its quarter-hours at one price, the grid the renderer and the local prices share.
+            // Each quarter remembers the published interval's length, so a graph draws it as published.
+            val minutes = publishedMinutes(interval)
             quarterStarts(interval).map { instant ->
                 val start = atZone(instant, zone)
-                PricePoint(start, effective / 100.0) to start.toLocalDate()
+                PricePoint(start, effective / 100.0, minutes) to start.toLocalDate()
             }
         }
         if (points.isEmpty()) return null
@@ -89,6 +91,12 @@ internal object DashboardChart {
         val minutes = java.time.Duration.between(interval.start.toInstant(), interval.end.toInstant()).toMinutes()
         if (minutes <= QUARTER_MINUTES || minutes % QUARTER_MINUTES != 0L) return listOf(interval.start)
         return (0 until minutes / QUARTER_MINUTES).map { interval.start.plusMinutes(it * QUARTER_MINUTES) }
+    }
+
+    /** One interval's published length in whole minutes; an empty or reversed one counts as a quarter-hour. */
+    private fun publishedMinutes(interval: DashboardPriceInterval): Int {
+        val minutes = java.time.Duration.between(interval.start.toInstant(), interval.end.toInstant()).toMinutes()
+        return if (minutes > 0L) minutes.toInt() else QUARTER_MINUTES.toInt()
     }
 
     private const val QUARTER_MINUTES = 15L
