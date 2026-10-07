@@ -13,6 +13,7 @@ import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.app.LauncherActivity
 import se.sensnology.spotnav.chart.DayRollover
 import se.sensnology.spotnav.ui.charging.LiveRefresh
+import se.sensnology.spotnav.notify.InAppQuestion
 import se.sensnology.spotnav.push.PushWakeListener
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
@@ -220,6 +221,7 @@ class WidgetConfigActivity : Activity() {
         if (resumedOnce) shell.onForeground?.invoke()
         resumedOnce = true
         foreground = true
+        InAppQuestion.foreground = true
         if (currentScreen == Screen.MAIN) { dayRollover.arm(); liveRefresh.arm() }
         // A push wake-up while the app is in view reads the charging screen's charger at once (the
         // re-read is armed only on that screen, so elsewhere it reads nothing).
@@ -245,6 +247,7 @@ class WidgetConfigActivity : Activity() {
 
     override fun onStop() {
         foreground = false
+        InAppQuestion.foreground = false
         PushWakeListener.set(null)
         dayRollover.cancel()
         liveRefresh.cancel()

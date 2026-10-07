@@ -45,7 +45,8 @@ internal object IdentifyNotice {
             ?.takeIf { VehicleIdentification.advertised(dashboard) && it.state == DashboardIdentification.State.ASKING }
             ?.takeIf { it.candidates.isNotEmpty() }
 
-    private fun key(block: DashboardIdentification): String = block.since ?: block.state.wire
+    /** A question's key: the plug-in it belongs to. */
+    fun key(block: DashboardIdentification): String = block.since ?: block.state.wire
 
     /**
      * What one read means for the question: [chosen] is whether this phone's event is on, [posted] the key
