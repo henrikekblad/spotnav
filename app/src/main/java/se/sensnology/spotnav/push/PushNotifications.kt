@@ -43,10 +43,12 @@ internal object PushNotifications {
             },
             local = {
                 val local = LocalNotificationStore.forContext(app)
+                val profiles = ChargerProfileStore.forContext(app).listProfiles().filter { it.configured }.map { it.localId }
                 PushRegistration.Local(
                     enabled = local.enabled,
-                    profiles = ChargerProfileStore.forContext(app).listProfiles().filter { it.configured }.map { it.localId },
-                    events = NotificationEvent.entries.filter { it in local.events }.map { it.wire }
+                    profiles = profiles,
+                    events = NotificationEvent.entries.filter { it in local.events }.map { it.wire },
+                    identifying = local.identifying(profiles)
                 )
             }
         )

@@ -22,13 +22,29 @@ internal class PushRegistration(
         fun delete()
     }
 
-    /** This phone's own notifications: on or off, the paired profiles, and the chosen events (wire ids). */
-    data class Local(val enabled: Boolean, val profiles: List<String>, val events: List<String>)
+    /**
+     * This phone's own notifications: on or off, the paired profiles, the chosen events (wire ids), and
+     * the profiles whose Home Assistant identifies cars: only those are given `vehicle_identify`, which
+     * one without identification refuses (and with it the whole registration).
+     */
+    data class Local(
+        val enabled: Boolean,
+        val profiles: List<String>,
+        val events: List<String>,
+        val identifying: Set<String> = emptySet()
+    ) {
+        fun eventsFor(localId: String): List<String> =
+            if (localId in identifying) events else events.filter { it != IDENTIFY_EVENT }
+    }
 
     /** What one profile's Home Assistant was given. */
     data class Sent(val ref: String, val events: List<String>)
 
     enum class Result { ON, OFF, NO_TOKEN, SERVER_OFF, RATE_LIMITED, FAILED }
+
+    private companion object {
+        const val IDENTIFY_EVENT = "vehicle_identify"
+    }
 
     /** Turn instant notifications on. Anything but [Result.ON] leaves them off. */
     @Synchronized
@@ -83,10 +99,10 @@ internal class PushRegistration(
     fun sync() {
         val local = local()
         val ref = store.pushRef?.takeIf { store.enabled && local.enabled }
-        val wanted = ref?.let { Sent(it, local.events) }
         // Profiles unpaired since: Home Assistant forgot the reference when the pairing went.
         (store.known - local.profiles.toSet()).forEach { store.remember(it, null) }
         for (localId in local.profiles) {
+            val wanted = ref?.let { Sent(it, local.eventsFor(localId)) }
             if (store.sent(localId) == wanted) continue
             val accepted = runCatching { homeAssistant(localId, wanted?.ref, wanted?.events.orEmpty()) }.getOrDefault(false)
             if (accepted) store.remember(localId, wanted)
