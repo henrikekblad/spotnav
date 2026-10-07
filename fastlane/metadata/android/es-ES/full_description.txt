@@ -4,7 +4,7 @@ PRECIOS
 - Hoy y mañana en un único gráfico de 24 horas, con el intervalo actual y los precios mínimo, máximo y actual marcados.
 - Zonas de precios de los países nórdicos y bálticos, Alemania y los Países Bajos.
 - Precios por cuarto de hora o medias horarias, en la moneda local.
-- IVA, impuesto eléctrico y peajes de red opcionales. Los valores de impuestos sugeridos se pueden editar; compruébalos con tu propio contrato.
+- IVA, impuesto sobre la electricidad y peaje de acceso opcionales. Los valores de impuestos sugeridos se pueden editar; compruébalos con tu propio contrato.
 - Widget redimensionable, caché local para fallos de red y comprobación automática de los precios de mañana.
 - Disponible en inglés, sueco, noruego, danés, finés, alemán, neerlandés, español y francés.
 
@@ -15,7 +15,7 @@ PLANIFICADOR DE CARGA
 
 HOME ASSISTANT (OPCIONAL)
 - Vincula la app con tu Home Assistant mediante la integración SpotNav para ver y cambiar los ajustes de carga desde el teléfono.
-- El control de la carga, la planificación solar e híbrida y el balanceo de carga funcionan en la integración SpotNav para Home Assistant, que se instala por separado. La app no necesita estar conectada para que se cumpla la programación.
+- El control de la carga, la planificación solar e híbrida y el equilibrado de carga funcionan en la integración SpotNav para Home Assistant, que se instala por separado. La app no necesita estar conectada para que se cumpla la programación.
 - La app recibe un ID de webhook por cargador, nunca una contraseña ni un token de Home Assistant.
 - Todo, salvo las funciones de Home Assistant, funciona sin vinculación.
 
