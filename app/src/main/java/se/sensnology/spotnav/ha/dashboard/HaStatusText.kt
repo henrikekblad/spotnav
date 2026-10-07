@@ -323,6 +323,7 @@ internal object HaStatusText {
             "need_limited_by_room", "filling_to_limit", "fill_room_unknown" ->
                 say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
+            "min_soc_charging" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 0.0, 0)))
             "remaining_need_estimated" -> say(
                 // Counted from the recorded charges, or kept from the meter's last reading.
                 if (p["basis"] == "sessions") "issue.needFromSessions" else key,
