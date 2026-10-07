@@ -1,0 +1,9 @@
+- Alin varaustaso autoittain: sen alla Home Assistant lataa heti
+- Latausjaksot: laturin asetus, oletuksena Automaattinen
+- Liukusäätimet lataustavoitteelle, alimmalle varaustasolle ja latausrajalle
+- Suunnittelukortissa auto, rivi Lataa perusteella ja merkit nyt, raja ja min
+- Aurinko ilman autoa näyttää ylijäämän kW:na
+- Vertailukuvat päivä- ja yöruutuina
+- Saksa, hollanti, espanja ja ranska
+- Tarkkuusasetus poistettu
+- Vaatii SpotNav for Home Assistant 1.14:n

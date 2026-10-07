@@ -1,0 +1,9 @@
+- Nivel de carga mínimo por coche: por debajo, carga inmediata
+- Periodos de carga: ajuste del cargador, Automático por defecto
+- Deslizadores para objetivo de carga, nivel de carga mínimo y límite de carga
+- Planificación con el coche, la fila Cargar por y marcas ahora, límite, mín
+- Solar sin coche muestra el excedente solar en kW
+- Imágenes de referencia de día y de noche
+- Alemán, neerlandés, español y francés
+- Ajuste de resolución eliminado
+- Requiere SpotNav para Home Assistant 1.14

@@ -1,0 +1,9 @@
+- Minimum charge level per car: below it, Home Assistant charges at once
+- Charge periods: a charger setting, Automatic by default
+- Sliders for charge target, minimum charge level and charge limit
+- Planning card named after the car, with a Charge by row and now, limit and min marks
+- Solar with no car shows the surplus in kW
+- Reference pictures as day and night tiles
+- German, Dutch, Spanish and French
+- Resolution setting removed
+- Needs SpotNav for Home Assistant 1.14

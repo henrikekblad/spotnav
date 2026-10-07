@@ -1,0 +1,9 @@
+- Lägsta laddnivå per bil: under den laddar Home Assistant direkt
+- Laddperioder: en laddarinställning, Automatiskt som standard
+- Reglage för laddmål, lägsta laddnivå och laddgräns
+- Planeringskortet visar bilen, raden Ladda efter och markeringar för nu, gräns och min
+- Sol utan bil visar överskottet i kW
+- Referensbilder som rutor för dag och natt
+- Tyska, nederländska, spanska och franska
+- Inställningen för upplösning är borttagen
+- Kräver SpotNav för Home Assistant 1.14
