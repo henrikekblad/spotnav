@@ -4,7 +4,7 @@ PRIX
 - Aujourd'hui et demain sur un seul graphique de 24 heures, avec l'intervalle en cours et les prix minimum, maximum et actuel mis en évidence.
 - Zones de prix des pays nordiques et baltes, de l'Allemagne et des Pays-Bas.
 - Prix par quart d'heure ou moyennes horaires, dans la devise locale.
-- TVA, taxe sur l'électricité et frais d'acheminement en option. Les valeurs de taxe suggérées sont modifiables ; vérifiez-les par rapport à votre propre contrat.
+- TVA, taxe sur l'électricité et frais de réseau en option. Les valeurs de taxe suggérées sont modifiables ; vérifiez-les par rapport à votre propre contrat.
 - Widget redimensionnable, cache local en cas de panne réseau et vérification automatique des prix de demain.
 - Disponible en anglais, suédois, norvégien, danois, finnois, allemand, néerlandais, espagnol et français.
 
