@@ -15,12 +15,6 @@ data class DepartureIntent(val enabled: Boolean, val time: LocalTime)
 data class PlanningInputs(
     /** Which price area's market this plan is for. */
     val areaId: String,
-    /**
-     * The presentation resolution the price series is aggregated to: 15 or 60 minutes. It is not the
-     * source's resolution: every source (15, 30 or 60 minutes) is laid out on the quarter-hour grid
-     * first, so a 30-minute area (Great Britain) shows each half-hour as two equal quarters at 15.
-     */
-    val intervalMinutes: Int,
     /** VAT: multiplied in last, by its own effective percentage. */
     val vat: FiscalInput,
     /** Tax, added in minor units. */
@@ -43,7 +37,6 @@ data class PlanningInputs(
 ) {
     init {
         require(areaId.isNotBlank()) { "a plan needs an area" }
-        require(intervalMinutes == 15 || intervalMinutes == 60) { "intervalMinutes must be 15 or 60" }
         require(phases == 1 || phases == 3) { "phases must be 1 or 3" }
         require(amps >= 1) { "amps must be a positive whole number of amperes" }
         require(requestedEnergyKwh.isFinite() && requestedEnergyKwh > 0.0) {
@@ -63,7 +56,4 @@ data class PlanningInputs(
     /** One relay price into what a plan and a table show. */
     fun apply(localMajorPerKwh: Double): Double =
         FiscalArithmetic.apply(localMajorPerKwh, vat = vat, tax = tax, transfer = transfer)
-
-    /** Whether the price series is aggregated to whole hours for display. */
-    val hourly: Boolean get() = intervalMinutes == 60
 }

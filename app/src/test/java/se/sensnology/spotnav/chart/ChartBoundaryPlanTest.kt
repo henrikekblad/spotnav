@@ -20,22 +20,21 @@ class ChartBoundaryPlanTest {
         PriceMarkets.replace(listOf(se4))
     }
 
-    private fun market(intervalMinutes: Int) =
-        ChartMarket.of(LocalPlanningInputs.of(WidgetSettings(area = "SE4", intervalMinutes = intervalMinutes)))
+    private fun market() = ChartMarket.of(LocalPlanningInputs.of(WidgetSettings(area = "SE4")))
 
     private fun at(time: String) = OffsetDateTime.parse(time)
 
-    private fun day(from: String, hours: Int) = (0 until hours * 4).map { index ->
-        PricePoint(at(from).plusMinutes(index * 15L), 1.0)
+    private fun day(from: String, hours: Int, minutes: Int) = (0 until hours * 4).map { index ->
+        PricePoint(at(from).plusMinutes(index * 15L), 1.0, minutes)
     }
 
-    private fun result(from: String = "2026-09-20T00:00:00+02:00", hours: Int = 24) =
-        PriceResult(day(from, hours), emptyList(), 0L)
+    private fun result(from: String = "2026-09-20T00:00:00+02:00", hours: Int = 24, minutes: Int = 15) =
+        PriceResult(day(from, hours, minutes), emptyList(), 0L)
 
     @Test
     fun theQuarterHourBoundaryIsTheEndOfTheContainingInterval() {
         val now = at("2026-09-20T12:22:00+02:00")
-        val need = ChartBoundaryNeed(market(15), result())
+        val need = ChartBoundaryNeed(market(), result())
 
         val action = ChartBoundaryPlan.action(now, listOf(need))
 
@@ -49,7 +48,7 @@ class ChartBoundaryPlanTest {
     @Test
     fun theHourlyBoundaryIsTheEndOfTheHourRatherThanTheQuarter() {
         val now = at("2026-09-20T12:22:00+02:00")
-        val need = ChartBoundaryNeed(market(60), result())
+        val need = ChartBoundaryNeed(market(), result(minutes = 60))
 
         val action = ChartBoundaryPlan.action(now, listOf(need))
 
@@ -61,12 +60,26 @@ class ChartBoundaryPlanTest {
     }
 
     @Test
+    fun theHalfHourBoundaryIsTheEndOfTheHalfHour() {
+        val now = at("2026-09-20T12:22:00+02:00")
+        val need = ChartBoundaryNeed(market(), result(minutes = 30))
+
+        val action = ChartBoundaryPlan.action(now, listOf(need))
+
+        assertEquals(
+            "eight minutes to the end of the 12:00 half-hour",
+            now.plusMinutes(8).toInstant().toEpochMilli(),
+            (action as ChartBoundaryAction.Arm).atMillis
+        )
+    }
+
+    @Test
     fun oneAppointmentServesEveryWidgetAtTheEarliestBoundary() {
         val now = at("2026-09-20T12:22:00+02:00")
         val needs = listOf(
-            ChartBoundaryNeed(market(60), result()),
-            ChartBoundaryNeed(market(15), result()),
-            ChartBoundaryNeed(market(15), result())
+            ChartBoundaryNeed(market(), result()),
+            ChartBoundaryNeed(market(), result()),
+            ChartBoundaryNeed(market(), result())
         )
 
         val action = ChartBoundaryPlan.action(now, needs)
@@ -83,8 +96,8 @@ class ChartBoundaryPlanTest {
     fun noCurrentIntervalAnywhereMeansNoAppointment() {
         val now = at("2026-09-20T12:22:00+02:00")
         val needs = listOf(
-            ChartBoundaryNeed(market(15), result(hours = 6)),
-            ChartBoundaryNeed(market(15), PriceResult(emptyList(), emptyList(), 0L))
+            ChartBoundaryNeed(market(), result(hours = 6)),
+            ChartBoundaryNeed(market(), PriceResult(emptyList(), emptyList(), 0L))
         )
 
         assertEquals(ChartBoundaryAction.Cancel, ChartBoundaryPlan.action(now, needs))

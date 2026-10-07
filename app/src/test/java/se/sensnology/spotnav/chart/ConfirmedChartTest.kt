@@ -9,7 +9,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.PriceRequestKey
 import se.sensnology.spotnav.ha.authority.RemotePlan
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
@@ -71,7 +70,7 @@ class ConfirmedChartTest {
 
     /** The external plan the *planner* would produce for [record], for the tests that need one. */
     private fun externalInputs(record: HaPlanningSettings): PlanningInputs =
-        SettingsFixtures.localInputs(record, listOf(se4), HaPresentation.QUARTER_HOUR)
+        SettingsFixtures.localInputs(record, listOf(se4))
 
     /** A day of quarter hours on a fixed date: the real planner finds nothing in a past day. */
     private fun prices(): PriceResult {
@@ -104,7 +103,7 @@ class ConfirmedChartTest {
     )
 
     private fun market(record: HaPlanningSettings): ChartMarket =
-        (ChartMarket.from(record, record.areaId!!, 15, se4) as ChartMarketBuild.Ready).market
+        (ChartMarket.from(record, record.areaId!!, se4) as ChartMarketBuild.Ready).market
 
 
     @Test

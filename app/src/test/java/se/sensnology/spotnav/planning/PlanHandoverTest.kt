@@ -51,7 +51,6 @@ class PlanHandoverTest {
         // Every field the planner is a function of.
         val changed = listOf(
             "area" to inputs(settings).copy(areaId = "NO1"),
-            "interval" to inputs(settings).copy(intervalMinutes = 60),
             "energy" to inputs(settings).copy(requestedEnergyKwh = 40.0),
             "amps" to inputs(settings).copy(amps = 16),
             "phases" to inputs(settings).copy(phases = 1),

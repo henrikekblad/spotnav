@@ -17,6 +17,7 @@ import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.planning.LocalPlanningInputs
 import se.sensnology.spotnav.prices.ChargeCoverage
+import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceTableCell
@@ -50,7 +51,6 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
             authority = authorityController?.authority,
             localArea = stored.area,
             localInputs = LocalPlanningInputs.ofOrNull(stored),
-            intervalMinutes = stored.intervalMinutes,
             profileId = stored.chargerProfileId,
             generation = generation,
             catalogue = PriceMarkets.all
@@ -67,7 +67,11 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
                 content.removeAllViews()
                 val market = PriceMarkets.find(subject.areaId)
                 val unit = market?.appliedPriceUnit.orEmpty()
-                content.addView(TextView(context).apply { text = t(R.string.table_title, subject.areaId, subject.intervalMinutes, unit); textSize = 19f; setTextColor(dark); setPadding(0, dp(8), 0, dp(12)) })
+                // The title names the published interval of the prices shown, as the rows are drawn.
+                val minutes = PriceAggregation.aggregate(result.today.ifEmpty { result.tomorrow }).firstOrNull()?.minutes
+                val title = minutes?.let { t(R.string.table_title, subject.areaId, it, unit) }
+                    ?: listOf(subject.areaId, unit).filter { it.isNotEmpty() }.joinToString(" · ")
+                content.addView(TextView(context).apply { text = title; textSize = 19f; setTextColor(dark); setPadding(0, dp(8), 0, dp(12)) })
                 val tableHeader = addTableHeader()
                 scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
                     val offset = (scrollY - tableHeader.top).coerceAtLeast(0)

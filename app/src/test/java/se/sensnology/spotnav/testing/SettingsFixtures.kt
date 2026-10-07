@@ -2,7 +2,6 @@ package se.sensnology.spotnav.testing
 
 import org.json.JSONArray
 import org.json.JSONObject
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.settings.HaFiscalValue
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -132,11 +131,11 @@ internal object SettingsFixtures {
     }
 
     /** Synthetic local-plan fixture only; never a production adaptation of HA ownership. */
-    fun localInputs(record: HaPlanningSettings, catalogue: List<PriceMarket>, presentation: HaPresentation): PlanningInputs {
+    fun localInputs(record: HaPlanningSettings, catalogue: List<PriceMarket>): PlanningInputs {
         val market = catalogue.first { it.id == record.areaId }
         val row = record.overrides.firstOrNull { it.areaId == record.areaId }
         return PlanningInputs(
-            areaId = market.id, intervalMinutes = presentation.intervalMinutes,
+            areaId = market.id,
             vat = FiscalResolution.component(row?.vat ?: HaFiscalValue.OFF, market.vatPercent).input,
             tax = FiscalResolution.component(row?.tax ?: HaFiscalValue.OFF, market.suggestedTax).input,
             transfer = FiscalResolution.component(row?.transfer ?: HaFiscalValue.OFF, market.suggestedGridFee).input,

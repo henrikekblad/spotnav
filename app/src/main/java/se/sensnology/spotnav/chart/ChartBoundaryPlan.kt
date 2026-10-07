@@ -33,7 +33,7 @@ internal object ChartBoundaryPlan {
      */
     fun action(now: OffsetDateTime, needs: List<ChartBoundaryNeed>): ChartBoundaryAction {
         val delay = needs.mapNotNull { need ->
-            ChartNow.untilNextIntervalMillis(need.market, need.result, now)
+            ChartNow.untilNextIntervalMillis(need.result, now)
         }.minOrNull() ?: return ChartBoundaryAction.Cancel
         return ChartBoundaryAction.Arm(now.toInstant().toEpochMilli() + delay)
     }

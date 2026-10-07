@@ -15,13 +15,12 @@ import se.sensnology.spotnav.widget.WidgetSettings
 /** What a price load and an authority answer belong to. */
 class AuthorityRefreshTest {
     private val catalogue = listOf(RelayFixtures.se4)
-    private val presentation = HaPresentation.QUARTER_HOUR
     private val written = SettingsFixtures.parsed(revision = 4, areaId = "SE4")
     private val autoRecord = SettingsFixtures.parsed(revision = 6, areaId = "SE4")
     private val localInputs = LocalPlanningInputs.of(WidgetSettings(area = "NO1"))
 
     private fun adapted(record: HaPlanningSettings): HaPlanningInputs =
-        HaPlanningAdapter.of(record, catalogue, presentation)
+        HaPlanningAdapter.of(record, catalogue)
 
     private fun state(outcome: SettingsAuthorityCoordinator.Outcome): VisibleAuthority =
         (VisibleAuthorityResolver.resolve(outcome, localInputs, null) as AuthorityResolution.State).authority

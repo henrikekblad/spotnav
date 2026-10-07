@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.chart
 
+import se.sensnology.spotnav.prices.PriceInterval
 import java.time.OffsetDateTime
 import kotlin.math.max
 
@@ -47,16 +48,17 @@ internal object ChartMarks {
     fun tomorrowRadius(height: Int, scale: Float): Float = max(3.2f * scale, height * .0052f)
 
     /**
-     * The one geometry for one mark of [market]: a circle for a quarter-hour point, a stroke through
-     * the middle of its hour for an hourly interval. Never depends on currentness.
+     * The one geometry for one mark of a published interval of [minutes]: a circle for a quarter-hour
+     * point, a stroke through the middle of a longer interval, as long as the interval is (a half-hour
+     * is half an hour's stroke). Never depends on currentness.
      */
-    fun geometry(market: ChartMarket, radius: Float, hourWidth: Float): ChartMark =
-        if (market.hourly) {
+    fun geometry(minutes: Int, radius: Float, hourWidth: Float): ChartMark =
+        if (minutes > QUARTER_MINUTES) {
             ChartMark(
                 kind = ChartMarkKind.SEGMENT,
                 radius = radius,
                 thickness = radius * 1.35f,
-                halfLength = hourWidth * .39f
+                halfLength = hourWidth * .39f * minutes / 60f
             )
         } else {
             ChartMark(kind = ChartMarkKind.POINT, radius = radius, thickness = radius * 1.35f, halfLength = 0f)
@@ -67,8 +69,7 @@ internal object ChartMarks {
      * day's mean, and only the alpha from the current interval's position.
      */
     fun plan(
-        market: ChartMarket,
-        values: List<Pair<OffsetDateTime, Double>>,
+        values: List<PriceInterval>,
         radius: Float,
         hourWidth: Float,
         nowMinute: Float?,
@@ -76,11 +77,11 @@ internal object ChartMarks {
         cheap: Int,
         expensive: Int
     ): List<ChartMarkDraw> {
-        val mark = geometry(market, radius, hourWidth)
-        return values.map { (start, value) ->
-            val minute = ChartNow.markMinute(market, start)
+        return values.map { interval ->
+            val (start, value, minutes) = interval
+            val minute = ChartNow.markMinute(interval)
             ChartMarkDraw(
-                mark = mark,
+                mark = geometry(minutes, radius, hourWidth),
                 start = start,
                 minute = minute,
                 value = value,
@@ -93,4 +94,6 @@ internal object ChartMarks {
     /** A mark up to and including the current interval, and the softer one after it. */
     const val MARK_ALPHA: Int = 245
     const val FUTURE_ALPHA: Int = 205
+
+    private const val QUARTER_MINUTES = 15
 }

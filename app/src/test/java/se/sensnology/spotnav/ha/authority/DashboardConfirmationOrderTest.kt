@@ -34,7 +34,6 @@ class DashboardConfirmationOrderTest {
         targetSocPercent = 80
     )
     private val catalogue = listOf(RelayFixtures.se4, RelayFixtures.no1)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     /** The widget's own record: */
     private val local = WidgetSettings(
@@ -101,8 +100,7 @@ class DashboardConfirmationOrderTest {
             screenGeneration = generation,
             coordinator = coordinator,
             cache = cache,
-            catalogue = { catalogue },
-            presentation = { presentation }
+            catalogue = { catalogue }
         )
         built = controller
         controller.captureLocal(local.area, LocalPlanningInputs.ofOrNull(local))

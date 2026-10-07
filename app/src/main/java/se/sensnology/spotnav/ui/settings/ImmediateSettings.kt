@@ -30,7 +30,6 @@ internal data class LocalSettingsDraft(
     val taxText: String,
     val transfer: Boolean,
     val transferText: String,
-    val intervalMinutes: Int,
     val showChargingPlan: Boolean
 )
 
@@ -53,14 +52,11 @@ internal object ImmediateSettings {
     /**
      * The settings [draft] makes of [current]. A figure that is not valid keeps the stored one and is
      * named in `invalid`; every other field of the draft still applies. A paired phone owns neither
-     * its area nor its fiscal values, so only the two phone-side fields are read from the draft then.
+     * its area nor its fiscal values, so only the phone-side field is read from the draft then.
      * A blank area (an empty catalogue) never replaces a stored one.
      */
     fun apply(current: WidgetSettings, draft: LocalSettingsDraft, paired: Boolean): LocalApplication {
-        val base = current.copy(
-            intervalMinutes = draft.intervalMinutes,
-            showChargingPlan = draft.showChargingPlan
-        )
+        val base = current.copy(showChargingPlan = draft.showChargingPlan)
         if (paired) return LocalApplication(base, emptySet())
         val invalid = mutableSetOf<FigureField>()
         fun read(text: String, field: FigureField, stored: Double): Double =

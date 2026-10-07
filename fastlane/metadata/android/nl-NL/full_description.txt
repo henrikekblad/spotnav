@@ -3,7 +3,7 @@ SpotNav toont de spotprijzen voor stroom als widget op je startscherm en in een 
 PRIJZEN
 - Vandaag en morgen in één 24-uursgrafiek, met het huidige interval, de laagste, hoogste en huidige prijs gemarkeerd.
 - Prijszones in de Noordse en Baltische landen, Duitsland en Nederland.
-- Kwartierprijzen of uurgemiddelden, in de lokale valuta.
+- Prijzen zoals elk gebied ze publiceert, per 15, 30 of 60 minuten, in de lokale valuta.
 - Optioneel btw, energiebelasting en nettarief. Voorgestelde belastingwaarden zijn aan te passen; controleer ze met je eigen contract.
 - Schaalbare widget, een lokale cache bij netwerkstoringen en automatische controle op de prijzen van morgen.
 - Beschikbaar in het Engels, Zweeds, Noors, Deens, Fins, Duits, Nederlands, Spaans en Frans.

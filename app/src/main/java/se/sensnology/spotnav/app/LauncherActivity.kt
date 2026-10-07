@@ -67,7 +67,7 @@ class LauncherActivity : Activity() {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
                 addView(Button(this@LauncherActivity).apply {
-                    text = AppLanguageSettings.text(this@LauncherActivity, R.string.widget_choice, index + 1, settings.area, settings.intervalMinutes)
+                    text = AppLanguageSettings.text(this@LauncherActivity, R.string.widget_choice, index + 1, settings.area)
                     isAllCaps = false
                     textSize = 16f
                     gravity = Gravity.CENTER_VERTICAL

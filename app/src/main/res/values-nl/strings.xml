@@ -16,9 +16,6 @@
   <string name="system">Systeemstandaard</string>
   <string name="light">Licht</string>
   <string name="dark">Donker</string>
-  <string name="resolution">Resolutie</string>
-  <string name="quarter">15 minuten</string>
-  <string name="hour">Uurgemiddelde</string>
   <string name="vat">%1$s %% btw toevoegen</string>
   <string name="vat_zero">Btw (0 %% in %1$s)</string>
   <string name="tax">Energiebelasting toevoegen</string>
@@ -75,7 +72,7 @@
   <string name="duration_hours_minutes">%1$d u %2$d min</string>
   <string name="charging_too_long">Laden duurt ongeveer %1$s. Verlaag de energie, verhoog de stroom of zet de vertrektijd uit om over meerdere dagen te plannen.</string>
   <string name="table_title">%1$s · %2$d-minutenprijzen · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Systeemstandaard</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
@@ -256,7 +253,6 @@
   <string name="authority_reason_transfer">geen nettarief of voorstel</string>
   <string name="authority_reason_departure">onleesbare vertrektijd</string>
   <string name="authority_reason_target">geen laaddoel</string>
-  <string name="authority_reason_presentation">onbruikbare weergaveresolutie</string>
   <string name="authority_reason_rejected">een waarde die de berekening weigert</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Goedkoopst</string>

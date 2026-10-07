@@ -35,8 +35,7 @@ import se.sensnology.spotnav.widget.WidgetSettings
 import java.util.Locale
 
 /**
- * The price controls of the settings screen: area and the fiscal add-ons, and the display resolution
- * that is a setting of this phone alone. Unpaired they sit in the "Electricity price" card and each
+ * The price controls of the settings screen: area and the fiscal add-ons. Unpaired they sit in the "Electricity price" card and each
  * change is handed to `onChange` the moment it is made; paired the area and fiscal controls are
  * built into the dialog of the card's Change button, and nothing is handed on until its Save.
  */
@@ -48,7 +47,7 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
     private fun plainFigure(value: Double): String = String.format(Locale.ROOT, "%s", value)
 
     /**
-     * The "Electricity price" section: which market's prices to use, at which resolution, and the
+     * The "Electricity price" section: which market's prices to use, and the
      * three add-ons that depend on it (VAT, tax and the transfer fee). One piece because the market
      * selection rewrites the other fields:
      */
@@ -61,8 +60,6 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         writable: Boolean,
         /** Called after each change a person makes (a pick, a toggle, a committed figure). */
         onChange: () -> Unit = {},
-        /** Adds controls between the area and the fiscal add-ons (the resolution, when unpaired). */
-        afterArea: (LinearLayout) -> Unit = {},
         /** The area alone (its picker, source and region search): the add-ons are their own rows. */
         areaOnly: Boolean = false
     ): PriceSettings {
@@ -136,7 +133,6 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
             saveNeeded = paired
         )
         parent.addView(findRegion.view)
-        afterArea(parent)
         val priceInfo = TextView(context).apply {
             textSize = 13f; setTextColor(muted); setPadding(0, dp(14), 0, dp(8))
         }

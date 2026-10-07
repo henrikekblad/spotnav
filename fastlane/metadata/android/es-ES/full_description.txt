@@ -3,7 +3,7 @@ SpotNav muestra los precios spot de la electricidad en un widget para la pantall
 PRECIOS
 - Hoy y mañana en un único gráfico de 24 horas, con el intervalo actual y los precios mínimo, máximo y actual marcados.
 - Zonas de precios de los países nórdicos y bálticos, Alemania y los Países Bajos.
-- Precios por cuarto de hora o medias horarias, en la moneda local.
+- Precios tal como los publica cada zona, cada 15, 30 o 60 minutos, en la moneda local.
 - IVA, impuesto sobre la electricidad y peaje de acceso opcionales. Los valores de impuestos sugeridos se pueden editar; compruébalos con tu propio contrato.
 - Widget redimensionable, caché local para fallos de red y comprobación automática de los precios de mañana.
 - Disponible en inglés, sueco, noruego, danés, finés, alemán, neerlandés, español y francés.

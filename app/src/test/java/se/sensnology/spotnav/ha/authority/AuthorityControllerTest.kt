@@ -52,7 +52,6 @@ class AuthorityControllerTest {
      * testable).
      */
     private val catalogue = listOf(RelayFixtures.se4, RelayFixtures.no1)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     /** The widget's own record: NO1, ten amperes, twelve kWh -- deliberately not SE4. */
     private var local = WidgetSettings(
@@ -91,8 +90,7 @@ class AuthorityControllerTest {
             screenGeneration = 1,
             coordinator = coordinator,
             cache = cache,
-            catalogue = { catalogue },
-            presentation = { presentation }
+            catalogue = { catalogue }
         )
         built = controller
         controller.captureLocal(local.area, LocalPlanningInputs.ofOrNull(local))
@@ -178,8 +176,7 @@ class AuthorityControllerTest {
             screenGeneration = 1,
             coordinator = null,
             cache = cache,
-            catalogue = { catalogue },
-            presentation = { presentation }
+            catalogue = { catalogue }
         )
         assertEquals(CommitRoute.LocalSave, unpaired.beginWrite(HaSettingsEdit.Amps(11)))
 
@@ -393,7 +390,7 @@ class AuthorityControllerTest {
 
     /** The calculation inputs the compatibility record's own adaptation produces. */
     private fun externalInputs(state: VisibleAuthority.AutoRemote): PlanningInputs =
-        SettingsFixtures.localInputs(state.settings, catalogue, presentation)
+        SettingsFixtures.localInputs(state.settings, catalogue)
 
     /** One External state with its accepted prices, and the plan the fixture calculates for them. */
     private fun externalWithPrices(

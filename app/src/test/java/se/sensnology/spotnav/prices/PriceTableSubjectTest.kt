@@ -7,7 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.chart.ChartMarket
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.PriceRequestKey
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -20,7 +19,6 @@ import se.sensnology.spotnav.widget.WidgetSettings
 class PriceTableSubjectTest {
     private val profileId = "local-a"
     private val catalogue = listOf(RelayFixtures.se4, RelayFixtures.no1)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     /** The widget's own record: NO1 and its own fiscal flags, disagreeing with the charger. */
     private val local = WidgetSettings(
@@ -55,7 +53,6 @@ class PriceTableSubjectTest {
         authority = authority,
         localArea = local.area,
         localInputs = LocalPlanningInputs.ofOrNull(local),
-        intervalMinutes = local.intervalMinutes,
         profileId = profileId,
         generation = 1,
         catalogue = catalogue

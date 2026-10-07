@@ -103,8 +103,8 @@ is now. The table button opens the price table.
 
 <img src="images/app-price-table.png" alt="Price table with time, today's and tomorrow's price per quarter-hour, coloured by price, the current quarter outlined" width="360">
 
-Every quarter-hour (or hour) of today and tomorrow, coloured from cheap to dear, starting at the
-current one.
+Every published interval (a quarter-hour, half-hour or hour) of today and tomorrow, coloured from
+cheap to dear, starting at the current one.
 
 ## Home-screen widget
 
@@ -119,10 +119,11 @@ Each widget has its own settings.
 
 **General**: the app's language and colour theme.
 
-<img src="images/app-settings-price.png" alt="Electricity price settings: resolution, price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">
+<img src="images/app-settings-price.png" alt="Electricity price settings: price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">
 
-**Electricity price**: 15-minute prices or hourly averages, and the price area and additions. Once
-paired, area and taxes are Home Assistant's and are changed through it.
+**Electricity price**: the price area and additions. Prices are always shown as the area publishes
+them, every 15, 30 or 60 minutes, as in the Home Assistant card. Once paired, area and taxes are
+Home Assistant's and are changed through it.
 
 <img src="images/app-settings-widget.png" alt="Widget settings: show charging status at the bottom of the widget" width="420">
 

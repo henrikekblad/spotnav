@@ -99,7 +99,6 @@ class PlanChartTest {
         assertEquals(base, ChartRequests.of(inputs(settings), result, 1000, ChartProfile.PLAN_CARD))
         // Every input that can change what the widget's renderer draws.
         assertNotEquals("a new area", base, ChartRequests.of(inputs(settings.copy(area = "NO1")), result, 1000, ChartProfile.PLAN_CARD))
-        assertNotEquals("a new resolution", base, ChartRequests.of(inputs(settings.copy(intervalMinutes = 60)), result, 1000, ChartProfile.PLAN_CARD))
         assertEquals(
             "with nothing to shade, the shading switch is not a different picture",
             base,

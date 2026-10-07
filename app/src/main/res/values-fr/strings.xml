@@ -16,9 +16,6 @@
   <string name="system">Par défaut du système</string>
   <string name="light">Clair</string>
   <string name="dark">Sombre</string>
-  <string name="resolution">Résolution</string>
-  <string name="quarter">15 minutes</string>
-  <string name="hour">Moyenne horaire</string>
   <string name="vat">Ajouter la TVA de %1$s %%</string>
   <string name="vat_zero">TVA (0 %% en %1$s)</string>
   <string name="tax">Ajouter la taxe sur l\'électricité</string>
@@ -79,7 +76,7 @@
   <string name="duration_hours_minutes">%1$d h %2$d min</string>
   <string name="charging_too_long">La charge dure environ %1$s. Réduisez l\'énergie, augmentez le courant ou désactivez l\'heure de départ pour planifier sur plusieurs jours.</string>
   <string name="table_title">%1$s · prix par %2$d minutes · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Par défaut du système</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
@@ -260,7 +257,6 @@
   <string name="authority_reason_transfer">pas de montant ni de suggestion de frais de réseau</string>
   <string name="authority_reason_departure">heure de départ illisible</string>
   <string name="authority_reason_target">pas d\'objectif de charge</string>
-  <string name="authority_reason_presentation">résolution d\'affichage inutilisable</string>
   <string name="authority_reason_rejected">une valeur refusée par le calcul</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Moins cher</string>

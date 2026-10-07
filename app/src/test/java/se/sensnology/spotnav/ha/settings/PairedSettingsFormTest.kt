@@ -8,7 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.authority.HaPlanningInputs
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.SettingsAuthorityCoordinator
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.authority.WriteOutcome
@@ -28,7 +27,6 @@ class PairedSettingsFormTest {
     private val profileId = "local-a"
     private val otherId = "local-b"
     private val catalogue = listOf(RelayFixtures.se4, RelayFixtures.no1)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     private val cache = ConfirmedSettingsStore(FakeKeyValueStore()) { }
 
@@ -74,8 +72,7 @@ class PairedSettingsFormTest {
         screenGeneration = 1,
         coordinator = null,
         cache = cache,
-        catalogue = { catalogue },
-        presentation = { presentation }
+        catalogue = { catalogue }
     )
 
     /** A controller with the confirmed record already resolved, as the screen has on opening: */
@@ -105,7 +102,7 @@ class PairedSettingsFormTest {
     private val askedFor = mutableListOf<String>()
 
     private fun external(record: HaPlanningSettings): PlanningInputs =
-        SettingsFixtures.localInputs(record, catalogue, presentation)
+        SettingsFixtures.localInputs(record, catalogue)
 
     // The screen's
     // authority source, and the answers that leave a record standing.
