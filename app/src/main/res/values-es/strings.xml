@@ -322,7 +322,7 @@
   <string name="charger_current_number_unnamed">Controlado</string>
   <string name="charger_current_easee">Easee</string>
   <string name="charger_energy_label">Contador de energía</string>
-  <string name="charger_energy_automatic">Encontrado automáticamente</string>
+  <string name="charger_energy_automatic">Detección automática</string>
   <string name="site_main_fuse_label">Fusible general</string>
   <string name="site_measurement_label">Modo de medición</string>
   <string name="site_measurement_direct">Por fase, directa</string>
