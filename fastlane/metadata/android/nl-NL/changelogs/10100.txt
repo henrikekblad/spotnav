@@ -1,7 +1,7 @@
 - Welke auto is aangesloten? Gevraagd in een SpotNav-melding met een knop per auto
-- De laadpaalkaart toont de auto, hoe die bepaald is en ⇄ Auto wisselen
+- De laadpaalkaart toont de auto, hoe die bepaald is en ⇄ Andere auto
 - Elke auto houdt zijn eigen laaddoel
-- Status: "De auto wordt herkend…" en "Wacht op antwoord"
-- Camera: parkeerplek bijsnijden, referentiefoto's voor dag en nacht per auto
+- Status: "Auto wordt herkend…" en "Wacht op antwoord"
+- Camera: parkeerplaats bijsnijden, referentiefoto's voor dag en nacht per auto
 - Nieuwe compacte instellingenschermen: één rij per waarde, tabbladen voor laadpalen en auto's
 - Vereist SpotNav voor Home Assistant 1.13
