@@ -14,18 +14,21 @@ is involved.
 Needs the Home Assistant repository next to this one (`../elpris-home-assistant`, or `HA_REPO=...`),
 `node` 22 or newer, `python3`, and the Android SDK in `~/Android/Sdk` (or `ANDROID_SDK_ROOT`) with the
 emulator and the `android-36` `google_apis_playstore` `x86_64` system image. A run takes about
-fifteen minutes, most of it the five language passes.
+twenty minutes, most of it the five language passes.
 
 ## What it does
 
 1. Starts the Home Assistant repository's own demo pieces from `tools/docs_screenshots` without changing
    that repository: `relay_stub.py` on 127.0.0.1:8130 and `ha_launch.py` (Home Assistant with the relay
    redirected to the stub and synthetic charge history) on 127.0.0.1:8129, with a configuration built
-   from nothing in `.work/ha-config` (the demo OCPP charger, Sigenergy plant and Kia car, and the
-   integration linked in). Its Python environment is reused, or made here from its pinned requirements.
-2. `ha_setup.mjs setup` onboards the instance (reusing that tool's `driver/ha.mjs`), adds a SpotNav
-   charger ("Garage charger Connector 1") and a site ("Home"), and sets the instance's internal URL to
-   `http://localhost:8123`, the address the app is given.
+   from nothing in `.work/ha-config` (the demo OCPP charger, Sigenergy plant, two Kia cars, a camera and an
+   AI Task entity, and the integration linked in). Its Python environment is reused, or made here from its pinned requirements.
+2. `ha_setup.mjs setup` onboards the instance (reusing that tool's `driver/ha.mjs` and `driver/demo.mjs`), adds a
+   SpotNav charger ("Garage charger Connector 1") and a site ("Home"), and sets the instance's internal URL to
+   `http://localhost:8123`, the address the app is given. Two cars ("Family car", "City car") can charge at the
+   charger, identification is **Automatic**, the camera is chosen with its parking bay cropped and a day reference
+   picture of each car (the camera's picture is drawn by the demo: no photograph, no number plate), and "Family
+   car" is identified by its charging cable.
 3. Creates the `SpotNavDocs` emulator once (`make_avd.sh`; the other AVDs are never touched): 1080x2160
    at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. Every run
    boots it wiped, headless, in Europe/Stockholm time.
@@ -45,8 +48,13 @@ fifteen minutes, most of it the five language passes.
    - changes the charging current and back once, a person's edit, which confirms the first-run
      suggestions so the status line does not ask to check them;
    - adds the widget from the launcher's widget list and widens it to the screen;
-   - then one pass per language: main screen, planning and plan, price table, widget, settings, charge
-     history (the month before early in a month, so the bar chart has days).
+   - then one pass per language: main screen, planning and plan, price table, widget, settings (with the
+     crop editor and a car's reference pictures in the documentation languages), charge history (the month
+     before early in a month, so the bar chart has days);
+   - last, which car is plugged in: `ha_setup.mjs unplug`, then `plug-in` once the unplug counts (it waits about
+     two minutes: SpotNav takes a shorter unplug for the same plug-in) for "identifying…", `city` for the car line
+     "identified by the car's charging cable ⇄", and `ask` (a quick replug with both cars saying they are plugged
+     in) for the question, which stays open for every language's store picture.
 
 Logs are in `.work/logs`.
 
@@ -55,11 +63,13 @@ Logs are in `.work/logs`.
 Documentation (English; `--sv` adds `docs/images/sv/`): `app-standalone`, `app-pairing-code`,
 `app-main`, `app-planning`, `app-planning-target`, `app-plan-chart`, `app-price-table`, `app-widget`, `app-settings-general`,
 `app-settings-price`, `app-settings-widget`, `app-settings-vehicle`, `app-settings-charger`,
-`app-settings-site`, `app-settings-notifications`, `app-settings-home-assistant`, `app-history`.
+`app-settings-site`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
+`app-reference-picture`, `app-history`, `app-identifying`, `app-identified`, `app-identify-question`.
 Whole screens lose the status and gesture bars; settings sections are cropped to their card.
 
 Store (each of en-US, sv-SE, nb-NO, da-DK, fi-FI, with the app in that language; whole 1080x2160
-screens): `1_main`, `2_plan`, `3_price_table`, `4_widget`, `5_settings`, `6_history`. A full run first
+screens): `1_main`, `2_plan`, `3_price_table`, `4_widget`, `5_settings`, `6_history`, `7_identify` (the question
+which car is plugged in). A full run first
 removes the numbered pictures already in those folders, so a folder holds exactly one set.
 
 ## Uploading the store pictures

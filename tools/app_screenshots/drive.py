@@ -5,8 +5,8 @@
 Environment: SERIAL (an emulator), ADB, APK, OUT (docs/images), STORE_OUT (fastlane/metadata/android),
 HA_PORT, APP_HA_PORT, and what ha_setup.mjs needs. Each run starts from a freshly wiped emulator: it
 installs the app, takes the unpaired picture, pairs with the demo Home Assistant (approving the request
-there through its config flow), confirms the suggested settings once, adds the widget, and then takes
-one pass per language. English (and with --docs-langs more) writes docs/images/app-*.png; every
+there through its config flow), confirms the suggested settings once, adds the widget, takes one pass
+per language, and ends with a new plug-in for the car identification pictures. English (and with --docs-langs more) writes docs/images/app-*.png; every
 language writes the Play store set into fastlane's layout.
 """
 
@@ -394,7 +394,8 @@ def language_pass(lang: str, docs: bool) -> None:
             ("app-settings-general", exact(s["section_general"])),
             ("app-settings-price", exact(s["section_electricity_price"])),
             ("app-settings-widget", exact(s["section_widget"])),
-            ("app-settings-vehicle", "^" + re.escape(s["vehicle_title"]) + " · Family car$"),
+            # Two cars: the vehicle card is headed "Vehicle" alone, with a tab per car under it.
+            ("app-settings-vehicle", exact(s["vehicle_title"])),
             # The charger and site cards name their subject after their kind ("Charger · …", "Site · Home").
             ("app-settings-charger", "^" + re.escape(s["section_charger"]) + " · "),
             ("app-settings-site", "^" + re.escape(s["site_default_name"]) + " · Home$"),
@@ -408,6 +409,7 @@ def language_pass(lang: str, docs: bool) -> None:
                 docs_crop(name, lang, bring_card(title))
             except Exception as error:  # noqa: BLE001
                 failed.append(f"{lang} {name}: {error}")
+        camera_editors(lang)
     back()
 
     step("charge history")
@@ -434,6 +436,62 @@ def language_pass(lang: str, docs: bool) -> None:
         docs_crop("app-planning-target", lang, bring_card(exact(s["card_planning_title"]), top=230))
         tap(exact(s["driver_kwh"]), scroll=False)
         time.sleep(4)
+
+
+def camera_editors(lang: str) -> None:
+    """The charger's frame editor (the drawn camera picture, cropped to the parking bay) and a car's reference
+    pictures, from the Settings page."""
+    s = strings(lang)
+    for name, label, wait in (
+        ("app-camera-frame", s["camera_frame_label"], s["camera_frame_preview"]),
+        ("app-reference-picture", s["reference_label"], s["reference_day"]),
+    ):
+        if not wanted(name):
+            continue
+        try:
+            scroll_to_top()
+            tap(exact(label))
+            wait_for(exact(wait), timeout=20)
+            time.sleep(3)   # the pictures load after the dialog
+            docs_full(name, lang)
+            back()
+        except Exception as error:  # noqa: BLE001
+            failed.append(f"{lang} {name}: {error}")
+            back()
+
+
+def charger_screen(lang: str, pattern: str | None = None) -> None:
+    """The main screen in [lang], fresh from Home Assistant, at the top; waits for [pattern] when given."""
+    launch(lang)
+    if wait_for(exact(strings(lang)["card_planning_title"]), timeout=30) is None:
+        raise RuntimeError("the main screen did not open")
+    scroll_to_top()
+    if pattern is not None and wait_for(pattern, timeout=30) is None:
+        raise RuntimeError(f"nothing on the main screen matches {pattern!r}")
+    time.sleep(2)
+
+
+def identification(langs: list[str], docs_langs: list[str]) -> None:
+    """Which car is plugged in: a plug-in being identified, a car decided by its charging cable, and the
+    question. One new plug-in serves every language; the question stays open for the store pictures."""
+    if only and not only & {"app-identifying", "app-identified", "app-identify-question", "store-identify"}:
+        return
+    step("which car is plugged in")
+    ha("unplug")
+    ha("plug-in")
+    for lang in docs_langs:
+        charger_screen(lang, re.escape(strings(lang)["identify_identifying"]))
+        docs_full("app-identifying", lang)
+    ha("city")
+    for lang in docs_langs:
+        charger_screen(lang, re.escape(strings(lang)["identify_by_plug_sensor"]))
+        docs_full("app-identified", lang)
+    ha("ask")
+    for lang in langs:
+        charger_screen(lang, exact(strings(lang)["identify_question"]))
+        if lang in docs_langs:
+            docs_full("app-identify-question", lang)
+        store_shot(7, "identify", lang)
 
 
 def clear_store_sets(langs: list[str]) -> None:
@@ -468,6 +526,11 @@ def main() -> int:
             print(f"   FAILED {lang}: {error}", flush=True)
             back()
             back()
+    try:
+        identification(args.langs, args.docs_langs)
+    except Exception as error:  # noqa: BLE001
+        failed.append(f"identification: {error}")
+        print(f"   FAILED identification: {error}", flush=True)
     print(f"\nwritten: {len(written)}  failed: {len(failed)}")
     for f in failed:
         print("FAILED " + f)
