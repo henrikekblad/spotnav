@@ -22,6 +22,7 @@ import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.push.PushNotifications
 import se.sensnology.spotnav.vehicles.VehicleIdentification
@@ -137,6 +138,18 @@ internal object LocalNotifications {
         sync(context)
     }
 
+    /**
+     * What one dashboard read for [localId] says of identification, wherever the app reads it (this
+     * check, a screen's read, Settings): remembered, and Home Assistant registered again when it
+     * changed, so the question is offered and registered at once rather than after the next check.
+     */
+    fun observeIdentification(context: Context, localId: String, dashboard: Dashboard) {
+        val app = context.applicationContext
+        if (LocalNotificationStore.forContext(app).observeIdentifies(localId, VehicleIdentification.advertised(dashboard))) {
+            PushNotifications.sync(app)
+        }
+    }
+
     /** One background check of every paired charger. Never throws. */
     fun check(context: Context, now: Instant = Instant.now()) {
         val app = context.applicationContext
@@ -153,7 +166,7 @@ internal object LocalNotifications {
                 HomeAssistantClient.dashboard(profile.toHomeAssistantSettings(), connectTimeoutMs = 10_000, readTimeoutMs = 20_000)
             }.getOrNull() ?: continue
             // Whether this Home Assistant takes the question as an instant-notification event.
-            if (store.setIdentifies(profile.localId, VehicleIdentification.advertised(dashboard))) identifyingChanged = true
+            if (store.observeIdentifies(profile.localId, VehicleIdentification.advertised(dashboard))) identifyingChanged = true
             val current = NotificationRules.snapshot(dashboard, now)
             val derivation = NotificationRules.derive(store.snapshot(profile.localId), current, chosen, store.lastSent(profile.localId))
             store.remember(profile.localId, current, derivation.lastSent)

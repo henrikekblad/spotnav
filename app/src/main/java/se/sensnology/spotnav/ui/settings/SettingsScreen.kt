@@ -49,6 +49,7 @@ import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.testmode.TestMode
@@ -197,11 +198,15 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             fun showNotifications() {
                 val writable = priceControlsEnabled(true, settingsAuthority.authority)
                 val confirmed = settingsCache.confirmed(settingsProfile.localId)
-                notificationsCard?.show(confirmed?.notifications, writable, identifies = confirmed?.let { it.identification != null })
+                // Known from any dashboard read for this charger, or from the record it confirmed.
+                val identifies = LocalNotificationStore.forContext(applicationContext).identifies(settingsProfile.localId) ||
+                    confirmed?.identification != null
+                notificationsCard?.show(confirmed?.notifications, writable, identifies = identifies.takeIf { it || confirmed != null })
                 pairedCards.setIdentificationWritable(writable)
             }
             fun loadPaired() = session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
+                dashboard?.let { LocalNotifications.observeIdentification(applicationContext, settingsProfile.localId, it) }
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
                     // A newer record (or one now stating its notifications) is what this screen writes against.
                     settingsAuthority.seedFromConfirmedRecord()
