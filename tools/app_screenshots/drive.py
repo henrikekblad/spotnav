@@ -87,6 +87,13 @@ def exact(text: str) -> str:
     return "^" + re.escape(text) + "$"
 
 
+def planning_title(s: dict[str, str]) -> str:
+    """The plan card's title: "Planning", or "Planning for <car>" once Home Assistant names the planned car."""
+    plain = re.escape(s["card_planning_title"])
+    named = re.escape(s["card_planning_title_for"]).replace(re.escape("%1$s"), ".+")
+    return f"^(?:{plain}|{named})$"
+
+
 # ------------------------------------------------------------------------------------------- pictures
 
 def wanted(name: str) -> bool:
@@ -348,7 +355,7 @@ def language_pass(lang: str, docs: bool) -> None:
     redraw_widget()
     launch(lang)
     plan_title = exact(s["card_charging_plan_title"])
-    if wait_for(exact(s["card_planning_title"]), timeout=30) is None:
+    if wait_for(planning_title(s), timeout=30) is None:
         raise RuntimeError("the main screen did not open")
     time.sleep(3)
     scroll_to_top()
@@ -357,7 +364,7 @@ def language_pass(lang: str, docs: bool) -> None:
     store_shot(1, "main", lang)
 
     # The planning card's title just under the status bar, so no part of the card above shows cut off.
-    bring_card(exact(s["card_planning_title"]), top=120)
+    bring_card(planning_title(s), top=120)
     if docs:
         docs_full("app-planning", lang)
     store_shot(2, "plan", lang)
@@ -431,12 +438,18 @@ def language_pass(lang: str, docs: bool) -> None:
         # the other pictures show.
         step("planning by target")
         scroll_to_top()
-        bring_card(exact(s["card_planning_title"]), top=230)
-        tap(exact(s["driver_target_soc"]), scroll=False)
-        time.sleep(4)
-        docs_crop("app-planning-target", lang, bring_card(exact(s["card_planning_title"]), top=230))
-        tap(exact(s["driver_kwh"]), scroll=False)
-        time.sleep(4)
+        bring_card(planning_title(s), top=230)
+        charge_by(s, "charge_by_target")
+        docs_crop("app-planning-target", lang, bring_card(planning_title(s), top=230))
+        charge_by(s, "charge_by_energy")
+
+
+def charge_by(s: dict[str, str], choice: str) -> None:
+    """Pick the plan's "Charge by" mode: tap the row, then the choice in its chooser."""
+    tap(exact(s["charge_by_label"]), scroll=False)
+    time.sleep(1)
+    tap(exact(s[choice].replace("%%", "%")), scroll=False)
+    time.sleep(4)
 
 
 def camera_editors(lang: str) -> None:
@@ -464,7 +477,7 @@ def camera_editors(lang: str) -> None:
 def charger_screen(lang: str, pattern: str | None = None) -> None:
     """The main screen in [lang], fresh from Home Assistant, at the top; waits for [pattern] when given."""
     launch(lang)
-    if wait_for(exact(strings(lang)["card_planning_title"]), timeout=30) is None:
+    if wait_for(planning_title(strings(lang)), timeout=30) is None:
         raise RuntimeError("the main screen did not open")
     scroll_to_top()
     if pattern is not None and wait_for(pattern, timeout=30) is None:
