@@ -205,6 +205,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Gleich erneut versuchen</string>
   <string name="vehicle_card_reread_failed">Home Assistant konnte dieses Auto nicht neu lesen</string>
   <string name="card_planning_title">Planung</string>
+  <string name="card_planning_title_for">Planung für %1$s</string>
+  <string name="charge_by_label">Laden nach</string>
+  <string name="charge_by_energy">Energie</string>
+  <string name="charge_by_target">Ladeziel</string>
   <string name="card_charging_plan_title">Ladeplan</string>
   <string name="popover_eyebrow_plan">PLANEINSTELLUNG</string>
   <string name="plan_card_departure_label">Abfahrt</string>
@@ -223,7 +227,6 @@
   <string name="plan_card_periods_note">Der Plan wird auf höchstens so viele Ladefenster aufgeteilt.</string>
   <string name="nothing_to_charge">Nichts zu laden</string>
   <string name="nothing_to_charge_note">Das Ziel liegt auf oder unter dem aktuellen Ladestand des Autos. Erhöhe das Ziel, um eine Ladung zu planen.</string>
-  <string name="driver_target_soc">Ziel</string>
   <string name="instance_pairing_open_ha">Home Assistant zur Freigabe öffnen</string>
   <string name="instance_pairing_open_failed">Keine App auf diesem Telefon konnte diese Adresse öffnen.</string>
   <string name="area_unavailable">Preiszone %1$s ist beim Preisdienst nicht mehr verfügbar</string>

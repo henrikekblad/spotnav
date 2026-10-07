@@ -201,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Yritä uudelleen pian</string>
   <string name="vehicle_card_reread_failed">Home Assistant ei voinut lukea autoa uudelleen</string>
   <string name="card_planning_title">Suunnittelu</string>
+  <string name="card_planning_title_for">Suunnittelu: %1$s</string>
+  <string name="charge_by_label">Lataa perusteella</string>
+  <string name="charge_by_energy">Energia</string>
+  <string name="charge_by_target">Tavoite-SoC</string>
   <string name="card_charging_plan_title">Lataussuunnitelma</string>
   <string name="popover_eyebrow_plan">SUUNNITELMAN ASETUS</string>
   <string name="plan_card_departure_label">Lähtö</string>
@@ -222,7 +226,6 @@
   <string name="widget_settings_none">Mikään widget ei ole auki. Jokaisella widgetillä on oma asetuksensa; muuta sitä napauttamalla widgetiä aloitusnäytöllä.</string>
   <string name="nothing_to_charge">Ei ladattavaa</string>
   <string name="nothing_to_charge_note">Tavoite on auton nykyisellä tasolla tai sen alla. Nosta tavoitetta, niin lataus voidaan suunnitella.</string>
-  <string name="driver_target_soc">Tavoite</string>
   <string name="charge_progress_vehicle_not_requesting_current">Lataus aloitettiin, mutta ajoneuvo ei pyydä virtaa. Tarkista ajoneuvon latausasetukset tai kytke kaapeli uudelleen.</string>
   <string name="instance_pairing_open_ha">Avaa Home Assistant hyväksyäksesi</string>
   <string name="instance_pairing_open_failed">Mikään sovellus ei voinut avata osoitetta.</string>

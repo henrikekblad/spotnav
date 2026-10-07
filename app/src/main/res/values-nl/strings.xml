@@ -205,6 +205,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Probeer het zo opnieuw</string>
   <string name="vehicle_card_reread_failed">Home Assistant kon deze auto niet opnieuw uitlezen</string>
   <string name="card_planning_title">Planning</string>
+  <string name="card_planning_title_for">Planning voor %1$s</string>
+  <string name="charge_by_label">Laden op</string>
+  <string name="charge_by_energy">Energie</string>
+  <string name="charge_by_target">Laaddoel</string>
   <string name="card_charging_plan_title">Laadplan</string>
   <string name="popover_eyebrow_plan">PLANINSTELLING</string>
   <string name="plan_card_departure_label">Vertrek</string>
@@ -223,7 +227,6 @@
   <string name="plan_card_periods_note">Het plan wordt verdeeld over hoogstens zoveel laadvensters.</string>
   <string name="nothing_to_charge">Niets te laden</string>
   <string name="nothing_to_charge_note">Het doel ligt op of onder het huidige niveau van de auto. Verhoog het doel om te kunnen plannen.</string>
-  <string name="driver_target_soc">Doel</string>
   <string name="instance_pairing_open_ha">Open Home Assistant om goed te keuren</string>
   <string name="instance_pairing_open_failed">Geen app op deze telefoon kon dat adres openen.</string>
   <string name="area_unavailable">Prijsgebied %1$s is niet meer beschikbaar bij de prijsdienst</string>

@@ -201,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Försök igen strax</string>
   <string name="vehicle_card_reread_failed">Home Assistant kunde inte läsa om bilen</string>
   <string name="card_planning_title">Planering</string>
+  <string name="card_planning_title_for">Planering för %1$s</string>
+  <string name="charge_by_label">Ladda efter</string>
+  <string name="charge_by_energy">Energi</string>
+  <string name="charge_by_target">Laddmål</string>
   <string name="card_charging_plan_title">Laddplan</string>
   <string name="popover_eyebrow_plan">PLANINSTÄLLNING</string>
   <string name="plan_card_departure_label">Avresa</string>
@@ -222,7 +226,6 @@
   <string name="widget_settings_none">Ingen widget är öppen. Varje widget har sin egen inställning; tryck på en widget på startskärmen för att ändra den.</string>
   <string name="nothing_to_charge">Inget att ladda</string>
   <string name="nothing_to_charge_note">Målet ligger på eller under bilens nuvarande nivå. Höj målet för att planera en laddning.</string>
-  <string name="driver_target_soc">Mål</string>
   <string name="charge_progress_vehicle_not_requesting_current">Laddningen startades, men fordonet begär ingen ström. Kontrollera fordonets laddningsinställningar eller anslut kabeln igen.</string>
   <string name="instance_pairing_open_ha">Öppna Home Assistant för att godkänna</string>
   <string name="instance_pairing_open_failed">Ingen app i telefonen kunde öppna adressen.</string>

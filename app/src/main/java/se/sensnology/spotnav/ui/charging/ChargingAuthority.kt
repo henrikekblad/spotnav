@@ -16,6 +16,7 @@ import se.sensnology.spotnav.ha.settings.HaSettingsEditor
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.planning.PlanDriver
 import se.sensnology.spotnav.ui.common.authorityRefusalText
+import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.authorityStateNote
 
 // The authority applied to the charging screen: which values are the record's, what may be edited,
@@ -155,8 +156,7 @@ internal fun ChargingScreen.setPlanningControlsEnabled(enabled: Boolean) {
     planCard.dailyRadio.isEnabled = enabled
     planCard.onDateRadio.isEnabled = enabled
     planCard.refreshDepartureLabel()
-    planCard.kwhOption.isEnabled = enabled
-    planCard.targetOption.isEnabled = enabled
+    planCard.chargeBy.show(ValueCue.of(editable = true, available = enabled))
     targetSoc.slider.isEnabled = enabled
 }
 

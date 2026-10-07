@@ -201,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Prøv igjen snart</string>
   <string name="vehicle_card_reread_failed">Home Assistant kunne ikke lese bilen på nytt</string>
   <string name="card_planning_title">Planlegging</string>
+  <string name="card_planning_title_for">Planlegging for %1$s</string>
+  <string name="charge_by_label">Lad etter</string>
+  <string name="charge_by_energy">Energi</string>
+  <string name="charge_by_target">Mål-SoC</string>
   <string name="card_charging_plan_title">Ladeplan</string>
   <string name="popover_eyebrow_plan">PLANINNSTILLING</string>
   <string name="plan_card_departure_label">Avreise</string>
@@ -222,7 +226,6 @@
   <string name="widget_settings_none">Ingen widget er åpen. Hver widget har sin egen innstilling; trykk på en widget på startskjermen for å endre den.</string>
   <string name="nothing_to_charge">Ingenting å lade</string>
   <string name="nothing_to_charge_note">Målet er på eller under bilens nåværende nivå. Øk målet for å planlegge en lading.</string>
-  <string name="driver_target_soc">Mål</string>
   <string name="charge_progress_vehicle_not_requesting_current">Ladingen ble startet, men kjøretøyet ber ikke om strøm. Kontroller kjøretøyets ladeinnstillinger, eller koble til kabelen på nytt.</string>
   <string name="instance_pairing_open_ha">Åpne Home Assistant for å godkjenne</string>
   <string name="instance_pairing_open_failed">Ingen app på telefonen kunne åpne adressen.</string>
