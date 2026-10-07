@@ -112,6 +112,10 @@ internal object VehicleIdentification {
         return Switch(choices, currentId(dashboard))
     }
 
+    /** The name of the car the charger plans for now, or `null` when no car is known (never its id). */
+    fun plannedName(dashboard: Dashboard): String? =
+        currentId(dashboard)?.let { nameOf(dashboard, it) }?.takeIf { it.isNotBlank() }
+
     /** The car the charger plans for now: the block's, else the dashboard's target, else the `soc` block's. */
     private fun currentId(dashboard: Dashboard): String? =
         dashboard.identification?.vehicleId
