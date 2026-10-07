@@ -168,6 +168,13 @@ internal data class DashboardVehicle(
     val targetPercent: Double? = null,
     /** Whether the row states `target_percent` at all: only then is a target shown or written for the car. */
     val targetStated: Boolean = false,
+    /**
+     * The car's minimum charge level (`min_percent`, 10-80 in steps of 5): below it Home Assistant charges at once.
+     * `null` when off, or not stated ([minStated]).
+     */
+    val minPercent: Int? = null,
+    /** Whether the row states `min_percent` at all: only then is the minimum level shown or written for the car. */
+    val minStated: Boolean = false,
     /** The car's identification sources (`identification`); `null` from a Home Assistant without them. */
     val identification: VehicleIdentificationSources? = null
 )
@@ -714,6 +721,8 @@ internal data class Dashboard(
             onboardPhases = whole(json.opt("onboard_phases"))?.takeIf { it == 1 || it == 3 },
             targetPercent = (json.opt("target_percent") as? Number)?.toDouble()?.takeIf { it.isFinite() && it in 0.0..100.0 },
             targetStated = json.has("target_percent"),
+            minPercent = whole(json.opt("min_percent"))?.takeIf { it in 10..80 && it % 5 == 0 },
+            minStated = json.has("min_percent"),
             identification = VehicleIdentificationSources.parse(json.opt("identification"))
         )
 

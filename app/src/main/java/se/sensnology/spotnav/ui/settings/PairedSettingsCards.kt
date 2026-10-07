@@ -285,6 +285,19 @@ internal class PairedSettingsCards(
                 }
             }
         }
+        // The car's minimum charge level: below it Home Assistant charges at once, whatever the strategy.
+        if (vehicle.minStated) {
+            val levels = VehicleUpdate.MINIMUM_LEVELS
+            val level = vehicle.minPercent?.let { t(R.string.vehicle_card_soc_value, it) } ?: t(R.string.vehicle_minimum_off)
+            val shown = if (vehicle.minPercent != null && vehicle.minNeedsLevel) t(R.string.vehicle_minimum_needs_level, level) else level
+            valueRow(body, t(R.string.vehicle_minimum), shown) {
+                val options = listOf(t(R.string.vehicle_minimum_off)) + levels.map { t(R.string.vehicle_card_soc_value, it) }
+                val selected = vehicle.minPercent?.let { levels.indexOf(it) + 1 } ?: 0
+                chooseOne(t(R.string.vehicle_minimum), options, selected, intro = t(R.string.vehicle_minimum_help)) { index, done ->
+                    writeOne(vehicle.id, VehicleField.MINIMUM, if (index == 0) null else levels[index - 1].toDouble(), done)
+                }
+            }
+        }
         vehicle.sources?.let { addSources(body, it) }
         addReference(body, dash, vehicle)
         vehicleNotices[vehicle.id]?.let { body.addView(muted(it, top = 4)) }
@@ -393,6 +406,7 @@ internal class PairedSettingsCards(
                 VehicleField.CONSUMPTION -> R.string.vehicle_error_consumption
                 VehicleField.ONBOARD_PHASES -> R.string.vehicle_error_onboard
                 VehicleField.TARGET -> R.string.vehicle_error_target
+                VehicleField.MINIMUM -> R.string.vehicle_error_minimum
             }
             VehicleFieldIssue.NOT_A_NUMBER -> R.string.paired_error_number
             VehicleFieldIssue.UNKNOWN -> R.string.paired_error_field

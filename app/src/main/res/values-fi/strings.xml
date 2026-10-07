@@ -522,6 +522,11 @@
   <string name="reference_close">Sulje</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
+  <string name="vehicle_minimum">Alin varaustaso</string>
+  <string name="vehicle_minimum_off">Pois</string>
+  <string name="vehicle_minimum_needs_level">%1$s · tarvitsee auton varaustason</string>
+  <string name="vehicle_minimum_help">Tämän tason alapuolella SpotNav lataa heti täydellä virralla strategiasta riippumatta. Valitsemasi tauko tai pysäytys menee edelle. Tarvitsee auton varaustason.</string>
+  <string name="vehicle_error_minimum">Alimman varaustason on oltava välillä 10–80.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Muuta napauttamalla</string>
   <string name="identify_vehicles_all">Kaikki autot</string>
