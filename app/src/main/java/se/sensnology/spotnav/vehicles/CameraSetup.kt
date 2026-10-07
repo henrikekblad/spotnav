@@ -11,6 +11,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * What Settings shows of the charger's camera for identification, decided from one dashboard and the
@@ -66,6 +67,12 @@ internal object CameraSetup {
             }
         val canDelete: Boolean get() = picture != null
     }
+
+    /**
+     * A reference picture's tile, in the car's settings and in its editor, is 16:9 whatever the picture is (the
+     * picture is cropped to fill it, as the Home Assistant card shows it): its height for [width].
+     */
+    fun tileHeight(width: Int): Int = (width * 9 / 16.0).roundToInt()
 
     /** The editor's two slots, day then night, from the car's pictures. */
     fun slots(pictures: List<ReferencePicture>): List<Slot> =

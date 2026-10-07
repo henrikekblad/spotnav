@@ -137,4 +137,11 @@ class CameraSetupTest {
         assertEquals(listOf(R.string.reference_retake, R.string.reference_retake), both.map { it.takeLabel })
         assertEquals(listOf(true, true), both.map { it.canDelete })
     }
+
+    @Test fun aReferenceTileIsSixteenByNineWhateverThePictureIs() {
+        // The car tab's tiles and the editor's slots: one fixed aspect, the picture cropped to fill it.
+        assertEquals(90, CameraSetup.tileHeight(160))
+        assertEquals(203, CameraSetup.tileHeight(360))
+        assertEquals(0, CameraSetup.tileHeight(0))
+    }
 }
