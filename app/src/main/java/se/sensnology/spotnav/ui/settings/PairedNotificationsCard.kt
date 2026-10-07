@@ -123,7 +123,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
                 onTap = { openHomeAssistant() })
             if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
         }
-        settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts),
+        settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts, identifies == true),
             onTap = { openSpotNav() })
         if (local.enabled && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
     }
@@ -157,7 +157,13 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
     }
 
     /** The SpotNav app's section: on or off, instant or every 15 minutes, and for what. */
-    private class SpotNavSection(val on: Switch, val instant: Switch?, val eventBoxes: List<CheckBox>, val error: TextView)
+    private class SpotNavSection(
+        val on: Switch,
+        val instant: Switch?,
+        val offered: List<NotificationEvent>,
+        val eventBoxes: List<CheckBox>,
+        val error: TextView
+    )
 
     private fun switch(label: String, checked: Boolean) = Switch(context).apply {
         text = label; isChecked = checked; textSize = 16f; setTextColor(dark)
@@ -172,7 +178,9 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         val help = muted("", top = 2).also { body.addView(it) }
         body.addView(heading(t(R.string.notify_events), top = 10))
         val chosen = local.events
-        val eventBoxes = NotificationEvent.LOCAL.map { event ->
+        // The question which car is plugged in only where this charger's Home Assistant identifies cars.
+        val offered = NotificationEvent.localOffered(identifies == true)
+        val eventBoxes = offered.map { event ->
             checkbox(eventName(event), event in chosen).also { body.addView(it) }
         }
         val error = errorView().also { body.addView(it) }
@@ -184,7 +192,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         on.setOnCheckedChangeListener { _, _ -> follow() }
         instant?.setOnCheckedChangeListener { _, _ -> follow() }
         follow()
-        return SpotNavSection(on, instant, eventBoxes, error)
+        return SpotNavSection(on, instant, offered, eventBoxes, error)
     }
 
     private fun saver() = NotificationsSave(
@@ -234,7 +242,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
                 // The Home Assistant app's route is not written from here.
                 homeAssistant = null,
                 spotNavOn = section.on.isChecked,
-                spotNavEvents = NotificationEvent.LOCAL.filterIndexed { index, _ -> section.eventBoxes[index].isChecked }.toSet(),
+                spotNavEvents = NotificationEvent.localChoice(section.offered, section.eventBoxes.map { it.isChecked }, local.events),
                 instant = section.instant?.isChecked ?: PushNotifications.enabled(context)
             )
             saver().save(record, choice) { outcome ->
