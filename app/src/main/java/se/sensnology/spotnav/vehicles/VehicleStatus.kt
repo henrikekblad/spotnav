@@ -12,5 +12,7 @@ data class VehicleStatus(
     val socPercent: Double,
     val targetSocPercentMax: Double? = null,
     val batteryCapacityKwh: Double? = null,
-    val capacitySource: String? = null
+    val capacitySource: String? = null,
+    /** What the car's own limit can be written to (the row's `charge_limit_range`); `null` when unknown. */
+    val chargeLimitRange: ChargeLimitRange? = null
 )

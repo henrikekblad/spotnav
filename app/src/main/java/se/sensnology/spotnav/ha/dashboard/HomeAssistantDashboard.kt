@@ -375,7 +375,8 @@ internal data class Dashboard(
                     socPercent = level,
                     targetSocPercentMax = row.maxPercent ?: target?.takeIf { it.vehicleId == row.id }?.vehicleMaxPercent,
                     batteryCapacityKwh = row.capacityKwh ?: target?.takeIf { it.vehicleId == row.id }?.capacityKwh,
-                    capacitySource = row.capacitySource
+                    capacitySource = row.capacitySource,
+                    chargeLimitRange = row.chargeLimitRange
                 )
             }
             if (fromRows.isNotEmpty() || target == null) return fromRows
