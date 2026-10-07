@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.chart
 
 import se.sensnology.spotnav.prices.PriceAggregation
+import se.sensnology.spotnav.prices.PriceInterval
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceResult
 import java.time.OffsetDateTime
@@ -18,32 +19,32 @@ internal data class ChartLine(val kind: ChartLineKind, val minute: Float)
  * The current interval and the one-line rule, as pure geometry.
  *
  * `now` is an input, read once where a request is assembled (see `ChartRequest`). It is matched by
- * containment in the market's aggregation interval (15 or 60 minutes): a `now` no row contains
+ * containment in a published interval (15, 30 or 60 minutes): a `now` no row contains
  * yields no mark minute, and nothing is borrowed from tomorrow or the nearest row.
  */
 internal object ChartNow {
     /**
-     * The minute of the day a mark for an interval starting at [start] is drawn at: the start for
-     * quarter-hour values, the centre of the hour for hourly ones. Selection, the now line and the
-     * renderer all read this one definition.
+     * The minute of the day a mark for an interval of [minutes] starting at [start] is drawn at: the
+     * start for a quarter-hour, the centre of a longer interval (a half-hour or an hour). Selection, the
+     * now line and the renderer all read this one definition.
      */
-    fun markMinute(market: ChartMarket, start: OffsetDateTime): Float =
-        (start.hour * 60 + start.minute + if (market.hourly) market.intervalMinutes / 2 else 0).toFloat()
+    fun markMinute(start: OffsetDateTime, minutes: Int): Float =
+        (start.hour * 60 + start.minute + if (minutes > QUARTER_MINUTES) minutes / 2f else 0f)
+
+    fun markMinute(interval: PriceInterval): Float = markMinute(interval.start, interval.minutes)
+
+    private const val QUARTER_MINUTES = 15
 
     /**
      * The mark minute of the interval of today's rows that contains [now], or `null` when none does.
      * Today only: tomorrow's rows are a different record (see `ChartReadout`).
      */
-    fun currentMarkMinute(market: ChartMarket, result: PriceResult, now: OffsetDateTime): Float? {
-        val interval = market.intervalMinutes.toLong()
-        return PriceAggregation.aggregate(result.today, market).firstOrNull { (start, _) ->
-            !now.isBefore(start) && now.isBefore(start.plusMinutes(interval))
-        }?.let { (start, _) -> markMinute(market, start) }
-    }
+    fun currentMarkMinute(result: PriceResult, now: OffsetDateTime): Float? =
+        current(result, now)?.let(::markMinute)
 
     fun currentMarkMinute(market: ChartMarket, result: PriceResult): Float? =
         currentMarkMinute(
-            market, result,
+            result,
             OffsetDateTime.now(PriceMarkets.find(market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault())
         )
 
@@ -51,14 +52,17 @@ internal object ChartNow {
      * Milliseconds until the interval containing [now] ends, or `null` when no row contains it. This is
      * the only instant at which the now line can move, so a view redraws here and nowhere else.
      */
-    fun untilNextIntervalMillis(market: ChartMarket, result: PriceResult, now: OffsetDateTime): Long? {
-        val interval = market.intervalMinutes.toLong()
-        val start = PriceAggregation.aggregate(result.today, market)
-            .map { it.first }
-            .firstOrNull { !now.isBefore(it) && now.isBefore(it.plusMinutes(interval)) }
-            ?: return null
-        return java.time.Duration.between(now, start.plusMinutes(interval)).toMillis().coerceAtLeast(0L)
+    fun untilNextIntervalMillis(result: PriceResult, now: OffsetDateTime): Long? {
+        val interval = current(result, now) ?: return null
+        val end = interval.start.plusMinutes(interval.minutes.toLong())
+        return java.time.Duration.between(now, end).toMillis().coerceAtLeast(0L)
     }
+
+    /** Today's published interval that contains [now], or `null`. */
+    private fun current(result: PriceResult, now: OffsetDateTime): PriceInterval? =
+        PriceAggregation.aggregate(result.today).firstOrNull { interval ->
+            !now.isBefore(interval.start) && now.isBefore(interval.start.plusMinutes(interval.minutes.toLong()))
+        }
 
     /**
      * The one focus line a frame draws, or none. A selection hides the now line rather than drawing

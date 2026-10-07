@@ -8,7 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.authority.HaPlanningAdapter
 import se.sensnology.spotnav.ha.authority.HaPlanningInputs
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
 import se.sensnology.spotnav.ha.settings.HaFiscalValue
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -45,9 +44,6 @@ class ChartMarketTest {
         val market = ChartMarket.of(inputs)
 
         assertEquals(inputs.areaId, market.areaId)
-        assertEquals(inputs.intervalMinutes, market.intervalMinutes)
-        assertEquals(inputs.intervalMinutes, market.aggregationMinutes)
-        assertEquals(inputs.hourly, market.hourly)
         assertEquals(inputs.vat, market.vat)
         assertEquals(inputs.tax, market.tax)
         assertEquals(inputs.transfer, market.transfer)
@@ -64,41 +60,20 @@ class ChartMarketTest {
             areaId = "SE4",
             overrides = JSONArray().put(override("SE4", vat = 12.0, tax = 0.0, transfer = 5.5))
         )
-        val built = ChartMarket.from(record, areaId = "SE4", intervalMinutes = 60, market = catalogue.first { it.id == "SE4" })
+        val built = ChartMarket.from(record, areaId = "SE4", market = catalogue.first { it.id == "SE4" })
         assertTrue("expected a market, got $built", built is ChartMarketBuild.Ready)
         val market = (built as ChartMarketBuild.Ready).market
 
         assertEquals("SE4", market.areaId)
-        assertTrue(market.hourly)
-        assertEquals(60, market.aggregationMinutes)
         assertFalse(local.area == market.areaId)
 
         assertTrue(
             "paired settings have no local planning inputs",
             !PlanningInputs::class.java.isAssignableFrom(
-                HaPlanningAdapter.of(record, catalogue, HaPresentation(60)).javaClass
+                HaPlanningAdapter.of(record, catalogue).javaClass
             )
         )
-        assertEquals(HaPlanningInputs.Auto(record), HaPlanningAdapter.of(record, catalogue, HaPresentation(60)))
-    }
-
-    @Test
-    fun pairedMarketKeepsQuarterHourAndHourlyPresentationIndependentOfSettings() {
-        val record = SettingsFixtures.parsed(revision = 6, areaId = "SE4")
-
-        val quarter = ready(ChartMarket.from(record, "SE4", 15, se4))
-        val hourly = ready(ChartMarket.from(record, "SE4", 60, se4))
-
-        assertEquals(15, quarter.intervalMinutes)
-        assertFalse(quarter.hourly)
-        assertEquals(15, quarter.aggregationMinutes)
-        assertEquals(60, hourly.intervalMinutes)
-        assertTrue(hourly.hourly)
-        assertEquals(60, hourly.aggregationMinutes)
-        assertEquals(quarter.vat, hourly.vat)
-        assertEquals(quarter.tax, hourly.tax)
-        assertEquals(quarter.transfer, hourly.transfer)
-        assertEquals(quarter.apply(1.0), hourly.apply(1.0), 0.0)
+        assertEquals(HaPlanningInputs.Auto(record), HaPlanningAdapter.of(record, catalogue))
     }
 
     @Test
@@ -107,7 +82,7 @@ class ChartMarketTest {
         val zero = SettingsFixtures.parsed(
             revision = 1, areaId = "SE4", overrides = JSONArray().put(override("SE4", tax = 0.0))
         )
-        val zeroMarket = ready(ChartMarket.from(zero, "SE4", 15, se4))
+        val zeroMarket = ready(ChartMarket.from(zero, "SE4", se4))
         assertEquals(HaFiscalValue(enabled = true, value = 0.0), HaFiscalValue(true, zeroMarket.tax.overrideValue))
         assertEquals(0.0, zeroMarket.tax.effectiveValue!!, 0.0)
 
@@ -120,7 +95,7 @@ class ChartMarketTest {
                 )
             )
         )
-        val suggestedMarket = ready(ChartMarket.from(suggested, "SE4", 15, se4))
+        val suggestedMarket = ready(ChartMarket.from(suggested, "SE4", se4))
         assertEquals(null, suggestedMarket.vat.overrideValue)
         assertEquals(se4.vatPercent, suggestedMarket.vat.effectiveValue)
 
@@ -128,7 +103,7 @@ class ChartMarketTest {
         val decimal = SettingsFixtures.parsed(
             revision = 1, areaId = "SE4", overrides = JSONArray().put(override("SE4", transfer = 5.5))
         )
-        assertEquals(5.5, ready(ChartMarket.from(decimal, "SE4", 15, se4)).transfer.effectiveValue!!, 0.0)
+        assertEquals(5.5, ready(ChartMarket.from(decimal, "SE4", se4)).transfer.effectiveValue!!, 0.0)
     }
 
     @Test
@@ -164,41 +139,40 @@ class ChartMarketTest {
 
         assertEquals(
             ChartMarketBuild.Incomplete(listOf(HaAreaOverrideComponent.VAT)),
-            ChartMarket.from(recordWith(vat = "none"), "SE4", 15, null)
+            ChartMarket.from(recordWith(vat = "none"), "SE4", null)
         )
         assertEquals(
             ChartMarketBuild.Incomplete(listOf(HaAreaOverrideComponent.TAX)),
-            ChartMarket.from(recordWith(tax = "none"), "SE4", 15, null)
+            ChartMarket.from(recordWith(tax = "none"), "SE4", null)
         )
         assertEquals(
             ChartMarketBuild.Incomplete(listOf(HaAreaOverrideComponent.TRANSFER)),
-            ChartMarket.from(recordWith(transfer = "none"), "SE4", 15, null)
+            ChartMarket.from(recordWith(transfer = "none"), "SE4", null)
         )
         assertEquals(
             "several unresolved components are all named, in a stable order",
             ChartMarketBuild.Incomplete(
                 listOf(HaAreaOverrideComponent.VAT, HaAreaOverrideComponent.TAX, HaAreaOverrideComponent.TRANSFER)
             ),
-            ChartMarket.from(recordWith(vat = "none", tax = "none", transfer = "none"), "SE4", 15, null)
+            ChartMarket.from(recordWith(vat = "none", tax = "none", transfer = "none"), "SE4", null)
         )
         assertEquals(
             listOf(HaAreaOverrideComponent.TAX, HaAreaOverrideComponent.TRANSFER),
-            (ChartMarket.from(recordWith(tax = "none", transfer = "none"), "SE4", 15, null) as ChartMarketBuild.Incomplete).unresolved
+            (ChartMarket.from(recordWith(tax = "none", transfer = "none"), "SE4", null) as ChartMarketBuild.Incomplete).unresolved
         )
 
-        assertTrue(ChartMarket.from(recordWith(vat = "none"), "SE4", 15, se4) is ChartMarketBuild.Ready)
-        assertTrue(ChartMarket.from(recordWith(vat = "none"), "SE4", 15, se4.copy(vatPercent = null)) is ChartMarketBuild.Incomplete)
-        assertTrue(ChartMarket.from(recordWith(vat = 0.0), "SE4", 15, null) is ChartMarketBuild.Ready)
-        assertTrue(ChartMarket.from(recordWith(vat = 12.5), "SE4", 15, null) is ChartMarketBuild.Ready)
+        assertTrue(ChartMarket.from(recordWith(vat = "none"), "SE4", se4) is ChartMarketBuild.Ready)
+        assertTrue(ChartMarket.from(recordWith(vat = "none"), "SE4", se4.copy(vatPercent = null)) is ChartMarketBuild.Incomplete)
+        assertTrue(ChartMarket.from(recordWith(vat = 0.0), "SE4", null) is ChartMarketBuild.Ready)
+        assertTrue(ChartMarket.from(recordWith(vat = 12.5), "SE4", null) is ChartMarketBuild.Ready)
         // And a disabled component is valid however little it says.
-        assertTrue(ChartMarket.from(recordWith(), "SE4", 15, null) is ChartMarketBuild.Ready)
+        assertTrue(ChartMarket.from(recordWith(), "SE4", null) is ChartMarketBuild.Ready)
     }
 
     @Test
     fun vatIsAppliedLast() {
         val market = ChartMarket(
             areaId = "SE4",
-            intervalMinutes = 15,
             vat = FiscalInput(enabled = true, overrideValue = 25.0, effectiveValue = 25.0),
             tax = FiscalInput(enabled = true, overrideValue = 10.0, effectiveValue = 10.0),
             transfer = FiscalInput(enabled = true, overrideValue = 10.0, effectiveValue = 10.0)
@@ -208,12 +182,9 @@ class ChartMarketTest {
     }
 
     @Test
-    fun aMarketWithoutAnAreaOrAKnownResolutionIsNotAValue() {
+    fun aMarketWithoutAnAreaIsNotAValue() {
         assertThrows(IllegalArgumentException::class.java) {
-            ChartMarket("", 15, FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF)
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            ChartMarket("SE4", 30, FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF)
+            ChartMarket("", FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF)
         }
     }
 }

@@ -115,10 +115,9 @@ internal object DashboardChart {
         dashboard.market.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
             ?: dashboard.market.areaId?.let { PriceMarkets.find(it)?.zoneId }
 
-    /** The chart for [dashboard] at [intervalMinutes], or `null` without an area, a clock or a priced interval. */
+    /** The chart for [dashboard], each interval as published, or `null` without an area, a clock or a priced interval. */
     fun build(
         dashboard: Dashboard,
-        intervalMinutes: Int,
         fetchedAt: Long = stamp(dashboard),
         now: Instant = Instant.now()
     ): PairedChart? {
@@ -127,7 +126,6 @@ internal object DashboardChart {
         val prices = prices(dashboard.prices, zone, fetchedAt, now) ?: return null
         val market = ChartMarket(
             areaId = areaId,
-            intervalMinutes = intervalMinutes,
             vat = FiscalInput.OFF,
             tax = FiscalInput.OFF,
             transfer = FiscalInput.OFF

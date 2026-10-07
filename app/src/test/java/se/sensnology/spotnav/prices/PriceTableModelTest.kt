@@ -16,14 +16,34 @@ import java.time.OffsetDateTime
 class PriceTableModelTest {
     /** The calculation inputs for these widget settings. */
     private fun inputs(settings: WidgetSettings): PlanningInputs = LocalPlanningInputs.of(settings)
-    @Test fun hourlyAggregationAveragesFourQuarterHours() {
+    @Test fun anHourlyAreaIsOneIntervalPerPublishedHour() {
         val start = OffsetDateTime.parse("2026-09-12T10:00:00+02:00")
-        val points = listOf(1.0, 2.0, 3.0, 4.0).mapIndexed { index, value ->
-            PricePoint(start.plusMinutes(index * 15L), value)
-        }
-        val aggregated = PriceAggregation.aggregate(points, inputs(WidgetSettings(intervalMinutes = 60)))
-        assertEquals(1, aggregated.size)
-        assertEquals(2.5, aggregated.single().second, 0.0)
+        val points = List(8) { index -> PricePoint(start.plusMinutes(index * 15L), if (index < 4) 2.5 else 4.0, 60) }
+        val aggregated = PriceAggregation.aggregate(points)
+        assertEquals(listOf(PriceInterval(start, 2.5, 60), PriceInterval(start.plusHours(1), 4.0, 60)), aggregated)
+    }
+
+    @Test fun aQuarterHourAreaKeepsEveryQuarter() {
+        val start = OffsetDateTime.parse("2026-09-12T10:00:00+02:00")
+        val points = listOf(1.0, 2.0, 3.0, 4.0).mapIndexed { index, value -> PricePoint(start.plusMinutes(index * 15L), value) }
+        val aggregated = PriceAggregation.aggregate(points)
+        assertEquals(points.map { PriceInterval(it.start, it.pricePerKwh, 15) }, aggregated)
+    }
+
+    @Test fun aHalfHourAreaIsOneIntervalPerPublishedHalfHour() {
+        val start = OffsetDateTime.parse("2026-09-12T10:00:00+02:00")
+        val points = List(4) { index -> PricePoint(start.plusMinutes(index * 15L), if (index < 2) 1.0 else 3.0, 30) }
+        val aggregated = PriceAggregation.aggregate(points)
+        assertEquals(listOf(PriceInterval(start, 1.0, 30), PriceInterval(start.plusMinutes(30), 3.0, 30)), aggregated)
+    }
+
+    @Test fun aRepeatedClockChangeHourStaysTwoHours() {
+        // 2026-10-25 in Stockholm: 02:00 happens at +02:00 and again at +01:00.
+        val first = OffsetDateTime.parse("2026-10-25T02:00:00+02:00")
+        val second = OffsetDateTime.parse("2026-10-25T02:00:00+01:00")
+        val points = List(4) { PricePoint(first.plusMinutes(it * 15L), 1.0, 60) } +
+            List(4) { PricePoint(second.plusMinutes(it * 15L), 2.0, 60) }
+        assertEquals(listOf(PriceInterval(first, 1.0, 60), PriceInterval(second, 2.0, 60)), PriceAggregation.aggregate(points))
     }
 
     @Test fun marksCurrentRowAndCalculatesRanges() {
@@ -187,35 +207,13 @@ class PriceTableModelTest {
         return RelayDayPoints.points((parsed as DayParse.Ok).document, area.zoneId)
     }
 
-    @Test fun anHourlyRelayDocumentBecomesFourQuarterCellsInFifteenMinuteMode() {
-        // What the relay really serves for an hourly area: one price per hour, which
-        // `RelayDayPoints` expands into four quarter-hour points at that same price.
-        val points = relayPoints(
-            RelayFixtures.no1, "2026-09-20", "2026-09-20T00:00:00+02:00", RelayFixtures.prices(4, base = 0.10), res = 60
-        )
-        assertEquals(16, points.size)
-
-        val model = table(points, plan = planOf("2026-09-20T00:30:00+02:00" to "2026-09-20T00:45:00+02:00"))
-
-        // Four separate quarter-hour cells per hour, each covering one quarter.
-        assertEquals(16, model.rows.size)
-        assertTrue("every cell covers one quarter", model.rows.all { it.today!!.minutes == 15L })
-        assertTrue("every cell has one segment", model.rows.all { it.today!!.coverage.segmentCount == 1 })
-        assertEquals(1, model.rows.count { !it.today!!.coverage.isEmpty })
-        assertEquals(at("2026-09-20T00:30:00+02:00"), model.rows[2].today!!.start)
-        assertEquals(1, model.rows[2].today!!.coverage.selectedCount)
-        // And the four quarters of the first hour carry that hour's one price.
-        assertEquals(1, model.rows.take(4).map { it.today!!.price }.distinct().size)
-    }
-
-    @Test fun theSameNormalizedQuartersBecomeOneHourCellInHourlyMode() {
+    @Test fun anHourlyAreasQuartersBecomeOneHourCell() {
         val points = relayPoints(
             RelayFixtures.no1, "2026-09-20", "2026-09-20T00:00:00+02:00", RelayFixtures.prices(4, base = 0.10), res = 60
         )
 
         val model = table(
             points,
-            settings = WidgetSettings(intervalMinutes = 60),
             plan = planOf(
                 "2026-09-20T00:15:00+02:00" to "2026-09-20T00:30:00+02:00",
                 "2026-09-20T00:45:00+02:00" to "2026-09-20T01:00:00+02:00"

@@ -78,28 +78,49 @@ class ChartSelectionTest {
         assertEquals(15f, readout.markMinute, 0f)
 
         val points = (0 until 8).map { index ->
-            PricePoint(at("2026-09-20T00:00:00+02:00").plusMinutes(index * 15L), 1.0 + index)
+            PricePoint(at("2026-09-20T00:00:00+02:00").plusMinutes(index * 15L), 1.0 + index / 4, 60)
         }
-        val hourly = ChartSelection.nearest(xOf(30f), metrics, inputs(WidgetSettings(intervalMinutes = 60)), PriceResult(points, emptyList(), 0))!!
+        val hourly = ChartSelection.nearest(xOf(30f), metrics, inputs(WidgetSettings()), PriceResult(points, emptyList(), 0))!!
         assertEquals(LocalTime.of(0, 0), hourly.time)
         assertEquals(30f, hourly.markMinute, 0f)
 
-        val cycled = ChartSelection.readoutAt(LocalTime.of(0, 0), inputs(WidgetSettings(intervalMinutes = 60)), PriceResult(points, emptyList(), 0))!!
+        val cycled = ChartSelection.readoutAt(LocalTime.of(0, 0), inputs(WidgetSettings()), PriceResult(points, emptyList(), 0))!!
         assertEquals(hourly, cycled)
         assertEquals(0f, cycled.markMinute - hourly.markMinute, 0f)
     }
 
     @Test
-    fun inHourlyModeTheNearestIntervalIsMeasuredAtItsOwnStroke() {
+    fun inAnHourlyAreaTheNearestIntervalIsMeasuredAtItsOwnStroke() {
         val points = (0 until 8).map { index ->
-            PricePoint(at("2026-09-20T00:00:00+02:00").plusMinutes(index * 15L), 1.0 + index)
+            PricePoint(at("2026-09-20T00:00:00+02:00").plusMinutes(index * 15L), 1.0 + index / 4, 60)
         }
         val result = PriceResult(points, emptyList(), 0)
-        val settings = WidgetSettings(intervalMinutes = 60)
+        val settings = WidgetSettings()
 
         assertEquals(LocalTime.of(0, 0), ChartSelection.nearest(xOf(30f), metrics, inputs(settings), result)!!.time)
         assertEquals(LocalTime.of(1, 0), ChartSelection.nearest(xOf(90f), metrics, inputs(settings), result)!!.time)
         assertEquals(LocalTime.of(0, 0), ChartSelection.nearest(xOf(31f), metrics, inputs(settings), result)!!.time)
+    }
+
+    @Test
+    fun inAHalfHourAreaEachHalfHourIsOneMarkAtItsMiddle() {
+        val points = (0 until 8).map { index ->
+            PricePoint(at("2026-09-20T00:00:00+02:00").plusMinutes(index * 15L), 1.0 + index / 2, 30)
+        }
+        val result = PriceResult(points, emptyList(), 0)
+        val market = inputs(WidgetSettings())
+
+        val first = ChartSelection.nearest(xOf(15f), metrics, market, result)!!
+        assertEquals(LocalTime.of(0, 0), first.time)
+        assertEquals("a half-hour is drawn through its middle", 15f, first.markMinute, 0f)
+        val second = ChartSelection.nearest(xOf(44f), metrics, market, result)!!
+        assertEquals(LocalTime.of(0, 30), second.time)
+        assertEquals(45f, second.markMinute, 0f)
+        assertEquals(
+            "four half-hours, one position each",
+            listOf(LocalTime.of(0, 0), LocalTime.of(0, 30), LocalTime.of(1, 0), LocalTime.of(1, 30)),
+            ChartSelection.positions(market, result)
+        )
     }
 
     @Test
@@ -226,10 +247,6 @@ class ChartSelectionTest {
         assertFalse(
             "a new area",
             ChartSelection.stillValid(readout, request, ChartRequests.of(inputs(settings.copy(area = no1.id)), result, 840, ChartProfile.PLAN_CARD))
-        )
-        assertFalse(
-            "a new resolution",
-            ChartSelection.stillValid(readout, request, ChartRequests.of(inputs(settings.copy(intervalMinutes = 60)), result, 840, ChartProfile.PLAN_CARD))
         )
         assertFalse(
             "new prices",

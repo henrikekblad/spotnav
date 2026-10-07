@@ -17,7 +17,6 @@ import se.sensnology.spotnav.chart.PairedChart
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.authority.AuthorityResolution
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.SettingsAuthorityCoordinator
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.dashboard.AutoControl
@@ -201,8 +200,7 @@ internal class ChargingScreen(
             screenGeneration = generation,
             coordinator = authorityCoordinator,
             cache = authorityCache,
-            catalogue = { PriceMarkets.all },
-            presentation = { HaPresentation(settings.intervalMinutes) }
+            catalogue = { PriceMarkets.all }
         ).also { controller ->
             controller.captureLocal(settings.area, LocalPlanningInputs.ofOrNull(settings))
         }

@@ -12,7 +12,8 @@ import se.sensnology.spotnav.prices.PriceMarket
 /**
  * What a price graph needs to know about a market, and nothing a plan needs.
  *
- * The area, the aggregation interval and the three fiscal components. It carries no phases, amperes,
+ * The area and the three fiscal components; each interval is drawn at its published length, which
+ * the prices themselves carry (see `PricePoint.minutes`). It carries no phases, amperes,
  * energy, target or departure, so it cannot be turned into a plan by accident (an `auto_price`
  * charger has an authoritative market but must never have planning inputs). [apply] delegates to
  * [FiscalArithmetic], the one formula.
@@ -20,12 +21,6 @@ import se.sensnology.spotnav.prices.PriceMarket
 internal data class ChartMarket(
     /** Which price area's market these prices are. */
     val areaId: String,
-    /**
-     * The presentation resolution the price series is aggregated to: 15 or 60 minutes, never the
-     * source's (15, 30 or 60), which is already on the quarter-hour grid: a half-hour is two equal
-     * quarters at 15 and half an hour of the average at 60.
-     */
-    val intervalMinutes: Int,
     val vat: FiscalInput,
     val tax: FiscalInput,
     val transfer: FiscalInput
@@ -33,12 +28,7 @@ internal data class ChartMarket(
     init {
         // Market-presentation invariants only; the fiscal components validate themselves (see FiscalInput).
         require(areaId.isNotBlank()) { "a chart needs an area" }
-        require(intervalMinutes == 15 || intervalMinutes == 60) { "intervalMinutes must be 15 or 60" }
     }
-
-    val hourly: Boolean get() = intervalMinutes == 60
-
-    val aggregationMinutes: Int get() = intervalMinutes
 
     fun apply(localMajorPerKwh: Double): Double =
         FiscalArithmetic.apply(localMajorPerKwh, vat = vat, tax = tax, transfer = transfer)
@@ -47,14 +37,13 @@ internal data class ChartMarket(
         /** The market a locally calculated plan is drawn in: the calculation inputs minus everything planning-shaped. */
         fun of(inputs: PlanningInputs): ChartMarket = ChartMarket(
             areaId = inputs.areaId,
-            intervalMinutes = inputs.intervalMinutes,
             vat = inputs.vat,
             tax = inputs.tax,
             transfer = inputs.transfer
         )
 
         /**
-         * The market an authoritative record is drawn in, at the screen's own presentation [intervalMinutes].
+         * The market an authoritative record is drawn in.
          *
          * [areaId] is the effective area and [market] its catalogue entry. Fiscal components come from
          * [FiscalResolution], so a drawn and a planned price of one row agree. A record that enables a
@@ -63,7 +52,6 @@ internal data class ChartMarket(
         fun from(
             record: HaPlanningSettings,
             areaId: String,
-            intervalMinutes: Int,
             market: PriceMarket?
         ): ChartMarketBuild {
             val components = FiscalResolution.forArea(record, areaId, market)
@@ -71,7 +59,6 @@ internal data class ChartMarket(
             return ChartMarketBuild.Ready(
                 ChartMarket(
                     areaId = areaId,
-                    intervalMinutes = intervalMinutes,
                     vat = components.vat.input,
                     tax = components.tax.input,
                     transfer = components.transfer.input

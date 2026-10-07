@@ -15,7 +15,6 @@ class PlanningInputsTest {
         transfer = true,
         taxMinorUnit = 39.0,
         gridFeeMinorUnit = 25.0,
-        intervalMinutes = 60,
         chargingPhases = 1,
         chargingAmps = 10,
         consumptionKwhPerMil = 1.8,
@@ -33,7 +32,6 @@ class PlanningInputsTest {
         val inputs = LocalPlanningInputs.of(complete)
 
         assertEquals("SE4", inputs.areaId)
-        assertEquals(60, inputs.intervalMinutes)
         // The local record keeps one figure per component, so it is at once the user's own value
         // and the effective one (see LocalPlanningInputs).
         val rate = complete.effectiveVatPercent
@@ -83,7 +81,6 @@ class PlanningInputsTest {
             assertEquals(settings.chargingAmps, inputs.amps)
             assertEquals(settings.chargingPhases, inputs.phases)
             assertEquals(settings.maxChargingPeriods, inputs.maxPeriods)
-            assertEquals(settings.intervalMinutes, inputs.intervalMinutes)
             assertEquals(settings.departureHour, inputs.departure.time.hour)
             assertEquals(settings.departureMinute, inputs.departure.time.minute)
         }
@@ -192,7 +189,6 @@ class PlanningInputsTest {
 
         listOf(
             "an empty area" to { valid.copy(areaId = " ") },
-            "an unsupported resolution" to { valid.copy(intervalMinutes = 30) },
             "two phases" to { valid.copy(phases = 2) },
             "no amps" to { valid.copy(amps = 0) },
             "negative amps" to { valid.copy(amps = -6) },
@@ -223,7 +219,6 @@ class PlanningInputsTest {
             chargingAmps = 0,
             chargingPhases = 2,
             consumptionKwhPerMil = 0.0,
-            intervalMinutes = 30,
             maxChargingPeriods = 12,
             departureHour = 25,
             departureMinute = 99,
@@ -238,7 +233,6 @@ class PlanningInputsTest {
         assertEquals(1, inputs.amps)
         assertEquals(3, inputs.phases)
         assertEquals(0.1, inputs.consumptionKwhPer10Km, 1e-12)
-        assertEquals(60, inputs.intervalMinutes)
         assertEquals(8, inputs.maxPeriods)
         assertEquals(LocalTime.of(23, 59), inputs.departure.time)
         // A figure that is not a number is not a figure: absent, never added.

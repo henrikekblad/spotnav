@@ -20,7 +20,6 @@ internal fun ViewScope.authorityReasonText(reason: HaPlanningInputs.Reason): Str
     HaPlanningInputs.Reason.FISCAL_TRANSFER -> t(R.string.authority_reason_transfer)
     HaPlanningInputs.Reason.DEPARTURE -> t(R.string.authority_reason_departure)
     HaPlanningInputs.Reason.TARGET -> t(R.string.authority_reason_target)
-    HaPlanningInputs.Reason.PRESENTATION -> t(R.string.authority_reason_presentation)
     HaPlanningInputs.Reason.REJECTED -> t(R.string.authority_reason_rejected)
 }
 

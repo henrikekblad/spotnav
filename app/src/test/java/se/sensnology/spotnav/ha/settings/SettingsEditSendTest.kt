@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.authority.AuthorityController
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.testing.FakeKeyValueStore
 import se.sensnology.spotnav.testing.RelayFixtures
@@ -28,8 +27,7 @@ class SettingsEditSendTest {
         screenGeneration = 1,
         coordinator = null,
         cache = cache,
-        catalogue = { listOf(RelayFixtures.se4) },
-        presentation = { HaPresentation.QUARTER_HOUR }
+        catalogue = { listOf(RelayFixtures.se4) }
     ).also {
         cache.recordOutcome(profileId, SettingsUpdate.Outcome.Updated(record))
         it.seedFromConfirmedRecord()

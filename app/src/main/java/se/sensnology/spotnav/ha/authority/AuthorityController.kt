@@ -116,8 +116,7 @@ internal class AuthorityController(
     private val coordinator: SettingsAuthorityCoordinator?,
     /** Where every answer is folded before it is rendered. */
     private val cache: ConfirmedSettingsStore,
-    private val catalogue: () -> List<PriceMarket>,
-    private val presentation: () -> HaPresentation
+    private val catalogue: () -> List<PriceMarket>
 ) {
     private val lock = Any()
     private var state: VisibleAuthority? = null
@@ -182,7 +181,7 @@ internal class AuthorityController(
             true
         }
         if (!current) return AuthorityResolution.Stale
-        val answer = runCatching { coordinator.reconcile(localId, presentation(), accepted.operation) }.getOrNull()
+        val answer = runCatching { coordinator.reconcile(localId, accepted.operation) }.getOrNull()
             ?: return AuthorityResolution.Stale
         return apply(answer)
     }
@@ -195,7 +194,7 @@ internal class AuthorityController(
         val localId = profileId ?: return null
         val record = cache.confirmed(localId)
             ?: return show(VisibleAuthority.ReadOnlyOffline(null))
-        val adaptation = HaPlanningAdapter.of(record, catalogue(), presentation())
+        val adaptation = HaPlanningAdapter.of(record, catalogue())
         return show(VisibleAuthorityResolver.forRecord(record, adaptation, dashboard = null))
     }
 
@@ -219,7 +218,7 @@ internal class AuthorityController(
             val next = synchronized(lock) { state }
             return WriteOutcome.Reported(answer, next)
         }
-        val adaptation = HaPlanningAdapter.of(record, catalogue(), presentation())
+        val adaptation = HaPlanningAdapter.of(record, catalogue())
         val next = VisibleAuthorityResolver.forRecord(record, adaptation, dashboard)
         show(next)
         return WriteOutcome.Applied(next, answer)

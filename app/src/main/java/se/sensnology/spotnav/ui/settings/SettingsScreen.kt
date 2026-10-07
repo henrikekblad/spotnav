@@ -34,7 +34,6 @@ import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.client.CameraCommands
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
 import se.sensnology.spotnav.ha.settings.FormSaveOutcome
@@ -114,8 +113,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // resolves from the cache and writes through the settings transport alone.
             coordinator = null,
             cache = settingsCache,
-            catalogue = { PriceMarkets.all },
-            presentation = { HaPresentation(old.intervalMinutes) }
+            catalogue = { PriceMarkets.all }
         )
         authorityController = settingsAuthority
         var confirmedRecord = settingsProfile?.let { settingsCache.confirmed(it.localId) }

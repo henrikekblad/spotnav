@@ -99,8 +99,8 @@ class ChartScrubTest {
 
     @Test
     fun anHourlyScrubFollowsTheSameCentreTheMarkIsDrawnAt() {
-        val settings = WidgetSettings(intervalMinutes = 60)
-        val chosen = ChartSelection.nearest(metrics.xAt(9 * 60f + 30f), metrics, inputs(settings), result)
+        val hourly = PriceResult(result.today.map { it.copy(pricePerKwh = (it.start.hour).toDouble(), minutes = 60) }, emptyList(), 0L)
+        val chosen = ChartSelection.nearest(metrics.xAt(9 * 60f + 30f), metrics, inputs(WidgetSettings()), hourly)
         assertEquals(LocalTime.of(9, 0), chosen!!.time)
         assertEquals("the line lands on the hour's own centre", 9 * 60f + 30f, chosen.markMinute, 0.001f)
     }

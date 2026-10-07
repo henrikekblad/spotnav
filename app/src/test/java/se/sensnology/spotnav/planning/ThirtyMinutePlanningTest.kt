@@ -103,21 +103,20 @@ class ThirtyMinutePlanningTest {
     }
 
     @Test
-    fun theTableAndTheNowLineReadHalfHoursAtBothPresentations() {
+    fun theTableAndTheNowLineShowHalfHoursAsPublished() {
         val result = londonDay(listOf("GB-C_2026-10-04.json", "GB-C_2026-10-05.json"))
         val now = OffsetDateTime.parse("2026-10-04T20:20:00+01:00")
-        val quarter = ChartMarket("GB-C", 15, FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF)
-        val hour = quarter.copy(intervalMinutes = 60)
+        val market = ChartMarket("GB-C", FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF)
 
-        val quarterTable = PriceTableModels.create(result, quarter, now)
-        assertEquals(96, quarterTable.rows.size)
-        // The current row at 20:20 is 20:15, the second quarter of the 20:00 half-hour, at its price.
-        val current = quarterTable.rows[quarterTable.currentIndex]
-        assertEquals("20:15", current.position.time.toString())
-        assertEquals(quarterTable.rows[quarterTable.currentIndex - 1].today!!.price, current.today!!.price, 0.0)
-        assertEquals(24, PriceTableModels.create(result, hour, now).rows.size)
+        // The planner still reads quarters; the table shows the 48 published half-hours.
+        assertEquals(96, result.today.size)
+        val table = PriceTableModels.create(result, market, now)
+        assertEquals(48, table.rows.size)
+        assertTrue(table.rows.all { it.today!!.minutes == 30L })
+        // The current row at 20:20 is the 20:00 half-hour.
+        assertEquals("20:00", table.rows[table.currentIndex].position.time.toString())
 
-        assertEquals((20 * 60 + 15).toFloat(), ChartNow.currentMarkMinute(quarter, result, now))
-        assertEquals((20 * 60 + 30).toFloat(), ChartNow.currentMarkMinute(hour, result, now))
+        // The now line sits in the middle of that half-hour.
+        assertEquals((20 * 60 + 15).toFloat(), ChartNow.currentMarkMinute(result, now))
     }
 }

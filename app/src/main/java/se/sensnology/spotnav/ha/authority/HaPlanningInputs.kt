@@ -33,9 +33,6 @@ sealed interface HaPlanningInputs {
         /** A target-driven plan with no target to drive it. */
         TARGET,
 
-        /** A presentation resolution that is not one of the two the app draws. */
-        PRESENTATION,
-
         /** A value that satisfied this adapter's checks but not the calculation value's own. */
         REJECTED
     }

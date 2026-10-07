@@ -18,9 +18,6 @@ internal object LocalPlanningInputs {
 
     fun of(settings: WidgetSettings): PlanningInputs = PlanningInputs(
         areaId = settings.area,
-        // Anything that is not the quarter-hour presentation is the hourly one, which is exactly
-        // how the aggregation has always read this field.
-        intervalMinutes = if (settings.intervalMinutes == 15) 15 else 60,
         // A part the area's published price already includes adds nothing (see WidgetSettings.included).
         vat = local(settings.vatAdded, settings.effectiveVatPercent),
         tax = local(settings.taxAdded, settings.taxMinorUnit),

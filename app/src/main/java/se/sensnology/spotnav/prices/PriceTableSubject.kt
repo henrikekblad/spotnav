@@ -15,7 +15,6 @@ import se.sensnology.spotnav.planning.PlanningInputs
 internal data class PriceTableSubject(
     val requestKey: PriceRequestKey,
     val areaId: String,
-    val intervalMinutes: Int,
     /** The exact market presentation; present even when HA owns the plan and [inputs] are absent. */
     val market: ChartMarket?,
     val inputs: PlanningInputs?,
@@ -38,7 +37,6 @@ internal object PriceTableSubjects {
         authority: VisibleAuthority?,
         localArea: String,
         localInputs: PlanningInputs?,
-        intervalMinutes: Int,
         profileId: String?,
         generation: Int,
         catalogue: List<PriceMarket>
@@ -52,14 +50,12 @@ internal object PriceTableSubjects {
                     market = (ChartMarket.from(
                         record,
                         areaId,
-                        intervalMinutes,
                         catalogue.firstOrNull { it.id == areaId }
                     ) as? ChartMarketBuild.Ready)?.market,
                     // No paired state carries calculation inputs: Home Assistant owns the plan for
                     // this charger, in either mode (see [inputsOf]).
                     inputs = inputsOf(),
                     revision = record.revision,
-                    intervalMinutes = intervalMinutes,
                     profileId = profileId,
                     generation = generation
                 )
@@ -72,7 +68,6 @@ internal object PriceTableSubjects {
                 market = null,
                 inputs = null,
                 revision = null,
-                intervalMinutes = intervalMinutes,
                 profileId = profileId,
                 generation = generation
             )
@@ -82,7 +77,6 @@ internal object PriceTableSubjects {
             market = localInputs?.let(ChartMarket::of),
             inputs = localInputs,
             revision = null,
-            intervalMinutes = intervalMinutes,
             profileId = profileId,
             generation = generation
         )
@@ -95,13 +89,11 @@ internal object PriceTableSubjects {
         market: ChartMarket?,
         inputs: PlanningInputs?,
         revision: Int?,
-        intervalMinutes: Int,
         profileId: String?,
         generation: Int
     ): PriceTableSubject = PriceTableSubject(
         requestKey = PriceRequestKey(profileId, areaId, generation),
         areaId = areaId,
-        intervalMinutes = intervalMinutes,
         market = market,
         inputs = inputs,
         revision = revision
@@ -121,7 +113,6 @@ internal fun PriceTableSubjects.stillCurrent(
     authority = authority,
     localArea = localArea,
     localInputs = subject.inputs,
-    intervalMinutes = subject.intervalMinutes,
     profileId = subject.requestKey.profileId,
     generation = subject.requestKey.generation,
     catalogue = catalogue

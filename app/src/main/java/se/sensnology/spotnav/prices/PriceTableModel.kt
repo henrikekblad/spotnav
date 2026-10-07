@@ -61,14 +61,13 @@ object PriceTableModels {
         now: OffsetDateTime,
         periods: List<ChargingPeriod>
     ): PriceTableModel {
-        val minutes = market.intervalMinutes.toLong()
         fun cells(points: List<PricePoint>): List<PriceTableCell> =
-            PriceAggregation.aggregate(points, market).map { (start, price) ->
+            PriceAggregation.aggregate(points).map { (start, price, minutes) ->
                 PriceTableCell(
                     start = start,
-                    minutes = minutes,
+                    minutes = minutes.toLong(),
                     price = market.apply(price),
-                    coverage = ChargeCoverage.forInterval(start, minutes, periods)
+                    coverage = ChargeCoverage.forInterval(start, minutes.toLong(), periods)
                 )
             }
         val today = cells(result.today)
@@ -108,16 +107,40 @@ object PriceTableModels {
     }
 }
 
-object PriceAggregation {
-    /** The series as one drawn mark per interval, for the market a graph is drawn in. */
-    internal fun aggregate(points: List<PricePoint>, market: ChartMarket): List<Pair<OffsetDateTime, Double>> {
-        if (market.aggregationMinutes == 15) return points.map { it.start to it.pricePerKwh }
-        return points.groupBy { it.start.toLocalDate() to it.start.hour }
-            .values.map { group -> group.first().start.withMinute(0) to group.map { it.pricePerKwh }.average() }
-            .sortedBy { it.first }
-    }
+/** One published price interval as a graph or a table draws it: its start, its price and its length. */
+data class PriceInterval(val start: OffsetDateTime, val price: Double, val minutes: Int)
 
-    /** The same aggregation for a caller that still holds calculation inputs (the compatibility path). */
-    fun aggregate(points: List<PricePoint>, inputs: PlanningInputs): List<Pair<OffsetDateTime, Double>> =
-        aggregate(points, ChartMarket.of(inputs))
+object PriceAggregation {
+    /**
+     * The series as one drawn mark per published interval: a quarter-hour area's quarters one by one,
+     * a half-hour area's half-hours, an hourly area's hours, each at its own published price. The
+     * quarters of one interval are found by elapsed time from its first quarter, so an hour repeated by
+     * a clock change stays two hours.
+     */
+    fun aggregate(points: List<PricePoint>): List<PriceInterval> {
+        val out = ArrayList<PriceInterval>()
+        var start: OffsetDateTime? = null
+        var minutes = 0
+        val prices = ArrayList<Double>()
+        fun flush() {
+            val first = start ?: return
+            out.add(PriceInterval(first, prices.average(), minutes))
+        }
+        for (point in points.sortedBy { it.start.toInstant() }) {
+            val current = start
+            val within = current != null && point.minutes == minutes &&
+                point.start.toInstant().isBefore(current.toInstant().plusSeconds(minutes * 60L))
+            if (within) {
+                prices.add(point.pricePerKwh)
+                continue
+            }
+            flush()
+            start = point.start
+            minutes = point.minutes
+            prices.clear()
+            prices.add(point.pricePerKwh)
+        }
+        flush()
+        return out
+    }
 }

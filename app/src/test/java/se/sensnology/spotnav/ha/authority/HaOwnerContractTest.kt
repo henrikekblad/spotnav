@@ -20,7 +20,7 @@ class HaOwnerContractTest {
         val dashboard = DashboardFixtures.dashboard { put("settings", HaSettingsCodec.encode(record)) }
 
         assertEquals(record, dashboard.settings)
-        assertEquals(HaPlanningInputs.Auto(record), HaPlanningAdapter.of(record, emptyList(), HaPresentation.HOURLY))
+        assertEquals(HaPlanningInputs.Auto(record), HaPlanningAdapter.of(record, emptyList()))
         val authority = VisibleAuthorityResolver.forRecord(record, HaPlanningInputs.Auto(record), dashboard)
         assertTrue(authority is VisibleAuthority.AutoRemote)
         assertFalse(AuthorityPlan.source(authority) is PlanSource.AndroidCalculates)
