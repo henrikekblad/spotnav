@@ -43,6 +43,38 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
 With **Target** instead of **kWh**, you set the charge level to reach; the app works out the energy from
 the car's charge level and battery.
 
+## Which car is plugged in?
+
+When more than one car can charge at a charger, Home Assistant finds out which one was plugged in, from what
+the cars report and, if you set one up, the charger's camera. The app shows the same as the Home Assistant card:
+
+- **The question.** When Home Assistant cannot tell, the charger card shows **Which car is plugged in?** with one
+  button per car, the likeliest first. The first answer wins, from the app, the card or the notification on any
+  phone. If nobody answers, the car that was chosen stays.
+- **The status line** says **Identifying the car…** while Home Assistant looks at the cars, and **Waiting for an
+  answer: which car is plugged in?** while the question is open. Both go once the car is decided.
+- **The car line** on the charger card names the car being planned for, with how it was decided (by the car's
+  charging cable, by position, by the camera, selected manually, or assumed). **⇄ Change car** changes it at any
+  time while a car is plugged in; any paired phone may do it, and it counts as an answer.
+
+In **Settings → Charger**, the same settings as in the card:
+
+- **Cars at this charger**: the cars that can charge and be planned for here (at least one).
+- **Identification**: **Automatic** (from the cars' own reports, asking when they cannot tell), **Always ask**,
+  or **Off** (the car you chose stays).
+- **Camera**: the camera chosen in Home Assistant, shown here; the camera and its AI task are chosen in the Home
+  Assistant card. **Crop parking spot** fetches a picture to drag the selection around the parking spot; only what
+  is inside is compared.
+
+In **Settings → Vehicle**, each car has its **Reference picture**: a **Day** and a **Night** slot. With the car
+parked at the charger, **Take day picture** (and, in the dark, **Take night picture** for the camera's infrared);
+over a picture the button is **Retake**, and **Delete** removes only that picture. **Close** closes the dialog.
+A car without a reference picture is never recognised by the camera.
+
+How it decides, what the camera can and cannot tell apart, which AI model to use and what to send with a field
+report are in [Which car is plugged in?](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/vehicle-identification.md)
+in the Home Assistant integration's documentation.
+
 ## Plan chart
 
 <img src="images/app-plan-chart.png" alt="Charging plan card: today's and tomorrow's prices as dots, the planned period shaded, the current time marked, with cost, energy, range and the period's start and end" width="480">
