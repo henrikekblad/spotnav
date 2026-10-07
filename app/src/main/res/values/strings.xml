@@ -216,8 +216,8 @@
   <string name="card_planning_title">Planning</string>
   <string name="card_planning_title_for">Planning for %1$s</string>
   <string name="charge_by_label">Charge by</string>
-  <string name="charge_by_energy">Energy</string>
-  <string name="charge_by_target">Target SoC</string>
+  <string name="charge_by_energy">Energy · kWh</string>
+  <string name="charge_by_target">Target SoC · %%</string>
   <string name="card_charging_plan_title">Charging plan</string>
   <string name="popover_eyebrow_plan">PLAN SETTING</string>
   <string name="plan_card_departure_label">Departure</string>

@@ -35,7 +35,7 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
 - **Vehicle**: charge level, charge limit, battery capacity, consumption and onboard charger, as the
   car reports them or as you set them.
 - **Planning**: titled with the car Home Assistant plans for (**Planning for EV6**; just **Planning** while no car
-  is known). **Charge by** chooses **Energy** (kWh) or **Target SoC**, then come the strategy, departure, and the
+  is known). **Charge by** chooses **Energy · kWh** or **Target SoC · %**, then come the strategy, departure, and the
   energy to add or the target charge level. The slider
   marks where the battery is full. How the charge is split into periods is a charger setting, **Settings →
   Charger → Charge periods**: **Automatic** (the default: the cheapest hours, split only where the saving is worth
@@ -44,9 +44,9 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
 
 <img src="images/app-planning-target.png" alt="Planning card charging by Target SoC: the car's charge level and charge limit above the target state of charge slider at 80 %, and the energy needed" width="420">
 
-With **Charge by** set to **Target SoC** instead of **Energy**, you set the charge level to reach; the app works out
+With **Charge by** set to **Target SoC · %** instead of **Energy · kWh**, you set the charge level to reach; the app works out
 the energy from the car's charge level and battery. **Charge by** is there only when a target can work: when the car's
-charge level is known (with the phone's own plan, also its battery capacity). The slider marks the car's level now and its charge limit, and, when the car
+charge level is known (with the phone's own plan, also its battery capacity). The slider marks the car's level now and its charge limit (only below 100 %), and, when the car
 has a minimum charge level, shades the track from 0 to it in a darker tone with **min 30 %** under it.
 
 ## Which car is plugged in?

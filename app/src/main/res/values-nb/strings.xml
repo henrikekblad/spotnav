@@ -203,8 +203,8 @@
   <string name="card_planning_title">Planlegging</string>
   <string name="card_planning_title_for">Planlegging for %1$s</string>
   <string name="charge_by_label">Lad etter</string>
-  <string name="charge_by_energy">Energi</string>
-  <string name="charge_by_target">Mål-SoC</string>
+  <string name="charge_by_energy">Energi · kWh</string>
+  <string name="charge_by_target">Mål-SoC · %%</string>
   <string name="card_charging_plan_title">Ladeplan</string>
   <string name="popover_eyebrow_plan">PLANINNSTILLING</string>
   <string name="plan_card_departure_label">Avreise</string>

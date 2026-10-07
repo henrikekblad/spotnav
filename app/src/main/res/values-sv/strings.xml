@@ -203,8 +203,8 @@
   <string name="card_planning_title">Planering</string>
   <string name="card_planning_title_for">Planering för %1$s</string>
   <string name="charge_by_label">Ladda efter</string>
-  <string name="charge_by_energy">Energi</string>
-  <string name="charge_by_target">Laddmål</string>
+  <string name="charge_by_energy">Energi · kWh</string>
+  <string name="charge_by_target">Laddmål · %%</string>
   <string name="card_charging_plan_title">Laddplan</string>
   <string name="popover_eyebrow_plan">PLANINSTÄLLNING</string>
   <string name="plan_card_departure_label">Avresa</string>

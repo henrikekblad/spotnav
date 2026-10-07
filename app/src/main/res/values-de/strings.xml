@@ -207,8 +207,8 @@
   <string name="card_planning_title">Planung</string>
   <string name="card_planning_title_for">Planung für %1$s</string>
   <string name="charge_by_label">Laden nach</string>
-  <string name="charge_by_energy">Energie</string>
-  <string name="charge_by_target">Ladeziel</string>
+  <string name="charge_by_energy">Energie · kWh</string>
+  <string name="charge_by_target">Ladeziel · %%</string>
   <string name="card_charging_plan_title">Ladeplan</string>
   <string name="popover_eyebrow_plan">PLANEINSTELLUNG</string>
   <string name="plan_card_departure_label">Abfahrt</string>

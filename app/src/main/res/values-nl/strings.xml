@@ -207,8 +207,8 @@
   <string name="card_planning_title">Planning</string>
   <string name="card_planning_title_for">Planning voor %1$s</string>
   <string name="charge_by_label">Laden op</string>
-  <string name="charge_by_energy">Energie</string>
-  <string name="charge_by_target">Laaddoel</string>
+  <string name="charge_by_energy">Energie · kWh</string>
+  <string name="charge_by_target">Laaddoel · %%</string>
   <string name="card_charging_plan_title">Laadplan</string>
   <string name="popover_eyebrow_plan">PLANINSTELLING</string>
   <string name="plan_card_departure_label">Vertrek</string>

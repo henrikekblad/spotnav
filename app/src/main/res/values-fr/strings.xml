@@ -211,8 +211,8 @@
   <string name="card_planning_title">Planification</string>
   <string name="card_planning_title_for">Planification pour %1$s</string>
   <string name="charge_by_label">Charger selon</string>
-  <string name="charge_by_energy">Énergie</string>
-  <string name="charge_by_target">Niveau cible</string>
+  <string name="charge_by_energy">Énergie · kWh</string>
+  <string name="charge_by_target">Niveau cible · %%</string>
   <string name="card_charging_plan_title">Plan de charge</string>
   <string name="popover_eyebrow_plan">RÉGLAGE DU PLAN</string>
   <string name="plan_card_departure_label">Départ</string>

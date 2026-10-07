@@ -203,8 +203,8 @@
   <string name="card_planning_title">Suunnittelu</string>
   <string name="card_planning_title_for">Suunnittelu: %1$s</string>
   <string name="charge_by_label">Lataa perusteella</string>
-  <string name="charge_by_energy">Energia</string>
-  <string name="charge_by_target">Tavoite-SoC</string>
+  <string name="charge_by_energy">Energia · kWh</string>
+  <string name="charge_by_target">Tavoite-SoC · %%</string>
   <string name="card_charging_plan_title">Lataussuunnitelma</string>
   <string name="popover_eyebrow_plan">SUUNNITELMAN ASETUS</string>
   <string name="plan_card_departure_label">Lähtö</string>
