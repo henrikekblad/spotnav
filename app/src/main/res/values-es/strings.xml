@@ -120,8 +120,8 @@
   <string name="instance_stale">Ya no está en Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">En Home Assistant, pero sin vincular con esta app: %1$s</string>
   <string name="instance_pair_again">Vincular de nuevo</string>
-  <string name="home_assistant_intro">Vincula una sola vez con %1$s. Todos los cargadores de esa instancia quedan incluidos en la aprobación; la app nunca recibe un token de Home Assistant.</string>
-  <string name="home_assistant_integration_link">Integración SpotNav para Home Assistant</string>
+  <string name="home_assistant_intro">Vincula la app una sola vez con la %1$s. Todos los cargadores de esa instancia quedan incluidos en la aprobación; la app nunca recibe un token de Home Assistant.</string>
+  <string name="home_assistant_integration_link">integración SpotNav para Home Assistant</string>
   <string name="home_assistant_checking">Comprobando Home Assistant…</string>
   <string name="charge_progress_vehicle_not_requesting_current">La carga se ha iniciado, pero el vehículo no solicita corriente. Revisa los ajustes de carga del vehículo o vuelve a conectar el cable.</string>
   <string name="home_assistant_address_required">Usa HTTPS, o HTTP con una dirección local privada.</string>
