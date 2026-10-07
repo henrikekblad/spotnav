@@ -62,15 +62,40 @@ def problems(files: list[Path]) -> list[str]:
     return found
 
 
+#: Play's limits for a store listing's texts.
+LISTING_LIMITS = {"title": 30, "shortDescription": 80, "fullDescription": 4000}
+
+
+def listing_texts(locale_dir: Path) -> dict[str, str] | None:
+    """A new store listing's texts from a locale folder (title.txt, short_description.txt, full_description.txt), or
+    `None` when one is missing, empty or over Play's limit."""
+    texts: dict[str, str] = {}
+    for key, name in (("title", "title.txt"), ("shortDescription", "short_description.txt"),
+                      ("fullDescription", "full_description.txt")):
+        path = locale_dir / name
+        text = path.read_text(encoding="utf-8").strip() if path.exists() else ""
+        if not text or len(text) > LISTING_LIMITS[key]:
+            print(f"  {locale_dir.name}/{name}: missing, empty or longer than {LISTING_LIMITS[key]} characters")
+            return None
+        texts[key] = text
+    return texts
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--key", help="the service account's JSON key file")
     parser.add_argument("--locales", nargs="*", help="repository locale folders to upload (default: every one)")
     parser.add_argument("--dry-run", action="store_true", help="check the files only; contact nothing")
+    parser.add_argument(
+        "--create-listings",
+        action="store_true",
+        help="add a language the store listing lacks, from its folder's title, short and full description",
+    )
     args = parser.parse_args()
 
     locales = args.locales or sorted(p.name for p in ROOT.iterdir() if p.is_dir())
     plan: dict[str, list[Path]] = {}
+    repo_locale: dict[str, str] = {}
     failed = False
     for locale in locales:
         files = shots(ROOT / locale)
@@ -80,6 +105,7 @@ def main() -> int:
             print(f"  {problem}")
             failed = True
         plan[play] = files
+        repo_locale[play] = locale
     if failed:
         print("Nothing uploaded: fix the screenshots above first.")
         return 1
@@ -105,7 +131,13 @@ def main() -> int:
             for listing in edits.listings().list(packageName=PACKAGE, editId=edit_id).execute().get("listings", [])
         }
         for play in sorted(set(plan) - listed):
-            print(f"{play}: the store listing has no such language; skipped")
+            texts = listing_texts(ROOT / repo_locale[play]) if args.create_listings else None
+            if texts is None:
+                print(f"{play}: the store listing has no such language; skipped")
+                continue
+            edits.listings().update(packageName=PACKAGE, editId=edit_id, language=play, body=texts).execute()
+            listed.add(play)
+            print(f"{play}: store listing added from {repo_locale[play]}")
         for play, files in plan.items():
             if play not in listed:
                 continue

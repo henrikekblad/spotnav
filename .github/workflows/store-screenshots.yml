@@ -15,6 +15,10 @@ on:
         description: "Only check the files against Play's limits"
         type: boolean
         default: false
+      create_listings:
+        description: "Add a language the store listing lacks, from its folder's title and descriptions"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -34,9 +38,11 @@ jobs:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           LOCALES: ${{ inputs.locales }}
           DRY_RUN: ${{ inputs.dry_run }}
+          CREATE_LISTINGS: ${{ inputs.create_listings }}
         run: |
           args=()
           if [ -n "$LOCALES" ]; then args+=(--locales $LOCALES); fi
+          if [ "$CREATE_LISTINGS" = "true" ]; then args+=(--create-listings); fi
           if [ "$DRY_RUN" = "true" ]; then
             python tools/app_screenshots/upload_store.py --dry-run "${args[@]}"
             exit 0
