@@ -207,6 +207,11 @@ internal object HaStatusText {
                 if (at == null || zone == null) say("strategy.status.solar.carStoppedNoTime")
                 else say(key, mapOf("time" to clock(at)))
             }
+            "solar_no_car_surplus" -> {
+                val kw = num(p["surplus_kw"])
+                if (kw == null) say(key)
+                else say("strategy.status.solar.noCarSurplusKw", mapOf("kw" to number(format.locale, kw, 1)))
+            }
             "solar_charging" -> {
                 val amps = num(p["requested_a"])
                 if (amps == null) say("strategy.status.solar.chargingUnknown")
