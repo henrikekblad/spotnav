@@ -51,6 +51,10 @@
     <item quantity="one">%1$d Zeitraum</item>
     <item quantity="other">%1$d Zeiträume</item>
   </plurals>
+  <string name="charge_periods_title">Ladezeiträume</string>
+  <string name="charge_periods_auto">Automatisch</string>
+  <string name="charge_periods_auto_help">Die günstigsten Stunden, nur dann aufgeteilt, wenn die Ersparnis einen weiteren Start wert ist. Jeder Zeitraum dauert mindestens 30 Minuten.</string>
+  <string name="charge_periods_help">Wie das Laden aufgeteilt werden darf. Eine Zahl ist die größte Anzahl an Zeiträumen, die es nutzen darf.</string>
   <string name="misses_departure">Nicht vor der Abfahrt fertig</string>
   <string name="no_plan">Keine Ladeperiode berechenbar</string>
   <string name="not_enough_prices">Es gibt nicht genug Preisdaten, um eine Ladeperiode zu berechnen.</string>

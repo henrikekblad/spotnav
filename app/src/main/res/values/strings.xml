@@ -51,6 +51,10 @@
     <item quantity="one">%1$d period</item>
     <item quantity="other">%1$d periods</item>
   </plurals>
+  <string name="charge_periods_title">Charge periods</string>
+  <string name="charge_periods_auto">Automatic</string>
+  <string name="charge_periods_auto_help">The cheapest hours, split only where the saving is worth another start. Each period is at least 30 minutes.</string>
+  <string name="charge_periods_help">How the charge may be split. A number is the most periods it may use.</string>
   <string name="misses_departure">Cannot finish before departure</string>
   <string name="no_plan">No charging period can be calculated</string>
   <string name="not_enough_prices">There is not enough price data to calculate a charging period.</string>
