@@ -186,6 +186,7 @@
   <string name="vehicle_card_limit_label">Latausraja</string>
   <string name="vehicle_limit_set">Aseta latausraja</string>
   <string name="vehicle_limit_hint">Kirjoitetaan auton integraation kautta; se tulee voimaan, kun auto lukee sen seuraavan kerran</string>
+  <string name="vehicle_limit_slider">Latausraja, prosenttia</string>
   <string name="vehicle_limit_too_soon">Yritä uudelleen %1$d s kuluttua</string>
   <string name="vehicle_limit_failed">Latausrajan asettaminen ei onnistunut</string>
   <string name="vehicle_card_capacity_label">Akun kapasiteetti</string>

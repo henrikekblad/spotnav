@@ -268,9 +268,10 @@ internal class PairedSettingsCards(
         vehicle.chargeLimit?.let { limit ->
             valueRow(body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit),
                 onTap = if (vehicle.limitWritable) ({
-                    editNumber(t(R.string.vehicle_card_limit_label), NumberSpec(1.0, 100.0, 0), "%", limit.toDouble(),
-                        t(R.string.paired_error_number), help = t(R.string.vehicle_limit_hint)) { value, done ->
-                        writeChargeLimit(vehicle.id, value!!.toInt(), limit, done)
+                    // A slider over what the car's integration takes (1-100 in whole percent when it says nothing).
+                    editLimitSlider(t(R.string.vehicle_card_limit_label), limit, vehicle.limitRange,
+                        t(R.string.vehicle_limit_hint)) { value, done ->
+                        writeChargeLimit(vehicle.id, value, limit, done)
                     }
                 }) else null)
         }

@@ -17,6 +17,7 @@ import se.sensnology.spotnav.ha.sessions.SessionsSummary
 import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.IncludedPart
 import se.sensnology.spotnav.prices.PriceMarket
+import se.sensnology.spotnav.vehicles.ChargeLimitRange
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import java.time.OffsetDateTime
 
@@ -176,7 +177,9 @@ internal data class DashboardVehicle(
     /** Whether the row states `min_percent` at all: only then is the minimum level shown or written for the car. */
     val minStated: Boolean = false,
     /** The car's identification sources (`identification`); `null` from a Home Assistant without them. */
-    val identification: VehicleIdentificationSources? = null
+    val identification: VehicleIdentificationSources? = null,
+    /** What the car's own limit can be written to (`charge_limit_range`); `null` when unknown or not stated. */
+    val chargeLimitRange: ChargeLimitRange? = null
 )
 
 /**
@@ -372,7 +375,8 @@ internal data class Dashboard(
                     socPercent = level,
                     targetSocPercentMax = row.maxPercent ?: target?.takeIf { it.vehicleId == row.id }?.vehicleMaxPercent,
                     batteryCapacityKwh = row.capacityKwh ?: target?.takeIf { it.vehicleId == row.id }?.capacityKwh,
-                    capacitySource = row.capacitySource
+                    capacitySource = row.capacitySource,
+                    chargeLimitRange = row.chargeLimitRange
                 )
             }
             if (fromRows.isNotEmpty() || target == null) return fromRows
@@ -723,7 +727,8 @@ internal data class Dashboard(
             targetStated = json.has("target_percent"),
             minPercent = whole(json.opt("min_percent"))?.takeIf { it in 10..80 && it % 5 == 0 },
             minStated = json.has("min_percent"),
-            identification = VehicleIdentificationSources.parse(json.opt("identification"))
+            identification = VehicleIdentificationSources.parse(json.opt("identification")),
+            chargeLimitRange = ChargeLimitRange.parse(json.opt("charge_limit_range"))
         )
 
         /** The `site` block, as the dashboard and the site write's own answers state it. */

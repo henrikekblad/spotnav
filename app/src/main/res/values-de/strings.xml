@@ -190,6 +190,7 @@
   <string name="vehicle_card_limit_label">Ladegrenze</string>
   <string name="vehicle_limit_set">Ladegrenze setzen</string>
   <string name="vehicle_limit_hint">Wird über die Integration des Autos geschrieben; wirkt, sobald das Auto sie das nächste Mal liest</string>
+  <string name="vehicle_limit_slider">Ladegrenze, Prozent</string>
   <string name="vehicle_limit_too_soon">Erneut versuchen in %1$d s</string>
   <string name="vehicle_limit_failed">Ladegrenze konnte nicht gesetzt werden</string>
   <string name="vehicle_card_capacity_label">Batteriekapazität</string>

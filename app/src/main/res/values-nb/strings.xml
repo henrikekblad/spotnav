@@ -186,6 +186,7 @@
   <string name="vehicle_card_limit_label">Ladegrense</string>
   <string name="vehicle_limit_set">Angi ladegrense</string>
   <string name="vehicle_limit_hint">Skrives via bilens integrasjon; gjelder når bilen leser den neste gang</string>
+  <string name="vehicle_limit_slider">Ladegrense, prosent</string>
   <string name="vehicle_limit_too_soon">Prøv igjen om %1$d s</string>
   <string name="vehicle_limit_failed">Kunne ikke angi ladegrensen</string>
   <string name="vehicle_card_capacity_label">Batterikapasitet</string>

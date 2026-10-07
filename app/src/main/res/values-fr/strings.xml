@@ -194,6 +194,7 @@
   <string name="vehicle_card_limit_label">Limite de charge</string>
   <string name="vehicle_limit_set">Définir la limite</string>
   <string name="vehicle_limit_hint">Écrite via l\'intégration de la voiture ; elle prend effet lorsque la voiture la lit à nouveau</string>
+  <string name="vehicle_limit_slider">Limite de charge, pourcentage</string>
   <string name="vehicle_limit_too_soon">Réessayez dans %1$d s</string>
   <string name="vehicle_limit_failed">Impossible de régler la limite</string>
   <string name="vehicle_card_capacity_label">Capacité de la batterie</string>

@@ -29,14 +29,16 @@ import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.openEditor
 import se.sensnology.spotnav.ui.common.thickenTrack
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.ChargeLimitRange
 import se.sensnology.spotnav.vehicles.FloorSlider
+import se.sensnology.spotnav.vehicles.LimitSlider
 import se.sensnology.spotnav.vehicles.TargetSlider
 import kotlin.math.roundToInt
 
 /**
- * The editors a car's charge target and minimum charge level open: what the value is for, the value large,
- * a slider under it, and Save and Cancel as every value editor has. Opening writes nothing; Save writes only
- * a slider that was moved to something other than what is stored.
+ * The editors a car's charge target, minimum charge level and own charge limit open: what the value is for, the
+ * value large, a slider under it, and Save and Cancel as every value editor has. Opening writes nothing; Save
+ * writes only a slider that was moved to something other than what is stored.
  */
 
 /** The car's charge target, 0..100 % in whole percent; none stored opens at [maxPercent]'s default, marked so. */
@@ -151,6 +153,50 @@ internal fun ViewScope.editFloorSlider(
     openEditor(title, body, error) { done ->
         val write = FloorSlider.toWrite(current, moved, seek.progress)
         if (write == null) done(null) else save(write.level, done)
+    }
+}
+
+/** The car's own charge limit, over the range and step its integration takes ([LimitSlider]); opens at [current]. */
+internal fun ViewScope.editLimitSlider(
+    title: String,
+    current: Int,
+    range: ChargeLimitRange?,
+    help: String,
+    save: (Int, (String?) -> Unit) -> Unit
+) {
+    val stops = LimitSlider.stops(range)
+    val body = editorBody()
+    body.addView(helpText(help))
+    val amount = amountText()
+    body.addView(amount)
+    var moved = false
+    val seek = percentSeek(LimitSlider.last(stops), LimitSlider.index(stops, current))
+    seek.contentDescription = t(R.string.vehicle_limit_slider)
+    val paint = {
+        amount.text = t(R.string.percent_label, if (moved) LimitSlider.at(stops, seek.progress) else current)
+    }
+    seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            if (fromUser) moved = true
+            paint()
+        }
+        override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+        override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+    })
+    paint()
+    body.addView(seek, seekParams())
+    // The track's two ends: the lowest and the highest limit the car takes.
+    body.addView(LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        addView(bandLabel().apply { text = t(R.string.percent_label, LimitSlider.at(stops, 0)) })
+        addView(View(context), weight())
+        addView(bandLabel().apply { text = t(R.string.percent_label, LimitSlider.at(stops, LimitSlider.last(stops))) })
+        setPadding(dp(4), 0, dp(4), 0)
+    })
+    val error = errorLine().also { body.addView(it) }
+    openEditor(title, body, error) { done ->
+        val value = LimitSlider.toWrite(current, moved, LimitSlider.at(stops, seek.progress))
+        if (value == null) done(null) else save(value, done)
     }
 }
 
