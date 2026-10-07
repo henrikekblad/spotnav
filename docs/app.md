@@ -41,7 +41,8 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
 <img src="images/app-planning-target.png" alt="Planning card set to Target: the car's charge level and charge limit above the target state of charge slider at 80 %, and the energy needed" width="420">
 
 With **Target** instead of **kWh**, you set the charge level to reach; the app works out the energy from
-the car's charge level and battery.
+the car's charge level and battery. The slider marks the car's level now and its charge limit, and, when the car
+has a minimum charge level, shades the track from 0 to it in a darker tone with **min 30 %** under it.
 
 ## Which car is plugged in?
 
@@ -132,10 +133,13 @@ Home Assistant's and are changed through it.
 <img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and reference picture" width="420">
 
 **Vehicle**: the car this charger plans for, and its properties. With two or more cars the card has a tab per car;
-each car has its own plug sensor, location and reference picture. **Minimum charge level** (Off, or 10 to 80 %, with
-a Home Assistant that has it) is the car's own: below it Home Assistant charges at once at full current, whatever
-the strategy, unless you paused or stopped the charge. It needs the car's charge level, and says so beside the value
-when the car has no level sensor.
+each car has its own plug sensor, location and reference picture. **Charge target** is the car's own, the same at
+every charger; tapping it opens a slider from 0 to 100 %, the value shown large above it. A car with none stored
+opens at the target it is planned with, marked **(default)**, and nothing is saved unless you move the slider.
+**Minimum charge level** (Off, or 10 to 80 %, with a Home Assistant that has it) is the car's own too: its slider
+starts at Off, goes in steps of 5, and stops at the charge target, the track beyond it hatched. Below it Home
+Assistant charges at once at full current, whatever the strategy, unless you paused or stopped the charge. It needs
+the car's charge level, and says so beside the value when the car has no level sensor.
 
 <img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the cars at this charger, identification and the camera" width="420">
 

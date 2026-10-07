@@ -72,7 +72,9 @@ internal data class PairedTargetFacts(
     /** True when the picked vehicle is not the one the `soc` block resolved. */
     val other: Boolean,
     /** Whether [now] is Home Assistant's estimate between readings ("≈"). */
-    val estimated: Boolean = false
+    val estimated: Boolean = false,
+    /** The picked car's own minimum charge level, `null` when it is off or not stated. */
+    val minPercent: Int? = null
 )
 
 /** The paired plan editor's rules, from the dashboard, as the card's settings editor states them. */
@@ -98,7 +100,8 @@ internal object PairedTarget {
             statedTarget = soc.targetPercent,
             statedNeedKwh = soc.needKwh,
             other = other,
-            estimated = !other && soc.value != null && soc.estimated
+            estimated = !other && soc.value != null && soc.estimated,
+            minPercent = (own ?: vehicles.firstOrNull { it.id == soc.vehicleId })?.minPercent
         )
     }
 

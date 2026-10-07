@@ -34,4 +34,19 @@ class SliderMarksTest {
         val placed = SliderMarks.place(listOf(SliderMarks.Mark("a", 100f, 40f), SliderMarks.Mark("b", 145f, 40f)), 400f, gap)
         assertEquals(1, placed[1].level)
     }
+
+    @Test fun theMinimumsWordUnderItsSegmentKeepsClearOfNowAndLimit() {
+        // The plan's target slider: "min 30 %" under the middle of 0..30, "nu" at 40, "gräns" at 90 (400 wide).
+        val placed = SliderMarks.place(
+            listOf(SliderMarks.Mark("now", 160f, 20f), SliderMarks.Mark("limit", 360f, 40f), SliderMarks.Mark("min", 60f, 60f)),
+            400f, gap
+        ).associateBy { it.key }
+        assertEquals(setOf(0), placed.values.map { it.level }.toSet())
+        // Close together, the later word goes down a level rather than overlapping.
+        val tight = SliderMarks.place(
+            listOf(SliderMarks.Mark("min", 30f, 60f), SliderMarks.Mark("now", 50f, 20f)), 400f, gap
+        ).associateBy { it.key }
+        assertEquals(0, tight.getValue("min").level)
+        assertEquals(1, tight.getValue("now").level)
+    }
 }

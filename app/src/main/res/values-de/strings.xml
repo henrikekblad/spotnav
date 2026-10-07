@@ -526,6 +526,9 @@
   <string name="vehicle_minimum_off">Aus</string>
   <string name="vehicle_minimum_needs_level">%1$s · benötigt den Ladestand des Autos</string>
   <string name="vehicle_minimum_help">Unter diesem Ladestand lädt SpotNav sofort mit vollem Strom, unabhängig von der Strategie. Eine von dir gewählte Pause oder ein Stopp hat Vorrang. Braucht den Ladestand des Autos.</string>
+  <string name="vehicle_target_default">(Standard)</string>
+  <string name="vehicle_minimum_cap">Ladeziel %1$d %%</string>
+  <string name="vehicle_minimum_slider">Mindestladestand, aus oder Prozent</string>
   <string name="vehicle_error_minimum">Der Mindestladestand muss zwischen 10 und 80 liegen.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Zum Ändern tippen</string>
@@ -540,4 +543,5 @@
   <string name="target_mark_now">jetzt</string>
   <string name="target_mark_now_estimated">≈ jetzt</string>
   <string name="target_mark_limit">Limit</string>
+  <string name="target_mark_min">min. %1$d %%</string>
 </resources>
