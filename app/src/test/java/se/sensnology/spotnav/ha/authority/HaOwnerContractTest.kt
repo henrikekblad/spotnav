@@ -45,7 +45,7 @@ class HaOwnerContractTest {
             request.keys().asSequence().toSet()
         )
         assertEquals(9, request.getInt("expected_revision"))
-        assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode", "identify_camera"), List(request.getJSONArray("reads").length()) { request.getJSONArray("reads").getString(it) })
+        assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode", "identify_camera", "identification_status"), List(request.getJSONArray("reads").length()) { request.getJSONArray("reads").getString(it) })
         // The replacement names the date explicitly, null clearing it:
         assertTrue(request.getJSONObject("settings").has("departure_date"))
         assertEquals(7, request.getJSONObject("settings").getJSONArray("departure_weekdays").length())
