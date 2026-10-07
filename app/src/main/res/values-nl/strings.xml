@@ -477,7 +477,7 @@
   <string name="identify_hint_away">Niet thuis</string>
   <string name="identify_hint_elsewhere">Bij een andere laadpaal</string>
   <string name="identify_by_plug_sensor">herkend aan de laadkabel van de auto</string>
-  <string name="identify_by_location">herkend aan de locatie</string>
+  <string name="identify_by_location">herkend aan de positie</string>
   <string name="identify_by_hand">handmatig gekozen</string>
   <string name="identify_by_assumed">aangenomen</string>
   <string name="identify_identifying">herkennen…</string>
@@ -493,7 +493,7 @@
   <string name="identify_mode_off">Uit</string>
   <string name="identify_mode_off_help">Houdt de auto die je gekozen hebt.</string>
   <string name="identify_source_plug">Stekkersensor</string>
-  <string name="identify_source_location">Locatie</string>
+  <string name="identify_source_location">Positie</string>
   <string name="identify_source_none">Geen</string>
   <string name="identify_source_choose">Kies er een</string>
   <string name="identify_by_camera">herkend door de camera</string>
