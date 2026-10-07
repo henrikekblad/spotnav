@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Bitmap
@@ -209,13 +210,42 @@ internal fun ViewScope.openFrameEditor(
 internal fun ViewScope.pictureKindText(kind: PictureKind): String =
     t(if (kind == PictureKind.DAY) R.string.reference_day else R.string.reference_night)
 
-/** A thumbnail as the Settings page shows one: [heightDp] high, its width as the picture's. */
-internal fun ViewScope.thumbnailView(kind: PictureKind, heightDp: Int): ImageView = ImageView(context).apply {
-    contentDescription = pictureKindText(kind)
-    adjustViewBounds = true
-    scaleType = ImageView.ScaleType.FIT_CENTER
-    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(heightDp)).apply { marginEnd = dp(8) }
-    visibility = View.GONE
+/**
+ * A reference picture's tile, in the car's settings and in its editor: as wide as it is given, 16:9 high, the
+ * picture cropped to fill it ([image]), or "No picture" ([empty]) without one.
+ */
+internal class ReferenceTile(val frame: FrameLayout, val image: ImageView, val empty: TextView) {
+    /** Shows [bitmap], or "No picture" (`null`). */
+    fun show(bitmap: Bitmap?) {
+        image.setImageBitmap(bitmap)
+        empty.visibility = if (bitmap == null) View.VISIBLE else View.GONE
+    }
+}
+
+/** A frame whose height follows its width: [CameraSetup.tileHeight]. */
+@SuppressLint("ViewConstructor")
+private class TileFrame(context: android.content.Context) : FrameLayout(context) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(CameraSetup.tileHeight(width), MeasureSpec.EXACTLY))
+    }
+}
+
+internal fun ViewScope.referenceTile(kind: PictureKind): ReferenceTile {
+    val frame = TileFrame(context)
+    val image = ImageView(context).apply {
+        contentDescription = pictureKindText(kind)
+        scaleType = ImageView.ScaleType.CENTER_CROP
+        clipToOutline = true
+        outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
+        background = GradientDrawable().apply { cornerRadius = dp(6).toFloat(); setColor(cardBackground) }
+    }
+    frame.addView(image, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    val empty = TextView(context).apply {
+        text = t(R.string.reference_empty); textSize = 13f; setTextColor(muted); gravity = Gravity.CENTER
+    }
+    frame.addView(empty, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    return ReferenceTile(frame, image, empty)
 }
 
 /** What a slot's button or Delete answered: the car's pictures after it, or the words to show in that slot. */
@@ -258,20 +288,11 @@ internal fun ViewScope.openReferenceEditor(
             text = pictureKindText(kind); textSize = 15f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
             setPadding(0, 0, 0, dp(6))
         })
-        val frame = FrameLayout(context)
-        column.addView(frame, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(96)))
-        val image = ImageView(context).apply {
-            contentDescription = pictureKindText(kind)
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            clipToOutline = true
-            outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
-            background = GradientDrawable().apply { cornerRadius = dp(6).toFloat(); setColor(cardBackground) }
-        }
-        frame.addView(image, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        val empty = TextView(context).apply {
-            text = t(R.string.reference_empty); textSize = 13f; setTextColor(muted); gravity = Gravity.CENTER
-        }
-        frame.addView(empty, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        val tile = referenceTile(kind)
+        val frame = tile.frame
+        val image = tile.image
+        val empty = tile.empty
+        column.addView(frame, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         val spinner = ProgressBar(context).apply { isIndeterminate = true }
         frame.addView(spinner, FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER))
         val caption = mutedText("", top = 4)

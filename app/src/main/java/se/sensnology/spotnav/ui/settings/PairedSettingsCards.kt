@@ -618,15 +618,14 @@ internal class PairedSettingsCards(
 
     /**
      * A car's reference pictures, with a camera chosen and the car one of this charger's: the row (which
-     * pictures it has) opening the car's reference editor, and their thumbnails under it.
+     * pictures it has) opening the car's reference editor, and a day and a night tile under it.
      */
     private fun addReference(body: LinearLayout, dash: Dashboard, vehicle: PairedOverview.VehicleCard) {
         val listed = CameraSetup.references(dash, currentRecord(dash), vehicle.id) ?: return
         val pictures = adoptedReferences[vehicle.id] ?: listed
         if (vehicle.sources == null) body.addView(divider())
         val carName = vehicle.name ?: t(R.string.vehicle_title)
-        valueRow(body, t(R.string.reference_label),
-            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }) {
+        val open = {
             openReferenceEditor(
                 carName, pictures,
                 thumbnail = { picture, done -> thumbnail(vehicle.id, picture, done) },
@@ -645,20 +644,35 @@ internal class PairedSettingsCards(
                 }
             }
         }
-        if (pictures.isEmpty()) return
+        valueRow(body, t(R.string.reference_label),
+            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }, onTap = open)
+        // Two equal tiles, day and night, each as the editor shows it: 16:9, the picture cropped to fill it, or
+        // "No picture". A tile opens the editor as the row does.
         val row = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.END
-            setPadding(0, dp(4), 0, 0)
+            setPadding(0, dp(4), 0, dp(8))
         }
-        for (picture in pictures) {
-            val image = thumbnailView(picture.kind, 64)
-            row.addView(image)
-            thumbnail(vehicle.id, picture) { bitmap ->
-                if (bitmap != null) {
-                    image.setImageBitmap(bitmap)
-                    image.visibility = View.VISIBLE
-                }
+        for ((index, slot) in CameraSetup.slots(pictures).withIndex()) {
+            val column = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                isClickable = true
+                isFocusable = true
+                contentDescription = "${t(R.string.reference_label)}: ${pictureKindText(slot.kind)}"
+                setOnClickListener { open() }
+            }
+            row.addView(column, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+                if (index == 0) marginEnd = dp(6) else marginStart = dp(6)
+            })
+            column.addView(muted(pictureKindText(slot.kind), bottom = 4))
+            val tile = referenceTile(slot.kind)
+            column.addView(tile.frame, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            val picture = slot.picture
+            if (picture == null) {
+                tile.show(null)
+            } else {
+                // Blank while it loads; "No picture" only when there is none to show.
+                tile.empty.visibility = View.GONE
+                thumbnail(vehicle.id, picture) { bitmap -> tile.show(bitmap) }
             }
         }
         body.addView(row)
