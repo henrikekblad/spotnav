@@ -1,5 +1,8 @@
 package se.sensnology.spotnav.push
 
+import se.sensnology.spotnav.ha.settings.NotificationEvent
+import se.sensnology.spotnav.notify.LocalNotificationStore
+
 /**
  * Instant notifications, decided away from Android: turning them on (a push token, the relay's
  * reference for it, then every paired charger's Home Assistant told the reference and this phone's
@@ -35,6 +38,16 @@ internal class PushRegistration(
     ) {
         fun eventsFor(localId: String): List<String> =
             if (localId in identifying) events else events.filter { it != IDENTIFY_EVENT }
+
+        companion object {
+            /** What [local] says for the paired [profiles]. */
+            fun of(local: LocalNotificationStore, profiles: List<String>) = Local(
+                enabled = local.enabled,
+                profiles = profiles,
+                events = NotificationEvent.entries.filter { it in local.events }.map { it.wire },
+                identifying = local.identifying(profiles)
+            )
+        }
     }
 
     /** What one profile's Home Assistant was given. */

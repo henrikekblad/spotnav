@@ -6,7 +6,6 @@ import se.sensnology.spotnav.BuildConfig
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
-import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
 import java.util.concurrent.Executors
@@ -42,14 +41,8 @@ internal object PushNotifications {
                 profile != null && HomeAssistantClient.registerPush(profile.toHomeAssistantSettings(), ref, events)
             },
             local = {
-                val local = LocalNotificationStore.forContext(app)
                 val profiles = ChargerProfileStore.forContext(app).listProfiles().filter { it.configured }.map { it.localId }
-                PushRegistration.Local(
-                    enabled = local.enabled,
-                    profiles = profiles,
-                    events = NotificationEvent.entries.filter { it in local.events }.map { it.wire },
-                    identifying = local.identifying(profiles)
-                )
+                PushRegistration.Local.of(LocalNotificationStore.forContext(app), profiles)
             }
         )
     }

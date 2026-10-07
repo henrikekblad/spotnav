@@ -46,6 +46,21 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
         return true
     }
 
+    /**
+     * What a dashboard read for [localId] says of identification: [setIdentifies], and the first time any
+     * Home Assistant is known to identify cars, the question added to the chosen events, since a choice
+     * saved before then could not have it (it was not offered). Once offered, the choice stands. Whether
+     * anything changed, so Home Assistant is registered again.
+     */
+    fun observeIdentifies(localId: String, identifies: Boolean): Boolean {
+        val changed = setIdentifies(localId, identifies)
+        if (!identifies || store.getString(IDENTIFY_OFFERED) == "true") return changed
+        val before = events
+        store.putString(IDENTIFY_OFFERED, "true")
+        events = before + NotificationEvent.VEHICLE_IDENTIFY
+        return true
+    }
+
     /** The profiles of [localIds] whose Home Assistant identifies cars. */
     fun identifying(localIds: List<String>): Set<String> = localIds.filter { identifies(it) }.toSet()
 
@@ -94,6 +109,8 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
         private const val IDENTIFIES = "identifies."
         private const val POSTED = "identify_posted."
         private const val EVENT_SET = "event_set"
+        /** Set once the question which car is plugged in was first offered (see [observeIdentifies]). */
+        private const val IDENTIFY_OFFERED = "identify_offered"
         /** The events a stored choice was made among: 2 has the question which car is plugged in. */
         private const val CURRENT_EVENT_SET = "2"
 
