@@ -1,0 +1,7 @@
+- Quelle voiture est branchée ? Demandé dans une notification, un bouton par voiture
+- La carte de la borne montre la voiture, comment elle a été choisie et ⇄ Changer de voiture
+- Un objectif de charge par voiture
+- État : « Identification de la voiture… » et « En attente de réponse »
+- Caméra : recadrage de la place, images de référence jour et nuit
+- Écrans de paramètres compacts : une ligne par valeur, onglets bornes et voitures
+- Nécessite SpotNav pour Home Assistant 1.13
