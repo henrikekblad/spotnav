@@ -22,7 +22,7 @@ class RoundThreeWordingTest {
     }
 
     @Test fun theTargetSlidersMarksHaveShortWordsInEveryLanguage() {
-        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi")) {
+        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             for (name in listOf("target_mark_now", "target_mark_limit", "price_suggestion")) {
                 val value = text(directory, name)
                 assertTrue("$directory $name", value != null && value.isNotBlank())
