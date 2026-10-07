@@ -535,6 +535,11 @@
   <string name="reference_close">Close</string>
   <string name="vehicle_target_follows">Follows the car to every charger</string>
   <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
+  <string name="vehicle_minimum">Minimum charge level</string>
+  <string name="vehicle_minimum_off">Off</string>
+  <string name="vehicle_minimum_needs_level">%1$s · needs the car\'s charge level</string>
+  <string name="vehicle_minimum_help">Below this level SpotNav charges at once at full current, whatever the strategy. A pause or Stop you choose wins. Needs the car\'s charge level.</string>
+  <string name="vehicle_error_minimum">The minimum charge level must be between 10 and 80.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Tap to change</string>
   <string name="identify_vehicles_all">All cars</string>

@@ -131,7 +131,10 @@ paired, area and taxes are Home Assistant's and are changed through it.
 <img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and reference picture" width="420">
 
 **Vehicle**: the car this charger plans for, and its properties. With two or more cars the card has a tab per car;
-each car has its own plug sensor, location and reference picture.
+each car has its own plug sensor, location and reference picture. **Minimum charge level** (Off, or 10 to 80 %, with
+a Home Assistant that has it) is the car's own: below it Home Assistant charges at once at full current, whatever
+the strategy, unless you paused or stopped the charge. It needs the car's charge level, and says so beside the value
+when the car has no level sensor.
 
 <img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the cars at this charger, identification and the camera" width="420">
 

@@ -70,6 +70,11 @@ internal object PairedOverview {
         /** The car's own target (`null` when never set); shown only when the row [targetStated] it. */
         val targetPercent: Double? = null,
         val targetStated: Boolean = false,
+        /** The car's minimum charge level (`null` when off); shown only when the row [minStated] it. */
+        val minPercent: Int? = null,
+        val minStated: Boolean = false,
+        /** The car has no charge level sensor, so a minimum level cannot act: said beside it. */
+        val minNeedsLevel: Boolean = false,
         /** The car's identification sources, or `null` from a Home Assistant without them. */
         val sources: VehicleIdentificationSources? = null,
         /** The car's own charge limit (whole percent), when it reports one. */
@@ -102,6 +107,9 @@ internal object PairedOverview {
                 onboardPhases = row.onboardPhases,
                 targetPercent = row.targetPercent,
                 targetStated = row.targetStated,
+                minPercent = row.minPercent,
+                minStated = row.minStated,
+                minNeedsLevel = row.socEntityId == null && sensorName == null,
                 sources = row.identification,
                 chargeLimit = row.maxPercent?.takeIf { it.isFinite() }?.toInt(),
                 limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true
