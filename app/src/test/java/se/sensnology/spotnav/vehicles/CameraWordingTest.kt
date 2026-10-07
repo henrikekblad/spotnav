@@ -29,8 +29,24 @@ class CameraWordingTest {
     @Test fun theChargersRowsAreNamedAsInTheCard() {
         expect("camera_label", "Camera", "Kamera", "Kamera", "Kamera", "Kamera")
         expect("camera_none", "No camera", "Ingen kamera", "Intet kamera", "Ingen kamera", "Ei kameraa")
-        expect("camera_frame_label", "Crop parking spot", "Beskär bild laddplats", "Beskær billede af ladepladsen",
-            "Beskjær bilde av ladeplassen", "Rajaa kuva latauspaikasta")
+        expect("camera_frame_label", "Crop parking spot", "Beskär bild laddplats", "Beskær billede af ladeplads",
+            "Beskjær bilde av ladeplass", "Rajaa latauspaikan kuva")
+        expect("camera_frame_intro",
+            "Drag the selection around the parking spot: move it, or drag a corner. Only what is inside is compared.",
+            "Dra markeringen runt laddplatsen: flytta den eller dra i ett hörn. Bara det som är innanför jämförs.",
+            "Træk markeringen omkring ladepladsen: flyt den, eller træk i et hjørne. Kun det indenfor sammenlignes.",
+            "Dra markeringen rundt ladeplassen: flytt den, eller dra i et hjørne. Bare det som er innenfor, sammenlignes.",
+            "Vedä valinta latauspaikan ympärille: siirrä sitä tai vedä kulmasta. Vain valinnan sisältöä verrataan.")
+        // Nothing says "frame" (or "ruta") any more: the picture is cropped, the selection dragged.
+        for (directory in directories) {
+            val camera = Regex("<string name=\"(camera|reference)_[a-z_]+\">(.*?)</string>").findAll(xml(directory))
+                .map { it.groupValues[2] }.toList()
+            for (text in camera) {
+                for (word in listOf("frame", "ruta", "ramme", "rajaus")) {
+                    assertFalse("$directory: $text", Regex("\\b$word\\b", RegexOption.IGNORE_CASE).containsMatchIn(text))
+                }
+            }
+        }
         expect("camera_frame_whole", "Whole picture", "Hela bilden", "Hele billedet", "Hele bildet", "Koko kuva")
         expect("camera_frame_cropped", "Cropped", "Beskuren", "Beskåret", "Beskåret", "Rajattu")
         // The AI task is chosen in the Home Assistant card alone.
@@ -47,8 +63,11 @@ class CameraWordingTest {
             "Ta referansebilde nå", "Ota vertailukuva nyt")
         expect("reference_take_night", "Take night picture", "Ta nattbild", "Tag natbillede", "Ta nattbilde", "Ota yökuva")
         expect("reference_delete", "Delete", "Ta bort", "Slet", "Slett", "Poista")
-        expect("reference_stale", "Taken with another frame – take it again", "Tagen med en annan ruta – ta om",
-            "Taget med en anden ramme – tag det igen", "Tatt med en annen ramme – ta det på nytt", "Otettu toisella rajauksella – ota uudelleen")
+        expect("reference_stale", "taken before the crop was changed – take a new one", "tagen innan beskärningen ändrades – ta en ny",
+            "taget før beskæringen blev ændret – tag et nyt", "tatt før beskjæringen ble endret – ta et nytt",
+            "otettu ennen rajauksen muutosta – ota uusi")
+        expect("reference_day_picture", "Day picture", "Dagbild", "Dagbillede", "Dagbilde", "Päiväkuva")
+        expect("reference_night_picture", "Night picture", "Nattbild", "Natbillede", "Nattbilde", "Yökuva")
         // The car's name is filled in by the app: one placeholder in every language.
         for (directory in directories) {
             assertTrue(directory, text(directory, "reference_intro")!!.contains("%1\$s"))
