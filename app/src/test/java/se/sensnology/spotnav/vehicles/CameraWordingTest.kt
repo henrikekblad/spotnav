@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.vehicles
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -28,12 +29,16 @@ class CameraWordingTest {
     @Test fun theChargersRowsAreNamedAsInTheCard() {
         expect("camera_label", "Camera", "Kamera", "Kamera", "Kamera", "Kamera")
         expect("camera_none", "No camera", "Ingen kamera", "Intet kamera", "Ingen kamera", "Ei kameraa")
-        expect("camera_frame_label", "Frame", "Ruta", "Ramme", "Ramme", "Rajaus")
+        expect("camera_frame_label", "Crop parking spot", "Beskär bild laddplats", "Beskær billede af ladepladsen",
+            "Beskjær bilde av ladeplassen", "Rajaa kuva latauspaikasta")
         expect("camera_frame_whole", "Whole picture", "Hela bilden", "Hele billedet", "Hele bildet", "Koko kuva")
-        expect("camera_frame_drawn", "Drawn", "Ritad", "Tegnet", "Tegnet", "Piirretty")
-        expect("camera_ai_task_label", "AI task", "AI-uppgift", "AI-opgave", "AI-oppgave", "AI-tehtävä")
-        expect("camera_ai_task_default", "Home Assistant's default", "Home Assistants standard", "Home Assistants standard",
-            "Home Assistants standard", "Home Assistantin oletus")
+        expect("camera_frame_cropped", "Cropped", "Beskuren", "Beskåret", "Beskåret", "Rajattu")
+        // The AI task is chosen in the Home Assistant card alone.
+        for (directory in directories) {
+            for (gone in listOf("camera_ai_task_label", "camera_ai_task_default", "camera_frame_drawn")) {
+                assertFalse("$directory still has $gone", xml(directory).contains("name=\"$gone\""))
+            }
+        }
     }
 
     @Test fun aCarsReferencePictureIsWordedAsInTheCard() {

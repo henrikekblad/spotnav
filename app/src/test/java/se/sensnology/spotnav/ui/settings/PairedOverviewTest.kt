@@ -211,4 +211,21 @@ class PairedOverviewTest {
             assertFalse(name, Regex("\\b(sensor|switch|number|select|binary_sensor)\\.[a-z0-9_]+").containsMatchIn(shown))
         }
     }
+
+    @Test fun severalCarsAreTabsOfOneCardWithThePlannedCarFirstChosen() {
+        val cards = PairedOverview.vehicles(twoVehicles)
+        val planned = cards.firstOrNull { it.planned }?.id ?: cards[0].id
+        assertEquals(planned, PairedOverview.selectedTab(cards, null))
+        // A tab once chosen stays chosen while the car is there.
+        assertEquals("vehicle_niro", PairedOverview.selectedTab(cards, "vehicle_niro"))
+        assertEquals(planned, PairedOverview.selectedTab(cards, "vehicle_gone"))
+        // One car is no tabs.
+        assertNull(PairedOverview.selectedTab(cards.take(1), null))
+        assertNull(PairedOverview.selectedTab(emptyList(), null))
+    }
+
+    @Test fun aSiteOrSolarCardSaysWhichChargersItAppliesToOnlyWhenThereAreSeveral() {
+        assertFalse(PairedOverview.saysChargers(1))
+        assertTrue(PairedOverview.saysChargers(2))
+    }
 }

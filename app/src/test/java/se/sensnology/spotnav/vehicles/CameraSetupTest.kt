@@ -16,8 +16,8 @@ import java.time.ZoneId
 import java.util.Locale
 
 /**
- * What Settings shows of the charger's camera, as the Home Assistant card does: the camera, its frame
- * and its AI task under the charger's identification, each car's reference pictures, and nothing at all
+ * What Settings shows of the charger's camera: the camera and its frame (its AI task is the Home
+ * Assistant card's alone) under the charger's identification, each car's reference pictures, and nothing at all
  * where Home Assistant offers no camera or does not state the field. The car line names a car the
  * camera recognised.
  */
@@ -62,23 +62,18 @@ class CameraSetupTest {
         val section = CameraSetup.section(dash, dash.settings)!!
         assertEquals("Norr", section.cameraName)
         assertFalse(section.frameDrawn)
-        // Home Assistant's default AI task.
-        assertNull(section.aiTaskName)
 
         val framed = dashboard(chosen(aiTask = "ai_task.ollama", frame = JSONObject().put("x", 0.5).put("y", 0.2).put("w", 0.4).put("h", 0.5)))
         val drawn = CameraSetup.section(framed, framed.settings)!!
         assertTrue(drawn.frameDrawn)
-        assertEquals("Ollama qwen3-vl", drawn.aiTaskName)
         // The whole picture drawn as a frame reads as the whole picture.
         val whole = dashboard(chosen(frame = JSONObject().put("x", 0).put("y", 0).put("w", 1).put("h", 1)))
         assertFalse(CameraSetup.section(whole, whole.settings)!!.frameDrawn)
     }
 
-    @Test fun aCameraOrAiTaskThatIsGoneIsNamedByItsEntity() {
-        val dash = dashboard(chosen(aiTask = "ai_task.gone").put("camera_entity_id", "camera.gone"))
-        val section = CameraSetup.section(dash, dash.settings)!!
-        assertEquals("camera.gone", section.cameraName)
-        assertEquals("ai_task.gone", section.aiTaskName)
+    @Test fun aCameraThatIsGoneIsNamedByItsEntity() {
+        val dash = dashboard(chosen().put("camera_entity_id", "camera.gone"))
+        assertEquals("camera.gone", CameraSetup.section(dash, dash.settings)!!.cameraName)
     }
 
     @Test fun eachCarOfTheChargerHasItsReferencePicturesWithACameraChosen() {
