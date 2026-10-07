@@ -35,7 +35,6 @@ import se.sensnology.spotnav.ha.settings.HaCameraChoice
 import se.sensnology.spotnav.ha.settings.HaIdentificationSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.IdentifyMode
-import se.sensnology.spotnav.ui.charging.styleSegment
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
@@ -44,6 +43,8 @@ import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.editNumber
 import se.sensnology.spotnav.ui.common.settingRow
+import se.sensnology.spotnav.ui.common.textTabs
+import se.sensnology.spotnav.ui.common.textTabsLayoutParams
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueColour
 import se.sensnology.spotnav.ui.common.weight
@@ -66,8 +67,13 @@ internal class PairedSettingsCards(
     scope: ViewScope,
     parent: LinearLayout,
     /** The charger these settings are for, by the name the app shows it under (its heading says so). */
-    private val chargerName: String? = null
+    private val chargerName: String? = null,
+    /** With several paired chargers, the charger card's tabs: which one these settings are for. */
+    private val chargerTabs: ChargerTabs? = null
 ) : ViewScope(scope) {
+    /** The paired chargers by name, the one shown chosen, and what choosing another does. */
+    class ChargerTabs(val names: List<String>, val selected: Int, val onSelect: (Int) -> Unit)
+
     private val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private var dashboard: Dashboard? = null
     private var unreachable = false
@@ -215,49 +221,15 @@ internal class PairedSettingsCards(
             return
         }
         val card = card(container, t(R.string.vehicle_title), R.drawable.ic_ev)
-        card.header.addView(carTabs(vehicles, selected), LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = -dp(14); bottomMargin = -dp(14) })
-        addVehicleRows(card.body, dash, vehicles.first { it.id == selected })
-    }
-
-    /**
-     * The car tabs in the car card's header, a compact text row like the main screen's "kWh | Mål": each
-     * car's name, the chosen one in the accent colour and underlined, each a 48 dp target; the last ends
-     * where the rows' values end.
-     */
-    private fun carTabs(vehicles: List<PairedOverview.VehicleCard>, selected: String): View {
-        val row = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.END or Gravity.CENTER_VERTICAL
-        }
-        vehicles.forEachIndexed { index, vehicle ->
-            if (index > 0) row.addView(TextView(context).apply {
-                text = "|"; textSize = 15f; setTextColor(muted)
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            })
-            val last = index == vehicles.lastIndex
-            val tab = TextView(context).apply {
-                text = vehicle.name ?: t(R.string.vehicle_title)
-                textSize = 15f
-                isClickable = true
-                isFocusable = true
-                minimumHeight = dp(48)
-                minimumWidth = dp(48)
-                maxLines = 1
-                gravity = if (last) Gravity.END or Gravity.CENTER_VERTICAL else Gravity.CENTER
-                setPadding(dp(6), 0, if (last) 0 else dp(6), 0)
-                setOnClickListener {
-                    if (selectedCar != vehicle.id) {
-                        selectedCar = vehicle.id
-                        repaint()
-                    }
-                }
+        val tabs = textTabs(vehicles.map { it.name ?: t(R.string.vehicle_title) }, vehicles.indexOfFirst { it.id == selected }, card.body) { index ->
+            val chosen = vehicles[index].id
+            if (selectedCar != chosen) {
+                selectedCar = chosen
+                repaint()
             }
-            styleSegment(tab, vehicle.id == selected)
-            row.addView(tab, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
         }
-        return row
+        card.header.addView(tabs.row, textTabsLayoutParams())
+        addVehicleRows(card.body, dash, vehicles.first { it.id == selected })
     }
 
     /** One car's rows: its level, its own figures, its target, its sources and its reference pictures. */
@@ -437,7 +409,17 @@ internal class PairedSettingsCards(
     private fun addChargerCard(dash: Dashboard) {
         val charger = PairedOverview.charger(dash)
         // Which charger, always: with several paired, the heading is what says so.
-        val card = card(container, SettingsHeading.named(t(R.string.section_charger), chargerName ?: dash.chargerName), R.drawable.ic_card_charger)
+        // Several paired chargers: "Laddare" with a tab per charger, the shown one chosen; one: its name.
+        val tabs = chargerTabs
+        val card = if (tabs == null) {
+            card(container, SettingsHeading.named(t(R.string.section_charger), chargerName ?: dash.chargerName), R.drawable.ic_card_charger)
+        } else {
+            card(container, t(R.string.section_charger), R.drawable.ic_card_charger).also { card ->
+                card.header.addView(textTabs(tabs.names, tabs.selected, card.body) { index ->
+                    if (index != tabs.selected) tabs.onSelect(index)
+                }.row, textTabsLayoutParams())
+            }
+        }
         if (charger.showsStartStop) {
             readRow(card.body, t(R.string.charger_start_stop_label),
                 t(if (charger.summary?.startStopName != null) R.string.setup_active else R.string.setup_missing))

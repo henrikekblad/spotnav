@@ -80,6 +80,12 @@ import se.sensnology.spotnav.widget.WidgetSettings
  * controller in this package; this class is the page they sit on.
  */
 internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
+    /**
+     * The charger tab chosen on this screen with several paired chargers; until one is, the screen is
+     * for the charger the main screen shows. Choosing a tab never changes the main screen's charger.
+     */
+    private var chosenCharger: String? = null
+
     fun show() {
         beginScreen()
         showPanel(t(R.string.settings))
@@ -93,9 +99,13 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         addGeneralSettings(generalCard.body)
         // The market, its resolution and its money: controls while unpaired, an overview while paired.
         val priceCard = card(content, t(R.string.section_electricity_price), R.drawable.ic_price_table)
-        val settingsProfile = WidgetChargerResolver.resolve(
-            old, ChargerProfileStore.forContext(applicationContext)
-        )?.takeIf { it.configured }
+        // The charger these settings are for: the one the main screen shows, or with several paired
+        // the one whose tab was chosen here (see [chosenCharger]).
+        val profileStore = ChargerProfileStore.forContext(applicationContext)
+        val shownProfile = WidgetChargerResolver.resolve(old, profileStore)?.takeIf { it.configured }
+        val pairedProfiles = profileStore.listProfiles().filter { it.configured }
+        val tabbedId = PairedOverview.selectedChargerTab(pairedProfiles.map { it.localId }, chosenCharger, shownProfile?.localId)
+        val settingsProfile = tabbedId?.let { id -> pairedProfiles.firstOrNull { it.localId == id } } ?: shownProfile
         val settingsCache = ConfirmedSettingsStore.forContext(applicationContext)
         val settingsAuthority = AuthorityController(
             profileId = settingsProfile?.localId,
@@ -161,7 +171,18 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // A paired charger's vehicles, charger, site and solar come after the phone's own settings
         // and right before the Home Assistant card, in the order the Home Assistant card has them.
         // The page is an overview: each area that can be changed from here opens its own dialog.
-        val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it)) }
+        val chargerTabs = tabbedId?.let { selected ->
+            PairedSettingsCards.ChargerTabs(
+                names = pairedProfiles.map { chargerName(it) },
+                selected = pairedProfiles.indexOfFirst { it.localId == selected }
+            ) { index ->
+                chosenCharger = pairedProfiles[index].localId
+                show()
+            }
+        }
+        val pairedCards = settingsProfile?.let {
+            PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it), chargerTabs = chargerTabs)
+        }
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration
