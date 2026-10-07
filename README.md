@@ -38,7 +38,7 @@ With the [SpotNav integration](https://github.com/henrikekblad/spotnav-home-assi
 
 1. Install the integration through HACS and pick your charger during setup.
 2. In SpotNav, open **Settings → Home Assistant** and tap **Find Home Assistant on the network** (or type its address).
-3. The app shows a code. Enter it in Home Assistant to approve the phone; every charger on that instance is paired at once.
+3. The app shows a six-digit code, and Home Assistant shows the same code under **Settings → Devices & services**. Check that they match and approve the phone there; every charger on that instance is paired at once.
 
 The app receives one secret webhook ID per charger, never a Home Assistant password or token. HTTPS is required for internet addresses; local addresses may use HTTP. Details, entities and configuration are in the [integration repository](https://github.com/henrikekblad/spotnav-home-assistant).
 
