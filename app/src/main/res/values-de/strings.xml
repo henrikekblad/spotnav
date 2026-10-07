@@ -116,7 +116,7 @@
   <string name="instance_stale">Nicht mehr in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant, aber nicht mit dieser App gekoppelt: %1$s</string>
   <string name="instance_pair_again">Erneut koppeln</string>
-  <string name="home_assistant_intro">Einmal mit %1$s koppeln. Alle Ladestationen dieser Instanz kommen mit der Freigabe; die App erhält nie ein Home-Assistant-Token.</string>
+  <string name="home_assistant_intro">Einmal mit der %1$s koppeln. Alle Ladestationen dieser Instanz kommen mit der Freigabe; die App erhält nie ein Home-Assistant-Token.</string>
   <string name="home_assistant_integration_link">SpotNav-Integration für Home Assistant</string>
   <string name="home_assistant_checking">Home Assistant wird geprüft…</string>
   <string name="charge_progress_vehicle_not_requesting_current">Das Laden wurde gestartet, aber das Fahrzeug fordert keinen Strom an. Prüfe die Ladeeinstellungen des Fahrzeugs oder stecke das Kabel neu an.</string>
