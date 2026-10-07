@@ -52,6 +52,7 @@ import se.sensnology.spotnav.vehicles.CameraSetup
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
+import se.sensnology.spotnav.vehicles.TargetSlider
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 import java.time.ZoneId
 import java.util.Locale
@@ -273,28 +274,27 @@ internal class PairedSettingsCards(
                     }
                 }) else null)
         }
-        // The car's own target, the same at every charger; it can also be cleared.
+        // The car's own target, the same at every charger, set with a slider in its editor. One none stored opens
+        // there at the target it is planned with, and the minimum stops at that same target.
+        val plannedTarget = vehicle.targetPercent ?: TargetSlider.default(vehicle.chargeLimit?.toDouble()).toDouble()
         if (vehicle.targetStated) {
             valueRow(body, t(R.string.vehicle_target), vehicle.targetPercent
                 ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset)) {
                 // That the target follows the car to every charger is said in its editor.
-                editNumber(t(R.string.vehicle_target), NumberSpec(0.0, 100.0, 0), "%", vehicle.targetPercent,
-                    t(R.string.vehicle_error_target), help = t(R.string.vehicle_target_follows),
-                    noneLabel = t(R.string.paired_value_unset)) { value, done ->
+                editTargetSlider(t(R.string.vehicle_target), vehicle.targetPercent, vehicle.chargeLimit?.toDouble(),
+                    t(R.string.vehicle_target_follows)) { value, done ->
                     writeOne(vehicle.id, VehicleField.TARGET, value, done)
                 }
             }
         }
         // The car's minimum charge level: below it Home Assistant charges at once, whatever the strategy.
         if (vehicle.minStated) {
-            val levels = VehicleUpdate.MINIMUM_LEVELS
             val level = vehicle.minPercent?.let { t(R.string.vehicle_card_soc_value, it) } ?: t(R.string.vehicle_minimum_off)
             val shown = if (vehicle.minPercent != null && vehicle.minNeedsLevel) t(R.string.vehicle_minimum_needs_level, level) else level
             valueRow(body, t(R.string.vehicle_minimum), shown) {
-                val options = listOf(t(R.string.vehicle_minimum_off)) + levels.map { t(R.string.vehicle_card_soc_value, it) }
-                val selected = vehicle.minPercent?.let { levels.indexOf(it) + 1 } ?: 0
-                chooseOne(t(R.string.vehicle_minimum), options, selected, intro = t(R.string.vehicle_minimum_help)) { index, done ->
-                    writeOne(vehicle.id, VehicleField.MINIMUM, if (index == 0) null else levels[index - 1].toDouble(), done)
+                editFloorSlider(t(R.string.vehicle_minimum), vehicle.minPercent, plannedTarget,
+                    t(R.string.vehicle_minimum_help)) { chosen, done ->
+                    writeOne(vehicle.id, VehicleField.MINIMUM, chosen?.toDouble(), done)
                 }
             }
         }
