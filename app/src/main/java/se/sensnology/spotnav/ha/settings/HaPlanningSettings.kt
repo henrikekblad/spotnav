@@ -66,7 +66,8 @@ data class HaPlanningSettings(
     val phases: Int?,
     val amps: Int?,
     val requestedKwh: Double,
-    val maxPeriods: Int,
+    /** The most charge periods a plan may use (1 to 8), or `null`: automatic, Home Assistant's default ([ChargePeriods]). */
+    val maxPeriods: Int?,
     val departureEnabled: Boolean,
     val departureTime: String,
     /** A departure on one particular day (ISO date in the area's zone), or `null` for every day. */

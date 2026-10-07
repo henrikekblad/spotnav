@@ -51,6 +51,10 @@
     <item quantity="one">%1$d periode</item>
     <item quantity="other">%1$d perioder</item>
   </plurals>
+  <string name="charge_periods_title">Ladeperioder</string>
+  <string name="charge_periods_auto">Automatisk</string>
+  <string name="charge_periods_auto_help">De billigste timer, kun delt op hvor besparelsen er en ekstra start værd. Hver periode er mindst 30 minutter.</string>
+  <string name="charge_periods_help">Hvordan opladningen må deles op. Et antal er det højeste antal perioder, den må bruge.</string>
   <string name="misses_departure">Kan ikke nås før afgang</string>
   <string name="no_plan">Ladetiden kan ikke beregnes</string>
   <string name="not_enough_prices">Der er ikke tilstrækkelige prisdata til at beregne en ladetid.</string>

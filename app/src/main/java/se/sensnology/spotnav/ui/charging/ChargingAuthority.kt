@@ -47,7 +47,9 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings) {
         chargerCard.refreshPhasesRow()
         energy.setKwh(record.requestedKwh, record.fillToLimit)
         energy.refreshValueLabel()
-        planCard.periods.progress = (record.maxPeriods - 1).coerceIn(0, planCard.periods.max)
+        // Home Assistant's charge periods are a charger setting (the plan card does not show them); a number is
+        // still carried into the slider so a switch back to the phone's own plan starts from it.
+        record.maxPeriods?.let { planCard.periods.progress = (it - 1).coerceIn(0, planCard.periods.max) }
         planCard.refreshPeriodsLabel()
         planCard.setDriver(
             if (record.driver == HaSettingsDriver.TARGET_SOC) PlanDriver.TARGET_SOC else PlanDriver.KWH
@@ -174,6 +176,8 @@ internal fun ChargingScreen.applyState(state: VisibleAuthority?, note: String? =
     offlineNotice.visibility = if (offlineSentence == null) View.GONE else View.VISIBLE
     if (offlineSentence != null && note == null) text = null
     syncPaired()
+    // The charge periods are Home Assistant's charger setting when it plans; the phone's own plan keeps its row.
+    planCard.periodsRow.visibility = if (state != null && state.haOwnsPlanning) View.GONE else View.VISIBLE
     if (state != null && state.haOwnsPlanning) {
         state.remoteSettings?.let { showRecordInControls(it) }
         setPlanningControlsEnabled(state.pairedControlsEnabled)

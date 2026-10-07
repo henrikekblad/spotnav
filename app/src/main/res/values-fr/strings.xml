@@ -53,6 +53,10 @@
     <item quantity="many">%1$d périodes</item>
     <item quantity="other">%1$d périodes</item>
   </plurals>
+  <string name="charge_periods_title">Périodes de charge</string>
+  <string name="charge_periods_auto">Automatique</string>
+  <string name="charge_periods_auto_help">Les heures les moins chères, découpées seulement quand l\'économie vaut un démarrage de plus. Chaque période dure au moins 30 minutes.</string>
+  <string name="charge_periods_help">Comment la charge peut être découpée. Un nombre est le maximum de périodes qu\'elle peut utiliser.</string>
   <string name="misses_departure">Impossible de terminer avant le départ</string>
   <string name="no_plan">Aucune période de charge ne peut être calculée</string>
   <string name="not_enough_prices">Les données de prix sont insuffisantes pour calculer une période de charge.</string>

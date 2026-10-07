@@ -141,7 +141,7 @@ internal object SettingsFixtures {
             transfer = FiscalResolution.component(row?.transfer ?: HaFiscalValue.OFF, market.suggestedGridFee).input,
             phases = requireNotNull(record.phases), amps = requireNotNull(record.amps),
             requestedEnergyKwh = record.requestedKwh, consumptionKwhPer10Km = 2.0,
-            maxPeriods = record.maxPeriods,
+            maxPeriods = record.maxPeriods ?: 8,
             departure = DepartureIntent(record.departureEnabled, java.time.LocalTime.parse(record.departureTime)),
             driver = if (record.driver == HaSettingsDriver.TARGET_SOC) PlanDriver.TARGET_SOC else PlanDriver.KWH,
             targetSocPercent = if (record.driver == HaSettingsDriver.TARGET_SOC) record.target.targetPercent else null

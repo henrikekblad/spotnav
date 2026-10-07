@@ -41,8 +41,8 @@ internal sealed interface HaSettingsEdit {
      */
     data class Energy(val requestedKwh: Double, val fill: Boolean = false) : HaSettingsEdit
 
-    /** The period cap. */
-    data class MaxPeriods(val maxPeriods: Int) : HaSettingsEdit
+    /** The period cap, or `null` for automatic periods. */
+    data class MaxPeriods(val maxPeriods: Int?) : HaSettingsEdit
 
     /**
      * Departure, as a whole state: whether it applies, the wall time it is, the day (`null` for

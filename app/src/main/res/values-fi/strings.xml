@@ -51,6 +51,10 @@
     <item quantity="one">%1$d jakso</item>
     <item quantity="other">%1$d jaksoa</item>
   </plurals>
+  <string name="charge_periods_title">Latausjaksot</string>
+  <string name="charge_periods_auto">Automaattinen</string>
+  <string name="charge_periods_auto_help">Halvimmat tunnit, jaettuna vain kun säästö on uuden käynnistyksen arvoinen. Jokainen jakso on vähintään 30 minuuttia.</string>
+  <string name="charge_periods_help">Miten lataus saa jakautua. Luku on suurin jaksojen määrä, jonka se saa käyttää.</string>
   <string name="misses_departure">Ei valmistu ennen lähtöä</string>
   <string name="no_plan">Latausaikaa ei voida laskea</string>
   <string name="not_enough_prices">Latausajan laskemiseen ei ole riittävästi hintatietoja.</string>

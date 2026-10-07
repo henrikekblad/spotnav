@@ -75,12 +75,17 @@ class ChargeBarTest {
         })
     }
 
+    // The windows these rules are measured against, stated here rather than taken from how the fixture's plan
+    // happens to fall (Home Assistant's automatic charge periods may split it).
     private fun target(edit: JSONObject.() -> Unit = {}): Dashboard =
-        DashboardFixtures.dashboard("target_soc_estimated.json") { older(); charging(); edit() }
+        DashboardFixtures.dashboard("target_soc_estimated.json") {
+            older(); charging(); periods("2026-09-22T08:15:00Z" to "2026-09-22T23:15:00Z"); edit()
+        }
 
     private fun kwh(edit: JSONObject.() -> Unit = {}): Dashboard = DashboardFixtures.dashboard {
         older()
         charging()
+        periods("2026-09-22T06:45:00Z" to "2026-09-22T15:30:00Z")
         getJSONObject("plan").put("delivered_kwh", 5.0).put("remaining_kwh", 15.0)
         edit()
     }

@@ -34,8 +34,10 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
   charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule.
 - **Vehicle**: charge level, charge limit, battery capacity, consumption and onboard charger, as the
   car reports them or as you set them.
-- **Planning**: the strategy, departure, number of charging periods, and the energy to add (kWh) or a
-  target charge level. The slider marks where the battery is full.
+- **Planning**: the strategy, departure, and the energy to add (kWh) or a target charge level. The slider
+  marks where the battery is full. How the charge is split into periods is a charger setting, **Settings →
+  Charger → Charge periods**: **Automatic** (the default: the cheapest hours, split only where the saving is worth
+  another start, each period at least 30 minutes) or **1 period** to **8 periods**, the most a plan may use.
 - **Charging plan**: the plan Home Assistant has installed.
 
 <img src="images/app-planning-target.png" alt="Planning card set to Target: the car's charge level and charge limit above the target state of charge slider at 80 %, and the energy needed" width="420">

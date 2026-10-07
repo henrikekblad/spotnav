@@ -52,15 +52,15 @@ class HaStatusTextTest {
     @Test fun wordsAPlannedLineInTheMarketsClockAndTheReadersLanguage() {
         val s = status("target_soc_estimated")
         assertEquals(
-            "Planerat från 10:15 · 34,5 kWh · 82,92 kr · 17,3 mil",
+            "Planerat från 09:15 · 34,5 kWh · 62,55 kr · 17,3 mil",
             HaStatusText.render(s, format("sv"), now)
         )
         assertEquals(
-            "Planned from 10:15 · 34.5 kWh · 82.92 kr · 173 km",
+            "Planned from 09:15 · 34.5 kWh · 62.55 kr · 173 km",
             HaStatusText.render(s, format("en"), now)
         )
         assertEquals(
-            "Suunniteltu klo 10:15 alkaen · 34,5 kWh · 82,92 kr · 173 km",
+            "Suunniteltu klo 09:15 alkaen · 34,5 kWh · 62,55 kr · 173 km",
             HaStatusText.render(s, format("fi"), now)
         )
     }
@@ -72,7 +72,7 @@ class HaStatusTextTest {
 
     @Test fun anInstantIsNotWrittenWithoutAZone() {
         val noZone = StatusFormat("en", null, null, null)
-        assertEquals("Charging is scheduled · 34.5 kWh · 82.92 SEK · 173 km",
+        assertEquals("Charging is scheduled · 34.5 kWh · 62.55 SEK · 173 km",
             HaStatusText.render(status("target_soc_estimated"), noZone, now))
     }
 

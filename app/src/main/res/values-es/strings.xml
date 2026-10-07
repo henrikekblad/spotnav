@@ -53,6 +53,10 @@
     <item quantity="many">%1$d periodos</item>
     <item quantity="other">%1$d periodos</item>
   </plurals>
+  <string name="charge_periods_title">Periodos de carga</string>
+  <string name="charge_periods_auto">Automático</string>
+  <string name="charge_periods_auto_help">Las horas más baratas, divididas solo cuando el ahorro compensa otro arranque. Cada periodo dura al menos 30 minutos.</string>
+  <string name="charge_periods_help">Cómo puede dividirse la carga. Un número es el máximo de periodos que puede usar.</string>
   <string name="misses_departure">No termina antes de la salida</string>
   <string name="no_plan">No se puede calcular ningún periodo de carga</string>
   <string name="not_enough_prices">No hay suficientes datos de precios para calcular un periodo de carga.</string>

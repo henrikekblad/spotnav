@@ -195,6 +195,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     confirmed?.identification != null
                 notificationsCard?.show(confirmed?.notifications, writable, identifies = identifies.takeIf { it || confirmed != null })
                 pairedCards.setIdentificationWritable(writable)
+                pairedCards.setChargePeriodsWritable(writable)
             }
             fun loadPaired() = session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
@@ -246,6 +247,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // Which cars can charge here and how the plugged-in one is found: the same settings write.
             pairedCards.attachIdentification { mode, vehicleIds, done ->
                 writeEdit(HaSettingsEdit.Identification(mode, vehicleIds), after = { loadPaired() }, done = done)
+            }
+            // The charge periods: the same settings write.
+            pairedCards.attachChargePeriods { maxPeriods, done ->
+                writeEdit(HaSettingsEdit.MaxPeriods(maxPeriods), after = { loadPaired() }, done = done)
             }
             // The camera's frame and the cars' reference pictures, through the charger's own actions;
             // a picture is decoded off the main thread, and the cards read again after a write.

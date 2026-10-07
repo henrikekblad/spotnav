@@ -31,6 +31,7 @@ import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.ha.dashboard.IdentificationSource
 import se.sensnology.spotnav.ha.dashboard.ReferencePicture
 import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
+import se.sensnology.spotnav.ha.settings.ChargePeriods
 import se.sensnology.spotnav.ha.settings.HaCameraChoice
 import se.sensnology.spotnav.ha.settings.HaIdentificationSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -112,6 +113,14 @@ internal class PairedSettingsCards(
     private var adoptedIdentification: HaIdentificationSettings? = null
     private var identificationNotice: String? = null
 
+    // The charge periods: Home Assistant's charger setting, written through the ordinary settings write (the
+    // screen owns it); what a write here chose is shown until the next dashboard.
+    private class AdoptedPeriods(val maxPeriods: Int?)
+    private var writeChargePeriods: (Int?, (String?) -> Unit) -> Unit = { _, done -> done(null) }
+    private var chargePeriodsWritable = false
+    private var chargePeriodsWriting = false
+    private var adoptedPeriods: AdoptedPeriods? = null
+
     // The charger's camera: its webhook actions (the screen owns the connection; a picture comes back
     // decoded at most the given size), what a frame or a picture write answered, and the reference
     // thumbnails fetched so far (a few, by car, kind and when the picture was taken).
@@ -156,6 +165,17 @@ internal class PairedSettingsCards(
         writeIdentification = write
     }
 
+    /** Where the charge periods are written (`done` gets the refusal in words, or `null`). */
+    fun attachChargePeriods(write: (Int?, (String?) -> Unit) -> Unit) {
+        writeChargePeriods = write
+    }
+
+    fun setChargePeriodsWritable(writable: Boolean) {
+        if (writable == chargePeriodsWritable) return
+        chargePeriodsWritable = writable
+        repaint()
+    }
+
     fun setIdentificationWritable(writable: Boolean) {
         if (writable == identificationWritable) return
         identificationWritable = writable
@@ -169,6 +189,7 @@ internal class PairedSettingsCards(
             adoptedSite = null
             adoptedPriority = null
             adoptedIdentification = null
+            adoptedPeriods = null
             adoptedCamera = null
             adoptedReferences.clear()
         }
@@ -459,7 +480,38 @@ internal class PairedSettingsCards(
         }
         // The priority is this charger's own setting (its place among the site's chargers), as in the card.
         addPriority(card.body)
+        addChargePeriods(card.body, dash)
         addIdentification(card.body, dash)
+    }
+
+    // --- Charge periods -----------------------------------------------------------------------------
+
+    /** "Automatic", or "3 periods". */
+    private fun periodsName(count: Int?) =
+        if (count == null) t(R.string.charge_periods_auto) else tq(R.plurals.charging_period_count, count, count)
+
+    /**
+     * How the charge may be split: automatic (Home Assistant weighs a start cost per period) or at most 1 to 8
+     * periods, one choice of nine written at once; read-only while the record cannot be written.
+     */
+    private fun addChargePeriods(body: LinearLayout, dash: Dashboard) {
+        val record = dash.settings ?: return
+        val current = adoptedPeriods.let { if (it != null) it.maxPeriods else record.maxPeriods }
+        val writable = chargePeriodsWritable && !chargePeriodsWriting
+        val title = t(R.string.charge_periods_title)
+        valueRow(body, title, periodsName(current), onTap = if (writable) ({
+            chooseOne(title, ChargePeriods.OPTIONS.map { periodsName(it) }, ChargePeriods.indexOf(current),
+                helps = listOf(t(R.string.charge_periods_auto_help)), intro = t(R.string.charge_periods_help)) { index, done ->
+                val chosen = ChargePeriods.OPTIONS[index]
+                chargePeriodsWriting = true
+                writeChargePeriods(chosen) { refusal ->
+                    chargePeriodsWriting = false
+                    if (refusal == null) adoptedPeriods = AdoptedPeriods(chosen)
+                    done(refusal)
+                    repaint()
+                }
+            }
+        }) else null)
     }
 
     // --- Which car is plugged in ------------------------------------------------------------------
