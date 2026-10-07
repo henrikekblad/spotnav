@@ -34,8 +34,6 @@ import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.client.CameraCommands
-import se.sensnology.spotnav.ha.authority.CommitRoute
-import se.sensnology.spotnav.ha.authority.WriteSubject
 import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
@@ -46,6 +44,7 @@ import se.sensnology.spotnav.ha.settings.SaveEffect
 import se.sensnology.spotnav.ha.settings.SettingsFormSession
 import se.sensnology.spotnav.ha.settings.SettingsFormValues
 import se.sensnology.spotnav.ha.settings.SettingsSave
+import se.sensnology.spotnav.ha.settings.SettingsEditSend
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
@@ -120,7 +119,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         authorityController = settingsAuthority
         var confirmedRecord = settingsProfile?.let { settingsCache.confirmed(it.localId) }
         // The paired screen's commit path (set further down, where the session exists):
-        var runFormSave: (SettingsFormValues, () -> Unit) -> Unit = { _, done -> done() }
+        var runFormSave: (SettingsFormValues, ((HaPlanningSettings) -> SettingsFormValues)?, () -> Unit) -> Unit = { _, _, done -> done() }
         val authorityNoteView = TextView(context).apply {
             textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(8))
         }
@@ -141,7 +140,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // record's, whose dialog writes through the paired path (wired below).
         val pairedPrice = if (paired) PairedPriceCard(this) else null
         val localPrice = if (paired) null else LocalPriceCard(this)
-        pairedPrice?.add(priceCard.body, old) { values, done -> runFormSave(values, done) }
+        pairedPrice?.add(priceCard.body, old) { values, replay, done -> runFormSave(values, replay, done) }
         localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
             storeIfChanged(WidgetSettings.load(context, widgetId), next)
         }
@@ -218,27 +217,38 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     if (answer == ChargeLimit.Answer.Set) loadPaired()
                 }
             }
+            /**
+             * One value written through the settings record: one Save writes it, also when Home
+             * Assistant moved the revision since this screen read the record (see [SettingsEditSend]).
+             * [after] runs once it has answered, before the editor hears how it went.
+             */
+            fun writeEdit(edit: HaSettingsEdit, after: () -> Unit, done: (String?) -> Unit) {
+                SettingsEditSend.send(settingsAuthority, settingsProfile.localId, edit, transport = { revision, replacement, answered ->
+                    session.updateSettings(revision, replacement) { answer ->
+                        if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
+                        answered(answer)
+                    }
+                }) { result ->
+                    when (result) {
+                        is SettingsEditSend.Result.Sent -> {
+                            if (result.outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
+                            after()
+                            done(
+                                when (result.answer) {
+                                    is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
+                                    is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
+                                    else -> authorityRefusalText(result.answer)
+                                }
+                            )
+                        }
+                        is SettingsEditSend.Result.Refused -> done(t(R.string.authority_refused_invalid))
+                        SettingsEditSend.Result.ReadOnly -> done(t(R.string.settings_paired_read_only))
+                    }
+                }
+            }
             // Which cars can charge here and how the plugged-in one is found: the same settings write.
             pairedCards.attachIdentification { mode, vehicleIds, done ->
-                when (val route = settingsAuthority.beginWrite(HaSettingsEdit.Identification(mode, vehicleIds))) {
-                    is CommitRoute.Send -> session.updateSettings(route.expectedRevision, route.replacement) { answer ->
-                        if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
-                        val outcome = settingsAuthority.onWriteAnswer(
-                            WriteSubject(settingsProfile.localId, route.operation, route.expectedRevision), answer
-                        )
-                        if (outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
-                        done(
-                            when (answer) {
-                                is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
-                                is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
-                                else -> authorityRefusalText(answer)
-                            }
-                        )
-                        loadPaired()
-                    }
-                    is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
-                    CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
-                }
+                writeEdit(HaSettingsEdit.Identification(mode, vehicleIds), after = { loadPaired() }, done = done)
             }
             // The camera's frame and the cars' reference pictures, through the charger's own actions;
             // a picture is decoded off the main thread, and the cards read again after a write.
@@ -251,25 +261,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             }
             notificationsCard?.attach(
                 save = { targets, events, done ->
-                    when (val route = settingsAuthority.beginWrite(HaSettingsEdit.Notifications(targets, events))) {
-                        is CommitRoute.Send -> session.updateSettings(route.expectedRevision, route.replacement) { answer ->
-                            if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
-                            val outcome = settingsAuthority.onWriteAnswer(
-                                WriteSubject(settingsProfile.localId, route.operation, route.expectedRevision), answer
-                            )
-                            if (outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
-                            showNotifications()
-                            done(
-                                when (answer) {
-                                    is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
-                                    is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
-                                    else -> authorityRefusalText(answer)
-                                }
-                            )
-                        }
-                        is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
-                        CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
-                    }
+                    writeEdit(HaSettingsEdit.Notifications(targets, events), after = { showNotifications() }, done = done)
                 },
                 requestPermission = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -384,9 +376,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         /**
          * One press of Save, off the main thread: the admission, the one request, the one answer.
          */
-        runFormSave = { values, done ->
+        runFormSave = { values, replay, done ->
             ioExecutor.execute {
-                val save = SettingsFormSession.save(settingsAuthority, values) { profileId -> settingsSaveTarget(context, profileId) }
+                val save = SettingsFormSession.save(settingsAuthority, values, replay) { profileId -> settingsSaveTarget(context, profileId) }
                 runOnUiThread {
                     if (isDestroyed || viewGeneration != settingsGeneration) return@runOnUiThread
                     performSaveEffects(SettingsFormSession.effects(save), save, values)

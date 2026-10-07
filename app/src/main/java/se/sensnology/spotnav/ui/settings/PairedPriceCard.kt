@@ -17,13 +17,17 @@ import se.sensnology.spotnav.widget.WidgetSettings
 internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     private val rows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private var old: WidgetSettings? = null
-    private var submit: (SettingsFormValues, done: () -> Unit) -> Unit = { _, done -> done() }
+    private var submit: (SettingsFormValues, ((HaPlanningSettings) -> SettingsFormValues)?, done: () -> Unit) -> Unit =
+        { _, _, done -> done() }
 
-    /** Add the overview to [parent]; [submit] carries one write out and calls `done` when it has answered. */
+    /**
+     * Add the overview to [parent]; [submit] carries one write out (the values, and the same one value
+     * on a newer record, should the charger's revision have moved) and calls `done` when it has answered.
+     */
     fun add(
         parent: LinearLayout,
         old: WidgetSettings,
-        submit: (SettingsFormValues, done: () -> Unit) -> Unit
+        submit: (SettingsFormValues, ((HaPlanningSettings) -> SettingsFormValues)?, done: () -> Unit) -> Unit
     ) {
         this.submit = submit
         this.old = old
@@ -43,7 +47,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
             areaControls = { body -> PriceSettingsCard(this).add(body, old ?: WidgetSettings(), record, writable, areaOnly = true) }
         ) { edit, done ->
             val confirmed = record ?: return@add done(null)
-            submit(PriceEdits.paired(confirmed, edit)) { done(null) }
+            submit(PriceEdits.paired(confirmed, edit), { fresh -> PriceEdits.paired(fresh, edit) }) { done(null) }
         }
     }
 }
