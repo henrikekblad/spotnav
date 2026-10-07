@@ -105,6 +105,20 @@ internal object PairedTarget {
         )
     }
 
+    /** The level now as a mark on the 0..100 track, as a fraction of it; `null` when not known. */
+    fun nowMark(facts: PairedTargetFacts): Float? =
+        facts.now?.let { (it / 100.0).toFloat().coerceIn(0f, 1f) }
+
+    /**
+     * The car's own limit as a mark on the 0..100 track, at the whole percent it stops at, and only below
+     * 100 %: at 100 % the track's end says it, and no limit stated is no mark.
+     */
+    fun limitMark(facts: PairedTargetFacts): Float? {
+        val limit = facts.limit ?: return null
+        val ceiling = TargetNeed.chargeCeiling(limit)
+        return if (ceiling < 100) (ceiling / 100.0).toFloat().coerceIn(0f, 1f) else null
+    }
+
     /** Whether the energy the target needs is said under the verdict: not when no charging is needed. */
     fun showsNeed(verdict: TargetVerdict): Boolean = verdict != TargetVerdict.NO_NEED
 
