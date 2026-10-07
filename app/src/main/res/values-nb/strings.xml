@@ -530,6 +530,9 @@
   <string name="vehicle_minimum_off">Av</string>
   <string name="vehicle_minimum_needs_level">%1$s · trenger bilens ladenivå</string>
   <string name="vehicle_minimum_help">Under dette nivået lader SpotNav straks med full strøm, uansett strategi. En pause eller et stopp du velger går foran. Trenger bilens ladenivå.</string>
+  <string name="vehicle_target_default">(standard)</string>
+  <string name="vehicle_minimum_cap">lademål %1$d %%</string>
+  <string name="vehicle_minimum_slider">Laveste ladenivå, av eller prosent</string>
   <string name="vehicle_error_minimum">Laveste ladenivå må være mellom 10 og 80.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Trykk for å endre</string>
@@ -544,4 +547,5 @@
   <string name="target_mark_now">nå</string>
   <string name="target_mark_now_estimated">≈ nå</string>
   <string name="target_mark_limit">grense</string>
+  <string name="target_mark_min">min. %1$d %%</string>
 </resources>
