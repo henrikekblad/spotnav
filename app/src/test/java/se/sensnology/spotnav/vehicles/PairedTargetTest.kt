@@ -147,6 +147,19 @@ class PairedTargetTest {
         assertFalse(PairedTarget.facts(d.soc!!, d.vehicles, "vehicle_ev6").other)
     }
 
+    @Test fun theFactsCarryThePickedCarsOwnMinimum() {
+        val json = HaFixtures.json("dashboard/target_soc_two_vehicles.json")
+        val vehicles = json.getJSONArray("vehicles")
+        vehicles.getJSONObject(0).put("min_percent", 30)
+        vehicles.getJSONObject(1).put("min_percent", 50)
+        val d = Dashboard.parse(json)
+        assertEquals(30, PairedTarget.facts(d.soc!!, d.vehicles, null).minPercent)
+        assertEquals(50, PairedTarget.facts(d.soc!!, d.vehicles, "vehicle_niro").minPercent)
+        vehicles.getJSONObject(0).put("min_percent", JSONObject.NULL)
+        val off = Dashboard.parse(json)
+        assertNull(PairedTarget.facts(off.soc!!, off.vehicles, null).minPercent)
+    }
+
     @Test fun thePickerOffersVehiclesOnlyWhenThereIsAChoiceAndShowsTheRecordsOwnElseTheResolvedOne() {
         val two = dashboard("target_soc_two_vehicles").soc!!
         assertEquals(listOf("vehicle_ev6", "vehicle_niro"), PairedTarget.choices(two).map { it.id })
