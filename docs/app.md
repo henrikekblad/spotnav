@@ -1,8 +1,8 @@
 # SpotNav for Android
 
 A tour of the app's screens. The pictures are taken by `tools/app_screenshots/run.sh` against a demo
-Home Assistant with made-up devices (an OCPP charger, a Kia called "Family car", a site called "Home")
-and recorded relay prices, so names and numbers are examples.
+Home Assistant with made-up devices (an OCPP charger, two Kia cars called "Family car" and "City car", a camera
+whose picture is drawn, a site called "Home") and recorded relay prices, so names and numbers are examples.
 
 ## Without Home Assistant
 
@@ -48,6 +48,8 @@ the car's charge level and battery.
 When more than one car can charge at a charger, Home Assistant finds out which one was plugged in, from what
 the cars report and, if you set one up, the charger's camera. The app shows the same as the Home Assistant card:
 
+<img src="images/app-identify-question.png" alt="The charger card asking Which car is plugged in? with a button for each car, City car and Family car" width="360">
+
 - **The question.** When Home Assistant cannot tell, the charger card shows **Which car is plugged in?** with one
   button per car, the likeliest first. The first answer wins, from the app, the card or the notification on any
   phone. If nobody answers, the car that was chosen stays.
@@ -63,6 +65,10 @@ the cars report and, if you set one up, the charger's camera. The app shows the 
   charging cable, by position, by the camera, selected manually, or assumed). **⇄ Change car** changes it at any
   time while a car is plugged in; any paired phone may do it, and it counts as an answer.
 
+<img src="images/app-identifying.png" alt="The charger card just after a plug-in: Identifying the car… on the status line and identifying… on the car line" width="360">
+&nbsp;
+<img src="images/app-identified.png" alt="The charger card with the car line City car, identified by the car's charging cable, and ⇄ to change the car" width="360">
+
 In **Settings → Charger**, the same settings as in the card:
 
 - **Cars at this charger**: the cars that can charge and be planned for here (at least one).
@@ -72,10 +78,14 @@ In **Settings → Charger**, the same settings as in the card:
   Assistant card. **Crop parking spot** fetches a picture to drag the selection around the parking spot; only what
   is inside is compared.
 
+<img src="images/app-camera-frame.png" alt="Crop parking spot: the camera's picture with the selection around the parking bay, and what is compared" width="360">
+
 In **Settings → Vehicle**, each car has its **Reference picture**: a **Day** and a **Night** slot. With the car
 parked at the charger, **Take day picture** (and, in the dark, **Take night picture** for the camera's infrared);
 over a picture the button is **Retake**, and **Delete** removes only that picture. **Close** closes the dialog.
 A car without a reference picture is never recognised by the camera.
+
+<img src="images/app-reference-picture.png" alt="A car's reference pictures: the day picture with Retake and Delete, and an empty night slot" width="360">
 
 How it decides, what the camera can and cannot tell apart, which AI model to use and what to send with a field
 report are in [Which car is plugged in?](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/vehicle-identification.md)
@@ -118,13 +128,14 @@ paired, area and taxes are Home Assistant's and are changed through it.
 
 **Widget**: settings of the widget the app was opened from.
 
-<img src="images/app-settings-vehicle.png" alt="Vehicle card in settings: charge level, battery capacity reported by the vehicle, consumption, onboard charger, and Change vehicle" width="420">
+<img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and reference picture" width="420">
 
-**Vehicle**: the car this charger plans for, and its properties.
+**Vehicle**: the car this charger plans for, and its properties. With two or more cars the card has a tab per car;
+each car has its own plug sensor, location and reference picture.
 
-<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, and the charger's priority" width="420">
+<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the cars at this charger, identification and the camera" width="420">
 
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, and the charger's priority among the site's chargers.
+**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)).
 
 <img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
 
