@@ -8,6 +8,7 @@ import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.CommandRefusal
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
+import se.sensnology.spotnav.ha.client.IdentifyVehicle
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -19,7 +20,9 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.vehicles.ChargeLimit
+import se.sensnology.spotnav.vehicles.PairedCarLine
 import se.sensnology.spotnav.vehicles.VehicleCardState
+import se.sensnology.spotnav.vehicles.VehicleIdentification
 import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.widget.WidgetSettings
 
@@ -66,6 +69,12 @@ internal class ChargerDashboardController(
         /** The strategies each accepted dashboard states this charger may be set to right now. */
         fun onStrategyOptions(options: Set<HaSettingsStrategy>, needingTotalGridPower: Set<HaSettingsStrategy>)
 
+        /**
+         * A car chosen with no car plugged in: nothing to identify, so it becomes the car the charger
+         * plans for, through the ordinary settings write.
+         */
+        fun onVehiclePicked(vehicleId: String)
+
         /** Home Assistant's dashboard each time one was read (`null` when the read failed). */
         fun onDashboard(dashboard: Dashboard?)
 
@@ -103,10 +112,22 @@ internal class ChargerDashboardController(
     )
 
     init {
-        // The charger's own re-read: the same fetch, asked for by hand.
+        // The charger's own re-read: the same fetch, asked for by hand, after re-reading the planned
+        // car where the integration can (the vehicle card stays out of sight when paired).
         chargerCard.reRead.attachRequest {
             chargerCard.reRead.setInFlight(true)
-            fetchDashboard()
+            val car = PairedCarLine.carToReRead(dashboard)
+            if (car == null) {
+                fetchDashboard()
+            } else {
+                session.reReadWithVehicle(car, admit = { listener.admitDashboard() }) { answer, read ->
+                    // "Try again in N s" is Home Assistant's pace and stays unsaid; a real failure is said.
+                    if (PairedCarLine.saysCarReRead(answer)) {
+                        Toast.makeText(context, t(R.string.vehicle_card_reread_failed), Toast.LENGTH_SHORT).show()
+                    }
+                    showRead(read)
+                }
+            }
         }
         // The card draws the control; the screen owns the connection, so it is the screen that gets
         // asked to do the asking.
@@ -114,6 +135,36 @@ internal class ChargerDashboardController(
         vehicleCard.limitControl.attachRequest { vehicleId, percent -> setChargeLimit(vehicleId, percent) }
         cells.attachTo(chargerCard.body)
         cells.refresh()
+        // A person's answer to which car is plugged in, from the banner or Byt bil.
+        chargerCard.identification.attachChoose { vehicleId -> identifyVehicle(vehicleId) }
+    }
+
+    /**
+     * Send the car a person chose (`identify_vehicle`: the answer, or a correction after a decision),
+     * then show the dashboard it left. With no car plugged in there is nothing to identify, and the
+     * choice is the planned car instead (the screen's settings write, as the picker made it).
+     */
+    private fun identifyVehicle(vehicleId: String) {
+        // A Home Assistant that does not identify: the choice is the planned car, as the picker made it.
+        if (dashboard?.let { VehicleIdentification.identifies(it) } != true) {
+            listener.onVehiclePicked(vehicleId)
+            return
+        }
+        chargerCard.identification.setBusy(true)
+        session.identifyVehicle(vehicleId, admit = { listener.admitDashboard() }) { outcome, read ->
+            chargerCard.identification.setBusy(false)
+            when (outcome) {
+                is IdentifyVehicle.Outcome.Identified -> read?.let {
+                    applyDashboard(it.result, it.detectedPhases)
+                    // The same read is the authority's newest record: Home Assistant wrote the settings.
+                    if (it.result.isSuccess) listener.onResult(it.admission, it.result)
+                }
+                IdentifyVehicle.Outcome.NotPluggedIn -> listener.onVehiclePicked(vehicleId)
+                IdentifyVehicle.Outcome.NotACandidate ->
+                    Toast.makeText(context, t(R.string.identify_not_here), Toast.LENGTH_LONG).show()
+                else -> Toast.makeText(context, t(R.string.identify_answer_failed), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     /**
@@ -198,6 +249,8 @@ internal class ChargerDashboardController(
             barShown = bar != null
             listener.onPendingRefreshChanged()
         }
+        // Which car is plugged in, from the same dashboard: the question, or the car and how it was decided.
+        chargerCard.identification.show(dashboard)
         // The bar and the status already say it charges: the connection line stands down meanwhile.
         chargerCard.showVehicleLine(vehicleLineText(dashboard).takeIf { ChargeBarLayout.connectionLineShown(bar) }, if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
         // Home Assistant's own status block words the line (see HaStatusText):
@@ -225,7 +278,11 @@ internal class ChargerDashboardController(
     }
 
     /** The charger's connection state in words ("Ansluten"); `null` when the dashboard states none. */
-    private fun vehicleLineText(held: Dashboard?): String? = held?.connection?.let { t(connectionString(it)) }
+    private fun vehicleLineText(held: Dashboard?): String? = held?.connection?.let { state ->
+        val connection = t(connectionString(state))
+        // While the question is open the line says the charger waits for the answer.
+        if (VehicleIdentification.waitingForAnswer(held)) "$connection · ${t(R.string.identify_waiting)}" else connection
+    }
 
     private fun connectionString(state: ConnectionState): Int = when (state) {
         ConnectionState.DISCONNECTED -> R.string.connection_disconnected

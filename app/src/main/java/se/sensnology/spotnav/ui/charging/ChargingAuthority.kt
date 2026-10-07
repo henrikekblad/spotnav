@@ -25,7 +25,9 @@ import se.sensnology.spotnav.ui.common.authorityStateNote
 internal fun ChargingScreen.showExactValues(record: HaPlanningSettings) {
     // Under "Fill" the label is the word, not the amount the record keeps beside it.
     if (!energy.filling()) energy.valueLabel.text = kwhText(record.requestedKwh)
-    record.target.targetPercent?.let { targetSoc.valueLabel.text = t(R.string.percent_value_decimal, it) }
+    record.target.targetPercent?.let {
+        targetSoc.valueLabel.text = percentText(it, se.sensnology.spotnav.app.AppLanguageSettings.numberLocale(context))
+    }
 }
 
 /** Show the record's own values in the existing controls. */

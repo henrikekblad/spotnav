@@ -129,6 +129,21 @@ class ImmediateSettingsTest {
     }
 
     @Test
+    fun theLocalOverviewStatesThisPhonesOwnSettingsInTheSameRows() {
+        val settings = WidgetSettings(area = "SE4", vat = true, tax = true, taxMinorUnit = 36.0, transfer = false)
+        val overview = PriceOverview.ofLocal(settings) { id -> catalogue.firstOrNull { it.id == id } }
+        assertEquals("SE4 – " + RelayFixtures.se4.name, overview.area)
+        assertEquals(FiscalLine.Figure(25.0, "%"), overview.vat)
+        assertEquals(FiscalLine.Figure(36.0, "öre/kWh"), overview.tax)
+        assertEquals(FiscalLine.Off, overview.transfer)
+        // A fee switched on with no figure is not set.
+        val unset = PriceOverview.ofLocal(settings.copy(transfer = true, gridFeeMinorUnit = WidgetSettings.NO_SUGGESTION)) { id ->
+            catalogue.firstOrNull { it.id == id }
+        }
+        assertEquals(FiscalLine.Unset, unset.transfer)
+    }
+
+    @Test
     fun aRecordWithoutAnAreaIsNotSet() {
         val overview = PriceOverview.of(SettingsFixtures.parsed(areaId = null)) { null }
         assertEquals(null, overview.area)

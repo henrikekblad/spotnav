@@ -20,13 +20,13 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
     /** The chosen events; the defaults (stopped, at risk, complete) until a person changes them. */
     var events: Set<NotificationEvent>
         get() {
-            val raw = store.getString(EVENTS) ?: return NotificationEvent.DEFAULTS.toSet()
+            val raw = store.getString(EVENTS) ?: return NotificationEvent.LOCAL_DEFAULTS.toSet()
             return runCatching {
                 val list = JSONArray(raw)
-                (0 until list.length()).mapNotNull { NotificationEvent.of(list.opt(it)) }.toSet()
-            }.getOrDefault(NotificationEvent.DEFAULTS.toSet())
+                (0 until list.length()).mapNotNull { NotificationEvent.of(list.opt(it)) }.filter { it in NotificationEvent.LOCAL }.toSet()
+            }.getOrDefault(NotificationEvent.LOCAL_DEFAULTS.toSet())
         }
-        set(value) = store.putString(EVENTS, JSONArray(NotificationEvent.entries.filter { it in value }.map { it.wire }).toString())
+        set(value) = store.putString(EVENTS, JSONArray(NotificationEvent.LOCAL.filter { it in value }.map { it.wire }).toString())
 
     fun snapshot(localId: String): NotificationSnapshot? =
         store.getString(SNAPSHOT + localId)?.let { raw -> runCatching { NotificationSnapshot.fromJson(JSONObject(raw)) }.getOrNull() }

@@ -39,6 +39,7 @@ import se.sensnology.spotnav.vehicles.VehicleCapacityStore
 import se.sensnology.spotnav.vehicles.VehicleCardState
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.vehicles.VehicleFacts
+import se.sensnology.spotnav.vehicles.VehicleIdentification
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import se.sensnology.spotnav.widget.WidgetSettings
 import java.util.Locale
@@ -66,6 +67,24 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
             adapter = headerSpinnerAdapter(listOf(t(R.string.vehicle_none)))
         }
         card.heading.addView(vehicleSpinner, weight())
+        // "Assumed": the car shown was only kept (nobody answered which car is plugged in, nothing
+        // decided it), marked beside its name.
+        val assumedChip = TextView(context).apply {
+            text = t(R.string.identify_by_assumed)
+            textSize = 12f
+            setTextColor(accent)
+            setPadding(dp(8), dp(1), dp(8), dp(2))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(10).toFloat()
+                setStroke(dp(1), accent)
+            }
+            visibility = View.GONE
+        }
+        // The name takes its own width, so the mark sits right after it.
+        card.title.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0f)
+        card.heading.addView(assumedChip, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { marginStart = dp(8) })
 
         // The header's other occupant, and the card's only control that talks to Home Assistant:
         val refreshIcon = reReadIcon()
@@ -176,7 +195,9 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
         // What the card is showing: the vehicles the instance last reported, and the capabilities
         // that arrived with them.
         var shown = VehicleCardState.NOTHING_FETCHED
-        var selectedVehicleId: String? = profile?.selectedVehicleId
+        // The car this app saved is an unpaired charger's alone: a paired charger's car is Home
+        // Assistant's (see `applyPaired`), so the saved one is never read for it.
+        var selectedVehicleId: String? = profile?.selectedVehicleId?.takeUnless { profile.configured }
         // Who the card is about, and what capacity is remembered for it:
         var factsListener: ((VehicleStatus?, Double?) -> Unit)? = null
         // The spinner's own listener fires while its adapter and selection are being rebuilt;
@@ -244,7 +265,9 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
             val pairedRow = dash?.let { PairedVehicles.row(it, emptyMap(), pairedShownId) }
             val pairedName = dash?.let { pairedRow?.name ?: PairedVehicles.name(it, pairedShownId) }
             val content = VehicleFacts.content(shown.vehicles, selectedVehicleId)
-            val selectable = if (dash != null) pairedChoices.isNotEmpty() else content.selectable
+            // Where Home Assistant identifies the car, Byt bil on the charger card chooses it, not this card.
+            val selectable = if (dash != null) pairedChoices.isNotEmpty() && !VehicleIdentification.replacesPicker(dash)
+                else content.selectable
             // The vehicle the status list knows by this id (paired) or the local selection
             // (unpaired).
             val vehicle = if (dash != null) effectiveVehicle() else content.vehicle
@@ -255,6 +278,11 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
                 else content.vehicle?.name ?: t(R.string.vehicle_title)
             card.title.visibility = if (selectable) View.GONE else View.VISIBLE
             vehicleSpinner.visibility = if (selectable) View.VISIBLE else View.GONE
+            // The assumed car is the one the dashboard plans for: the mark goes with that car alone.
+            assumedChip.visibility = if (
+                dash != null && !selectable && VehicleIdentification.assumed(dash) &&
+                (dash.identification?.vehicleId == null || dash.identification?.vehicleId == pairedShownId)
+            ) View.VISIBLE else View.GONE
             repopulatingVehicles = true
             if (dash != null) {
                 vehicleSpinner.adapter = headerSpinnerAdapter(pairedChoices.map { it.name })

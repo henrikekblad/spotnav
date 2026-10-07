@@ -50,6 +50,7 @@ import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
@@ -57,7 +58,10 @@ import se.sensnology.spotnav.ui.common.HEADER_CONTROL_GAP_DP
 import se.sensnology.spotnav.ui.common.authorityRefusalText
 import se.sensnology.spotnav.ui.common.authorityStateNote
 import se.sensnology.spotnav.ui.common.card
-import se.sensnology.spotnav.ui.common.checkbox
+import se.sensnology.spotnav.ui.common.chargerName
+import se.sensnology.spotnav.ui.common.chooseOne
+import se.sensnology.spotnav.ui.common.editOnOff
+import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.label
 import se.sensnology.spotnav.ui.common.settingsSaveTarget
 import se.sensnology.spotnav.ui.common.weight
@@ -104,38 +108,36 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         )
         authorityController = settingsAuthority
         var confirmedRecord = settingsProfile?.let { settingsCache.confirmed(it.localId) }
+        // The paired screen's commit path (set further down, where the session exists):
+        var runFormSave: (SettingsFormValues, () -> Unit) -> Unit = { _, done -> done() }
         val authorityNoteView = TextView(context).apply {
             textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(8))
         }
         priceCard.body.addView(authorityNoteView)
         val paired = settingsProfile != null
         // The phone-only settings apply as they change: one reader of the controls, one store.
-        var readPrice: PriceSettings? = null
         var readInterval: () -> Int = { old.intervalMinutes }
         var readShowPlan: () -> Boolean = { old.showChargingPlan }
         fun applyLocal() {
             applyLocalSettings(
                 paired = paired,
-                price = readPrice,
+                price = null,
                 intervalMinutes = readInterval(),
                 showChargingPlan = readShowPlan()
             )
         }
-        val priceCardBuilder = PriceSettingsCard(scope = this)
-        // Unpaired: the price controls live in the card and apply on change. Paired: an overview,
-        // whose dialog writes through the paired path (wired below).
+        // Unpaired: this phone's own price as value rows, whose dialog applies at once. Paired: the
+        // record's, whose dialog writes through the paired path (wired below).
         val pairedPrice = if (paired) PairedPriceCard(this) else null
-        val price: PriceSettings? = if (paired) {
-            readInterval = priceCardBuilder.addResolution(priceCard.body, old) { applyLocal() }
-            null
-        } else {
-            priceCardBuilder.add(
-                priceCard.body, old, null, true,
-                onChange = { applyLocal() },
-                afterArea = { readInterval = priceCardBuilder.addResolution(it, old) { applyLocal() } }
-            )
+        val localPrice = if (paired) null else LocalPriceCard(this)
+        pairedPrice?.add(priceCard.body, old) { values, done -> runFormSave(values, done) }
+        localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
+            storeIfChanged(WidgetSettings.load(context, widgetId), next)
         }
-        readPrice = price
+        // The resolution is this phone's own, paired or not: a row whose choice applies at once.
+        var interval = old.intervalMinutes
+        readInterval = { interval }
+        addResolutionRow(priceCard.body, { interval }) { chosen -> interval = chosen; applyLocal() }
         // What the authority has to say about these values, written where they are read.
         var authorityNote: String? = settingsAuthority.seedFromConfirmedRecord()?.let { authorityStateNote(it) }
         fun showAuthorityNote(extra: String? = null) {
@@ -150,32 +152,33 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         showAuthorityNote()
         // The paired screen's commit path:
         var applyPairedRecord: (HaPlanningSettings?) -> Unit = {}
-        var runFormSave: (SettingsFormValues, () -> Unit) -> Unit = { _, done -> done() }
         // Widget appearance, not operation:
         val widgetCard = card(content, t(R.string.section_widget), R.drawable.ic_widget_grid)
         val display = addWidgetDisplayControls(widgetCard.body, old) { applyLocal() }
-        display.showInWidget?.let { box -> readShowPlan = { box.isChecked } }
+        if (display.offered) readShowPlan = { display.showPlan() }
         // The instance, everything it hands over, and where the integration comes from.
         // A paired charger's vehicles, charger, site and solar come after the phone's own settings
         // and right before the Home Assistant card, in the order the Home Assistant card has them.
         // The page is an overview: each area that can be changed from here opens its own dialog.
-        val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content) }
+        val pairedCards = settingsProfile?.let { PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it)) }
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration
         val homeAssistantCard = card(content, t(R.string.home_assistant), R.drawable.ic_card_charger)
         HomeAssistantSection(
             shell,
-            onPlanDefaulted = { display.showInWidget?.isChecked = true },
+            onPlanDefaulted = { display.planOn() },
             // The paired cards above belong to the instance: the page is built again with or without them.
             onInstanceChanged = { show() }
         ).add(homeAssistantCard.body)
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
-            fun showNotifications() = notificationsCard?.show(
-                settingsCache.confirmed(settingsProfile.localId)?.notifications,
-                priceControlsEnabled(true, settingsAuthority.authority)
-            )
+            fun showNotifications() {
+                val writable = priceControlsEnabled(true, settingsAuthority.authority)
+                val confirmed = settingsCache.confirmed(settingsProfile.localId)
+                notificationsCard?.show(confirmed?.notifications, writable, identifies = confirmed?.let { it.identification != null })
+                pairedCards.setIdentificationWritable(writable)
+            }
             fun loadPaired() = session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
@@ -184,6 +187,36 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
                 }
                 showNotifications()
+            }
+            // A car's charge limit, written to the car through the integration; the cards read again after it.
+            pairedCards.attachChargeLimit { vehicleId, percent, done ->
+                session.setChargeLimit(vehicleId, percent) { answer ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@setChargeLimit
+                    done(answer)
+                    if (answer == ChargeLimit.Answer.Set) loadPaired()
+                }
+            }
+            // Which cars can charge here and how the plugged-in one is found: the same settings write.
+            pairedCards.attachIdentification { mode, vehicleIds, done ->
+                when (val route = settingsAuthority.beginWrite(HaSettingsEdit.Identification(mode, vehicleIds))) {
+                    is CommitRoute.Send -> session.updateSettings(route.expectedRevision, route.replacement) { answer ->
+                        if (isDestroyed || viewGeneration != settingsGeneration) return@updateSettings
+                        val outcome = settingsAuthority.onWriteAnswer(
+                            WriteSubject(settingsProfile.localId, route.operation, route.expectedRevision), answer
+                        )
+                        if (outcome is WriteOutcome.Applied) applyPairedRecord(settingsCache.confirmed(settingsProfile.localId))
+                        done(
+                            when (answer) {
+                                is SettingsUpdate.Outcome.Updated, is SettingsUpdate.Outcome.CommittedButReconcileFailed -> null
+                                is SettingsUpdate.Outcome.Conflict -> t(R.string.authority_changed_elsewhere)
+                                else -> authorityRefusalText(answer)
+                            }
+                        )
+                        loadPaired()
+                    }
+                    is CommitRoute.Refused -> done(t(R.string.authority_refused_invalid))
+                    CommitRoute.ReadOnly, CommitRoute.LocalSave -> done(t(R.string.settings_paired_read_only))
+                }
             }
             notificationsCard?.attach(
                 save = { targets, events, done ->
@@ -243,14 +276,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             if (result is CatalogueRefresh.Updated) {
                 runOnUiThread {
                     if (isDestroyed || settingsGeneration != viewGeneration) return@runOnUiThread
-                    price?.applyCatalogue(PriceMarkets.all)
+                    localPrice?.show()
                     pairedPrice?.show(confirmedRecord, priceControlsEnabled(true, settingsAuthority.authority))
                 }
             }
         }
 
-        // The paired price overview: its dialog's Save is the one write this card makes.
-        pairedPrice?.add(priceCard.body, old) { values, done -> runFormSave(values, done) }
 
         /** Render one confirmed record into the paired controls. */
         applyPairedRecord = { record ->
@@ -346,9 +377,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
 
     /**
      * Apply the phone's own controls now: store what [ImmediateSettings] makes of them, redraw the
-     * widget, and put the error under any figure that was refused. Nothing changes, nothing is stored.
+     * widget, and name any figure that was refused (its stored value is kept).
      */
-    private fun applyLocalSettings(paired: Boolean, price: PriceSettings?, intervalMinutes: Int, showChargingPlan: Boolean) {
+    private fun applyLocalSettings(paired: Boolean, price: PriceSettings?, intervalMinutes: Int, showChargingPlan: Boolean): Set<FigureField> {
         val current = WidgetSettings.load(context, widgetId)
         val draft = LocalSettingsDraft(
             area = price?.area() ?: current.area,
@@ -360,9 +391,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             intervalMinutes = intervalMinutes,
             showChargingPlan = showChargingPlan
         )
-        val result = ImmediateSettings.apply(current, draft, paired)
-        price?.showInvalid(result.invalid)
+        // With no price controls at hand only the phone-side fields change (the price is kept as stored).
+        val result = ImmediateSettings.apply(current, draft, paired || price == null)
         storeIfChanged(current, result.settings)
+        return result.invalid
     }
 
     /** The paired dialog's values, stored as the phone's own when the paired contract cannot be used. */
@@ -446,44 +478,44 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
      * handle. The card's own header carries the title, which is why nothing here adds one.
      */
     private fun addGeneralSettings(parent: LinearLayout) {
-        parent.addView(label(t(R.string.language)))
-        val language = Spinner(context).apply {
-            adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item,
-                AppLanguageSettings.choices.map { t(it.label) })
-            setSelection(AppLanguageSettings.choices.indexOfFirst { it.code == AppLanguageSettings.selected(context) }.coerceAtLeast(0))
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val selected = AppLanguageSettings.choices[position].code
-                    if (selected != AppLanguageSettings.selected(context)) {
-                        AppLanguageSettings.save(context, selected)
-                        activity.recreate()
-                    }
-                }
+        val languages = AppLanguageSettings.choices
+        val language = languages.indexOfFirst { it.code == AppLanguageSettings.selected(context) }.coerceAtLeast(0)
+        settingRow(parent, t(R.string.language), t(languages[language].label)) {
+            chooseOne(t(R.string.language), languages.map { t(it.label) }, language) { index, done ->
+                done(null)
+                AppLanguageSettings.save(context, languages[index].code)
+                activity.recreate()
             }
         }
-        parent.addView(language)
-        parent.addView(label(t(R.string.theme)))
         val themeModes = listOf(AppThemeSettings.SYSTEM, AppThemeSettings.LIGHT, AppThemeSettings.DARK)
-        val theme = Spinner(context).apply {
-            adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item,
-                listOf(t(R.string.system), t(R.string.light), t(R.string.dark)))
-            setSelection(themeModes.indexOf(AppThemeSettings.mode(context)).coerceAtLeast(0))
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val selected = themeModes[position]
-                    if (selected != AppThemeSettings.mode(context)) {
-                        AppThemeSettings.save(context, selected)
-                        activity.recreate()
-                    }
-                }
+        val themeNames = listOf(t(R.string.system), t(R.string.light), t(R.string.dark))
+        val theme = themeModes.indexOf(AppThemeSettings.mode(context)).coerceAtLeast(0)
+        settingRow(parent, t(R.string.theme), themeNames[theme]) {
+            chooseOne(t(R.string.theme), themeNames, theme) { index, done ->
+                done(null)
+                AppThemeSettings.save(context, themeModes[index])
+                activity.recreate()
             }
         }
-        parent.addView(theme)
     }
 
-    /** The option applies as soon as it is toggled; the caller reads `isChecked`. */
+    /** The resolution row: this phone's own, applied as soon as it is chosen. */
+    private fun addResolutionRow(parent: LinearLayout, current: () -> Int, onChosen: (Int) -> Unit) {
+        val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        parent.addView(holder)
+        val values = listOf(PresentationIntervals.QUARTER_HOUR_MINUTES, PresentationIntervals.HOUR_MINUTES)
+        val names = listOf(t(R.string.quarter), t(R.string.hour))
+        fun paint() {
+            holder.removeAllViews()
+            val index = values.indexOf(current()).coerceAtLeast(0)
+            settingRow(holder, t(R.string.resolution), names[index]) {
+                chooseOne(t(R.string.resolution), names, index) { chosen, done -> done(null); onChosen(values[chosen]); paint() }
+            }
+        }
+        paint()
+    }
+
+    /** The widget's option as a value row ("On"/"Off"), applied as soon as it is chosen. */
     private fun addWidgetDisplayControls(
         parent: LinearLayout,
         settings: WidgetSettings,
@@ -493,16 +525,25 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // with no widget placed (or none chosen), there is nothing to change, and the section says so.
         parent.addView(TextView(context).apply {
             text = t(if (widgetId > 0) R.string.widget_settings_this else R.string.widget_settings_none)
-            textSize = 13f; setTextColor(muted)
+            textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(4))
         })
-        if (widgetId <= 0) return WidgetDisplayControls(null)
-        val showInWidget = checkbox(t(R.string.widget_plan), settings.showChargingPlan)
-        showInWidget.setOnCheckedChangeListener { _, _ -> onChange() }
-        // Unlike most first rows this label commonly wraps.
-        parent.addView(showInWidget, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dp(HEADER_CONTROL_GAP_DP) })
-        return WidgetDisplayControls(showInWidget)
+        if (widgetId <= 0) return WidgetDisplayControls(offered = false, showPlan = { settings.showChargingPlan }, planOn = {})
+        var on = settings.showChargingPlan
+        val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        parent.addView(holder)
+        fun paint() {
+            holder.removeAllViews()
+            settingRow(holder, t(R.string.widget_plan), t(if (on) R.string.site_on else R.string.site_off)) {
+                editOnOff(t(R.string.widget_plan), on) { chosen, done ->
+                    done(null)
+                    on = chosen
+                    paint()
+                    onChange()
+                }
+            }
+        }
+        paint()
+        return WidgetDisplayControls(offered = true, showPlan = { on }, planOn = { on = true; paint() })
     }
 
     private fun addAppFooter() {
@@ -535,5 +576,5 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 }
 
-/** What [addWidgetDisplayControls] hands back: the single option it builds. */
-internal class WidgetDisplayControls(val showInWidget: CheckBox?)
+/** What [addWidgetDisplayControls] hands back: whether the option is offered, its value, and a way to turn it on. */
+internal class WidgetDisplayControls(val offered: Boolean, val showPlan: () -> Boolean, val planOn: () -> Unit)

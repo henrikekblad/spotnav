@@ -6,6 +6,7 @@ import se.sensnology.spotnav.ha.client.FetchedDashboard
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
+import se.sensnology.spotnav.ha.client.IdentifyVehicle
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -40,6 +41,9 @@ internal interface HaTransport {
     fun updateChargerPriority(expected: String, priority: String): ChargerPriorityUpdate.Outcome =
         ChargerPriorityUpdate.Outcome.Failed(null)
 
+    /** `identify_vehicle`: which car is plugged in; never throws. */
+    fun identifyVehicle(vehicleId: String): IdentifyVehicle.Outcome = IdentifyVehicle.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -68,6 +72,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun updateChargerPriority(expected: String, priority: String) =
         HomeAssistantClient.updateChargerPriority(connection, expected, priority)
+
+    override fun identifyVehicle(vehicleId: String) = HomeAssistantClient.identifyVehicle(connection, vehicleId)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -169,6 +175,21 @@ internal class HaSession(
         }
     }
 
+    /**
+     * The charger card's re-read: re-read the planned car's own entities first, then read the
+     * dashboard as an ordinary read does (admitted after the car's re-read, so it sees what the car
+     * said), whatever the car answered.
+     */
+    fun reReadWithVehicle(vehicleId: String, admit: () -> DashboardAdmission?, done: (VehicleRefresh.Answer, Read) -> Unit) {
+        background.execute {
+            val answer = transport.refreshVehicle(vehicleId)
+            val admission = admit()
+            val fetched = runCatching { transport.dashboard() }
+            val phases = recorder.record(fetched)
+            mainThread { done(answer, Read(admission, fetched.map { it.dashboard }, phases)) }
+        }
+    }
+
     /** Write one vehicle's charge limit. */
     fun setChargeLimit(vehicleId: String, percent: Int, done: (ChargeLimit.Answer) -> Unit) {
         background.execute {
@@ -214,6 +235,26 @@ internal class HaSession(
         background.execute {
             val outcome = transport.updateChargerPriority(expected, priority)
             mainThread { done(outcome) }
+        }
+    }
+
+    /**
+     * Answer which car is plugged in, or correct it, and read the dashboard back when it was taken, so
+     * the screen shows the car the charger now plans for.
+     */
+    fun identifyVehicle(vehicleId: String, admit: () -> DashboardAdmission?, done: (IdentifyVehicle.Outcome, Sent?) -> Unit) {
+        background.execute {
+            val outcome = transport.identifyVehicle(vehicleId)
+            val read = if (outcome is IdentifyVehicle.Outcome.Identified) {
+                // Home Assistant has written the settings (the car and the revision): the read is
+                // admitted only now, as a command's confirmation read is, so the screen writes against it.
+                val admission = admit()
+                val fetched = runCatching { transport.dashboard() }
+                Sent(fetched.map { it.dashboard }, recorder.record(fetched), admission)
+            } else {
+                null
+            }
+            mainThread { done(outcome, read) }
         }
     }
 

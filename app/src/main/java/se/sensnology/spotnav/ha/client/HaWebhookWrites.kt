@@ -5,6 +5,7 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardForecastChoice
+import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import java.util.Locale
@@ -65,7 +66,10 @@ internal object WriteEnvelope {
 internal enum class VehicleField(val wire: String, val min: Double, val max: Double) {
     CAPACITY("capacity_kwh", 1.0, 500.0),
     CONSUMPTION("consumption_kwh_per_10km", 0.1, 50.0),
-    ONBOARD_PHASES("onboard_phases", 1.0, 3.0)
+    ONBOARD_PHASES("onboard_phases", 1.0, 3.0),
+
+    /** The car's own target, the same at every charger (whole percent). */
+    TARGET("target_percent", 0.0, 100.0)
 }
 
 /** Why the app (or the integration) refuses a typed value or a save. */
@@ -93,6 +97,7 @@ internal object VehicleUpdate {
         VehicleField.CAPACITY -> row.capacityKwh
         VehicleField.CONSUMPTION -> row.consumptionKwhPer10km
         VehicleField.ONBOARD_PHASES -> row.onboardPhases?.toDouble()
+        VehicleField.TARGET -> row.targetPercent
     }
 
     /**
@@ -102,14 +107,17 @@ internal object VehicleUpdate {
      */
     fun capacityEditable(row: DashboardVehicle): Boolean = !(row.capacitySource == "reported" && row.capacityKwh != null)
 
-    /** One field of a save: the value to write and the value the row showed. */
-    data class FieldChange(val field: VehicleField, val value: Double, val shown: Double?)
+    /** One field of a save: the value to write (`null` clears it, a target only) and the value the row showed. */
+    data class FieldChange(val field: VehicleField, val value: Double?, val shown: Double?)
+
+    /** One value written alone, against what [row] shows for it (the per-value editor's write). */
+    fun single(row: DashboardVehicle, field: VehicleField, value: Double?): FieldChange = FieldChange(field, value, shown(row, field))
 
     /**
      * The request body for one field: the value to write and the value the row showed (`null` when
      * it showed none, which the server compares as "nothing stored").
      */
-    fun payload(vehicleId: String, field: VehicleField, value: Double, shown: Double?): JSONObject =
+    fun payload(vehicleId: String, field: VehicleField, value: Double?, shown: Double?): JSONObject =
         payload(vehicleId, listOf(FieldChange(field, value, shown)))
 
     /** The request body for one or more fields, each compared against what the row showed. */
@@ -121,16 +129,24 @@ internal object VehicleUpdate {
             put("action", "update_vehicle")
             put("api_version", API_VERSION)
             put("vehicle_id", vehicleId)
-            put("changes", JSONObject().also { body -> changes.forEach { body.put(it.field.wire, wireValue(it.field, it.value)) } })
+            put("changes", JSONObject().also { body ->
+                changes.forEach { body.put(it.field.wire, it.value?.let { value -> wireValue(it.field, value) } ?: JSONObject.NULL) }
+            })
             put("expected", JSONObject().also { body ->
                 changes.forEach { body.put(it.field.wire, it.shown?.let { shown -> wireValue(it.field, shown) } ?: JSONObject.NULL) }
             })
         }
     }
 
-    /** The phases are a whole number on the wire (`1`, not `1.0`); the other fields are decimals. */
-    private fun wireValue(field: VehicleField, value: Double): Any =
-        if (field == VehicleField.ONBOARD_PHASES) value.toInt() else value
+    /**
+     * The phases are a whole number on the wire (`1`, not `1.0`), and so is a whole target percent; the
+     * other fields are decimals.
+     */
+    private fun wireValue(field: VehicleField, value: Double): Any = when {
+        field == VehicleField.ONBOARD_PHASES -> value.toInt()
+        field == VehicleField.TARGET && value % 1.0 == 0.0 -> value.toInt()
+        else -> value
+    }
 
     /** What pressing Save in the vehicle dialog means, decided from the typed texts. */
     sealed interface Draft {
@@ -149,17 +165,28 @@ internal object VehicleUpdate {
      * offers no choice) against the row. A blank text for a field the row shows nothing for is "left
      * alone"; a capacity the vehicle reports itself is never sent.
      */
-    fun draft(row: DashboardVehicle, capacityText: String, consumptionText: String, onboardPhases: Int? = null): Draft {
+    fun draft(
+        row: DashboardVehicle,
+        capacityText: String,
+        consumptionText: String,
+        onboardPhases: Int? = null,
+        targetText: String? = null
+    ): Draft {
         val issues = LinkedHashMap<VehicleField, VehicleFieldIssue>()
         val changes = ArrayList<FieldChange>()
         val typed = buildList {
             if (capacityEditable(row)) add(VehicleField.CAPACITY to capacityText)
             add(VehicleField.CONSUMPTION to consumptionText)
+            // The car's target, only on a row that states one (an older Home Assistant would refuse it).
+            if (row.targetStated && targetText != null) add(VehicleField.TARGET to targetText)
         }
         for ((field, text) in typed) {
             val shown = shown(row, field)
             if (text.isBlank() && shown == null) continue
-            when (val check = check(field, text)) {
+            val judged = check(field, text)
+            // A target is a whole percent, as the card writes it.
+            val check = if (field == VehicleField.TARGET && judged is Check.Valid) Check.Valid(Math.round(judged.value).toDouble()) else judged
+            when (check) {
                 is Check.Invalid -> issues[field] = check.issue
                 is Check.Valid -> if (check.value != shown) changes += FieldChange(field, check.value, shown)
             }
@@ -221,7 +248,7 @@ internal object VehicleUpdate {
                 for (error in head.fieldErrors) {
                     val field = VehicleField.entries.firstOrNull { it.wire == error.field } ?: continue
                     issues[field] = when (error.code) {
-                        "invalid_capacity", "invalid_consumption", "invalid_onboard_phases" -> VehicleFieldIssue.OUT_OF_RANGE
+                        "invalid_capacity", "invalid_consumption", "invalid_onboard_phases", "invalid_target" -> VehicleFieldIssue.OUT_OF_RANGE
                         else -> VehicleFieldIssue.UNKNOWN
                     }
                 }
@@ -233,6 +260,56 @@ internal object VehicleUpdate {
 
     /** A figure as the field shows it: one decimal, in the user's own decimal separator. */
     fun display(value: Double, locale: Locale): String = String.format(locale, "%.1f", value)
+}
+
+/**
+ * `identify_vehicle`: a person's answer to "which car is plugged in?", or a correction of the car
+ * already decided, whenever a car is plugged in (`docs/api.md`, "Vehicle identification"). Any
+ * paired app may send it: Home Assistant records it as `answered`, and it holds like an answer.
+ */
+internal object IdentifyVehicle {
+    const val API_VERSION = 1
+    const val NOT_IDENTIFYING = "spotnav_not_identifying"
+
+    fun payload(vehicleId: String): JSONObject = JSONObject().apply {
+        put("version", 1)
+        WebhookReads.put(this)
+        put("action", "identify_vehicle")
+        put("api_version", API_VERSION)
+        put("vehicle_id", vehicleId)
+    }
+
+    sealed interface Outcome {
+        /** Taken: [block] is the identification after it (`null` when Home Assistant states none). */
+        data class Identified(val block: DashboardIdentification?) : Outcome
+
+        /** No car is plugged in: there is nothing to answer or correct. */
+        data object NotPluggedIn : Outcome
+
+        /** Not one of this charger's cars. */
+        data object NotACandidate : Outcome
+
+        /** The integration speaks another version of this contract. */
+        data object NotSupported : Outcome
+
+        /** Anything else, including no answer at all. */
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (head.ok) {
+            return if (head.error == null) Outcome.Identified(DashboardIdentification.parse(head.json.opt("identification")))
+            else Outcome.Failed(head.error)
+        }
+        return when (head.error) {
+            NOT_IDENTIFYING -> Outcome.NotPluggedIn
+            WriteEnvelope.INVALID_VALUE -> Outcome.NotACandidate
+            WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
+            else -> Outcome.Failed(head.error)
+        }
+    }
 }
 
 /**

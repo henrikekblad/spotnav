@@ -319,6 +319,6 @@ class HaWebhookWritesTest {
             VehicleUpdate.payload("v", VehicleField.CAPACITY, 60.0, null),
             SiteUpdate.priorityRequest("car_first", "battery_first").payload()
         ).map { body -> List(body.getJSONArray("reads").length()) { body.getJSONArray("reads").getString(it) } }
-        reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit"), it) }
+        reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode"), it) }
     }
 }

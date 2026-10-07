@@ -49,7 +49,7 @@
   <string name="charge">Charge</string>
   <string name="could_not_fetch">Could not load prices</string>
   <string name="choose_widget">Choose which widget to open</string>
-  <string name="max_charging_periods">Maximum charging periods</string>
+  <string name="max_charging_periods">Max charge periods</string>
   <plurals name="charging_period_count">
     <item quantity="one">%1$d period</item>
     <item quantity="other">%1$d periods</item>
@@ -164,10 +164,8 @@
   <string name="forget_widget_message">SpotNav will remove this instance from the chooser. Android may keep the widget ID until the launcher cleans it up.</string>
   <string name="vehicle_title">Vehicle</string>
   <string name="vehicle_none">No vehicle selected</string>
-  <string name="vehicle_target">Target state of charge</string>
+  <string name="vehicle_target">Charge target</string>
   <string name="target_no_limit">No known limit</string>
-  <string name="paired_target_now">Now %1$s</string>
-  <string name="paired_target_limit">Vehicle charge limit %1$s</string>
   <string name="paired_target_no_need">No charging needed now</string>
   <string name="paired_target_to_limit">Charging to the vehicle\'s limit, %1$s</string>
   <string name="car_ends_charge">The car ends the charge itself when it is full or reaches its charge limit (%1$s).</string>
@@ -182,10 +180,9 @@
   <string name="pause_choice_next_period">Until the next planned period</string>
   <string name="pause_choice_until_tomorrow">Until tomorrow</string>
   <string name="pause_choice_until_resumed">Until I resume</string>
-  <string name="target_description">Target state of charge, %1$d %% to %2$d %%</string>
-  <string name="target_description_no_limit">Target state of charge, from %1$d %% and up; the car reports no limit</string>
+  <string name="target_description">Charge target, %1$d %% to %2$d %%</string>
+  <string name="target_description_no_limit">Charge target, from %1$d %% and up; the car reports no limit</string>
   <string name="percent_label" translatable="false">%1$d %%</string>
-  <string name="percent_value_decimal" translatable="false">%1$.1f %%</string>
   <string name="vehicle_capacity_save">Save capacity</string>
   <string name="charger_card_phases_label">Phases</string>
   <string name="charger_card_phases_detected">%1$s (read from the charger)</string>
@@ -264,7 +261,7 @@
   <string name="authority_reason_tax">no electricity tax figure or suggestion</string>
   <string name="authority_reason_transfer">no grid fee figure or suggestion</string>
   <string name="authority_reason_departure">unreadable departure time</string>
-  <string name="authority_reason_target">no target state of charge</string>
+  <string name="authority_reason_target">no charge target</string>
   <string name="authority_reason_presentation">unusable display resolution</string>
   <string name="authority_reason_rejected">a value the calculation refuses</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
@@ -303,7 +300,6 @@
   <string name="site_car_first">Car first</string>
   <string name="site_battery_first">Battery first</string>
   <string name="site_forecast_title">Solar forecast sources</string>
-  <string name="site_forecast_none">None selected. Without one, hybrid plans a charge like Cheapest.</string>
   <string name="site_active_title">Active load balancing</string>
   <string name="site_on">On</string>
   <string name="site_off">Off</string>
@@ -312,49 +308,39 @@
   <string name="site_active_reason_measurement">Not available: this site\'s own power measurement is not healthy.</string>
   <string name="site_active_reason_unknown">Not available, for a reason this app does not know yet.</string>
   <string name="site_active_note">Best effort, not a protective device. Turning it off gives any current it had lowered back.</string>
-  <string name="site_active_in_ha">This is changed in Home Assistant, not here.</string>
   <string name="site_error_conflict">Changed elsewhere. The current values are shown.</string>
   <string name="site_error_not_permitted">Home Assistant does not allow this change from the app. Nothing changed.</string>
   <string name="site_error_unavailable">The site is not available right now. Nothing changed.</string>
   <!-- The paired charger's settings overview: vehicle, charger, site and solar cards. -->
-  <string name="settings_vehicle_change">Change vehicle</string>
-  <string name="settings_vehicle_dialog_title">Vehicle · %1$s</string>
   <string name="settings_vehicle_planned_here">This charger plans for it</string>
   <string name="vehicle_charge_level_label">Charge level</string>
   <string name="vehicle_charge_level_none">No reading</string>
   <string name="settings_vehicle_none">No vehicle is set up yet.</string>
   <string name="section_charger">Charger</string>
   <string name="charger_current_label">Charging current</string>
-  <string name="charger_current_kept">Not set by SpotNav (the charger keeps its own limit)</string>
-  <string name="charger_current_set">Set by SpotNav, %1$d–%2$d A</string>
+  <string name="charger_current_kept">Not controlled</string>
+  <string name="charger_current_set">Controlled, %1$d–%2$d A</string>
   <string name="charger_start_stop_label">Start and stop</string>
-  <string name="charger_current_ocpp">OCPP ChangeConfiguration</string>
-  <string name="charger_current_number">A number entity: %1$s</string>
-  <string name="charger_current_number_unnamed">A number entity</string>
-  <string name="charger_current_easee">Easee\'s dynamic current limit</string>
+  <string name="charger_current_ocpp">OCPP</string>
+  <string name="charger_current_number_unnamed">Controlled</string>
+  <string name="charger_current_easee">Easee</string>
   <string name="charger_energy_label">Energy register</string>
   <string name="charger_energy_automatic">Found automatically</string>
   <string name="site_main_fuse_label">Main fuse</string>
   <string name="site_measurement_label">Measurement mode</string>
-  <string name="site_measurement_direct">Phase currents measured directly</string>
-  <string name="site_measurement_derived">Phase currents derived from power and voltage</string>
+  <string name="site_measurement_direct">Per phase, direct</string>
+  <string name="site_measurement_derived">Derived</string>
   <string name="site_battery_label">Battery</string>
   <string name="site_main_fuse_value" translatable="false">%1$s A</string>
-  <string name="changed_in_home_assistant">Changed in Home Assistant.</string>
   <string name="site_default_name">Site</string>
   <string name="site_none">This charger has no site.</string>
   <string name="section_solar">Solar</string>
-  <string name="solar_change">Change solar settings</string>
-  <string name="solar_dialog_title">Solar settings</string>
   <string name="priority_label">Priority</string>
   <string name="priority_help">Which charger gets power and solar surplus first on the site</string>
-  <string name="priority_change">Change priority</string>
   <string name="priority_first">First</string>
   <string name="priority_normal">Normal</string>
   <string name="priority_last">Last</string>
   <string name="value_none">None</string>
-  <string name="price_change">Change price area and taxes</string>
-  <string name="price_dialog_title">Area and taxes</string>
   <string name="price_row_area">Area</string>
   <string name="price_row_vat">VAT</string>
   <string name="price_row_tax">Energy tax</string>
@@ -423,7 +409,6 @@
   <string name="notify_phones">Phones</string>
   <string name="notify_events">Events</string>
   <string name="notify_phones_none">No phone chosen</string>
-  <string name="notify_change">Change notifications</string>
   <string name="notify_no_phones">No phone with the Home Assistant app is signed in to this Home Assistant.</string>
   <string name="notify_missing">%1$s (not found)</string>
   <string name="notify_event_plan_stopped">Charging stopped or did not start as planned</string>
@@ -483,4 +468,55 @@
   <string name="charge_bar_charging_power">Charging · %1$s kW</string>
   <string name="charge_bar_description">Charge progress</string>
   <string name="charge_bar_line" translatable="false">%1$s · %2$s</string>
+  <!-- Which car is plugged in: the question, the car line, Byt bil, and the identification settings. -->
+  <string name="identify_question">Which car is plugged in?</string>
+  <string name="identify_undecided">SpotNav could not tell from the cars.</string>
+  <string name="identify_keeps">If nobody answers, %1$s is kept.</string>
+  <string name="identify_answer_where">Answer in the app or in the notification</string>
+  <string name="identify_waiting">waiting for an answer</string>
+  <string name="identify_answer_failed">The answer could not be saved.</string>
+  <string name="identify_not_here">That car cannot charge at this charger.</string>
+  <string name="identify_switch">Change car</string>
+  <string name="identify_switch_prompt">Which car is plugged in at %1$s?</string>
+  <string name="identify_choose">Choose</string>
+  <string name="identify_hint_plugged_in">Its charging cable says plugged in</string>
+  <string name="identify_hint_not_plugged_in">Its charging cable says unplugged</string>
+  <string name="identify_hint_away">Not at home</string>
+  <string name="identify_hint_elsewhere">At another charger</string>
+  <string name="identify_by_plug_sensor">identified by the car\'s charging cable</string>
+  <string name="identify_by_location">identified by position</string>
+  <string name="identify_by_hand">selected manually</string>
+  <string name="identify_by_assumed">assumed</string>
+  <string name="identify_identifying">identifying…</string>
+  <string name="identify_vehicles_title">Cars at this charger</string>
+  <string name="identify_vehicles_help">Only these can be charged and planned for here. At least one.</string>
+  <string name="identify_no_vehicle">Tick at least one car.</string>
+  <string name="identify_mode_title">Identification</string>
+  <string name="identify_mode_help">Which car is plugged in, when several can charge here.</string>
+  <string name="identify_mode_automatic">Automatic</string>
+  <string name="identify_mode_automatic_help">From the cars\' own plug sensors and positions; asks when they cannot tell.</string>
+  <string name="identify_mode_ask">Always ask</string>
+  <string name="identify_mode_ask_help">Asks at every plug-in.</string>
+  <string name="identify_mode_off">Off</string>
+  <string name="identify_mode_off_help">Keeps the car you chose.</string>
+  <string name="identify_source_plug">Plug sensor</string>
+  <string name="identify_source_location">Location</string>
+  <string name="identify_source_none">None</string>
+  <string name="identify_source_choose">Choose one</string>
+  <string name="identify_sources_help">Read only to tell which car is plugged in.</string>
+  <string name="vehicle_target_follows">Follows the car to every charger</string>
+  <string name="vehicle_error_target">The charge target must be between 0 and 100.</string>
+  <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
+  <string name="setting_row_changeable">%1$s, %2$s. Tap to change</string>
+  <string name="identify_vehicles_all">All cars</string>
+  <!-- Settings setup rows as short status values. -->
+  <string name="setup_active">Active</string>
+  <string name="setup_missing">Missing</string>
+  <string name="setup_present">Present</string>
+  <string name="charger_energy_chosen">Chosen</string>
+  <!-- The price editors' suggestion, and the target slider's marks. -->
+  <string name="price_suggestion">Suggestion: %1$s</string>
+  <string name="target_mark_now">now</string>
+  <string name="target_mark_now_estimated">≈ now</string>
+  <string name="target_mark_limit">limit</string>
 </resources>

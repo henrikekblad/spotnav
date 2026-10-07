@@ -112,15 +112,17 @@ class PairedTargetTest {
         assertEquals(40, ChargeNeed.targetRange(40.0, 80.0).clamp(10))
     }
 
-    @Test fun theVerdictSaysNoNeedAtOrBelowTheChargeNowAndToLimitAboveTheLimit() {
+    @Test fun theVerdictSaysNoNeedAtOrBelowTheChargeNowAndToLimitAtOrAboveTheLimit() {
         val d = dashboard("target_soc_two_vehicles")
         val facts = PairedTarget.facts(d.soc!!, d.vehicles, null)
         assertEquals(40.0, facts.now!!, 0.0)
         assertEquals(80.0, facts.limit!!, 0.0)
         assertEquals(TargetVerdict.NO_NEED, PairedTarget.verdict(facts, 40.0))
         assertEquals(TargetVerdict.NO_NEED, PairedTarget.verdict(facts, 0.0))
-        assertEquals(TargetVerdict.NONE, PairedTarget.verdict(facts, 80.0))
+        // At the limit the charge ends there too: said once, as the limit line.
+        assertEquals(TargetVerdict.TO_LIMIT, PairedTarget.verdict(facts, 80.0))
         assertEquals(TargetVerdict.TO_LIMIT, PairedTarget.verdict(facts, 90.0))
+        assertEquals(TargetVerdict.NONE, PairedTarget.verdict(facts, 70.0))
     }
 
     @Test fun theStatedNeedIsUsedExactlyForTheSavedTargetAndTheFormulaForAnyOther() {

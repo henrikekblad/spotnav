@@ -240,7 +240,7 @@ class NotificationRulesTest {
     @Test fun aSnapshotAndTheLastSentTimesSurviveTheStore() {
         val store = LocalNotificationStore(FakeKeyValueStore())
         assertFalse(store.enabled)
-        assertEquals(NotificationEvent.DEFAULTS.toSet(), store.events)
+        assertEquals(NotificationEvent.LOCAL_DEFAULTS.toSet(), store.events)
         val snapshot = snap(planKey = "k", planStart = "02:00", windowsLeft = true, remainingKwh = 4.5, departure = "07:30")
         store.remember("p", snapshot, mapOf(PLUGGED_IN to later))
         assertEquals(snapshot, store.snapshot("p"))

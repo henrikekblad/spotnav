@@ -42,13 +42,15 @@ class NotificationsOverviewTest {
 
     private val n6 = HaNotifyService("notify.mobile_app_n6", "N6")
     private val pixel = HaNotifyService("notify.mobile_app_pixel", "Pixel")
-    private val three = NotificationEvent.DEFAULTS.map { it.wire }
+    private val three = NotificationEvent.LOCAL_DEFAULTS.map { it.wire }
 
     private fun ha(targets: List<String>, events: List<String> = three) =
         HaNotificationSettings(targets = targets, events = events, available = listOf(n6, pixel))
 
     // --- The card's summary -----------------------------------------------------------------------
 
+    // These records do not have "which car is plugged in?" on: a Home Assistant without identification,
+    // which takes seven events.
     @Test fun theHomeAssistantRowNamesNoPhoneOnePhoneOrHowMany() {
         assertEquals("Ingen telefon vald", NotificationsOverview.homeAssistant(ha(emptyList()), sv))
         assertEquals("N6 · 3 av 7 händelser", NotificationsOverview.homeAssistant(ha(listOf(n6.service)), sv))
@@ -64,7 +66,7 @@ class NotificationsOverviewTest {
     }
 
     @Test fun theSpotNavRowIsOffEveryFifteenMinutesOrInstant() {
-        val events = NotificationEvent.DEFAULTS.toSet()
+        val events = NotificationEvent.LOCAL_DEFAULTS.toSet()
         assertEquals("Av", NotificationsOverview.spotNav(false, events, instant = true, texts = sv))
         assertEquals("Var 15:e minut · 3 av 7 händelser", NotificationsOverview.spotNav(true, events, instant = false, texts = sv))
         assertEquals("Direkt · 3 av 7 händelser", NotificationsOverview.spotNav(true, events, instant = true, texts = sv))
@@ -78,14 +80,14 @@ class NotificationsOverviewTest {
         val names = listOf(
             "notify_companion_title", "notify_companion_intro", "notify_app_title", "notify_local_toggle", "notify_local_help",
             "notify_push_toggle", "notify_push_help", "notify_phones_none", "notify_app_off",
-            "notify_app_periodic", "notify_app_instant", "notify_change"
+            "notify_app_periodic", "notify_app_instant"
         )
         for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi")) {
             val xml = listOf("src/main/res", "app/src/main/res").map { File(it, "$dir/strings.xml") }.first { it.exists() }.readText()
             for (name in names) assertTrue("$dir $name", xml.contains("<string name=\"$name\">"))
             assertTrue("$dir phones", xml.contains("<plurals name=\"notify_phones_count\">"))
             assertTrue("$dir events", xml.contains("<plurals name=\"notify_events_count\">"))
-            for (gone in listOf("notify_events_on", "notify_local_title", "notify_local_events_change")) {
+            for (gone in listOf("notify_events_on", "notify_local_title", "notify_local_events_change", "notify_change")) {
                 assertFalse("$dir $gone", xml.contains("name=\"$gone\""))
             }
         }
@@ -140,7 +142,7 @@ class NotificationsOverviewTest {
         fun run(current: HaNotificationSettings?, choice: NotificationsSave.Choice) = save.save(current, choice) { outcomes += it }
     }
 
-    private val defaults = NotificationEvent.DEFAULTS.toSet()
+    private val defaults = NotificationEvent.LOCAL_DEFAULTS.toSet()
 
     private fun choice(
         homeAssistant: NotificationsSave.HomeAssistantChoice? = null,

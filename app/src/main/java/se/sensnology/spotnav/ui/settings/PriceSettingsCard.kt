@@ -14,8 +14,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
 import se.sensnology.spotnav.R
@@ -64,7 +62,9 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         /** Called after each change a person makes (a pick, a toggle, a committed figure). */
         onChange: () -> Unit = {},
         /** Adds controls between the area and the fiscal add-ons (the resolution, when unpaired). */
-        afterArea: (LinearLayout) -> Unit = {}
+        afterArea: (LinearLayout) -> Unit = {},
+        /** The area alone (its picker, source and region search): the add-ons are their own rows. */
+        areaOnly: Boolean = false
     ): PriceSettings {
         // Paired: Unpaired: exactly as before.
         val paired = confirmed != null
@@ -72,7 +72,7 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         // Whether the paired controls may be edited at all: a pending, offline or conflicting
         // authority shows the confirmed values and offers no write (see VisibleAuthority).
         val controlsEnabled = writable
-        parent.addView(label(t(R.string.area)))
+        if (!areaOnly) parent.addView(label(t(R.string.area)))
         data class AreaChoice(val label: String, val code: String? = null) {
             override fun toString() = label
         }
@@ -140,7 +140,7 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         val priceInfo = TextView(context).apply {
             textSize = 13f; setTextColor(muted); setPadding(0, dp(14), 0, dp(8))
         }
-        parent.addView(priceInfo)
+        if (!areaOnly) parent.addView(priceInfo)
         // The record's own state for the area the form stands for, read once for the controls'
         // initial values:
         val recordVat = confirmed?.let { HaSettingsEditor.fiscalFor(it, HaAreaOverrideComponent.VAT, recordArea) }
@@ -161,7 +161,9 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         var settingBoxes = false
         if (recordTax != null) taxValue.setText(PairedSettingsForm.figureText(recordTax))
         if (recordTransfer != null) transferValue.setText(PairedSettingsForm.figureText(recordTransfer))
-        parent.addView(vat); parent.addView(tax); parent.addView(taxValue); parent.addView(transfer); parent.addView(transferValue)
+        if (!areaOnly) {
+            parent.addView(vat); parent.addView(tax); parent.addView(taxValue); parent.addView(transfer); parent.addView(transferValue)
+        }
         // The identity the labels describe is the form's own state, never the Spinner's selected
         // row:
         fun currentAreaId(): String = picker.selectedId.orEmpty()
@@ -378,23 +380,6 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
                 }
             }.apply { isDaemon = true }.start()
         }
-    }
-
-    /** The resolution radio group: a setting of this phone, applied as soon as it is chosen. */
-    fun addResolution(parent: LinearLayout, old: WidgetSettings, onChange: () -> Unit): () -> Int {
-        parent.addView(label(t(R.string.resolution)))
-        val interval = RadioGroup(context).apply { orientation = RadioGroup.HORIZONTAL }
-        val quarterId = View.generateViewId()
-        val hourId = View.generateViewId()
-        interval.addView(RadioButton(context).apply {
-            id = quarterId; text = t(R.string.quarter); isChecked = old.intervalMinutes == PresentationIntervals.QUARTER_HOUR_MINUTES
-        })
-        interval.addView(RadioButton(context).apply {
-            id = hourId; text = t(R.string.hour); isChecked = old.intervalMinutes == PresentationIntervals.HOUR_MINUTES
-        })
-        parent.addView(interval)
-        interval.setOnCheckedChangeListener { _, _ -> onChange() }
-        return { if (interval.checkedRadioButtonId == hourId) PresentationIntervals.HOUR_MINUTES else PresentationIntervals.QUARTER_HOUR_MINUTES }
     }
 
     /** Commit a field when it loses focus or the keyboard's Done is pressed. */

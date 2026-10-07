@@ -161,8 +161,8 @@ internal class EnergyController(scope: ViewScope) : ViewScope(scope) {
         )
     }
 
-    private companion object {
-        /** How far the "full" line reaches above and below the track. */
+    companion object {
+        /** How far a mark's line ("full", "now", "limit") reaches above and below the track. */
         const val MARK_REACH_DP = 5
     }
 }

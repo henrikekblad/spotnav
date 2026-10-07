@@ -17,15 +17,21 @@ internal fun ViewScope.pairedLine() = TextView(context).apply {
     setPadding(0, dp(2), 0, dp(2))
 }
 
-/** A percent as the card writes it: at most one decimal, in the reader's own number format. */
-internal fun ViewScope.percentText(value: Double, locale: java.util.Locale): String {
-    val format = java.text.NumberFormat.getNumberInstance(locale).apply {
-        maximumFractionDigits = 1
-        minimumFractionDigits = 0
+/** A percent as the card writes it: whole when it is whole ("80 %"), else one decimal, in the reader's own number format. */
+internal object PercentFormat {
+    fun text(value: Double, locale: java.util.Locale): String {
+        val format = java.text.NumberFormat.getNumberInstance(locale).apply {
+            maximumFractionDigits = 1
+            minimumFractionDigits = 0
+        }
+        // A no-break space: "80 %" never breaks between the figure and its sign at the end of a line.
+        return "${format.format(value)}\u00A0%"
     }
-    // A no-break space: "80 %" never breaks between the figure and its sign at the end of a line.
-    return "${format.format(value)}\u00A0%"
 }
+
+/** [PercentFormat] in the screen's own number format. */
+@Suppress("UnusedReceiverParameter")
+internal fun ViewScope.percentText(value: Double, locale: java.util.Locale): String = PercentFormat.text(value, locale)
 
 internal fun ViewScope.bandLabel() = TextView(context).apply {
     textSize = 12f
@@ -45,16 +51,25 @@ internal fun ViewScope.bandLabel() = TextView(context).apply {
 internal fun ViewScope.mutedShadingColour() = (muted and 0x00FFFFFF) or (SHADING_ALPHA shl 24)
 
 /**
- * One half of a segmented control: filled and in the card's own colour when it is the active half,
- * plain and muted when it is the other one.
+ * One word of a text toggle ("kWh | Mål"): the chosen one in the accent colour, bold and underlined,
+ * the other muted; no box around either.
  */
 internal fun ViewScope.styleSegment(segment: TextView, selected: Boolean) {
-    segment.background = GradientDrawable().apply {
-        setColor(if (selected) accent else 0x00000000)
-        cornerRadius = dp(6).toFloat()
-    }
-    segment.setTextColor(if (selected) cardBackground else muted)
+    segment.background = null
+    segment.setTextColor(if (selected) accent else muted)
     segment.typeface = if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+    segment.paintFlags = if (selected) segment.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+        else segment.paintFlags and android.graphics.Paint.UNDERLINE_TEXT_FLAG.inv()
+    segment.isSelected = selected
+    // Read as one of two options, the chosen one checked.
+    segment.accessibilityDelegate = object : View.AccessibilityDelegate() {
+        override fun onInitializeAccessibilityNodeInfo(host: View, info: android.view.accessibility.AccessibilityNodeInfo) {
+            super.onInitializeAccessibilityNodeInfo(host, info)
+            info.className = android.widget.RadioButton::class.java.name
+            info.isCheckable = true
+            info.isChecked = selected
+        }
+    }
 }
 
 /** The paired-offline notice: the page's own prominent line for a record that cannot be checked. */

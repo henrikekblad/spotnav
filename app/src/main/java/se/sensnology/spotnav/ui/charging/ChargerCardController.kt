@@ -44,6 +44,8 @@ import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerBindingStore
 import se.sensnology.spotnav.widget.WidgetChargerSelectionController
 import se.sensnology.spotnav.widget.WidgetSettings
+import se.sensnology.spotnav.widget.WidgetDashboardStore
+import se.sensnology.spotnav.vehicles.PairedCarLine
 
 /**
  * The charger card: amps, phases, the charger selector and the status line -- the first of the two
@@ -127,7 +129,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 // dropdown, so "the charger is missing" is never something the user can pick.
                 isRowEnabled = { position ->
                     selector.entries.getOrNull(position)?.kind != ChargerCardSelector.Kind.PLACEHOLDER
-                }
+                },
+                // Each paired charger's car and its levels, from its last dashboard ("EV6 · 89 % → 93 %").
+                subtitle = { position -> chargerCarLine(selector.entries.getOrNull(position)) }
             )
             chargerSpinner.setSelection(selector.selectedIndex, false)
             // That is what this defers, exactly as that card does.
@@ -218,6 +222,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(vehicleLine)
 
+        // Which car is plugged in: the open question's banner, else the car line with Byt bil.
+        val identification = IdentificationViews(this, card.body)
+
         // The controls themselves live in the popovers, built once here rather than per tap, so
         // they stay the single source of truth that `currentSettings()`, the shared seek listener
         // and the phases listener already read.
@@ -303,6 +310,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             showChargeBar = { bar, now -> paintChargeBar(bar, now, chargeBarBlock, chargeBarView, chargeBarLine) },
             advisory = advisory,
             vehicleLine = vehicleLine,
+            identification = identification,
             connection = connection,
             refreshPhasesRow = { renderPhasesRow(); renderPairedPhases() },
             showHistory = { summary ->
@@ -385,6 +393,16 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         view.contentDescription = t(R.string.charge_bar_description) + ", " + text
         view.show(bar.percent?.let { it / 100f }, ChargeBarMotion.animate(bar, android.animation.ValueAnimator.areAnimatorsEnabled()))
         block.visibility = View.VISIBLE
+    }
+
+    /**
+     * A paired charger's car and its levels, as its last dashboard said them; `null` for "No charger",
+     * an unpaired charger, or one not read yet.
+     */
+    private fun chargerCarLine(entry: ChargerCardSelector.Entry?): String? {
+        val profile = entry?.profile?.takeIf { entry.kind == ChargerCardSelector.Kind.PROFILE && it.configured } ?: return null
+        val stored = WidgetDashboardStore.forContext(applicationContext).dashboardFor(profile.localId) ?: return null
+        return PairedCarLine.summary(stored.dashboard) { value -> t(R.string.vehicle_card_soc_value, value) }
     }
 
     /** One row's label in the charger card's selector. */
@@ -507,6 +525,8 @@ internal class ChargerCard(
     val advisory: TextView,
     /** The vehicle's charge followed by the connection state; hidden when there is neither. */
     val vehicleLine: TextView,
+    /** "Which car is plugged in?": the banner and the car line with Byt bil (see [IdentificationViews]). */
+    val identification: IdentificationViews,
     val connection: ConnectionControls,
     val refreshPhasesRow: () -> Unit,
     /**
