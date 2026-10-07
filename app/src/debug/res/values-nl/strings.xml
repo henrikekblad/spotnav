@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testmodus</string>
+  <string name="test_mode_intro">Bekijk de schermen die één echte laadpaal niet kan opleveren, met een mock-Home Assistant op je netwerk. Je eigen laadpalen worden opzijgezet zolang de testmodus aan staat, en precies teruggezet zoals ze waren wanneer je hem verlaat.</string>
+  <string name="test_mode_discover">Mock-servers zoeken</string>
+  <string name="test_mode_discovering">Zoeken naar mock-servers…</string>
+  <string name="test_mode_none_found">Geen mock-server reageerde. Start tools/fake_ha.py of typ hieronder het adres.</string>
+  <string name="test_mode_found">Mock-servers gevonden: %1$d</string>
+  <string name="test_mode_manual_label">Adres van de mock-server</string>
+  <string name="test_mode_manual_fetch">Scenario\'s ophalen</string>
+  <string name="test_mode_unreachable">%1$s is niet bereikbaar.</string>
+  <string name="test_mode_no_scenarios">%1$s reageerde, maar biedt geen scenario\'s.</string>
+  <string name="test_mode_enter">Testmodus starten</string>
+  <string name="test_mode_leave">Testmodus verlaten</string>
+  <string name="test_mode_on">Testmodus staat aan</string>
+  <string name="test_mode_off">Je laadpalen zijn terug</string>
+  <string name="test_mode_nothing_to_restore">Niets om te herstellen – geen momentopname gevonden</string>
+  <string name="test_mode_already_on">Testmodus staat al aan</string>
+  <string name="test_mode_banner">TESTMODUS – niet je echte laadpalen</string>
+  <string name="test_mode_not_a_mock">%1$s is geen mock-server waarmee deze app mag praten. Gebruik HTTPS of een privé HTTP-adres.</string>
+</resources>
