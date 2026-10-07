@@ -316,7 +316,7 @@
   <string name="charger_current_ocpp">OCPP</string>
   <string name="charger_current_number_unnamed">Aangestuurd</string>
   <string name="charger_current_easee">Easee</string>
-  <string name="charger_energy_label">Energieteller</string>
+  <string name="charger_energy_label">Energiemeter</string>
   <string name="charger_energy_automatic">Automatisch gevonden</string>
   <string name="site_main_fuse_label">Hoofdzekering</string>
   <string name="site_measurement_label">Meetmethode</string>
