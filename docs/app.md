@@ -51,6 +51,12 @@ the cars report and, if you set one up, the charger's camera. The app shows the 
 - **The question.** When Home Assistant cannot tell, the charger card shows **Which car is plugged in?** with one
   button per car, the likeliest first. The first answer wins, from the app, the card or the notification on any
   phone. If nobody answers, the car that was chosen stays.
+- **The notification.** With the app's own notifications on (Settings → Notifications → via the SpotNav app), the
+  event **Which car is plugged in?** is on by default where Home Assistant identifies cars. The app posts the
+  question with a button per car (with more than three cars, the two likeliest and one that opens the app); a
+  button answers at once, also with the app closed, and the notification then says "EV6 · selected" quietly and
+  goes. When the question is answered elsewhere or decided, the app takes it off at its next check. With instant
+  notifications it comes as soon as Home Assistant asks, otherwise at the next 15-minute check.
 - **The status line** says **Identifying the car…** while Home Assistant looks at the cars, and **Waiting for an
   answer: which car is plugged in?** while the question is open. Both go once the car is decided.
 - **The car line** on the charger card names the car being planned for, with how it was decided (by the car's
