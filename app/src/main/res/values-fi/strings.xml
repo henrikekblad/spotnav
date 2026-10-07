@@ -461,6 +461,9 @@
   <string name="identify_answer_where">Vastaa sovelluksessa tai ilmoituksessa</string>
   <string name="identify_waiting">odottaa vastausta</string>
   <string name="identify_answer_failed">Vastausta ei voitu tallentaa.</string>
+  <string name="notify_identify_chosen">%1$s · valittu</string>
+  <string name="notify_identify_failed">Vastaaminen epäonnistui – avaa SpotNav</string>
+  <string name="notify_identify_open">Avaa SpotNav</string>
   <string name="identify_not_here">Tätä autoa ei voi ladata tällä laturilla.</string>
   <string name="identify_switch">Vaihda auto</string>
   <string name="identify_switch_prompt">Mikä auto on kytketty laturiin %1$s?</string>

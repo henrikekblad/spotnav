@@ -474,6 +474,9 @@
   <string name="identify_answer_where">Answer in the app or in the notification</string>
   <string name="identify_waiting">waiting for an answer</string>
   <string name="identify_answer_failed">The answer could not be saved.</string>
+  <string name="notify_identify_chosen">%1$s · selected</string>
+  <string name="notify_identify_failed">Could not answer – open SpotNav</string>
+  <string name="notify_identify_open">Open SpotNav</string>
   <string name="identify_not_here">That car cannot charge at this charger.</string>
   <string name="identify_switch">Change car</string>
   <string name="identify_switch_prompt">Which car is plugged in at %1$s?</string>

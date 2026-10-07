@@ -461,6 +461,9 @@
   <string name="identify_answer_where">Svar i appen eller i varselet</string>
   <string name="identify_waiting">venter på svar</string>
   <string name="identify_answer_failed">Svaret kunne ikke lagres.</string>
+  <string name="notify_identify_chosen">%1$s · valgt</string>
+  <string name="notify_identify_failed">Kunne ikke svare – åpne SpotNav</string>
+  <string name="notify_identify_open">Åpne SpotNav</string>
   <string name="identify_not_here">Den bilen kan ikke lade ved denne laderen.</string>
   <string name="identify_switch">Bytt bil</string>
   <string name="identify_switch_prompt">Hvilken bil er tilkoblet %1$s?</string>

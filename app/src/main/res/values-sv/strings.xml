@@ -461,6 +461,9 @@
   <string name="identify_answer_where">Svara i appen eller i notisen</string>
   <string name="identify_waiting">väntar på svar</string>
   <string name="identify_answer_failed">Svaret kunde inte sparas.</string>
+  <string name="notify_identify_chosen">%1$s · vald</string>
+  <string name="notify_identify_failed">Kunde inte svara – öppna SpotNav</string>
+  <string name="notify_identify_open">Öppna SpotNav</string>
   <string name="identify_not_here">Den bilen kan inte laddas vid den här laddaren.</string>
   <string name="identify_switch">Byt bil</string>
   <string name="identify_switch_prompt">Vilken bil är inkopplad i %1$s?</string>
