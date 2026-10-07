@@ -50,9 +50,21 @@ internal object SettingsFormSession {
     fun save(
         controller: AuthorityController,
         values: SettingsFormValues,
+        /**
+         * The same one value on another record: when the charger answers that its revision moved (Home
+         * Assistant moves it on its own, so the record shown is often one behind), the value is built
+         * again on the record it answered with and sent once more, so one Save writes it. `null` sends
+         * nothing more.
+         */
+        replay: ((HaPlanningSettings) -> SettingsFormValues)? = null,
         /** The owner an admitted Save must be sent through: resolved from its own profile id. */
         targetFor: (String) -> SettingsSaveTarget?
-    ): FormSaveOutcome = save(controller, controller.admitFormSave(values), targetFor)
+    ): FormSaveOutcome {
+        val first = save(controller, controller.admitFormSave(values), targetFor)
+        val conflict = (first as? FormSaveOutcome.Sent)?.answer as? SettingsUpdate.Outcome.Conflict
+        if (replay == null || conflict == null || first.outcome !is WriteOutcome.Applied) return first
+        return save(controller, controller.admitFormSave(replay(conflict.current)), targetFor)
+    }
 
     fun save(
         controller: AuthorityController,
