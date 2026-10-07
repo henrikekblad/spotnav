@@ -239,6 +239,21 @@ class HaStatusTextTest {
             say("solar_car_stopped", mapOf("time" to "2026-09-22T08:15:00+00:00"), "sv"))
     }
 
+    @Test fun anEmptyChargerOnSolarSaysNoCarAndToPlugItInWhileTheSurplusWouldStartIt() {
+        fun say(code: String, params: Map<String, Any?> = emptyMap(), language: String = "en") =
+            HaStatusText.line(StatusLine(code, params), format(language), now)
+        assertEquals("Sol · ingen bil inkopplad", say("solar_no_car", language = "sv"))
+        assertEquals("Sol · överskott finns – koppla in bilen", say("solar_no_car_surplus", mapOf("surplus_kw" to 4.2), "sv"))
+        assertEquals("Solar · no car plugged in", say("solar_no_car"))
+        assertEquals("Solar · surplus available – plug in the car", say("solar_no_car_surplus", mapOf("surplus_kw" to null)))
+        for (language in HaStatusWording.LANGUAGES) {
+            for (line in listOf(StatusLine("solar_no_car", emptyMap()), StatusLine("solar_no_car_surplus", mapOf("surplus_kw" to 4.2)))) {
+                val text = HaStatusText.line(line, format(language), now)
+                assertTrue("$language: $text", !text.isNullOrBlank() && !text!!.contains('{') && !text.contains("Home Assistant"))
+            }
+        }
+    }
+
     @Test fun theWaitingForHistoryFixtureIsWordedInEveryLocale() {
         for (language in HaStatusWording.LANGUAGES) {
             val text = HaStatusText.render(status("waiting_for_history"), format(language), now)
