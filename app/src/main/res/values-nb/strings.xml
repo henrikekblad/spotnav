@@ -493,14 +493,14 @@
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Ingen kamera</string>
   <string name="camera_help">Bildene blir i Home Assistant og sendes bare til AI-oppgaven du velger; en lokal modell holder dem hjemme.</string>
-  <string name="camera_frame_label">Beskjær bilde av ladeplassen</string>
+  <string name="camera_frame_label">Beskjær bilde av ladeplass</string>
   <string name="camera_frame_whole">Hele bildet</string>
   <string name="camera_frame_cropped">Beskåret</string>
-  <string name="camera_frame_intro">Dra rammen rundt parkeringsplassen: flytt den, eller dra i et hjørne. Bare det som er innenfor, sammenlignes.</string>
+  <string name="camera_frame_intro">Dra markeringen rundt ladeplassen: flytt den, eller dra i et hjørne. Bare det som er innenfor, sammenlignes.</string>
   <string name="camera_frame_loading">Henter et bilde fra kameraet…</string>
   <string name="camera_frame_retry">Prøv igjen</string>
   <string name="camera_frame_preview">Dette sammenlignes:</string>
-  <string name="camera_frame_area">Ramme rundt parkeringsplassen.</string>
+  <string name="camera_frame_area">Markering rundt ladeplassen.</string>
   <string name="camera_error_no_camera">Kameraet finnes ikke lenger.</string>
   <string name="camera_error_no_picture">Kameraet ga ikke noe bilde.</string>
   <string name="reference_label">Referansebilde</string>
@@ -512,7 +512,9 @@
   <string name="reference_delete">Slett</string>
   <string name="reference_intro">Ta bildet mens %1$s står parkert ved laderen. Ta nattbildet når det er mørkt.</string>
   <string name="reference_help">En bil uten referansebilde blir ikke gjenkjent av kameraet.</string>
-  <string name="reference_stale">Tatt med en annen ramme – ta det på nytt</string>
+  <string name="reference_stale">tatt før beskjæringen ble endret – ta et nytt</string>
+  <string name="reference_night_picture">Nattbilde</string>
+  <string name="reference_day_picture">Dagbilde</string>
   <string name="vehicle_target_follows">Følger bilen til alle ladere</string>
   <string name="vehicle_error_target">Lademålet må være mellom 0 og 100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->

@@ -493,14 +493,14 @@
   <string name="camera_label">Kamera</string>
   <string name="camera_none">Ei kameraa</string>
   <string name="camera_help">Kuvat pysyvät Home Assistantissa ja menevät vain valitsemallesi AI-tehtävälle; paikallinen malli pitää ne kotona.</string>
-  <string name="camera_frame_label">Rajaa kuva latauspaikasta</string>
+  <string name="camera_frame_label">Rajaa latauspaikan kuva</string>
   <string name="camera_frame_whole">Koko kuva</string>
   <string name="camera_frame_cropped">Rajattu</string>
-  <string name="camera_frame_intro">Vedä rajaus pysäköintipaikan ympärille: siirrä sitä tai vedä kulmasta. Vain rajauksen sisältöä verrataan.</string>
+  <string name="camera_frame_intro">Vedä valinta latauspaikan ympärille: siirrä sitä tai vedä kulmasta. Vain valinnan sisältöä verrataan.</string>
   <string name="camera_frame_loading">Haetaan kuvaa kamerasta…</string>
   <string name="camera_frame_retry">Yritä uudelleen</string>
   <string name="camera_frame_preview">Tätä verrataan:</string>
-  <string name="camera_frame_area">Rajaus pysäköintipaikan ympärillä.</string>
+  <string name="camera_frame_area">Valinta latauspaikan ympärillä.</string>
   <string name="camera_error_no_camera">Kameraa ei enää ole.</string>
   <string name="camera_error_no_picture">Kamera ei antanut kuvaa.</string>
   <string name="reference_label">Vertailukuva</string>
@@ -512,7 +512,9 @@
   <string name="reference_delete">Poista</string>
   <string name="reference_intro">Ota kuva, kun %1$s on pysäköity laturille. Ota yökuva, kun on pimeää.</string>
   <string name="reference_help">Kamera ei tunnista autoa, jolla ei ole vertailukuvaa.</string>
-  <string name="reference_stale">Otettu toisella rajauksella – ota uudelleen</string>
+  <string name="reference_stale">otettu ennen rajauksen muutosta – ota uusi</string>
+  <string name="reference_night_picture">Yökuva</string>
+  <string name="reference_day_picture">Päiväkuva</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
