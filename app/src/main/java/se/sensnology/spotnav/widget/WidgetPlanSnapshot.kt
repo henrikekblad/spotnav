@@ -60,8 +60,6 @@ internal data class WidgetPlanSnapshot(
     val areaId: String,
     /** The market's own clock, captured rather than re-derived from the catalogue. */
     val zoneId: ZoneId,
-    /** The presentation resolution drawn at (15 or 60 minutes; a 30-minute source is drawn on quarters). */
-    val intervalMinutes: Int,
     val vat: FiscalInput,
     val tax: FiscalInput,
     val transfer: FiscalInput,
@@ -81,14 +79,12 @@ internal data class WidgetPlanSnapshot(
     init {
         require(profileId.isNotBlank()) { "a widget plan snapshot names its charger" }
         require(areaId.isNotBlank()) { "a widget plan snapshot names its market" }
-        require(intervalMinutes == 15 || intervalMinutes == 60) { "intervalMinutes must be 15 or 60" }
     }
 
-    /** The market this snapshot's graph is drawn in: the captured area, resolution and fiscals. */
+    /** The market this snapshot's graph is drawn in: the captured area and fiscals. */
     val market: ChartMarket
         get() = ChartMarket(
             areaId = areaId,
-            intervalMinutes = intervalMinutes,
             vat = vat,
             tax = tax,
             transfer = transfer
@@ -216,7 +212,6 @@ internal class WidgetPlanSnapshotStore(
             put(REVISION, snapshot.revision)
             put(AREA, snapshot.areaId)
             put(ZONE, snapshot.zoneId.id)
-            put(INTERVAL, snapshot.intervalMinutes)
             put(VAT, fiscal(snapshot.vat))
             put(TAX, fiscal(snapshot.tax))
             put(TRANSFER, fiscal(snapshot.transfer))
@@ -252,15 +247,15 @@ internal class WidgetPlanSnapshotStore(
      * partly read: an empty-but-valid snapshot would shade nothing while looking like an answer.
      */
     private fun snapshotOf(json: JSONObject, requested: String): WidgetPlanSnapshot? {
-        if (json.keys().asSequence().toSet() != SNAPSHOT_KEYS) return refuse()
+        // A snapshot stored while the phone chose its own resolution also names that interval; it is ignored.
+        val keys = json.keys().asSequence().toSet()
+        if (keys != SNAPSHOT_KEYS && keys != SNAPSHOT_KEYS + LEGACY_INTERVAL) return refuse()
         val charger = (json.opt(CHARGER) as? String)?.takeIf { it.isNotBlank() } ?: return refuse()
         if (charger != requested) return refuse()
         val revision = whole(json.opt(REVISION)) ?: return refuse()
         val area = (json.opt(AREA) as? String)?.takeIf { it.isNotBlank() } ?: return refuse()
         val zone = (json.opt(ZONE) as? String)
             ?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: return refuse()
-        val interval = whole(json.opt(INTERVAL)) ?: return refuse()
-        if (interval != 15 && interval != 60) return refuse()
         val vat = fiscalOf(json.opt(VAT)) ?: return refuse()
         val tax = fiscalOf(json.opt(TAX)) ?: return refuse()
         val transfer = fiscalOf(json.opt(TRANSFER)) ?: return refuse()
@@ -276,7 +271,6 @@ internal class WidgetPlanSnapshotStore(
             revision = revision,
             areaId = area,
             zoneId = zone,
-            intervalMinutes = interval,
             vat = vat,
             tax = tax,
             transfer = transfer,
@@ -391,7 +385,8 @@ internal class WidgetPlanSnapshotStore(
         private const val REVISION = "revision"
         private const val AREA = "area"
         private const val ZONE = "zone"
-        private const val INTERVAL = "interval"
+        /** The resolution a snapshot written before the published interval was always drawn still carries. */
+        private const val LEGACY_INTERVAL = "interval"
         private const val VAT = "vat"
         private const val TAX = "tax"
         private const val TRANSFER = "transfer"
@@ -410,7 +405,7 @@ internal class WidgetPlanSnapshotStore(
         private const val EFFECTIVE = "effective"
 
         private val SNAPSHOT_KEYS = setOf(
-            CHARGER, REVISION, AREA, ZONE, INTERVAL, VAT, TAX, TRANSFER,
+            CHARGER, REVISION, AREA, ZONE, VAT, TAX, TRANSFER,
             INSTALLED, PERIODS, AMPS, CHARGING, PRICES, CAPTURED
         )
         private val FISCAL_KEYS = setOf(ENABLED, OVERRIDE, EFFECTIVE)

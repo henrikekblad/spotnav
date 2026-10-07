@@ -182,7 +182,6 @@ internal object WidgetPlanCapture {
         subject: PriceRequestKey?,
         state: VisibleAuthority?,
         prices: PriceResult?,
-        intervalMinutes: Int,
         capturedAt: Long
     ): WidgetPlanSnapshot? {
         val charger = profileId ?: return null
@@ -202,14 +201,13 @@ internal object WidgetPlanCapture {
         if (subject.areaId != area) return null
         // Same market rule as the price table (`ChartMarket.from`): no market to draw, nothing to publish.
         val market = PriceMarkets.find(area) ?: return null
-        val built = ChartMarket.from(record, area, intervalMinutes, market)
+        val built = ChartMarket.from(record, area, market)
         if (built !is ChartMarketBuild.Ready) return null
         return WidgetPlanSnapshot(
             profileId = charger,
             revision = record.revision,
             areaId = area,
             zoneId = MarketZone.of(area),
-            intervalMinutes = built.market.intervalMinutes,
             vat = built.market.vat,
             tax = built.market.tax,
             transfer = built.market.transfer,

@@ -45,7 +45,6 @@ class WidgetPlanSnapshotStoreTest {
         revision = revision,
         areaId = areaId,
         zoneId = ZoneId.of("Europe/Stockholm"),
-        intervalMinutes = 15,
         vat = FiscalInput(enabled = true, overrideValue = 25.0, effectiveValue = 25.0),
         tax = FiscalInput.OFF,
         transfer = FiscalInput(enabled = false, overrideValue = null, effectiveValue = 30.0),
@@ -74,7 +73,6 @@ class WidgetPlanSnapshotStoreTest {
         )
         assertEquals(written.priceIdentity, read?.priceIdentity)
         assertEquals(ZoneId.of("Europe/Stockholm"), read?.zoneId)
-        assertEquals(15, read?.intervalMinutes)
         assertNull("nothing was reported as unreadable", documented.lastOrNull())
     }
 
@@ -167,6 +165,20 @@ class WidgetPlanSnapshotStoreTest {
 
         assertNull("a newer or older document is not this app's to read", snapshots.snapshotFor(charger))
         assertEquals("still there, byte for byte", raw.replace("\"schema\":1", "\"schema\":2"), store.rawOrNull(key(charger)))
+    }
+
+    @Test
+    fun aSnapshotStoredWithThePhonesOldResolutionIsStillReadAndTheResolutionIgnored() {
+        val written = snapshot()
+        snapshots.put(written)
+        val raw = store.rawOrNull(key(charger))!!
+        // A document written while the phone chose its own resolution also named it.
+        store.setRaw(key(charger), raw.replace("\"snapshot\":{", "\"snapshot\":{\"interval\":60,"))
+        assertTrue(store.rawOrNull(key(charger))!!.contains("\"interval\":60"))
+
+        val read = snapshots.snapshotFor(charger)
+        assertEquals(written.copy(periods = emptyList()), read?.copy(periods = emptyList()))
+        assertNull("nothing was reported as unreadable", documented.lastOrNull())
     }
 
     @Test

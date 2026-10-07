@@ -2,7 +2,7 @@
   <img src="assets/spotnav-social-preview.png" alt="SpotNav: spot prices and smart EV charging">
 </p>
 
-SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas the SpotNav relay publishes, and is available in English, Swedish, Norwegian, Danish and Finnish.
+SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas the SpotNav relay publishes, and is available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
 
 <p align="center">
   <img src="docs/images/app-main.png" alt="SpotNav main screen paired with Home Assistant: charger status, vehicle and planning" width="360">
@@ -13,7 +13,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 ## Features
 
 - Today and tomorrow overlaid on one chart, with the current interval, minimum, maximum and current price highlighted.
-- Day-ahead prices for 26 European countries, 15-minute or hourly, in the local currency (EUR, SEK, NOK, DKK, PLN, CZK, HUF, RON, CHF, GBP).
+- Day-ahead prices for 26 European countries, shown as each area publishes them (15, 30 or 60 minutes), in the local currency (EUR, SEK, NOK, DKK, PLN, CZK, HUF, RON, CHF, GBP).
 - Optional VAT, electricity tax and grid fee.
 - Colour-coded price table.
 - EV charging planner: charging current, phases, energy, vehicle consumption, departure time and up to eight charging periods, with the chosen periods shaded in the widget.
@@ -24,7 +24,7 @@ A tour of every screen, with pictures, is in [docs/app.md](docs/app.md).
 
 1. Install SpotNav from [Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav), or download the APK from [Releases](../../releases).
 2. Install it and add **SpotNav** from the Android widget picker.
-3. Choose language, price area, resolution and any taxes or fees. Tap the widget to open the price table and the EV planner.
+3. Choose language, price area and any taxes or fees. Tap the widget to open the price table and the EV planner.
 
 ## EV charging planner
 
@@ -38,7 +38,7 @@ With the [SpotNav integration](https://github.com/henrikekblad/spotnav-home-assi
 
 1. Install the integration through HACS and pick your charger during setup.
 2. In SpotNav, open **Settings → Home Assistant** and tap **Find Home Assistant on the network** (or type its address).
-3. The app shows a code. Enter it in Home Assistant to approve the phone; every charger on that instance is paired at once.
+3. The app shows a six-digit code, and Home Assistant shows the same code under **Settings → Devices & services**. Check that they match and approve the phone there; every charger on that instance is paired at once.
 
 The app receives one secret webhook ID per charger, never a Home Assistant password or token. HTTPS is required for internet addresses; local addresses may use HTTP. Details, entities and configuration are in the [integration repository](https://github.com/henrikekblad/spotnav-home-assistant).
 

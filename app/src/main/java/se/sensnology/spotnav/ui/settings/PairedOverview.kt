@@ -7,6 +7,7 @@ import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
+import se.sensnology.spotnav.vehicles.ChargeLimitRange
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 
@@ -70,12 +71,19 @@ internal object PairedOverview {
         /** The car's own target (`null` when never set); shown only when the row [targetStated] it. */
         val targetPercent: Double? = null,
         val targetStated: Boolean = false,
+        /** The car's minimum charge level (`null` when off); shown only when the row [minStated] it. */
+        val minPercent: Int? = null,
+        val minStated: Boolean = false,
+        /** The car has no charge level sensor, so a minimum level cannot act: said beside it. */
+        val minNeedsLevel: Boolean = false,
         /** The car's identification sources, or `null` from a Home Assistant without them. */
         val sources: VehicleIdentificationSources? = null,
         /** The car's own charge limit (whole percent), when it reports one. */
         val chargeLimit: Int? = null,
         /** Whether Home Assistant can write that limit to the car (`set_charge_limit`). */
-        val limitWritable: Boolean = false
+        val limitWritable: Boolean = false,
+        /** What that limit can be written to; `null` when Home Assistant does not say. */
+        val limitRange: ChargeLimitRange? = null
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -102,9 +110,13 @@ internal object PairedOverview {
                 onboardPhases = row.onboardPhases,
                 targetPercent = row.targetPercent,
                 targetStated = row.targetStated,
+                minPercent = row.minPercent,
+                minStated = row.minStated,
+                minNeedsLevel = row.socEntityId == null && sensorName == null,
                 sources = row.identification,
                 chargeLimit = row.maxPercent?.takeIf { it.isFinite() }?.toInt(),
-                limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true
+                limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true,
+                limitRange = row.chargeLimitRange
             )
         }
 

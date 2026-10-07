@@ -17,7 +17,7 @@ class SummaryStringsTest {
         listOf("src/main/res", "app/src/main/res").map { File(it, "$dir/strings.xml") }.first { it.exists() }.readText()
 
     @Test fun everyLocaleStatesEveryRow() {
-        for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi")) {
+        for (dir in listOf("values", "values-sv", "values-nb", "values-da", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             val xml = text(dir)
             for (name in names) assertTrue("$dir $name", xml.contains("<string name=\"$name\">"))
         }

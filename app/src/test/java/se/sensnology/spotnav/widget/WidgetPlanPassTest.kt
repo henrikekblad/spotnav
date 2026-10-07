@@ -85,7 +85,6 @@ class WidgetPlanPassTest {
         revision = revision,
         areaId = areaId,
         zoneId = stockholm,
-        intervalMinutes = 15,
         vat = FiscalInput.OFF,
         tax = FiscalInput.OFF,
         transfer = FiscalInput.OFF,
@@ -380,7 +379,7 @@ class WidgetPlanPassTest {
         prices: PriceResult? = documents(),
         subject: PriceRequestKey? = subject(),
         capturedAt: Long = 4_242L
-    ): WidgetPlanSnapshot? = WidgetPlanCapture.of(charger, subject, state, prices, 15, capturedAt)
+    ): WidgetPlanSnapshot? = WidgetPlanCapture.of(charger, subject, state, prices, capturedAt)
 
     @Test
     fun aConfirmedCoherentPassIsCapturedWhole() {
@@ -391,7 +390,6 @@ class WidgetPlanPassTest {
         assertEquals(7, captured.revision)
         assertEquals("SE4", captured.areaId)
         assertEquals(stockholm, captured.zoneId)
-        assertEquals(15, captured.intervalMinutes)
         assertEquals(
             "the installed schedule's instants, exactly",
             listOf(installed().start.toInstant() to installed().end.toInstant()),

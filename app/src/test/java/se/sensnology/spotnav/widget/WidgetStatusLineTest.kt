@@ -18,7 +18,7 @@ class WidgetStatusLineTest {
 
     @Test fun aFreshStatusIsShownAsIs() {
         val line = WidgetStatusLine.compose(stored(), "sv", Instant.ofEpochMilli(captured + 10 * 60_000))!!
-        assertEquals("Planerat från 10:15 · 34,5 kWh · 82,92 kr · 17,3 mil", line.text)
+        assertEquals("Planerat från 09:15 · 34,5 kWh · 62,55 kr · 17,3 mil", line.text)
         assertEquals(StatusTone.NORMAL, line.tone)
     }
 

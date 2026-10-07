@@ -19,10 +19,13 @@ import se.sensnology.spotnav.ui.common.LABEL_GAP_DP
 import se.sensnology.spotnav.ui.common.SLIDER_TRACK_DP
 import se.sensnology.spotnav.ui.common.SliderMarks
 import se.sensnology.spotnav.ui.common.SliderTicks
+import se.sensnology.spotnav.ui.common.TrackBandDrawable
+import se.sensnology.spotnav.ui.common.darker
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
+import se.sensnology.spotnav.vehicles.FloorSlider
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.TargetNeed
 import se.sensnology.spotnav.vehicles.TargetVerdict
@@ -76,6 +79,16 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
             layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
             targetSoc.progressDrawable = layers
         }
+        // A paired car's minimum charge level: the track from 0 to it in a darker tone of the fill, under the
+        // marks, with "min 30 %" under the middle of that part.
+        val floorBand = TrackBandDrawable(darker(accent, FLOOR_DARKEN))
+        if (layers != null) {
+            val index = layers.addLayer(floorBand)
+            layers.setLayerInset(index, trackInsets.left, 0, trackInsets.right, 0)
+            layers.setLayerHeight(index, trackHeight)
+            layers.setLayerGravity(index, Gravity.FILL_HORIZONTAL or Gravity.CENTER_VERTICAL)
+            targetSoc.progressDrawable = layers
+        }
         // A paired car's level now and its own charge limit, as marks on the track with a short word
         // under each ("nu", "gräns"), as the kWh slider marks "fullt".
         val nowTick = FullMarkDrawable(dark, dp(2).toFloat(), dp(EnergyController.MARK_REACH_DP).toFloat())
@@ -123,29 +136,33 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         // The marks' words: centred under their ticks, on a second level when they would touch.
         val nowWord = bandLabel().apply { text = t(R.string.target_mark_now); visibility = View.INVISIBLE }
         val limitWord = bandLabel().apply { text = t(R.string.target_mark_limit); visibility = View.INVISIBLE }
+        val minWord = bandLabel().apply { visibility = View.INVISIBLE }
         val markRow = FrameLayout(context).apply { visibility = View.GONE }
-        markRow.addView(nowWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-        markRow.addView(limitWord, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        for (word in listOf(minWord, nowWord, limitWord)) {
+            markRow.addView(word, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
         // Right under the track, where the band's numbers go for a standalone charger.
         container.addView(markRow, container.indexOfChild(bandRow))
         var nowAt: Float? = null
         var limitAt: Float? = null
+        var minAt: Float? = null
         val placeMarks = {
             nowTick.fraction = nowAt
             limitTick.fraction = limitAt
             val rail = SliderTicks.rail(
                 targetSoc.width, targetSoc.paddingLeft, targetSoc.paddingRight, targetSoc.thumb?.intrinsicWidth ?: 0, targetSoc.thumbOffset
             )
-            val words = mapOf("now" to nowWord, "limit" to limitWord)
+            val words = mapOf("min" to minWord, "now" to nowWord, "limit" to limitWord)
             val mirrored = targetSoc.layoutDirection == View.LAYOUT_DIRECTION_RTL
             val marks = if (rail == null) emptyList() else listOfNotNull(
+                minAt?.let { SliderMarks.Mark("min", SliderTicks.centerAtFraction(it, rail, mirrored), minWord.width.toFloat()) },
                 nowAt?.let { SliderMarks.Mark("now", SliderTicks.centerAtFraction(it, rail, mirrored), nowWord.width.toFloat()) },
                 limitAt?.let { SliderMarks.Mark("limit", SliderTicks.centerAtFraction(it, rail, mirrored), limitWord.width.toFloat()) }
             )
             val placed = SliderMarks.place(marks, markRow.width.toFloat(), dp(6).toFloat()).associateBy { it.key }
             // One line per level: a word on the second level sits one line lower, and the row is as tall as
             // its lowest word.
-            val line = maxOf(nowWord.height, limitWord.height).takeIf { it > 0 } ?: nowWord.lineHeight
+            val line = maxOf(minWord.height, nowWord.height, limitWord.height).takeIf { it > 0 } ?: nowWord.lineHeight
             for ((key, word) in words) {
                 val at = placed[key]
                 word.visibility = if (at == null) View.INVISIBLE else View.VISIBLE
@@ -164,6 +181,7 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         onLaidOut(targetSoc) { placeMarks() }
         onLaidOut(nowWord) { placeMarks() }
         onLaidOut(limitWord) { placeMarks() }
+        onLaidOut(minWord) { placeMarks() }
         onLaidOut(markRow) { placeMarks() }
         var storedTargetSocPercent: Int? = profile?.targetSocPercent
         // A paired charger's own words around the slider: what is known now is on the track as marks
@@ -183,16 +201,24 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
                 for (line in listOf(verdictLine, needLine)) { line.text = ""; line.visibility = View.GONE }
                 nowAt = null
                 limitAt = null
+                minAt = null
+                floorBand.to = null
                 placeMarks()
             } else {
                 val facts = PairedTarget.facts(soc, pairedVehicles, pairedPicked)
                 val target = targetSoc.progress.toDouble()
                 val locale = AppLanguageSettings.numberLocale(context)
                 // The level now and the car's own limit, as marks on the 0..100 track.
-                nowAt = facts.now?.let { (it / 100.0).toFloat().coerceIn(0f, 1f) }
+                nowAt = PairedTarget.nowMark(facts)
                 // "≈ nu": Home Assistant's estimate between readings says so.
                 nowWord.text = t(if (facts.estimated) R.string.target_mark_now_estimated else R.string.target_mark_now)
-                limitAt = facts.limit?.let { (TargetNeed.chargeCeiling(it) / 100.0).toFloat().coerceIn(0f, 1f) }
+                // The limit only below 100 %: the track's end already says the rest.
+                limitAt = PairedTarget.limitMark(facts)
+                // The car's minimum, no further than the target being chosen.
+                val floor = FloorSlider.segment(facts.minPercent, target)
+                floorBand.to = floor?.end
+                minAt = floor?.label
+                minWord.text = floor?.let { FloorSlider.markText(template(R.string.target_mark_min), it.percent, locale) }.orEmpty()
                 placeMarks()
                 // Once the words have their sizes for this text, place them again.
                 markRow.post { placeMarks() }
@@ -298,6 +324,9 @@ internal class TargetSocController(scope: ViewScope) : ViewScope(scope) {
         )
     }
 }
+
+/** How much darker than the fill the minimum's part of the track is. */
+private const val FLOOR_DARKEN = 0.45f
 
 /** What [TargetSocController.add] hands back: */
 internal class TargetSocControls(

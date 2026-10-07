@@ -100,7 +100,7 @@ internal class SettingsAuthorityCoordinator(
     }
 
     /** Resolve the authority for one profile and publish what it means. */
-    fun reconcile(localId: String, presentation: HaPresentation, generation: Long): Outcome {
+    fun reconcile(localId: String, generation: Long): Outcome {
         if (!admit(localId, generation)) return Outcome.Superseded
 
         val capturedProfile = profiles().firstOrNull { it.localId == localId }
@@ -124,7 +124,7 @@ internal class SettingsAuthorityCoordinator(
         return publish(
             localId,
             generation,
-            Outcome.RemoteAuthoritative(record, HaPlanningAdapter.of(record, capturedCatalogue, presentation))
+            Outcome.RemoteAuthoritative(record, HaPlanningAdapter.of(record, capturedCatalogue))
         )
     }
 }

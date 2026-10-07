@@ -1,0 +1,28 @@
+SpotNav muestra los precios spot de la electricidad en un widget para la pantalla de inicio y en una tabla de precios por colores, y te ayuda a planificar la carga de tu vehículo eléctrico en las horas más baratas.
+
+PRECIOS
+- Hoy y mañana en un único gráfico de 24 horas, con el intervalo actual y los precios mínimo, máximo y actual marcados.
+- Zonas de precios de los países nórdicos y bálticos, Alemania y los Países Bajos.
+- Precios tal como los publica cada zona, cada 15, 30 o 60 minutos, en la moneda local.
+- IVA, impuesto sobre la electricidad y peaje de acceso opcionales. Los valores de impuestos sugeridos se pueden editar; compruébalos con tu propio contrato.
+- Widget redimensionable, caché local para fallos de red y comprobación automática de los precios de mañana.
+- Disponible en inglés, sueco, noruego, danés, finés, alemán, neerlandés, español y francés.
+
+PLANIFICADOR DE CARGA
+- Configura carga monofásica o trifásica, corriente, energía a añadir, consumo del vehículo, hora de salida y hasta ocho periodos de carga.
+- La app elige la combinación más barata de cuartos de hora y muestra el coste y la autonomía. Los periodos elegidos se sombrean en el widget.
+- Los planes solo usan precios publicados. Si la ventana de carga necesita los precios de mañana antes de que salgan (hacia las 13:00 CET), la app los espera y ahora solo compra lo que no puede esperar a la salida. No se tienen en cuenta las pérdidas de carga ni la curva de carga del vehículo.
+
+HOME ASSISTANT (OPCIONAL)
+- Vincula la app con tu Home Assistant mediante la integración SpotNav para ver y cambiar los ajustes de carga desde el teléfono.
+- El control de la carga, la planificación solar e híbrida y el equilibrado de carga funcionan en la integración SpotNav para Home Assistant, que se instala por separado. La app no necesita estar conectada para que se cumpla la programación.
+- La app recibe un ID de webhook por cargador, nunca una contraseña ni un token de Home Assistant.
+- Todo, salvo las funciones de Home Assistant, funciona sin vinculación.
+
+DATOS Y PRIVACIDAD
+- Los precios son precios del mercado diario de ENTSO-E, publicados por el relé de SpotNav, con las monedas convertidas según los tipos de cambio del BCE. El precio mostrado es un precio spot; el IVA, los impuestos y los cargos solo se añaden si los activas.
+- Sin cuenta, sin publicidad, sin analíticas. El desarrollador no recibe ningún dato de la app.
+- La app pide los precios al relé (zona de precios y fecha) y, si está vinculada, solo se comunica con tu propio Home Assistant.
+- Política de privacidad: https://spotnav.sensnology.se/privacy
+
+SpotNav no está afiliada a ENTSO-E, el BCE, Nord Pool, comercializadoras eléctricas ni distribuidoras. Los precios y cálculos de carga son solo orientativos; compruébalos con tu contrato y tu factura.

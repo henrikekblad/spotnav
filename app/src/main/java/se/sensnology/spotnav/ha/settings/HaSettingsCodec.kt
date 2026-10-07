@@ -117,7 +117,8 @@ internal object HaSettingsCodec {
             },
             amps = nullable(raw.opt("amps")) { value -> whole(value, "amps", "invalid_amps", 1, MAX_AMPS) },
             requestedKwh = positive(raw.opt("requested_kwh"), "requested_kwh", "invalid_energy"),
-            maxPeriods = whole(raw.opt("max_periods"), "max_periods", "invalid_periods", 1, MAX_PERIODS),
+            // `null` is automatic periods; the key itself is still required (`requireKeys`).
+            maxPeriods = nullable(raw.opt("max_periods")) { whole(it, "max_periods", "invalid_periods", 1, MAX_PERIODS) },
             departureEnabled = boolean(raw.opt("departure_enabled"), "departure_enabled", "invalid_departure"),
             departureTime = wallTime(raw.opt("departure_time")),
             departureDate = nullable(raw.opt("departure_date")) { departureDate(it) },
@@ -409,7 +410,7 @@ internal object HaSettingsCodec {
             put("requested_kwh", settings.requestedKwh)
             // Stated only when Home Assistant stated it, and then always sent back as it stands.
             settings.fillToLimit?.let { put(FILL_TO_LIMIT, it) }
-            put("max_periods", settings.maxPeriods)
+            put("max_periods", settings.maxPeriods ?: JSONObject.NULL)
             put("departure_enabled", settings.departureEnabled)
             put("departure_time", settings.departureTime)
             putNullable("departure_date", settings.departureDate?.toString())

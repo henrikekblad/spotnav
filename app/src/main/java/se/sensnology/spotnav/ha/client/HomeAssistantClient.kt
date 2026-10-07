@@ -55,13 +55,15 @@ internal class WebhookHttpStatusException(
 
 /**
  * The settings fields this app reads that Home Assistant withholds from an app that does not ask
- * (`docs/api.md`, "Withheld settings field"), and `identification_status`, the status lines said while a car is
- * identified. Every request the app sends names them.
+ * (`docs/api.md`, "Withheld settings field"), `identification_status`, the status lines said while a car is
+ * identified, `solar_no_car_status`, the solar lines of an empty charger, `min_soc`, the car's minimum charge level (its
+ * status line and the vehicle rows' `min_percent`), and `auto_periods`, a `max_periods` of `null` (automatic). Every
+ * request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
         "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
-        "identify_camera", "identification_status"
+        "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))

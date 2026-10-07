@@ -226,7 +226,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         }
         // The current mark is read from the clock here and carried in the request; left out of `drawnOn`
         // like the selection, since an interval passing is not the data moving. `null` prices mean no line.
-        val nowMinute = prices?.let { ChartNow.currentMarkMinute(market, it, now()) }
+        val nowMinute = prices?.let { ChartNow.currentMarkMinute(it, now()) }
         val request = ChartRequests.of(
             market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute
         ) ?: return
@@ -252,7 +252,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
     private fun armBoundary() {
         val shown = chart
         val delay = shown?.prices?.let { prices ->
-            ChartNow.untilNextIntervalMillis(shown.market, prices, now())
+            ChartNow.untilNextIntervalMillis(prices, now())
         }
         boundaryRefresh.arm(delay) {
             // Redraw first, then re-arm: the draw may be a no-op, and an ended interval still needs its successor scheduled.

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Modo de prueba</string>
+  <string name="test_mode_intro">Mira las pantallas que un cargador real no puede producir, con un Home Assistant simulado en tu red. Tus propios cargadores se apartan mientras el modo de prueba está activo y se restauran tal como estaban al salir.</string>
+  <string name="test_mode_discover">Buscar servidores simulados</string>
+  <string name="test_mode_discovering">Buscando servidores simulados…</string>
+  <string name="test_mode_none_found">Ningún servidor simulado respondió. Inicia tools/fake_ha.py o escribe su dirección abajo.</string>
+  <string name="test_mode_found">Servidores simulados encontrados: %1$d</string>
+  <string name="test_mode_manual_label">Dirección del servidor simulado</string>
+  <string name="test_mode_manual_fetch">Obtener escenarios</string>
+  <string name="test_mode_unreachable">No se pudo contactar con %1$s.</string>
+  <string name="test_mode_no_scenarios">%1$s respondió, pero no ofrece escenarios.</string>
+  <string name="test_mode_enter">Entrar en modo de prueba</string>
+  <string name="test_mode_leave">Salir del modo de prueba</string>
+  <string name="test_mode_on">El modo de prueba está activo</string>
+  <string name="test_mode_off">Tus cargadores han vuelto</string>
+  <string name="test_mode_nothing_to_restore">Nada que restaurar: no se encontró ninguna copia</string>
+  <string name="test_mode_already_on">El modo de prueba ya está activo</string>
+  <string name="test_mode_banner">MODO DE PRUEBA – no son tus cargadores reales</string>
+  <string name="test_mode_not_a_mock">%1$s no es un servidor simulado con el que esta app pueda comunicarse. Usa HTTPS o una dirección HTTP privada.</string>
+</resources>

@@ -23,7 +23,7 @@ class SetupWordingTest {
     )
 
     @Test fun everySetupValueIsShortInEveryLanguage() {
-        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi")) {
+        for (directory in listOf("values", "values-sv", "values-da", "values-nb", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             val strings = xml(directory)
             for (name in statusValues) {
                 val value = text(strings, name)

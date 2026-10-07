@@ -20,7 +20,6 @@ data class WidgetSettings(
     val transfer: Boolean = false,
     val taxMinorUnit: Double = NO_SUGGESTION,
     val gridFeeMinorUnit: Double = NO_SUGGESTION,
-    val intervalMinutes: Int = 15,
     val chargingPhases: Int = 3,
     val chargingAmps: Int = 10,
     val consumptionKwhPerMil: Double = 2.0,
@@ -160,7 +159,6 @@ data class WidgetSettings(
                 gridFeeMinorUnit = p.getString(key + "gridFeeMinorUnit", null)?.toDoubleOrNull()
                     ?: market?.suggestedGridFee
                     ?: NO_SUGGESTION,
-                intervalMinutes = p.getInt(key + "intervalMinutes", 15),
                 chargingPhases = p.getInt(key + "chargingPhases", 3).takeIf { it == 1 || it == 3 } ?: 3,
                 chargingAmps = p.getInt(key + "chargingAmps", 10),
                 consumptionKwhPerMil = p.getString(key + "consumptionKwhPerMil", "2.0")?.toDoubleOrNull() ?: 2.0,
@@ -189,7 +187,8 @@ data class WidgetSettings(
                 .putBoolean(key + "transfer", value.transfer)
                 .putString(key + "taxMinorUnit", value.taxMinorUnit.toString())
                 .putString(key + "gridFeeMinorUnit", value.gridFeeMinorUnit.toString())
-                .putInt(key + "intervalMinutes", value.intervalMinutes)
+                // The resolution the phone once chose is no longer a setting: its stored value goes.
+                .remove(key + "intervalMinutes")
                 .putInt(key + "chargingPhases", value.chargingPhases)
                 .putInt(key + "chargingAmps", value.chargingAmps)
                 .putString(key + "consumptionKwhPerMil", value.consumptionKwhPerMil.toString())

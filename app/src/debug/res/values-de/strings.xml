@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="test_mode_title">Testmodus</string>
+  <string name="test_mode_intro">Sieh dir die Bildschirme an, die eine echte Ladestation nicht erzeugen kann, mit einem Mock-Home-Assistant in deinem Netzwerk. Deine eigenen Ladestationen werden im Testmodus beiseitegelegt und beim Verlassen genau so wiederhergestellt, wie sie waren.</string>
+  <string name="test_mode_discover">Mock-Server suchen</string>
+  <string name="test_mode_discovering">Suche nach Mock-Servern…</string>
+  <string name="test_mode_none_found">Kein Mock-Server hat geantwortet. Starte tools/fake_ha.py oder gib seine Adresse unten ein.</string>
+  <string name="test_mode_found">Gefundene Mock-Server: %1$d</string>
+  <string name="test_mode_manual_label">Adresse des Mock-Servers</string>
+  <string name="test_mode_manual_fetch">Szenarien abrufen</string>
+  <string name="test_mode_unreachable">%1$s war nicht erreichbar.</string>
+  <string name="test_mode_no_scenarios">%1$s hat geantwortet, bietet aber keine Szenarien an.</string>
+  <string name="test_mode_enter">Testmodus starten</string>
+  <string name="test_mode_leave">Testmodus beenden</string>
+  <string name="test_mode_on">Testmodus ist an</string>
+  <string name="test_mode_off">Deine Ladestationen sind zurück</string>
+  <string name="test_mode_nothing_to_restore">Nichts wiederherzustellen – kein Schnappschuss gefunden</string>
+  <string name="test_mode_already_on">Testmodus ist bereits an</string>
+  <string name="test_mode_banner">TESTMODUS – nicht deine echten Ladestationen</string>
+  <string name="test_mode_not_a_mock">%1$s ist kein Mock-Server, mit dem diese App sprechen darf. Verwende HTTPS oder eine private HTTP-Adresse.</string>
+</resources>

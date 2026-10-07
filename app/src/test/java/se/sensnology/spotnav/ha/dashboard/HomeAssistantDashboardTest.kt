@@ -18,6 +18,8 @@ import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.testing.HaFixtures
+import se.sensnology.spotnav.vehicles.ChargeLimitRange
+import se.sensnology.spotnav.vehicles.LimitSlider
 
 class HomeAssistantDashboardTest {
     private fun v1(name: String) = HaFixtures.json("dashboard/$name.json")
@@ -58,7 +60,7 @@ class HomeAssistantDashboardTest {
         val d = Dashboard.parse(v1("target_soc_estimated"))
         assertEquals(StatusTone.NORMAL, d.status.tone)
         assertEquals(listOf("auto_planned", "plan_energy", "plan_cost", "plan_distance"), d.status.lines.map { it.code })
-        assertEquals(8292.0, d.status.lines[2].params["amount_minor"])
+        assertEquals(6255.0, d.status.lines[2].params["amount_minor"])
         assertTrue(d.capabilities.refreshVehicle)
         assertTrue(d.capabilities.setChargeLimit)
         assertEquals(6, d.currentRange.minA)
@@ -69,7 +71,8 @@ class HomeAssistantDashboardTest {
         assertEquals("SEK", proposal.costCurrency)
         assertFalse(proposal.unpriced)
         assertEquals(60, proposal.pricedSlots)
-        assertEquals(1, proposal.periods.size.coerceAtLeast(1))
+        // Automatic charge periods: the cheapest plan counting each start, here two periods.
+        assertEquals(2, proposal.periods.size)
         val soc = d.soc!!
         assertEquals(75.1, soc.value!!, 1e-9)
         assertTrue(soc.estimated)
@@ -403,5 +406,22 @@ class HomeAssistantDashboardTest {
         unread.getJSONObject("soc").put("value", JSONObject.NULL)
         unread.getJSONArray("vehicles").getJSONObject(0).put("soc_percent", JSONObject.NULL)
         assertTrue(Dashboard.parse(unread).readVehicles.isEmpty())
+    }
+
+    @Test fun theVehicleCardsLimitSliderTakesTheRangeAndStepTheRowStates() {
+        val kia = v1("target_soc_two_vehicles")
+        kia.getJSONArray("vehicles").getJSONObject(0)
+            .put("charge_limit_range", JSONObject().put("min", 50).put("max", 100).put("step", 10))
+        val ev6 = Dashboard.parse(kia).readVehicles.first { it.name == "EV6" }
+        assertEquals(ChargeLimitRange(50.0, 100.0, 10.0), ev6.chargeLimitRange)
+        // The charging screen's popover and the settings editor have the same stops.
+        val stops = LimitSlider.stops(ev6.chargeLimitRange)
+        assertEquals(5, LimitSlider.last(stops))
+        assertEquals(80, LimitSlider.at(stops, LimitSlider.index(stops, 80)))
+
+        // Unknown (`null` in the fixture) falls back to 1..100 in whole percent.
+        val unknown = Dashboard.parse(v1("target_soc_two_vehicles")).readVehicles.first { it.name == "EV6" }
+        assertNull(unknown.chargeLimitRange)
+        assertEquals(ChargeLimitRange(1.0, 100.0, 1.0), LimitSlider.stops(unknown.chargeLimitRange))
     }
 }

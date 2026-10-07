@@ -23,6 +23,7 @@ import se.sensnology.spotnav.ha.settings.PairedSettingsForm
 import se.sensnology.spotnav.ha.settings.SettingsFormValues
 import se.sensnology.spotnav.planning.FiscalInput
 import se.sensnology.spotnav.planning.FiscalResolution
+import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.IncludedPart
 import se.sensnology.spotnav.prices.PriceMarkets
@@ -119,7 +120,7 @@ class PairedRelayV2Test {
         val components = FiscalResolution.forArea(record, "GB-C", null)
         assertTrue(components.isComplete)
         assertEquals(listOf(FiscalInput.OFF, FiscalInput.OFF, FiscalInput.OFF), listOf(components.vat.input, components.tax.input, components.transfer.input))
-        val market = (ChartMarket.from(record, "GB-C", 15, null) as ChartMarketBuild.Ready).market
+        val market = (ChartMarket.from(record, "GB-C", null) as ChartMarketBuild.Ready).market
         assertEquals(12.5, market.apply(0.125), 1e-12)
     }
 
@@ -163,7 +164,7 @@ class PairedRelayV2Test {
     }
 
     @Test
-    fun aPairedChartDrawsHalfHoursAsQuarters() {
+    fun aPairedChartPlansOnQuartersAndDrawsHalfHoursAsPublished() {
         val json = greatBritain()
         val intervals = JSONArray()
         var start = OffsetDateTime.parse("2026-09-22T00:00:00+01:00")
@@ -179,10 +180,16 @@ class PairedRelayV2Test {
         json.getJSONObject("prices").put("intervals", intervals).put("interval_count", 48).put("resolution_minutes", 30)
         val dashboard = Dashboard.parse(json)
         val noon = OffsetDateTime.parse("2026-09-22T12:20:00+01:00").toInstant()
-        val chart = DashboardChart.build(dashboard, 15, now = noon)!!
+        val chart = DashboardChart.build(dashboard, now = noon)!!
         assertEquals(96, chart.prices.today.size)
         assertEquals(chart.prices.today[0].pricePerKwh, chart.prices.today[1].pricePerKwh, 0.0)
         assertEquals("00:15", chart.prices.today[1].start.toLocalTime().toString())
         assertEquals("+01:00", chart.prices.today[0].start.offset.toString())
+        // Drawn, each half-hour is one interval at its own price.
+        val drawn = PriceAggregation.aggregate(chart.prices.today)
+        assertEquals(48, drawn.size)
+        assertTrue(drawn.all { it.minutes == 30 })
+        assertEquals("00:30", drawn[1].start.toLocalTime().toString())
+        assertEquals(11.0, chart.market.apply(drawn[1].price), 1e-9)
     }
 }

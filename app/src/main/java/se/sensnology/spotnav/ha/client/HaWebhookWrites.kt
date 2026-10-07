@@ -69,7 +69,10 @@ internal enum class VehicleField(val wire: String, val min: Double, val max: Dou
     ONBOARD_PHASES("onboard_phases", 1.0, 3.0),
 
     /** The car's own target, the same at every charger (whole percent). */
-    TARGET("target_percent", 0.0, 100.0)
+    TARGET("target_percent", 0.0, 100.0),
+
+    /** The car's minimum charge level (whole percent, 10-80 in steps of 5; `null` turns it off). */
+    MINIMUM("min_percent", 10.0, 80.0)
 }
 
 /** Why the app (or the integration) refuses a typed value or a save. */
@@ -78,6 +81,9 @@ internal enum class VehicleFieldIssue { OUT_OF_RANGE, NOT_A_NUMBER, UNKNOWN }
 /** `update_vehicle`: a vehicle's battery capacity or consumption, under compare-and-set. */
 internal object VehicleUpdate {
     const val API_VERSION = 1
+
+    /** The minimum charge levels a car can have, as Home Assistant accepts them (`vehicle_properties`). */
+    val MINIMUM_LEVELS: List<Int> = (10..80 step 5).toList()
 
     /** A typed value, judged: the number to send (one decimal), or why it cannot be sent. */
     sealed interface Check {
@@ -98,6 +104,7 @@ internal object VehicleUpdate {
         VehicleField.CONSUMPTION -> row.consumptionKwhPer10km
         VehicleField.ONBOARD_PHASES -> row.onboardPhases?.toDouble()
         VehicleField.TARGET -> row.targetPercent
+        VehicleField.MINIMUM -> row.minPercent?.toDouble()
     }
 
     /**
@@ -143,7 +150,7 @@ internal object VehicleUpdate {
      * other fields are decimals.
      */
     private fun wireValue(field: VehicleField, value: Double): Any = when {
-        field == VehicleField.ONBOARD_PHASES -> value.toInt()
+        field == VehicleField.ONBOARD_PHASES || field == VehicleField.MINIMUM -> value.toInt()
         field == VehicleField.TARGET && value % 1.0 == 0.0 -> value.toInt()
         else -> value
     }
@@ -248,7 +255,8 @@ internal object VehicleUpdate {
                 for (error in head.fieldErrors) {
                     val field = VehicleField.entries.firstOrNull { it.wire == error.field } ?: continue
                     issues[field] = when (error.code) {
-                        "invalid_capacity", "invalid_consumption", "invalid_onboard_phases", "invalid_target" -> VehicleFieldIssue.OUT_OF_RANGE
+                        "invalid_capacity", "invalid_consumption", "invalid_onboard_phases", "invalid_target", "invalid_min_percent" ->
+                            VehicleFieldIssue.OUT_OF_RANGE
                         else -> VehicleFieldIssue.UNKNOWN
                     }
                 }

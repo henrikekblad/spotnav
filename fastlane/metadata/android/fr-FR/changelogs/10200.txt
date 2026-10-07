@@ -1,0 +1,9 @@
+- Niveau de charge minimum par voiture : en dessous, charge immédiate
+- Périodes de charge : réglage de la borne, Automatique par défaut
+- Curseurs : objectif de charge, niveau de charge minimum, limite de charge
+- Planification avec la voiture, Charger selon et repères actuel, limite, min
+- Solaire sans voiture : surplus solaire en kW
+- Images de référence jour et nuit
+- Allemand, néerlandais, espagnol, français
+- Réglage de résolution supprimé
+- Nécessite SpotNav pour Home Assistant 1.14

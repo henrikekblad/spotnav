@@ -33,6 +33,7 @@ import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueRow
 import se.sensnology.spotnav.ui.common.weight
+import se.sensnology.spotnav.vehicles.LimitSlider
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
 import se.sensnology.spotnav.vehicles.VehicleCapacityStore
@@ -143,8 +144,11 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
         // The screen owns the connection, so it is asked to do the writing -- twice-borrowed, like
         // `requestRefresh` below.
         var requestLimit: (String, Int) -> Unit = { _, _ -> }
-        val limitSlider = slider(null, 1, 100, 1, limitPopoverValue, limitControl) { value ->
-            limitPopoverValue.text = t(R.string.vehicle_card_limit_value, value)
+        // The slider's progress is a stop's index: the range and step the car's limit takes, else 1..100 in
+        // whole percent ([LimitSlider], as the settings editor has it). Set for the car at each opening.
+        var limitStops = LimitSlider.FALLBACK
+        val limitSlider = slider(null, 0, LimitSlider.last(limitStops), 0, limitPopoverValue, limitControl) { index ->
+            limitPopoverValue.text = t(R.string.vehicle_card_limit_value, LimitSlider.at(limitStops, index))
         }
 
         // The state of charge is a reading, and only a reading:
@@ -408,10 +412,10 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
         limitRow.tap {
             val vehicle = effectiveVehicle() ?: return@tap
             val current = VehicleFacts.chargeLimit(vehicle) ?: return@tap
+            limitStops = LimitSlider.stops(vehicle.chargeLimitRange)
+            limitSlider.max = LimitSlider.last(limitStops)
+            limitSlider.progress = LimitSlider.index(limitStops, current)
             limitPopoverValue.text = t(R.string.vehicle_card_limit_value, current)
-            // A `SeekBar`'s progress is 0-based from its minimum, so the slider and `progress + 1`
-            // are the same value said two ways.
-            limitSlider.progress = current - 1
             limitDialog = showValuePopover(
                 limitDialog,
                 PopoverSpec(
@@ -427,7 +431,7 @@ internal class VehicleCardController(scope: ViewScope) : ViewScope(scope) {
                 // -- it is re-shown rather than rebuilt, and the car can change between two
                 // openings.
                 effectiveVehicle()?.let { chosen ->
-                    requestLimit(chosen.id, limitSlider.progress + 1)
+                    requestLimit(chosen.id, LimitSlider.at(limitStops, limitSlider.progress))
                 }
             }
         }

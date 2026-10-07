@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 private const val TAB_GAP_DP = 8
 
 /**
- * A compact row of text tabs in a card's header ("kWh | Mål", "EV6 | Niro"): each word wraps its own
+ * A compact row of text tabs in a card's header ("EV6 | Niro"): each word wraps its own
  * text with the same gap on both sides of every "|", the chosen one in the accent colour, bold and
  * underlined, the others muted, and the last word's text ends where the card's values end. No word is
  * widened for its touch target: once laid out, each word's target is grown to 48 dp on [host] (the

@@ -1,0 +1,9 @@
+- Mindestladestand pro Auto: darunter lädt Home Assistant sofort
+- Ladezeiträume: Einstellung der Ladestation, standardmäßig Automatisch
+- Schieberegler für Ladeziel, Mindestladestand und Ladegrenze
+- Planungskarte mit dem Auto, Zeile Laden nach und Marken jetzt, Limit, min
+- Solar ohne Auto zeigt Solarüberschuss in kW
+- Referenzbilder als Kacheln für Tag und Nacht
+- Deutsch, Niederländisch, Spanisch, Französisch
+- Einstellung Auflösung entfällt
+- Benötigt SpotNav für Home Assistant 1.14

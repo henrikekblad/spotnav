@@ -31,6 +31,7 @@ import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import se.sensnology.spotnav.ha.dashboard.IdentificationSource
 import se.sensnology.spotnav.ha.dashboard.ReferencePicture
 import se.sensnology.spotnav.ha.dashboard.VehicleIdentificationSources
+import se.sensnology.spotnav.ha.settings.ChargePeriods
 import se.sensnology.spotnav.ha.settings.HaCameraChoice
 import se.sensnology.spotnav.ha.settings.HaIdentificationSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -52,6 +53,7 @@ import se.sensnology.spotnav.vehicles.CameraSetup
 import se.sensnology.spotnav.vehicles.ChargeLimit
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.vehicles.SocDisplay
+import se.sensnology.spotnav.vehicles.TargetSlider
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 import java.time.ZoneId
 import java.util.Locale
@@ -111,6 +113,14 @@ internal class PairedSettingsCards(
     private var adoptedIdentification: HaIdentificationSettings? = null
     private var identificationNotice: String? = null
 
+    // The charge periods: Home Assistant's charger setting, written through the ordinary settings write (the
+    // screen owns it); what a write here chose is shown until the next dashboard.
+    private class AdoptedPeriods(val maxPeriods: Int?)
+    private var writeChargePeriods: (Int?, (String?) -> Unit) -> Unit = { _, done -> done(null) }
+    private var chargePeriodsWritable = false
+    private var chargePeriodsWriting = false
+    private var adoptedPeriods: AdoptedPeriods? = null
+
     // The charger's camera: its webhook actions (the screen owns the connection; a picture comes back
     // decoded at most the given size), what a frame or a picture write answered, and the reference
     // thumbnails fetched so far (a few, by car, kind and when the picture was taken).
@@ -155,6 +165,17 @@ internal class PairedSettingsCards(
         writeIdentification = write
     }
 
+    /** Where the charge periods are written (`done` gets the refusal in words, or `null`). */
+    fun attachChargePeriods(write: (Int?, (String?) -> Unit) -> Unit) {
+        writeChargePeriods = write
+    }
+
+    fun setChargePeriodsWritable(writable: Boolean) {
+        if (writable == chargePeriodsWritable) return
+        chargePeriodsWritable = writable
+        repaint()
+    }
+
     fun setIdentificationWritable(writable: Boolean) {
         if (writable == identificationWritable) return
         identificationWritable = writable
@@ -168,6 +189,7 @@ internal class PairedSettingsCards(
             adoptedSite = null
             adoptedPriority = null
             adoptedIdentification = null
+            adoptedPeriods = null
             adoptedCamera = null
             adoptedReferences.clear()
         }
@@ -267,21 +289,34 @@ internal class PairedSettingsCards(
         vehicle.chargeLimit?.let { limit ->
             valueRow(body, t(R.string.vehicle_card_limit_label), t(R.string.vehicle_card_limit_value, limit),
                 onTap = if (vehicle.limitWritable) ({
-                    editNumber(t(R.string.vehicle_card_limit_label), NumberSpec(1.0, 100.0, 0), "%", limit.toDouble(),
-                        t(R.string.paired_error_number), help = t(R.string.vehicle_limit_hint)) { value, done ->
-                        writeChargeLimit(vehicle.id, value!!.toInt(), limit, done)
+                    // A slider over what the car's integration takes (1-100 in whole percent when it says nothing).
+                    editLimitSlider(t(R.string.vehicle_card_limit_label), limit, vehicle.limitRange,
+                        t(R.string.vehicle_limit_hint)) { value, done ->
+                        writeChargeLimit(vehicle.id, value, limit, done)
                     }
                 }) else null)
         }
-        // The car's own target, the same at every charger; it can also be cleared.
+        // The car's own target, the same at every charger, set with a slider in its editor. One none stored opens
+        // there at the target it is planned with, and the minimum stops at that same target.
+        val plannedTarget = vehicle.targetPercent ?: TargetSlider.default(vehicle.chargeLimit?.toDouble()).toDouble()
         if (vehicle.targetStated) {
             valueRow(body, t(R.string.vehicle_target), vehicle.targetPercent
                 ?.let { t(R.string.vehicle_card_soc_value, SocDisplay.wholePercent(it)) } ?: t(R.string.paired_value_unset)) {
                 // That the target follows the car to every charger is said in its editor.
-                editNumber(t(R.string.vehicle_target), NumberSpec(0.0, 100.0, 0), "%", vehicle.targetPercent,
-                    t(R.string.vehicle_error_target), help = t(R.string.vehicle_target_follows),
-                    noneLabel = t(R.string.paired_value_unset)) { value, done ->
+                editTargetSlider(t(R.string.vehicle_target), vehicle.targetPercent, vehicle.chargeLimit?.toDouble(),
+                    t(R.string.vehicle_target_follows)) { value, done ->
                     writeOne(vehicle.id, VehicleField.TARGET, value, done)
+                }
+            }
+        }
+        // The car's minimum charge level: below it Home Assistant charges at once, whatever the strategy.
+        if (vehicle.minStated) {
+            val level = vehicle.minPercent?.let { t(R.string.vehicle_card_soc_value, it) } ?: t(R.string.vehicle_minimum_off)
+            val shown = if (vehicle.minPercent != null && vehicle.minNeedsLevel) t(R.string.vehicle_minimum_needs_level, level) else level
+            valueRow(body, t(R.string.vehicle_minimum), shown) {
+                editFloorSlider(t(R.string.vehicle_minimum), vehicle.minPercent, plannedTarget,
+                    t(R.string.vehicle_minimum_help)) { chosen, done ->
+                    writeOne(vehicle.id, VehicleField.MINIMUM, chosen?.toDouble(), done)
                 }
             }
         }
@@ -393,6 +428,7 @@ internal class PairedSettingsCards(
                 VehicleField.CONSUMPTION -> R.string.vehicle_error_consumption
                 VehicleField.ONBOARD_PHASES -> R.string.vehicle_error_onboard
                 VehicleField.TARGET -> R.string.vehicle_error_target
+                VehicleField.MINIMUM -> R.string.vehicle_error_minimum
             }
             VehicleFieldIssue.NOT_A_NUMBER -> R.string.paired_error_number
             VehicleFieldIssue.UNKNOWN -> R.string.paired_error_field
@@ -444,7 +480,38 @@ internal class PairedSettingsCards(
         }
         // The priority is this charger's own setting (its place among the site's chargers), as in the card.
         addPriority(card.body)
+        addChargePeriods(card.body, dash)
         addIdentification(card.body, dash)
+    }
+
+    // --- Charge periods -----------------------------------------------------------------------------
+
+    /** "Automatic", or "3 periods". */
+    private fun periodsName(count: Int?) =
+        if (count == null) t(R.string.charge_periods_auto) else tq(R.plurals.charging_period_count, count, count)
+
+    /**
+     * How the charge may be split: automatic (Home Assistant weighs a start cost per period) or at most 1 to 8
+     * periods, one choice of nine written at once; read-only while the record cannot be written.
+     */
+    private fun addChargePeriods(body: LinearLayout, dash: Dashboard) {
+        val record = dash.settings ?: return
+        val current = adoptedPeriods.let { if (it != null) it.maxPeriods else record.maxPeriods }
+        val writable = chargePeriodsWritable && !chargePeriodsWriting
+        val title = t(R.string.charge_periods_title)
+        valueRow(body, title, periodsName(current), onTap = if (writable) ({
+            chooseOne(title, ChargePeriods.OPTIONS.map { periodsName(it) }, ChargePeriods.indexOf(current),
+                helps = listOf(t(R.string.charge_periods_auto_help)), intro = t(R.string.charge_periods_help)) { index, done ->
+                val chosen = ChargePeriods.OPTIONS[index]
+                chargePeriodsWriting = true
+                writeChargePeriods(chosen) { refusal ->
+                    chargePeriodsWriting = false
+                    if (refusal == null) adoptedPeriods = AdoptedPeriods(chosen)
+                    done(refusal)
+                    repaint()
+                }
+            }
+        }) else null)
     }
 
     // --- Which car is plugged in ------------------------------------------------------------------
@@ -551,15 +618,14 @@ internal class PairedSettingsCards(
 
     /**
      * A car's reference pictures, with a camera chosen and the car one of this charger's: the row (which
-     * pictures it has) opening the car's reference editor, and their thumbnails under it.
+     * pictures it has) opening the car's reference editor, and a day and a night tile under it.
      */
     private fun addReference(body: LinearLayout, dash: Dashboard, vehicle: PairedOverview.VehicleCard) {
         val listed = CameraSetup.references(dash, currentRecord(dash), vehicle.id) ?: return
         val pictures = adoptedReferences[vehicle.id] ?: listed
         if (vehicle.sources == null) body.addView(divider())
         val carName = vehicle.name ?: t(R.string.vehicle_title)
-        valueRow(body, t(R.string.reference_label),
-            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }) {
+        val open = {
             openReferenceEditor(
                 carName, pictures,
                 thumbnail = { picture, done -> thumbnail(vehicle.id, picture, done) },
@@ -578,20 +644,35 @@ internal class PairedSettingsCards(
                 }
             }
         }
-        if (pictures.isEmpty()) return
+        valueRow(body, t(R.string.reference_label),
+            if (pictures.isEmpty()) t(R.string.reference_none) else pictures.joinToString(", ") { pictureKindText(it.kind) }, onTap = open)
+        // Two equal tiles, day and night, each as the editor shows it: 16:9, the picture cropped to fill it, or
+        // "No picture". A tile opens the editor as the row does.
         val row = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.END
-            setPadding(0, dp(4), 0, 0)
+            setPadding(0, dp(4), 0, dp(8))
         }
-        for (picture in pictures) {
-            val image = thumbnailView(picture.kind, 64)
-            row.addView(image)
-            thumbnail(vehicle.id, picture) { bitmap ->
-                if (bitmap != null) {
-                    image.setImageBitmap(bitmap)
-                    image.visibility = View.VISIBLE
-                }
+        for ((index, slot) in CameraSetup.slots(pictures).withIndex()) {
+            val column = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                isClickable = true
+                isFocusable = true
+                contentDescription = "${t(R.string.reference_label)}: ${pictureKindText(slot.kind)}"
+                setOnClickListener { open() }
+            }
+            row.addView(column, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+                if (index == 0) marginEnd = dp(6) else marginStart = dp(6)
+            })
+            column.addView(muted(pictureKindText(slot.kind), bottom = 4))
+            val tile = referenceTile(slot.kind)
+            column.addView(tile.frame, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            val picture = slot.picture
+            if (picture == null) {
+                tile.show(null)
+            } else {
+                // Blank while it loads; "No picture" only when there is none to show.
+                tile.empty.visibility = View.GONE
+                thumbnail(vehicle.id, picture) { bitmap -> tile.show(bitmap) }
             }
         }
         body.addView(row)

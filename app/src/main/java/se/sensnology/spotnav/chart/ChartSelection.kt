@@ -19,8 +19,8 @@ internal data class ChartReadout(
     /** The selected position's local wall clock. */
     val time: LocalTime,
     /**
-     * The minute of day the graph draws this position at: [time]'s own minute for quarter-hour
-     * presentation, the middle of its hour for hourly. The selection line is drawn here.
+     * The minute of day the graph draws this position at: [time]'s own minute for a quarter-hour, the
+     * middle of a half-hour or an hour. The selection line is drawn here.
      */
     val markMinute: Float,
     val today: List<ChartOccurrence>,
@@ -106,10 +106,10 @@ internal object ChartSelection {
             .sortedBy { it.start.toInstant() }
             .map { ChartOccurrence(it.price, it.start.offset) }
 
-    /** The marks one day's column draws: quarter-hour points at their start, hourly intervals through the middle of the hour. */
+    /** The marks one day's column draws: quarter-hour points at their start, longer intervals through their middle. */
     private fun intervals(points: List<PricePoint>, market: ChartMarket): List<Mark> =
-        PriceAggregation.aggregate(points, market).map { (start, price) ->
+        PriceAggregation.aggregate(points).map { interval ->
             // Same anchor as the now line and current-interval lookup.
-            Mark(start, market.apply(price), ChartNow.markMinute(market, start))
+            Mark(interval.start, market.apply(interval.price), ChartNow.markMinute(interval))
         }
 }

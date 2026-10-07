@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="store_action">Steun SpotNav via GitHub Sponsors</string>
+  <string name="store_action_unavailable">Er is geen browser beschikbaar om GitHub Sponsors te openen</string>
+</resources>

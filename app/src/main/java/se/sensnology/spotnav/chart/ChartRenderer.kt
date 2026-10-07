@@ -12,10 +12,10 @@ import se.sensnology.spotnav.app.DistanceUnit
 import se.sensnology.spotnav.ha.dashboard.StatusTone
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.prices.PriceAggregation
+import se.sensnology.spotnav.prices.PriceInterval
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceResult
 import se.sensnology.spotnav.widget.WidgetStatusLine
-import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
 import kotlin.math.min
@@ -156,9 +156,9 @@ internal object ChartRenderer {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = colors.surface
         canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), 22f, 22f, paint)
-        val today = PriceAggregation.aggregate(result.today, market).map { it.first to market.apply(it.second) }
-        val tomorrow = PriceAggregation.aggregate(result.tomorrow, market).map { it.first to market.apply(it.second) }
-        val allValues = (today + tomorrow).map { it.second }
+        val today = PriceAggregation.aggregate(result.today).map { it.copy(price = market.apply(it.price)) }
+        val tomorrow = PriceAggregation.aggregate(result.tomorrow).map { it.copy(price = market.apply(it.price)) }
+        val allValues = (today + tomorrow).map { it.price }
         if (allValues.isEmpty()) {
             // No prices: draw the placeholder; null metrics means no plot to select on.
             drawPlaceholder(context, canvas, paint, w, h, colors)
@@ -170,10 +170,10 @@ internal object ChartRenderer {
         // The current figure is the price of the mark [nowMinute] names, by the same anchor the line uses;
         // a `now` no row contains has no current figure.
         val current = nowMinute?.let { minute ->
-            today.firstOrNull { ChartNow.markMinute(market, it.first) == minute }?.second
+            today.firstOrNull { ChartNow.markMinute(it) == minute }?.price
         }
-        val dayMax = today.maxOfOrNull { it.second }
-        val dayMin = today.minOfOrNull { it.second }
+        val dayMax = today.maxOfOrNull { it.price }
+        val dayMin = today.minOfOrNull { it.price }
 
         val maxText = dayMax?.let { String.format(numbers, "↑%.1f", it) } ?: "↑–"
         val minText = dayMin?.let { String.format(numbers, "↓%.1f", it) } ?: "↓–"
@@ -213,7 +213,7 @@ internal object ChartRenderer {
         val range = (maxValue - minValue).coerceAtLeast(1.0)
         fun y(value: Double) = bottom - ((value - minValue) / range * (bottom - top)).toFloat()
         // The one time-to-pixel mapping: marks, shading and focus line read it and the hit test inverts it.
-        fun anchor(time: OffsetDateTime) = metrics.xAt(ChartNow.markMinute(market, time))
+        fun anchor(interval: PriceInterval) = metrics.xAt(ChartNow.markMinute(interval))
 
         if (bands.isNotEmpty()) {
             paint.color = colors.band
@@ -256,8 +256,8 @@ internal object ChartRenderer {
 
         // Tomorrow is drawn first as a neutral comparison, with no current mark: the current interval is today's.
         val hourWidth = (right - left) / 24f
-        drawTomorrow(canvas, paint, tomorrow, ::anchor, ::y, scale, market, hourWidth, colors)
-        drawToday(canvas, paint, today, ::anchor, ::y, scale, market, nowMinute, hourWidth, colors)
+        drawTomorrow(canvas, paint, tomorrow, ::anchor, ::y, scale, hourWidth, colors)
+        drawToday(canvas, paint, today, metrics::xAt, ::y, scale, nowMinute, hourWidth, colors)
 
         paint.textSize = axisText
         paint.color = colors.muted
@@ -309,27 +309,27 @@ internal object ChartRenderer {
     private fun drawTomorrow(
         canvas: Canvas,
         paint: Paint,
-        values: List<Pair<OffsetDateTime, Double>>,
-        anchor: (OffsetDateTime) -> Float,
+        values: List<PriceInterval>,
+        anchor: (PriceInterval) -> Float,
         y: (Double) -> Float,
         scale: Float,
-        market: ChartMarket,
         hourWidth: Float,
         colors: ChartTheme
     ) {
         paint.style = Paint.Style.FILL; paint.color = colors.tomorrow; paint.alpha = 190
-        val mark = ChartMarks.geometry(market, ChartMarks.tomorrowRadius(canvas.height, scale), hourWidth)
+        val radius = ChartMarks.tomorrowRadius(canvas.height, scale)
         values.forEach { item ->
+            val mark = ChartMarks.geometry(item.minutes, radius, hourWidth)
             if (mark.kind == ChartMarkKind.SEGMENT) {
                 paint.style = Paint.Style.STROKE
                 paint.strokeCap = Paint.Cap.ROUND
                 paint.strokeWidth = mark.thickness
-                val center = anchor(item.first)
-                canvas.drawLine(center - mark.halfLength, y(item.second), center + mark.halfLength, y(item.second), paint)
+                val center = anchor(item)
+                canvas.drawLine(center - mark.halfLength, y(item.price), center + mark.halfLength, y(item.price), paint)
                 paint.strokeCap = Paint.Cap.BUTT
                 paint.style = Paint.Style.FILL
             } else {
-                canvas.drawCircle(anchor(item.first), y(item.second), mark.radius, paint)
+                canvas.drawCircle(anchor(item), y(item.price), mark.radius, paint)
             }
         }
         paint.style = Paint.Style.FILL
@@ -341,22 +341,21 @@ internal object ChartRenderer {
      * (currentness is the solid now line). The geometry has no `now` parameter, so a test can compare plans
      * under different `now` values.
      */
-    private fun drawToday(canvas: Canvas, paint: Paint, values: List<Pair<OffsetDateTime, Double>>,
-                          anchor: (OffsetDateTime) -> Float, y: (Double) -> Float, scale: Float,
-                          market: ChartMarket, nowMinute: Float?, hourWidth: Float, colors: ChartTheme) {
+    private fun drawToday(canvas: Canvas, paint: Paint, values: List<PriceInterval>,
+                          xAt: (Float) -> Float, y: (Double) -> Float, scale: Float,
+                          nowMinute: Float?, hourWidth: Float, colors: ChartTheme) {
         if (values.isEmpty()) return
         val plan = ChartMarks.plan(
-            market = market,
             values = values,
             radius = ChartMarks.todayRadius(canvas.height, scale),
             hourWidth = hourWidth,
             nowMinute = nowMinute,
-            mean = values.map { it.second }.average(),
+            mean = values.map { it.price }.average(),
             cheap = colors.cheap,
             expensive = colors.expensive
         )
         plan.forEach { draw ->
-            val x = anchor(draw.start)
+            val x = xAt(draw.minute)
             paint.style = Paint.Style.FILL
             paint.color = draw.colour
             paint.alpha = draw.alpha

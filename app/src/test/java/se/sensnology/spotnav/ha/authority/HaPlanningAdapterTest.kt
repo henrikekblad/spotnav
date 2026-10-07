@@ -42,7 +42,7 @@ class HaPlanningAdapterTest {
         val sparse = record(areaId = null, phases = null, amps = null, requestedKwh = 20.5)
 
         listOf(complete, sparse).forEach { paired ->
-            val result = HaPlanningAdapter.of(paired, catalogue, HaPresentation.QUARTER_HOUR)
+            val result = HaPlanningAdapter.of(paired, catalogue)
             assertEquals(HaPlanningInputs.Auto(paired), result)
             assertTrue(
                 "paired adaptation must not produce local calculation inputs",
@@ -53,18 +53,16 @@ class HaPlanningAdapterTest {
     }
 
     @Test
-    fun catalogueAndPresentationCannotTurnPairedAutoIntoLocalPlanningInputs() {
+    fun theCatalogueCannotTurnPairedAutoIntoLocalPlanningInputs() {
         val paired = record()
 
-        val quarter = HaPlanningAdapter.of(paired, catalogue, HaPresentation.QUARTER_HOUR)
-        val hourly = HaPlanningAdapter.of(paired, emptyList(), HaPresentation.HOURLY)
-        val unsupportedPresentation = HaPlanningAdapter.of(paired, catalogue, HaPresentation(30))
+        val known = HaPlanningAdapter.of(paired, catalogue)
+        val unknown = HaPlanningAdapter.of(paired, emptyList())
 
-        assertEquals(HaPlanningInputs.Auto(paired), quarter)
-        assertEquals(HaPlanningInputs.Auto(paired), hourly)
-        assertEquals(HaPlanningInputs.Auto(paired), unsupportedPresentation)
-        assertTrue(!PlanningInputs::class.java.isAssignableFrom(hourly.javaClass))
-        assertTrue(!PlanningInputs::class.java.isAssignableFrom(unsupportedPresentation.javaClass))
+        assertEquals(HaPlanningInputs.Auto(paired), known)
+        assertEquals(HaPlanningInputs.Auto(paired), unknown)
+        assertTrue(!PlanningInputs::class.java.isAssignableFrom(known.javaClass))
+        assertTrue(!PlanningInputs::class.java.isAssignableFrom(unknown.javaClass))
     }
 
     @Test

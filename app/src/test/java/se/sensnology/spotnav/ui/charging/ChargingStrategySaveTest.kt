@@ -4,7 +4,6 @@ import org.junit.Test
 import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
 import se.sensnology.spotnav.ha.authority.AuthorityController
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.authority.WriteSubject
@@ -134,8 +133,7 @@ class ChargingStrategySaveTest {
             screenGeneration = 1,
             coordinator = null,
             cache = cache,
-            catalogue = { listOf(RelayFixtures.se4) },
-            presentation = { HaPresentation.QUARTER_HOUR }
+            catalogue = { listOf(RelayFixtures.se4) }
         )
         val confirmed = record.copy(revision = 6, areaId = "SE4", strategy = HaSettingsStrategy.CHEAPEST)
         cache.record(profileId, confirmed)

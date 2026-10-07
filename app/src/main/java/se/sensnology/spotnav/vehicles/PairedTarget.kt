@@ -72,7 +72,9 @@ internal data class PairedTargetFacts(
     /** True when the picked vehicle is not the one the `soc` block resolved. */
     val other: Boolean,
     /** Whether [now] is Home Assistant's estimate between readings ("≈"). */
-    val estimated: Boolean = false
+    val estimated: Boolean = false,
+    /** The picked car's own minimum charge level, `null` when it is off or not stated. */
+    val minPercent: Int? = null
 )
 
 /** The paired plan editor's rules, from the dashboard, as the card's settings editor states them. */
@@ -98,8 +100,23 @@ internal object PairedTarget {
             statedTarget = soc.targetPercent,
             statedNeedKwh = soc.needKwh,
             other = other,
-            estimated = !other && soc.value != null && soc.estimated
+            estimated = !other && soc.value != null && soc.estimated,
+            minPercent = (own ?: vehicles.firstOrNull { it.id == soc.vehicleId })?.minPercent
         )
+    }
+
+    /** The level now as a mark on the 0..100 track, as a fraction of it; `null` when not known. */
+    fun nowMark(facts: PairedTargetFacts): Float? =
+        facts.now?.let { (it / 100.0).toFloat().coerceIn(0f, 1f) }
+
+    /**
+     * The car's own limit as a mark on the 0..100 track, at the whole percent it stops at, and only below
+     * 100 %: at 100 % the track's end says it, and no limit stated is no mark.
+     */
+    fun limitMark(facts: PairedTargetFacts): Float? {
+        val limit = facts.limit ?: return null
+        val ceiling = TargetNeed.chargeCeiling(limit)
+        return if (ceiling < 100) (ceiling / 100.0).toFloat().coerceIn(0f, 1f) else null
     }
 
     /** Whether the energy the target needs is said under the verdict: not when no charging is needed. */

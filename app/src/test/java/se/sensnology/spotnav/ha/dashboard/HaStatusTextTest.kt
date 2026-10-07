@@ -52,15 +52,15 @@ class HaStatusTextTest {
     @Test fun wordsAPlannedLineInTheMarketsClockAndTheReadersLanguage() {
         val s = status("target_soc_estimated")
         assertEquals(
-            "Planerat från 10:15 · 34,5 kWh · 82,92 kr · 17,3 mil",
+            "Planerat från 09:15 · 34,5 kWh · 62,55 kr · 17,3 mil",
             HaStatusText.render(s, format("sv"), now)
         )
         assertEquals(
-            "Planned from 10:15 · 34.5 kWh · 82.92 kr · 173 km",
+            "Planned from 09:15 · 34.5 kWh · 62.55 kr · 173 km",
             HaStatusText.render(s, format("en"), now)
         )
         assertEquals(
-            "Suunniteltu klo 10:15 alkaen · 34,5 kWh · 82,92 kr · 173 km",
+            "Suunniteltu klo 09:15 alkaen · 34,5 kWh · 62,55 kr · 173 km",
             HaStatusText.render(s, format("fi"), now)
         )
     }
@@ -72,7 +72,7 @@ class HaStatusTextTest {
 
     @Test fun anInstantIsNotWrittenWithoutAZone() {
         val noZone = StatusFormat("en", null, null, null)
-        assertEquals("Charging is scheduled · 34.5 kWh · 82.92 SEK · 173 km",
+        assertEquals("Charging is scheduled · 34.5 kWh · 62.55 SEK · 173 km",
             HaStatusText.render(status("target_soc_estimated"), noZone, now))
     }
 
@@ -237,6 +237,24 @@ class HaStatusTextTest {
         assertEquals("Solar · the car stopped charging", say("solar_car_stopped", mapOf("time" to null)))
         assertEquals("Sol · bilen slutade ladda; försöker igen kl. 10:15",
             say("solar_car_stopped", mapOf("time" to "2026-09-22T08:15:00+00:00"), "sv"))
+    }
+
+    @Test fun anEmptyChargerOnSolarSaysNoCarOrTheSurplusThereIsForOne() {
+        fun say(code: String, params: Map<String, Any?> = emptyMap(), language: String = "en") =
+            HaStatusText.line(StatusLine(code, params), format(language), now)
+        assertEquals("Sol · ingen bil inkopplad", say("solar_no_car", language = "sv"))
+        assertEquals("Sol · överskott finns (4,2 kW)", say("solar_no_car_surplus", mapOf("surplus_kw" to 4.23), "sv"))
+        assertEquals("Solar · no car plugged in", say("solar_no_car"))
+        assertEquals("Solar · surplus available (4.2 kW)", say("solar_no_car_surplus", mapOf("surplus_kw" to 4.23)))
+        assertEquals("Sol · överskott finns", say("solar_no_car_surplus", mapOf("surplus_kw" to null), "sv"))
+        for (language in HaStatusWording.LANGUAGES) {
+            for (line in listOf(StatusLine("solar_no_car", emptyMap()), StatusLine("solar_no_car_surplus", mapOf("surplus_kw" to null)))) {
+                val text = HaStatusText.line(line, format(language), now)
+                assertTrue("$language: $text", !text.isNullOrBlank() && !text!!.contains('{') && !text.contains("Home Assistant"))
+            }
+            val shown = HaStatusText.line(StatusLine("solar_no_car_surplus", mapOf("surplus_kw" to 4.23)), format(language), now)
+            assertTrue("$language: $shown", Regex("""\(4[.,]2 kW\)$""").containsMatchIn(shown ?: ""))
+        }
     }
 
     @Test fun theWaitingForHistoryFixtureIsWordedInEveryLocale() {
@@ -529,5 +547,16 @@ class HaStatusTextTest {
         )
         assertEquals(say("en", "price_data_invalid"), HaStatusText.line(StatusLine("price_data_invalid", emptyMap()), format("en"), now))
         assertEquals("No charging plan could be calculated with the data available right now.", say("en", "something_new"))
+    }
+
+    @Test fun theNewLanguagesNameWeekdaysInThePluralTheirSentencesTake() {
+        assertEquals("Sonntage", HaStatusText.weekdayPlural("de", 7.0))
+        assertEquals("Mittwoche", HaStatusText.weekdayPlural("de", 3.0))
+        assertEquals("zondagen", HaStatusText.weekdayPlural("nl", 7.0))
+        assertEquals("domingos", HaStatusText.weekdayPlural("es", 7.0))
+        assertEquals("lunes", HaStatusText.weekdayPlural("es", 1.0))
+        assertEquals("sábados", HaStatusText.weekdayPlural("es", 6.0))
+        assertEquals("dimanches", HaStatusText.weekdayPlural("fr", 7.0))
+        assertEquals(null, HaStatusText.weekdayPlural("fr", 8.0))
     }
 }

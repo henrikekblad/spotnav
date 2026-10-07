@@ -14,8 +14,11 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * One quarter-hour point already converted for display: `start` is in the area's own zone, and
  * [pricePerKwh] is in the area's **local major** unit.
+ *
+ * [minutes] is the length of the published interval this quarter belongs to (15, 30 or 60): planning
+ * reads the quarter-hour grid, while a graph or table draws each published interval as one mark.
  */
-data class PricePoint(val start: OffsetDateTime, val pricePerKwh: Double)
+data class PricePoint(val start: OffsetDateTime, val pricePerKwh: Double, val minutes: Int = 15)
 
 /** Where one day's prices came from, so held data is never presented as though it had just arrived. */
 enum class PriceSource { RELAY, MEMORY, DISK, NONE }

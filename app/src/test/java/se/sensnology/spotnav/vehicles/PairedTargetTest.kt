@@ -147,6 +147,19 @@ class PairedTargetTest {
         assertFalse(PairedTarget.facts(d.soc!!, d.vehicles, "vehicle_ev6").other)
     }
 
+    @Test fun theFactsCarryThePickedCarsOwnMinimum() {
+        val json = HaFixtures.json("dashboard/target_soc_two_vehicles.json")
+        val vehicles = json.getJSONArray("vehicles")
+        vehicles.getJSONObject(0).put("min_percent", 30)
+        vehicles.getJSONObject(1).put("min_percent", 50)
+        val d = Dashboard.parse(json)
+        assertEquals(30, PairedTarget.facts(d.soc!!, d.vehicles, null).minPercent)
+        assertEquals(50, PairedTarget.facts(d.soc!!, d.vehicles, "vehicle_niro").minPercent)
+        vehicles.getJSONObject(0).put("min_percent", JSONObject.NULL)
+        val off = Dashboard.parse(json)
+        assertNull(PairedTarget.facts(off.soc!!, off.vehicles, null).minPercent)
+    }
+
     @Test fun thePickerOffersVehiclesOnlyWhenThereIsAChoiceAndShowsTheRecordsOwnElseTheResolvedOne() {
         val two = dashboard("target_soc_two_vehicles").soc!!
         assertEquals(listOf("vehicle_ev6", "vehicle_niro"), PairedTarget.choices(two).map { it.id })
@@ -166,5 +179,27 @@ class PairedTargetTest {
         assertFalse(PairedTarget.showsNeed(TargetVerdict.NO_NEED))
         assertTrue(PairedTarget.showsNeed(TargetVerdict.TO_LIMIT))
         assertTrue(PairedTarget.showsNeed(TargetVerdict.NONE))
+    }
+
+    // the marks on the slider
+
+    private fun facts(now: Double? = 40.0, limit: Double?) =
+        PairedTargetFacts(now, limit, 77.0, 0.9, null, null, other = false)
+
+    @Test fun theLimitIsMarkedAtTheWholePercentTheCarStopsAtWhenBelow100() {
+        assertEquals(0.8f, PairedTarget.limitMark(facts(limit = 80.6))!!, 1e-6f)
+        assertEquals(0.99f, PairedTarget.limitMark(facts(limit = 99.5))!!, 1e-6f)
+    }
+
+    @Test fun aLimitOf100OrNoneIsNotMarked() {
+        assertNull(PairedTarget.limitMark(facts(limit = 100.0)))
+        assertNull(PairedTarget.limitMark(facts(limit = 120.0)))
+        assertNull(PairedTarget.limitMark(facts(limit = null)))
+    }
+
+    @Test fun theLevelNowIsMarkedOnTheTrack() {
+        assertEquals(0.45f, PairedTarget.nowMark(facts(now = 45.0, limit = null))!!, 1e-6f)
+        assertEquals(1f, PairedTarget.nowMark(facts(now = 104.0, limit = null))!!, 1e-6f)
+        assertNull(PairedTarget.nowMark(facts(now = null, limit = null)))
     }
 }

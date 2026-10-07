@@ -37,8 +37,6 @@ import se.sensnology.spotnav.ui.common.chartDescription
 import se.sensnology.spotnav.ui.common.checkbox
 import se.sensnology.spotnav.ui.common.compactIconAction
 import se.sensnology.spotnav.ui.common.expandActionTarget
-import se.sensnology.spotnav.ui.common.textTabs
-import se.sensnology.spotnav.ui.common.textTabsLayoutParams
 import se.sensnology.spotnav.ui.common.onLaidOut
 import se.sensnology.spotnav.ui.common.popoverControl
 import se.sensnology.spotnav.ui.common.readoutLines
@@ -48,6 +46,7 @@ import se.sensnology.spotnav.ui.common.showValuePopover
 import se.sensnology.spotnav.ui.common.slider
 import se.sensnology.spotnav.ui.common.valueLabel
 import se.sensnology.spotnav.ui.common.valueRow
+import se.sensnology.spotnav.ui.common.ValueRow
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.vehicles.VehicleStatus
@@ -66,7 +65,13 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         persistTargetSoc: (Int) -> Unit
     ): PlanCard {
         val card = card(parent, t(R.string.card_planning_title), R.drawable.ic_card_plan)
-        // The header ends in a compact text toggle, no taller than the title: no extra gap under it.
+
+        // What the plan is driven by, first: the energy to add or a target charge level, in the same
+        // label-and-blue-value pattern as the rows under it. Its chooser is the screen's (see
+        // [PlanCard]); the row is there only when both can actually work.
+        val chargeByValue = valueLabel()
+        val chargeBy = valueRow(card.body, t(R.string.charge_by_label), chargeByValue) {}
+        chargeBy.view.visibility = View.GONE
 
         // The strategy uses the same compact label-and-blue-value pattern as the card's other
         // selectors. The value opens the existing chooser; ownership is not a second visual field.
@@ -82,17 +87,6 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             value = strategyValue,
             attachOpen = { handler -> openStrategyChooser = handler }
         )
-
-        // The driver choice, in the header row: a compact text toggle "kWh | Mål", the chosen one in the
-        // accent colour and underlined. Each word keeps a 48 dp touch target but draws no box, so the
-        // heading row stays as tall as its title. Only present when both modes can actually work.
-        // The short name, and only here: the slider it drives keeps the full label. Its words are styled
-        // by the chosen driver below; their clicks are the screen's (see [PlanCard]).
-        val driverTabs = textTabs(listOf(t(R.string.driver_kwh), t(R.string.driver_target_soc)), selected = 0, host = card.body) {}
-        val kwhOption = driverTabs.words[0]
-        val targetOption = driverTabs.words[1]
-        val driverChoice = driverTabs.row.apply { visibility = View.GONE }
-        card.header.addView(driverChoice, textTabsLayoutParams())
 
         // The driver slot: one control at a time, in the same place -- the energy control in kWh
         // mode, the target slider in target-SoC mode.
@@ -260,7 +254,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         }
         val periodsReading = valueLabel()
         var periodsDialog: AlertDialog? = null
-        valueRow(card.body, t(R.string.max_charging_periods), periodsReading) {
+        val periodsRow = valueRow(card.body, t(R.string.max_charging_periods), periodsReading) {
             periodsDialog = showValuePopover(periodsDialog, PopoverSpec(
                 eyebrow = t(R.string.popover_eyebrow_plan),
                 title = t(R.string.max_charging_periods),
@@ -303,30 +297,25 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             )
         }
 
-        /**
-         * Put the driver slot, the choice in the header and the readout set in step with the mode
-         * actually in force.
-         */
-        /** The driver actually in force, as [refreshDriver] decides it. */
         // A paired charger's dashboard (null for an unpaired one):
         var paired: Dashboard? = null
         var pairedPicked: String? = null
-        val availableDrivers = {
-            val held = paired
-            if (held == null) PlanMode.availableDrivers(vehicle, rememberedCapacityKwh)
-            // The card's own rule: a charge-level source resolves, or the record already stands on
-            // the target (then it is shown as it is, and can still be undone).
-            else if (PairedTarget.available(held) || driver == PlanDriver.TARGET_SOC) setOf(PlanDriver.KWH, PlanDriver.TARGET_SOC)
-            else setOf(PlanDriver.KWH)
-        }
-        var effectiveDriver = if (driver in availableDrivers()) driver else PlanDriver.KWH
+        val availableDrivers = { PlanCardFace.availableDrivers(paired, driver, vehicle, rememberedCapacityKwh) }
+        /** The driver actually in force, as [refreshDriver] decides it. */
+        var effectiveDriver = PlanCardFace.effectiveDriver(driver, availableDrivers())
+        /**
+         * Put the driver slot, the "Charge by" row and the readout set in step with the mode actually
+         * in force.
+         */
         val refreshDriver = {
             val available = availableDrivers()
-            val effective = if (driver in available) driver else PlanDriver.KWH
+            val effective = PlanCardFace.effectiveDriver(driver, available)
             effectiveDriver = effective
-            driverChoice.visibility = if (PlanDriver.TARGET_SOC in available) View.VISIBLE else View.GONE
-            styleSegment(kwhOption, selected = effective == PlanDriver.KWH)
-            styleSegment(targetOption, selected = effective == PlanDriver.TARGET_SOC)
+            chargeBy.view.visibility = if (PlanCardFace.chargeByShown(available)) View.VISIBLE else View.GONE
+            chargeByValue.text = chargeByText(effective)
+            chargeBy.view.contentDescription = t(
+                R.string.strategy_row_description, t(R.string.charge_by_label), chargeByValue.text
+            )
             energyDriver.visibility = if (effective == PlanDriver.KWH) View.VISIBLE else View.GONE
             targetSoc.container.visibility = if (effective == PlanDriver.TARGET_SOC) View.VISIBLE else View.GONE
             result.energyRow.visibility = if (effective == PlanDriver.TARGET_SOC) View.VISIBLE else View.GONE
@@ -355,8 +344,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             targetSoc = targetSoc,
             energy = energy,
             status = status,
-            kwhOption = kwhOption,
-            targetOption = targetOption,
+            chargeBy = chargeBy,
             driver = { driver },
             effectiveDriver = { effectiveDriver },
             setDriver = { chosen ->
@@ -374,6 +362,10 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             applyPaired = { dashboard, picked ->
                 paired = dashboard
                 pairedPicked = picked
+                // Home Assistant's plan names the car it is for; the phone's own plan does not.
+                card.title.text = PlanCardFace.title(
+                    t(R.string.card_planning_title), template(R.string.card_planning_title_for), dashboard
+                )
                 val soc = dashboard?.soc
                 targetSoc.applyPaired(soc, dashboard?.vehicles.orEmpty(), picked)
                 // The kWh slider reaches past the battery's room to Fill; an older Home Assistant states none.
@@ -385,6 +377,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             refreshDriver = { refreshDriver() },
             nothingToCharge = { driverInForce, targetPercent -> nothingToCharge(driverInForce, targetPercent) },
             periods = periods,
+            periodsRow = periodsRow.view,
             refreshPeriodsLabel = refreshPeriodsLabel,
             useDeparture = useDeparture,
             departurePicker = departurePicker,
@@ -548,6 +541,12 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
     }
 }
 
+/** The "Charge by" row's and chooser's word for [driver], as the Home Assistant card says it. */
+internal fun ViewScope.chargeByText(driver: PlanDriver): String = when (driver) {
+    PlanDriver.KWH -> t(R.string.charge_by_energy)
+    PlanDriver.TARGET_SOC -> t(R.string.charge_by_target)
+}
+
 /**
  * the readout views that function writes, the energy row itself — a consequence in target-SoC mode,
  * and deliberately absent in kWh mode, where the energy control already shows that number — and the
@@ -596,8 +595,8 @@ internal class PlanCard(
     val targetSoc: TargetSocControls,
     val energy: EnergyControls,
     val status: TextView,
-    val kwhOption: TextView,
-    val targetOption: TextView,
+    /** "Charge by": energy or the target; the screen attaches its chooser and enables it. */
+    val chargeBy: ValueRow,
     val driver: () -> PlanDriver,
     val effectiveDriver: () -> PlanDriver,
     val setDriver: (PlanDriver) -> Unit,
@@ -610,6 +609,8 @@ internal class PlanCard(
     val refreshDriver: () -> Unit,
     val nothingToCharge: (PlanDriver, Int?) -> Boolean,
     val periods: SeekBar,
+    /** The periods' value row: the phone's own plan only (Home Assistant's are a charger setting). */
+    val periodsRow: View,
     val refreshPeriodsLabel: () -> Unit,
     val useDeparture: CheckBox,
     val departurePicker: Button,

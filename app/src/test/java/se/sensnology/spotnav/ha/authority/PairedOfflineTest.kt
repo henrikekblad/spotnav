@@ -13,7 +13,6 @@ import java.io.File
 /** A paired screen that cannot reach Home Assistant: */
 class PairedOfflineTest {
     private val catalogue = listOf(RelayFixtures.se4)
-    private val presentation = HaPresentation.QUARTER_HOUR
     private val written = SettingsFixtures.parsed(revision = 6, areaId = "SE4", amps = 16, requestedKwh = 20.5)
     private val autoRecord = SettingsFixtures.parsed(
         revision = 7, areaId = "SE4", amps = 16, requestedKwh = 20.5
@@ -31,7 +30,7 @@ class PairedOfflineTest {
 
         // The sentence is the state's own, localized in all five locales, and it names Home
         // Assistant rather than a bare "offline".
-        for (locale in listOf("values", "values-sv", "values-nb", "values-da", "values-fi")) {
+        for (locale in listOf("values", "values-sv", "values-nb", "values-da", "values-fi", "values-de", "values-nl", "values-es", "values-fr")) {
             val xml = read("src/main/res/$locale/strings.xml")
             val withRecord = valueOf(xml, "authority_offline")
             val without = valueOf(xml, "authority_offline_none")

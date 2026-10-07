@@ -16,9 +16,6 @@
   <string name="system">Järjestelmän oletus</string>
   <string name="light">Vaalea</string>
   <string name="dark">Tumma</string>
-  <string name="resolution">Tarkkuus</string>
-  <string name="quarter">15 minuuttia</string>
-  <string name="hour">Tuntikeskiarvo</string>
   <string name="vat">Lisää ALV %1$s %%</string>
   <string name="vat_zero">ALV (0 %% alueella %1$s)</string>
   <string name="tax">Lisää sähkövero</string>
@@ -54,6 +51,10 @@
     <item quantity="one">%1$d jakso</item>
     <item quantity="other">%1$d jaksoa</item>
   </plurals>
+  <string name="charge_periods_title">Latausjaksot</string>
+  <string name="charge_periods_auto">Automaattinen</string>
+  <string name="charge_periods_auto_help">Halvimmat tunnit, jaettuna vain kun säästö on uuden käynnistyksen arvoinen. Jokainen jakso on vähintään 30 minuuttia.</string>
+  <string name="charge_periods_help">Miten lataus saa jakautua. Luku on suurin jaksojen määrä, jonka se saa käyttää.</string>
   <string name="misses_departure">Ei valmistu ennen lähtöä</string>
   <string name="no_plan">Latausaikaa ei voida laskea</string>
   <string name="not_enough_prices">Latausajan laskemiseen ei ole riittävästi hintatietoja.</string>
@@ -75,12 +76,16 @@
   <string name="duration_hours_minutes">%1$d h %2$d min</string>
   <string name="charging_too_long">Lataus kestää noin %1$s. Vähennä energiaa, nosta virtaa tai poista lähtöaika käytöstä suunnitellaksesi usealle vuorokaudelle.</string>
   <string name="table_title">%1$s · %2$d minuutin hinnat · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Järjestelmän oletus</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
   <string name="language_danish">Dansk</string>
   <string name="language_finnish">Suomi</string>
+  <string name="language_german">Deutsch</string>
+  <string name="language_dutch">Nederlands</string>
+  <string name="language_spanish">Español</string>
+  <string name="language_french">Français</string>
   <string name="language_english">English</string>
   <string name="section_general">Yleiset</string>
   <string name="section_electricity_price">Sähkön hinta</string>
@@ -185,6 +190,7 @@
   <string name="vehicle_card_limit_label">Latausraja</string>
   <string name="vehicle_limit_set">Aseta latausraja</string>
   <string name="vehicle_limit_hint">Kirjoitetaan auton integraation kautta; se tulee voimaan, kun auto lukee sen seuraavan kerran</string>
+  <string name="vehicle_limit_slider">Latausraja, prosenttia</string>
   <string name="vehicle_limit_too_soon">Yritä uudelleen %1$d s kuluttua</string>
   <string name="vehicle_limit_failed">Latausrajan asettaminen ei onnistunut</string>
   <string name="vehicle_card_capacity_label">Akun kapasiteetti</string>
@@ -195,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Yritä uudelleen pian</string>
   <string name="vehicle_card_reread_failed">Home Assistant ei voinut lukea autoa uudelleen</string>
   <string name="card_planning_title">Suunnittelu</string>
+  <string name="card_planning_title_for">Suunnittelu: %1$s</string>
+  <string name="charge_by_label">Lataa perusteella</string>
+  <string name="charge_by_energy">Energia · kWh</string>
+  <string name="charge_by_target">Tavoite-SoC · %%</string>
   <string name="card_charging_plan_title">Lataussuunnitelma</string>
   <string name="popover_eyebrow_plan">SUUNNITELMAN ASETUS</string>
   <string name="plan_card_departure_label">Lähtö</string>
@@ -216,7 +226,6 @@
   <string name="widget_settings_none">Mikään widget ei ole auki. Jokaisella widgetillä on oma asetuksensa; muuta sitä napauttamalla widgetiä aloitusnäytöllä.</string>
   <string name="nothing_to_charge">Ei ladattavaa</string>
   <string name="nothing_to_charge_note">Tavoite on auton nykyisellä tasolla tai sen alla. Nosta tavoitetta, niin lataus voidaan suunnitella.</string>
-  <string name="driver_target_soc">Tavoite</string>
   <string name="charge_progress_vehicle_not_requesting_current">Lataus aloitettiin, mutta ajoneuvo ei pyydä virtaa. Tarkista ajoneuvon latausasetukset tai kytke kaapeli uudelleen.</string>
   <string name="instance_pairing_open_ha">Avaa Home Assistant hyväksyäksesi</string>
   <string name="instance_pairing_open_failed">Mikään sovellus ei voinut avata osoitetta.</string>
@@ -252,7 +261,6 @@
   <string name="authority_reason_transfer">ei siirtohintaa tai ehdotusta</string>
   <string name="authority_reason_departure">lähtöaika ei ole luettavissa</string>
   <string name="authority_reason_target">ei lataustavoitetta</string>
-  <string name="authority_reason_presentation">näyttötarkkuus ei kelpaa</string>
   <string name="authority_reason_rejected">arvo, jota laskenta ei hyväksy</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Halvin</string>
@@ -522,6 +530,14 @@
   <string name="reference_close">Sulje</string>
   <string name="vehicle_target_follows">Seuraa autoa kaikille latureille</string>
   <string name="vehicle_error_target">Lataustavoitteen on oltava välillä 0–100.</string>
+  <string name="vehicle_minimum">Alin varaustaso</string>
+  <string name="vehicle_minimum_off">Pois</string>
+  <string name="vehicle_minimum_needs_level">%1$s · tarvitsee auton varaustason</string>
+  <string name="vehicle_minimum_help">Tämän tason alapuolella SpotNav lataa heti täydellä virralla strategiasta riippumatta. Valitsemasi tauko tai pysäytys menee edelle. Tarvitsee auton varaustason.</string>
+  <string name="vehicle_target_default">(oletus)</string>
+  <string name="vehicle_minimum_cap">lataustavoite %1$d %%</string>
+  <string name="vehicle_minimum_slider">Alin varaustaso, pois tai prosenttia</string>
+  <string name="vehicle_error_minimum">Alimman varaustason on oltava välillä 10–80.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Muuta napauttamalla</string>
   <string name="identify_vehicles_all">Kaikki autot</string>
@@ -535,4 +551,5 @@
   <string name="target_mark_now">nyt</string>
   <string name="target_mark_now_estimated">≈ nyt</string>
   <string name="target_mark_limit">raja</string>
+  <string name="target_mark_min">väh. %1$d %%</string>
 </resources>

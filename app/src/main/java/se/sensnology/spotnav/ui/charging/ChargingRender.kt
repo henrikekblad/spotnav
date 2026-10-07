@@ -49,20 +49,19 @@ internal fun ChargingScreen.distanceText(mil: Double, miles: Boolean = false): S
 /** One built paired chart and what it was built from. */
 internal class PairedChartMemo(
     val dashboard: Dashboard,
-    val intervalMinutes: Int,
     val date: java.time.LocalDate?,
     val chart: PairedChart?
 )
 
-internal fun ChargingScreen.pairedChartFor(dashboard: Dashboard, intervalMinutes: Int): PairedChart? {
+internal fun ChargingScreen.pairedChartFor(dashboard: Dashboard): PairedChart? {
     // The local date is part of the key: the same answer drawn after midnight is a different chart.
     val now = java.time.Instant.now()
     val date = DashboardChart.localDate(dashboard, now)
     pairedChartMemo?.let {
-        if (it.dashboard === dashboard && it.intervalMinutes == intervalMinutes && it.date == date) return it.chart
+        if (it.dashboard === dashboard && it.date == date) return it.chart
     }
-    return DashboardChart.build(dashboard, intervalMinutes, now = now).also {
-        pairedChartMemo = PairedChartMemo(dashboard, intervalMinutes, date, it)
+    return DashboardChart.build(dashboard, now = now).also {
+        pairedChartMemo = PairedChartMemo(dashboard, date, it)
     }
 }
 
@@ -132,7 +131,7 @@ internal fun ChargingScreen.render() {
     // charger's graph is Home Assistant's own:
     val held = pairedNow()
     val pairedChart = if (source is PlanSource.RemoteOwned && retained == null) {
-        held?.let { pairedChartFor(it, settings.intervalMinutes) }
+        held?.let { pairedChartFor(it) }
     } else {
         null
     }
@@ -169,7 +168,6 @@ internal fun ChargingScreen.render() {
             subject = authority.currentSubject,
             state = state,
             prices = retained?.prices ?: prices,
-            intervalMinutes = settings.intervalMinutes,
             capturedAt = System.currentTimeMillis()
         )
     )

@@ -3,10 +3,10 @@ SpotNav viser strømmens spotpris som widget på startskjermen og i en fargekode
 PRISER
 - I dag og i morgen i ett 24-timersdiagram, med gjeldende intervall, laveste, høyeste og nåværende pris markert.
 - Prisområder i Norden og Baltikum, Tyskland og Nederland.
-- Kvartspriser eller timesgjennomsnitt, i lokal valuta.
+- Priser slik hvert område publiserer dem, per 15, 30 eller 60 minutter, i lokal valuta.
 - Valgfri mva., elavgift og nettleie. Foreslåtte avgiftsverdier kan endres; kontroller dem mot din egen avtale.
 - Widget som kan endres i størrelse, lokal hurtigbuffer ved nettverksfeil og automatisk kontroll av morgendagens priser.
-- Tilgjengelig på norsk, svensk, dansk, finsk og engelsk.
+- Tilgjengelig på norsk, svensk, dansk, finsk, engelsk, tysk, nederlandsk, spansk og fransk.
 
 LADEPLANLEGGER FOR ELBIL
 - Velg enfase- eller trefaselading, strøm, energi som skal lades, bilens forbruk, avreisetid og opptil åtte ladeperioder.

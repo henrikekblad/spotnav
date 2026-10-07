@@ -1,0 +1,9 @@
+- Minimaal laadniveau per auto: daaronder laadt Home Assistant meteen
+- Laadperioden: instelling van de laadpaal, standaard Automatisch
+- Schuifregelaars voor laaddoel, minimaal laadniveau en laadlimiet
+- Planningskaart met de auto, de rij Laden op en markeringen nu, limiet, min
+- Zon zonder auto toont het zonne-overschot in kW
+- Referentiefoto's als tegels voor dag en nacht
+- Duits, Nederlands, Spaans en Frans
+- Instelling resolutie verwijderd
+- Vereist SpotNav voor Home Assistant 1.14

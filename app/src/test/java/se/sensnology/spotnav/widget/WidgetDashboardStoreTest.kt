@@ -30,7 +30,7 @@ class WidgetDashboardStoreTest {
         store.put("c1", body, captured)
         val read = store.dashboardFor("c1")!!
         val line = WidgetStatusLine.compose(read.status, "sv", Instant.ofEpochMilli(captured + 10 * 60_000))!!
-        assertEquals("Planerat från 10:15 · 34,5 kWh · 82,92 kr · 17,3 mil", line.text)
+        assertEquals("Planerat från 09:15 · 34,5 kWh · 62,55 kr · 17,3 mil", line.text)
     }
 
     @Test fun anOlderCaptureNeverReplacesANewerOne() {

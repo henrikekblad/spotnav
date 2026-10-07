@@ -3,10 +3,10 @@ SpotNav näyttää sähkön pörssihinnan widgetinä aloitusnäytöllä ja väri
 HINNAT
 - Tämä päivä ja huominen samassa 24 tunnin kaaviossa, jossa nykyinen jakso, alin, ylin ja nykyinen hinta on merkitty.
 - Hinta-alueet Pohjoismaissa ja Baltiassa, Saksassa ja Alankomaissa.
-- 15 minuutin hinnat tai tuntikeskiarvot paikallisessa valuutassa.
+- Hinnat sellaisina kuin kukin alue ne julkaisee, 15, 30 tai 60 minuutin jaksoissa, paikallisessa valuutassa.
 - Valinnainen arvonlisävero, sähkövero ja siirtomaksu. Ehdotettuja veroarvoja voi muokata; tarkista ne omasta sopimuksestasi.
 - Kokoa muuttava widget, paikallinen välimuisti verkkovikojen varalle ja huomisen hintojen automaattinen tarkistus.
-- Saatavilla suomeksi, ruotsiksi, norjaksi, tanskaksi ja englanniksi.
+- Saatavilla suomeksi, ruotsiksi, norjaksi, tanskaksi, englanniksi, saksaksi, hollanniksi, espanjaksi ja ranskaksi.
 
 SÄHKÖAUTON LATAUKSEN SUUNNITTELIJA
 - Valitse yksi- tai kolmivaihelataus, virta, ladattava energia, auton kulutus, lähtöaika ja enintään kahdeksan latausjaksoa.

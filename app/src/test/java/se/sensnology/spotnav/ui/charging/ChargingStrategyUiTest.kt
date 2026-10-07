@@ -10,7 +10,6 @@ import org.junit.Test
 import se.sensnology.spotnav.chargers.ChargerAction
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.PairedOfflineTest
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.dashboard.AutoControl
@@ -26,7 +25,6 @@ import java.io.File
 /** The strategy row and its chooser, as the screen's own model. */
 class ChargingStrategyUiTest {
     private val catalogue = listOf(RelayFixtures.se4)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     /** The charger's record, in both of the two ownership spellings the contract can carry. */
     private val externalRecord = SettingsFixtures.parsed(revision = 5, areaId = "SE4")
@@ -419,7 +417,7 @@ class ChargingStrategyUiTest {
 
     @Test
     fun theStrategyCopyIsLocalizedInEveryLocaleAndNamesNoWireValue() {
-        val locales = listOf("values", "values-sv", "values-nb", "values-da", "values-fi")
+        val locales = listOf("values", "values-sv", "values-nb", "values-da", "values-fi", "values-de", "values-nl", "values-es", "values-fr")
         val keys = listOf(
             "strategy_title_cheapest", "strategy_title_solar", "strategy_title_hybrid",
             "strategy_field_label",

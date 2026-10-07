@@ -207,6 +207,11 @@ internal object HaStatusText {
                 if (at == null || zone == null) say("strategy.status.solar.carStoppedNoTime")
                 else say(key, mapOf("time" to clock(at)))
             }
+            "solar_no_car_surplus" -> {
+                val kw = num(p["surplus_kw"])
+                if (kw == null) say(key)
+                else say("strategy.status.solar.noCarSurplusKw", mapOf("kw" to number(format.locale, kw, 1)))
+            }
             "solar_charging" -> {
                 val amps = num(p["requested_a"])
                 if (amps == null) say("strategy.status.solar.chargingUnknown")
@@ -318,6 +323,7 @@ internal object HaStatusText {
             "need_limited_by_room", "filling_to_limit", "fill_room_unknown" ->
                 say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
+            "min_soc_charging" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 0.0, 0)))
             "remaining_need_estimated" -> say(
                 // Counted from the recorded charges, or kept from the meter's last reading.
                 if (p["basis"] == "sessions") "issue.needFromSessions" else key,
@@ -385,6 +391,10 @@ internal object HaStatusText {
             "sv" -> "och"
             "da", "nb" -> "og"
             "fi" -> "ja"
+            "de" -> "und"
+            "nl" -> "en"
+            "es" -> "y"
+            "fr" -> "et"
             else -> "and"
         }
         return when (items.size) {
@@ -397,7 +407,8 @@ internal object HaStatusText {
 
     /**
      * A weekday in the plural the language uses for "every Sunday" (`Sundays`, `söndagar`,
-     * `søndager`, `søndage`, `sunnuntaisin`), or `null` for a number that is no ISO weekday.
+     * `søndager`, `søndage`, `sunnuntaisin`, `Sonntage`, `zondagen`, `domingos`, `dimanches`), or `null`
+     * for a number that is no ISO weekday.
      */
     internal fun weekdayPlural(language: String, isoWeekday: Double?): String? {
         val number = isoWeekday?.takeIf { it == Math.floor(it) && it >= 1 && it <= 7 }?.toInt() ?: return null
@@ -408,6 +419,10 @@ internal object HaStatusText {
             "nb" -> "${name}er"
             "da" -> "${name}e"
             "fi" -> if (name.endsWith("i")) "${name}sin" else "${name}isin"
+            "de" -> name.replaceFirstChar { it.titlecase(locale) } + "e"
+            "nl" -> "${name}en"
+            "es" -> if (name.endsWith("s")) name else "${name}s"
+            "fr" -> "${name}s"
             else -> name.replaceFirstChar { it.titlecase(locale) } + "s"
         }
     }

@@ -16,9 +16,6 @@
   <string name="system">Systemstandard</string>
   <string name="light">Ljust</string>
   <string name="dark">Mörkt</string>
-  <string name="resolution">Upplösning</string>
-  <string name="quarter">15 minuter</string>
-  <string name="hour">Heltimmesmedel</string>
   <string name="vat">Lägg på %1$s %% moms</string>
   <string name="vat_zero">Moms (0 %% i %1$s)</string>
   <string name="tax">Lägg på energiskatt</string>
@@ -54,6 +51,10 @@
     <item quantity="one">%1$d period</item>
     <item quantity="other">%1$d perioder</item>
   </plurals>
+  <string name="charge_periods_title">Laddperioder</string>
+  <string name="charge_periods_auto">Automatiskt</string>
+  <string name="charge_periods_auto_help">De billigaste tiderna, uppdelade bara där besparingen är värd en start till. Varje period är minst 30 minuter.</string>
+  <string name="charge_periods_help">Hur laddningen får delas upp. Ett antal är det högsta antalet perioder den får använda.</string>
   <string name="misses_departure">Hinner inte före avresan</string>
   <string name="no_plan">Ingen laddtid kan beräknas</string>
   <string name="not_enough_prices">Det saknas tillräckligt med prisdata för att beräkna en laddtid.</string>
@@ -75,12 +76,16 @@
   <string name="duration_hours_minutes">%1$d tim %2$d min</string>
   <string name="charging_too_long">Laddningen kräver cirka %1$s. Minska energimängden, höj strömmen eller avmarkera avresetiden för att planera över flera dygn.</string>
   <string name="table_title">%1$s · %2$d-minuterspriser · %3$s</string>
-  <string name="widget_choice">Widget %1$d · %2$s · %3$d min</string>
+  <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="language_system">Systemstandard</string>
   <string name="language_swedish">Svenska</string>
   <string name="language_norwegian">Norsk</string>
   <string name="language_danish">Dansk</string>
   <string name="language_finnish">Suomi</string>
+  <string name="language_german">Deutsch</string>
+  <string name="language_dutch">Nederlands</string>
+  <string name="language_spanish">Español</string>
+  <string name="language_french">Français</string>
   <string name="language_english">English</string>
   <string name="section_general">Generellt</string>
   <string name="section_electricity_price">Elpris</string>
@@ -185,6 +190,7 @@
   <string name="vehicle_card_limit_label">Laddgräns</string>
   <string name="vehicle_limit_set">Ange laddgräns</string>
   <string name="vehicle_limit_hint">Skrivs via bilens integration; gäller när bilen läser av den nästa gång</string>
+  <string name="vehicle_limit_slider">Laddgräns, procent</string>
   <string name="vehicle_limit_too_soon">Försök igen om %1$d s</string>
   <string name="vehicle_limit_failed">Kunde inte ange laddgränsen</string>
   <string name="vehicle_card_capacity_label">Batterikapacitet</string>
@@ -195,6 +201,10 @@
   <string name="vehicle_card_reread_too_soon_shortly">Försök igen strax</string>
   <string name="vehicle_card_reread_failed">Home Assistant kunde inte läsa om bilen</string>
   <string name="card_planning_title">Planering</string>
+  <string name="card_planning_title_for">Planering för %1$s</string>
+  <string name="charge_by_label">Ladda efter</string>
+  <string name="charge_by_energy">Energi · kWh</string>
+  <string name="charge_by_target">Laddmål · %%</string>
   <string name="card_charging_plan_title">Laddplan</string>
   <string name="popover_eyebrow_plan">PLANINSTÄLLNING</string>
   <string name="plan_card_departure_label">Avresa</string>
@@ -216,7 +226,6 @@
   <string name="widget_settings_none">Ingen widget är öppen. Varje widget har sin egen inställning; tryck på en widget på startskärmen för att ändra den.</string>
   <string name="nothing_to_charge">Inget att ladda</string>
   <string name="nothing_to_charge_note">Målet ligger på eller under bilens nuvarande nivå. Höj målet för att planera en laddning.</string>
-  <string name="driver_target_soc">Mål</string>
   <string name="charge_progress_vehicle_not_requesting_current">Laddningen startades, men fordonet begär ingen ström. Kontrollera fordonets laddningsinställningar eller anslut kabeln igen.</string>
   <string name="instance_pairing_open_ha">Öppna Home Assistant för att godkänna</string>
   <string name="instance_pairing_open_failed">Ingen app i telefonen kunde öppna adressen.</string>
@@ -252,7 +261,6 @@
   <string name="authority_reason_transfer">ingen nätavgift eller förslag</string>
   <string name="authority_reason_departure">oläsbar avresetid</string>
   <string name="authority_reason_target">inget laddmål</string>
-  <string name="authority_reason_presentation">oläsbar visningsupplösning</string>
   <string name="authority_reason_rejected">ett värde som beräkningen avvisar</string>
   <!-- What a plan optimizes, who plans it, and what an unavailable strategy waits for. -->
   <string name="strategy_title_cheapest">Billigast</string>
@@ -522,6 +530,14 @@
   <string name="reference_close">Stäng</string>
   <string name="vehicle_target_follows">Följer bilen till alla laddare</string>
   <string name="vehicle_error_target">Laddmålet måste vara mellan 0 och 100.</string>
+  <string name="vehicle_minimum">Lägsta laddnivå</string>
+  <string name="vehicle_minimum_off">Av</string>
+  <string name="vehicle_minimum_needs_level">%1$s · behöver bilens laddnivå</string>
+  <string name="vehicle_minimum_help">Under den här nivån laddar SpotNav direkt med full ström, oavsett strategi. En paus eller ett stopp du väljer går före. Behöver bilens laddnivå.</string>
+  <string name="vehicle_target_default">(standard)</string>
+  <string name="vehicle_minimum_cap">laddmål %1$d %%</string>
+  <string name="vehicle_minimum_slider">Lägsta laddnivå, av eller procent</string>
+  <string name="vehicle_error_minimum">Lägsta laddnivå måste vara mellan 10 och 80.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Tryck för att ändra</string>
   <string name="identify_vehicles_all">Alla bilar</string>
@@ -535,4 +551,5 @@
   <string name="target_mark_now">nu</string>
   <string name="target_mark_now_estimated">≈ nu</string>
   <string name="target_mark_limit">gräns</string>
+  <string name="target_mark_min">min %1$d %%</string>
 </resources>

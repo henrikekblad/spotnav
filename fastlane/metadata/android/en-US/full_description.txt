@@ -3,10 +3,10 @@ SpotNav shows electricity spot prices as a home-screen widget and a colour-coded
 PRICES
 - Today and tomorrow on one 24-hour chart, with the current interval, minimum, maximum and current price marked.
 - Price areas in the Nordic and Baltic countries, Germany and the Netherlands.
-- 15-minute prices or hourly averages, in the local currency.
+- Prices as each area publishes them, every 15, 30 or 60 minutes, in the local currency.
 - Optional VAT, electricity tax and grid fee. Suggested tax values can be edited; check them against your own agreement.
 - Resizable widget, a local cache for network failures and automatic checks for tomorrow's prices.
-- Available in English, Swedish, Norwegian, Danish and Finnish.
+- Available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
 
 EV CHARGING PLANNER
 - Set single-phase or three-phase charging, current, energy to add, vehicle consumption, departure time and up to eight charging periods.

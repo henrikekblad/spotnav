@@ -18,7 +18,6 @@ import java.time.OffsetDateTime
 /** The screen's authority state: */
 class VisibleAuthorityTest {
     private val catalogue = listOf(RelayFixtures.se4)
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     private val written = SettingsFixtures.parsed(revision = 4, areaId = "SE4", amps = 16, requestedKwh = 20.5)
     private val autoRecord = SettingsFixtures.parsed(
@@ -31,7 +30,7 @@ class VisibleAuthorityTest {
     private val localInputs = LocalPlanningInputs.of(localSettings)
 
     private fun adapted(record: HaPlanningSettings): HaPlanningInputs =
-        HaPlanningAdapter.of(record, catalogue, presentation)
+        HaPlanningAdapter.of(record, catalogue)
 
     private fun resolve(
         outcome: SettingsAuthorityCoordinator.Outcome,

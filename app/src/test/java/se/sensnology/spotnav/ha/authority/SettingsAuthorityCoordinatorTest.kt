@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class SettingsAuthorityCoordinatorTest {
     private val profileId = "local-a"
     private val otherId = "local-b"
-    private val presentation = HaPresentation.QUARTER_HOUR
 
     private val profile = ChargerProfile(
         localId = profileId,
@@ -83,13 +82,13 @@ class SettingsAuthorityCoordinatorTest {
 
     private fun authoritative(record: HaPlanningSettings) = SettingsAuthorityCoordinator.Outcome.RemoteAuthoritative(
         record,
-        HaPlanningAdapter.of(record, listOf(RelayFixtures.se4), presentation)
+        HaPlanningAdapter.of(record, listOf(RelayFixtures.se4))
     )
 
     @Test fun aWrittenRecordIsAuthoritative() {
         dashboards = { dashboard(writtenRecord) }
 
-        val outcome = coordinator().reconcile(profileId, presentation, 1)
+        val outcome = coordinator().reconcile(profileId, 1)
 
         val remote = outcome as SettingsAuthorityCoordinator.Outcome.RemoteAuthoritative
         assertEquals(writtenRecord, remote.settings)
@@ -102,7 +101,7 @@ class SettingsAuthorityCoordinatorTest {
     @Test fun aDefaultedRecordAtRevisionZeroIsAdoptedNotSeeded() {
         dashboards = { dashboard(defaultedRecord) }
 
-        val outcome = coordinator().reconcile(profileId, presentation, 1)
+        val outcome = coordinator().reconcile(profileId, 1)
 
         assertEquals(authoritative(defaultedRecord), outcome)
         assertEquals(0, cache.confirmed(profileId)!!.revision)
@@ -112,14 +111,14 @@ class SettingsAuthorityCoordinatorTest {
         val coordinator = coordinator()
 
         reachable = false
-        assertEquals(SettingsAuthorityCoordinator.Outcome.Unreachable(null), coordinator.reconcile(profileId, presentation, 1))
+        assertEquals(SettingsAuthorityCoordinator.Outcome.Unreachable(null), coordinator.reconcile(profileId, 1))
 
         // Reachable, but Home Assistant states no record: the revision cannot be checked either.
         reachable = true
         dashboards = { dashboardWithoutSettings() }
         assertEquals(
             SettingsAuthorityCoordinator.Outcome.Unreachable(null, answeredWithoutRecord = true),
-            coordinator.reconcile(profileId, presentation, 2)
+            coordinator.reconcile(profileId, 2)
         )
 
         assertNull(cache.confirmed(profileId))
@@ -131,10 +130,10 @@ class SettingsAuthorityCoordinatorTest {
         // First a reachable answer confirms a record, then the server goes away.
         dashboards = { dashboard(writtenRecord) }
         val coordinator = coordinator()
-        coordinator.reconcile(profileId, presentation, 1)
+        coordinator.reconcile(profileId, 1)
 
         reachable = false
-        val outcome = coordinator.reconcile(profileId, presentation, 2)
+        val outcome = coordinator.reconcile(profileId, 2)
 
         assertEquals(SettingsAuthorityCoordinator.Outcome.Unreachable(writtenRecord), outcome)
         assertEquals(4, (outcome as SettingsAuthorityCoordinator.Outcome.Unreachable).lastConfirmed!!.revision)
@@ -146,8 +145,8 @@ class SettingsAuthorityCoordinatorTest {
         dashboards = { subject -> dashboard(if (subject.localId == profileId) recordForA else recordForB) }
         val coordinator = coordinator()
 
-        val forA = coordinator.reconcile(profileId, presentation, 1)
-        val forB = coordinator.reconcile(otherId, presentation, 1)
+        val forA = coordinator.reconcile(profileId, 1)
+        val forB = coordinator.reconcile(otherId, 1)
 
         assertEquals(7, (forA as SettingsAuthorityCoordinator.Outcome.RemoteAuthoritative).settings.revision)
         assertEquals(3, (forB as SettingsAuthorityCoordinator.Outcome.RemoteAuthoritative).settings.revision)
@@ -166,13 +165,13 @@ class SettingsAuthorityCoordinatorTest {
         dashboards = { _ ->
             val mine = depth + 1
             depth = mine
-            if (mine == 1) newer = coordinator.reconcile(profileId, presentation, 2)
+            if (mine == 1) newer = coordinator.reconcile(profileId, 2)
             dashboard(if (mine == 1) olderRecord else newerRecord)
         }
         coordinator = coordinator()
         reachable = true
 
-        val older = coordinator.reconcile(profileId, presentation, 1)
+        val older = coordinator.reconcile(profileId, 1)
 
         assertEquals("a late older answer is not the visible result", SettingsAuthorityCoordinator.Outcome.Superseded, older)
         assertEquals(authoritative(newerRecord), coordinator.published(profileId))
@@ -197,13 +196,13 @@ class SettingsAuthorityCoordinatorTest {
         var olderResult: SettingsAuthorityCoordinator.Outcome? = null
         var newerResult: SettingsAuthorityCoordinator.Outcome? = null
 
-        val olderOperation = Thread { olderResult = coordinator.reconcile(profileId, presentation, 1) }
+        val olderOperation = Thread { olderResult = coordinator.reconcile(profileId, 1) }
         olderOperation.start()
         assertTrue("the older observation should be parked in its cache write", store.entered.await(5, TimeUnit.SECONDS))
 
         val newerFinished = CountDownLatch(1)
         val newerOperation = Thread {
-            newerResult = coordinator.reconcile(profileId, presentation, 2)
+            newerResult = coordinator.reconcile(profileId, 2)
             newerFinished.countDown()
         }
         newerOperation.start()
@@ -241,12 +240,12 @@ class SettingsAuthorityCoordinatorTest {
         catalogueSnapshot = { catalogueCalls += 1; listOf(RelayFixtures.se4) }
         dashboards = { dashboard(writtenRecord) }
         val coordinator = coordinator()
-        coordinator.reconcile(profileId, presentation, 5)
+        coordinator.reconcile(profileId, 5)
         fetches.clear()
         val snapshotsAfterTheFirst = listOf(profileCalls, catalogueCalls)
 
-        assertEquals(SettingsAuthorityCoordinator.Outcome.Superseded, coordinator.reconcile(profileId, presentation, 5))
-        assertEquals(SettingsAuthorityCoordinator.Outcome.Superseded, coordinator.reconcile(profileId, presentation, 4))
+        assertEquals(SettingsAuthorityCoordinator.Outcome.Superseded, coordinator.reconcile(profileId, 5))
+        assertEquals(SettingsAuthorityCoordinator.Outcome.Superseded, coordinator.reconcile(profileId, 4))
 
         assertTrue("a superseded operation must not even read the charger", fetches.isEmpty())
         // Admission happens before the first snapshot provider is called, so a superseded operation
@@ -283,11 +282,11 @@ class SettingsAuthorityCoordinatorTest {
         var olderResult: SettingsAuthorityCoordinator.Outcome? = null
         var newerResult: SettingsAuthorityCoordinator.Outcome? = null
 
-        val olderOperation = Thread { olderResult = coordinator.reconcile(profileId, presentation, 1) }
+        val olderOperation = Thread { olderResult = coordinator.reconcile(profileId, 1) }
         olderOperation.start()
         assertTrue("generation 1 should reach its dashboard read", gen1InFetch.await(5, TimeUnit.SECONDS))
 
-        val newerOperation = Thread { newerResult = coordinator.reconcile(profileId, presentation, 2) }
+        val newerOperation = Thread { newerResult = coordinator.reconcile(profileId, 2) }
         newerOperation.start()
         assertTrue("generation 2 should reach its dashboard read", gen2InFetch.await(5, TimeUnit.SECONDS))
         assertNull("generation 2 has published nothing yet", coordinator.published(profileId))
@@ -321,12 +320,12 @@ class SettingsAuthorityCoordinatorTest {
         val coordinator = coordinator()
         var forA: SettingsAuthorityCoordinator.Outcome? = null
 
-        val operationForA = Thread { forA = coordinator.reconcile(profileId, presentation, 1) }
+        val operationForA = Thread { forA = coordinator.reconcile(profileId, 1) }
         operationForA.start()
         assertTrue(inFetch.await(5, TimeUnit.SECONDS))
 
         // A much newer generation for B, admitted and published while A waits.
-        val forB = coordinator.reconcile(otherId, presentation, 9)
+        val forB = coordinator.reconcile(otherId, 9)
         assertEquals(3, (forB as SettingsAuthorityCoordinator.Outcome.RemoteAuthoritative).settings.revision)
 
         mayAnswer.countDown()
@@ -342,7 +341,7 @@ class SettingsAuthorityCoordinatorTest {
         profileSnapshot = { profileCalls += 1; if (profileCalls == 1) listOf(profile) else listOf(other) }
         dashboards = { dashboard(writtenRecord) }
 
-        coordinator().reconcile(profileId, presentation, 1)
+        coordinator().reconcile(profileId, 1)
 
         assertEquals("the captured profile is what was asked, once", 1, profileCalls)
         assertEquals(listOf(profileId), fetches.map { it.localId })
@@ -353,7 +352,7 @@ class SettingsAuthorityCoordinatorTest {
     @Test fun anUnknownProfileIsNamedAndDoesNothing() {
         assertEquals(
             SettingsAuthorityCoordinator.Outcome.ProfileMissing,
-            coordinator().reconcile("local-missing", presentation, 1)
+            coordinator().reconcile("local-missing", 1)
         )
         assertTrue(fetches.isEmpty())
     }
@@ -361,7 +360,7 @@ class SettingsAuthorityCoordinatorTest {
     @Test fun noOutcomeAndNoCachedByteCarriesConnectionMaterial() {
         dashboards = { dashboard(SettingsFixtures.parsed(revision = 1, areaId = "SE4", target = SettingsFixtures.target(vehicleId = "vehicle-1"))) }
 
-        val outcome = coordinator().reconcile(profileId, presentation, 1)
+        val outcome = coordinator().reconcile(profileId, 1)
         val text = outcome.toString()
         val stored = raw.rawOrNull("confirmed.$profileId")!!
 

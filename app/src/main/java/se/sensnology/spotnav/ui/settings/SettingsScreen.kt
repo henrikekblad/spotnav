@@ -34,7 +34,6 @@ import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.client.CameraCommands
-import se.sensnology.spotnav.ha.authority.HaPresentation
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
 import se.sensnology.spotnav.ha.settings.FormSaveOutcome
@@ -97,7 +96,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // uses:
         val generalCard = card(content, t(R.string.section_general), R.drawable.ic_settings)
         addGeneralSettings(generalCard.body)
-        // The market, its resolution and its money: controls while unpaired, an overview while paired.
+        // The market and its money: controls while unpaired, an overview while paired.
         val priceCard = card(content, t(R.string.section_electricity_price), R.drawable.ic_price_table)
         // The charger these settings are for: the one the main screen shows, or with several paired
         // the one whose tab was chosen here (see [chosenCharger]).
@@ -114,8 +113,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // resolves from the cache and writes through the settings transport alone.
             coordinator = null,
             cache = settingsCache,
-            catalogue = { PriceMarkets.all },
-            presentation = { HaPresentation(old.intervalMinutes) }
+            catalogue = { PriceMarkets.all }
         )
         authorityController = settingsAuthority
         var confirmedRecord = settingsProfile?.let { settingsCache.confirmed(it.localId) }
@@ -127,13 +125,11 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         priceCard.body.addView(authorityNoteView)
         val paired = settingsProfile != null
         // The phone-only settings apply as they change: one reader of the controls, one store.
-        var readInterval: () -> Int = { old.intervalMinutes }
         var readShowPlan: () -> Boolean = { old.showChargingPlan }
         fun applyLocal() {
             applyLocalSettings(
                 paired = paired,
                 price = null,
-                intervalMinutes = readInterval(),
                 showChargingPlan = readShowPlan()
             )
         }
@@ -145,10 +141,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
             storeIfChanged(WidgetSettings.load(context, widgetId), next)
         }
-        // The resolution is this phone's own, paired or not: a row whose choice applies at once.
-        var interval = old.intervalMinutes
-        readInterval = { interval }
-        addResolutionRow(priceCard.body, { interval }) { chosen -> interval = chosen; applyLocal() }
         // What the authority has to say about these values, written where they are read.
         var authorityNote: String? = settingsAuthority.seedFromConfirmedRecord()?.let { authorityStateNote(it) }
         fun showAuthorityNote(extra: String? = null) {
@@ -203,6 +195,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     confirmed?.identification != null
                 notificationsCard?.show(confirmed?.notifications, writable, identifies = identifies.takeIf { it || confirmed != null })
                 pairedCards.setIdentificationWritable(writable)
+                pairedCards.setChargePeriodsWritable(writable)
             }
             fun loadPaired() = session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
@@ -254,6 +247,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // Which cars can charge here and how the plugged-in one is found: the same settings write.
             pairedCards.attachIdentification { mode, vehicleIds, done ->
                 writeEdit(HaSettingsEdit.Identification(mode, vehicleIds), after = { loadPaired() }, done = done)
+            }
+            // The charge periods: the same settings write.
+            pairedCards.attachChargePeriods { maxPeriods, done ->
+                writeEdit(HaSettingsEdit.MaxPeriods(maxPeriods), after = { loadPaired() }, done = done)
             }
             // The camera's frame and the cars' reference pictures, through the charger's own actions;
             // a picture is decoded off the main thread, and the cards read again after a write.
@@ -407,7 +404,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
      * Apply the phone's own controls now: store what [ImmediateSettings] makes of them, redraw the
      * widget, and name any figure that was refused (its stored value is kept).
      */
-    private fun applyLocalSettings(paired: Boolean, price: PriceSettings?, intervalMinutes: Int, showChargingPlan: Boolean): Set<FigureField> {
+    private fun applyLocalSettings(paired: Boolean, price: PriceSettings?, showChargingPlan: Boolean): Set<FigureField> {
         val current = WidgetSettings.load(context, widgetId)
         val draft = LocalSettingsDraft(
             area = price?.area() ?: current.area,
@@ -416,7 +413,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             taxText = price?.taxText() ?: "",
             transfer = price?.transfer() ?: current.transfer,
             transferText = price?.transferText() ?: "",
-            intervalMinutes = intervalMinutes,
             showChargingPlan = showChargingPlan
         )
         // With no price controls at hand only the phone-side fields change (the price is kept as stored).
@@ -432,7 +428,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             area = values.areaId, vat = values.vat, tax = values.tax,
             taxText = values.taxFigure?.toString().orEmpty(),
             transfer = values.transfer, transferText = values.transferFigure?.toString().orEmpty(),
-            intervalMinutes = current.intervalMinutes, showChargingPlan = current.showChargingPlan
+            showChargingPlan = current.showChargingPlan
         )
         storeIfChanged(current, ImmediateSettings.apply(current, draft, paired = false).settings)
     }
@@ -525,22 +521,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 activity.recreate()
             }
         }
-    }
-
-    /** The resolution row: this phone's own, applied as soon as it is chosen. */
-    private fun addResolutionRow(parent: LinearLayout, current: () -> Int, onChosen: (Int) -> Unit) {
-        val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        parent.addView(holder)
-        val values = listOf(PresentationIntervals.QUARTER_HOUR_MINUTES, PresentationIntervals.HOUR_MINUTES)
-        val names = listOf(t(R.string.quarter), t(R.string.hour))
-        fun paint() {
-            holder.removeAllViews()
-            val index = values.indexOf(current()).coerceAtLeast(0)
-            settingRow(holder, t(R.string.resolution), names[index]) {
-                chooseOne(t(R.string.resolution), names, index) { chosen, done -> done(null); onChosen(values[chosen]); paint() }
-            }
-        }
-        paint()
     }
 
     /** The widget's option as a value row ("On"/"Off"), applied as soon as it is chosen. */
