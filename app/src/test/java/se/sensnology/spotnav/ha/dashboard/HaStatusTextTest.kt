@@ -239,6 +239,24 @@ class HaStatusTextTest {
             say("solar_car_stopped", mapOf("time" to "2026-09-22T08:15:00+00:00"), "sv"))
     }
 
+    @Test fun anEmptyChargerOnSolarSaysNoCarOrTheSurplusThereIsForOne() {
+        fun say(code: String, params: Map<String, Any?> = emptyMap(), language: String = "en") =
+            HaStatusText.line(StatusLine(code, params), format(language), now)
+        assertEquals("Sol · ingen bil inkopplad", say("solar_no_car", language = "sv"))
+        assertEquals("Sol · överskott finns (4,2 kW)", say("solar_no_car_surplus", mapOf("surplus_kw" to 4.23), "sv"))
+        assertEquals("Solar · no car plugged in", say("solar_no_car"))
+        assertEquals("Solar · surplus available (4.2 kW)", say("solar_no_car_surplus", mapOf("surplus_kw" to 4.23)))
+        assertEquals("Sol · överskott finns", say("solar_no_car_surplus", mapOf("surplus_kw" to null), "sv"))
+        for (language in HaStatusWording.LANGUAGES) {
+            for (line in listOf(StatusLine("solar_no_car", emptyMap()), StatusLine("solar_no_car_surplus", mapOf("surplus_kw" to null)))) {
+                val text = HaStatusText.line(line, format(language), now)
+                assertTrue("$language: $text", !text.isNullOrBlank() && !text!!.contains('{') && !text.contains("Home Assistant"))
+            }
+            val shown = HaStatusText.line(StatusLine("solar_no_car_surplus", mapOf("surplus_kw" to 4.23)), format(language), now)
+            assertTrue("$language: $shown", Regex("""\(4[.,]2 kW\)$""").containsMatchIn(shown ?: ""))
+        }
+    }
+
     @Test fun theWaitingForHistoryFixtureIsWordedInEveryLocale() {
         for (language in HaStatusWording.LANGUAGES) {
             val text = HaStatusText.render(status("waiting_for_history"), format(language), now)
