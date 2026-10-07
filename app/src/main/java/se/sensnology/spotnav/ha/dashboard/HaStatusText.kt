@@ -391,6 +391,10 @@ internal object HaStatusText {
             "sv" -> "och"
             "da", "nb" -> "og"
             "fi" -> "ja"
+            "de" -> "und"
+            "nl" -> "en"
+            "es" -> "y"
+            "fr" -> "et"
             else -> "and"
         }
         return when (items.size) {
@@ -403,7 +407,8 @@ internal object HaStatusText {
 
     /**
      * A weekday in the plural the language uses for "every Sunday" (`Sundays`, `söndagar`,
-     * `søndager`, `søndage`, `sunnuntaisin`), or `null` for a number that is no ISO weekday.
+     * `søndager`, `søndage`, `sunnuntaisin`, `Sonntage`, `zondagen`, `domingos`, `dimanches`), or `null`
+     * for a number that is no ISO weekday.
      */
     internal fun weekdayPlural(language: String, isoWeekday: Double?): String? {
         val number = isoWeekday?.takeIf { it == Math.floor(it) && it >= 1 && it <= 7 }?.toInt() ?: return null
@@ -414,6 +419,10 @@ internal object HaStatusText {
             "nb" -> "${name}er"
             "da" -> "${name}e"
             "fi" -> if (name.endsWith("i")) "${name}sin" else "${name}isin"
+            "de" -> name.replaceFirstChar { it.titlecase(locale) } + "e"
+            "nl" -> "${name}en"
+            "es" -> if (name.endsWith("s")) name else "${name}s"
+            "fr" -> "${name}s"
             else -> name.replaceFirstChar { it.titlecase(locale) } + "s"
         }
     }
