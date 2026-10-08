@@ -1,0 +1,53 @@
+name: "Bug in the app or widget"
+description: Report something in the SpotNav Android app or its widget that does not work as it should.
+title: "App bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Paired with Home Assistant and the SpotNav card shows the same thing? Then the cause
+        is in Home Assistant: please report it in [SpotNav for Home Assistant](https://github.com/henrikekblad/spotnav-home-assistant/issues/new/choose) instead.
+        Paired: the card's debug file (Settings → Support → **Download debug info**) helps a lot, but it holds your
+        entity ids, device names and charging times, so **do not attach it here** (files on GitHub are public);
+        email it to **support@sensnology.se** with this issue's number in the subject.
+        Do not paste addresses, webhook ids or tokens below.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: The app (at the bottom of Settings), Android, and SpotNav for Home Assistant if paired.
+      placeholder: "Example: app 1.2.0, Android 15, SpotNav 1.14.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: paired
+    attributes:
+      label: Paired with Home Assistant?
+      options:
+        - "Yes"
+        - "No, the app on its own"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where it happens
+      multiple: true
+      options:
+        - Prices, the chart or the price table
+        - The widget
+        - The plan or charging
+        - Settings
+        - Notifications
+        - Pairing with Home Assistant
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what the app did instead, with the time it happened. A screenshot helps.
+    validations:
+      required: true
