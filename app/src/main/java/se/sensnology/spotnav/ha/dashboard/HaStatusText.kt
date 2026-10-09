@@ -227,6 +227,17 @@ internal object HaStatusText {
                     grid + say("strategy.status.hybrid.creditSuffix", mapOf("credit" to number(format.locale, credit, 1)))
                 } else grid
             }
+            "balancing_paused" -> {
+                // Load balancing paused the plan's charge: why (the house, or a home battery charging from the grid) and
+                // when it is tried again, or that it is when there is room.
+                val battery = p["cause"] == "battery_shares_fuse"
+                val at = instant(p["retry_at"])
+                if (at == null || zone == null) {
+                    say(if (battery) "status.balancingPausedBatteryRoom" else "status.balancingPausedHouseRoom")
+                } else {
+                    say(if (battery) "status.balancingPausedBattery" else key, mapOf("time" to clock(at)))
+                }
+            }
             "load_balancing_limited" -> {
                 val limit = num(p["limit_a"])
                 // The cause names who shares the fuse; an unknown (or absent) cause is the plain sentence.

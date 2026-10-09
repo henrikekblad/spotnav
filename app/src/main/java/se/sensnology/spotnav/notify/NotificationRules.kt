@@ -131,7 +131,7 @@ internal object NotificationRules {
     /** Lines under which a charge that is not running is no fault (`docs/notifications.md`). */
     private val EXCUSED = setOf(
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "waiting_for_vehicle_update",
-        "load_balancing_limited",
+        "load_balancing_limited", "balancing_paused",
         // The car ends a charge to its own limit itself: one that stops there is full, not a fault.
         "charging_to_vehicle_limit", "topping_off"
     )
