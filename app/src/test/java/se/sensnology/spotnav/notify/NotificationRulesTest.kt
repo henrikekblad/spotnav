@@ -229,6 +229,15 @@ class NotificationRulesTest {
         assertNull(snapshot.stopReason)
     }
 
+    @Test fun aChargeLoadBalancingPausedIsNoFault() {
+        val paused = idleWith(
+            "balancing_paused",
+            JSONObject().put("retry_at", "2026-09-22T07:15:00+00:00").put("cause", "battery_shares_fuse")
+        )
+        val snapshot = NotificationRules.snapshot(paused, Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
+        assertNull(snapshot.stopReason)
+    }
+
     @Test fun aCarFinishingPastTheLastWindowIsNoFaultWhenItStops() {
         val finishing = startIdle()
         finishing.getJSONObject("status").getJSONArray("lines")
