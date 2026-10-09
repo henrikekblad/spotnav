@@ -354,7 +354,12 @@ internal data class Dashboard(
      * The camera for identification (`camera_identification`, see [DashboardCamera]): `null` where Home
      * Assistant offers no camera, from an older one, or for a block this app cannot read.
      */
-    val cameraIdentification: DashboardCamera? = null
+    val cameraIdentification: DashboardCamera? = null,
+    /**
+     * How many new plans Home Assistant told (`plan_notice.seq`, a whole number from 0): the app's own check
+     * tells a new plan when it rises. `null` from an older Home Assistant or for a block this app cannot read.
+     */
+    val planNotice: Long? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -450,8 +455,19 @@ internal data class Dashboard(
                 progress = DashboardProgress.parse(json),
                 identification = DashboardIdentification.parse(json.opt("identification")),
                 vehicleChoices = vehicleChoices(json.opt("vehicle_choices")),
-                cameraIdentification = DashboardCamera.parse(json.opt("camera_identification"))
+                cameraIdentification = DashboardCamera.parse(json.opt("camera_identification")),
+                planNotice = planNotice(json.opt("plan_notice"))
             )
+        }
+
+        /** `plan_notice.seq`, read leniently: anything but a whole number from 0 is not there. */
+        private fun planNotice(raw: Any?): Long? {
+            val seq = (raw as? JSONObject)?.opt("seq") ?: return null
+            return when (seq) {
+                is Int -> seq.toLong()
+                is Long -> seq
+                else -> null
+            }?.takeIf { it >= 0 }
         }
 
         /** `vehicle_choices`, read leniently: an entry without an id (or a repeated one) is skipped. */

@@ -46,7 +46,12 @@ internal data class NotificationSnapshot(
     /** What remains of a manual need (Home Assistant 1.9), `null` where nothing counts it. */
     val remainingKwh: Double?,
     /** The energy of the plan the preview proposes. */
-    val plannedKwh: Double?
+    val plannedKwh: Double?,
+    /**
+     * How many new plans Home Assistant told (`plan_notice.seq`): when it states it, a new plan is told when it
+     * rises and [planKey] is not compared. `null` from an older Home Assistant.
+     */
+    val planNotice: Long? = null
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -64,6 +69,7 @@ internal data class NotificationSnapshot(
         put("target_percent", targetPercent ?: JSONObject.NULL)
         put("remaining_kwh", remainingKwh ?: JSONObject.NULL)
         put("planned_kwh", plannedKwh ?: JSONObject.NULL)
+        put("plan_notice", planNotice ?: JSONObject.NULL)
     }
 
     companion object {
@@ -87,7 +93,8 @@ internal data class NotificationSnapshot(
                 targetReached = flag("target_reached"),
                 targetPercent = number("target_percent"),
                 remainingKwh = number("remaining_kwh"),
-                plannedKwh = number("planned_kwh")
+                plannedKwh = number("planned_kwh"),
+                planNotice = (json.opt("plan_notice") as? Number)?.toLong()
             )
         }.getOrNull()
     }
@@ -188,7 +195,8 @@ internal object NotificationRules {
             targetReached = "target_reached" in codes,
             targetPercent = dashboard.soc?.targetPercent ?: settings?.target?.targetPercent,
             remainingKwh = remaining,
-            plannedKwh = dashboard.plan.proposal?.plannedKwh
+            plannedKwh = dashboard.plan.proposal?.plannedKwh,
+            planNotice = dashboard.planNotice
         )
     }
 
@@ -227,7 +235,14 @@ internal object NotificationRules {
         if (now.charging && !before.charging) add(LocalEvent(NotificationEvent.CHARGE_STARTED, time = now.windowEnd))
         if (now.connected == true && before.connected == false) add(LocalEvent(NotificationEvent.PLUGGED_IN))
         if (now.connected == false && before.connected == true) add(LocalEvent(NotificationEvent.UNPLUGGED))
-        if (now.planKey != null && now.planKey != before.planKey && now.planStart != null) {
+        val newPlan = if (now.planNotice != null) {
+            // Home Assistant decides what is a new plan (not while the car is away, once per burst, not the rest
+            // of a told plan): told when its count rises. The first count after an update is a baseline.
+            before.planNotice != null && now.planNotice != before.planNotice
+        } else {
+            now.planKey != null && now.planKey != before.planKey
+        }
+        if (newPlan && now.planStart != null) {
             add(LocalEvent(NotificationEvent.PLAN_INSTALLED, time = now.planStart, kwh = now.plannedKwh))
         }
     }
