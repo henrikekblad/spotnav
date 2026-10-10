@@ -101,6 +101,9 @@ internal class ScreenShell(
     var liveRefreshReconsider: (() -> Unit)? = null
     var dayZone: (() -> java.time.ZoneId)? = null
 
+    /** The car the next settings screen opens at (its vehicle card, that car's tab); taken by that screen. */
+    var settingsCar: String? = null
+
     /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
     var onNotificationPermission: (() -> Unit)? = null
 

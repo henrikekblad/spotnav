@@ -130,6 +130,18 @@ internal class PairedSettingsCards(
 
     /** The car tab chosen in the car card (several cars only). */
     private var selectedCar: String? = null
+
+    // The car Settings was opened at, until its card has been drawn and scrolled to.
+    private var focusCar: String? = null
+    private var scrollTo: (Int) -> Unit = {}
+
+    /** Open at [vehicleId]: its tab chosen, and [scroll] handed the top of its card once drawn. */
+    fun openAtCar(vehicleId: String, scroll: (Int) -> Unit) {
+        selectedCar = vehicleId
+        focusCar = vehicleId
+        scrollTo = scroll
+        repaint()
+    }
     private val adoptedReferences = mutableMapOf<String, List<ReferencePicture>>()
     private val thumbnails = object : LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Bitmap>?): Boolean = size > MAX_THUMBNAILS
@@ -228,6 +240,11 @@ internal class PairedSettingsCards(
 
     private fun addVehicleCards(dash: Dashboard) {
         val vehicles = PairedOverview.vehicles(dash, adoptedVehicles)
+        focusCar?.takeIf { car -> vehicles.any { it.id == car } }?.let {
+            focusCar = null
+            // The card is the container's first view; its top is known once laid out.
+            container.post { scrollTo(container.top) }
+        }
         if (vehicles.isEmpty()) {
             val card = card(container, t(R.string.vehicle_title), R.drawable.ic_ev)
             card.body.addView(muted(t(R.string.settings_vehicle_none), top = 8))

@@ -175,6 +175,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val pairedCards = settingsProfile?.let {
             PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it), chargerTabs = chargerTabs)
         }
+        // Opened from the charger card's car row: at that car, once.
+        shell.settingsCar?.let { car -> pairedCards?.openAtCar(car) { y -> shell.scrollView.post { shell.scrollView.smoothScrollTo(0, y) } } }
+        shell.settingsCar = null
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration
