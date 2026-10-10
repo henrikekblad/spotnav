@@ -130,7 +130,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                 isRowEnabled = { position ->
                     selector.entries.getOrNull(position)?.kind != ChargerCardSelector.Kind.PLACEHOLDER
                 },
-                // Each paired charger's car and its levels, from its last dashboard ("EV6 · 89 % → 93 %").
+                // Each paired charger's car and its levels, from its last dashboard ("EV6 · 89 % av 93 % mål").
                 subtitle = { position -> chargerCarLine(selector.entries.getOrNull(position)) }
             )
             chargerSpinner.setSelection(selector.selectedIndex, false)
@@ -402,7 +402,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
     private fun chargerCarLine(entry: ChargerCardSelector.Entry?): String? {
         val profile = entry?.profile?.takeIf { entry.kind == ChargerCardSelector.Kind.PROFILE && it.configured } ?: return null
         val stored = WidgetDashboardStore.forContext(applicationContext).dashboardFor(profile.localId) ?: return null
-        return PairedCarLine.summary(stored.dashboard) { value -> t(R.string.vehicle_card_soc_value, value) }
+        return PairedCarLine.summary(stored.dashboard, { value -> t(R.string.vehicle_card_soc_value, value) }, template(R.string.car_line_of_target))
     }
 
     /** One row's label in the charger card's selector. */
