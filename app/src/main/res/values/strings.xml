@@ -470,6 +470,9 @@
   <string name="charge_bar_done">%1$d %% done</string>
   <string name="charge_bar_of_target">%1$d %% of target</string>
   <string name="car_line_of_target">%1$s of %2$s target</string>
+  <string name="car_caption">Car</string>
+  <string name="car_with">Car · %1$s</string>
+  <string name="car_caption_choose">Choose car</string>
   <string name="charge_bar_ends">done about %1$s</string>
   <string name="charge_bar_charging">Charging</string>
   <string name="charge_bar_charging_power">Charging · %1$s kW</string>

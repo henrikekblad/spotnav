@@ -459,6 +459,9 @@
   <string name="charge_bar_done">%1$d %% ferdig</string>
   <string name="charge_bar_of_target">%1$d %% av målet</string>
   <string name="car_line_of_target">%1$s av %2$s mål</string>
+  <string name="car_caption">Bil</string>
+  <string name="car_with">Bil · %1$s</string>
+  <string name="car_caption_choose">Velg bil</string>
   <string name="charge_bar_ends">ferdig ca. %1$s</string>
   <string name="charge_bar_charging">Lader</string>
   <string name="charge_bar_charging_power">Lader · %1$s kW</string>

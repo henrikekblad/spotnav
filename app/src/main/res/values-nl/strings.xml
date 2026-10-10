@@ -459,6 +459,9 @@
   <string name="charge_bar_done">%1$d %% klaar</string>
   <string name="charge_bar_of_target">%1$d %% van doel</string>
   <string name="car_line_of_target">%1$s van %2$s doel</string>
+  <string name="car_caption">Auto</string>
+  <string name="car_with">Auto · %1$s</string>
+  <string name="car_caption_choose">Auto kiezen</string>
   <string name="charge_bar_ends">klaar rond %1$s</string>
   <string name="charge_bar_charging">Laden</string>
   <string name="charge_bar_charging_power">Laadt · %1$s kW</string>
