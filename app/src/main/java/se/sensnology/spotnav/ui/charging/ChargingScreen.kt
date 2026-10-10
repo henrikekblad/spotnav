@@ -169,8 +169,13 @@ internal class ChargingScreen(
             objectCards, settings, resolvedChargerProfile, shareRow, onOpenHistory = { shell.navigate(Screen.HISTORY) }
         ) { rebuild() }
         connection = chargerCard.connection
+        // One car at the charger: its row opens the car's own settings.
+        chargerCard.identification.attachOpenCar { vehicleId ->
+            shell.settingsCar = vehicleId
+            shell.navigate(Screen.SETTINGS)
+        }
         // The vehicle card is the second of the two. Paired with Home Assistant the car is the charger
-        // card's car line instead (the car Home Assistant plans for, its levels and Byt bil), and its
+        // card's car row or button instead (the car Home Assistant plans for and its levels), and its
         // details live in Settings: the card is kept for its facts and stays out of sight.
         vehicleCard = VehicleCardController(this).add(objectCards, settings, resolvedChargerProfile, shareRow)
         if (resolvedChargerProfile?.configured == true) vehicleCard.body.visibility = View.GONE

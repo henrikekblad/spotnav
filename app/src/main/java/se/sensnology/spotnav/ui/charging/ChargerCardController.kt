@@ -222,9 +222,6 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(vehicleLine)
 
-        // Which car is plugged in: the open question's banner, else the car line with Byt bil.
-        val identification = IdentificationViews(this, card.body)
-
         // The controls themselves live in the popovers, built once here rather than per tap, so
         // they stay the single source of truth that `currentSettings()`, the shared seek listener
         // and the phases listener already read.
@@ -285,6 +282,10 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         val historyValue = valueLabel()
         val historyRow = valueRow(card.body, t(R.string.history_row_label), historyValue) { onOpenHistory() }
         historyRow.view.visibility = View.GONE
+
+        // The car: one car's value row right under the history; with several, the open question and
+        // the car's button, last on the card so Start and Pause (attached after) sit right under it.
+        val identification = IdentificationViews(this, card.body)
 
         val renderPhasesRow = {
             val notSet = connection.phasesNotSet()
@@ -525,7 +526,7 @@ internal class ChargerCard(
     val advisory: TextView,
     /** The vehicle's charge followed by the connection state; hidden when there is neither. */
     val vehicleLine: TextView,
-    /** "Which car is plugged in?": the banner and the car line with Byt bil (see [IdentificationViews]). */
+    /** The car: its value row, or the question's banner and the car's button (see [IdentificationViews]). */
     val identification: IdentificationViews,
     val connection: ConnectionControls,
     val refreshPhasesRow: () -> Unit,

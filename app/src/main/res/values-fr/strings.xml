@@ -467,6 +467,9 @@
   <string name="charge_bar_done">%1$d %% effectués</string>
   <string name="charge_bar_of_target">%1$d %% de l\'objectif</string>
   <string name="car_line_of_target">%1$s sur un objectif de %2$s</string>
+  <string name="car_caption">Voiture</string>
+  <string name="car_with">Voiture · %1$s</string>
+  <string name="car_caption_choose">Choisir la voiture</string>
   <string name="charge_bar_ends">fin vers %1$s</string>
   <string name="charge_bar_charging">En charge</string>
   <string name="charge_bar_charging_power">En charge · %1$s kW</string>
