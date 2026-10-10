@@ -35,7 +35,8 @@ class HaStatusTextTest {
             "start" to "2026-09-22T08:15:00+00:00", "until" to "2026-09-22T09:00:00+00:00",
             "window_start" to "2026-09-22T10:15:00+00:00", "window_end" to "2026-09-22T13:15:00+00:00",
             "publication_at" to "2026-09-22T11:45:00+00:00", "currency" to "SEK",
-            "basis" to "estimate", "reason" to "ready", "missing" to listOf("area"), "choice" to "next_period"
+            "basis" to "estimate", "reason" to "ready", "missing" to listOf("area"), "choice" to "next_period",
+            "stopped_at" to "2026-09-22T05:31:00+00:00"
         )
         for ((code, spec) in HaFixtures.statusCodes()) {
             val withParams = spec.first.associateWith { fact[it] ?: 12.5 }
@@ -65,9 +66,35 @@ class HaStatusTextTest {
         )
     }
 
-    @Test fun aTargetStoppedOnAnEstimateSaysSoAndHowOldTheReadingIs() {
+    @Test fun aTargetStoppedOnAnEstimateSaysSoAndWhenItStopped() {
         val text = HaStatusText.render(status("target_soc_stopped_on_estimate"), format("sv"), now)!!
-        assertTrue(text, text.endsWith("Stoppad vid 81 % (uppskattat, avläsningen 30 min gammal)"))
+        assertTrue(text, text.endsWith("Stoppad vid 81 % kl. 08:30 (uppskattat)"))
+    }
+
+    @Test fun aTargetStopIsToldWithItsTimeNeverAsJustNowHoursLater() {
+        // The field case: stopped at 05:31Z on a fresh reading (age 0 then), read three hours later.
+        val later = Instant.parse("2026-10-10T08:33:00Z")
+        fun worded(language: String, basis: String, at: String?, atNow: Instant = later) = HaStatusText.line(
+            StatusLine(
+                "target_reached",
+                mapOf("soc_percent" to 53.0, "basis" to basis, "reading_age_s" to 0.0, "stopped_at" to at)
+            ),
+            format(language),
+            atNow
+        )
+        val stop = "2026-10-10T05:31:00+00:00"
+        assertEquals("Stoppad vid 53 % kl. 07:31", worded("sv", "reading", stop))
+        assertEquals("Stoppad vid 53 % kl. 07:31 (uppskattat)", worded("sv", "estimate", stop))
+        assertEquals("Stopped at 53 % at 07:31", worded("en", "reading", stop))
+        // A stop on an earlier day names the day.
+        val nextDay = worded("en", "reading", stop, Instant.parse("2026-10-11T08:33:00Z"))
+        assertTrue(nextDay, nextDay.startsWith("Stopped at 53 % at ") && nextDay.endsWith(" 07:31") && nextDay.length > 24)
+        // A Home Assistant without the time: the reading's age, as before.
+        assertEquals("Stoppad vid 53 % (nyss)", worded("sv", "reading", null))
+        for (language in HaStatusWording.LANGUAGES) {
+            val text = worded(language, "reading", stop)
+            assertTrue("$language: $text", text.contains("07:31") && !text.contains('{'))
+        }
     }
 
     @Test fun anInstantIsNotWrittenWithoutAZone() {
