@@ -75,8 +75,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            // Room for the swap mark on either side, so the text stays centred.
-            setPadding(dp(30), dp(7), dp(30), dp(8))
+            setPadding(dp(14), dp(7), dp(14), dp(8))
             addView(caption)
             addView(LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -85,9 +84,6 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
                 addView(mainText, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
             }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         }, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
-        addView(glyph(R.drawable.ic_swap, accent, 18), FrameLayout.LayoutParams(dp(18), dp(18), Gravity.END or Gravity.CENTER_VERTICAL).apply {
-            marginEnd = dp(14)
-        })
     }
 
     init {
