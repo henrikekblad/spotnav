@@ -41,4 +41,21 @@ class CarLineWordingTest {
             }
         }
     }
+
+    @Test fun theCarsLevelIsWordedAsAShareOfTheTargetAsTheCardHasIt() {
+        val expected = mapOf(
+            "values" to "%1\$s of %2\$s target",
+            "values-sv" to "%1\$s av %2\$s mål",
+            "values-da" to "%1\$s af %2\$s mål",
+            "values-nb" to "%1\$s av %2\$s mål",
+            "values-fi" to "%1\$s / %2\$s tavoite",
+            "values-de" to "%1\$s von %2\$s Ziel",
+            "values-nl" to "%1\$s van %2\$s doel",
+            "values-es" to "%1\$s de un objetivo de %2\$s",
+            "values-fr" to "%1\$s sur un objectif de %2\$s"
+        )
+        for ((directory, words) in expected) {
+            assertEquals(directory, words, text(directory, "car_line_of_target"))
+        }
+    }
 }
