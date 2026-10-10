@@ -50,10 +50,11 @@ class NotificationRulesTest {
         targetReached: Boolean = false,
         targetPercent: Double? = null,
         remainingKwh: Double? = null,
-        plannedKwh: Double? = null
+        plannedKwh: Double? = null,
+        planNotice: Long? = null
     ) = NotificationSnapshot(
         at, charging, connected, planKey, planStart, windowOpen, windowEnd, windowsLeft, stopReason, atRisk,
-        departure, targetReached, targetPercent, remainingKwh, plannedKwh
+        departure, targetReached, targetPercent, remainingKwh, plannedKwh, planNotice
     )
 
     private fun events(
@@ -229,6 +230,15 @@ class NotificationRulesTest {
         assertNull(snapshot.stopReason)
     }
 
+    @Test fun aChargeLoadBalancingPausedIsNoFault() {
+        val paused = idleWith(
+            "balancing_paused",
+            JSONObject().put("retry_at", "2026-09-22T07:15:00+00:00").put("cause", "battery_shares_fuse")
+        )
+        val snapshot = NotificationRules.snapshot(paused, Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
+        assertNull(snapshot.stopReason)
+    }
+
     @Test fun aCarFinishingPastTheLastWindowIsNoFaultWhenItStops() {
         val finishing = startIdle()
         finishing.getJSONObject("status").getJSONArray("lines")
@@ -251,7 +261,9 @@ class NotificationRulesTest {
         val store = LocalNotificationStore(FakeKeyValueStore())
         assertFalse(store.enabled)
         assertEquals(NotificationEvent.LOCAL_DEFAULTS.toSet(), store.events)
-        val snapshot = snap(planKey = "k", planStart = "02:00", windowsLeft = true, remainingKwh = 4.5, departure = "07:30")
+        val snapshot = snap(
+            planKey = "k", planStart = "02:00", windowsLeft = true, remainingKwh = 4.5, departure = "07:30", planNotice = 7
+        )
         store.remember("p", snapshot, mapOf(PLUGGED_IN to later))
         assertEquals(snapshot, store.snapshot("p"))
         assertEquals(mapOf(PLUGGED_IN to later), store.lastSent("p"))
@@ -260,5 +272,56 @@ class NotificationRulesTest {
         store.forget("p")
         assertNull(store.snapshot("p"))
         assertEquals(emptyMap<NotificationEvent, Instant>(), store.lastSent("p"))
+    }
+
+    // ------------------------------------------------------------------ Home Assistant decides what a new plan is
+
+    @Test fun aNewPlanIsToldWhenHomeAssistantsCountRisesAndOnlyThen() {
+        val told = snap(planKey = "a", planNotice = 4)
+        // Home Assistant told a new plan: so does the app, worded from the plan that stands.
+        assertEquals(
+            listOf(LocalEvent(PLAN_INSTALLED, time = "02:00", kwh = 12.5)),
+            events(told, snap(at = later, planKey = "b", planStart = "02:00", windowsLeft = true, plannedKwh = 12.5, planNotice = 5))
+        )
+        // Other windows Home Assistant did not count (the car away, a burst, the rest of a told plan): nothing.
+        assertEquals(
+            emptyList<LocalEvent>(),
+            events(told, snap(at = later, planKey = "c", planStart = "02:00", windowsLeft = true, planNotice = 4))
+        )
+        // The count rose with the same windows (the energy changed, or a plan told again after the car was back).
+        assertEquals(
+            listOf(LocalEvent(PLAN_INSTALLED, time = "02:00")),
+            events(told, snap(at = later, planKey = "a", planStart = "02:00", windowsLeft = true, planNotice = 5))
+        )
+    }
+
+    @Test fun theFirstCountAfterAnUpdateIsABaselineForNewPlans() {
+        // A snapshot from an older Home Assistant (or this app before it read the count): no count to compare.
+        assertEquals(
+            emptyList<LocalEvent>(),
+            events(snap(planKey = "a"), snap(at = later, planKey = "b", planStart = "02:00", windowsLeft = true, planNotice = 3))
+        )
+    }
+
+    @Test fun anOlderHomeAssistantKeepsTheAppsOwnComparison() {
+        assertEquals(
+            listOf(LocalEvent(PLAN_INSTALLED, time = "02:00")),
+            events(snap(planKey = "a", planNotice = 3), snap(at = later, planKey = "b", planStart = "02:00", windowsLeft = true))
+        )
+    }
+
+    @Test fun theDashboardsCountBecomesTheSnapshots() {
+        val zone = ZoneId.of("Europe/Stockholm")
+        val json = startIdle()
+        assertEquals(0L, NotificationRules.snapshot(Dashboard.parse(json), t0, zone).planNotice)
+        json.put("plan_notice", JSONObject().put("seq", 12).put("at", "2026-09-22T05:00:00+00:00"))
+        assertEquals(12L, Dashboard.parse(json).planNotice)
+        assertEquals(12L, NotificationRules.snapshot(Dashboard.parse(json), t0, zone).planNotice)
+        for (odd in listOf(JSONObject.NULL, "12", JSONObject().put("seq", -1), JSONObject().put("seq", 1.5), JSONObject())) {
+            json.put("plan_notice", odd)
+            assertNull(Dashboard.parse(json).planNotice)
+        }
+        json.remove("plan_notice")
+        assertNull(NotificationRules.snapshot(Dashboard.parse(json), t0, zone).planNotice)
     }
 }
