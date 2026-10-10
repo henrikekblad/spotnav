@@ -110,6 +110,6 @@ class IdentificationReviewTest {
         val line = VehicleIdentification.carLine(dash)!!
         org.junit.Assert.assertNull(line.vehicleId)
         org.junit.Assert.assertTrue(line.canSwitch)
-        org.junit.Assert.assertNull(PairedCarLine.summary(dash) { "$it %" })
+        org.junit.Assert.assertNull(PairedCarLine.summary(dash, { "$it %" }, "%1\$s of %2\$s target"))
     }
 }

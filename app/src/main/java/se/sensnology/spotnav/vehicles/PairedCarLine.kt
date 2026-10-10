@@ -2,10 +2,11 @@ package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
+import java.util.Locale
 
 /**
  * The car on a paired charger's card, and in the charger drop-down's rows: its name and its levels,
- * "EV6 · 89 % → 93 %" when planning to a target, only "EV6 · 89 %" when planning an amount, "≈" before
+ * "EV6 · 89 % of 93 % target" when planning to a target, only "EV6 · 89 %" when planning an amount, "≈" before
  * a level Home Assistant estimated between readings and "–" for none. Always the car Home Assistant
  * plans for, never one saved in this app.
  */
@@ -32,18 +33,22 @@ internal object PairedCarLine {
         )
     }
 
-    /** "89 % → 93 %", "≈ 91 % → 93 %", "– → 90 %" or "89 %"; `null` when there is nothing to say. */
-    fun levelsText(levels: Levels, percent: (Int) -> String): String? {
+    /**
+     * "89 % of 93 % target", "≈ 91 % of 93 % target", "– of 90 % target" or "89 %"; `null` when there is
+     * nothing to say. [ofTarget] is the translated `car_line_of_target` template (level, then target).
+     */
+    fun levelsText(levels: Levels, percent: (Int) -> String, ofTarget: String): String? {
         val now = levels.now?.let { (if (levels.estimated) "≈ " else "") + percent(it) }
         val target = levels.target?.takeIf { levels.targetMode } ?: return now
-        return "${now ?: "–"} → ${percent(target)}"
+        // Both parts are already written, so the template needs no locale of its own.
+        return ofTarget.format(Locale.ROOT, now ?: "–", percent(target))
     }
 
-    /** The charger's car and its levels, "EV6 · 89 % → 93 %"; `null` when no car is planned for. */
-    fun summary(dashboard: Dashboard, percent: (Int) -> String): String? {
+    /** The charger's car and its levels, "EV6 · 89 % of 93 % target"; `null` when no car is planned for. */
+    fun summary(dashboard: Dashboard, percent: (Int) -> String, ofTarget: String): String? {
         val line = VehicleIdentification.carLine(dashboard) ?: return null
         val id = line.vehicleId ?: return null
-        return listOfNotNull(line.name ?: id, levelsText(levels(dashboard, id), percent)).joinToString(" · ")
+        return listOfNotNull(line.name ?: id, levelsText(levels(dashboard, id), percent, ofTarget)).joinToString(" · ")
     }
 
     /**

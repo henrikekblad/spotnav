@@ -167,7 +167,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
     }
 
     /**
-     * "EV6 · 89 % → 93 % · identifierad via bilens laddkabel": the name in bold, its levels (see
+     * "EV6 · 89 % av 93 % mål · identifierad via bilens laddkabel": the name in bold, its levels (see
      * [PairedCarLine]), then how it was decided.
      */
     private fun carLineText(held: Dashboard, line: VehicleIdentification.CarLine): CharSequence {
@@ -176,7 +176,7 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         val text = SpannableStringBuilder(line.name ?: id)
         text.setSpan(StyleSpan(Typeface.BOLD), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.setSpan(ForegroundColorSpan(dark), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        PairedCarLine.levelsText(PairedCarLine.levels(held, id), ::percent)?.let { levels ->
+        PairedCarLine.levelsText(PairedCarLine.levels(held, id), ::percent, template(R.string.car_line_of_target))?.let { levels ->
             val start = text.length + 3
             text.append(" · ").append(levels)
             text.setSpan(ForegroundColorSpan(dark), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

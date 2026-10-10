@@ -458,6 +458,7 @@
   <string name="notify_planned_kwh">%1$s kWh suunniteltu.</string>
   <string name="charge_bar_done">%1$d %% valmis</string>
   <string name="charge_bar_of_target">%1$d %% tavoitteesta</string>
+  <string name="car_line_of_target">%1$s / %2$s tavoite</string>
   <string name="charge_bar_ends">valmis noin klo %1$s</string>
   <string name="charge_bar_charging">Ladataan</string>
   <string name="charge_bar_charging_power">Ladataan · %1$s kW</string>

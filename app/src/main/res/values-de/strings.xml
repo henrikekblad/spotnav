@@ -458,6 +458,7 @@
   <string name="notify_planned_kwh">%1$s kWh geplant.</string>
   <string name="charge_bar_done">%1$d %% erledigt</string>
   <string name="charge_bar_of_target">%1$d %% des Ziels</string>
+  <string name="car_line_of_target">%1$s von %2$s Ziel</string>
   <string name="charge_bar_ends">fertig ca. %1$s</string>
   <string name="charge_bar_charging">Lädt</string>
   <string name="charge_bar_charging_power">Lädt · %1$s kW</string>
