@@ -266,16 +266,23 @@ internal object HaStatusText {
                 }
             }
             "target_reached" -> {
-                // The percent is shown rounded (the comparison that stopped the charge never was).
+                // The percent is shown rounded (the comparison that stopped the charge never was). Told with the
+                // time of the stop; without one (an older Home Assistant) the age of the reading it was made on.
                 val soc = number(format.locale, num(p["soc_percent"]) ?: 0.0, 0)
                 val estimated = p["basis"] == "estimate"
+                val stoppedAt = instant(p["stopped_at"])
                 val ageS = num(p["reading_age_s"])
                 val age = when {
                     ageS == null || ageS < 60 -> null
                     ageS < 3600 -> say("status.targetAgeMinutes", mapOf("n" to number(format.locale, Math.floor(ageS / 60), 0)))
                     else -> say("status.targetAgeHours", mapOf("n" to number(format.locale, Math.floor(ageS / 3600), 0)))
                 }
-                if (age == null) {
+                if (stoppedAt != null && zone != null) {
+                    say(
+                        if (estimated) "status.targetStoppedEstimateAt" else "status.targetStoppedAt",
+                        mapOf("soc" to soc, "time" to moment(stoppedAt))
+                    )
+                } else if (age == null) {
                     when {
                         estimated -> say("status.targetStoppedEstimate", mapOf("soc" to soc))
                         ageS == null -> say("status.targetStopped", mapOf("soc" to soc))
