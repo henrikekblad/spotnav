@@ -1,0 +1,4 @@
+- Das Auto ist eine Taste über Start und Pause (tippen zum Wechseln) oder bei einem Auto eine Zeile unter dem Ladeverlauf
+- Hinweis auf einen neuen Plan nur, wenn Home Assistant ihn als neu meldet: keiner, solange das Auto weg ist, keiner für den Rest desselben Plans, einer für schnelle Änderungen
+- Ein Stopp am Ziel zeigt die Uhrzeit: „Gestoppt bei 53 % um 07:31“
+- Die Statuszeile sagt, warum das Auto wartet: „Pausiert – das Haus nutzt die ganze Sicherung; neuer Versuch um 04:30“

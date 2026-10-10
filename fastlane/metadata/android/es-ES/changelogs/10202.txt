@@ -1,0 +1,4 @@
+- El coche es un botón sobre Iniciar y Pausa (toca para cambiar) o, con un solo coche, una fila bajo el historial
+- Aviso de plan nuevo solo cuando Home Assistant dice que es nuevo: ninguno con el coche fuera, ninguno por el resto del mismo plan, uno por cambios rápidos
+- Una parada en el objetivo muestra la hora: "Detenido al 53 % a las 07:31"
+- La línea de estado dice por qué espera el coche: "En pausa: la casa usa todo el fusible; nuevo intento a las 04:30"

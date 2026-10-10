@@ -1,0 +1,5 @@
+- The car is a button over Start and Pause (tap to change car), or a row under the charge history with one car
+- New-plan notifications only when Home Assistant says the plan is news: none while the car is away, none for the rest of the same plan, one for quick changes
+- A stop at the target shows its time: "Stopped at 53 % at 07:31"
+- The status says why the car waits: "Paused – the house is using the whole fuse; trying again at 04:30"
+- Works best with SpotNav for Home Assistant 1.14.2

@@ -1,0 +1,5 @@
+- Bilen er en knap over Start og Pause (tryk for at skifte bil), eller en linje under ladehistorikken med én bil
+- Besked om ny plan kun når Home Assistant siger, at planen er ny: intet mens bilen er væk, intet for resten af samme plan, ét for hurtige ændringer
+- Stop ved målet viser tidspunktet: "Stoppet ved 53 % kl. 07:31"
+- Statuslinjen siger, hvorfor bilen venter: "Pause – huset bruger hele sikringen; prøver igen kl. 04:30"
+- Virker bedst med SpotNav til Home Assistant 1.14.2

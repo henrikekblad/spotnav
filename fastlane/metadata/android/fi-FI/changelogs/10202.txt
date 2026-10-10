@@ -1,0 +1,4 @@
+- Auto on painike Aloita- ja Tauko-painikkeiden yllä (vaihda autoa napauttamalla), tai rivi lataushistorian alla yhdellä autolla
+- Ilmoitus uudesta suunnitelmasta vain, kun Home Assistant kertoo sen olevan uusi: ei auton ollessa poissa, ei saman suunnitelman loppuosasta, yksi nopeista muutoksista
+- Pysähdys tavoitteessa näyttää ajan: "Pysäytetty 53 %:ssa klo 07.31"
+- Tilarivi kertoo, miksi auto odottaa: "Tauko – talo käyttää koko sulakkeen; uusi yritys klo 04.30"

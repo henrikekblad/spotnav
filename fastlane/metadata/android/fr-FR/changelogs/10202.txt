@@ -1,0 +1,4 @@
+- La voiture est un bouton au-dessus de Démarrer et Pause (touchez pour changer) ou, avec une voiture, une ligne sous l'historique
+- Notification de nouveau plan seulement quand Home Assistant le dit nouveau
+- Un arrêt à l'objectif affiche l'heure : « Arrêté à 53 % à 07:31 »
+- La ligne d'état dit pourquoi la voiture attend : « En pause – la maison utilise tout le disjoncteur ; nouvel essai à 04:30 »
