@@ -145,6 +145,7 @@ jobs:
             cp "$file" "whatsnew/whatsnew-$locale"
           done
           echo "upload=true" >> "$GITHUB_OUTPUT"
+          echo "name=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
       - name: Upload to Google Play (draft)
         if: steps.play.outputs.upload == 'true'
         uses: r0adkll/upload-google-play@v1
@@ -154,4 +155,7 @@ jobs:
           releaseFiles: spotnav-*-play.aab
           track: production
           status: draft
+          # Named after this version: a draft left unsubmitted from an earlier tag is updated in place, and kept
+          # its old name (1.2.2 went up as "1.2.1").
+          releaseName: ${{ steps.play.outputs.name }}
           whatsNewDirectory: whatsnew
