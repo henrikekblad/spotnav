@@ -1,0 +1,4 @@
+- Varsel om ny plan bare når Home Assistant sier at planen er ny: ingen mens bilen er borte, ingen for resten av samme plan, én for raske endringer
+- Stopp ved målet viser klokkeslettet: "Stoppet ved 53 % kl. 07:31"
+- Statuslinjen sier hvorfor bilen venter: "Pause – huset bruker hele sikringen; prøver igjen kl. 04:30"
+- Fungerer best med SpotNav for Home Assistant 1.14.2

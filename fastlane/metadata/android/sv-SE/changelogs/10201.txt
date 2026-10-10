@@ -1,0 +1,4 @@
+- Notis om ny plan bara när Home Assistant säger att planen är ny: ingen när bilen är borta, ingen för resten av samma plan, en för snabba ändringar
+- Stopp vid målet visar tiden: "Stoppad vid 53 % kl. 07:31"
+- Statusraden säger varför bilen väntar: "Pausad – huset använder hela säkringen; försöker igen kl. 04:30"
+- Fungerar bäst med SpotNav för Home Assistant 1.14.2

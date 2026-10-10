@@ -1,0 +1,4 @@
+- Melding over een nieuw plan alleen als Home Assistant zegt dat het nieuw is: geen terwijl de auto weg is, geen voor de rest van hetzelfde plan, één voor snelle wijzigingen
+- Een stop bij het doel toont de tijd: "Gestopt bij 53 % om 07:31"
+- De statusregel zegt waarom de auto wacht: "Gepauzeerd – het huis gebruikt de hele zekering; nieuwe poging om 04:30"
+- Werkt het best met SpotNav voor Home Assistant 1.14.2
