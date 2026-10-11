@@ -126,7 +126,7 @@ class WidgetChartSourceTest {
         val source = WidgetChartSource.of("c1", chargerKnown = true, shown, tomorrowPlan, evening) as WidgetChartSource.Dashboard
         assertEquals(96, source.chart.prices.tomorrow.size)
         assertEquals(
-            listOf(se.sensnology.spotnav.chart.ChartBand(java.time.LocalDate.parse("2026-09-23"), 690f, 885f)),
+            listOf(se.sensnology.spotnav.chart.ChartBand(java.time.LocalDate.parse("2026-09-23"), 690f, 885f, tomorrow = true)),
             source.bands
         )
     }
