@@ -257,4 +257,90 @@ class DashboardChartTest {
             java.util.TimeZone.setDefault(saved)
         }
     }
+
+    /** Two installed windows today, a proposal across the first one's end and one window tomorrow. */
+    private fun waiting(applied: Boolean, pendingIdentity: String? = "p2"): Dashboard {
+        val json = HaFixtures.json("dashboard/cheapest_direct_site_admin.json")
+        fun periods(vararg spans: Pair<String, String>) = org.json.JSONArray().apply {
+            spans.forEach { (start, end) -> put(JSONObject().put("start", start).put("end", end)) }
+        }
+        val plan = json.getJSONObject("plan")
+        plan.getJSONObject("installed").put(
+            "periods",
+            periods("2026-09-22T10:15:00+00:00" to "2026-09-22T13:15:00+00:00", "2026-09-22T16:00:00+00:00" to "2026-09-22T17:00:00+00:00")
+        )
+        plan.getJSONObject("proposal").put("identity", "p2").put(
+            "periods",
+            periods("2026-09-22T12:30:00+00:00" to "2026-09-22T14:00:00+00:00", "2026-09-23T05:00:00+00:00" to "2026-09-23T06:00:00+00:00")
+        )
+        plan.put(
+            "relation",
+            JSONObject().put("applied", applied).put("applied_identity", "71b4b5b5892260a997cbed7f23370994")
+                .put("pending_identity", pendingIdentity ?: JSONObject.NULL)
+        )
+        return Dashboard.parse(json)
+    }
+
+    private val today = LocalDate.parse("2026-09-22")
+    private val tomorrow = LocalDate.parse("2026-09-23")
+    private fun minute(hour: Int, minute: Int = 0) = hour * 60f + minute
+    private val inFirstWindow = OffsetDateTime.parse("2026-09-22T11:00:00+00:00").toInstant()
+    private val beforeAnyWindow = OffsetDateTime.parse("2026-09-22T09:00:00+00:00").toInstant()
+
+    @Test fun thePlansRelationAndTheProposalsIdentityAreDecoded() {
+        val d = waiting(applied = false)
+        assertEquals("p2", d.plan.proposal!!.identity)
+        assertEquals(false, d.plan.relation!!.applied)
+        assertEquals("p2", d.plan.relation!!.pendingIdentity)
+        assertEquals(true, fixture("cheapest_direct_site_admin").plan.relation!!.applied)
+    }
+
+    @Test fun aWaitingProposalIsDrawnFromTheRunningWindowsEndAndHidesTheWindowsItReplaces() {
+        val chart = DashboardChart.build(waiting(applied = false), now = inFirstWindow)!!
+        assertEquals(
+            listOf(
+                // The running window, 12:15-15:15 local; the 18:00-19:00 window is replaced and not drawn.
+                ChartBand(today, minute(12, 15), minute(15, 15), ChartBandKind.INSTALLED, tomorrow = false),
+                // The proposal from the running window's end, and tomorrow's window hatched.
+                ChartBand(today, minute(15, 15), minute(16), ChartBandKind.PROPOSAL, tomorrow = false),
+                ChartBand(tomorrow, minute(7), minute(8), ChartBandKind.PROPOSAL, tomorrow = true)
+            ),
+            chart.bands
+        )
+    }
+
+    @Test fun aWaitingProposalWithNoRunningWindowIsDrawnWholeAndNoInstalledWindowIs() {
+        val chart = DashboardChart.build(waiting(applied = false), now = beforeAnyWindow)!!
+        assertTrue(chart.bands.all { it.kind == ChartBandKind.PROPOSAL })
+        assertEquals(
+            listOf(
+                ChartBand(today, minute(14, 30), minute(16), ChartBandKind.PROPOSAL, tomorrow = false),
+                ChartBand(tomorrow, minute(7), minute(8), ChartBandKind.PROPOSAL, tomorrow = true)
+            ),
+            chart.bands
+        )
+    }
+
+    @Test fun withNothingWaitingTheInstalledScheduleIsWholeAndTheProposalFillsOnlyWhatIsNotInstalled() {
+        val expected = listOf(
+            ChartBand(today, minute(12, 15), minute(15, 15), ChartBandKind.INSTALLED, tomorrow = false),
+            ChartBand(today, minute(18), minute(19), ChartBandKind.INSTALLED, tomorrow = false),
+            ChartBand(today, minute(15, 15), minute(16), ChartBandKind.PROPOSAL, tomorrow = false),
+            ChartBand(tomorrow, minute(7), minute(8), ChartBandKind.PROPOSAL, tomorrow = true)
+        )
+        assertEquals(expected, DashboardChart.build(waiting(applied = true), now = inFirstWindow)!!.bands)
+        // A pending identity that is not the proposal's is not a waiting proposal either.
+        assertNull(DashboardChart.pendingProposal(waiting(applied = false, pendingIdentity = "other"), inFirstWindow))
+        assertEquals(expected, DashboardChart.build(waiting(applied = false, pendingIdentity = "other"), now = inFirstWindow)!!.bands)
+    }
+
+    @Test fun theRunningWindowIsTheInstalledPeriodThatHoldsTheClock() {
+        assertEquals(
+            se.sensnology.spotnav.planning.ChargingPeriod(
+                OffsetDateTime.parse("2026-09-22T10:15:00+00:00"), OffsetDateTime.parse("2026-09-22T13:15:00+00:00")
+            ),
+            DashboardChart.pendingProposal(waiting(applied = false), inFirstWindow)!!.running
+        )
+        assertNull(DashboardChart.pendingProposal(waiting(applied = false), beforeAnyWindow)!!.running)
+    }
 }
