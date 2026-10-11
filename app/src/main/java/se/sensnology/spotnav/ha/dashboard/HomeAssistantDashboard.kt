@@ -99,7 +99,9 @@ internal data class DashboardProposal(
     val unpriced: Boolean,
     val unpricedSlots: Int?,
     val pricedSlots: Int?,
-    val periods: List<DashboardPeriod>
+    val periods: List<DashboardPeriod>,
+    /** The proposal's identity (`identity`), compared with [DashboardPlanRelation.pendingIdentity]; `null` when absent. */
+    val identity: String? = null
 )
 
 internal data class DashboardInstalled(
@@ -111,6 +113,12 @@ internal data class DashboardInstalled(
     val powerKw: Double? = null
 )
 
+/**
+ * How the proposal stands to the installed schedule (`plan.relation`). [applied] is `null` when the answer
+ * does not state it; [pendingIdentity] names the proposal that is installed when the running window ends.
+ */
+internal data class DashboardPlanRelation(val applied: Boolean?, val pendingIdentity: String?)
+
 internal data class DashboardPlan(
     val proposal: DashboardProposal?,
     val installed: DashboardInstalled?,
@@ -119,7 +127,9 @@ internal data class DashboardPlan(
      * `null` where nothing tracks it (a target, nothing delivered known, an older Home Assistant).
      */
     val deliveredKwh: Double? = null,
-    val remainingKwh: Double? = null
+    val remainingKwh: Double? = null,
+    /** `plan.relation`, or `null` from an answer without one. */
+    val relation: DashboardPlanRelation? = null
 )
 
 internal data class DashboardVehicleRef(val id: String, val name: String)
@@ -664,7 +674,8 @@ internal data class Dashboard(
                     unpriced = p.opt("unpriced") == true,
                     unpricedSlots = optInt(p, "unpriced_slots"),
                     pricedSlots = optInt(p, "priced_slots"),
-                    periods = periods(p)
+                    periods = periods(p),
+                    identity = optText(p, "identity")
                 )
             },
             installed = optObj(json, "installed")?.let { i ->
@@ -675,7 +686,10 @@ internal data class Dashboard(
             },
             // Read leniently: a count that is not a finite, non-negative number is simply not there.
             deliveredKwh = (json.opt("delivered_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 },
-            remainingKwh = (json.opt("remaining_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 }
+            remainingKwh = (json.opt("remaining_kwh") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 },
+            relation = optObj(json, "relation")?.let { r ->
+                DashboardPlanRelation(applied = r.strictBoolean("applied"), pendingIdentity = optText(r, "pending_identity"))
+            }
         )
 
         private fun periods(json: JSONObject): List<DashboardPeriod> = array(json, "periods").objects().map {
