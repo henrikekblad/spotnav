@@ -9,10 +9,18 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 /**
+ * Which plan a band shows: the schedule that is (or would be) carried out, or Home Assistant's proposal
+ * waiting to replace it. A local plan is drawn as [INSTALLED].
+ */
+internal enum class ChartBandKind { INSTALLED, PROPOSAL }
+
+/**
  * One drawable band of shading: a represented market date and the wall-clock span on it.
  *
  * [fromMinute] and [toMinute] are minutes of [date]'s own day; a band never runs backwards or spans a
  * midnight or offset transition. A band with `toMinute == fromMinute` is not drawable (see [isDrawable]).
+ * [tomorrow] is true for a band on any date other than the one the price result's today is on; such a
+ * band is drawn hatched (see [ChartBandStyle]), today's solid.
  */
 internal data class ChartBand(
     val date: LocalDate,
@@ -21,7 +29,9 @@ internal data class ChartBand(
      * The band's end, in the same minutes, never above a whole day. On a fall-back day the repeated
      * hour is covered by two ordered bands even though the graph collapses them onto one x.
      */
-    val toMinute: Float
+    val toMinute: Float,
+    val kind: ChartBandKind = ChartBandKind.INSTALLED,
+    val tomorrow: Boolean = false
 ) {
     init {
         require(fromMinute >= 0f) { "a band cannot start before its day" }
@@ -45,25 +55,33 @@ internal data class ChartBand(
  * clipped to the represented dates, split at local midnights and offset transitions, with
  * non-positive intervals dropped.
  */
-internal data class ChartOverlay(val periods: List<ChargingPeriod>) {
+internal data class ChartOverlay(
+    val periods: List<ChargingPeriod>,
+    val kind: ChartBandKind = ChartBandKind.INSTALLED
+) {
     val isEmpty: Boolean get() = periods.isEmpty()
 
     /**
      * The bands this overlay draws on the days [result] represents, in the market's zone. Each date's
      * bands are the sorted union of what covers it (see `union`): one rectangle per shaded stretch.
+     * A date is [ChartBand.tomorrow] unless it is the date of [result]'s today.
      */
     fun bands(result: PriceResult, zoneId: ZoneId): List<ChartBand> {
         val days = representedDays(result, zoneId)
         val drawable = positive(periods)
         if (days.isEmpty() || drawable.isEmpty()) return emptyList()
-        return days.flatMap { day -> union(day, dayBands(drawable, day, zoneId)) }
+        val today = result.today.firstOrNull()?.start?.atZoneSameInstant(zoneId)?.toLocalDate()
+        return days.flatMap { day ->
+            union(day, dayBands(drawable, day, zoneId)).map { it.copy(kind = kind, tomorrow = day != today) }
+        }
     }
 
     companion object {
         /** No shading at all. */
         val NONE = ChartOverlay(emptyList())
 
-        fun planned(periods: List<ChargingPeriod>): ChartOverlay = ChartOverlay(positive(periods))
+        fun planned(periods: List<ChargingPeriod>, kind: ChartBandKind = ChartBandKind.INSTALLED): ChartOverlay =
+            ChartOverlay(positive(periods), kind)
 
         /** The installed schedule one status reported; `null` or `installed == false` shades nothing. */
         fun installed(plan: RemotePlan?): ChartOverlay =

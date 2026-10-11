@@ -108,7 +108,7 @@ class ChartOverlayTest {
             "the missing day is not a column: a band for the 12th and one for the 14th, and none for the 13th",
             listOf(
                 ChartBand(LocalDate.of(2026, 9, 12), 22f * 60, 24f * 60),
-                ChartBand(LocalDate.of(2026, 9, 14), 0f, 2f * 60)
+                ChartBand(LocalDate.of(2026, 9, 14), 0f, 2f * 60, tomorrow = true)
             ),
             bands
         )
@@ -138,7 +138,7 @@ class ChartOverlayTest {
         assertEquals(
             listOf(
                 ChartBand(LocalDate.of(2026, 9, 12), 23f * 60, 24f * 60),
-                ChartBand(LocalDate.of(2026, 9, 13), 0f, 1.5f * 60)
+                ChartBand(LocalDate.of(2026, 9, 13), 0f, 1.5f * 60, tomorrow = true)
             ),
             bands
         )
@@ -321,5 +321,27 @@ class ChartOverlayTest {
                 band.date in represented || band.date == LocalDate.of(2026, 3, 29) || band.date == LocalDate.of(2026, 10, 25)
             )
         }
+    }
+
+    @Test
+    fun aBandOnTomorrowIsMarkedTomorrowAndTodaysIsNot() {
+        val overlay = ChartOverlay.planned(
+            listOf(period("2026-09-12T18:00+02:00", "2026-09-12T19:00+02:00"), period("2026-09-13T03:00+02:00", "2026-09-13T04:00+02:00")),
+            ChartBandKind.PROPOSAL
+        )
+        assertEquals(
+            listOf(
+                ChartBand(LocalDate.of(2026, 9, 12), 18f * 60, 19f * 60, ChartBandKind.PROPOSAL, tomorrow = false),
+                ChartBand(LocalDate.of(2026, 9, 13), 3f * 60, 4f * 60, ChartBandKind.PROPOSAL, tomorrow = true)
+            ),
+            overlay.bands(result(LocalDate.of(2026, 9, 12), LocalDate.of(2026, 9, 13)), stockholm)
+        )
+    }
+
+    @Test
+    fun withNoPricesForTodayEveryBandIsAnotherDays() {
+        val tomorrowOnly = PriceResult(today = emptyList(), tomorrow = day(LocalDate.of(2026, 9, 13)), fetchedAt = 0L)
+        val bands = plan(period("2026-09-13T03:00+02:00", "2026-09-13T04:00+02:00")).bands(tomorrowOnly, stockholm)
+        assertTrue(bands.single().tomorrow)
     }
 }

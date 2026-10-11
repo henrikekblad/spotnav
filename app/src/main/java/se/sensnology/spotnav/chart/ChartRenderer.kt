@@ -216,13 +216,7 @@ internal object ChartRenderer {
         fun anchor(interval: PriceInterval) = metrics.xAt(ChartNow.markMinute(interval))
 
         if (bands.isNotEmpty()) {
-            paint.color = colors.band
-            paint.alpha = 38
-            // Bands arrive clipped, split and merged; one rectangle each.
-            bands.forEach { band ->
-                canvas.drawRect(metrics.xAt(band.fromMinute), top, metrics.xAt(band.toMinute), bottom, paint)
-            }
-            paint.alpha = 255
+            drawBands(canvas, paint, bands, metrics, context.resources.displayMetrics.density, colors)
         }
 
         paint.strokeWidth = 1f
@@ -304,6 +298,48 @@ internal object ChartRenderer {
             paint.textAlign = Paint.Align.LEFT
         }
         return ChartFrame(bitmap, metrics)
+    }
+
+    /**
+     * Bands arrive clipped, split and merged; one rectangle each. Today's are solid; another day's are
+     * hatched in the band colour with nothing between the lines (see [ChartBandStyle]), drawn after the
+     * solid ones so an overlaid today never hides them.
+     */
+    private fun drawBands(
+        canvas: Canvas,
+        paint: Paint,
+        bands: List<ChartBand>,
+        metrics: ChartMetrics,
+        density: Float,
+        colors: ChartTheme
+    ) {
+        val top = metrics.top
+        val bottom = metrics.bottom
+        paint.style = Paint.Style.FILL
+        paint.color = colors.band
+        bands.filter { !it.tomorrow }.forEach { band ->
+            paint.alpha = ChartBandStyle.solidAlpha(band.kind)
+            canvas.drawRect(metrics.xAt(band.fromMinute), top, metrics.xAt(band.toMinute), bottom, paint)
+        }
+        paint.style = Paint.Style.STROKE
+        paint.strokeCap = Paint.Cap.BUTT
+        bands.filter { it.tomorrow }.forEach { band ->
+            val hatch = ChartBandStyle.hatch(band.kind)
+            val left = metrics.xAt(band.fromMinute)
+            val right = metrics.xAt(band.toMinute)
+            paint.color = colors.band
+            paint.alpha = hatch.alpha
+            paint.strokeWidth = hatch.widthDp * density
+            canvas.save()
+            canvas.clipRect(left, top, right, bottom)
+            ChartBandStyle.lines(left, top, right, bottom, hatch.spacingDp * density, originX = metrics.left).forEach { line ->
+                canvas.drawLine(line.x0, line.y0, line.x1, line.y1, paint)
+            }
+            canvas.restore()
+        }
+        paint.style = Paint.Style.FILL
+        paint.strokeWidth = 1f
+        paint.alpha = 255
     }
 
     private fun drawTomorrow(

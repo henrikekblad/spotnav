@@ -52,8 +52,8 @@ internal data class PairedChart(
  * `effective_price` already has every fiscal component applied, so the market is built with
  * [FiscalInput.OFF] and each price is handed over as `effective / 100` "major" so [ChartMarket.apply]
  * (`major x 100`) returns the stated number. Intervals with no effective price are left out (a gap, never
- * a zero). Bands shade the proposal's periods, else the installed schedule's; the footer needs every fact
- * of the proposal.
+ * a zero). Bands shade the installed schedule and the proposal by the card's rule (see [plannedPeriods]);
+ * the footer needs every fact of the proposal.
  */
 internal object DashboardChart {
     /**
@@ -131,10 +131,64 @@ internal object DashboardChart {
             transfer = FiscalInput.OFF
         )
         val figures = figures(dashboard)
-        val periods = figures?.periods.orEmpty()
-        val bands = if (periods.isEmpty()) emptyList() else ChartOverlay.planned(periods).bands(prices, zone)
+        val (installed, proposal) = plannedPeriods(dashboard, now)
+        val bands = ChartOverlay.planned(installed, ChartBandKind.INSTALLED).bands(prices, zone) +
+            ChartOverlay.planned(proposal, ChartBandKind.PROPOSAL).bands(prices, zone)
         return PairedChart(market, prices, bands, footer(figures), figures)
     }
+
+    /**
+     * A proposal Home Assistant installs when the running window ends, as the backend's own
+     * `_pending_proposal` decides it: not applied, an identity that is the relation's pending one, and
+     * periods. [running] is the installed period that holds the clock, or `null` when none does.
+     */
+    internal data class PendingProposal(val running: ChargingPeriod?)
+
+    /** The waiting proposal of [dashboard] at [now], or `null` (see [PendingProposal]). */
+    fun pendingProposal(dashboard: Dashboard, now: Instant): PendingProposal? {
+        val plan = dashboard.plan
+        val proposal = plan.proposal ?: return null
+        val identity = proposal.identity ?: return null
+        val relation = plan.relation ?: return null
+        if (relation.applied != false || relation.pendingIdentity != identity || proposal.periods.isEmpty()) return null
+        val running = plan.installed?.periods
+            ?.firstOrNull { !it.start.toInstant().isAfter(now) && now.isBefore(it.end.toInstant()) }
+            ?.let { ChargingPeriod(it.start, it.end) }
+        return PendingProposal(running)
+    }
+
+    /**
+     * The installed and proposal periods the chart shades, as the card's `plannedBands` decides them.
+     * With a proposal waiting, the installed schedule is drawn only for the running window and the
+     * proposal from that window's end (whole when nothing runs); the installed schedule's other windows
+     * are the ones the proposal replaces and are not drawn. Otherwise the installed schedule is drawn
+     * whole and the proposal only where nothing is installed.
+     */
+    fun plannedPeriods(dashboard: Dashboard, now: Instant): Pair<List<ChargingPeriod>, List<ChargingPeriod>> {
+        val installed = dashboard.plan.installed?.periods.orEmpty().map { ChargingPeriod(it.start, it.end) }
+        val proposal = dashboard.plan.proposal?.periods.orEmpty().map { ChargingPeriod(it.start, it.end) }
+        val pending = pendingProposal(dashboard, now)
+            ?: return installed to subtract(proposal, installed)
+        val running = pending.running ?: return emptyList<ChargingPeriod>() to proposal
+        val after = proposal.mapNotNull { period ->
+            val start = maxOf(period.start, running.end, compareBy { it.toInstant() })
+            if (period.end.toInstant().isAfter(start.toInstant())) ChargingPeriod(start, period.end) else null
+        }
+        return listOf(running) to after
+    }
+
+    /** [periods] with every stretch [cuts] cover taken out. */
+    private fun subtract(periods: List<ChargingPeriod>, cuts: List<ChargingPeriod>): List<ChargingPeriod> =
+        cuts.fold(periods) { remaining, cut ->
+            remaining.flatMap { period ->
+                if (!cut.start.toInstant().isBefore(period.end.toInstant()) || !period.start.toInstant().isBefore(cut.end.toInstant())) {
+                    listOf(period)
+                } else listOfNotNull(
+                    ChargingPeriod(period.start, cut.start).takeIf { cut.start.toInstant().isAfter(period.start.toInstant()) },
+                    ChargingPeriod(cut.end, period.end).takeIf { period.end.toInstant().isAfter(cut.end.toInstant()) }
+                )
+            }
+        }
 
     /** Home Assistant's composition time as the price result's stamp, never the wall clock, so equal dashboards give equal charts. */
     fun stamp(dashboard: Dashboard): Long =
