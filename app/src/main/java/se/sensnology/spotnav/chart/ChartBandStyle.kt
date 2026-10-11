@@ -5,15 +5,24 @@ import kotlin.math.sqrt
 /**
  * How a plan band is painted, Android-free so the values and the hatch geometry are testable.
  *
- * Today's bands are solid at [SOLID_ALPHA], the chart's one band opacity for both kinds. A band on any
- * other day is a 45-degree "/" hatch in the band colour with no fill between the lines; the spacing
- * (perpendicular to the lines), line width and opacity are the Home Assistant card's
- * `CROSS_PLAN_BAND_STYLE`, its CSS pixels read as dp. The installed schedule's hatch is denser and
- * stronger than a proposal's.
+ * Today's bands are solid at the kind's fill opacity ([solidAlpha]), the installed schedule stronger than
+ * a proposal so a running window and the waiting proposal after it differ. A band on any other day is a
+ * 45-degree "/" hatch in the band colour with no fill between the lines. Every value is the Home Assistant
+ * card's `CROSS_PLAN_BAND_STYLE`, its CSS pixels read as dp (spacing perpendicular to the lines); the
+ * installed schedule's hatch is denser and stronger than a proposal's.
  */
 internal object ChartBandStyle {
-    /** Today's solid fill, out of 255, for both kinds. */
-    const val SOLID_ALPHA = 38
+    /** Today's solid fill opacity per kind. */
+    const val INSTALLED_FILL_OPACITY = 0.16f
+    const val PROPOSAL_FILL_OPACITY = 0.07f
+
+    /** Today's solid fill for [kind], out of 255. */
+    fun solidAlpha(kind: ChartBandKind): Int = Math.round(
+        when (kind) {
+            ChartBandKind.INSTALLED -> INSTALLED_FILL_OPACITY
+            ChartBandKind.PROPOSAL -> PROPOSAL_FILL_OPACITY
+        } * 255f
+    )
 
     /** Degrees clockwise from vertical: lines run from lower left to upper right. */
     const val HATCH_ANGLE_DEGREES = 45

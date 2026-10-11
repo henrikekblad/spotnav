@@ -317,8 +317,8 @@ internal object ChartRenderer {
         val bottom = metrics.bottom
         paint.style = Paint.Style.FILL
         paint.color = colors.band
-        paint.alpha = ChartBandStyle.SOLID_ALPHA
         bands.filter { !it.tomorrow }.forEach { band ->
+            paint.alpha = ChartBandStyle.solidAlpha(band.kind)
             canvas.drawRect(metrics.xAt(band.fromMinute), top, metrics.xAt(band.toMinute), bottom, paint)
         }
         paint.style = Paint.Style.STROKE

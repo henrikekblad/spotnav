@@ -26,8 +26,11 @@ class ChartBandStyleTest {
         assertTrue(installed.opacity > proposal.opacity)
     }
 
-    @Test fun todaysBandsKeepTheChartsOneSolidOpacity() {
-        assertEquals(38, ChartBandStyle.SOLID_ALPHA)
+    @Test fun todaysSolidFillIsTheCardsPerKindOpacity() {
+        assertEquals(0.16f, ChartBandStyle.INSTALLED_FILL_OPACITY, 0f)
+        assertEquals(0.07f, ChartBandStyle.PROPOSAL_FILL_OPACITY, 0f)
+        assertEquals(41, ChartBandStyle.solidAlpha(ChartBandKind.INSTALLED))
+        assertEquals(18, ChartBandStyle.solidAlpha(ChartBandKind.PROPOSAL))
     }
 
     @Test fun theLinesRunFromLowerLeftToUpperRightAtFortyFiveDegrees() {
