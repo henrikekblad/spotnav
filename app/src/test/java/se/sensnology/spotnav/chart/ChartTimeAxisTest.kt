@@ -189,4 +189,38 @@ class ChartTimeAxisTest {
         assertEquals(ChartAxisMode.FROM_NOW, preference.mode())
         assertEquals(ChartTimeAxis.WallClock, ChartTimeAxis.of(ChartAxisMode.DEFAULT, result(), zone, now))
     }
+
+    /** Ticks fitted to a plot [width] wide, each label [label] pixels wide. */
+    private fun fitted(width: Float, label: Float = 60f): List<ChartTick> {
+        val axis = range()
+        return ChartTickFit.fit(axis.ticks(), axis.spanMinutes, { it / axis.spanMinutes * width }, { label }, 8f)
+    }
+
+    @Test
+    fun aWidePlotLabelsEveryTick() {
+        assertEquals(range().ticks(), fitted(2000f))
+    }
+
+    @Test
+    fun aNarrowPlotDropsTheSixHourTicksFirstAndKeepsTheDayStart() {
+        // 32 hours over 500 px: a tick every 94 px is too close for 60 px labels with ends of their own.
+        val narrow = fitted(500f, label = 90f)
+        assertTrue(narrow.none { it.hour == 6 || it.hour == 18 })
+        assertTrue(narrow.any { it.dayStart })
+        assertTrue(narrow.any { it.hour == 12 })
+        assertEquals("the right edge stays", 24, narrow.last().hour)
+    }
+
+    @Test
+    fun aTinyPlotKeepsOnlyTheDayStartAndTheEdgesThatFit() {
+        val tiny = fitted(200f, label = 60f)
+        assertTrue(tiny.any { it.dayStart })
+        assertTrue(tiny.all { it.dayStart || it.minute == 0f || it.minute == span })
+    }
+
+    @Test
+    fun theDayAxisKeepsItsFiveTicksOnAWidgetWidth() {
+        val ticks = ChartTimeAxis.WallClock.ticks()
+        assertEquals(ticks, ChartTickFit.fit(ticks, 1440f, { it / 1440f * 700f }, { 40f }, 8f))
+    }
 }

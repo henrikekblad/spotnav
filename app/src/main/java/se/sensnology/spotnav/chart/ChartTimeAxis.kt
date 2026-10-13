@@ -144,3 +144,49 @@ internal sealed interface ChartTimeAxis {
         }
     }
 }
+
+/**
+ * Which ticks a plot of a given width labels: all of them while their labels fit side by side, else
+ * the six-hour ones (06 and 18) go first, then the noons and midnights, so a narrow chart, such as a
+ * small widget, keeps the same axis with fewer labels. A day's start ([ChartTick.dayStart]) is always
+ * kept; an edge that would collide with one gives way. Android-free.
+ */
+internal object ChartTickFit {
+    fun fit(
+        ticks: List<ChartTick>,
+        spanMinutes: Float,
+        xAt: (Float) -> Float,
+        labelWidth: (ChartTick) -> Float,
+        gap: Float
+    ): List<ChartTick> {
+        fun extent(tick: ChartTick): ClosedFloatingPointRange<Float> {
+            val x = xAt(tick.minute)
+            val w = labelWidth(tick)
+            return when (tick.minute) {
+                0f -> x..(x + w)
+                spanMinutes -> (x - w)..x
+                else -> (x - w / 2f)..(x + w / 2f)
+            }
+        }
+        fun fits(chosen: List<ChartTick>): Boolean =
+            chosen.zipWithNext().all { (a, b) -> extent(a).endInclusive + gap <= extent(b).start }
+        fun rank(tick: ChartTick): Int = when {
+            tick.dayStart || tick.minute == 0f || tick.minute == spanMinutes -> 0
+            tick.hour == 0 || tick.hour == 12 || tick.hour == 24 -> 1
+            else -> 2
+        }
+        for (most in 2 downTo 0) {
+            val chosen = ticks.filter { rank(it) <= most }
+            if (fits(chosen)) return chosen
+        }
+        // Only day starts and edges are left and still collide: the edges next to a day start give way.
+        val starts = ticks.filter { it.dayStart }
+        return ticks.filter { tick ->
+            rank(tick) == 0 && (tick.dayStart || starts.none { start ->
+                val a = extent(tick)
+                val b = extent(start)
+                a.start < b.endInclusive + gap && b.start < a.endInclusive + gap
+            })
+        }
+    }
+}

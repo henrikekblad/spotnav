@@ -364,8 +364,8 @@ internal object ChartRenderer {
     }
 
     /**
-     * The ticks under the plot from [ChartTimeAxis.ticks]: an hour each, the left edge's label starting at
-     * it and the right edge's ending at it. A midnight inside the From now axis is a dashed divider through
+     * The ticks under the plot from [ChartTimeAxis.ticks], as many as fit (see [ChartTickFit]): an hour
+     * each, the left edge's label starting at it and the right edge's ending at it. A midnight inside the From now axis is a dashed divider through
      * the plot, labelled with the new day's weekday and date.
      */
     private fun drawTicks(
@@ -378,7 +378,14 @@ internal object ChartRenderer {
     ) {
         val axisText = metrics.axisTextSize
         val locale = AppLanguageSettings.locale(context)
-        axis.ticks().forEach { tick ->
+        fun label(tick: ChartTick): String =
+            if (tick.dayStart && tick.instant != null && axis is ChartTimeAxis.Range) {
+                DateTimeFormatter.ofPattern("EEE d", locale).format(tick.instant.atZone(axis.zone))
+            } else tick.hour.toString().padStart(2, '0')
+        paint.textSize = axisText
+        // As many labels as fit the plot's width: a small widget keeps the axis with fewer of them.
+        val shown = ChartTickFit.fit(axis.ticks(), axis.spanMinutes, metrics::xAt, { paint.measureText(label(it)) }, axisText * .6f)
+        shown.forEach { tick ->
             val px = metrics.xAt(tick.minute)
             if (tick.dayStart) {
                 paint.color = colors.muted
@@ -391,9 +398,6 @@ internal object ChartRenderer {
                 paint.alpha = 255
                 paint.strokeWidth = 1f
             }
-            val label = if (tick.dayStart && tick.instant != null && axis is ChartTimeAxis.Range) {
-                DateTimeFormatter.ofPattern("EEE d", locale).format(tick.instant.atZone(axis.zone))
-            } else tick.hour.toString().padStart(2, '0')
             paint.textSize = axisText
             paint.color = colors.muted
             paint.textAlign = when (tick.minute) {
@@ -401,7 +405,7 @@ internal object ChartRenderer {
                 axis.spanMinutes -> Paint.Align.RIGHT
                 else -> Paint.Align.CENTER
             }
-            canvas.drawText(label, px, metrics.bottom + axisText * 1.15f, paint)
+            canvas.drawText(label(tick), px, metrics.bottom + axisText * 1.15f, paint)
         }
         paint.textAlign = Paint.Align.LEFT
     }
