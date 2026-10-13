@@ -568,4 +568,11 @@
   <string name="target_mark_now_estimated">≈ now</string>
   <string name="target_mark_limit">limit</string>
   <string name="target_mark_min">min %1$d %%</string>
+  <string name="section_display">Display</string>
+  <string name="chart_axis">Chart time axis</string>
+  <string name="chart_axis_day">Day</string>
+  <string name="chart_axis_day_help">00–24, with tomorrow drawn over today.</string>
+  <string name="chart_axis_from_now">From now</string>
+  <string name="chart_axis_from_now_help">From this hour to the end of the last published day. Until tomorrow\'s prices are out, the same as Day.</string>
+  <string name="chart_axis_applies">Only this phone: applies to the chart in the app and is not sent to Home Assistant. The widget always shows Day.</string>
 </resources>

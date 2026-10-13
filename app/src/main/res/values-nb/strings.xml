@@ -556,4 +556,11 @@
   <string name="target_mark_now_estimated">≈ nå</string>
   <string name="target_mark_limit">grense</string>
   <string name="target_mark_min">min. %1$d %%</string>
+  <string name="section_display">Visning</string>
+  <string name="chart_axis">Tidsakse i diagrammet</string>
+  <string name="chart_axis_day">Døgn</string>
+  <string name="chart_axis_day_help">00–24, med i morgen tegnet over i dag.</string>
+  <string name="chart_axis_from_now">Fra nå</string>
+  <string name="chart_axis_from_now_help">Fra denne timen til slutten av det siste publiserte døgnet. Til morgendagens priser er ute, det samme som Døgn.</string>
+  <string name="chart_axis_applies">Bare denne telefonen: gjelder diagrammet i appen og sendes ikke til Home Assistant. Widgeten viser alltid Døgn.</string>
 </resources>

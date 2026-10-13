@@ -556,4 +556,11 @@
   <string name="target_mark_now_estimated">≈ jetzt</string>
   <string name="target_mark_limit">Limit</string>
   <string name="target_mark_min">min. %1$d %%</string>
+  <string name="section_display">Anzeige</string>
+  <string name="chart_axis">Zeitachse im Diagramm</string>
+  <string name="chart_axis_day">Tag</string>
+  <string name="chart_axis_day_help">00–24, morgen über heute gezeichnet.</string>
+  <string name="chart_axis_from_now">Ab jetzt</string>
+  <string name="chart_axis_from_now_help">Von dieser Stunde bis zum Ende des letzten veröffentlichten Tages. Bis die Preise für morgen da sind, wie Tag.</string>
+  <string name="chart_axis_applies">Nur dieses Telefon: gilt für das Diagramm in der App und wird nicht an Home Assistant gesendet. Das Widget zeigt immer Tag.</string>
 </resources>

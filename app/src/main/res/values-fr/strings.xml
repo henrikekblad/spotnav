@@ -564,4 +564,11 @@
   <string name="target_mark_now_estimated">≈ actuel</string>
   <string name="target_mark_limit">limite</string>
   <string name="target_mark_min">min. %1$d %%</string>
+  <string name="section_display">Affichage</string>
+  <string name="chart_axis">Axe du temps du graphique</string>
+  <string name="chart_axis_day">Journée</string>
+  <string name="chart_axis_day_help">00–24, demain dessiné par-dessus aujourd\'hui.</string>
+  <string name="chart_axis_from_now">À partir de maintenant</string>
+  <string name="chart_axis_from_now_help">De l\'heure en cours à la fin du dernier jour publié. Tant que les prix de demain ne sont pas publiés, identique à Journée.</string>
+  <string name="chart_axis_applies">Ce téléphone seulement : s\'applique au graphique de l\'app et n\'est pas envoyé à Home Assistant. Le widget affiche toujours Journée.</string>
 </resources>

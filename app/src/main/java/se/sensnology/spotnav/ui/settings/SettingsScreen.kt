@@ -29,6 +29,8 @@ import se.sensnology.spotnav.BuildConfig
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.app.AppThemeSettings
+import se.sensnology.spotnav.chart.ChartAxisMode
+import se.sensnology.spotnav.chart.ChartAxisPreference
 import se.sensnology.spotnav.app.StoreAction
 import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
@@ -96,6 +98,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // uses:
         val generalCard = card(content, t(R.string.section_general), R.drawable.ic_settings)
         addGeneralSettings(generalCard.body)
+        val displayCard = card(content, t(R.string.section_display), R.drawable.ic_plan_clock)
+        addDisplaySettings(displayCard.body)
         // The market and its money: controls while unpaired, an overview while paired.
         val priceCard = card(content, t(R.string.section_electricity_price), R.drawable.ic_price_table)
         // The charger these settings are for: the one the main screen shows, or with several paired
@@ -524,6 +528,35 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 activity.recreate()
             }
         }
+    }
+
+    /**
+     * The "Display" card: how this phone draws the in-app chart. Kept on the phone (see
+     * [ChartAxisPreference]), never sent to Home Assistant, and read by the chart at its next draw.
+     */
+    private fun addDisplaySettings(parent: LinearLayout) {
+        parent.addView(TextView(context).apply {
+            text = t(R.string.chart_axis_applies)
+            textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(4))
+        })
+        val preference = ChartAxisPreference.of(context)
+        val modes = listOf(ChartAxisMode.DAY, ChartAxisMode.FROM_NOW)
+        val names = listOf(t(R.string.chart_axis_day), t(R.string.chart_axis_from_now))
+        val helps = listOf(t(R.string.chart_axis_day_help), t(R.string.chart_axis_from_now_help))
+        val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        parent.addView(holder)
+        fun paint() {
+            holder.removeAllViews()
+            val chosen = modes.indexOf(preference.mode()).coerceAtLeast(0)
+            settingRow(holder, t(R.string.chart_axis), names[chosen]) {
+                chooseOne(t(R.string.chart_axis), names, chosen, helps) { index, done ->
+                    done(null)
+                    preference.save(modes[index])
+                    paint()
+                }
+            }
+        }
+        paint()
     }
 
     /** The widget's option as a value row ("On"/"Off"), applied as soon as it is chosen. */

@@ -556,4 +556,11 @@
   <string name="target_mark_now_estimated">≈ nu</string>
   <string name="target_mark_limit">limiet</string>
   <string name="target_mark_min">min. %1$d %%</string>
+  <string name="section_display">Weergave</string>
+  <string name="chart_axis">Tijdas van de grafiek</string>
+  <string name="chart_axis_day">Dag</string>
+  <string name="chart_axis_day_help">00–24, met morgen over vandaag getekend.</string>
+  <string name="chart_axis_from_now">Vanaf nu</string>
+  <string name="chart_axis_from_now_help">Van dit uur tot het einde van de laatst gepubliceerde dag. Tot de prijzen van morgen er zijn, hetzelfde als Dag.</string>
+  <string name="chart_axis_applies">Alleen deze telefoon: geldt voor de grafiek in de app en wordt niet naar Home Assistant gestuurd. De widget toont altijd Dag.</string>
 </resources>
