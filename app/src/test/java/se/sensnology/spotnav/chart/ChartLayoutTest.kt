@@ -18,7 +18,7 @@ class ChartLayoutTest {
         height: Int = 440,
         scaledDensity: Float = 2f,
         hasPlan: Boolean = true
-    ) = ChartLayout.metrics(profile, width, height, scaledDensity, hasPlan, measure)
+    ) = ChartLayout.metrics(profile, width, height, scaledDensity, hasPlan, measureHeader = measure)
 
     @Test
     fun theWidgetProfileKeepsItsOwnSizesAndItsFooter() {
@@ -95,13 +95,13 @@ class ChartLayoutTest {
         assertEquals(m.left + 30f / 1440f * m.plotWidth, m.xAt(30f), 1e-4f)
         assertEquals(m.xAt(30f), m.xAt(0f) + m.plotWidth * 30f / 1440f, 1e-4f)
 
-        assertEquals(0f, m.minuteOfDayAt(m.left)!!, 1e-4f)
-        assertEquals(12 * 60f, m.minuteOfDayAt(m.xAt(12 * 60f))!!, 1e-3f)
-        assertEquals(24 * 60f, m.minuteOfDayAt(m.right)!!, 1e-4f)
-        assertEquals(30f, m.minuteOfDayAt(m.xAt(30f))!!, 1e-3f)
-        assertNull(m.minuteOfDayAt(m.left - 1f))
-        assertNull(m.minuteOfDayAt(m.right + 1f))
-        assertNull(ChartMetrics(1f, 0f, 0f, 0f, 0f, 0f, 0f, 10f, 10f).minuteOfDayAt(10f))
+        assertEquals(0f, m.minuteAt(m.left)!!, 1e-4f)
+        assertEquals(12 * 60f, m.minuteAt(m.xAt(12 * 60f))!!, 1e-3f)
+        assertEquals(24 * 60f, m.minuteAt(m.right)!!, 1e-4f)
+        assertEquals(30f, m.minuteAt(m.xAt(30f))!!, 1e-3f)
+        assertNull(m.minuteAt(m.left - 1f))
+        assertNull(m.minuteAt(m.right + 1f))
+        assertNull(ChartMetrics(1f, 0f, 0f, 0f, 0f, 0f, 0f, 10f, 10f).minuteAt(10f))
     }
 
     @Test
