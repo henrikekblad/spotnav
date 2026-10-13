@@ -183,7 +183,7 @@ internal object ChartRenderer {
         }
         // The highest and lowest of the prices drawn at full strength: today's on the Day axis, everything
         // drawn on the From now axis.
-        val extremes = if (axis.overlay) today else today + tomorrow
+        val extremes = axis.fullStrength(today, tomorrow)
         val dayMax = extremes.maxOfOrNull { it.price }
         val dayMin = extremes.minOfOrNull { it.price }
 

@@ -60,6 +60,13 @@ internal sealed interface ChartTimeAxis {
     /** The ticks under the plot, left to right. */
     fun ticks(): List<ChartTick>
 
+    /**
+     * The prices drawn at full strength, which the header's highest and lowest cover: today's on the
+     * Day axis, where tomorrow is a subdued comparison, and everything on the axis on a range.
+     */
+    fun fullStrength(today: List<PriceInterval>, tomorrow: List<PriceInterval>): List<PriceInterval> =
+        (if (overlay) today else today + tomorrow).filter(::shows)
+
     /** The wall-clock overlay: a time's place is its local time of day, whichever day it is on. */
     data object WallClock : ChartTimeAxis {
         override val spanMinutes: Float = MINUTES_PER_DAY
