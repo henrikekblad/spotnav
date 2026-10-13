@@ -71,6 +71,7 @@ import se.sensnology.spotnav.ui.haSession
 import se.sensnology.spotnav.vehicles.PairedVehicles
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerResolver
+import se.sensnology.spotnav.widget.WidgetChartBoundary
 import se.sensnology.spotnav.widget.WidgetSettings
 
 /**
@@ -531,8 +532,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 
     /**
-     * The "Display" card: the chart's time axis, kept on the phone (see [ChartAxisPreference]) and read by
-     * the chart at its next draw.
+     * The "Display" card: the chart's time axis, kept on the phone (see [ChartAxisPreference]), read by the
+     * in-app chart at its next draw and by the widgets, which are redrawn when it changes.
      */
     private fun addDisplaySettings(parent: LinearLayout) {
         val preference = ChartAxisPreference.of(context)
@@ -548,6 +549,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 chooseOne(t(R.string.chart_axis), names, chosen, helps) { index, done ->
                     done(null)
                     preference.save(modes[index])
+                    // The widgets draw the same axis: redraw them from what they hold.
+                    WidgetChartBoundary.requestRedraw(context)
                     paint()
                 }
             }

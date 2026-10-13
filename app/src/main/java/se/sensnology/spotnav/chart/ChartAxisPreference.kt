@@ -6,8 +6,8 @@ import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
 
 /**
  * This phone's choice of chart time axis (see [ChartAxisMode]), kept beside the app's other appearance
- * choices. It applies to the in-app charts only and is never sent to Home Assistant; the widget always
- * draws the Day axis. Nothing stored, or anything unknown, reads as [ChartAxisMode.DEFAULT].
+ * choices. The in-app chart and every widget draw it; it is never sent to Home Assistant. Nothing
+ * stored, or anything unknown, reads as [ChartAxisMode.DEFAULT].
  */
 internal class ChartAxisPreference(private val store: KeyValueStore) {
     fun mode(): ChartAxisMode = ChartAxisMode.of(store.getString(KEY))

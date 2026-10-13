@@ -28,8 +28,9 @@ internal object ChartRenderer {
     private const val LINE_ALPHA = 110
 
     /**
-     * The widget's entry point: the bitmap only. [nowMinute] is the current interval's mark, read from the
-     * clock by the caller; the widget has no selection. [theme] defaults to the dark panel.
+     * The widget's entry point for a local plan: the bitmap only, on the time axis [axisMode] gives at
+     * [now], with the now line at the interval containing [now]; the widget has no selection. [theme]
+     * defaults to the dark panel.
      */
     fun render(
         context: Context,
@@ -40,14 +41,17 @@ internal object ChartRenderer {
         result: PriceResult,
         profile: ChartProfile = ChartProfile.WIDGET,
         showPlan: Boolean = true,
-        nowMinute: Float? = null,
+        axisMode: ChartAxisMode = ChartAxisMode.DEFAULT,
+        now: java.time.Instant = java.time.Instant.now(),
         theme: ChartTheme? = null
     ): Bitmap {
         // The only place a caller's plan is calculated for a bitmap; bands and footer come from one call.
         val chart = LocalCharts.of(inputs, result, showPlan)
+        val zone = PriceMarkets.find(chart.market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault()
+        val (axis, bands) = ChartRequests.placed(result, zone, chart.bands, chart.overlays, axisMode, now)
         return renderFrame(
-            context, width, height, scaledDensity, chart.market, result, chart.bands, chart.footer, profile,
-            null, nowMinute, theme
+            context, width, height, scaledDensity, chart.market, result, bands, chart.footer, profile,
+            null, ChartNow.currentMarkMinute(chart.market, result, axis, now), theme, axis = axis
         ).bitmap
     }
 

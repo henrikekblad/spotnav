@@ -100,12 +100,26 @@ internal object ChartRequests {
      * came, or on the From now axis the overlays placed by instant. Without prices or a zone it is the Day
      * axis.
      */
-    fun placed(shown: ShownChart, mode: ChartAxisMode, now: Instant): Pair<ChartTimeAxis, List<ChartBand>> {
-        val prices = shown.prices ?: return ChartTimeAxis.WallClock to shown.bands
-        val zone = shown.zone ?: return ChartTimeAxis.WallClock to shown.bands
+    fun placed(shown: ShownChart, mode: ChartAxisMode, now: Instant): Pair<ChartTimeAxis, List<ChartBand>> =
+        placed(shown.prices, shown.zone, shown.bands, shown.overlays, mode, now)
+
+    /**
+     * The axis [prices] in [zone] draw in [mode] at [now], and the bands on it: [dayBands] on the Day axis,
+     * [overlays] placed by instant on the From now axis. The in-app chart and the widget both ask here.
+     */
+    fun placed(
+        prices: PriceResult?,
+        zone: ZoneId?,
+        dayBands: List<ChartBand>,
+        overlays: List<ChartOverlay>,
+        mode: ChartAxisMode,
+        now: Instant
+    ): Pair<ChartTimeAxis, List<ChartBand>> {
+        prices ?: return ChartTimeAxis.WallClock to dayBands
+        zone ?: return ChartTimeAxis.WallClock to dayBands
         return when (val axis = ChartTimeAxis.of(mode, prices, zone, now)) {
-            is ChartTimeAxis.Range -> axis to shown.overlays.flatMap { it.bands(prices, zone, axis) }
-            ChartTimeAxis.WallClock -> axis to shown.bands
+            is ChartTimeAxis.Range -> axis to overlays.flatMap { it.bands(prices, zone, axis) }
+            ChartTimeAxis.WallClock -> axis to dayBands
         }
     }
 }

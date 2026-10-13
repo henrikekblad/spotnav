@@ -1,9 +1,12 @@
 package se.sensnology.spotnav.widget
 
+import se.sensnology.spotnav.chart.ChartAxisMode
 import se.sensnology.spotnav.chart.ChartBand
 import se.sensnology.spotnav.chart.ChartMarket
 import se.sensnology.spotnav.chart.ChartMarketBuild
 import se.sensnology.spotnav.chart.ChartOverlay
+import se.sensnology.spotnav.chart.ChartRequests
+import se.sensnology.spotnav.chart.ChartTimeAxis
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
 import se.sensnology.spotnav.ha.authority.PriceRequestKey
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
@@ -152,6 +155,23 @@ internal object WidgetPlanDecision {
             return refused(WidgetPlanPass.Remote.Reason.OUTSIDE_PRICES, confirmed)
         }
         return WidgetPlanPass.Remote(snapshot = confirmed, bands = bands, refused = null)
+    }
+
+    /**
+     * A drawable [pass] on the time axis [mode] gives for [prices] at [now]: the axis, and on the From now
+     * axis the installed schedule placed by instant in the snapshot's zone (none when it has all ended);
+     * on the Day axis the pass's own bands.
+     */
+    fun placed(
+        pass: WidgetPlanPass.Remote,
+        prices: PriceResult,
+        mode: ChartAxisMode,
+        now: java.time.Instant
+    ): Pair<ChartTimeAxis, List<ChartBand>> {
+        val confirmed = pass.snapshot ?: return ChartTimeAxis.WallClock to pass.bands
+        return ChartRequests.placed(
+            prices, confirmed.zoneId, pass.bands, listOf(ChartOverlay.installed(confirmed.remotePlan)), mode, now
+        )
     }
 }
 

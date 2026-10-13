@@ -9,7 +9,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import se.sensnology.spotnav.app.KeyValueStore
+import se.sensnology.spotnav.chart.ChartAxisMode
 import se.sensnology.spotnav.chart.ChartBand
+import se.sensnology.spotnav.chart.ChartTimeAxis
 import se.sensnology.spotnav.chart.ChartOverlay
 import se.sensnology.spotnav.chart.LocalCharts
 import se.sensnology.spotnav.ha.authority.AuthorityAvailability
@@ -142,6 +144,23 @@ class WidgetPlanPassTest {
         assertNull(paired.refused)
     }
 
+
+    @Test
+    fun onFromNowTheConfirmedScheduleIsPlacedByInstantFromTheCurrentHour() {
+        val paired = remote(pass(snapshot = snapshot()))
+        // 13:30 in Stockholm: the axis starts at 13:00 and runs to the end of tomorrow, 35 hours.
+        val now = OffsetDateTime.parse("2026-09-27T13:30:00+02:00").toInstant()
+        val (axis, bands) = WidgetPlanDecision.placed(paired, documents(), ChartAxisMode.FROM_NOW, now)
+        assertTrue(axis is ChartTimeAxis.Range)
+        assertEquals(35 * 60f, axis.spanMinutes, 0f)
+        // The 12:00-15:45 window: what is left of it, 13:00-15:45, solid.
+        assertEquals(listOf(ChartBand(today, 0f, 165f)), bands)
+
+        assertEquals(
+            ChartTimeAxis.WallClock to paired.bands,
+            WidgetPlanDecision.placed(paired, documents(), ChartAxisMode.DAY, now)
+        )
+    }
 
     @Test
     fun aPairedWidgetWithNoSnapshotShadesNothingAndNamesNoMarket() {
