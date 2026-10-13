@@ -361,8 +361,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         val metrics = plot ?: return
         val shown = chart ?: return
         if (shown.prices == null) return
+        val point = onFrame(x, 0f) ?: return
         val readout = ChartSelection.nearest(
-            ChartScrub.clampedX(x, metrics.left, metrics.right), metrics, shown.market, shown.prices, drawnAxis()
+            ChartScrub.clampedX(point.x, metrics.left, metrics.right), metrics, shown.market, shown.prices, drawnAxis()
         ) ?: return
         if (readout == selection) return
         apply(readout, shown.market, shown.prices)
@@ -389,10 +390,24 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
     /** The axis of the frame on screen: a selection is made on what is drawn. */
     private fun drawnAxis(): ChartTimeAxis = frameRequest?.axis ?: ChartTimeAxis.WallClock
 
-    private fun select(x: Float, y: Float) {
+    /**
+     * A touch at ([x], [y]) on this view as a pixel of the frame on screen, whose [plot] metrics are in
+     * the frame's own pixels: read from the view's size now and the frame's size, since the frame may be
+     * shown scaled (see [ChartTouch]).
+     */
+    private fun onFrame(x: Float, y: Float): FramePoint? {
+        val shown = frame ?: return null
+        return ChartTouch.toFrame(
+            x, y, width - paddingLeft - paddingRight, height - paddingTop - paddingBottom,
+            shown.width, shown.height, paddingLeft, paddingTop
+        )
+    }
+
+    private fun select(viewX: Float, viewY: Float) {
         val metrics = plot
         val shown = chart ?: return
         if (metrics == null || shown.prices == null) return
+        val (x, y) = onFrame(viewX, viewY) ?: return
         // Only inside the plot: header, axis labels and the card around it clear the selection.
         if (y < metrics.top || y > metrics.bottom) {
             clearSelection()
