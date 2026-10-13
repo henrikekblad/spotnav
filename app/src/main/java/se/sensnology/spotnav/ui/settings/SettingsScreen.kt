@@ -531,14 +531,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 
     /**
-     * The "Display" card: how this phone draws the in-app chart. Kept on the phone (see
-     * [ChartAxisPreference]), never sent to Home Assistant, and read by the chart at its next draw.
+     * The "Display" card: the chart's time axis, kept on the phone (see [ChartAxisPreference]) and read by
+     * the chart at its next draw.
      */
     private fun addDisplaySettings(parent: LinearLayout) {
-        parent.addView(TextView(context).apply {
-            text = t(R.string.chart_axis_applies)
-            textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(4))
-        })
         val preference = ChartAxisPreference.of(context)
         val modes = listOf(ChartAxisMode.DAY, ChartAxisMode.FROM_NOW)
         val names = listOf(t(R.string.chart_axis_day), t(R.string.chart_axis_from_now))
