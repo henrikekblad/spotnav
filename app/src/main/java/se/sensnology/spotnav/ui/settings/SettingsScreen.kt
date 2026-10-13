@@ -75,8 +75,8 @@ import se.sensnology.spotnav.widget.WidgetChartBoundary
 import se.sensnology.spotnav.widget.WidgetSettings
 
 /**
- * The settings screen: the general, price, widget and Home Assistant cards. There is no Save for
- * the screen as a whole: what belongs to this phone (language, theme, the widget's options, and the
+ * The settings screen: the general, display (the chart's time axis and the widget), price and Home
+ * Assistant cards. There is no Save for the screen as a whole: what belongs to this phone (language, theme, the widget's options, and the
  * price settings while unpaired) applies the moment it changes, and what a paired charger owns is
  * changed in a dialog with its own Save and Cancel. Each card that has a life of its own is a
  * controller in this package; this class is the page they sit on.
@@ -160,9 +160,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         showAuthorityNote()
         // The paired screen's commit path:
         var applyPairedRecord: (HaPlanningSettings?) -> Unit = {}
-        // Widget appearance, not operation:
-        val widgetCard = card(content, t(R.string.section_widget), R.drawable.ic_widget_grid)
-        val display = addWidgetDisplayControls(widgetCard.body, old) { applyLocal() }
+        // Widget appearance, not operation: in the Display card, under the chart's time axis.
+        val display = addWidgetDisplayControls(displayCard.body, old) { applyLocal() }
         if (display.offered) readShowPlan = { display.showPlan() }
         // The instance, everything it hands over, and where the integration comes from.
         // A paired charger's vehicles, charger, site and solar come after the phone's own settings
@@ -558,12 +557,20 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         paint()
     }
 
-    /** The widget's option as a value row ("On"/"Off"), applied as soon as it is chosen. */
+    /**
+     * The widget's option as a value row ("On"/"Off") under a "Widget" heading in the Display card,
+     * applied as soon as it is chosen and stored with the widget's own settings.
+     */
     private fun addWidgetDisplayControls(
         parent: LinearLayout,
         settings: WidgetSettings,
         onChange: () -> Unit
     ): WidgetDisplayControls {
+        parent.addView(TextView(context).apply {
+            text = t(R.string.section_widget)
+            textSize = 15f; setTextColor(dark); setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setPadding(0, dp(14), 0, dp(2))
+        })
         // Which widget these settings change: the one this screen was opened from. Opened from the app
         // with no widget placed (or none chosen), there is nothing to change, and the section says so.
         parent.addView(TextView(context).apply {
