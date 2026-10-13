@@ -9,7 +9,9 @@ import android.view.ViewConfiguration
 import android.widget.ImageView
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.prices.PriceResult
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import kotlin.math.roundToInt
 
 /**
@@ -38,7 +40,9 @@ internal data class ChartRequest(
      * no row of today contains the frame's instant. The clock is read once, where this value is built, so
      * two draws of one request are one picture.
      */
-    val nowMinute: Float? = null
+    val nowMinute: Float? = null,
+    /** The time mapping [bands], [selectionMinute] and [nowMinute] were placed on (see [ChartTimeAxis]). */
+    val axis: ChartTimeAxis = ChartTimeAxis.WallClock
 )
 
 /**
@@ -81,25 +85,43 @@ internal object ChartRequests {
         profile: ChartProfile,
         footer: ChartFooterPlan? = null,
         selectionMinute: Float? = null,
-        nowMinute: Float? = null
+        nowMinute: Float? = null,
+        axis: ChartTimeAxis = ChartTimeAxis.WallClock
     ): ChartRequest? {
         val height = heightFor(widthPx, profile)
         return if (height <= 0) null
         else ChartRequest(
-            profile, market, prices ?: NOTHING_FETCHED, bands, footer, widthPx, height, selectionMinute, nowMinute
+            profile, market, prices ?: NOTHING_FETCHED, bands, footer, widthPx, height, selectionMinute, nowMinute, axis
         )
+    }
+
+    /**
+     * The axis [shown] draws in [mode] at [now], and its bands placed on that axis: the Day bands as they
+     * came, or on the From now axis the overlays placed by instant. Without prices or a zone it is the Day
+     * axis.
+     */
+    fun placed(shown: ShownChart, mode: ChartAxisMode, now: Instant): Pair<ChartTimeAxis, List<ChartBand>> {
+        val prices = shown.prices ?: return ChartTimeAxis.WallClock to shown.bands
+        val zone = shown.zone ?: return ChartTimeAxis.WallClock to shown.bands
+        return when (val axis = ChartTimeAxis.of(mode, prices, zone, now)) {
+            is ChartTimeAxis.Range -> axis to shown.overlays.flatMap { it.bands(prices, zone, axis) }
+            ChartTimeAxis.WallClock -> axis to shown.bands
+        }
     }
 }
 
 /**
- * What the view is showing: exactly the facts a request compares, minus the profile and the size, which
- * are the view's own dimensions at draw time.
+ * What the view is showing: the facts a request is built from, minus the profile and the size, which are
+ * the view's own dimensions at draw time. [bands] are the Day axis's; [overlays] are the plan's periods,
+ * placed on the From now axis in the market's [zone] when that axis is drawn (see [ChartRequests.placed]).
  */
 internal data class ShownChart(
     val market: ChartMarket,
     val bands: List<ChartBand>,
     val footer: ChartFooterPlan?,
-    val prices: PriceResult?
+    val prices: PriceResult?,
+    val overlays: List<ChartOverlay> = emptyList(),
+    val zone: ZoneId? = null
 )
 
 /**
@@ -125,6 +147,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
 
     /** The clock the current interval is read from, once per draw at the request boundary; injectable for tests (see `ChartNow`). */
     var now: () -> OffsetDateTime = { OffsetDateTime.now() }
+
+    /** This phone's chart time axis, read at every draw so a changed setting shows on the next one. */
+    var axisMode: () -> ChartAxisMode = { ChartAxisPreference.of(context).mode() }
 
     /** The one pending boundary redraw: replaced on every draw, cancelled on detach (see [ChartBoundaryRefresh]). */
     private val boundaryRefresh = ChartBoundaryRefresh(
@@ -157,13 +182,23 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         isFocusable = true
     }
 
-    /** Shows what these inputs draw; called from the screen's render, where the generation guard lives. */
-    fun show(market: ChartMarket?, bands: List<ChartBand>, footer: ChartFooterPlan?, prices: PriceResult?) {
+    /**
+     * Shows what these inputs draw; called from the screen's render, where the generation guard lives.
+     * [overlays] and [zone] let the From now axis place the plan by instant (see [ShownChart]).
+     */
+    fun show(
+        market: ChartMarket?,
+        bands: List<ChartBand>,
+        footer: ChartFooterPlan?,
+        prices: PriceResult?,
+        overlays: List<ChartOverlay> = emptyList(),
+        zone: ZoneId? = null
+    ) {
         if (market == null) {
             showUnavailable()
             return
         }
-        chart = ShownChart(market, bands, footer, prices)
+        chart = ShownChart(market, bands, footer, prices, overlays, zone)
         draw()
     }
 
@@ -211,11 +246,13 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
     private fun draw() {
         val shown = chart ?: return
         val market = shown.market
-        val bands = shown.bands
         val footer = shown.footer
         val prices = shown.prices
+        // The clock is read once per draw: the axis, its bands and the now line all come from this instant.
+        val at = now()
+        val (axis, bands) = ChartRequests.placed(shown, axisMode(), at.toInstant())
         // The frame a selection is made on and validated against: without the selection line, so a fresh selection cannot invalidate itself.
-        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer) ?: return
+        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer, axis = axis) ?: return
         // A selection belongs to the frame it was made on; changed data, size or profile drop it.
         if (!ChartSelection.stillValid(selection, selectionMadeOn, drawnOn)) {
             val hadSelection = selection != null
@@ -226,9 +263,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         }
         // The current mark is read from the clock here and carried in the request; left out of `drawnOn`
         // like the selection, since an interval passing is not the data moving. `null` prices mean no line.
-        val nowMinute = prices?.let { ChartNow.currentMarkMinute(it, now()) }
+        val nowMinute = prices?.let { ChartNow.currentMarkMinute(it, at, axis) }
         val request = ChartRequests.of(
-            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute
+            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute, axis
         ) ?: return
         // Unchanged request: the frame on screen is this one.
         if (request == lastRequest) return
@@ -236,7 +273,8 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         frameRequest = drawnOn
         val drawn = ChartRenderer.renderFrame(
             context, request.widthPx, request.heightPx, oneSp(), request.market, request.result,
-            request.bands, request.footer, request.profile, request.selectionMinute, request.nowMinute
+            request.bands, request.footer, request.profile, request.selectionMinute, request.nowMinute,
+            axis = request.axis
         )
         plot = drawn.metrics
         val previous = frame
@@ -324,7 +362,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         val shown = chart ?: return
         if (shown.prices == null) return
         val readout = ChartSelection.nearest(
-            ChartScrub.clampedX(x, metrics.left, metrics.right), metrics, shown.market, shown.prices
+            ChartScrub.clampedX(x, metrics.left, metrics.right), metrics, shown.market, shown.prices, drawnAxis()
         ) ?: return
         if (readout == selection) return
         apply(readout, shown.market, shown.prices)
@@ -342,10 +380,14 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         super.performClick()
         val shown = chart ?: return true
         if (shown.prices == null) return true
-        val next = ChartSelection.next(selection?.time, ChartSelection.positions(shown.market, shown.prices)) ?: return true
-        apply(ChartSelection.readoutAt(next, shown.market, shown.prices), shown.market, shown.prices)
+        val axis = drawnAxis()
+        val next = ChartSelection.next(selection?.markMinute, ChartSelection.positions(shown.market, shown.prices, axis)) ?: return true
+        apply(ChartSelection.readoutAt(next, shown.market, shown.prices, axis), shown.market, shown.prices)
         return true
     }
+
+    /** The axis of the frame on screen: a selection is made on what is drawn. */
+    private fun drawnAxis(): ChartTimeAxis = frameRequest?.axis ?: ChartTimeAxis.WallClock
 
     private fun select(x: Float, y: Float) {
         val metrics = plot
@@ -356,7 +398,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
             clearSelection()
             return
         }
-        val readout = ChartSelection.nearest(x, metrics, shown.market, shown.prices)
+        val readout = ChartSelection.nearest(x, metrics, shown.market, shown.prices, drawnAxis())
         if (readout != null && readout == selection) {
             clearSelection()
             return

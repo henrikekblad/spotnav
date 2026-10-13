@@ -142,14 +142,16 @@ internal fun ChargingScreen.render() {
             bands = retained.bands,
             footer = retained.footer,
             drawnPrices = retained.drawnPrices,
-            figures = retained.figures
+            figures = retained.figures,
+            overlays = retained.overlays
         )
         pairedChart != null -> LocalChart(
             market = pairedChart.market,
             bands = pairedChart.bands,
             footer = pairedChart.footer,
             drawnPrices = pairedChart.prices,
-            figures = pairedChart.figures
+            figures = pairedChart.figures,
+            overlays = pairedChart.overlays
         )
         source is PlanSource.RemoteOwned -> null
         else -> ChartPass.chart(inputs, prices, plan)
@@ -272,7 +274,8 @@ internal fun ChargingScreen.render() {
     // The graph is the last thing this pass touches, and it is the one part of the card that is not
     // text:
     planCard.result.chart.show(
-        chart?.market, chart?.bands ?: emptyList(), chart?.footer, chart?.drawnPrices ?: retained?.prices ?: prices
+        chart?.market, chart?.bands ?: emptyList(), chart?.footer, chart?.drawnPrices ?: retained?.prices ?: prices,
+        chart?.overlays.orEmpty(), marketZone
     )
     planCard.result.authorityNote.text = authorityNote.orEmpty()
 }

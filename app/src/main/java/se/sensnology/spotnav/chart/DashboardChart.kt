@@ -43,7 +43,9 @@ internal data class PairedChart(
     val prices: PriceResult,
     val bands: List<ChartBand>,
     val footer: ChartFooterPlan?,
-    val figures: PairedPlanFigures?
+    val figures: PairedPlanFigures?,
+    /** The installed and proposal periods [bands] were drawn from, for placing them on the From now axis. */
+    val overlays: List<ChartOverlay> = emptyList()
 )
 
 /**
@@ -132,9 +134,12 @@ internal object DashboardChart {
         )
         val figures = figures(dashboard)
         val (installed, proposal) = plannedPeriods(dashboard, now)
-        val bands = ChartOverlay.planned(installed, ChartBandKind.INSTALLED).bands(prices, zone) +
-            ChartOverlay.planned(proposal, ChartBandKind.PROPOSAL).bands(prices, zone)
-        return PairedChart(market, prices, bands, footer(figures), figures)
+        val overlays = listOf(
+            ChartOverlay.planned(installed, ChartBandKind.INSTALLED),
+            ChartOverlay.planned(proposal, ChartBandKind.PROPOSAL)
+        )
+        val bands = overlays.flatMap { it.bands(prices, zone) }
+        return PairedChart(market, prices, bands, footer(figures), figures, overlays)
     }
 
     /**
