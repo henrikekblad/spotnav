@@ -54,7 +54,7 @@ class ChartTouchTest {
 
     @Test
     fun aFrameNarrowerThanTheViewIsCentredAndTheTouchFollowsIt() {
-        // An unfolded screen wider than the bitmap cap: the frame is shown centred at its own size.
+        // A view wider than the frame at the same height (a screen wider than the bitmap cap): the frame is shown centred at its own size.
         val viewW = 2150
         val viewH = ChartRequests.heightFor(viewW, profile)
         val frameW = 1400

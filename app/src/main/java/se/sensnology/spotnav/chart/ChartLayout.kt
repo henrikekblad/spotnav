@@ -61,8 +61,17 @@ internal data class ChartMetrics(
  * is measured by the caller and passed in as a lambda.
  */
 internal object ChartLayout {
+    /**
+     * The sizes a chart bitmap is kept within. The widest is above an unfolded foldable's inner screen, so
+     * the in-app chart is drawn at the width it is shown at rather than scaled up or centred.
+     */
+    const val MIN_WIDTH_PX = 180
+    const val MAX_WIDTH_PX = 2600
+    const val MIN_HEIGHT_PX = 100
+    const val MAX_HEIGHT_PX = 1400
+
     fun scaleFor(width: Int, height: Int): Float =
-        min(width.coerceIn(180, 1400) / 420f, height.coerceIn(100, 900) / 220f).coerceIn(.72f, 1.45f)
+        min(width.coerceIn(MIN_WIDTH_PX, MAX_WIDTH_PX) / 420f, height.coerceIn(MIN_HEIGHT_PX, MAX_HEIGHT_PX) / 220f).coerceIn(.72f, 1.45f)
 
     fun metrics(
         profile: ChartProfile,
@@ -73,8 +82,8 @@ internal object ChartLayout {
         spanMinutes: Float = 1440f,
         measureHeader: (textSize: Float) -> Float
     ): ChartMetrics {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(MIN_WIDTH_PX, MAX_WIDTH_PX)
+        val h = height.coerceIn(MIN_HEIGHT_PX, MAX_HEIGHT_PX)
         // Geometry scale is independent of the profile: markers, padding and grid follow it.
         val scale = scaleFor(w, h)
         val pad = 14f * scale

@@ -56,8 +56,8 @@ internal object ChartRenderer {
      * has neither prices nor valid [PlanningInputs].
      */
     fun emptyState(context: Context, width: Int, height: Int, theme: ChartTheme? = null): Bitmap {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val colors = theme ?: ChartTheme.Dark
@@ -80,8 +80,8 @@ internal object ChartRenderer {
         details: List<String> = emptyList(),
         theme: ChartTheme? = null
     ): Bitmap {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val colors = theme ?: ChartTheme.Dark
@@ -155,8 +155,8 @@ internal object ChartRenderer {
     ): ChartFrame {
         // The chart's surface is dark in both system themes, so the palette is not resolved from night mode.
         val colors = theme ?: ChartTheme.Dark
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
