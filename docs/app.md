@@ -133,10 +133,10 @@ cheap to dear, starting at the current one.
 
 <img src="images/app-widget.png" alt="SpotNav widget on the home screen: the price chart for today and tomorrow with the planned period shaded and the charging status line underneath" width="480">
 
-The widget shows the same chart and, when a charger is paired, its status line. It always uses the
-**Day** axis: on a home-screen widget's small canvas, 32 hours of quarter-hours would crowd into a
-smear. Tap it to open the app.
-Each widget has its own settings.
+The widget shows the same chart, on the same time axis as the app (Settings → Display), and, when a
+charger is paired, its status line. On a narrow widget the axis keeps fewer labels: the 06 and 18 go
+first, then noon and midnight, while a new day's label stays. Tap it to open the app. Each widget has
+its own settings.
 
 ## Settings
 
@@ -144,19 +144,16 @@ Each widget has its own settings.
 
 **General**: the app's language and colour theme.
 
-**Display**: how this phone draws the chart in the app; it is not sent to Home Assistant. **Chart time
-axis** is **Day** (00–24, tomorrow drawn over today; the default) or **From now** (from this hour to the
-end of the last published day; see [Plan chart](#plan-chart)). The widget always shows **Day**.
+**Display**: **Chart time axis** is **Day** (00–24, with tomorrow drawn over today; the default) or
+**From now** (from this hour to the end of the last published day; see [Plan chart](#plan-chart)). The
+chart in the app and the widgets follow it. Under **Widget** are the settings of the widget the app was
+opened from: whether its status line is shown.
 
 <img src="images/app-settings-price.png" alt="Electricity price settings: price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">
 
 **Electricity price**: the price area and additions. Prices are always shown as the area publishes
 them, every 15, 30 or 60 minutes, as in the Home Assistant card. Once paired, area and taxes are
 Home Assistant's and are changed through it.
-
-<img src="images/app-settings-widget.png" alt="Widget settings: show charging status at the bottom of the widget" width="420">
-
-**Widget**: settings of the widget the app was opened from.
 
 <img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, charge limit, charge target, minimum charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and the day and night reference picture tiles" width="420">
 
