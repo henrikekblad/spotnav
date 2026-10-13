@@ -134,8 +134,8 @@ cheap to dear, starting at the current one.
 <img src="images/app-widget.png" alt="SpotNav widget on the home screen: the price chart for today and tomorrow with the planned period shaded and the charging status line underneath" width="480">
 
 The widget shows the same chart and, when a charger is paired, its status line. It always uses the
-**Day** axis: on a home-screen widget's small canvas, 32 hours of quarter-hours would crowd into a smear,
-and the widget redraws less often than the app. Tap it to open the app.
+**Day** axis: on a home-screen widget's small canvas, 32 hours of quarter-hours would crowd into a
+smear. Tap it to open the app.
 Each widget has its own settings.
 
 ## Settings
