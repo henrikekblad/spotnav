@@ -36,16 +36,24 @@ internal object ChartNow {
     private const val QUARTER_MINUTES = 15
 
     /**
-     * The mark minute of the interval of today's rows that contains [now], or `null` when none does.
-     * Today only: tomorrow's rows are a different record (see `ChartReadout`).
+     * The mark minute of the interval of today's rows that contains [now] on [axis], or `null` when none
+     * does. Today only: tomorrow's rows are a different record (see `ChartReadout`).
      */
-    fun currentMarkMinute(result: PriceResult, now: OffsetDateTime): Float? =
-        current(result, now)?.let(::markMinute)
+    fun currentMarkMinute(
+        result: PriceResult,
+        now: OffsetDateTime,
+        axis: ChartTimeAxis = ChartTimeAxis.WallClock
+    ): Float? = current(result, now)?.let(axis::markMinute)
 
     fun currentMarkMinute(market: ChartMarket, result: PriceResult): Float? =
+        currentMarkMinute(market, result, ChartTimeAxis.WallClock, java.time.Instant.now())
+
+    /** The mark minute on [axis] of today's interval that contains [now], read in [market]'s zone. */
+    fun currentMarkMinute(market: ChartMarket, result: PriceResult, axis: ChartTimeAxis, now: java.time.Instant): Float? =
         currentMarkMinute(
             result,
-            OffsetDateTime.now(PriceMarkets.find(market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault())
+            now.atZone(PriceMarkets.find(market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault()).toOffsetDateTime(),
+            axis
         )
 
     /**

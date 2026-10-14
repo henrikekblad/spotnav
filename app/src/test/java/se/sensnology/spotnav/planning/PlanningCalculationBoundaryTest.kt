@@ -43,7 +43,7 @@ class PlanningCalculationBoundaryTest {
         // -- for the same published price, all three are one number.
         val model = PriceTableModels.create(result, inputs, start, plan = null)
         val cell = model.rows.first { it.position.time == LocalTime.of(0, 15) }.today!!
-        val readout = ChartSelection.readoutAt(LocalTime.of(0, 15), ChartMarket.of(inputs), result)!!
+        val readout = ChartSelection.readoutAt(15f, ChartMarket.of(inputs), result)!!
         val publishedPrice = result.today.first { it.start == start.plusMinutes(15) }.pricePerKwh
 
         assertEquals(inputs.apply(publishedPrice), cell.price, 1e-12)

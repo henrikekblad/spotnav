@@ -84,7 +84,7 @@ class ChartSelectionTest {
         assertEquals(LocalTime.of(0, 0), hourly.time)
         assertEquals(30f, hourly.markMinute, 0f)
 
-        val cycled = ChartSelection.readoutAt(LocalTime.of(0, 0), inputs(WidgetSettings()), PriceResult(points, emptyList(), 0))!!
+        val cycled = ChartSelection.readoutAt(30f, inputs(WidgetSettings()), PriceResult(points, emptyList(), 0))!!
         assertEquals(hourly, cycled)
         assertEquals(0f, cycled.markMinute - hourly.markMinute, 0f)
     }
@@ -117,8 +117,8 @@ class ChartSelectionTest {
         assertEquals(LocalTime.of(0, 30), second.time)
         assertEquals(45f, second.markMinute, 0f)
         assertEquals(
-            "four half-hours, one position each",
-            listOf(LocalTime.of(0, 0), LocalTime.of(0, 30), LocalTime.of(1, 0), LocalTime.of(1, 30)),
+            "four half-hours, one position each, at their middles",
+            listOf(15f, 45f, 75f, 105f),
             ChartSelection.positions(market, result)
         )
     }
@@ -260,7 +260,7 @@ class ChartSelectionTest {
     }
 
     @Test
-    fun theDisplayedPositionsAreWallClocksInOrderWithARepeatedOneOnlyOnce() {
+    fun theDisplayedPositionsAreMarkMinutesInOrderWithARepeatedOneOnlyOnce() {
         val today = day("2026-10-25T00:00:00+02:00", (0 until 12).map { 1.0 + it }) + listOf(
             PricePoint(at("2026-10-25T02:15:00+01:00"), 7.0)
         )
@@ -268,28 +268,28 @@ class ChartSelectionTest {
         val positions = ChartSelection.positions(inputs(WidgetSettings()), PriceResult(today, emptyList(), 0))
 
         assertEquals(12, positions.size)
-        assertEquals(LocalTime.of(0, 0), positions.first())
-        assertEquals(LocalTime.of(2, 45), positions.last())
-        assertEquals("02:15 appears once in the cycle", 1, positions.count { it == LocalTime.of(2, 15) })
+        assertEquals(0f, positions.first(), 0f)
+        assertEquals(165f, positions.last(), 0f)
+        assertEquals("02:15 appears once in the cycle", 1, positions.count { it == 135f })
         // The readout at that one position still carries both of its values.
-        val repeated = ChartSelection.readoutAt(LocalTime.of(2, 15), inputs(WidgetSettings()), PriceResult(today, emptyList(), 0))!!
+        val repeated = ChartSelection.readoutAt(135f, inputs(WidgetSettings()), PriceResult(today, emptyList(), 0))!!
         assertEquals(2, repeated.today.size)
     }
 
     @Test
     fun activationStepsThroughThePositionsInOrderAndWraps() {
-        val positions = listOf(LocalTime.of(0, 0), LocalTime.of(0, 15), LocalTime.of(0, 30))
+        val positions = listOf(0f, 15f, 30f)
 
         // Nothing selected yet: activation starts at the first position.
-        assertEquals(LocalTime.of(0, 0), ChartSelection.next(null, positions))
-        assertEquals(LocalTime.of(0, 15), ChartSelection.next(LocalTime.of(0, 0), positions))
-        assertEquals(LocalTime.of(0, 30), ChartSelection.next(LocalTime.of(0, 15), positions))
+        assertEquals(0f, ChartSelection.next(null, positions))
+        assertEquals(15f, ChartSelection.next(0f, positions))
+        assertEquals(30f, ChartSelection.next(15f, positions))
         // Past the last one it wraps to the first, so activation never dead-ends.
-        assertEquals(LocalTime.of(0, 0), ChartSelection.next(LocalTime.of(0, 30), positions))
+        assertEquals(0f, ChartSelection.next(30f, positions))
         // One position (or a stale one) cannot get stuck either.
-        assertEquals(LocalTime.of(0, 15), ChartSelection.next(LocalTime.of(0, 15), listOf(LocalTime.of(0, 15))))
-        assertEquals(LocalTime.of(0, 0), ChartSelection.next(LocalTime.of(9, 45), positions))
-        assertEquals(null, ChartSelection.next(LocalTime.of(9, 45), emptyList()))
+        assertEquals(15f, ChartSelection.next(15f, listOf(15f)))
+        assertEquals(0f, ChartSelection.next(585f, positions))
+        assertEquals(null, ChartSelection.next(585f, emptyList()))
     }
 
     @Test
@@ -300,10 +300,10 @@ class ChartSelectionTest {
         val settings = WidgetSettings()
 
         val positions = ChartSelection.positions(inputs(settings), result)
-        assertEquals(listOf(LocalTime.of(0, 0), LocalTime.of(0, 15), LocalTime.of(0, 30)), positions)
+        assertEquals(listOf(0f, 15f, 30f), positions)
         for (position in positions) {
             val cycled = ChartSelection.readoutAt(position, inputs(settings), result)!!
-            val tapped = ChartSelection.nearest(xOf(position.toSecondOfDay() / 60f), metrics, inputs(settings), result)!!
+            val tapped = ChartSelection.nearest(xOf(position), metrics, inputs(settings), result)!!
             assertEquals("at $position", cycled, tapped)
         }
     }
@@ -318,7 +318,7 @@ class ChartSelectionTest {
         fun request(footer: ChartFooterPlan?) =
             ChartRequests.of(market, listOf(band), result, 1000, ChartProfile.PLAN_CARD, footer)
         val start = date.atTime(1, 0).atZone(stockholm).toOffsetDateTime()
-        val readout = ChartSelection.readoutAt(LocalTime.of(1, 0), market, result)!!
+        val readout = ChartSelection.readoutAt(60f, market, result)!!
 
         assertTrue("the same frame keeps its selection", ChartSelection.stillValid(readout, request(null), request(null)))
         val described = ChartFooterPlan(start, start.plusHours(3), 2, false, 20.0, 10.0)

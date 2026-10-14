@@ -5,8 +5,11 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import se.sensnology.spotnav.chart.ChartAxisMode
 import se.sensnology.spotnav.chart.ChartMarkKind
 import se.sensnology.spotnav.chart.ChartMarks
+import se.sensnology.spotnav.chart.ChartRequests
+import se.sensnology.spotnav.chart.ChartTimeAxis
 import se.sensnology.spotnav.chart.DashboardChart
 import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.testing.DashboardFixtures
@@ -37,6 +40,32 @@ class WidgetChartSourceTest {
         val source = WidgetChartSource.of("c1", chargerKnown = true, shown, stored, noon) as WidgetChartSource.Dashboard
         assertSame(source.chart.market, source.need.market)
         assertSame(source.chart.prices, source.need.result)
+    }
+
+    @Test fun onFromNowTheWidgetDrawsTheSameAxisAndBandsAsTheInAppChart() {
+        // Today and tomorrow published, noon in Stockholm: the axis runs from 12:00 to the end of tomorrow.
+        val dashboard = publishedAt(15)
+        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, dashboard, noon, ChartAxisMode.FROM_NOW)
+            as WidgetChartSource.Dashboard
+        val axis = source.axis as ChartTimeAxis.Range
+        assertEquals(noon, axis.start)
+        assertEquals(36 * 60f, axis.spanMinutes, 0f)
+        val chart = DashboardChart.build(dashboard.dashboard, now = noon)!!
+        val expected = ChartRequests.placed(
+            chart.prices, DashboardChart.zone(dashboard.dashboard), chart.bands, chart.overlays, ChartAxisMode.FROM_NOW, noon
+        )
+        assertEquals(expected, source.axis to source.bands)
+        assertTrue("every band on the range is solid", source.bands.none { it.tomorrow })
+
+        val hidden = WidgetChartSource.of("c1", chargerKnown = true, hidden, dashboard, noon, ChartAxisMode.FROM_NOW)
+            as WidgetChartSource.Dashboard
+        assertEquals("hiding the plan keeps the axis", source.axis, hidden.axis)
+        assertTrue(hidden.bands.isEmpty())
+    }
+
+    @Test fun theDayAxisIsTheDefault() {
+        val source = WidgetChartSource.of("c1", chargerKnown = true, shown, publishedAt(15), noon) as WidgetChartSource.Dashboard
+        assertSame(ChartTimeAxis.WallClock, source.axis)
     }
 
     @Test fun anUnpairedWidgetKeepsThePlanPass() {

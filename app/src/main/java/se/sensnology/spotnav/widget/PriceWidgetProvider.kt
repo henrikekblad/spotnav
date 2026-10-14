@@ -16,7 +16,8 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
-import se.sensnology.spotnav.chart.ChartMarket
+import se.sensnology.spotnav.chart.ChartAxisMode
+import se.sensnology.spotnav.chart.ChartAxisPreference
 import se.sensnology.spotnav.chart.ChartNow
 import se.sensnology.spotnav.chart.ChartProfile
 import se.sensnology.spotnav.chart.ChartRenderer
@@ -203,7 +204,10 @@ class PriceWidgetProvider : AppWidgetProvider() {
                 WidgetChargerResolver.resolve(settings, ChargerProfileStore.forContext(context)) != null
             // Chart and bottom line both come from this one stored dashboard, refreshed first when due and allowed.
             val stored = if (chargerProfileId != null && chargerKnown) batch.dashboards.latest(chargerProfileId) else null
-            val source = WidgetChartSource.of(chargerProfileId, chargerKnown, settings, stored)
+            // The clock and the chart time axis are read once: the axis, its bands and the now line agree.
+            val now = java.time.Instant.now()
+            val axisMode = ChartAxisPreference.of(context).mode()
+            val source = WidgetChartSource.of(chargerProfileId, chargerKnown, settings, stored, now, axisMode)
             val statusLine = if (stored != null && settings.showChargingPlan) {
                 WidgetStatusLine.compose(
                     stored.status,
@@ -235,11 +239,14 @@ class PriceWidgetProvider : AppWidgetProvider() {
                         context, width, height, oneSp, source.chart.market, source.chart.prices, source.bands,
                         footer = null,
                         profile = ChartProfile.WIDGET,
-                        nowMinute = ChartNow.currentMarkMinute(source.chart.market, source.chart.prices),
-                        statusFooter = statusLine
+                        nowMinute = ChartNow.currentMarkMinute(source.chart.market, source.chart.prices, source.axis, now),
+                        statusFooter = statusLine,
+                        axis = source.axis
                     ).bitmap
                 }
-                WidgetChartSource.Pass -> drawPlanPass(context, id, settings, chargerProfileId, chargerKnown, statusLine, batch, width, height, oneSp)
+                WidgetChartSource.Pass -> drawPlanPass(
+                    context, id, settings, chargerProfileId, chargerKnown, statusLine, batch, width, height, oneSp, axisMode, now
+                )
             }
             val views = RemoteViews(context.packageName, R.layout.widget_price)
             views.setImageViewBitmap(R.id.chart, chart)
@@ -276,7 +283,9 @@ class PriceWidgetProvider : AppWidgetProvider() {
             batch: WidgetBatch,
             width: Int,
             height: Int,
-            oneSp: Float
+            oneSp: Float,
+            axisMode: ChartAxisMode,
+            now: java.time.Instant
         ): Bitmap {
             val snapshot = WidgetPlanSnapshotStore.forContext(context).snapshotFor(chargerProfileId)
             // A `null` area is a paired widget with nothing confirmed: nothing is fetched and it renders unavailable.
@@ -294,7 +303,8 @@ class PriceWidgetProvider : AppWidgetProvider() {
                             context, width, height, oneSp, inputs, data,
                             showPlan = settings.showChargingPlan,
                             // Now line only, never a selection line.
-                            nowMinute = ChartNow.currentMarkMinute(ChartMarket.of(inputs), data)
+                            axisMode = axisMode,
+                            now = now
                         )
                     }
                 }
@@ -326,13 +336,17 @@ class PriceWidgetProvider : AppWidgetProvider() {
                         )
                         // Confirmed but no current price answer: the placeholder.
                         data == null -> ChartRenderer.emptyState(context, width, height)
-                        else -> ChartRenderer.renderFrame(
-                            context, width, height, oneSp, confirmed.market, data, pass.bands,
-                            footer = null,
-                            profile = ChartProfile.WIDGET,
-                            nowMinute = ChartNow.currentMarkMinute(confirmed.market, data),
-                            statusFooter = statusLine
-                        ).bitmap
+                        else -> {
+                            val (axis, bands) = WidgetPlanDecision.placed(pass, data, axisMode, now)
+                            ChartRenderer.renderFrame(
+                                context, width, height, oneSp, confirmed.market, data, bands,
+                                footer = null,
+                                profile = ChartProfile.WIDGET,
+                                nowMinute = ChartNow.currentMarkMinute(confirmed.market, data, axis, now),
+                                statusFooter = statusLine,
+                                axis = axis
+                            ).bitmap
+                        }
                     }
                 }
             }

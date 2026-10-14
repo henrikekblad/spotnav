@@ -15,35 +15,32 @@ import java.time.ZoneId
 internal enum class ChartBandKind { INSTALLED, PROPOSAL }
 
 /**
- * One drawable band of shading: a represented market date and the wall-clock span on it.
+ * One drawable band of shading, in the minutes of the [ChartTimeAxis] it was placed on.
  *
- * [fromMinute] and [toMinute] are minutes of [date]'s own day; a band never runs backwards or spans a
- * midnight or offset transition. A band with `toMinute == fromMinute` is not drawable (see [isDrawable]).
- * [tomorrow] is true for a band on any date other than the one the price result's today is on; such a
- * band is drawn hatched (see [ChartBandStyle]), today's solid.
+ * On the Day axis [fromMinute] and [toMinute] are minutes of [date]'s own day, and a band never spans a
+ * midnight or offset transition. On the From now axis they are minutes from the axis start, [date] is the
+ * date the band starts on, and a band may run across midnight. A band never runs backwards; one with
+ * `toMinute == fromMinute` is not drawable (see [isDrawable]). [tomorrow] is true for a band on the Day
+ * axis on any date other than the one the price result's today is on; such a band is drawn hatched (see
+ * [ChartBandStyle]), today's solid. On the From now axis every band is solid.
  */
 internal data class ChartBand(
     val date: LocalDate,
     val fromMinute: Float,
     /**
-     * The band's end, in the same minutes, never above a whole day. On a fall-back day the repeated
-     * hour is covered by two ordered bands even though the graph collapses them onto one x.
+     * The band's end, in the same minutes; on the Day axis never above a whole day. On a fall-back day
+     * the repeated hour is covered by two ordered bands even though the Day axis collapses them onto one x.
      */
     val toMinute: Float,
     val kind: ChartBandKind = ChartBandKind.INSTALLED,
     val tomorrow: Boolean = false
 ) {
     init {
-        require(fromMinute >= 0f) { "a band cannot start before its day" }
-        require(toMinute <= MINUTES_PER_DAY) { "a band cannot end after its day" }
+        require(fromMinute >= 0f) { "a band cannot start before its axis" }
         require(toMinute >= fromMinute) { "a band cannot run backwards" }
     }
 
     val isDrawable: Boolean get() = toMinute > fromMinute
-
-    private companion object {
-        const val MINUTES_PER_DAY = 1440f
-    }
 }
 
 /**
@@ -66,7 +63,27 @@ internal data class ChartOverlay(
      * bands are the sorted union of what covers it (see `union`): one rectangle per shaded stretch.
      * A date is [ChartBand.tomorrow] unless it is the date of [result]'s today.
      */
-    fun bands(result: PriceResult, zoneId: ZoneId): List<ChartBand> {
+    fun bands(result: PriceResult, zoneId: ZoneId): List<ChartBand> = bands(result, zoneId, ChartTimeAxis.WallClock)
+
+    /**
+     * The bands this overlay draws on [axis]. On [ChartTimeAxis.WallClock] they are [bands] above. On a
+     * [ChartTimeAxis.Range] each period is placed by instant and clipped to the axis, so what ended before
+     * the axis starts is not drawn and a period across midnight is one band; the bands are the sorted
+     * union of what is left, all solid.
+     */
+    fun bands(result: PriceResult, zoneId: ZoneId, axis: ChartTimeAxis): List<ChartBand> {
+        if (axis !is ChartTimeAxis.Range) return wallClockBands(result, zoneId)
+        val placed = positive(periods).mapNotNull { period ->
+            val start = maxOf(period.start.toInstant(), axis.start)
+            val end = minOf(period.end.toInstant(), axis.end)
+            if (!end.isAfter(start)) return@mapNotNull null
+            ChartBand(start.atZone(zoneId).toLocalDate(), axis.minuteOf(start), axis.minuteOf(end), kind)
+        }
+        val first = placed.minByOrNull { it.fromMinute }?.date ?: return emptyList()
+        return union(first, placed)
+    }
+
+    private fun wallClockBands(result: PriceResult, zoneId: ZoneId): List<ChartBand> {
         val days = representedDays(result, zoneId)
         val drawable = positive(periods)
         if (days.isEmpty() || drawable.isEmpty()) return emptyList()

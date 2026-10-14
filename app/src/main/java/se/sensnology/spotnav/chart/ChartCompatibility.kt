@@ -21,7 +21,9 @@ internal data class LocalChart(
      * Home Assistant's all-in intervals (see [DashboardChart]). `null` means the screen's own result.
      */
     val drawnPrices: PriceResult? = null,
-    val figures: PairedPlanFigures? = null
+    val figures: PairedPlanFigures? = null,
+    /** The plan's periods [bands] were drawn from, for placing them on the From now axis (see [ChartTimeAxis]). */
+    val overlays: List<ChartOverlay> = emptyList()
 )
 
 internal object LocalCharts {
@@ -41,9 +43,11 @@ internal object LocalCharts {
         val market = ChartMarket.of(inputs)
         if (!showPlan || plan == null || prices == null) return LocalChart(market, emptyList(), null)
         val zoneId = PriceMarkets.find(market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault()
+        val overlay = ChartOverlay.planned(plan.periods)
         return LocalChart(
             market = market,
-            bands = ChartOverlay.planned(plan.periods).bands(prices, zoneId),
+            bands = overlay.bands(prices, zoneId),
+            overlays = listOf(overlay),
             footer = ChartFooterPlan(
                 start = plan.start,
                 end = plan.end,

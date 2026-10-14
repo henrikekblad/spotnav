@@ -28,7 +28,9 @@ internal data class ConfirmedChart(
     val remotePlan: RemotePlan?,
     /** Home Assistant's own prices when the graph drew those (paired charger); [market] then matches them instead of [prices]. */
     val drawnPrices: PriceResult? = null,
-    val figures: PairedPlanFigures? = null
+    val figures: PairedPlanFigures? = null,
+    /** The periods [bands] were drawn from, for the From now axis (see [LocalChart.overlays]). */
+    val overlays: List<ChartOverlay> = emptyList()
 )
 
 /**
@@ -47,7 +49,8 @@ internal object ConfirmedChartRules {
         profileId: String?,
         screenGeneration: Int,
         drawnPrices: PriceResult? = null,
-        figures: PairedPlanFigures? = null
+        figures: PairedPlanFigures? = null,
+        overlays: List<ChartOverlay> = emptyList()
     ): ConfirmedChart? {
         if (subject == null || prices == null || market == null) return null
         if (subject.profileId != profileId || subject.generation != screenGeneration) return null
@@ -69,7 +72,8 @@ internal object ConfirmedChartRules {
             footer = footer,
             remotePlan = (state as? VisibleAuthority.AutoRemote)?.remotePlan,
             drawnPrices = drawnPrices,
-            figures = figures
+            figures = figures,
+            overlays = overlays.toList()
         )
     }
 

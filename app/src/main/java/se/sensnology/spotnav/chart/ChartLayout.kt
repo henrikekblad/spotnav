@@ -29,24 +29,27 @@ internal data class ChartMetrics(
     val top: Float,
     val bottom: Float,
     val left: Float,
-    val right: Float
+    val right: Float,
+    /** The time the plot's width stands for (see [ChartTimeAxis.spanMinutes]): a day unless the axis is a range. */
+    val spanMinutes: Float = MINUTES_PER_DAY
 ) {
     val plotHeight: Float get() = bottom - top
 
     val plotWidth: Float get() = right - left
 
     /**
-     * The x a given minute of the day is drawn at, midnight to midnight across the plot. The drawing,
-     * the selection line and the hit test ([minuteOfDayAt], its inverse) all read this one mapping.
+     * The x an axis minute is drawn at (see [ChartTimeAxis]): on the Day axis a minute of the day, midnight
+     * to midnight across the plot; on the From now axis minutes from the start of the current hour. The
+     * drawing, the selection line and the hit test ([minuteAt], its inverse) all read this one mapping.
      */
-    fun xAt(minuteOfDay: Float): Float = left + minuteOfDay / MINUTES_PER_DAY * plotWidth
+    fun xAt(minute: Float): Float = left + minute / spanMinutes * plotWidth
 
     /**
-     * The minute of the day [x] falls on, or `null` outside the plot's horizontal span. The vertical
-     * check is the caller's.
+     * The axis minute [x] falls on, or `null` outside the plot's horizontal span. The vertical check is
+     * the caller's.
      */
-    fun minuteOfDayAt(x: Float): Float? =
-        if (plotWidth <= 0f || x < left || x > right) null else (x - left) / plotWidth * MINUTES_PER_DAY
+    fun minuteAt(x: Float): Float? =
+        if (plotWidth <= 0f || x < left || x > right) null else (x - left) / plotWidth * spanMinutes
 
     private companion object {
         const val MINUTES_PER_DAY = 1440f
@@ -58,8 +61,17 @@ internal data class ChartMetrics(
  * is measured by the caller and passed in as a lambda.
  */
 internal object ChartLayout {
+    /**
+     * The sizes a chart bitmap is kept within. The widest is above an unfolded foldable's inner screen, so
+     * the in-app chart is drawn at the width it is shown at rather than scaled up or centred.
+     */
+    const val MIN_WIDTH_PX = 180
+    const val MAX_WIDTH_PX = 2600
+    const val MIN_HEIGHT_PX = 100
+    const val MAX_HEIGHT_PX = 1400
+
     fun scaleFor(width: Int, height: Int): Float =
-        min(width.coerceIn(180, 1400) / 420f, height.coerceIn(100, 900) / 220f).coerceIn(.72f, 1.45f)
+        min(width.coerceIn(MIN_WIDTH_PX, MAX_WIDTH_PX) / 420f, height.coerceIn(MIN_HEIGHT_PX, MAX_HEIGHT_PX) / 220f).coerceIn(.72f, 1.45f)
 
     fun metrics(
         profile: ChartProfile,
@@ -67,10 +79,11 @@ internal object ChartLayout {
         height: Int,
         scaledDensity: Float,
         hasChargingPlan: Boolean,
+        spanMinutes: Float = 1440f,
         measureHeader: (textSize: Float) -> Float
     ): ChartMetrics {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(MIN_WIDTH_PX, MAX_WIDTH_PX)
+        val h = height.coerceIn(MIN_HEIGHT_PX, MAX_HEIGHT_PX)
         // Geometry scale is independent of the profile: markers, padding and grid follow it.
         val scale = scaleFor(w, h)
         val pad = 14f * scale
@@ -87,7 +100,7 @@ internal object ChartLayout {
         val bottom = h - pad - axisTextSize * 1.35f - footerHeight
         val left = pad + max(axisTextSize * 2.5f, w * .070f)
         val right = w - pad
-        return ChartMetrics(scale, pad, headerTextSize, axisTextSize, footerHeight, top, bottom, left, right)
+        return ChartMetrics(scale, pad, headerTextSize, axisTextSize, footerHeight, top, bottom, left, right, spanMinutes)
     }
 
     private fun cap(size: Float, fractionOfHeight: Float?, height: Int): Float =

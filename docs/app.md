@@ -114,6 +114,14 @@ today and hatched with diagonal lines tomorrow; the line is now. When Home Assis
 waiting for the current charging window to end, that window is drawn as installed and the new plan from
 its end, in place of the windows it replaces. The table button opens the price table.
 
+With **From now** (Settings → Display) and tomorrow's prices published, the axis runs in real time from
+the start of the current hour to the end of the last published day, about 32 to 35 hours, with the now
+line at the left edge. Every interval sits at its own time: nothing that has already ended is drawn,
+tomorrow is drawn like today, and a charging period across midnight is one band; every band is solid.
+Ticks come every six hours, and midnight is a dashed line labelled with the new day's weekday and date.
+The highest and lowest price then cover everything drawn rather than today's alone. Until tomorrow's
+prices are published, **From now** looks exactly like **Day**.
+
 ## Price table
 
 <img src="images/app-price-table.png" alt="Price table with time, today's and tomorrow's price per quarter-hour, coloured by price, the current quarter outlined" width="360">
@@ -125,8 +133,10 @@ cheap to dear, starting at the current one.
 
 <img src="images/app-widget.png" alt="SpotNav widget on the home screen: the price chart for today and tomorrow with the planned period shaded and the charging status line underneath" width="480">
 
-The widget shows the same chart and, when a charger is paired, its status line. Tap it to open the app.
-Each widget has its own settings.
+The widget shows the same chart, on the same time axis as the app (Settings → Display), and, when a
+charger is paired, its status line. On a narrow widget the axis keeps fewer labels: the 06 and 18 go
+first, then noon and midnight, while a new day's label stays. Tap it to open the app. Each widget has
+its own settings.
 
 ## Settings
 
@@ -134,15 +144,16 @@ Each widget has its own settings.
 
 **General**: the app's language and colour theme.
 
+**Display**: **Chart time axis** is **Day** (00–24, with tomorrow drawn over today; the default) or
+**From now** (from this hour to the end of the last published day; see [Plan chart](#plan-chart)). The
+chart in the app and the widgets follow it. Under **Widget** are the settings of the widget the app was
+opened from: whether its status line is shown.
+
 <img src="images/app-settings-price.png" alt="Electricity price settings: price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">
 
 **Electricity price**: the price area and additions. Prices are always shown as the area publishes
 them, every 15, 30 or 60 minutes, as in the Home Assistant card. Once paired, area and taxes are
 Home Assistant's and are changed through it.
-
-<img src="images/app-settings-widget.png" alt="Widget settings: show charging status at the bottom of the widget" width="420">
-
-**Widget**: settings of the widget the app was opened from.
 
 <img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, charge limit, charge target, minimum charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and the day and night reference picture tiles" width="420">
 

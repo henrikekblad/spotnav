@@ -373,7 +373,8 @@ internal class AuthorityController(
         profileId = profileId,
         screenGeneration = screenGeneration,
         drawnPrices = chart?.drawnPrices,
-        figures = chart?.figures
+        figures = chart?.figures,
+        overlays = chart?.overlays.orEmpty()
     )
 
     /**

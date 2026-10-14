@@ -28,8 +28,9 @@ internal object ChartRenderer {
     private const val LINE_ALPHA = 110
 
     /**
-     * The widget's entry point: the bitmap only. [nowMinute] is the current interval's mark, read from the
-     * clock by the caller; the widget has no selection. [theme] defaults to the dark panel.
+     * The widget's entry point for a local plan: the bitmap only, on the time axis [axisMode] gives at
+     * [now], with the now line at the interval containing [now]; the widget has no selection. [theme]
+     * defaults to the dark panel.
      */
     fun render(
         context: Context,
@@ -40,14 +41,17 @@ internal object ChartRenderer {
         result: PriceResult,
         profile: ChartProfile = ChartProfile.WIDGET,
         showPlan: Boolean = true,
-        nowMinute: Float? = null,
+        axisMode: ChartAxisMode = ChartAxisMode.DEFAULT,
+        now: java.time.Instant = java.time.Instant.now(),
         theme: ChartTheme? = null
     ): Bitmap {
         // The only place a caller's plan is calculated for a bitmap; bands and footer come from one call.
         val chart = LocalCharts.of(inputs, result, showPlan)
+        val zone = PriceMarkets.find(chart.market.areaId)?.zoneId ?: java.time.ZoneId.systemDefault()
+        val (axis, bands) = ChartRequests.placed(result, zone, chart.bands, chart.overlays, axisMode, now)
         return renderFrame(
-            context, width, height, scaledDensity, chart.market, result, chart.bands, chart.footer, profile,
-            null, nowMinute, theme
+            context, width, height, scaledDensity, chart.market, result, bands, chart.footer, profile,
+            null, ChartNow.currentMarkMinute(chart.market, result, axis, now), theme, axis = axis
         ).bitmap
     }
 
@@ -56,8 +60,8 @@ internal object ChartRenderer {
      * has neither prices nor valid [PlanningInputs].
      */
     fun emptyState(context: Context, width: Int, height: Int, theme: ChartTheme? = null): Bitmap {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val colors = theme ?: ChartTheme.Dark
@@ -80,8 +84,8 @@ internal object ChartRenderer {
         details: List<String> = emptyList(),
         theme: ChartTheme? = null
     ): Bitmap {
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val colors = theme ?: ChartTheme.Dark
@@ -128,6 +132,11 @@ internal object ChartRenderer {
      * means no line and no current figure. [selectionMinute] is the card's selection line (see
      * `ChartMetrics.xAt`); exactly one line is drawn, the selection if any, else now (see `ChartNow.line`).
      * [theme] `null` means [ChartTheme.Dark].
+     *
+     * [axis] is the time mapping every minute here is in (see [ChartTimeAxis]); [bands], [nowMinute] and
+     * [selectionMinute] must have been placed on it. On the Day axis tomorrow is drawn subdued over
+     * today and the header's highest and lowest prices are today's; on the From now axis only what is on
+     * the axis is drawn, every mark at full strength, and the highest and lowest cover all of it.
      */
     fun renderFrame(
         context: Context,
@@ -145,19 +154,23 @@ internal object ChartRenderer {
         nowMinute: Float? = null,
         theme: ChartTheme? = null,
         /** A ready-made footer line (a paired widget's status) drawn in place of the plan footer; the caller decides its words. */
-        statusFooter: WidgetStatusLine.Line? = null
+        statusFooter: WidgetStatusLine.Line? = null,
+        axis: ChartTimeAxis = ChartTimeAxis.WallClock
     ): ChartFrame {
         // The chart's surface is dark in both system themes, so the palette is not resolved from night mode.
         val colors = theme ?: ChartTheme.Dark
-        val w = width.coerceIn(180, 1400)
-        val h = height.coerceIn(100, 900)
+        val w = width.coerceIn(ChartLayout.MIN_WIDTH_PX, ChartLayout.MAX_WIDTH_PX)
+        val h = height.coerceIn(ChartLayout.MIN_HEIGHT_PX, ChartLayout.MAX_HEIGHT_PX)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = colors.surface
         canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), 22f, 22f, paint)
-        val today = PriceAggregation.aggregate(result.today).map { it.copy(price = market.apply(it.price)) }
-        val tomorrow = PriceAggregation.aggregate(result.tomorrow).map { it.copy(price = market.apply(it.price)) }
+        val todayDay = PriceAggregation.aggregate(result.today).map { it.copy(price = market.apply(it.price)) }
+        val tomorrowDays = PriceAggregation.aggregate(result.tomorrow).map { it.copy(price = market.apply(it.price)) }
+        // What is on the axis: everything on the Day axis, what has not ended on the From now axis.
+        val today = todayDay.filter(axis::shows)
+        val tomorrow = tomorrowDays.filter(axis::shows)
         val allValues = (today + tomorrow).map { it.price }
         if (allValues.isEmpty()) {
             // No prices: draw the placeholder; null metrics means no plot to select on.
@@ -170,17 +183,22 @@ internal object ChartRenderer {
         // The current figure is the price of the mark [nowMinute] names, by the same anchor the line uses;
         // a `now` no row contains has no current figure.
         val current = nowMinute?.let { minute ->
-            today.firstOrNull { ChartNow.markMinute(it) == minute }?.price
+            today.firstOrNull { axis.markMinute(it) == minute }?.price
         }
-        val dayMax = today.maxOfOrNull { it.price }
-        val dayMin = today.minOfOrNull { it.price }
+        // The highest and lowest of the prices drawn at full strength: today's on the Day axis, everything
+        // drawn on the From now axis.
+        val extremes = axis.fullStrength(today, tomorrow)
+        val dayMax = extremes.maxOfOrNull { it.price }
+        val dayMin = extremes.minOfOrNull { it.price }
 
         val maxText = dayMax?.let { String.format(numbers, "↑%.1f", it) } ?: "↑–"
         val minText = dayMin?.let { String.format(numbers, "↓%.1f", it) } ?: "↓–"
         val priceUnit = area?.appliedPriceUnit.orEmpty()
         val currentText = current?.let { String.format(numbers, "%.1f %s", it, priceUnit) } ?: "– $priceUnit"
         // The profile decides how much canvas the text may take.
-        val metrics = ChartLayout.metrics(profile, w, h, scaledDensity, bands.isNotEmpty() || statusFooter != null) { textSize ->
+        val metrics = ChartLayout.metrics(
+            profile, w, h, scaledDensity, bands.isNotEmpty() || statusFooter != null, axis.spanMinutes
+        ) { textSize ->
             paint.typeface = android.graphics.Typeface.DEFAULT_BOLD
             paint.textSize = textSize
             paint.measureText(maxText) + paint.measureText(minText) + paint.measureText(currentText)
@@ -213,7 +231,7 @@ internal object ChartRenderer {
         val range = (maxValue - minValue).coerceAtLeast(1.0)
         fun y(value: Double) = bottom - ((value - minValue) / range * (bottom - top)).toFloat()
         // The one time-to-pixel mapping: marks, shading and focus line read it and the hit test inverts it.
-        fun anchor(interval: PriceInterval) = metrics.xAt(ChartNow.markMinute(interval))
+        fun anchor(interval: PriceInterval) = metrics.xAt(axis.markMinute(interval))
 
         if (bands.isNotEmpty()) {
             drawBands(canvas, paint, bands, metrics, context.resources.displayMetrics.density, colors)
@@ -248,19 +266,22 @@ internal object ChartRenderer {
             paint.alpha = 255
         }
 
-        // Tomorrow is drawn first as a neutral comparison, with no current mark: the current interval is today's.
-        val hourWidth = (right - left) / 24f
-        drawTomorrow(canvas, paint, tomorrow, ::anchor, ::y, scale, hourWidth, colors)
-        drawToday(canvas, paint, today, metrics::xAt, ::y, scale, nowMinute, hourWidth, colors)
-
-        paint.textSize = axisText
-        paint.color = colors.muted
-        listOf(0 to "00", 6 to "06", 12 to "12", 18 to "18", 24 to "24").forEach { (hour, label) ->
-            val px = left + hour / 24f * (right - left)
-            paint.textAlign = when (hour) { 0 -> Paint.Align.LEFT; 24 -> Paint.Align.RIGHT; else -> Paint.Align.CENTER }
-            canvas.drawText(label, px, bottom + axisText * 1.15f, paint)
+        val hourWidth = (right - left) * 60f / axis.spanMinutes
+        if (axis.overlay) {
+            // Tomorrow is drawn first as a neutral comparison, with no current mark: the current interval is today's.
+            drawTomorrow(canvas, paint, tomorrow, ::anchor, ::y, scale, hourWidth, colors)
+            drawToday(canvas, paint, today, todayDay, metrics::xAt, ::y, scale, nowMinute, hourWidth, colors, axis)
+        } else {
+            // Nothing is overlaid: each day's marks at full strength, cheap or expensive against their own day.
+            drawToday(canvas, paint, today, todayDay, metrics::xAt, ::y, scale, nowMinute, hourWidth, colors, axis)
+            tomorrowDays.groupBy { it.start.toLocalDate() }.forEach { (date, day) ->
+                drawToday(
+                    canvas, paint, tomorrow.filter { it.start.toLocalDate() == date }, day, metrics::xAt, ::y,
+                    scale, nowMinute, hourWidth, colors, axis
+                )
+            }
         }
-        paint.textAlign = Paint.Align.LEFT
+        drawTicks(context, canvas, paint, axis, metrics, colors)
         // The plan-card profile drops the footer: the card states the same words below the graph.
         if (profile.footer && statusFooter != null) {
             paint.color = if (statusFooter.tone == StatusTone.BLOCKING) colors.expensive else colors.text
@@ -342,6 +363,56 @@ internal object ChartRenderer {
         paint.alpha = 255
     }
 
+    /**
+     * The ticks under the plot from [ChartTimeAxis.ticks], as many as fit (see [ChartTickFit]): an hour
+     * each, the left edge's label starting at it and the right edge's ending at it. A midnight inside the From now axis is a dashed divider through
+     * the plot, labelled with the new day's weekday and date.
+     */
+    private fun drawTicks(
+        context: Context,
+        canvas: Canvas,
+        paint: Paint,
+        axis: ChartTimeAxis,
+        metrics: ChartMetrics,
+        colors: ChartTheme
+    ) {
+        val axisText = metrics.axisTextSize
+        val locale = AppLanguageSettings.locale(context)
+        fun label(tick: ChartTick): String =
+            if (tick.dayStart && tick.instant != null && axis is ChartTimeAxis.Range) {
+                DateTimeFormatter.ofPattern("EEE d", locale).format(tick.instant.atZone(axis.zone))
+            } else tick.hour.toString().padStart(2, '0')
+        paint.textSize = axisText
+        // As many labels as fit the plot's width: a small widget keeps the axis with fewer of them.
+        val shown = ChartTickFit.fit(axis.ticks(), axis.spanMinutes, metrics::xAt, { paint.measureText(label(it)) }, axisText * .6f)
+        shown.forEach { tick ->
+            val px = metrics.xAt(tick.minute)
+            if (tick.dayStart) {
+                paint.color = colors.muted
+                paint.alpha = DIVIDER_ALPHA
+                paint.strokeWidth = max(1f, metrics.scale)
+                val dash = max(3f, 3f * metrics.scale)
+                paint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), 0f)
+                canvas.drawLine(px, metrics.top, px, metrics.bottom, paint)
+                paint.pathEffect = null
+                paint.alpha = 255
+                paint.strokeWidth = 1f
+            }
+            paint.textSize = axisText
+            paint.color = colors.muted
+            paint.textAlign = when (tick.minute) {
+                0f -> Paint.Align.LEFT
+                axis.spanMinutes -> Paint.Align.RIGHT
+                else -> Paint.Align.CENTER
+            }
+            canvas.drawText(label(tick), px, metrics.bottom + axisText * 1.15f, paint)
+        }
+        paint.textAlign = Paint.Align.LEFT
+    }
+
+    /** Opacity of the dashed midnight divider on the From now axis. */
+    private const val DIVIDER_ALPHA = 150
+
     private fun drawTomorrow(
         canvas: Canvas,
         paint: Paint,
@@ -373,22 +444,24 @@ internal object ChartRenderer {
     }
 
     /**
-     * Today's marks from [ChartMarks.plan]: one primitive per value, none resized for being current
-     * (currentness is the solid now line). The geometry has no `now` parameter, so a test can compare plans
-     * under different `now` values.
+     * One day's marks at full strength from [ChartMarks.plan]: one primitive per value in [values], none
+     * resized for being current (currentness is the solid now line), coloured against the mean of the
+     * whole [day] they belong to. The geometry has no `now` parameter, so a test can compare plans under
+     * different `now` values.
      */
-    private fun drawToday(canvas: Canvas, paint: Paint, values: List<PriceInterval>,
+    private fun drawToday(canvas: Canvas, paint: Paint, values: List<PriceInterval>, day: List<PriceInterval>,
                           xAt: (Float) -> Float, y: (Double) -> Float, scale: Float,
-                          nowMinute: Float?, hourWidth: Float, colors: ChartTheme) {
+                          nowMinute: Float?, hourWidth: Float, colors: ChartTheme, axis: ChartTimeAxis) {
         if (values.isEmpty()) return
         val plan = ChartMarks.plan(
             values = values,
             radius = ChartMarks.todayRadius(canvas.height, scale),
             hourWidth = hourWidth,
             nowMinute = nowMinute,
-            mean = values.map { it.price }.average(),
+            mean = day.map { it.price }.average(),
             cheap = colors.cheap,
-            expensive = colors.expensive
+            expensive = colors.expensive,
+            markMinute = axis::markMinute
         )
         plan.forEach { draw ->
             val x = xAt(draw.minute)

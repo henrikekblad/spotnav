@@ -556,4 +556,10 @@
   <string name="target_mark_now_estimated">≈ nyt</string>
   <string name="target_mark_limit">raja</string>
   <string name="target_mark_min">väh. %1$d %%</string>
+  <string name="section_display">Näyttö</string>
+  <string name="chart_axis">Kaavion aika-akseli</string>
+  <string name="chart_axis_day">Vuorokausi</string>
+  <string name="chart_axis_day_help">00–24, huominen piirrettynä tämän päivän päälle.</string>
+  <string name="chart_axis_from_now">Nyt alkaen</string>
+  <string name="chart_axis_from_now_help">Tästä tunnista viimeisen julkaistun vuorokauden loppuun. Kunnes huomisen hinnat on julkaistu, sama kuin Vuorokausi.</string>
 </resources>

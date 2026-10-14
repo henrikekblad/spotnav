@@ -34,7 +34,7 @@ internal data class ChartMark(
 internal data class ChartMarkDraw(
     val mark: ChartMark,
     val start: OffsetDateTime,
-    /** The anchor minute of the day this primitive belongs at (see `ChartNow.markMinute`). */
+    /** The axis minute this primitive belongs at (see `ChartTimeAxis.markMinute`). */
     val minute: Float,
     /** The drawn price, for the y the caller maps this to. */
     val value: Double,
@@ -75,11 +75,13 @@ internal object ChartMarks {
         nowMinute: Float?,
         mean: Double,
         cheap: Int,
-        expensive: Int
+        expensive: Int,
+        /** Where on the axis a mark goes (see [ChartTimeAxis.markMinute]). */
+        markMinute: (PriceInterval) -> Float = ChartNow::markMinute
     ): List<ChartMarkDraw> {
         return values.map { interval ->
             val (start, value, minutes) = interval
-            val minute = ChartNow.markMinute(interval)
+            val minute = markMinute(interval)
             ChartMarkDraw(
                 mark = geometry(minutes, radius, hourWidth),
                 start = start,
