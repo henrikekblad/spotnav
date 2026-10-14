@@ -112,7 +112,7 @@ in the Home Assistant integration's documentation.
 
 <img src="images/app-plan-chart.png" alt="Charging plan card: today's and tomorrow's prices as dots, the planned period shaded, the current time marked, with cost, energy, range and the period's start and end" width="480">
 
-Today's prices and tomorrow's (grey) on one 24-hour axis, green below the day's average and red above
+By default (**Day**), today's prices and tomorrow's (grey) on one 24-hour axis, green below the day's average and red above
 it, with the highest, lowest and current price on top. The shaded band is the planned charging, solid
 today and hatched with diagonal lines tomorrow; the line is now. When Home Assistant has a new plan
 waiting for the current charging window to end, that window is drawn as installed and the new plan from
@@ -147,6 +147,8 @@ its own settings.
 <img src="images/app-settings-general.png" alt="General settings: language and colour theme" width="420">
 
 **General**: the app's language and colour theme.
+
+<img src="images/app-settings-display.png" alt="Display settings: the chart time axis, Day or From now, and under Widget the settings of the widget the app was opened from" width="420">
 
 **Display**: **Chart time axis** is **Day** (00–24, with tomorrow drawn over today; the default) or
 **From now** (from this hour to the end of the last published day; see [Plan chart](#plan-chart)). The
