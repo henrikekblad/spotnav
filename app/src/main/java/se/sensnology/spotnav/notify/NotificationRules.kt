@@ -51,7 +51,18 @@ internal data class NotificationSnapshot(
      * How many new plans Home Assistant told (`plan_notice.seq`): when it states it, a new plan is told when it
      * rises and [planKey] is not compared. `null` from an older Home Assistant.
      */
-    val planNotice: Long? = null
+    val planNotice: Long? = null,
+    /**
+     * The car's level the target stop was told with (`target_reached`'s `soc_percent`) and how it is known (`basis`:
+     * `reading` or `estimate`); `null` from a Home Assistant that does not say.
+     */
+    val targetLevel: Double? = null,
+    val targetBasis: String? = null,
+    /**
+     * The estimated level the car ended the plan's charge at while the plan waits for the car's level
+     * (`car_ended_waiting` with `estimated`), `null` otherwise: Home Assistant tells that end as a completion.
+     */
+    val carEndedEstimate: Double? = null
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -67,6 +78,9 @@ internal data class NotificationSnapshot(
         put("departure", departure ?: JSONObject.NULL)
         put("target_reached", targetReached)
         put("target_percent", targetPercent ?: JSONObject.NULL)
+        put("target_level", targetLevel ?: JSONObject.NULL)
+        put("target_basis", targetBasis ?: JSONObject.NULL)
+        put("car_ended_estimate", carEndedEstimate ?: JSONObject.NULL)
         put("remaining_kwh", remainingKwh ?: JSONObject.NULL)
         put("planned_kwh", plannedKwh ?: JSONObject.NULL)
         put("plan_notice", planNotice ?: JSONObject.NULL)
@@ -92,6 +106,9 @@ internal data class NotificationSnapshot(
                 departure = text("departure"),
                 targetReached = flag("target_reached"),
                 targetPercent = number("target_percent"),
+                targetLevel = number("target_level"),
+                targetBasis = text("target_basis"),
+                carEndedEstimate = number("car_ended_estimate"),
                 remainingKwh = number("remaining_kwh"),
                 plannedKwh = number("planned_kwh"),
                 planNotice = (json.opt("plan_notice") as? Number)?.toLong()
@@ -108,7 +125,10 @@ internal data class LocalEvent(
     /** `HH:MM`: the departure, the window's end, or the new plan's start. */
     val time: String? = null,
     val percent: Double? = null,
-    val kwh: Double? = null
+    val kwh: Double? = null,
+    /** `charge_complete` at the target: the car's level it was told with, and `reading` or `estimate`. */
+    val level: Double? = null,
+    val basis: String? = null
 )
 
 /** What one check decided: the events to post, and when each kind was last posted. */
@@ -138,7 +158,7 @@ internal object NotificationRules {
     /** Lines under which a charge that is not running is no fault (`docs/notifications.md`). */
     private val EXCUSED = setOf(
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "waiting_for_vehicle_update",
-        "load_balancing_limited", "balancing_paused",
+        "car_ended_waiting", "load_balancing_limited", "balancing_paused",
         // The car ends a charge to its own limit itself: one that stops there is full, not a fault.
         "charging_to_vehicle_limit", "topping_off"
     )
@@ -161,6 +181,8 @@ internal object NotificationRules {
         }
         val charging = dashboard.live.charging || connection == ConnectionState.CHARGING
         val codes = dashboard.status.lines.map { it.code }.toSet()
+        val targetLine = dashboard.status.lines.firstOrNull { it.code == "target_reached" }?.params
+        val carEnded = dashboard.status.lines.firstOrNull { it.code == "car_ended_waiting" }?.params
         val remaining = dashboard.plan.remainingKwh
         val expected = open != null &&
             Duration.between(open.first, now) >= GRACE &&
@@ -194,6 +216,9 @@ internal object NotificationRules {
             departure = settings?.takeIf { it.departureEnabled }?.departureTime,
             targetReached = "target_reached" in codes,
             targetPercent = dashboard.soc?.targetPercent ?: settings?.target?.targetPercent,
+            targetLevel = targetLine?.get("soc_percent") as? Double,
+            targetBasis = targetLine?.get("basis") as? String,
+            carEndedEstimate = carEnded?.takeIf { it["estimated"] == true }?.get("soc_percent") as? Double,
             remainingKwh = remaining,
             plannedKwh = dashboard.plan.proposal?.plannedKwh,
             planNotice = dashboard.planNotice
@@ -252,7 +277,13 @@ internal object NotificationRules {
         val was = before.remainingKwh
         val left = now.remainingKwh
         return when {
-            now.targetReached && !before.targetReached -> LocalEvent(event, reason = "target", percent = now.targetPercent)
+            now.targetReached && !before.targetReached -> LocalEvent(
+                event, reason = "target", percent = now.targetPercent, level = now.targetLevel, basis = now.targetBasis
+            )
+            // The car ended the plan's charge short of the target on an estimate: told once, as Home Assistant does.
+            now.carEndedEstimate != null && before.carEndedEstimate == null -> LocalEvent(
+                event, reason = "target", percent = now.targetPercent, level = now.carEndedEstimate, basis = "estimate"
+            )
             was != null && was > NEED_MET_KWH && left != null && left <= NEED_MET_KWH -> LocalEvent(event, reason = "energy")
             before.charging && before.windowOpen && !now.charging && !now.windowsLeft -> LocalEvent(event, reason = "plan_done")
             else -> null

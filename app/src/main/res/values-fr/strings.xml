@@ -456,6 +456,9 @@
   <string name="notify_at_risk">La charge ne sera pas prête pour le départ.</string>
   <string name="notify_at_risk_time">La charge ne sera pas prête pour le départ à %1$s.</string>
   <string name="notify_complete_target">Charge terminée : l\'objectif de %1$s a été atteint.</string>
+  <string name="notify_complete_target_reading">Charge terminée : l\'objectif de %1$s a été atteint (la voiture indique %2$s).</string>
+  <string name="notify_complete_target_estimate">Charge arrêtée à %2$s (estimé), l\'objectif est de %1$s.</string>
+  <string name="notify_complete_stopped_below">La voiture a arrêté la charge à %2$s, juste sous l\'objectif de %1$s.</string>
   <string name="notify_complete_energy">Charge terminée : l\'énergie demandée a été fournie.</string>
   <string name="notify_complete_plan">La charge planifiée est terminée.</string>
   <string name="notify_started">Charge démarrée.</string>

@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Das Laden wird bis zur Abfahrt nicht fertig.</string>
   <string name="notify_at_risk_time">Das Laden wird bis zur Abfahrt um %1$s nicht fertig.</string>
   <string name="notify_complete_target">Laden abgeschlossen: Das Ladeziel von %1$s ist erreicht.</string>
+  <string name="notify_complete_target_reading">Laden abgeschlossen: Das Ladeziel von %1$s ist erreicht (das Auto zeigt %2$s).</string>
+  <string name="notify_complete_target_estimate">Laden bei %2$s gestoppt (geschätzt), das Ladeziel ist %1$s.</string>
+  <string name="notify_complete_stopped_below">Das Auto hat das Laden bei %2$s beendet, knapp unter dem Ladeziel von %1$s.</string>
   <string name="notify_complete_energy">Laden abgeschlossen: Die gewünschte Energie wurde geladen.</string>
   <string name="notify_complete_plan">Der geplante Ladevorgang ist beendet.</string>
   <string name="notify_started">Ladevorgang gestartet.</string>

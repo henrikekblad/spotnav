@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Laddningen hinner inte bli klar till avresan.</string>
   <string name="notify_at_risk_time">Laddningen hinner inte bli klar till avresan %1$s.</string>
   <string name="notify_complete_target">Laddningen är klar: målet %1$s är nått.</string>
+  <string name="notify_complete_target_reading">Laddningen är klar: målet %1$s är nått (bilen visar %2$s).</string>
+  <string name="notify_complete_target_estimate">Laddningen stoppades vid %2$s (uppskattat), målet är %1$s.</string>
+  <string name="notify_complete_stopped_below">Bilen slutade ladda vid %2$s, strax under målet %1$s.</string>
   <string name="notify_complete_energy">Laddningen är klar: den begärda energin är levererad.</string>
   <string name="notify_complete_plan">Den planerade laddningen är slutförd.</string>
   <string name="notify_started">Laddningen har startat.</string>
