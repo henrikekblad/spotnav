@@ -62,7 +62,7 @@ Logs are in `.work/logs`.
 
 Documentation (English; `--sv` adds `docs/images/sv/`): `app-standalone`, `app-pairing-code`,
 `app-main`, `app-planning`, `app-planning-target`, `app-plan-chart`, `app-price-table`, `app-widget`, `app-settings-general`,
-`app-settings-price`, `app-settings-widget`, `app-settings-vehicle`, `app-settings-charger`,
+`app-settings-display`, `app-settings-price`, `app-settings-vehicle`, `app-settings-charger`,
 `app-settings-site`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
 `app-reference-picture`, `app-history`, `app-identifying`, `app-identified`, `app-identify-question`.
 Whole screens lose the status and gesture bars; settings sections are cropped to their card.

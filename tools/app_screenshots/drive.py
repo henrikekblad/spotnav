@@ -400,8 +400,9 @@ def language_pass(lang: str, docs: bool) -> None:
     if docs:
         sections = [
             ("app-settings-general", exact(s["section_general"])),
+            # The chart's time axis and, under a "Widget" heading, the widget's own option.
+            ("app-settings-display", exact(s["section_display"])),
             ("app-settings-price", exact(s["section_electricity_price"])),
-            ("app-settings-widget", exact(s["section_widget"])),
             # Two cars: the vehicle card is headed "Vehicle" alone, with a tab per car under it.
             ("app-settings-vehicle", exact(s["vehicle_title"])),
             # The charger and site cards name their subject after their kind ("Charger · …", "Site · Home").
