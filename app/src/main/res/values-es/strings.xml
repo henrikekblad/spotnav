@@ -456,6 +456,9 @@
   <string name="notify_at_risk">La carga no estará lista para la salida.</string>
   <string name="notify_at_risk_time">La carga no estará lista para la salida de las %1$s.</string>
   <string name="notify_complete_target">Carga completada: se ha alcanzado el objetivo del %1$s.</string>
+  <string name="notify_complete_target_reading">Carga completada: se ha alcanzado el objetivo del %1$s (el coche indica %2$s).</string>
+  <string name="notify_complete_target_estimate">Carga detenida al %2$s (estimado), el objetivo es del %1$s.</string>
+  <string name="notify_complete_stopped_below">El coche dejó de cargar al %2$s, justo por debajo del objetivo del %1$s.</string>
   <string name="notify_complete_energy">Carga completada: se ha entregado la energía solicitada.</string>
   <string name="notify_complete_plan">La carga planificada ha terminado.</string>
   <string name="notify_started">La carga ha empezado.</string>

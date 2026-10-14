@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Ladingen blir ikke ferdig til avreise.</string>
   <string name="notify_at_risk_time">Ladingen blir ikke ferdig til avreise kl. %1$s.</string>
   <string name="notify_complete_target">Ladingen er ferdig: målet %1$s er nådd.</string>
+  <string name="notify_complete_target_reading">Ladingen er ferdig: målet %1$s er nådd (bilen viser %2$s).</string>
+  <string name="notify_complete_target_estimate">Ladingen er stoppet ved %2$s (anslått), målet er %1$s.</string>
+  <string name="notify_complete_stopped_below">Bilen stoppet ladingen ved %2$s, like under målet %1$s.</string>
   <string name="notify_complete_energy">Ladingen er ferdig: den ønskede energien er levert.</string>
   <string name="notify_complete_plan">Den planlagte ladingen er fullført.</string>
   <string name="notify_started">Ladingen har startet.</string>

@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Lataus ei valmistu lähtöön mennessä.</string>
   <string name="notify_at_risk_time">Lataus ei valmistu lähtöön klo %1$s mennessä.</string>
   <string name="notify_complete_target">Lataus on valmis: tavoite %1$s saavutettiin.</string>
+  <string name="notify_complete_target_reading">Lataus on valmis: tavoite %1$s saavutettiin (auto näyttää %2$s).</string>
+  <string name="notify_complete_target_estimate">Lataus pysäytetty %2$s:iin (arvio), tavoite on %1$s.</string>
+  <string name="notify_complete_stopped_below">Auto lopetti latauksen %2$s:iin, hieman alle tavoitteen %1$s.</string>
   <string name="notify_complete_energy">Lataus on valmis: pyydetty energia on toimitettu.</string>
   <string name="notify_complete_plan">Suunniteltu lataus on päättynyt.</string>
   <string name="notify_started">Lataus alkoi.</string>

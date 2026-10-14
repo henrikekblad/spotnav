@@ -34,7 +34,11 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
   charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule. The status line
   words what Home Assistant reports, for example *Charging to the minimum level (30 %)* while a car below its
   minimum charge level charges, or, on Solar with no car plugged in, *Solar · surplus available (4.2 kW)* while
-  the sun would start a charge and *Solar · no car plugged in* otherwise.
+  the sun would start a charge and *Solar · no car plugged in* otherwise. When the car ends the plan's charge itself
+  short of the target, the plan waits for the car to report its level before charging again: *The car ended the
+  charge at ~86 % (estimated); waiting for the car's level*, without *~* and *(estimated)* when the level is the car's
+  own reading. A stop at the target says the level and the time, for example *Stopped at 80 % at 07:31*, with
+  *(estimated)* when SpotNav stopped on its estimate rather than the car's reading.
 - **Vehicle**: charge level, charge limit, battery capacity, consumption and onboard charger, as the
   car reports them or as you set them.
 - **Planning**: titled with the car Home Assistant plans for (**Planning for EV6**; just **Planning** while no car
@@ -171,7 +175,7 @@ the value shown large above it. Nothing is written unless you move the slider, a
 
 <img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the charge periods, the cars at this charger, identification and the camera" width="420">
 
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)).
+**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)). Whether users of the Home Assistant card who are not administrators may change the strategy and the plan is set in the card (Settings → Charger, administrators only); the app always may, and keeps that choice as it is when it saves settings.
 
 <img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
 
@@ -179,7 +183,11 @@ the value shown large above it. Nothing is written unless you move the slider, a
 
 <img src="images/app-settings-notifications.png" alt="Notifications card: via the Home Assistant app and via the SpotNav app" width="420">
 
-**Notifications**: charging notifications through the Home Assistant companion app, or from this app.
+**Notifications**: charging notifications through the Home Assistant companion app, or from this app. A charge
+that ends at the target is told in Home Assistant's words: *Charging complete: the target 80 % was reached (the car
+shows 81 %)* on the car's reading, *Charging stopped at 86 % (estimated), the target is 91 %* on SpotNav's estimate
+(also when the car ended the plan's charge itself on an estimate), and *The car stopped charging at 79 %, just below
+the target 80 %* when the car's reading is short of it.
 
 <img src="images/app-settings-home-assistant.png" alt="Home Assistant card in settings showing the paired address with Refresh and Remove" width="420">
 

@@ -239,6 +239,38 @@ class NotificationRulesTest {
         assertNull(snapshot.stopReason)
     }
 
+    @Test fun aTargetStopIsToldWithTheLevelAndHowItIsKnown() {
+        val stopped = Dashboard.parse(HaFixtures.json("dashboard/target_soc_stopped_on_estimate.json"))
+        val snapshot = NotificationRules.snapshot(stopped, Instant.parse("2026-09-22T06:45:00Z"), ZoneId.of("UTC"))
+        assertEquals(83.1, snapshot.targetLevel!!, 0.0)
+        assertEquals("estimate", snapshot.targetBasis)
+        assertEquals(
+            listOf(LocalEvent(CHARGE_COMPLETE, reason = "target", percent = 80.0, level = 83.1, basis = "estimate")),
+            events(snap(charging = true), snapshot.copy(at = later, charging = false))
+                .filter { it.event == CHARGE_COMPLETE }
+        )
+        // The level and its basis survive the store.
+        val back = NotificationSnapshot.fromJson(snapshot.toJson())!!
+        assertEquals(snapshot, back)
+    }
+
+    @Test fun theCarEndingThePlansChargeOnAnEstimateIsToldOnceAndIsNoFault() {
+        val waiting = idleWith("car_ended_waiting", JSONObject().put("soc_percent", 86.4).put("estimated", true))
+        val snapshot = NotificationRules.snapshot(waiting, Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC"))
+        assertNull(snapshot.stopReason)
+        assertEquals(86.4, snapshot.carEndedEstimate!!, 0.0)
+        val before = snap(charging = true, targetPercent = 91.0)
+        val now = snap(at = later, targetPercent = 91.0).copy(carEndedEstimate = 86.4)
+        assertEquals(
+            listOf(LocalEvent(CHARGE_COMPLETE, reason = "target", percent = 91.0, level = 86.4, basis = "estimate")),
+            events(before, now).filter { it.event == CHARGE_COMPLETE }
+        )
+        assertEquals(emptyList<LocalEvent>(), events(now, now.copy(at = later.plus(Duration.ofMinutes(30)))))
+        // On an older reading Home Assistant tells no completion: the reading after the end does.
+        val read = idleWith("car_ended_waiting", JSONObject().put("soc_percent", 86.0).put("estimated", false))
+        assertNull(NotificationRules.snapshot(read, Instant.parse("2026-09-22T07:00:00Z"), ZoneId.of("UTC")).carEndedEstimate)
+    }
+
     @Test fun aCarFinishingPastTheLastWindowIsNoFaultWhenItStops() {
         val finishing = startIdle()
         finishing.getJSONObject("status").getJSONArray("lines")

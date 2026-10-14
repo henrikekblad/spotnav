@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Het laden is niet klaar voor vertrek.</string>
   <string name="notify_at_risk_time">Het laden is niet klaar voor het vertrek om %1$s.</string>
   <string name="notify_complete_target">Laden voltooid: het doel van %1$s is bereikt.</string>
+  <string name="notify_complete_target_reading">Laden voltooid: het doel van %1$s is bereikt (de auto geeft %2$s aan).</string>
+  <string name="notify_complete_target_estimate">Laden gestopt bij %2$s (geschat), het doel is %1$s.</string>
+  <string name="notify_complete_stopped_below">De auto stopte met laden bij %2$s, net onder het doel van %1$s.</string>
   <string name="notify_complete_energy">Laden voltooid: de gevraagde energie is geleverd.</string>
   <string name="notify_complete_plan">Het geplande laden is klaar.</string>
   <string name="notify_started">Laden gestart.</string>

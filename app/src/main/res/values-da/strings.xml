@@ -448,6 +448,9 @@
   <string name="notify_at_risk">Opladningen bliver ikke færdig til afgangen.</string>
   <string name="notify_at_risk_time">Opladningen bliver ikke færdig til afgangen kl. %1$s.</string>
   <string name="notify_complete_target">Opladningen er færdig: målet %1$s er nået.</string>
+  <string name="notify_complete_target_reading">Opladningen er færdig: målet %1$s er nået (bilen viser %2$s).</string>
+  <string name="notify_complete_target_estimate">Opladningen er stoppet ved %2$s (anslået), målet er %1$s.</string>
+  <string name="notify_complete_stopped_below">Bilen stoppede opladningen ved %2$s, lige under målet %1$s.</string>
   <string name="notify_complete_energy">Opladningen er færdig: den ønskede energi er leveret.</string>
   <string name="notify_complete_plan">Den planlagte opladning er afsluttet.</string>
   <string name="notify_started">Opladningen er startet.</string>

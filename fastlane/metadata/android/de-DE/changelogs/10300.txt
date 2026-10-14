@@ -1,0 +1,6 @@
+- Zeitachse Tag oder Ab jetzt unter Einstellungen → Anzeige, auch fürs Widget, dessen Einstellung jetzt dort ist
+- Tippen ins Diagramm klappt nach dem Aufklappen eines Foldables
+- Plan für morgen schraffiert; ein wartender Plan folgt dem laufenden Fenster
+- Meldung zum fertigen Laden sagt, ob der Stand gemessen oder geschätzt ist
+- Neuer Status: "Das Auto hat das Laden bei ~86 % (geschätzt) beendet; warten auf den Ladestand des Autos"
+- Am besten mit SpotNav für Home Assistant 1.15.0

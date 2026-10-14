@@ -247,10 +247,21 @@ internal object LocalNotifications {
             NotificationEvent.PLAN_AT_RISK ->
                 event.time?.let { t(R.string.notify_at_risk_time, it) } ?: t(R.string.notify_at_risk)
             NotificationEvent.CHARGE_COMPLETE -> when {
-                event.reason == "target" && event.percent != null -> t(
-                    R.string.notify_complete_target,
-                    number(event.percent, 1) + if (AppLanguageSettings.language(context) == "en") "%" else " %"
-                )
+                event.reason == "target" && event.percent != null -> {
+                    // Home Assistant's own choice: never "the target is reached" on an estimate, nor for a level
+                    // read below it; an estimate's level is a whole percent.
+                    fun percent(value: Double) =
+                        number(value, 1) + if (AppLanguageSettings.language(context) == "en") "%" else " %"
+                    val target = percent(event.percent)
+                    val level = event.level
+                    when {
+                        level == null -> t(R.string.notify_complete_target, target)
+                        event.basis == "estimate" ->
+                            t(R.string.notify_complete_target_estimate, target, percent(Math.round(level).toDouble()))
+                        level >= event.percent -> t(R.string.notify_complete_target_reading, target, percent(level))
+                        else -> t(R.string.notify_complete_stopped_below, target, percent(level))
+                    }
+                }
                 event.reason == "energy" -> t(R.string.notify_complete_energy)
                 else -> t(R.string.notify_complete_plan)
             }

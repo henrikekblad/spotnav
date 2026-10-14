@@ -1,0 +1,6 @@
+- Tidsaxel Dygn eller Från nu i Inställningar → Visning, även för widgeten, vars inställning nu också finns där
+- Tryck i diagrammet fungerar efter att en vikbar telefon fällts ut
+- Morgondagens plan är streckad; en väntande plan ritas efter det pågående fönstret
+- Notis om klar laddning säger om nivån är bilens avläsning eller uppskattad
+- Ny status: "Bilen avslutade laddningen vid ~86 % (uppskattat), väntar på bilens nivå"
+- Fungerar bäst med SpotNav för Home Assistant 1.15.0

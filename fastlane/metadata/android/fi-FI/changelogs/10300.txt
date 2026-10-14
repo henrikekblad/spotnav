@@ -1,0 +1,6 @@
+- Aika-akseli Vuorokausi tai Nyt alkaen: Asetukset → Näyttö, myös widgetille, jonka asetus on nyt siellä
+- Kaavion kosketus toimii taittuvan puhelimen avaamisen jälkeen
+- Huomisen suunnitelma on viivoitettu; odottava suunnitelma piirretään käynnissä olevan jakson jälkeen
+- Valmiin latauksen ilmoitus kertoo, onko taso auton lukema vai arvio
+- Uusi tila: "Auto lopetti latauksen noin 86 %:ssa (arvio); odotetaan auton varaustasoa"
+- Toimii parhaiten SpotNav for Home Assistant 1.15.0:n kanssa
