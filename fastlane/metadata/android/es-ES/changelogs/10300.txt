@@ -1,0 +1,6 @@
+- Eje de tiempo Día o Desde ahora en Ajustes → Visualización, también para el widget, cuyo ajuste está ahora allí
+- Tocar el gráfico funciona tras desplegar un plegable
+- El plan de mañana va rayado; un plan en espera se dibuja tras la ventana en curso
+- El aviso de carga completada dice si el nivel es leído o estimado
+- Nuevo estado: "El coche terminó la carga al ~86 % (estimado); esperando el nivel del coche"
+- Funciona mejor con SpotNav para Home Assistant 1.15.0

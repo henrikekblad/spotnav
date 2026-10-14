@@ -1,0 +1,6 @@
+- Axe du temps Journée ou À partir de maintenant dans Paramètres → Affichage, aussi pour le widget, dont le réglage y est désormais
+- Toucher le graphique marche après dépliage d'un pliable
+- Plan de demain hachuré ; un plan en attente suit la fenêtre en cours
+- L'avis de charge terminée dit si le niveau est lu ou estimé
+- Nouvel état : "La voiture a terminé la charge à ~86 % (estimé) ; en attente du niveau de la voiture"
+- Fonctionne mieux avec SpotNav pour Home Assistant 1.15.0

@@ -1,0 +1,6 @@
+- Tidsakse Døgn eller Fra nu i Indstillinger → Visning, også for widgetten, hvis indstilling nu også er der
+- Tryk i grafen virker efter udfoldning af en foldbar telefon
+- Morgendagens plan er skraveret; en ventende plan tegnes efter det igangværende vindue
+- Besked om færdig opladning siger, om niveauet er bilens aflæsning eller anslået
+- Ny status: "Bilen afsluttede opladningen ved ~86 % (anslået); venter på bilens niveau"
+- Virker bedst med SpotNav til Home Assistant 1.15.0

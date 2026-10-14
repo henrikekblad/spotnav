@@ -1,0 +1,6 @@
+- Chart time axis Day or From now in Settings → Display, also for the widget, whose setting is now there too
+- Touch on the chart works after unfolding a foldable
+- Tomorrow's plan is hatched; a waiting plan is drawn after the running window
+- Completed-charge notices say if the level is the car's reading or an estimate
+- New status: "The car ended the charge at ~86 % (estimated); waiting for the car's level"
+- Works best with SpotNav for Home Assistant 1.15.0

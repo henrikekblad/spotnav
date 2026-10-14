@@ -1,0 +1,6 @@
+- Tijdas Dag of Vanaf nu in Instellingen → Weergave, ook voor de widget, waarvan de instelling nu daar staat
+- Tikken op de grafiek werkt na openvouwen van een vouwbare telefoon
+- Plan van morgen gearceerd; een wachtend plan volgt na het lopende venster
+- Melding over klaar laden zegt of het niveau gemeten of geschat is
+- Nieuwe status: "De auto beëindigde het laden bij ~86 % (geschat); wacht op het niveau van de auto"
+- Werkt het best met SpotNav voor Home Assistant 1.15.0
