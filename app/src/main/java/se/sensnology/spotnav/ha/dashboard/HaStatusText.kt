@@ -265,6 +265,17 @@ internal object HaStatusText {
                     else -> say("status.finishSetup", mapOf("fields" to names.joinToString(", ") { say(it!!) }))
                 }
             }
+            "car_ended_waiting" -> {
+                // The car ended the plan's charge short of the target: at the level it ended at, "~" and "estimated"
+                // when that came from the delivered energy, and the plan waits for the car's own level.
+                val soc = num(p["soc_percent"])
+                when {
+                    soc == null -> say("status.carEndedWaitingUnknown")
+                    p["estimated"] == true ->
+                        say("status.carEndedWaitingEstimate", mapOf("soc" to number(format.locale, soc, 0)))
+                    else -> say(key, mapOf("soc" to number(format.locale, soc, 0)))
+                }
+            }
             "target_reached" -> {
                 // The percent is shown rounded (the comparison that stopped the charge never was). Told with the
                 // time of the stop; without one (an older Home Assistant) the age of the reading it was made on.

@@ -68,7 +68,7 @@ class HaStatusTextTest {
 
     @Test fun aTargetStoppedOnAnEstimateSaysSoAndWhenItStopped() {
         val text = HaStatusText.render(status("target_soc_stopped_on_estimate"), format("sv"), now)!!
-        assertTrue(text, text.endsWith("Stoppad vid 81 % kl. 08:30 (uppskattat)"))
+        assertTrue(text, text.endsWith("Stoppad vid 83 % kl. 08:40 (uppskattat)"))
     }
 
     @Test fun aTargetStopIsToldWithItsTimeNeverAsJustNowHoursLater() {
@@ -95,6 +95,23 @@ class HaStatusTextTest {
             val text = worded(language, "reading", stop)
             assertTrue("$language: $text", text.contains("07:31") && !text.contains('{'))
         }
+    }
+
+    @Test fun theWaitForTheCarsLevelAfterItEndedTheChargeSaysTheLevelAndHowItIsKnown() {
+        fun worded(language: String, params: Map<String, Any?>) =
+            HaStatusText.line(StatusLine("car_ended_waiting", params), format(language), now)
+        assertEquals(
+            "Bilen avslutade laddningen vid ~86 % (uppskattat), väntar på bilens nivå",
+            worded("sv", mapOf("soc_percent" to 86.4, "estimated" to true))
+        )
+        assertEquals(
+            "Bilen avslutade laddningen vid 86 %, väntar på bilens nivå",
+            worded("sv", mapOf("soc_percent" to 86.0, "estimated" to false))
+        )
+        assertEquals(
+            "The car ended the charge; waiting for the car's level",
+            worded("en", mapOf("soc_percent" to null, "estimated" to false))
+        )
     }
 
     @Test fun anInstantIsNotWrittenWithoutAZone() {
