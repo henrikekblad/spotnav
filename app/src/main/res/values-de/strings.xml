@@ -545,6 +545,10 @@
   <string name="vehicle_minimum_cap">Ladeziel %1$d %%</string>
   <string name="vehicle_minimum_slider">Mindestladestand, aus oder Prozent</string>
   <string name="vehicle_error_minimum">Der Mindestladestand muss zwischen 10 und 80 liegen.</string>
+  <string name="vehicle_wake">Auto für eine Ablesung wecken</string>
+  <string name="vehicle_wake_help">Bittet das Auto selbst, seinen Ladestand zu melden, wenn eine Ladung endet und die letzte Meldung alt ist. Das belastet die 12-V-Batterie des Autos und das Anfragelimit des Herstellers, daher macht SpotNav das höchstens einmal pro Ladeende.</string>
+  <string name="vehicle_error_wake">Wähle An oder Aus.</string>
+  <string name="vehicle_wake_unsupported">Dieses Auto kann nicht von SpotNav geweckt werden.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Zum Ändern tippen</string>
   <string name="identify_vehicles_all">Alle Autos</string>

@@ -553,6 +553,10 @@
   <string name="vehicle_minimum_cap">objetivo de carga %1$d %%</string>
   <string name="vehicle_minimum_slider">Nivel de carga mínimo, desactivado o porcentaje</string>
   <string name="vehicle_error_minimum">El nivel mínimo de carga debe estar entre 10 y 80.</string>
+  <string name="vehicle_wake">Despertar el coche para una lectura</string>
+  <string name="vehicle_wake_help">Pide al propio coche que informe de su nivel de carga cuando termina una carga y su último informe es antiguo. Esto usa la batería de 12 V del coche y el límite de solicitudes del fabricante, así que SpotNav lo hace como máximo una vez por fin de carga.</string>
+  <string name="vehicle_error_wake">Elige Activado o Desactivado.</string>
+  <string name="vehicle_wake_unsupported">Este coche no se puede despertar desde SpotNav.</string>
   <!-- Settings value rows: how a changeable row reads to a screen reader, and the cars row. -->
   <string name="setting_row_changeable">%1$s, %2$s. Toca para cambiar</string>
   <string name="identify_vehicles_all">Todos los coches</string>

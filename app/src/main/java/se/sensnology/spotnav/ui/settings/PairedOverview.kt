@@ -83,7 +83,9 @@ internal object PairedOverview {
         /** Whether Home Assistant can write that limit to the car (`set_charge_limit`). */
         val limitWritable: Boolean = false,
         /** What that limit can be written to; `null` when Home Assistant does not say. */
-        val limitRange: ChargeLimitRange? = null
+        val limitRange: ChargeLimitRange? = null,
+        /** Whether the car is woken for a reading; `null` when it has no wake (the row is then not shown). */
+        val wakeForReading: Boolean? = null
     )
 
     /** One card per vehicle the dashboard lists, an [adopted] row (a write's answer) standing in for its own. */
@@ -116,7 +118,8 @@ internal object PairedOverview {
                 sources = row.identification,
                 chargeLimit = row.maxPercent?.takeIf { it.isFinite() }?.toInt(),
                 limitWritable = dashboard.capabilities.setChargeLimit && row.maxPercent?.isFinite() == true,
-                limitRange = row.chargeLimitRange
+                limitRange = row.chargeLimitRange,
+                wakeForReading = row.wakeForReading
             )
         }
 
