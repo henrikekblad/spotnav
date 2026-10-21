@@ -43,6 +43,7 @@ import se.sensnology.spotnav.ui.common.chooseMany
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.editNumber
+import se.sensnology.spotnav.ui.common.editOnOff
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.textTabs
 import se.sensnology.spotnav.ui.common.textTabsLayoutParams
@@ -337,6 +338,14 @@ internal class PairedSettingsCards(
                 }
             }
         }
+        // Waking the car for a reading when a charge ends, only for a car whose integration has a wake.
+        vehicle.wakeForReading?.let { wake ->
+            valueRow(body, t(R.string.vehicle_wake), t(if (wake) R.string.site_on else R.string.site_off)) {
+                editOnOff(t(R.string.vehicle_wake), wake, help = t(R.string.vehicle_wake_help)) { on, done ->
+                    writeOne(vehicle.id, VehicleField.WAKE, VehicleUpdate.wakeValue(on), done)
+                }
+            }
+        }
         vehicle.sources?.let { addSources(body, it) }
         addReference(body, dash, vehicle)
         vehicleNotices[vehicle.id]?.let { body.addView(muted(it, top = 4)) }
@@ -446,7 +455,9 @@ internal class PairedSettingsCards(
                 VehicleField.ONBOARD_PHASES -> R.string.vehicle_error_onboard
                 VehicleField.TARGET -> R.string.vehicle_error_target
                 VehicleField.MINIMUM -> R.string.vehicle_error_minimum
+                VehicleField.WAKE -> R.string.vehicle_error_wake
             }
+            VehicleFieldIssue.UNSUPPORTED -> R.string.vehicle_wake_unsupported
             VehicleFieldIssue.NOT_A_NUMBER -> R.string.paired_error_number
             VehicleFieldIssue.UNKNOWN -> R.string.paired_error_field
         }
