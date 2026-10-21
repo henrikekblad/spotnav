@@ -8,6 +8,7 @@ import se.sensnology.spotnav.ha.client.SessionsOutcome
 import se.sensnology.spotnav.ha.client.SessionsRead
 import se.sensnology.spotnav.ha.sessions.SessionDay
 import se.sensnology.spotnav.ha.sessions.SessionTotals
+import se.sensnology.spotnav.prices.PriceUnit
 import se.sensnology.spotnav.testing.HaFixtures
 import java.time.LocalDate
 import java.time.YearMonth
@@ -111,5 +112,13 @@ class HistoryModelTest {
         assertNull(en.share(null))
         assertNull(HistoryFigures(Locale.UK, totals(null, null).copy(currency = null)).cost(4.0))
         assertEquals("4.00 SEK", HistoryFigures(Locale.UK, totals(null, null)).cost(4.0))
+    }
+
+    @Test fun theAveragePriceFollowsThePriceUnitAndMoneyStaysInTheMajorUnit() {
+        val major = HistoryFigures(Locale.forLanguageTag("sv"), totals("kr", "öre"), PriceUnit.MAJOR)
+        assertEquals("0,44 kr/kWh", major.price(44.395))
+        assertEquals("24,95 kr", major.cost(24.95))
+        // Without a major unit name the minor unit stays.
+        assertEquals("44,4 öre/kWh", HistoryFigures(Locale.forLanguageTag("sv"), totals(null, "öre"), PriceUnit.MAJOR).price(44.395))
     }
 }

@@ -18,6 +18,7 @@ import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.planning.LocalPlanningInputs
 import se.sensnology.spotnav.prices.ChargeCoverage
 import se.sensnology.spotnav.prices.PriceAggregation
+import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceTableCell
@@ -25,6 +26,7 @@ import se.sensnology.spotnav.prices.PriceTableModel
 import se.sensnology.spotnav.prices.PriceTableModels
 import se.sensnology.spotnav.prices.PriceTableRow
 import se.sensnology.spotnav.prices.PriceTableSubjects
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.prices.stillCurrent
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
@@ -66,7 +68,9 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
                 }
                 content.removeAllViews()
                 val market = PriceMarkets.find(subject.areaId)
-                val unit = market?.appliedPriceUnit.orEmpty()
+                // Per kWh in this phone's price unit, as the chart reads them.
+                val prices = PriceFormat.of(PriceUnitPreference.of(context).unit(), market, AppLanguageSettings.numberLocale(context))
+                val unit = prices.perKwhUnit
                 // The title names the published interval of the prices shown, as the rows are drawn.
                 val minutes = PriceAggregation.aggregate(result.today.ifEmpty { result.tomorrow }).firstOrNull()?.minutes
                 val title = minutes?.let { t(R.string.table_title, subject.areaId, it, unit) }
@@ -95,7 +99,7 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
                         authorityController?.handoverFor(inputs, result, subject.revision)
                     )
                 }
-                val rowViews = model.rows.map { row -> addRow(row, model, unit) }
+                val rowViews = model.rows.map { row -> addRow(row, model, prices) }
                 if (model.rows.isEmpty()) content.addView(TextView(context).apply { text = t(R.string.no_prices); setPadding(0, dp(20), 0, 0) })
                 if (model.currentIndex >= 0) {
                     content.post {
@@ -124,11 +128,11 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
      * is display only -- every cell carries its own interval and its own coverage (see
      * `PriceTableModels`).
      */
-    private fun addRow(row: PriceTableRow, model: PriceTableModel, unit: String): View {
+    private fun addRow(row: PriceTableRow, model: PriceTableModel, prices: PriceFormat): View {
         val view = rowView(
             row.position.time.format(DateTimeFormatter.ofPattern("HH:mm")),
-            row.today?.let { cellSpec(it, model.todayAverage, model.todayRange, unit) },
-            row.tomorrow?.let { cellSpec(it, model.tomorrowAverage, model.tomorrowRange, unit) },
+            row.today?.let { cellSpec(it, model.todayAverage, model.todayRange, prices) },
+            row.tomorrow?.let { cellSpec(it, model.tomorrowAverage, model.tomorrowRange, prices) },
             bold = row.current, framed = row.current
         )
         content.addView(view)
@@ -145,13 +149,13 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
         val description: String?
     )
 
-    private fun cellSpec(cell: PriceTableCell, average: Double?, range: Pair<Double, Double>, unit: String): TableCell {
-        val text = String.format(AppLanguageSettings.numberLocale(context), "%.2f", cell.price)
+    private fun cellSpec(cell: PriceTableCell, average: Double?, range: Pair<Double, Double>, prices: PriceFormat): TableCell {
+        val text = prices.figure(cell.price)
         return TableCell(
             text = text,
             style = cellStyle(cell.price, average ?: cell.price, range),
             coverage = cell.coverage,
-            description = chargingDescription(cell.coverage)?.let { charging -> "$text $unit, $charging" }
+            description = chargingDescription(cell.coverage)?.let { charging -> "${prices.perKwh(cell.price)}, $charging" }
         )
     }
 

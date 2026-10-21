@@ -3,6 +3,8 @@ package se.sensnology.spotnav.ui.history
 import se.sensnology.spotnav.ha.sessions.SessionDay
 import se.sensnology.spotnav.ha.sessions.SessionTotals
 import java.time.YearMonth
+import se.sensnology.spotnav.prices.PriceFormat
+import se.sensnology.spotnav.prices.PriceUnit
 import java.util.Locale
 
 /**
@@ -78,10 +80,14 @@ internal object DayBars {
     }
 }
 
-/** The figures as the History view writes them: the screen's number locale, the market's own units. */
-internal class HistoryFigures(private val locale: Locale, totals: SessionTotals) {
+/**
+ * The figures as the History view writes them: the screen's number locale, the market's own units, and
+ * the average price per kWh in this phone's [priceUnit] (money stays in the major unit).
+ */
+internal class HistoryFigures(private val locale: Locale, totals: SessionTotals, priceUnit: PriceUnit = PriceUnit.DEFAULT) {
     private val major = totals.majorUnit ?: totals.currency
     private val minor = totals.minorUnit
+    private val prices = PriceFormat(priceUnit, totals.minorUnit, totals.majorUnit, locale)
 
     fun energy(kwh: Double): String = String.format(locale, "%.1f kWh", kwh)
 
@@ -96,8 +102,9 @@ internal class HistoryFigures(private val locale: Locale, totals: SessionTotals)
         return "≈ " + sign + String.format(locale, "%.2f %s", Math.abs(amount), major)
     }
 
+    /** An average price per kWh, given in the minor unit, in the chosen unit; `null` when there is none or no unit. */
     fun price(perKwh: Double?): String? =
-        if (perKwh == null || minor == null) null else String.format(locale, "%.1f %s/kWh", perKwh, minor)
+        if (perKwh == null || minor == null) null else prices.perKwh(perKwh)
 
     fun share(fraction: Double?): String? =
         fraction?.let { String.format(locale, "%d %%", Math.round(it * 100)) }

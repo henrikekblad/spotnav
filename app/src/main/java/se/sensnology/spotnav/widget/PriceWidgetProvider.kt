@@ -27,6 +27,8 @@ import se.sensnology.spotnav.prices.PricePublicationBatch
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceResult
+import se.sensnology.spotnav.prices.PriceUnit
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.prices.PublicationOutcome
 import se.sensnology.spotnav.prices.runPublicationBatch
 import se.sensnology.spotnav.ui.WidgetConfigActivity
@@ -207,6 +209,7 @@ class PriceWidgetProvider : AppWidgetProvider() {
             // The clock and the chart time axis are read once: the axis, its bands and the now line agree.
             val now = java.time.Instant.now()
             val axisMode = ChartAxisPreference.of(context).mode()
+            val priceUnit = PriceUnitPreference.of(context).unit()
             val source = WidgetChartSource.of(chargerProfileId, chargerKnown, settings, stored, now, axisMode)
             val statusLine = if (stored != null && settings.showChargingPlan) {
                 WidgetStatusLine.compose(
@@ -241,11 +244,13 @@ class PriceWidgetProvider : AppWidgetProvider() {
                         profile = ChartProfile.WIDGET,
                         nowMinute = ChartNow.currentMarkMinute(source.chart.market, source.chart.prices, source.axis, now),
                         statusFooter = statusLine,
-                        axis = source.axis
+                        axis = source.axis,
+                        priceUnit = priceUnit
                     ).bitmap
                 }
                 WidgetChartSource.Pass -> drawPlanPass(
-                    context, id, settings, chargerProfileId, chargerKnown, statusLine, batch, width, height, oneSp, axisMode, now
+                    context, id, settings, chargerProfileId, chargerKnown, statusLine, batch, width, height, oneSp, axisMode, now,
+                    priceUnit
                 )
             }
             val views = RemoteViews(context.packageName, R.layout.widget_price)
@@ -285,7 +290,8 @@ class PriceWidgetProvider : AppWidgetProvider() {
             height: Int,
             oneSp: Float,
             axisMode: ChartAxisMode,
-            now: java.time.Instant
+            now: java.time.Instant,
+            priceUnit: PriceUnit
         ): Bitmap {
             val snapshot = WidgetPlanSnapshotStore.forContext(context).snapshotFor(chargerProfileId)
             // A `null` area is a paired widget with nothing confirmed: nothing is fetched and it renders unavailable.
@@ -304,7 +310,8 @@ class PriceWidgetProvider : AppWidgetProvider() {
                             showPlan = settings.showChargingPlan,
                             // Now line only, never a selection line.
                             axisMode = axisMode,
-                            now = now
+                            now = now,
+                            priceUnit = priceUnit
                         )
                     }
                 }
@@ -344,7 +351,8 @@ class PriceWidgetProvider : AppWidgetProvider() {
                                 profile = ChartProfile.WIDGET,
                                 nowMinute = ChartNow.currentMarkMinute(confirmed.market, data, axis, now),
                                 statusFooter = statusLine,
-                                axis = axis
+                                axis = axis,
+                                priceUnit = priceUnit
                             ).bitmap
                         }
                     }
