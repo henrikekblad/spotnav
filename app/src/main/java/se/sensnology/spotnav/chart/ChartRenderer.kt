@@ -364,9 +364,10 @@ internal object ChartRenderer {
     }
 
     /**
-     * The ticks under the plot from [ChartTimeAxis.ticks], as many as fit (see [ChartTickFit]): an hour
-     * each, the left edge's label starting at it and the right edge's ending at it. A midnight inside the From now axis is a dashed divider through
-     * the plot, labelled with the new day's weekday and date.
+     * The hour labels under the plot (see [ChartAxisLabels]): two digits every three hours, every six
+     * where they would touch, the left edge's label starting at it and the right edge's ("24") ending at
+     * it. A midnight inside the From now axis is a dashed divider through the plot, labelled with the new
+     * day's weekday and date.
      */
     private fun drawTicks(
         context: Context,
@@ -378,34 +379,33 @@ internal object ChartRenderer {
     ) {
         val axisText = metrics.axisTextSize
         val locale = AppLanguageSettings.locale(context)
-        fun label(tick: ChartTick): String =
-            if (tick.dayStart && tick.instant != null && axis is ChartTimeAxis.Range) {
-                DateTimeFormatter.ofPattern("EEE d", locale).format(tick.instant.atZone(axis.zone))
-            } else tick.hour.toString().padStart(2, '0')
-        paint.textSize = axisText
-        // As many labels as fit the plot's width: a small widget keeps the axis with fewer of them.
-        val shown = ChartTickFit.fit(axis.ticks(), axis.spanMinutes, metrics::xAt, { paint.measureText(label(it)) }, axisText * .6f)
-        shown.forEach { tick ->
+        // Weekday and day in the order and form the language writes them ("12 Mon", "mån 12"), as the card's `Intl` does.
+        val cue = DateTimeFormatter.ofPattern(android.text.format.DateFormat.getBestDateTimePattern(locale, "EEEd"), locale)
+        fun dayCue(instant: java.time.Instant): String =
+            if (axis is ChartTimeAxis.Range) cue.format(instant.atZone(axis.zone)) else ""
+        // The divider is drawn whether or not its label fits.
+        axis.ticks().filter { it.dayStart }.forEach { tick ->
             val px = metrics.xAt(tick.minute)
-            if (tick.dayStart) {
-                paint.color = colors.muted
-                paint.alpha = DIVIDER_ALPHA
-                paint.strokeWidth = max(1f, metrics.scale)
-                val dash = max(3f, 3f * metrics.scale)
-                paint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), 0f)
-                canvas.drawLine(px, metrics.top, px, metrics.bottom, paint)
-                paint.pathEffect = null
-                paint.alpha = 255
-                paint.strokeWidth = 1f
-            }
-            paint.textSize = axisText
             paint.color = colors.muted
-            paint.textAlign = when (tick.minute) {
+            paint.alpha = DIVIDER_ALPHA
+            paint.strokeWidth = max(1f, metrics.scale)
+            val dash = max(3f, 3f * metrics.scale)
+            paint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), 0f)
+            canvas.drawLine(px, metrics.top, px, metrics.bottom, paint)
+            paint.pathEffect = null
+            paint.alpha = 255
+            paint.strokeWidth = 1f
+        }
+        paint.textSize = axisText
+        paint.color = colors.muted
+        val labels = ChartAxisLabels.of(axis, metrics::xAt, axisText, ::dayCue) { paint.measureText(it) }
+        labels.forEach { label ->
+            paint.textAlign = when (label.tick.minute) {
                 0f -> Paint.Align.LEFT
                 axis.spanMinutes -> Paint.Align.RIGHT
                 else -> Paint.Align.CENTER
             }
-            canvas.drawText(label(tick), px, metrics.bottom + axisText * 1.15f, paint)
+            canvas.drawText(label.text, metrics.xAt(label.tick.minute), metrics.bottom + axisText * 1.15f, paint)
         }
         paint.textAlign = Paint.Align.LEFT
     }
