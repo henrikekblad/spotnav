@@ -174,9 +174,18 @@ class PriceWidgetProvider : AppWidgetProvider() {
             val dashboards = WidgetDashboardSource(
                 store = WidgetDashboardStore.forContext(context),
                 fetch = { profileId, timeouts ->
-                    val profile = ChargerProfileStore.forContext(context).getProfile(profileId)
-                    if (profile == null || !profile.configured) null
-                    else HomeAssistantClient.dashboardRead(profile.toHomeAssistantSettings(), timeouts.connectMs, timeouts.readMs)
+                    val profiles = ChargerProfileStore.forContext(context)
+                    val profile = profiles.getProfile(profileId)
+                    // A charger waiting to be paired again is asked only when its slow check is due.
+                    if (profile == null || !profile.configured || !profiles.claimRead(profileId)) null
+                    else {
+                        val read = runCatching {
+                            HomeAssistantClient.dashboardRead(profile.toHomeAssistantSettings(), timeouts.connectMs, timeouts.readMs)
+                        }
+                        // Whether the webhook is (still, or again) one Home Assistant recognises.
+                        profiles.recordWebhookAnswer(profileId, read.exceptionOrNull())
+                        read.getOrThrow()
+                    }
                 },
                 budget = WidgetNetworkBudget(startedAt, now = System::currentTimeMillis),
                 now = System::currentTimeMillis,

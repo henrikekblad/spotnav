@@ -161,10 +161,15 @@ internal object LocalNotifications {
         }
         val chosen = store.events
         var identifyingChanged = false
+        val profileStore = ChargerProfileStore.forContext(app)
         for (profile in profiles) {
-            val dashboard = runCatching {
+            // A charger waiting to be paired again is asked only when its slow check is due.
+            if (!profileStore.claimRead(profile.localId)) continue
+            val read = runCatching {
                 HomeAssistantClient.dashboard(profile.toHomeAssistantSettings(), connectTimeoutMs = 10_000, readTimeoutMs = 20_000)
-            }.getOrNull() ?: continue
+            }
+            profileStore.recordWebhookAnswer(profile.localId, read.exceptionOrNull())
+            val dashboard = read.getOrNull() ?: continue
             // Whether this Home Assistant takes the question as an instant-notification event.
             if (store.observeIdentifies(profile.localId, VehicleIdentification.advertised(dashboard))) identifyingChanged = true
             val current = NotificationRules.snapshot(dashboard, now)
