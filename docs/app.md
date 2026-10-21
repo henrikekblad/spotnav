@@ -155,7 +155,12 @@ its own settings.
 
 **Display**: **Chart time axis** is **Day** (00–24, with tomorrow drawn over today; the default) or
 **From now** (from this hour to the end of the last published day; see [Plan chart](#plan-chart)). The
-chart in the app and the widgets follow it. Under **Widget** are the settings of the widget the app was
+chart in the app and the widgets follow it. **Price unit** is the area's minor unit (for example **öre/kWh**, the
+default) or its major unit (**kr/kWh**), named from the area itself: 163,1 öre/kWh or 1,63 kr/kWh. The
+price on top of the chart, the highest and lowest, the price axis, a tapped price, the price table, the
+average price in the charge history and the widgets follow it; costs and savings stay in kronor (or the
+area's major unit), and energy tax and grid fee are still entered in öre. It is offered when the area
+names both units. Both settings are this phone's own and are not sent to Home Assistant. Under **Widget** are the settings of the widget the app was
 opened from: whether its status line is shown.
 
 <img src="images/app-settings-price.png" alt="Electricity price settings: price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">

@@ -565,4 +565,6 @@
   <string name="chart_axis_day_help">00–24, morgen über heute gezeichnet.</string>
   <string name="chart_axis_from_now">Ab jetzt</string>
   <string name="chart_axis_from_now_help">Von dieser Stunde bis zum Ende des letzten veröffentlichten Tages. Bis die Preise für morgen da sind, wie Tag.</string>
+  <string name="price_unit">Preiseinheit</string>
+  <string name="price_unit_example">Zum Beispiel %1$s</string>
 </resources>
