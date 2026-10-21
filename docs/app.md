@@ -22,6 +22,16 @@ nothing answers). The app shows a six-digit code; Home Assistant shows the same 
 Devices & services** and asks you to approve the phone. Every charger on that instance is paired at
 once. The app gets one webhook ID per charger, never a Home Assistant password or token.
 
+If SpotNav in Home Assistant no longer recognises a charger's webhook (the integration was set up
+again, or the webhook was replaced), the app says so instead of showing an error: *SpotNav in Home
+Assistant no longer recognises this phone. Pair again to reconnect.* appears above the charger card
+and in **Settings → Home Assistant**, with **Pair again**. Pairing again runs the same approval; a
+charger Home Assistant hands back under the same address and charger id gets the new webhook and keeps
+everything the app had for it (its settings, the widget showing it, its notifications), and instant
+notifications are registered again. Until then the app asks that charger's webhook only once every
+15 minutes. The app only decides this when the webhook answers empty twice in a row while Home
+Assistant itself answers; no contact at all is shown as before.
+
 ## Main screen
 
 <img src="images/app-main.png" alt="Main screen paired with Home Assistant: the charger card with its status line, charging current and charge history, Start and Pause buttons; the vehicle card with charge level, limit and capacity; and the top of the planning card" width="360">
@@ -193,7 +203,7 @@ the target 80 %* when the car's reading is short of it.
 
 <img src="images/app-settings-home-assistant.png" alt="Home Assistant card in settings showing the paired address with Refresh and Remove" width="420">
 
-**Home Assistant**: the paired instance, with **Refresh** (ask it again; a charger added there since is offered for pairing) and **Remove**.
+**Home Assistant**: the paired instance, with **Refresh** (ask it again; a charger added there since is offered for pairing) and **Remove**, and **Pair again** when Home Assistant no longer recognises the phone (see [Pairing](#pairing-with-home-assistant)).
 
 ## Charge history
 
