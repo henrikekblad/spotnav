@@ -91,13 +91,19 @@ internal fun ViewScope.openFrameEditor(
     val dialog = Dialog(context, if (darkTheme) android.R.style.Theme_Material_NoActionBar else android.R.style.Theme_Material_Light_NoActionBar)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     val screenHeight = resources.displayMetrics.heightPixels
+    // The title stays on top and Cancel and Save at the bottom; only the page between them scrolls.
+    val root = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setBackgroundColor(appBackground)
+    }
+    root.addView(TextView(context).apply {
+        text = t(R.string.camera_frame_label); textSize = 20f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
+        setPadding(dp(16), dp(16), dp(16), 0)
+    })
     val page = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
-        setPadding(dp(16), dp(16), dp(16), dp(16))
+        setPadding(dp(16), 0, dp(16), 0)
     }
-    page.addView(TextView(context).apply {
-        text = t(R.string.camera_frame_label); textSize = 20f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
-    })
     page.addView(mutedText(t(R.string.camera_frame_intro), top = 4, bottom = 8))
     val status = mutedText(t(R.string.camera_frame_loading), bottom = 8)
     page.addView(status)
@@ -153,7 +159,6 @@ internal fun ViewScope.openFrameEditor(
         gravity = Gravity.CENTER_HORIZONTAL
     })
     val error = errorLine()
-    page.addView(error)
     lateinit var saveButton: Button
     saveButton = dialogButton(t(R.string.paired_save)) {
         if (picture.bitmap == null) {
@@ -174,25 +179,28 @@ internal fun ViewScope.openFrameEditor(
             }
         }
     }
-    // Cancel and Save as every other editor has them: text buttons at the bottom right.
-    page.addView(LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.END
-        setPadding(0, dp(12), 0, 0)
-        addView(dialogButton(t(android.R.string.cancel)) { dialog.dismiss() })
-        addView(saveButton)
+    root.addView(ScrollView(context).apply { addView(page) },
+        LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+    // Cancel and Save as every other editor has them: text buttons at the bottom right, under the error.
+    root.addView(LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(16), 0, dp(16), dp(16))
+        addView(error)
+        addView(LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.END
+            setPadding(0, dp(12), 0, 0)
+            addView(dialogButton(t(android.R.string.cancel)) { dialog.dismiss() })
+            addView(saveButton)
+        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
     })
-    val scroller = ScrollView(context).apply {
-        setBackgroundColor(appBackground)
-        addView(page)
-    }
-    // The page keeps clear of the status and navigation bars (the window is drawn edge to edge).
-    scroller.setOnApplyWindowInsetsListener { view, insets ->
+    // The editor keeps clear of the status and navigation bars (the window is drawn edge to edge).
+    root.setOnApplyWindowInsetsListener { view, insets ->
         val bars = systemBars(insets)
         view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
         insets
     }
-    dialog.setContentView(scroller)
+    dialog.setContentView(root)
     dialog.window?.apply {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         setBackgroundDrawable(ColorDrawable(appBackground))
