@@ -114,6 +114,7 @@
   <string name="instance_stale">Findes ikke længere i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Findes i Home Assistant, men er ikke parret med appen: %1$s</string>
   <string name="instance_pair_again">Par igen</string>
+  <string name="pair_again_needed">SpotNav i Home Assistant genkender ikke længere denne telefon. Par igen for at genoprette forbindelsen.</string>
   <string name="home_assistant_intro">Parre én gang med %1$s. Alle opladere på instansen følger med godkendelsen, og appen får aldrig en Home Assistant-token.</string>
   <string name="home_assistant_integration_link">SpotNav-integrationen til Home Assistant</string>
   <string name="home_assistant_checking">Kontrollerer Home Assistant…</string>

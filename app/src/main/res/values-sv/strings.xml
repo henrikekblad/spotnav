@@ -114,6 +114,7 @@
   <string name="instance_stale">Finns inte längre i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Finns i Home Assistant men är inte parkopplad med appen: %1$s</string>
   <string name="instance_pair_again">Parkoppla igen</string>
+  <string name="pair_again_needed">SpotNav i Home Assistant känner inte längre igen den här telefonen. Parkoppla igen för att återansluta.</string>
   <string name="home_assistant_intro">Parkoppla en gång med %1$s. Alla laddare på instansen följer med godkännandet, och appen får aldrig någon Home Assistant-token.</string>
   <string name="home_assistant_integration_link">SpotNav-integrationen för Home Assistant</string>
   <string name="home_assistant_checking">Kontrollerar Home Assistant…</string>

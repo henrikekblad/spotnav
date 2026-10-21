@@ -117,6 +117,7 @@
   <string name="instance_stale">Niet meer in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant maar niet gekoppeld aan deze app: %1$s</string>
   <string name="instance_pair_again">Opnieuw koppelen</string>
+  <string name="pair_again_needed">SpotNav in Home Assistant herkent deze telefoon niet meer. Koppel opnieuw om weer verbinding te maken.</string>
   <string name="home_assistant_intro">Koppel één keer met de %1$s. Met de goedkeuring komen alle laadpalen van die instantie mee; de app krijgt nooit een Home Assistant-token.</string>
   <string name="home_assistant_integration_link">SpotNav-integratie voor Home Assistant</string>
   <string name="home_assistant_checking">Home Assistant controleren…</string>
