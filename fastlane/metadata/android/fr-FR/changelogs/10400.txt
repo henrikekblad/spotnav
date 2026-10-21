@@ -1,0 +1,5 @@
+- Unité de prix dans Réglages → Affichage : cent/kWh ou €/kWh, pour le graphique, l'historique et le widget
+- L'axe du temps affiche les heures toutes les trois heures : 00 03 … 21 24
+- Nouveau réglage véhicule : réveiller la voiture pour une lecture en fin de charge (Kia, Hyundai, Tesla)
+- Si Home Assistant ne reconnaît plus le téléphone, l'app propose « Associer à nouveau » en gardant vos réglages
+- Les titres restent visibles dans les fenêtres de valeur et le recadrage

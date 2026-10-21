@@ -1,0 +1,5 @@
+- Preiseinheit unter Einstellungen → Anzeige: cent/kWh oder €/kWh, für Diagramm, Verlauf und Widget
+- Die Zeitachse zeigt volle Stunden alle drei Stunden: 00 03 … 21 24
+- Neue Fahrzeugeinstellung: Auto für eine Ablesung wecken, wenn das Laden endet (Kia, Hyundai, Tesla)
+- Kennt Home Assistant das Telefon nicht mehr, bietet die App „Erneut koppeln“ an und behält Ihre Einstellungen
+- Titel bleiben in den Wertefenstern und beim Zuschneiden sichtbar

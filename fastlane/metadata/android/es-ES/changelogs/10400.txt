@@ -1,0 +1,5 @@
+- Unidad de precio en Ajustes → Visualización: cent/kWh o €/kWh, para gráfico, historial y widget
+- El eje de tiempo muestra horas enteras cada tres horas: 00 03 … 21 24
+- Nuevo ajuste del coche: despertarlo para una lectura al terminar la carga (Kia, Hyundai, Tesla)
+- Si Home Assistant ya no reconoce el teléfono, la app ofrece "Vincular de nuevo" y conserva tus ajustes
+- Los títulos quedan visibles en las ventanas de valores y al recortar

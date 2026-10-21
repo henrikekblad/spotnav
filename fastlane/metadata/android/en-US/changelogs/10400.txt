@@ -1,0 +1,5 @@
+- Price unit in Settings → Display: öre/kWh or kr/kWh (cent or €), for the chart, history and widget
+- The chart's time axis shows plain hours every three hours: 00 03 … 21 24
+- New car setting: wake the car for a reading when a charge ends (Kia, Hyundai, Tesla)
+- If Home Assistant no longer knows the phone, the app offers "Pair again" and keeps your settings
+- Titles stay in view in the value popovers and the crop editor

@@ -1,0 +1,5 @@
+- Prijseenheid in Instellingen → Weergave: cent/kWh of €/kWh, voor grafiek, geschiedenis en widget
+- De tijdas toont hele uren om de drie uur: 00 03 … 21 24
+- Nieuwe auto-instelling: de auto wekken voor een uitlezing als het laden stopt (Kia, Hyundai, Tesla)
+- Herkent Home Assistant de telefoon niet meer, dan biedt de app "Opnieuw koppelen" aan en blijven je instellingen bewaard
+- Titels blijven in beeld in de waardevensters en bij het bijsnijden

@@ -1,0 +1,5 @@
+- Prisenhet i Innstillinger → Visning: øre/kWh eller kr/kWh, for diagram, historikk og widget
+- Diagrammets tidsakse viser hele timer hver tredje time: 00 03 … 21 24
+- Ny bilinnstilling: vekk bilen for en avlesning når ladingen slutter (Kia, Hyundai, Tesla)
+- Kjenner ikke Home Assistant lenger igjen telefonen, tilbyr appen «Pare igjen» og beholder innstillingene dine
+- Titlene blir stående i verdivinduene og ved beskjæring

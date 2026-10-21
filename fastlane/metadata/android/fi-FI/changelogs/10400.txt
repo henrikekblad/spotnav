@@ -1,0 +1,5 @@
+- Hintayksikkö kohdassa Asetukset → Näyttö: cent/kWh tai €/kWh kaavioon, historiaan ja widgetiin
+- Kaavion aika-akseli näyttää tasatunnit kolmen tunnin välein: 00 03 … 21 24
+- Uusi auton asetus: herätä auto lukemaa varten latauksen päättyessä (Kia, Hyundai, Tesla)
+- Jos Home Assistant ei enää tunnista puhelinta, sovellus tarjoaa toiminnon "Liitä uudelleen" ja säilyttää asetukset
+- Otsikot pysyvät näkyvissä arvoikkunoissa ja rajauksessa
