@@ -37,10 +37,18 @@ internal object ChargerPairingApproval {
         val firstLocalId: String?,
         val binding: Binding,
         /**
-         * The profiles this approval *re-paired*: the device already held them, and the instance
-         * has just vouched for them again.
+         * The profiles this approval *re-paired* whose caches go: the device already held them, and
+         * the instance has just vouched for them again. A charger that was waiting to be paired again
+         * (its webhook gone, see [se.sensnology.spotnav.chargers.PairAgain]) is not among them: the
+         * same instance and the same charger, only a new webhook, so what the app remembers of it
+         * stays.
          */
-        val rePaired: List<String> = emptyList()
+        val rePaired: List<String> = emptyList(),
+        /**
+         * The re-paired profiles whose webhook changed: Home Assistant is told this phone's push
+         * reference again through the new one.
+         */
+        val newWebhooks: List<String> = emptyList()
     )
 
     /**
@@ -58,6 +66,7 @@ internal object ChargerPairingApproval {
         val profiles = mutableListOf<ChargerProfile>()
         val returnedLocalIds = mutableListOf<String>()
         val rePaired = mutableListOf<String>()
+        val newWebhooks = mutableListOf<String>()
         outcome.chargers.forEach { charger ->
             val held = existing.firstOrNull { it.baseUrl == baseUrl && it.remoteChargerId == charger.id }
             val profile = if (held == null) {
@@ -72,12 +81,15 @@ internal object ChargerPairingApproval {
                     remoteChargerName = charger.name
                 )
             } else {
-                rePaired += held.localId
+                if (!held.needsPairing) rePaired += held.localId
+                if (held.webhookId != charger.webhookId) newWebhooks += held.localId
                 held.copy(
                     baseUrl = baseUrl,
                     webhookId = charger.webhookId,
                     remoteChargerId = charger.id,
-                    remoteChargerName = charger.name
+                    remoteChargerName = charger.name,
+                    // Paired again: the new webhook is one Home Assistant recognises.
+                    pairAgain = null
                 )
             }
             returnedLocalIds += profile.localId
@@ -87,6 +99,7 @@ internal object ChargerPairingApproval {
             profiles = profiles,
             firstLocalId = returnedLocalIds.firstOrNull(),
             rePaired = rePaired,
+            newWebhooks = newWebhooks,
             binding = decide(
                 returnedLocalIds = returnedLocalIds,
                 storedBinding = storedBinding,
@@ -129,6 +142,15 @@ internal object ChargerPairingApproval {
         /** Bind this local profile id to the widget that asked for the pairing. */
         fun bind(localId: String)
 
+        /**
+         * Forget what this profile's Home Assistant was told of push, so it is told again through the
+         * profile's new webhook.
+         */
+        fun forgetPushRegistration(localId: String) {}
+
+        /** Bring every Home Assistant's push registration up to date, after the profiles are written. */
+        fun syncPush() {}
+
         /** Repaint the screen. Every write above must already have happened. */
         fun repaint()
     }
@@ -137,6 +159,8 @@ internal object ChargerPairingApproval {
         if (applied == null) return
         applied.rePaired.forEach { device.forgetCached(it) }
         applied.profiles.forEach { device.upsert(it) }
+        applied.newWebhooks.forEach { device.forgetPushRegistration(it) }
+        if (applied.newWebhooks.isNotEmpty()) device.syncPush()
         val active = device.activeProfileId()
         if (active == null && applied.firstLocalId != null) device.activate(applied.firstLocalId)
         (applied.binding as? Binding.Bind)?.let { device.bind(it.localId) }

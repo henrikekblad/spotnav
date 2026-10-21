@@ -222,6 +222,14 @@ class ChargerPairingApprovalTest {
             order += "bind:$localId"
         }
 
+        override fun forgetPushRegistration(localId: String) {
+            order += "forgetPush:$localId"
+        }
+
+        override fun syncPush() {
+            order += "syncPush"
+        }
+
         override fun repaint() {
             repaints += 1
             order += "repaint"
@@ -252,7 +260,10 @@ class ChargerPairingApprovalTest {
         ChargerPairingApproval.commit(applied, device)
 
         assertEquals(listOf("local-a"), device.forgotten)
-        assertEquals(listOf("forget:local-a", "upsert:local-a", "upsert:local-new", "repaint"), device.order)
+        assertEquals(
+            listOf("forget:local-a", "upsert:local-a", "upsert:local-new", "forgetPush:local-a", "syncPush", "repaint"),
+            device.order
+        )
     }
 
     @Test fun anAlreadyActiveDeviceKeepsItsActiveProfile() {
@@ -293,5 +304,51 @@ class ChargerPairingApprovalTest {
 
         assertTrue(device.order.isEmpty())
         assertEquals(0, device.repaints)
+    }
+
+    @Test fun pairingAgainAChargerWhoseWebhookWasGoneKeepsItsSettingsAndCaches() {
+        // The same instance and charger id, only a new webhook: the profile is the one it was, with
+        // the new webhook, its mark cleared, and nothing the app remembers of it forgotten.
+        val waiting = profile(localId = "local-a", remoteChargerId = "entry_a").copy(
+            displayName = "My garage",
+            selectedVehicleId = "car-1",
+            targetSocPercent = 80,
+            detectedPhases = 3,
+            pairAgain = se.sensnology.spotnav.chargers.PairAgainMark(markedAt = 1L, checkedAt = 2L)
+        )
+        val device = Recorder(active = "local-a")
+        val applied = apply(
+            approved(charger("entry_a", webhookId = "wh-rotated")),
+            existing = listOf(waiting),
+            storedBinding = WidgetChargerBinding(initialized = true, chargerProfileId = "local-a")
+        )
+
+        ChargerPairingApproval.commit(applied, device)
+
+        val paired = device.written.single()
+        assertEquals(
+            waiting.copy(webhookId = "wh-rotated", remoteChargerName = "Charger entry_a", pairAgain = null),
+            paired
+        )
+        assertFalse(paired.needsPairing)
+        assertTrue(device.forgotten.isEmpty())
+        // The widget stays bound to the same local profile, and push is registered again through the new webhook.
+        assertNull(device.bound)
+        assertEquals(listOf("upsert:local-a", "forgetPush:local-a", "syncPush", "repaint"), device.order)
+    }
+
+    @Test fun anApprovalWithTheSameWebhookRegistersNothingAgain() {
+        val held = profile(localId = "local-a", remoteChargerId = "entry_a")
+        val device = Recorder(active = "local-a")
+        ChargerPairingApproval.commit(
+            apply(
+                approved(charger("entry_a", webhookId = held.webhookId)),
+                existing = listOf(held),
+                storedBinding = WidgetChargerBinding(initialized = true, chargerProfileId = "local-a")
+            ),
+            device
+        )
+
+        assertEquals(listOf("forget:local-a", "upsert:local-a", "repaint"), device.order)
     }
 }
