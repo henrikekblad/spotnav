@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
@@ -272,6 +273,18 @@ object HomeAssistantClient {
         return SessionsRead.csv(status, body)
     }
 
+    /**
+     * How long an empty answer waits before the webhook is asked again (see [WebhookGone]); the
+     * tests shorten it.
+     */
+    internal var retryWaitMs: Long = WebhookGone.RETRY_WAIT_MS
+
+    /**
+     * Where the instance's pairing webhook is asked whether SpotNav runs there at all (see
+     * [WebhookGone.confirm]); the tests answer it themselves.
+     */
+    internal var instanceAnswers: (baseUrl: String) -> Boolean = { HomeAssistantPairingClient.reachable(it) }
+
     private fun post(
         settings: HomeAssistantSettings,
         body: String,
@@ -281,6 +294,37 @@ object HomeAssistantClient {
         require(settings.configured) { "Home Assistant is not configured" }
         require(HomeAssistantSettings.isAllowedBaseUrl(settings.baseUrl)) { "HTTPS or a local HTTP address is required" }
 
+        val (status, responseBody) = exchange(settings, body, connectTimeoutMs, readTimeoutMs)
+        if (status !in 200..299) throw WebhookHttpStatusException(status, responseBody)
+        if (responseBody.isBlank()) {
+            // What Home Assistant answers for a webhook id it does not have: asked again with a read
+            // that changes nothing, whatever the first request was, and checked against the instance.
+            val gone = WebhookGone.confirm(
+                retry = {
+                    try {
+                        val (again, againBody) = exchange(
+                            settings, payload(HomeAssistantCommand("dashboard")), connectTimeoutMs, readTimeoutMs
+                        )
+                        if (again in 200..299 && againBody.isBlank()) WebhookGone.Answer.EMPTY else WebhookGone.Answer.ANSWERED
+                    } catch (failure: java.io.IOException) {
+                        WebhookGone.Answer.NO_ANSWER
+                    }
+                },
+                probe = { runCatching { instanceAnswers(settings.baseUrl) }.getOrDefault(false) },
+                wait = { Thread.sleep(retryWaitMs) }
+            )
+            throw if (gone) WebhookGoneException() else EmptyWebhookAnswerException()
+        }
+        return JSONObject(responseBody)
+    }
+
+    /** One POST to the charger's webhook: the status and the body, whatever they were. */
+    private fun exchange(
+        settings: HomeAssistantSettings,
+        body: String,
+        connectTimeoutMs: Int,
+        readTimeoutMs: Int
+    ): Pair<Int, String> {
         val connection = URL(settings.webhookUrl()).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
@@ -293,8 +337,7 @@ object HomeAssistantClient {
             val status = connection.responseCode
             val responseBody = (if (status in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (status !in 200..299) throw WebhookHttpStatusException(status, responseBody)
-            return JSONObject(responseBody)
+            return status to responseBody
         } finally {
             connection.disconnect()
         }

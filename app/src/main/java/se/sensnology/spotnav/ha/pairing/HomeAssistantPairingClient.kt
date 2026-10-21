@@ -50,6 +50,23 @@ internal object HomeAssistantPairingClient {
         }
     }
 
+    /**
+     * Whether SpotNav answers at [baseUrl] at all: its pairing webhook is registered for as long as
+     * the integration runs, and a `poll` for a request id nobody opened answers `expired` (or
+     * `pending` just after a restart) and changes nothing. Asked only to tell a charger webhook that
+     * is gone from an instance that is not answering.
+     */
+    fun reachable(baseUrl: String): Boolean {
+        if (!HomeAssistantSettings.isAllowedBaseUrl(baseUrl)) return false
+        val poll = PairingProtocol.poll(post(baseUrl, PairingProtocol.pollPayload(PROBE_REQUEST_ID))) {
+            HomeAssistantSettings.isAllowedBaseUrl(it)
+        }
+        return poll !is PairingPoll.Unreachable && poll !is PairingPoll.Unusable
+    }
+
+    /** The request id [reachable] asks about: never one Home Assistant handed out. */
+    private const val PROBE_REQUEST_ID = "spotnav-reachability-check"
+
     /** Sleep, unless the caller cancelled part-way through. `true` when cancelled. */
     private fun waitOrCancel(delayMillis: Long, isCancelled: () -> Boolean): Boolean {
         val step = 100L
