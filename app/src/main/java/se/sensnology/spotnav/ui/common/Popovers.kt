@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.SeekBar
 import android.widget.TextView
 import se.sensnology.spotnav.R
@@ -56,6 +57,10 @@ internal fun ViewScope.showValuePopover(
     return dialog
 }
 
+/**
+ * The popover's body: the eyebrow, the title and the value stay in view, and only the control and its note scroll
+ * when the screen is too small for them (a small phone, or large text).
+ */
 internal fun ViewScope.popoverBody(spec: PopoverSpec) = LinearLayout(context).apply {
     orientation = LinearLayout.VERTICAL
     setPadding(dp(22), dp(18), dp(22), dp(4))
@@ -81,13 +86,21 @@ internal fun ViewScope.popoverBody(spec: PopoverSpec) = LinearLayout(context).ap
     addView(spec.value, LinearLayout.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
     ).apply { topMargin = dp(6) })
-    addView(spec.control, LinearLayout.LayoutParams(
+    val scrolled = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        // The slider's pressed halo has room inside the scrolled part, as it had in the popover.
+        clipChildren = false
+    }
+    addView(ScrollView(context).apply { addView(scrolled) }, LinearLayout.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f
+    ))
+    scrolled.addView(spec.control, LinearLayout.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
     ).apply { topMargin = dp(12) })
     if (spec.tickAxis != null) {
-        addView(tickRow(spec.tickAxis, spec.control))
+        scrolled.addView(tickRow(spec.tickAxis, spec.control))
     }
-    addView(TextView(context).apply {
+    scrolled.addView(TextView(context).apply {
         text = spec.note
         textSize = 13f
         setTextColor(muted)
