@@ -103,8 +103,31 @@ internal class ChargerProfileStore(
      * Applies a dashboard fetch's outcome to exactly [profileId] — never whichever profile happens
      * to be active by the time this runs.
      */
-    fun applyDashboardResult(profileId: String, result: Result<Dashboard>) {
+    fun applyDashboardResult(profileId: String, result: Result<Dashboard>, now: Long = System.currentTimeMillis()) {
         result.onSuccess { dashboard -> updateFromDashboard(profileId, dashboard) }
+        recordWebhookAnswer(profileId, result.exceptionOrNull(), now)
+    }
+
+    /**
+     * Whether [localId]'s webhook is (still, or no longer) one Home Assistant recognises, from one
+     * request to it that failed with [failure] (`null`: it answered). See [PairAgain.afterRead].
+     */
+    fun recordWebhookAnswer(localId: String, failure: Throwable?, now: Long = System.currentTimeMillis()) {
+        updateProfile(localId) { PairAgain.afterRead(it, failure, now) }
+    }
+
+    /**
+     * Whether [localId]'s webhook may be asked now, taken atomically: a charger waiting to be paired
+     * again is asked only when its slow check is due, and that check is then counted as made (see
+     * [PairAgain]), so two readers never both make it. An unknown profile is not this store's to
+     * refuse.
+     */
+    fun claimRead(localId: String, now: Long = System.currentTimeMillis()): Boolean = mutate { state ->
+        val existing = state.profiles.find { it.localId == localId } ?: return@mutate state to true
+        val mark = existing.pairAgain ?: return@mutate state to true
+        if (!PairAgain.mayRead(existing, now)) return@mutate state to false
+        val checked = existing.copy(pairAgain = mark.copy(checkedAt = now))
+        state.copy(profiles = state.profiles.map { if (it.localId == localId) checked else it }) to true
     }
 
     /** Runs [block] under [lock] against the current state and persists the state it returns, skipping the write if nothing changed. */
@@ -206,9 +229,15 @@ internal class ChargerProfileStore(
                 phaseDetectionSource = json.optStringOrNull("phase_detection_source"),
                 phaseDetectionConfidence = json.optStringOrNull("phase_detection_confidence"),
                 selectedVehicleId = json.optStringOrNull("selected_vehicle_id")?.takeIf { it.isNotBlank() },
-                targetSocPercent = json.optIntOrNull("target_soc_percent")?.takeIf { it in 0..100 }
+                targetSocPercent = json.optIntOrNull("target_soc_percent")?.takeIf { it in 0..100 },
+                pairAgain = json.optLongOrNull("pair_again_marked_at")?.let { markedAt ->
+                    PairAgainMark(markedAt, json.optLongOrNull("pair_again_checked_at") ?: markedAt)
+                }
             )
         }
+
+        private fun JSONObject.optLongOrNull(key: String): Long? =
+            if (has(key) && !isNull(key)) (opt(key) as? Number)?.toLong() else null
 
         private fun ChargerProfile.toJson(): JSONObject = JSONObject().apply {
             put("local_id", localId)
@@ -222,6 +251,10 @@ internal class ChargerProfileStore(
             put("phase_detection_confidence", phaseDetectionConfidence)
             put("selected_vehicle_id", selectedVehicleId)
             put("target_soc_percent", targetSocPercent)
+            pairAgain?.let {
+                put("pair_again_marked_at", it.markedAt)
+                put("pair_again_checked_at", it.checkedAt)
+            }
         }
     }
 }
