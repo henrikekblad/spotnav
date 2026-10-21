@@ -189,7 +189,13 @@ internal data class DashboardVehicle(
     /** The car's identification sources (`identification`); `null` from a Home Assistant without them. */
     val identification: VehicleIdentificationSources? = null,
     /** What the car's own limit can be written to (`charge_limit_range`); `null` when unknown or not stated. */
-    val chargeLimitRange: ChargeLimitRange? = null
+    val chargeLimitRange: ChargeLimitRange? = null,
+    /**
+     * Whether SpotNav wakes the car for a reading when a charge ends and its last report is old (`wake_for_reading`).
+     * `null` when the car's integration has no wake SpotNav knows, or the row does not state it: the setting is
+     * then not offered. Anything but a boolean reads as `null`.
+     */
+    val wakeForReading: Boolean? = null
 )
 
 /**
@@ -758,7 +764,8 @@ internal data class Dashboard(
             minPercent = whole(json.opt("min_percent"))?.takeIf { it in 10..80 && it % 5 == 0 },
             minStated = json.has("min_percent"),
             identification = VehicleIdentificationSources.parse(json.opt("identification")),
-            chargeLimitRange = ChargeLimitRange.parse(json.opt("charge_limit_range"))
+            chargeLimitRange = ChargeLimitRange.parse(json.opt("charge_limit_range")),
+            wakeForReading = json.opt("wake_for_reading") as? Boolean
         )
 
         /** The `site` block, as the dashboard and the site write's own answers state it. */
