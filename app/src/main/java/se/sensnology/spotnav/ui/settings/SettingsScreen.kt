@@ -152,6 +152,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         }
         // What the authority has to say about these values, written where they are read.
         var authorityNote: String? = settingsAuthority.seedFromConfirmedRecord()?.let { authorityStateNote(it) }
+        // A charger Home Assistant no longer recognises: why nothing can be written, rather than "no
+        // contact" (the Home Assistant card below offers the pairing).
+        if (settingsProfile?.needsPairing == true) authorityNote = t(R.string.pair_again_needed)
         fun showAuthorityNote(extra: String? = null) {
             // A paired price that cannot be written says why, next to the button it disables:
             val readOnly = if (paired && !priceControlsEnabled(true, settingsAuthority.authority)) {
@@ -211,7 +214,11 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 pairedCards.setIdentificationWritable(writable)
                 pairedCards.setChargePeriodsWritable(writable)
             }
-            fun loadPaired() = session.peekDashboard { dashboard ->
+            fun loadPaired() = if (!profileStore.claimRead(settingsProfile.localId)) {
+                // Waiting to be paired again, and its slow check not due: nothing is asked.
+                pairedCards.show(null)
+                showNotifications()
+            } else session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
                 dashboard?.let { LocalNotifications.observeIdentification(applicationContext, settingsProfile.localId, it) }
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {

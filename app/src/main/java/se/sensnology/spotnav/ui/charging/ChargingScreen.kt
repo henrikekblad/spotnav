@@ -41,6 +41,7 @@ import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.addMainHeader
 import se.sensnology.spotnav.ui.common.chooseOne
+import se.sensnology.spotnav.ui.common.pairAgainNotice
 import se.sensnology.spotnav.ui.haSession
 import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
@@ -66,6 +67,9 @@ internal class ChargingScreen(
     internal var settings: WidgetSettings = WidgetSettings.load(context, widgetId)
     internal var resolvedChargerProfile: ChargerProfile? = null
     internal lateinit var offlineNotice: TextView
+
+    /** The notice for a charger Home Assistant no longer recognises, with its "Pair again" (see [refreshPairAgain]). */
+    internal lateinit var pairAgainNotice: View
 
     // Cards
     internal lateinit var chargerCard: ChargerCard
@@ -157,6 +161,15 @@ internal class ChargingScreen(
         content.addView(offlineNotice, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { bottomMargin = dp(12) })
+        // In the offline notice's place, when it is the webhook Home Assistant no longer has: the
+        // pairing is done in Settings -> Home Assistant, which starts it at once.
+        pairAgainNotice = pairAgainNotice(t(R.string.pair_again_needed)) {
+            shell.pairAgainProfile = profileId
+            shell.navigate(Screen.SETTINGS)
+        }.apply { visibility = View.GONE }
+        content.addView(pairAgainNotice, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { bottomMargin = dp(12) })
         // This widget's own bound charger — never HomeAssistantSettings.load(), which would resolve
         // whichever profile is globally active instead.
         resolvedChargerProfile = WidgetChargerResolver.resolve(settings, ChargerProfileStore.forContext(applicationContext))
@@ -184,6 +197,7 @@ internal class ChargingScreen(
         strategyUi = strategyFace(null)
         authorityProfile = resolvedChargerProfile?.takeIf { it.configured }
         session = authorityProfile?.let { shell.haSession(it) }
+        refreshPairAgain()
         val authorityCache = ConfirmedSettingsStore.forContext(applicationContext)
         val authorityCoordinator = authorityProfile?.let { subject ->
             SettingsAuthorityCoordinator(
@@ -281,6 +295,17 @@ internal class ChargingScreen(
             currentNeedingTotalGridPower
         )
 
+    /** Whether the charger waits to be paired again, as stored now. */
+    internal fun waitsForPairing(): Boolean =
+        profileId?.let { profileStore.getProfile(it) }?.needsPairing == true
+
+    /** Show the pair-again notice while the charger waits for it; the offline notice stands down meanwhile. */
+    internal fun refreshPairAgain() {
+        val waiting = waitsForPairing()
+        pairAgainNotice.visibility = if (waiting) View.VISIBLE else View.GONE
+        if (waiting) offlineNotice.visibility = View.GONE
+    }
+
     internal fun pairedNow(): Dashboard? = pairedDashboard.takeIf { authority.authority?.haOwnsPlanning == true }
 
     /** Never writes anything. */
@@ -370,6 +395,8 @@ internal class ChargingScreen(
                 }
 
                 override fun onDashboard(dashboard: Dashboard?) {
+                    // Each answer (or failure) may have set or cleared the charger's pair-again mark.
+                    refreshPairAgain()
                     pairedDashboard = dashboard
                     if (dashboard?.startingUpUntil != null) shell.liveRefreshReconsider?.invoke()
                     // A fresh answer is the record's own again: a pick that never became a write is
@@ -385,7 +412,13 @@ internal class ChargingScreen(
                 override fun onVehiclePicked(vehicleId: String) = pickPairedVehicle(vehicleId)
             }
         )
-        startDashboardFetch = { controller.fetchDashboard() }
+        // A charger whose webhook Home Assistant no longer has is asked only at the slow check's
+        // pace, whatever asks (the minute's re-read, a push, the foreground); a re-read pressed by
+        // hand is still made.
+        startDashboardFetch = {
+            val localId = authorityProfile?.localId
+            if (localId == null || profileStore.claimRead(localId)) controller.fetchDashboard()
+        }
         pendingRefresh = { controller.pendingRefresh() }
         chargeBarShown = { controller.chargeBarShown() }
         refreshControls = { controller.refreshControls() }

@@ -9,6 +9,7 @@ import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.CommandRefusal
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
+import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -332,6 +333,8 @@ internal class ChargerDashboardController(
                         // A Start with no car: Home Assistant's own refusal, said plainly.
                         CommandRefusal.code(failure) == CommandRefusal.VEHICLE_NOT_CONNECTED ->
                             t(R.string.home_assistant_not_connected)
+                        // The webhook Home Assistant no longer has: the notice above offers the way back.
+                        WebhookGone.isGone(failure) -> t(R.string.pair_again_needed)
                         else -> t(R.string.home_assistant_error, failure.message ?: "")
                     },
                     colour = if (sent.result.isSuccess) accent else ERROR_COLOUR

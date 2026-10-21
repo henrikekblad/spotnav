@@ -120,6 +120,7 @@
   <string name="instance_stale">No longer in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant but not paired with this app: %1$s</string>
   <string name="instance_pair_again">Pair again</string>
+  <string name="pair_again_needed">SpotNav in Home Assistant no longer recognises this phone. Pair again to reconnect.</string>
   <string name="home_assistant_intro">Pair with the %1$s once. Every charger on that instance comes with the approval; the app never gets a Home Assistant token.</string>
   <string name="home_assistant_integration_link">SpotNav integration for Home Assistant</string>
   <string name="home_assistant_checking">Checking Home Assistant…</string>

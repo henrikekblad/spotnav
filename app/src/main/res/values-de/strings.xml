@@ -117,6 +117,7 @@
   <string name="instance_stale">Nicht mehr in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant, aber nicht mit dieser App gekoppelt: %1$s</string>
   <string name="instance_pair_again">Erneut koppeln</string>
+  <string name="pair_again_needed">SpotNav in Home Assistant erkennt dieses Telefon nicht mehr. Erneut koppeln, um die Verbindung wiederherzustellen.</string>
   <string name="home_assistant_intro">Einmal mit der %1$s koppeln. Alle Ladestationen dieser Instanz kommen mit der Freigabe; die App erhält nie ein Home-Assistant-Token.</string>
   <string name="home_assistant_integration_link">SpotNav-Integration für Home Assistant</string>
   <string name="home_assistant_checking">Home Assistant wird geprüft…</string>

@@ -3,6 +3,8 @@ package se.sensnology.spotnav.ui.charging
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import se.sensnology.spotnav.ha.client.EmptyWebhookAnswerException
+import se.sensnology.spotnav.ha.client.WebhookGoneException
 import se.sensnology.spotnav.ha.client.WebhookHttpStatusException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -13,6 +15,12 @@ class ReadFailureLineTest {
         assertFalse(ReadFailureLine.shown(SocketTimeoutException("timeout")))
         for (status in listOf(502, 503, 504)) assertFalse(ReadFailureLine.shown(WebhookHttpStatusException(status, "")))
         assertFalse(ReadFailureLine.shown(null))
+    }
+
+    @Test fun aWebhookHomeAssistantNoLongerHasIsLeftToThePairAgainNotice() {
+        assertFalse(ReadFailureLine.shown(WebhookGoneException()))
+        // An empty answer that was not confirmed as gone is an ordinary error, said as one.
+        assertTrue(ReadFailureLine.shown(EmptyWebhookAnswerException()))
     }
 
     @Test fun anAnswerHomeAssistantGaveIsShown() {

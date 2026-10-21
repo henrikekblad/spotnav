@@ -121,6 +121,7 @@
   <string name="instance_stale">N\'est plus dans Home Assistant : %1$s</string>
   <string name="instance_unprovisioned">Dans Home Assistant mais pas associé à cette application : %1$s</string>
   <string name="instance_pair_again">Associer à nouveau</string>
+  <string name="pair_again_needed">SpotNav dans Home Assistant ne reconnaît plus ce téléphone. Associez-le à nouveau pour le reconnecter.</string>
   <string name="home_assistant_intro">Associez une seule fois l\'application à l\'%1$s. Toutes les bornes de cette instance sont incluses dans l\'approbation ; l\'application ne reçoit jamais de jeton Home Assistant.</string>
   <string name="home_assistant_integration_link">intégration SpotNav pour Home Assistant</string>
   <string name="home_assistant_checking">Vérification de Home Assistant…</string>

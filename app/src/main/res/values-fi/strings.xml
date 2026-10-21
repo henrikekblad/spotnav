@@ -114,6 +114,7 @@
   <string name="instance_stale">Ei enää Home Assistantissa: %1$s</string>
   <string name="instance_unprovisioned">On Home Assistantissa, mutta ei liitetty sovellukseen: %1$s</string>
   <string name="instance_pair_again">Liitä uudelleen</string>
+  <string name="pair_again_needed">Home Assistantin SpotNav ei enää tunnista tätä puhelinta. Liitä uudelleen, niin yhteys palaa.</string>
   <string name="home_assistant_intro">Muodosta laitepari kerran: %1$s. Kaikki instanssin laturit tulevat hyväksynnän mukana, eikä sovellus saa koskaan Home Assistant -tunnusta.</string>
   <string name="home_assistant_integration_link">Home Assistantin SpotNav-integraatio</string>
   <string name="home_assistant_checking">Tarkistetaan Home Assistantia…</string>

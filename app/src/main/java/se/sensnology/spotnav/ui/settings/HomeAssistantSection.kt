@@ -27,6 +27,10 @@ import se.sensnology.spotnav.chargers.ChargerReconciliation
 import se.sensnology.spotnav.chargers.ProfileCaches
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
+import se.sensnology.spotnav.ha.client.WebhookGone
+import se.sensnology.spotnav.chargers.toHomeAssistantSettings
+import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.push.PushStore
 import se.sensnology.spotnav.ha.pairing.ChargerPairingApproval
 import se.sensnology.spotnav.ha.pairing.HomeAssistantInstanceStore
 import se.sensnology.spotnav.ha.pairing.HomeAssistantNsdDiscovery
@@ -38,6 +42,7 @@ import se.sensnology.spotnav.ha.pairing.PairingStop
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.chargerName
+import se.sensnology.spotnav.ui.common.pairAgainNotice
 import se.sensnology.spotnav.ui.common.weight
 import se.sensnology.spotnav.app.LauncherActivity
 import se.sensnology.spotnav.widget.PriceWidgetProvider
@@ -146,14 +151,17 @@ internal class HomeAssistantSection(
         /** Ask the instance what it has, and reconcile it against our profiles. */
         fun refresh() {
             val baseUrl = instanceStore.baseUrl() ?: return
-            val webhook = profileStore.listProfiles()
-                .firstOrNull { it.baseUrl == baseUrl && it.configured }?.webhookId ?: return
+            // A charger whose webhook is known to be gone is asked only when nothing else can be:
+            val asked = profileStore.listProfiles()
+                .filter { it.baseUrl == baseUrl && it.configured }
+                .minByOrNull { if (it.needsPairing) 1 else 0 } ?: return
             statusLine = t(R.string.instance_refreshing)
             redraw()
             ioExecutor.execute {
-                val answer = runCatching {
-                    HomeAssistantClient.dashboard(HomeAssistantSettings(baseUrl = baseUrl, webhookId = webhook))
-                }.getOrNull()
+                val read = runCatching { HomeAssistantClient.dashboard(asked.toHomeAssistantSettings()) }
+                // Asked by hand: the answer also says whether that webhook is (still) recognised.
+                profileStore.applyDashboardResult(asked.localId, read)
+                val answer = read.getOrNull()
                 val reconciled = answer?.let {
                     ChargerReconciliation.reconcile(profileStore.listProfiles(), baseUrl, it.chargers)
                 }
@@ -161,7 +169,12 @@ internal class HomeAssistantSection(
                     report = reconciled
                     // What changes is what Home Assistant owns:
                     reconciled?.updates?.forEach { profileStore.upsertProfile(it) }
-                    statusLine = if (answer == null) t(R.string.instance_unreachable) else ""
+                    statusLine = when {
+                        answer != null -> ""
+                        // The pair-again line under the instance says it, with its button.
+                        WebhookGone.isGone(read.exceptionOrNull()) -> ""
+                        else -> t(R.string.instance_unreachable)
+                    }
                     redraw()
                 }
             }
@@ -192,6 +205,11 @@ internal class HomeAssistantSection(
                 override fun activeProfileId(): String? = profileStore.getActiveProfileId()
 
                 override fun activate(localId: String) = profileStore.setActiveProfileId(localId)
+
+                override fun forgetPushRegistration(localId: String) =
+                    PushStore.forContext(applicationContext).remember(localId, null)
+
+                override fun syncPush() = LocalNotifications.sync(applicationContext)
 
                 override fun bind(localId: String) {
                     val hadCharger = bindingStore.storedBinding(widgetId).chargerProfileId != null
@@ -282,6 +300,13 @@ internal class HomeAssistantSection(
             }
         }
 
+        /**
+         * Pair again with the instance held: the same handshake, and an approval that names the same
+         * chargers gives their profiles the new webhooks and keeps everything else (see
+         * [ChargerPairingApproval]). The instance keeps the name it had.
+         */
+        fun pairAgain(baseUrl: String) = beginPairing(baseUrl, instanceStore.name())
+
         fun removeInstance(baseUrl: String) {
             AlertDialog.Builder(context)
                 .setTitle(t(R.string.instance_remove_confirm_title, baseUrl))
@@ -311,10 +336,39 @@ internal class HomeAssistantSection(
                 .show()
         }
 
+        fun showPairingCode() {
+            body.addView(TextView(context).apply {
+                text = code.orEmpty()
+                textSize = 44f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(accent)
+                letterSpacing = 0.15f
+                gravity = Gravity.CENTER
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            line(t(R.string.instance_pairing_enter_code))
+            // Where to go, as something to press rather than something to know:
+            pairingTarget?.let { target ->
+                body.addView(button(t(R.string.instance_pairing_open_ha)) {
+                    val page = Uri.parse("$target/config/integrations/dashboard")
+                    runCatching { startActivity(Intent(Intent.ACTION_VIEW, page)) }
+                        .onFailure { statusLine = t(R.string.instance_pairing_open_failed); redraw() }
+                }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(44)))
+            }
+            if (statusLine.isNotEmpty()) line(statusLine)
+            body.addView(button(t(R.string.instance_pairing_cancel)) {
+                cancelled.set(true)
+                pairing = false
+                statusLine = ""
+                redraw()
+            })
+        }
+
         redraw = {
             body.removeAllViews()
             val baseUrl = instanceStore.baseUrl()
             when {
+                // Pairing again with the instance already held shows the code too, not the instance.
+                pairing -> showPairingCode()
                 baseUrl != null -> {
                     // The name discovery heard, with the address under it: the name is what a
                     // person recognises, and the address is still what tells two instances apart.
@@ -331,6 +385,13 @@ internal class HomeAssistantSection(
                     )
                     if (instanceName != null) line(baseUrl)
                     if (statusLine.isNotEmpty()) line(statusLine)
+                    // A charger whose webhook Home Assistant no longer has: said, and offered, first.
+                    val waiting = profileStore.listProfiles().filter { it.baseUrl == baseUrl && it.needsPairing }
+                    if (waiting.isNotEmpty()) {
+                        body.addView(pairAgainNotice(t(R.string.pair_again_needed)) { pairAgain(baseUrl) },
+                            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                .apply { topMargin = dp(4); bottomMargin = dp(6) })
+                    }
                     report?.let { reconciled ->
                         val stale = reconciled.stale
                         if (stale.isNotEmpty()) {
@@ -338,35 +399,9 @@ internal class HomeAssistantSection(
                         }
                         if (reconciled.unprovisioned.isNotEmpty()) {
                             line(t(R.string.instance_unprovisioned, reconciled.unprovisioned.joinToString(", ") { it.name }))
-                            body.addView(button(t(R.string.instance_pair_again)) { beginPairing(baseUrl) })
+                            body.addView(button(t(R.string.instance_pair_again)) { beginPairing(baseUrl, instanceStore.name()) })
                         }
                     }
-                }
-                pairing -> {
-                    body.addView(TextView(context).apply {
-                        text = code.orEmpty()
-                        textSize = 44f
-                        typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(accent)
-                        letterSpacing = 0.15f
-                        gravity = Gravity.CENTER
-                    }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-                    line(t(R.string.instance_pairing_enter_code))
-                    // Where to go, as something to press rather than something to know:
-                    pairingTarget?.let { target ->
-                        body.addView(button(t(R.string.instance_pairing_open_ha)) {
-                            val page = Uri.parse("$target/config/integrations/dashboard")
-                            runCatching { startActivity(Intent(Intent.ACTION_VIEW, page)) }
-                                .onFailure { statusLine = t(R.string.instance_pairing_open_failed); redraw() }
-                        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(44)))
-                    }
-                    if (statusLine.isNotEmpty()) line(statusLine)
-                    body.addView(button(t(R.string.instance_pairing_cancel)) {
-                        cancelled.set(true)
-                        pairing = false
-                        statusLine = ""
-                        redraw()
-                    })
                 }
                 else -> {
                     body.addView(button(t(R.string.home_assistant_log_in)) { findHomeAssistant() },
@@ -402,9 +437,16 @@ internal class HomeAssistantSection(
         }
 
         redraw()
-        // A connected instance shows what it has without being asked: the checklist is the answer
-        // to "is it still there, and what does it have".
-        if (instanceStore.baseUrl() != null) refresh()
+        // "Pair again" pressed on the charging screen: the handshake starts here at once, for that
+        // charger's own instance.
+        val pairAgainAsked = shell.pairAgainProfile?.let { profileStore.getProfile(it) }
+        shell.pairAgainProfile = null
+        when {
+            pairAgainAsked != null && pairAgainAsked.baseUrl.isNotBlank() -> pairAgain(pairAgainAsked.baseUrl)
+            // A connected instance shows what it has without being asked: the checklist is the answer
+            // to "is it still there, and what does it have".
+            instanceStore.baseUrl() != null -> refresh()
+        }
     }
 
     private companion object {

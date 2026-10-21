@@ -104,6 +104,12 @@ internal class ScreenShell(
     /** The car the next settings screen opens at (its vehicle card, that car's tab); taken by that screen. */
     var settingsCar: String? = null
 
+    /**
+     * The charger profile whose "Pair again" was pressed on the charging screen: the next settings
+     * screen starts pairing its instance at once; taken by that screen.
+     */
+    var pairAgainProfile: String? = null
+
     /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
     var onNotificationPermission: (() -> Unit)? = null
 

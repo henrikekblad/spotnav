@@ -171,7 +171,10 @@ internal fun ChargingScreen.applyState(state: VisibleAuthority?, note: String? =
     var text = note ?: state?.let { authorityStateNote(it) }
     // Offline is the banner's fact, said once, at the top of the page: the notes under the cards
     // carry everything else, so the same sentence is not written twice on one screen.
-    val offlineSentence = (state as? VisibleAuthority.ReadOnlyOffline)?.let { authorityStateNote(it) }
+    // A charger Home Assistant no longer recognises has its own notice, with its way back, instead.
+    val offlineSentence = (state as? VisibleAuthority.ReadOnlyOffline)
+        ?.takeUnless { waitsForPairing() }
+        ?.let { authorityStateNote(it) }
     offlineNotice.text = offlineSentence
     offlineNotice.visibility = if (offlineSentence == null) View.GONE else View.VISIBLE
     if (offlineSentence != null && note == null) text = null

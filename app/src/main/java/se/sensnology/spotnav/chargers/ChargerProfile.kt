@@ -33,9 +33,17 @@ data class ChargerProfile(
     val phaseDetectionSource: String? = null,
     val phaseDetectionConfidence: String? = null,
     val selectedVehicleId: String? = null,
-    val targetSocPercent: Int? = null
+    val targetSocPercent: Int? = null,
+    /**
+     * Set while SpotNav in Home Assistant no longer recognises [webhookId] (see [PairAgain]): the
+     * charger is to be paired again, and its webhook is only asked at the slow check's pace.
+     */
+    val pairAgain: PairAgainMark? = null
 ) {
     val configured: Boolean get() = baseUrl.isNotBlank() && webhookId.isNotBlank()
+
+    /** Whether this charger waits to be paired again. */
+    val needsPairing: Boolean get() = pairAgain != null
 
     /**
      * The label to show for this charger: the name Home Assistant reports, else [displayName], else
@@ -68,7 +76,7 @@ data class ChargerProfile(
         "remoteChargerName=$remoteChargerName, " +
         "detectedPhases=$detectedPhases, " +
         "phaseDetectionSource=$phaseDetectionSource, phaseDetectionConfidence=$phaseDetectionConfidence, " +
-        "selectedVehicleId=$selectedVehicleId, targetSocPercent=$targetSocPercent)"
+        "selectedVehicleId=$selectedVehicleId, targetSocPercent=$targetSocPercent, pairAgain=$pairAgain)"
 }
 
 /**
