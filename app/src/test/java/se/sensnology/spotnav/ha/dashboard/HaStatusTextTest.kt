@@ -272,6 +272,22 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun theWaitForThePlannedStartIsFollowedByTheInstalledPlansFacts() {
+        val status = DashboardStatus(
+            listOf(
+                StatusLine("held_until_window", mapOf("time" to "2026-09-22T20:30:00+00:00")),
+                StatusLine("plan_energy", mapOf("kwh" to 16.6)),
+                StatusLine("plan_cost", mapOf("amount_minor" to 1710.0, "currency" to "SEK")),
+                StatusLine("plan_distance", mapOf("mil" to 8.7)),
+            ),
+            StatusTone.NORMAL
+        )
+        assertEquals("Laddningen väntar till planerad start kl. 22:30 · 16,6 kWh · 17,1 kr · 8,7 mil",
+            HaStatusText.render(status, format("sv"), now))
+        assertEquals("Charging waits for the planned start at 22:30 · 16.6 kWh · 17.1 kr · 87 km",
+            HaStatusText.render(status, format("en"), now))
+    }
+
     @Test fun aCarThatEndedTheChargeIsFullOrTriedAgainNeverCharging() {
         fun say(code: String, params: Map<String, Any?> = emptyMap(), language: String = "en") =
             HaStatusText.line(StatusLine(code, params), format(language), now)
