@@ -21,6 +21,7 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.sessions.ChargeSessionRow
 import se.sensnology.spotnav.ha.sessions.SessionDay
 import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.card
@@ -207,7 +208,7 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
     // --- The month -----------------------------------------------------------------------------
 
     private fun render(month: SessionsMonth) {
-        val figures = HistoryFigures(numberLocale, month.summary)
+        val figures = HistoryFigures(numberLocale, month.summary, PriceUnitPreference.of(context).unit())
         addSummary(month, figures)
         addChart(month, figures)
         if (month.sessions.isNotEmpty()) addSessions(month, figures)
@@ -324,7 +325,7 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 
     private fun sessionFacts(row: ChargeSessionRow, figures: HistoryFigures): String {
-        val totals = HistoryFigures(numberLocale, data!!.summary)
+        val totals = HistoryFigures(numberLocale, data!!.summary, PriceUnitPreference.of(context).unit())
         return listOfNotNull(
             (if (row.estimated) "~" else "") + totals.energy(row.energyKwh),
             totals.cost(row.cost),

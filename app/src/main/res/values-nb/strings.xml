@@ -565,4 +565,6 @@
   <string name="chart_axis_day_help">00–24, med i morgen tegnet over i dag.</string>
   <string name="chart_axis_from_now">Fra nå</string>
   <string name="chart_axis_from_now_help">Fra denne timen til slutten av det siste publiserte døgnet. Til morgendagens priser er ute, det samme som Døgn.</string>
+  <string name="price_unit">Prisenhet</string>
+  <string name="price_unit_example">For eksempel %1$s</string>
 </resources>

@@ -23,7 +23,9 @@ import se.sensnology.spotnav.planning.ChargeNeed
 import se.sensnology.spotnav.planning.PlanDriver
 import se.sensnology.spotnav.planning.PlanMode
 import se.sensnology.spotnav.planning.PlanReadout
+import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.DRIVER_SLOT_BOTTOM_DP
@@ -456,8 +458,10 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             // One line per value, so a day that repeats the wall clock shows *both* of its values
             // rather than one of them; the offset appears only where it is what tells two otherwise
             // identical lines apart (see readoutLines).
-            val unit = PriceMarkets.find(market.areaId)?.appliedPriceUnit.orEmpty()
-            val lines = selection?.let { readoutLines(it, unit) } ?: emptyList()
+            val prices = PriceFormat.of(
+                PriceUnitPreference.of(context).unit(), PriceMarkets.find(market.areaId), AppLanguageSettings.numberLocale(context)
+            )
+            val lines = selection?.let { readoutLines(it, prices) } ?: emptyList()
             callout.text = lines.joinToString("\n")
             callout.visibility = if (lines.isEmpty()) View.GONE else View.VISIBLE
             // The chart carries the same words, so a screen reader can obtain the selection without

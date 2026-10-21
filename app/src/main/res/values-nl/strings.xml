@@ -565,4 +565,6 @@
   <string name="chart_axis_day_help">00–24, met morgen over vandaag getekend.</string>
   <string name="chart_axis_from_now">Vanaf nu</string>
   <string name="chart_axis_from_now_help">Van dit uur tot het einde van de laatst gepubliceerde dag. Tot de prijzen van morgen er zijn, hetzelfde als Dag.</string>
+  <string name="price_unit">Prijseenheid</string>
+  <string name="price_unit_example">Bijvoorbeeld %1$s</string>
 </resources>

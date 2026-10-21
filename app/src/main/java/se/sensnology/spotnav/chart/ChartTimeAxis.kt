@@ -57,8 +57,17 @@ internal sealed interface ChartTimeAxis {
     /** Whether any part of [interval] is on the axis. */
     fun shows(interval: PriceInterval): Boolean
 
-    /** The ticks under the plot, left to right. */
-    fun ticks(): List<ChartTick>
+    /**
+     * The ticks every six hours, left to right: the day divider, and the hour labels when the
+     * three-hourly ones would touch (see [ChartAxisLabels]).
+     */
+    fun ticks(): List<ChartTick> = ticks(GRID_STEP_HOURS)
+
+    /** The same sequence every three hours: the chart's hour labels when they fit (see [ChartAxisLabels]). */
+    fun labelTicks(): List<ChartTick> = ticks(LABEL_STEP_HOURS)
+
+    /** The ticks every [stepHours] (a divisor of 24), left to right, the right edge included. */
+    fun ticks(stepHours: Int): List<ChartTick>
 
     /**
      * The prices drawn at full strength, which the header's highest and lowest cover: today's on the
@@ -74,9 +83,12 @@ internal sealed interface ChartTimeAxis {
         override fun markMinute(interval: PriceInterval): Float = ChartNow.markMinute(interval)
         override fun shows(interval: PriceInterval): Boolean = true
 
-        /** Five fixed ticks, whichever days are published, so 23-, 24- and 25-hour days draw the same axis. */
-        override fun ticks(): List<ChartTick> =
-            listOf(0, 6, 12, 18, 24).map { hour -> ChartTick(hour * 60f, hour, null) }
+        /**
+         * Fixed ticks from 00 to 24 (five every six hours, nine every three), whichever days are
+         * published, so 23-, 24- and 25-hour days draw the same axis.
+         */
+        override fun ticks(stepHours: Int): List<ChartTick> =
+            (0..24 step stepHours).map { hour -> ChartTick(hour * 60f, hour, null) }
     }
 
     /** Real time from [start] to [end], read in [zone] for ticks and day dividers. */
@@ -101,16 +113,17 @@ internal sealed interface ChartTimeAxis {
         }
 
         /**
-         * Every local 00, 06, 12 and 18 inside the range (each found by instant, so a 23- or 25-hour day
-         * keeps its ticks on those wall clocks), then the right edge. A midnight strictly inside is a
-         * [ChartTick.dayStart]; the left edge, the current hour, has no tick of its own.
+         * Every local 00, 06, 12 and 18 (every three hours with [stepHours] 3) inside the range (each
+         * found by instant, so a 23- or 25-hour day keeps its ticks on those wall clocks), then the right
+         * edge. A midnight strictly inside is a [ChartTick.dayStart]; the left edge, the current hour, has
+         * no tick of its own.
          */
-        override fun ticks(): List<ChartTick> {
+        override fun ticks(stepHours: Int): List<ChartTick> {
             val first = start.atZone(zone).toLocalDate()
             val last = end.atZone(zone).toLocalDate()
             val inside = generateSequence(first) { it.plusDays(1) }
                 .takeWhile { !it.isAfter(last) }
-                .flatMap { date -> listOf(0, 6, 12, 18).asSequence().map { hour -> hour to instantAt(date, hour) } }
+                .flatMap { date -> (0 until 24 step stepHours).asSequence().map { hour -> hour to instantAt(date, hour) } }
                 .filter { (_, instant) -> !instant.isBefore(start) && instant.isBefore(end) }
                 .map { (hour, instant) -> ChartTick(minuteOf(instant), hour, instant, dayStart = hour == 0 && instant.isAfter(start)) }
                 .toList()
@@ -123,6 +136,12 @@ internal sealed interface ChartTimeAxis {
     }
 
     companion object {
+        /** The divider's and the sparse labels' step: every six hours. */
+        const val GRID_STEP_HOURS = 6
+
+        /** The chart's hour labels' step when they fit: every three hours. */
+        const val LABEL_STEP_HOURS = 3
+
         private const val MINUTES_PER_DAY = 1440f
         private const val QUARTER_MINUTES = 15
 
@@ -152,6 +171,15 @@ internal sealed interface ChartTimeAxis {
  * kept; an edge that would collide with one gives way. Android-free.
  */
 internal object ChartTickFit {
+    /** Whether every one of [ticks] has room for its label, [gap] apart (see [fit] for the anchoring). */
+    fun fits(
+        ticks: List<ChartTick>,
+        spanMinutes: Float,
+        xAt: (Float) -> Float,
+        labelWidth: (ChartTick) -> Float,
+        gap: Float
+    ): Boolean = fit(ticks, spanMinutes, xAt, labelWidth, gap).size == ticks.size
+
     fun fit(
         ticks: List<ChartTick>,
         spanMinutes: Float,

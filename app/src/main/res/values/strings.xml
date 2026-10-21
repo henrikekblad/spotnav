@@ -577,4 +577,6 @@
   <string name="chart_axis_day_help">00–24, with tomorrow drawn over today.</string>
   <string name="chart_axis_from_now">From now</string>
   <string name="chart_axis_from_now_help">From this hour to the end of the last published day. Until tomorrow\'s prices are out, the same as Day.</string>
+  <string name="price_unit">Price unit</string>
+  <string name="price_unit_example">For example %1$s</string>
 </resources>

@@ -573,4 +573,6 @@
   <string name="chart_axis_day_help">00–24, demain dessiné par-dessus aujourd\'hui.</string>
   <string name="chart_axis_from_now">À partir de maintenant</string>
   <string name="chart_axis_from_now_help">De l\'heure en cours à la fin du dernier jour publié. Tant que les prix de demain ne sont pas publiés, identique à Journée.</string>
+  <string name="price_unit">Unité de prix</string>
+  <string name="price_unit_example">Par exemple %1$s</string>
 </resources>

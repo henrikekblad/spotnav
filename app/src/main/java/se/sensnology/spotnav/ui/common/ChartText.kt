@@ -1,19 +1,19 @@
 package se.sensnology.spotnav.ui.common
 
 import se.sensnology.spotnav.R
-import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.chart.ChartOccurrence
 import se.sensnology.spotnav.chart.ChartReadout
+import se.sensnology.spotnav.prices.PriceFormat
 import java.time.format.DateTimeFormatter
 
 /**
  * One readout's lines: one per value, so a day that repeats a wall clock shows both of its values
- * instead of one of them.
+ * instead of one of them. Each price per kWh in the unit [prices] shows.
  */
-internal fun ViewScope.readoutLines(selection: ChartReadout, unit: String): List<String> {
+internal fun ViewScope.readoutLines(selection: ChartReadout, prices: PriceFormat): List<String> {
     val time = selection.time.format(DateTimeFormatter.ofPattern("HH:mm"))
     fun lines(day: Int, occurrences: List<ChartOccurrence>, repeats: Boolean) = occurrences.map { occurrence ->
-        val price = String.format(AppLanguageSettings.numberLocale(context), "%.2f %s", occurrence.price, unit)
+        val price = prices.perKwh(occurrence.price)
         if (repeats) t(R.string.chart_readout_line_offset, t(day), time, occurrence.offset.id, price)
         else t(R.string.chart_readout_line, t(day), time, price)
     }

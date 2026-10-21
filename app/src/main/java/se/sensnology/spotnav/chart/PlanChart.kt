@@ -9,6 +9,8 @@ import android.view.ViewConfiguration
 import android.widget.ImageView
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.prices.PriceResult
+import se.sensnology.spotnav.prices.PriceUnit
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -42,7 +44,9 @@ internal data class ChartRequest(
      */
     val nowMinute: Float? = null,
     /** The time mapping [bands], [selectionMinute] and [nowMinute] were placed on (see [ChartTimeAxis]). */
-    val axis: ChartTimeAxis = ChartTimeAxis.WallClock
+    val axis: ChartTimeAxis = ChartTimeAxis.WallClock,
+    /** The unit the prices on the graph read in (see `PriceFormat`). */
+    val priceUnit: PriceUnit = PriceUnit.DEFAULT
 )
 
 /**
@@ -86,12 +90,14 @@ internal object ChartRequests {
         footer: ChartFooterPlan? = null,
         selectionMinute: Float? = null,
         nowMinute: Float? = null,
-        axis: ChartTimeAxis = ChartTimeAxis.WallClock
+        axis: ChartTimeAxis = ChartTimeAxis.WallClock,
+        priceUnit: PriceUnit = PriceUnit.DEFAULT
     ): ChartRequest? {
         val height = heightFor(widthPx, profile)
         return if (height <= 0) null
         else ChartRequest(
-            profile, market, prices ?: NOTHING_FETCHED, bands, footer, widthPx, height, selectionMinute, nowMinute, axis
+            profile, market, prices ?: NOTHING_FETCHED, bands, footer, widthPx, height, selectionMinute, nowMinute, axis,
+            priceUnit
         )
     }
 
@@ -164,6 +170,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
 
     /** This phone's chart time axis, read at every draw so a changed setting shows on the next one. */
     var axisMode: () -> ChartAxisMode = { ChartAxisPreference.of(context).mode() }
+
+    /** This phone's price unit, read at every draw like [axisMode]. */
+    var priceUnit: () -> PriceUnit = { PriceUnitPreference.of(context).unit() }
 
     /** The one pending boundary redraw: replaced on every draw, cancelled on detach (see [ChartBoundaryRefresh]). */
     private val boundaryRefresh = ChartBoundaryRefresh(
@@ -265,8 +274,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         // The clock is read once per draw: the axis, its bands and the now line all come from this instant.
         val at = now()
         val (axis, bands) = ChartRequests.placed(shown, axisMode(), at.toInstant())
+        val unit = priceUnit()
         // The frame a selection is made on and validated against: without the selection line, so a fresh selection cannot invalidate itself.
-        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer, axis = axis) ?: return
+        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer, axis = axis, priceUnit = unit) ?: return
         // A selection belongs to the frame it was made on; changed data, size or profile drop it.
         if (!ChartSelection.stillValid(selection, selectionMadeOn, drawnOn)) {
             val hadSelection = selection != null
@@ -279,7 +289,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         // like the selection, since an interval passing is not the data moving. `null` prices mean no line.
         val nowMinute = prices?.let { ChartNow.currentMarkMinute(it, at, axis) }
         val request = ChartRequests.of(
-            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute, axis
+            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute, axis, unit
         ) ?: return
         // Unchanged request: the frame on screen is this one.
         if (request == lastRequest) return
@@ -288,7 +298,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         val drawn = ChartRenderer.renderFrame(
             context, request.widthPx, request.heightPx, oneSp(), request.market, request.result,
             request.bands, request.footer, request.profile, request.selectionMinute, request.nowMinute,
-            axis = request.axis
+            axis = request.axis, priceUnit = request.priceUnit
         )
         plot = drawn.metrics
         val previous = frame

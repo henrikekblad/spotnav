@@ -12,9 +12,11 @@ import se.sensnology.spotnav.app.DistanceUnit
 import se.sensnology.spotnav.ha.dashboard.StatusTone
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.prices.PriceAggregation
+import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceInterval
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceResult
+import se.sensnology.spotnav.prices.PriceUnit
 import se.sensnology.spotnav.widget.WidgetStatusLine
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
@@ -29,8 +31,8 @@ internal object ChartRenderer {
 
     /**
      * The widget's entry point for a local plan: the bitmap only, on the time axis [axisMode] gives at
-     * [now], with the now line at the interval containing [now]; the widget has no selection. [theme]
-     * defaults to the dark panel.
+     * [now], with the now line at the interval containing [now]; the widget has no selection. Prices read
+     * in [priceUnit]. [theme] defaults to the dark panel.
      */
     fun render(
         context: Context,
@@ -43,7 +45,8 @@ internal object ChartRenderer {
         showPlan: Boolean = true,
         axisMode: ChartAxisMode = ChartAxisMode.DEFAULT,
         now: java.time.Instant = java.time.Instant.now(),
-        theme: ChartTheme? = null
+        theme: ChartTheme? = null,
+        priceUnit: PriceUnit = PriceUnit.DEFAULT
     ): Bitmap {
         // The only place a caller's plan is calculated for a bitmap; bands and footer come from one call.
         val chart = LocalCharts.of(inputs, result, showPlan)
@@ -51,7 +54,8 @@ internal object ChartRenderer {
         val (axis, bands) = ChartRequests.placed(result, zone, chart.bands, chart.overlays, axisMode, now)
         return renderFrame(
             context, width, height, scaledDensity, chart.market, result, bands, chart.footer, profile,
-            null, ChartNow.currentMarkMinute(chart.market, result, axis, now), theme, axis = axis
+            null, ChartNow.currentMarkMinute(chart.market, result, axis, now), theme, axis = axis,
+            priceUnit = priceUnit
         ).bitmap
     }
 
@@ -137,6 +141,9 @@ internal object ChartRenderer {
      * [selectionMinute] must have been placed on it. On the Day axis tomorrow is drawn subdued over
      * today and the header's highest and lowest prices are today's; on the From now axis only what is on
      * the axis is drawn, every mark at full strength, and the highest and lowest cover all of it.
+     *
+     * [priceUnit] is the unit the current, highest and lowest prices and the price axis read in (see
+     * [PriceFormat]); the prices themselves always arrive in the market's minor unit.
      */
     fun renderFrame(
         context: Context,
@@ -155,7 +162,8 @@ internal object ChartRenderer {
         theme: ChartTheme? = null,
         /** A ready-made footer line (a paired widget's status) drawn in place of the plan footer; the caller decides its words. */
         statusFooter: WidgetStatusLine.Line? = null,
-        axis: ChartTimeAxis = ChartTimeAxis.WallClock
+        axis: ChartTimeAxis = ChartTimeAxis.WallClock,
+        priceUnit: PriceUnit = PriceUnit.DEFAULT
     ): ChartFrame {
         // The chart's surface is dark in both system themes, so the palette is not resolved from night mode.
         val colors = theme ?: ChartTheme.Dark
@@ -191,10 +199,10 @@ internal object ChartRenderer {
         val dayMax = extremes.maxOfOrNull { it.price }
         val dayMin = extremes.minOfOrNull { it.price }
 
-        val maxText = dayMax?.let { String.format(numbers, "↑%.1f", it) } ?: "↑–"
-        val minText = dayMin?.let { String.format(numbers, "↓%.1f", it) } ?: "↓–"
-        val priceUnit = area?.appliedPriceUnit.orEmpty()
-        val currentText = current?.let { String.format(numbers, "%.1f %s", it, priceUnit) } ?: "– $priceUnit"
+        val prices = PriceFormat.of(priceUnit, area, numbers)
+        val maxText = dayMax?.let { "↑" + prices.figure(it) } ?: "↑–"
+        val minText = dayMin?.let { "↓" + prices.figure(it) } ?: "↓–"
+        val currentText = current?.let(prices::perKwh) ?: "– ${prices.perKwhUnit}"
         // The profile decides how much canvas the text may take.
         val metrics = ChartLayout.metrics(
             profile, w, h, scaledDensity, bands.isNotEmpty() || statusFooter != null, axis.spanMinutes
@@ -245,7 +253,7 @@ internal object ChartRenderer {
             paint.color = colors.muted
             paint.textSize = axisText
             paint.textAlign = Paint.Align.RIGHT
-            canvas.drawText(String.format(numbers, "%.0f", maxValue - i * range / 2), left - axisText * .45f, gy + axisText * .35f, paint)
+            canvas.drawText(prices.axisLabel(maxValue - i * range / 2, range), left - axisText * .45f, gy + axisText * .35f, paint)
         }
         paint.textAlign = Paint.Align.LEFT
 
@@ -364,9 +372,10 @@ internal object ChartRenderer {
     }
 
     /**
-     * The ticks under the plot from [ChartTimeAxis.ticks], as many as fit (see [ChartTickFit]): an hour
-     * each, the left edge's label starting at it and the right edge's ending at it. A midnight inside the From now axis is a dashed divider through
-     * the plot, labelled with the new day's weekday and date.
+     * The hour labels under the plot (see [ChartAxisLabels]): two digits every three hours, every six
+     * where they would touch, the left edge's label starting at it and the right edge's ("24") ending at
+     * it. A midnight inside the From now axis is a dashed divider through the plot, labelled with the new
+     * day's weekday and date.
      */
     private fun drawTicks(
         context: Context,
@@ -378,34 +387,33 @@ internal object ChartRenderer {
     ) {
         val axisText = metrics.axisTextSize
         val locale = AppLanguageSettings.locale(context)
-        fun label(tick: ChartTick): String =
-            if (tick.dayStart && tick.instant != null && axis is ChartTimeAxis.Range) {
-                DateTimeFormatter.ofPattern("EEE d", locale).format(tick.instant.atZone(axis.zone))
-            } else tick.hour.toString().padStart(2, '0')
-        paint.textSize = axisText
-        // As many labels as fit the plot's width: a small widget keeps the axis with fewer of them.
-        val shown = ChartTickFit.fit(axis.ticks(), axis.spanMinutes, metrics::xAt, { paint.measureText(label(it)) }, axisText * .6f)
-        shown.forEach { tick ->
+        // Weekday and day in the order and form the language writes them ("12 Mon", "mån 12"), as the card's `Intl` does.
+        val cue = DateTimeFormatter.ofPattern(android.text.format.DateFormat.getBestDateTimePattern(locale, "EEEd"), locale)
+        fun dayCue(instant: java.time.Instant): String =
+            if (axis is ChartTimeAxis.Range) cue.format(instant.atZone(axis.zone)) else ""
+        // The divider is drawn whether or not its label fits.
+        axis.ticks().filter { it.dayStart }.forEach { tick ->
             val px = metrics.xAt(tick.minute)
-            if (tick.dayStart) {
-                paint.color = colors.muted
-                paint.alpha = DIVIDER_ALPHA
-                paint.strokeWidth = max(1f, metrics.scale)
-                val dash = max(3f, 3f * metrics.scale)
-                paint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), 0f)
-                canvas.drawLine(px, metrics.top, px, metrics.bottom, paint)
-                paint.pathEffect = null
-                paint.alpha = 255
-                paint.strokeWidth = 1f
-            }
-            paint.textSize = axisText
             paint.color = colors.muted
-            paint.textAlign = when (tick.minute) {
+            paint.alpha = DIVIDER_ALPHA
+            paint.strokeWidth = max(1f, metrics.scale)
+            val dash = max(3f, 3f * metrics.scale)
+            paint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), 0f)
+            canvas.drawLine(px, metrics.top, px, metrics.bottom, paint)
+            paint.pathEffect = null
+            paint.alpha = 255
+            paint.strokeWidth = 1f
+        }
+        paint.textSize = axisText
+        paint.color = colors.muted
+        val labels = ChartAxisLabels.of(axis, metrics::xAt, axisText, ::dayCue) { paint.measureText(it) }
+        labels.forEach { label ->
+            paint.textAlign = when (label.tick.minute) {
                 0f -> Paint.Align.LEFT
                 axis.spanMinutes -> Paint.Align.RIGHT
                 else -> Paint.Align.CENTER
             }
-            canvas.drawText(label(tick), px, metrics.bottom + axisText * 1.15f, paint)
+            canvas.drawText(label.text, metrics.xAt(label.tick.minute), metrics.bottom + axisText * 1.15f, paint)
         }
         paint.textAlign = Paint.Align.LEFT
     }

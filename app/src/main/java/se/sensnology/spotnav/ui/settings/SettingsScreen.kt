@@ -49,7 +49,11 @@ import se.sensnology.spotnav.ha.settings.SettingsEditSend
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.CatalogueRefresh
+import se.sensnology.spotnav.prices.PriceFormat
+import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.prices.PriceUnit
+import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -160,6 +164,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         showAuthorityNote()
         // The paired screen's commit path:
         var applyPairedRecord: (HaPlanningSettings?) -> Unit = {}
+        // The price unit, named from the market these settings are for: the paired charger's area, else this phone's.
+        val displayArea = if (paired) confirmedRecord?.areaId?.takeIf { it.isNotEmpty() } else old.area.takeIf { it.isNotEmpty() }
+        addPriceUnitSetting(displayCard.body, displayArea?.let(PriceMarkets::find))
         // Widget appearance, not operation: in the Display card, under the chart's time axis.
         val display = addWidgetDisplayControls(displayCard.body, old) { applyLocal() }
         if (display.offered) readShowPlan = { display.showPlan() }
@@ -549,6 +556,39 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     done(null)
                     preference.save(modes[index])
                     // The widgets draw the same axis: redraw them from what they hold.
+                    WidgetChartBoundary.requestRedraw(context)
+                    paint()
+                }
+            }
+        }
+        paint()
+    }
+
+    /**
+     * The Display card's price unit: the market's minor unit ("öre/kWh", the default) or its major unit
+     * ("kr/kWh"), named from [market] itself and each shown with an example. Kept on the phone (see
+     * [PriceUnitPreference]), read by the in-app chart, its readout, the price table and History at their
+     * next draw and by the widgets, which are redrawn when it changes. Not offered when the market does not
+     * name both units.
+     */
+    private fun addPriceUnitSetting(parent: LinearLayout, market: PriceMarket?) {
+        val numbers = AppLanguageSettings.numberLocale(context)
+        if (!PriceFormat.of(PriceUnit.DEFAULT, market, numbers).choosable) return
+        val preference = PriceUnitPreference.of(context)
+        val units = listOf(PriceUnit.MINOR, PriceUnit.MAJOR)
+        val formats = units.map { PriceFormat.of(it, market, numbers) }
+        val names = formats.map { it.perKwhUnit }
+        val helps = formats.map { t(R.string.price_unit_example, it.perKwh(PriceFormat.EXAMPLE)) }
+        val holder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        parent.addView(holder)
+        fun paint() {
+            holder.removeAllViews()
+            val chosen = units.indexOf(preference.unit()).coerceAtLeast(0)
+            settingRow(holder, t(R.string.price_unit), names[chosen]) {
+                chooseOne(t(R.string.price_unit), names, chosen, helps) { index, done ->
+                    done(null)
+                    preference.save(units[index])
+                    // The widgets show prices in the same unit: redraw them from what they hold.
                     WidgetChartBoundary.requestRedraw(context)
                     paint()
                 }
