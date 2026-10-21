@@ -24,6 +24,12 @@ address as the base URL and the scenario name as the webhook id:
 
 `python3 tools/fake_ha.py --list` prints every scenario and what it is for.
 
+`/spotnav-mock/rotate-webhooks` gives every charger a new webhook id, as a
+re-installed integration would: the old ids then answer 200 with no body, the
+way Home Assistant answers a webhook it no longer has, so the app's "Pair
+again" can be looked at; pairing again hands over the new ids under the same
+charger ids.
+
 A debug build can also *find* this rather than being told where it is: it
 broadcasts `SPOTNAV-MOCK-DISCOVER` on UDP <port> and gets back the catalogue
 (`/spotnav-mock/scenarios` serves the same thing over HTTP, for a phone told
@@ -232,9 +238,30 @@ def paired_chargers() -> list[dict]:
     over every charger config entry -- `id`, `name` and that one's own webhook.
     """
     return [
-        {"id": key, "name": charger.name, "webhook": key}
+        {"id": key, "name": charger.name, "webhook": webhook_id(key)}
         for key, charger in SCENARIOS.items()
     ]
+
+
+#: How many times the webhook ids were replaced (`/spotnav-mock/rotate-webhooks`). Generation 0 is
+#: the scenario name itself, so a charger added by hand keeps working until a rotation.
+WEBHOOKS = {"generation": 0}
+
+
+def webhook_id(key: str, generation: int | None = None) -> str:
+    """The webhook id a scenario has now (or had in [generation]). The charger id stays the key."""
+    n = WEBHOOKS["generation"] if generation is None else generation
+    return key if n == 0 else f"{key}-r{n}"
+
+
+def scenario_for_webhook(hook: str) -> str | None:
+    """The scenario whose *current* webhook id is [hook]."""
+    return next((key for key in SCENARIOS if webhook_id(key) == hook), None)
+
+
+def retired_webhook(hook: str) -> bool:
+    """Whether [hook] was a scenario's webhook id before the last rotation."""
+    return any(webhook_id(key, n) == hook for key in SCENARIOS for n in range(WEBHOOKS["generation"]))
 
 # What a debug build broadcasts to find this, and what comes back. Deliberately
 # nothing like Home Assistant's own discovery: this announces a *mock*, and a
@@ -256,7 +283,7 @@ def catalogue(base_url: str) -> dict:
         "version": DISCOVERY_VERSION,
         "base_url": base_url,
         "scenarios": [
-            {"webhook_id": key, "name": charger.name, "why": charger.why}
+            {"webhook_id": webhook_id(key), "name": charger.name, "why": charger.why}
             for key, charger in SCENARIOS.items()
         ],
     }
@@ -360,6 +387,15 @@ class Handler(BaseHTTPRequestHandler):
                 state = dict(MANUAL)
             self._json(200, state)
             return
+        if path == "/spotnav-mock/rotate-webhooks":
+            # Every charger gets a new webhook id, as when the integration is set up again: the
+            # old ones answer empty from now on, and the next pairing hands over the new ones
+            # under the same charger ids.
+            with _lock:
+                WEBHOOKS["generation"] += 1
+                generation = WEBHOOKS["generation"]
+            self._json(200, {"ok": True, "generation": generation})
+            return
         if path == "/pairing":
             self._pairing_page()
             return
@@ -429,7 +465,16 @@ class Handler(BaseHTTPRequestHandler):
         if match.group(1) == PAIRING_WEBHOOK_ID:
             self._pairing(self._body())
             return
-        charger = SCENARIOS.get(match.group(1))
+        key = scenario_for_webhook(match.group(1))
+        if key is None and retired_webhook(match.group(1)):
+            # A webhook id handed out before /spotnav-mock/rotate-webhooks: answered exactly as Home
+            # Assistant answers a webhook it no longer has -- 200 and no body -- so the app's
+            # "Pair again" can be looked at.
+            self.send_response(200)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        charger = SCENARIOS.get(key) if key is not None else None
         if charger is None:
             self._json(404, {"ok": False, "error": f"Unknown scenario {match.group(1)!r}"})
             return
@@ -441,9 +486,9 @@ class Handler(BaseHTTPRequestHandler):
             action = payload.get("action")
             with _lock:
                 if action == "dashboard":
-                    self._json(200, dashboard_body(match.group(1)))
+                    self._json(200, dashboard_body(key))
                     return
-                if match.group(1) == "manual" and action == "start" and MANUAL["no_car"]:
+                if key == "manual" and action == "start" and MANUAL["no_car"]:
                     self._json(409, {"ok": False, "error": "vehicle_not_connected"})
                     return
                 charger.command(action, payload)
