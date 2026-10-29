@@ -602,4 +602,7 @@
   <string name="price_duplicate_fee_vat">VAT %1$s</string>
   <string name="price_duplicate_fee_tax">tax %1$s</string>
   <string name="price_duplicate_fee_transfer">grid %1$s</string>
+  <string name="phase_switching_label">Phase switching for solar</string>
+  <string name="phase_switching_automatic">Automatic</string>
+  <string name="phase_switching_help">When the sun does not cover three-phase charging, charge on one phase instead of drawing from the grid. Some cars charge badly after a phase change: turn this off if your car stops charging.</string>
 </resources>

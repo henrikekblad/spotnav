@@ -590,4 +590,7 @@
   <string name="price_duplicate_fee_vat">moms %1$s</string>
   <string name="price_duplicate_fee_tax">afgift %1$s</string>
   <string name="price_duplicate_fee_transfer">net %1$s</string>
+  <string name="phase_switching_label">Faseskift ved solopladning</string>
+  <string name="phase_switching_automatic">Automatisk</string>
+  <string name="phase_switching_help">Når solen ikke rækker til opladning på tre faser, lader bilen på én fase i stedet for at tage fra nettet. Nogle biler lader dårligt efter et faseskift: slå det fra, hvis bilen holder op med at lade.</string>
 </resources>

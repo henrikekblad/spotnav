@@ -272,6 +272,23 @@ internal data class ChargerPriority(val value: String, val choices: List<String>
     }
 }
 
+/**
+ * The `phase_switching` block (Home Assistant 1.22, asked for with the `reads` value `phase_switching`): whether a solar
+ * charge may switch to one phase when the sun does not cover three, and whether this connection may change it. Sent
+ * only for a charger where the setting is offered; `null` elsewhere, from an older Home Assistant, or for a block
+ * this app cannot read.
+ */
+internal data class PhaseSwitching(val enabled: Boolean, val writable: Boolean) {
+    companion object {
+        /** Read leniently: a block without a boolean `value` is not there; `writable` is true only when it says so. */
+        fun parse(raw: Any?): PhaseSwitching? {
+            val block = raw as? JSONObject ?: return null
+            val value = block.opt("value") as? Boolean ?: return null
+            return PhaseSwitching(value, block.opt("writable") == true)
+        }
+    }
+}
+
 internal data class DashboardSite(
     val name: String?,
     val writable: Boolean,
@@ -388,7 +405,9 @@ internal data class Dashboard(
      * The electricity price entry this charger uses (`price_source`, see [DashboardPriceSource]): `null` while it
      * prices with its own settings, from an older Home Assistant, or for a block this app cannot read.
      */
-    val priceSource: DashboardPriceSource? = null
+    val priceSource: DashboardPriceSource? = null,
+    /** Phase switching for solar (`phase_switching`, see [PhaseSwitching]); `null` where it is not offered. */
+    val phaseSwitching: PhaseSwitching? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -487,7 +506,8 @@ internal data class Dashboard(
                 vehicleChoices = vehicleChoices(json.opt("vehicle_choices")),
                 cameraIdentification = DashboardCamera.parse(json.opt("camera_identification")),
                 planNotice = planNotice(json.opt("plan_notice")),
-                priceSource = DashboardPriceSource.parse(json.opt("price_source"))
+                priceSource = DashboardPriceSource.parse(json.opt("price_source")),
+                phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching"))
             )
         }
 

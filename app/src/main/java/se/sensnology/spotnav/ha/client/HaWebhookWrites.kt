@@ -9,6 +9,7 @@ import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
+import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import java.util.Locale
 import kotlin.math.roundToLong
 
@@ -558,6 +559,53 @@ internal object PriceSourceUpdate {
         return when (head.error) {
             UNKNOWN_PRICE_ENTRY, UNKNOWN_PRICE_DUPLICATE -> Outcome.Stale
             NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
+            UNSUPPORTED_ACTION, WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * `update_phase_switching`: phase switching for solar on or off for this charger, under compare-and-set against the
+ * value the screen showed (`expected`). Answers `{ok, phase_switching, action}` with the block read again; a value
+ * changed elsewhere first is `spotnav_conflict`, and turning it on where it is not offered `spotnav_invalid_value`.
+ */
+internal object PhaseSwitchingUpdate {
+    private const val UNSUPPORTED_ACTION = "Unsupported action"
+
+    fun payload(expected: Boolean, enabled: Boolean): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_phase_switching")
+        WebhookReads.put(this)
+        put("enabled", enabled)
+        put("expected", expected)
+    }
+
+    sealed interface Outcome {
+        /** Written; [block] is the setting read again (`null` when it is no longer offered). */
+        data class Updated(val block: PhaseSwitching?) : Outcome
+
+        /** Changed elsewhere first: adopt [block] (when it came back). Nothing was written. */
+        data class Conflict(val block: PhaseSwitching?) : Outcome
+
+        data class Refused(val block: PhaseSwitching?) : Outcome
+
+        data object NotPermitted : Outcome
+
+        data object NotSupported : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        val block = PhaseSwitching.parse(head.json.opt("phase_switching"))
+        if (head.ok) return if (head.error == null) Outcome.Updated(block) else Outcome.Failed(head.error)
+        return when (head.error) {
+            WriteEnvelope.CONFLICT -> Outcome.Conflict(block)
+            WriteEnvelope.INVALID_VALUE -> Outcome.Refused(block)
+            PriceSourceUpdate.NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
             UNSUPPORTED_ACTION, WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)
         }

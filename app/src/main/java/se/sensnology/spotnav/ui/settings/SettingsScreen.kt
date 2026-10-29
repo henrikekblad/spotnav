@@ -314,6 +314,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                         done(outcome)
                         if (PairedVehicles.feedback(outcome).reload) loadPaired()
                     }
+                },
+                phaseSwitching = { expected, enabled, done ->
+                    session.updatePhaseSwitching(expected, enabled) { outcome ->
+                        done(outcome)
+                        if (PairedVehicles.feedback(outcome).reload) loadPaired()
+                    }
                 }
             )
             // The electricity price the charger uses: chosen, or the same-area question answered, the card's way.

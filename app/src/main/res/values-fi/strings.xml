@@ -590,4 +590,7 @@
   <string name="price_duplicate_fee_vat">ALV %1$s</string>
   <string name="price_duplicate_fee_tax">vero %1$s</string>
   <string name="price_duplicate_fee_transfer">siirto %1$s</string>
+  <string name="phase_switching_label">Vaiheenvaihto aurinkolatauksessa</string>
+  <string name="phase_switching_automatic">Automaattinen</string>
+  <string name="phase_switching_help">Kun aurinko ei riitä kolmivaiheiseen lataukseen, auto latautuu yhdellä vaiheella sen sijaan, että sähköä otettaisiin verkosta. Jotkin autot latautuvat huonosti vaiheenvaihdon jälkeen: kytke tämä pois, jos auto lakkaa latautumasta.</string>
 </resources>

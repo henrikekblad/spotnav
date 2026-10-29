@@ -590,4 +590,7 @@
   <string name="price_duplicate_fee_vat">MVA %1$s</string>
   <string name="price_duplicate_fee_tax">avgift %1$s</string>
   <string name="price_duplicate_fee_transfer">nett %1$s</string>
+  <string name="phase_switching_label">Faseveksling ved sollading</string>
+  <string name="phase_switching_automatic">Automatisk</string>
+  <string name="phase_switching_help">Når solen ikke rekker til lading på tre faser, lader bilen på én fase i stedet for å ta fra nettet. Noen biler lader dårlig etter et fasebytte: slå av hvis bilen slutter å lade.</string>
 </resources>

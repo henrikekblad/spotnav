@@ -598,4 +598,7 @@
   <string name="price_duplicate_fee_vat">TVA %1$s</string>
   <string name="price_duplicate_fee_tax">taxe %1$s</string>
   <string name="price_duplicate_fee_transfer">réseau %1$s</string>
+  <string name="phase_switching_label">Commutation de phases en charge solaire</string>
+  <string name="phase_switching_automatic">Automatique</string>
+  <string name="phase_switching_help">Quand le soleil ne suffit pas pour charger sur trois phases, la voiture charge sur une seule phase au lieu de prendre sur le réseau. Certaines voitures chargent mal après un changement de phase : désactivez ceci si votre voiture arrête de charger.</string>
 </resources>

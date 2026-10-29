@@ -590,4 +590,7 @@
   <string name="price_duplicate_fee_vat">btw %1$s</string>
   <string name="price_duplicate_fee_tax">belasting %1$s</string>
   <string name="price_duplicate_fee_transfer">net %1$s</string>
+  <string name="phase_switching_label">Fasewisseling bij zonneladen</string>
+  <string name="phase_switching_automatic">Automatisch</string>
+  <string name="phase_switching_help">Als de zon niet genoeg is om op drie fasen te laden, laadt de auto op één fase in plaats van stroom van het net te nemen. Sommige auto\'s laden slecht na een fasewissel: zet dit uit als je auto stopt met laden.</string>
 </resources>

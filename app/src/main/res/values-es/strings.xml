@@ -598,4 +598,7 @@
   <string name="price_duplicate_fee_vat">IVA %1$s</string>
   <string name="price_duplicate_fee_tax">impuesto %1$s</string>
   <string name="price_duplicate_fee_transfer">peaje %1$s</string>
+  <string name="phase_switching_label">Conmutación de fases en carga solar</string>
+  <string name="phase_switching_automatic">Automática</string>
+  <string name="phase_switching_help">Cuando el sol no alcanza para cargar en tres fases, el coche carga en una sola fase en lugar de tomar de la red. Algunos coches cargan mal tras un cambio de fase: desactívalo si tu coche deja de cargar.</string>
 </resources>
