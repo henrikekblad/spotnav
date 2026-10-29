@@ -17,12 +17,13 @@ import se.sensnology.spotnav.testing.DashboardFixtures
 import se.sensnology.spotnav.testing.HaFixtures
 
 /**
- * The dashboard's `price_source` block (Home Assistant 1.22). The integration's vendored fixtures carry none yet (it
- * is sent only to an app that reads it), so the blocks here are written to `api/price_source.py`'s shape, with fees
- * taken from a vendored dashboard's own `fiscal` block.
+ * The dashboard's `price_source` block (Home Assistant 1.22). No vendored dashboard carries one (it is sent only to an
+ * app that reads it), so the block is taken from Home Assistant's own `choose_price_source` answer and edited here.
  */
 class PriceSourceTest {
-    private val fees: JSONObject get() = HaFixtures.json("webhook/dashboard.json").getJSONObject("fiscal")
+    /** Home Assistant's own block: two SE4 prices, the same-area question with both entries' fees. */
+    private val real: JSONObject get() = HaFixtures.json("webhook/choose_price_source_success.json").getJSONObject("price_source")
+    private val fees: JSONObject get() = real.getJSONObject("duplicate").getJSONArray("fees").getJSONObject(0)
 
     private fun block(duplicate: Any? = JSONObject.NULL) = JSONObject()
         .put("entry_id", "price1")
@@ -48,6 +49,13 @@ class PriceSourceTest {
         assertTrue(request.getJSONArray("reads").toString().contains("\"price_source\""))
     }
 
+    @Test fun homeAssistantsOwnBlockIsRead() {
+        val source = DashboardPriceSource.parse(real)!!
+        assertEquals("price_b", source.entryId)
+        assertEquals(2, source.duplicate!!.entries.size)
+        assertEquals(source, dashboard(real).priceSource)
+    }
+
     @Test fun aWholeBlockIsRead() {
         val source = DashboardPriceSource.parse(block(duplicate()))!!
         assertEquals("price1", source.entryId)
@@ -58,7 +66,7 @@ class PriceSourceTest {
         val question = source.duplicate!!
         assertEquals("SE4", question.areaId)
         assertEquals(listOf("Electricity price SE4", "Electricity price SE4 (Home)"), question.entries.map { it.title })
-        assertEquals("off", question.entries[0].fees!!.vat.policy)
+        assertEquals("suggested", question.entries[0].fees!!.vat.policy)
         assertEquals("öre/kWh", question.entries[0].fees!!.tax.unit)
         assertNull(question.entries[1].fees)
         // On the dashboard too, beside everything else.
@@ -108,14 +116,10 @@ class PriceSourceTest {
     }
 }
 
-/**
- * `choose_price_source` and `answer_price_duplicate` over the webhook. Home Assistant's own fixtures for these answers
- * do not exist yet: the answers here follow the contract (`{ok, price_source, action}`, refusals by stable code).
- */
+/** `choose_price_source` and `answer_price_duplicate` over the webhook, against Home Assistant's own answers. */
 class PriceSourceWriteTest {
-    private val source = JSONObject()
-        .put("entry_id", "price2").put("title", "Electricity price SE4 (Home)").put("charger_count", 2)
-        .put("choices", JSONArray()).put("writable", true).put("duplicate", JSONObject.NULL)
+    private fun answer(name: String, status: Int) =
+        PriceSourceUpdate.answer(status, HaFixtures.json("webhook/$name.json").toString())
 
     @Test fun theRequestsCarryTheirOneSubjectAndTheReads() {
         val choose = PriceSourceUpdate.choosePayload("price2")
@@ -132,21 +136,34 @@ class PriceSourceWriteTest {
         assertTrue(both.isNull("keep_entry_id"))
     }
 
-    @Test fun eachAnswerIsAnOutcome() {
-        val update = PriceSourceUpdate
-        fun body(ok: Boolean, error: String? = null, block: Any? = source) = JSONObject()
-            .put("ok", ok).put("error", error ?: JSONObject.NULL).put("action", "choose_price_source")
-            .put("price_source", block ?: JSONObject.NULL).toString()
-        val updated = update.answer(200, body(true))
-        assertEquals("price2", (updated as Outcome.Updated).source!!.entryId)
-        assertEquals(Outcome.Updated(null), update.answer(200, body(true, block = null)))
-        assertEquals(Outcome.Stale, update.answer(400, body(false, "spotnav_unknown_price_entry")))
-        assertEquals(Outcome.Stale, update.answer(400, body(false, "spotnav_unknown_price_duplicate")))
-        assertEquals(Outcome.NotPermitted, update.answer(403, body(false, "spotnav_not_admin")))
+    @Test fun choosingAPriceAnswersTheBlockReadAgain() {
+        val chosen = answer("choose_price_source_success", 200) as Outcome.Updated
+        val source = chosen.source!!
+        assertEquals("price_b", source.entryId)
+        assertEquals("Electricity price SE4 (company)", source.title)
+        assertEquals(2, source.chargerCount)
+        assertEquals(listOf("price_a", "price_b"), source.choices.map { it.entryId })
+        val fees = source.duplicate!!.entries[1].fees!!
+        assertEquals("manual", fees.transfer.policy)
+        assertEquals(24.5, fees.transfer.effective!!, 0.0)
+        assertEquals("%", fees.vat.unit)
+        assertEquals(Outcome.Stale, answer("choose_price_source_unknown_entry", 400))
+        assertEquals(Outcome.Refused, answer("choose_price_source_invalid_value", 400))
+    }
+
+    @Test fun answeringTheQuestionAnswersTheBlockWithoutIt() {
+        val answered = answer("answer_price_duplicate_success", 200) as Outcome.Updated
+        assertNull(answered.source!!.duplicate)
+        assertEquals(Outcome.Stale, answer("answer_price_duplicate_unknown_duplicate", 400))
+        assertEquals(Outcome.Stale, answer("answer_price_duplicate_unknown_entry", 400))
+        assertEquals(Outcome.Refused, answer("answer_price_duplicate_invalid_value", 400))
+    }
+
+    @Test fun otherAnswersAreOutcomesToo() {
+        assertEquals(Outcome.NotPermitted, PriceSourceUpdate.answer(403, JSONObject().put("ok", false).put("error", "spotnav_not_admin").toString()))
         // A Home Assistant without the action answers the webhook's own refusal.
-        assertEquals(Outcome.NotSupported, update.answer(400, JSONObject().put("ok", false).put("error", "Unsupported action").toString()))
-        assertEquals(Outcome.Failed("spotnav_invalid_value"), update.answer(400, body(false, "spotnav_invalid_value")))
-        assertEquals(Outcome.Failed(null), update.answer(null, null))
-        assertEquals(Outcome.Failed(null), update.answer(200, "not json"))
+        assertEquals(Outcome.NotSupported, PriceSourceUpdate.answer(400, JSONObject().put("ok", false).put("error", "Unsupported action").toString()))
+        assertEquals(Outcome.Failed(null), PriceSourceUpdate.answer(null, null))
+        assertEquals(Outcome.Failed(null), PriceSourceUpdate.answer(200, "not json"))
     }
 }

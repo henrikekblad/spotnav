@@ -196,6 +196,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
                 done(null)
                 repaintSource()
             }
+            PriceSourceUpdate.Outcome.Refused -> done(t(R.string.paired_error_invalid))
             PriceSourceUpdate.Outcome.NotPermitted -> done(t(R.string.site_error_not_permitted))
             PriceSourceUpdate.Outcome.NotSupported -> done(t(R.string.paired_error_version))
             is PriceSourceUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))

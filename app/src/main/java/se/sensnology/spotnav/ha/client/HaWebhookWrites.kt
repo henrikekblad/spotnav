@@ -541,6 +541,9 @@ internal object PriceSourceUpdate {
         /** The entry or the question is gone (changed elsewhere first): nothing was written. */
         data object Stale : Outcome
 
+        /** Refused as invalid (`spotnav_invalid_value`): nothing was written. */
+        data object Refused : Outcome
+
         data object NotPermitted : Outcome
 
         /** A Home Assistant without the action. */
@@ -558,6 +561,7 @@ internal object PriceSourceUpdate {
         }
         return when (head.error) {
             UNKNOWN_PRICE_ENTRY, UNKNOWN_PRICE_DUPLICATE -> Outcome.Stale
+            WriteEnvelope.INVALID_VALUE -> Outcome.Refused
             NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
             UNSUPPORTED_ACTION, WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)
@@ -568,10 +572,12 @@ internal object PriceSourceUpdate {
 /**
  * `update_phase_switching`: phase switching for solar on or off for this charger, under compare-and-set against the
  * value the screen showed (`expected`). Answers `{ok, phase_switching, action}` with the block read again; a value
- * changed elsewhere first is `spotnav_conflict`, and turning it on where it is not offered `spotnav_invalid_value`.
+ * changed elsewhere first is `spotnav_conflict` (HTTP 409), and turning it on where it is not offered `spotnav_invalid_value` with the field
+ * error `not_writable` (HTTP 400).
  */
 internal object PhaseSwitchingUpdate {
     private const val UNSUPPORTED_ACTION = "Unsupported action"
+    private const val NOT_WRITABLE = "not_writable"
 
     fun payload(expected: Boolean, enabled: Boolean): JSONObject = JSONObject().apply {
         put("version", 1)
@@ -590,6 +596,12 @@ internal object PhaseSwitchingUpdate {
 
         data class Refused(val block: PhaseSwitching?) : Outcome
 
+        /**
+         * Turning it on was refused because Home Assistant no longer offers it for this charger (`spotnav_invalid_value`
+         * with the field error `not_writable`, and no block): nothing was written.
+         */
+        data object NotOffered : Outcome
+
         data object NotPermitted : Outcome
 
         data object NotSupported : Outcome
@@ -604,7 +616,9 @@ internal object PhaseSwitchingUpdate {
         if (head.ok) return if (head.error == null) Outcome.Updated(block) else Outcome.Failed(head.error)
         return when (head.error) {
             WriteEnvelope.CONFLICT -> Outcome.Conflict(block)
-            WriteEnvelope.INVALID_VALUE -> Outcome.Refused(block)
+            WriteEnvelope.INVALID_VALUE ->
+                if (head.fieldErrors.any { it.field == "phase_switching" && it.code == NOT_WRITABLE }) Outcome.NotOffered
+                else Outcome.Refused(block)
             PriceSourceUpdate.NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
             UNSUPPORTED_ACTION, WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)

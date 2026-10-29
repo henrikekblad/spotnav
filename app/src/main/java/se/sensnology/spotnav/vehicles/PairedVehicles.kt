@@ -145,6 +145,8 @@ internal object PairedVehicles {
         is PhaseSwitchingUpdate.Outcome.Updated -> PhaseSwitchingFeedback(outcome.block, null, reload = true)
         is PhaseSwitchingUpdate.Outcome.Conflict -> PhaseSwitchingFeedback(outcome.block, PriorityNotice.CONFLICT, reload = true)
         is PhaseSwitchingUpdate.Outcome.Refused -> PhaseSwitchingFeedback(outcome.block, PriorityNotice.INVALID, reload = false)
+        // No longer offered here: said, and the dashboard read again (which then has no row).
+        PhaseSwitchingUpdate.Outcome.NotOffered -> PhaseSwitchingFeedback(null, PriorityNotice.INVALID, reload = true)
         PhaseSwitchingUpdate.Outcome.NotPermitted -> PhaseSwitchingFeedback(null, PriorityNotice.NOT_PERMITTED, reload = false)
         PhaseSwitchingUpdate.Outcome.NotSupported -> PhaseSwitchingFeedback(null, PriorityNotice.NOT_SUPPORTED, reload = false)
         is PhaseSwitchingUpdate.Outcome.Failed -> PhaseSwitchingFeedback(null, PriorityNotice.FAILED, reload = false)
