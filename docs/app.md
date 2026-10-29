@@ -44,7 +44,10 @@ With Home Assistant paired, the main screen is the charger as Home Assistant run
   charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule. The status line
   words what Home Assistant reports, for example *Charging to the minimum level (30 %)* while a car below its
   minimum charge level charges, or, on Solar with no car plugged in, *Solar · surplus available (4.2 kW)* while
-  the sun would start a charge and *Solar · no car plugged in* otherwise. When the car ends the plan's charge itself
+  the sun would start a charge and *Solar · no car plugged in* otherwise, and *Solar · 1 phase · 2.9 kW* while the
+  sun has switched the charge to one phase. A plan that leaves part of the charge for cheaper hours says what it
+  waits for, for example *Waiting for Thursday's prices (at 13:00), which have been 41 % cheaper over the last 4
+  weeks*, the time given while it is still ahead. When the car ends the plan's charge itself
   short of the target, the plan waits for the car to report its level before charging again: *The car ended the
   charge at ~86 % (estimated); waiting for the car's level*, without *~* and *(estimated)* when the level is the car's
   own reading. A stop at the target says the level and the time, for example *Stopped at 80 % at 07:31*, with
@@ -177,7 +180,11 @@ opened from: whether its status line is shown.
 
 **Electricity price**: the price area and additions. Prices are always shown as the area publishes
 them, every 15, 30 or 60 minutes, as in the Home Assistant card. Once paired, area and taxes are
-Home Assistant's and are changed through it.
+Home Assistant's and are changed through it. With a Home Assistant that keeps the price on its own **Electricity
+price** device, the card first names that price and how many chargers use it (**Electricity price SE4 · used by all
+2 chargers**), and a change to the area or a fee then applies to all of them. With several electricity prices,
+**Price from** chooses the one this charger uses (on a site, for every charger there). When two prices for the same
+area have different fees, the card asks once which to use, each button with that price's fees, or **Keep both**.
 
 <img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, charge limit, charge target, minimum charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and the day and night reference picture tiles" width="420">
 
@@ -199,7 +206,7 @@ the car.
 
 <img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the charge periods, the cars at this charger, identification and the camera" width="420">
 
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)). Whether users of the Home Assistant card who are not administrators may change the strategy and the plan is set in the card (Settings → Charger, administrators only); the app always may, and keeps that choice as it is when it saves settings.
+**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Phase switching for solar** (**Off** or **Automatic**: when the sun does not cover charging on three phases, the car charges on one instead of drawing from the grid; shown only for a charger Home Assistant can switch, wired for three phases, on a site with solar), **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)). Whether users of the Home Assistant card who are not administrators may change the strategy and the plan is set in the card (Settings → Charger, administrators only); the app always may, and keeps that choice as it is when it saves settings.
 
 <img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
 
