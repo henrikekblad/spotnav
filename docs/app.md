@@ -208,7 +208,7 @@ the car.
 
 **Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Phase switching for solar** (**Off** or **Automatic**: when the sun does not cover charging on three phases, the car charges on one instead of drawing from the grid; shown only for a charger Home Assistant can switch, wired for three phases, on a site with solar), **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)). Whether users of the Home Assistant card who are not administrators may change the strategy and the plan is set in the card (Settings → Charger, administrators only); the app always may, and keeps that choice as it is when it saves settings.
 
-<img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and active load balancing" width="420">
+<img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and load balancing" width="420">
 
 **Site**: the main fuse and how the site's load is measured, and load balancing.
 

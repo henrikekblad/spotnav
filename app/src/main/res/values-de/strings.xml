@@ -298,7 +298,7 @@
   <string name="site_car_first">Zuerst das Auto</string>
   <string name="site_battery_first">Zuerst die Batterie</string>
   <string name="site_forecast_title">Quellen für die Solarprognose</string>
-  <string name="site_active_title">Aktives Lastmanagement</string>
+  <string name="site_active_title">Lastmanagement</string>
   <string name="site_on">An</string>
   <string name="site_off">Aus</string>
   <string name="site_active_reason_duplicate">Nicht verfügbar: Diese Ladestation wird von mehr als einem Standort beansprucht.</string>

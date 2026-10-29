@@ -298,7 +298,7 @@
   <string name="site_car_first">Bilen først</string>
   <string name="site_battery_first">Batteriet først</string>
   <string name="site_forecast_title">Kilder til solprognose</string>
-  <string name="site_active_title">Aktiv lastbalansering</string>
+  <string name="site_active_title">Lastbalansering</string>
   <string name="site_on">På</string>
   <string name="site_off">Av</string>
   <string name="site_active_reason_duplicate">Ikke tilgjengelig: denne laderen tilhører mer enn ett anlegg.</string>

@@ -308,7 +308,7 @@
   <string name="site_car_first">Car first</string>
   <string name="site_battery_first">Battery first</string>
   <string name="site_forecast_title">Solar forecast sources</string>
-  <string name="site_active_title">Active load balancing</string>
+  <string name="site_active_title">Load balancing</string>
   <string name="site_on">On</string>
   <string name="site_off">Off</string>
   <string name="site_active_reason_duplicate">Not available: this charger is claimed by more than one site.</string>
