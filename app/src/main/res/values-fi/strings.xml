@@ -572,4 +572,22 @@
   <string name="chart_axis_from_now_help">Tästä tunnista viimeisen julkaistun vuorokauden loppuun. Kunnes huomisen hinnat on julkaistu, sama kuin Vuorokausi.</string>
   <string name="price_unit">Hinnan yksikkö</string>
   <string name="price_unit_example">Esimerkiksi %1$s</string>
+  <string name="price_source_title">Sähkön hinta %1$s</string>
+  <string name="price_source_used_by_all">%1$s · käytössä kaikilla %2$s latauslaitteella</string>
+  <string name="price_source_used_by">%1$s · käytössä %2$s latauslaitteella</string>
+  <string name="price_source_shared">Täällä tehty muutos koskee kaikkia latauslaitteita, jotka käyttävät tätä sähkön hintaa.</string>
+  <string name="price_from_label">Hinnan lähde</string>
+  <string name="price_from_help">Sähkön hinta, jota tämä latauslaite käyttää.</string>
+  <string name="price_from_help_site">Koskee kaikkia tämän kohteen latauslaitteita.</string>
+  <string name="price_choice_here">%1$s (käytössä täällä)</string>
+  <string name="price_choice_other">%1$s (toinen)</string>
+  <string name="price_duplicate_question">Kaksi sähkön hintaa alueelle %1$s eri maksuilla. Käytetäänkö yhtä?</string>
+  <string name="price_duplicate_question_many">%1$s sähkön hintaa alueelle %2$s eri maksuilla. Käytetäänkö yhtä?</string>
+  <string name="price_duplicate_use">Käytä: %1$s</string>
+  <string name="price_duplicate_keep_both">Säilytä molemmat</string>
+  <string name="price_duplicate_keep_all">Säilytä kaikki</string>
+  <string name="price_duplicate_removable">Toisen sähkön hinnan voi poistaa kohdassa Laitteet ja palvelut.</string>
+  <string name="price_duplicate_fee_vat">ALV %1$s</string>
+  <string name="price_duplicate_fee_tax">vero %1$s</string>
+  <string name="price_duplicate_fee_transfer">siirto %1$s</string>
 </resources>

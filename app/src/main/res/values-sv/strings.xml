@@ -572,4 +572,22 @@
   <string name="chart_axis_from_now_help">Från den här timmen till slutet av det sista publicerade dygnet. Tills morgondagens priser finns, samma som Dygn.</string>
   <string name="price_unit">Prisenhet</string>
   <string name="price_unit_example">Till exempel %1$s</string>
+  <string name="price_source_title">Elpris %1$s</string>
+  <string name="price_source_used_by_all">%1$s · används av alla %2$s laddare</string>
+  <string name="price_source_used_by">%1$s · används av %2$s laddare</string>
+  <string name="price_source_shared">En ändring här gäller alla laddare som använder det här elpriset.</string>
+  <string name="price_from_label">Pris från</string>
+  <string name="price_from_help">Elpriset som den här laddaren använder.</string>
+  <string name="price_from_help_site">Gäller alla laddare på den här anläggningen.</string>
+  <string name="price_choice_here">%1$s (används här)</string>
+  <string name="price_choice_other">%1$s (det andra)</string>
+  <string name="price_duplicate_question">Två elpriser för %1$s med olika avgifter. Använd ett?</string>
+  <string name="price_duplicate_question_many">%1$s elpriser för %2$s med olika avgifter. Använd ett?</string>
+  <string name="price_duplicate_use">Använd %1$s</string>
+  <string name="price_duplicate_keep_both">Behåll båda</string>
+  <string name="price_duplicate_keep_all">Behåll alla</string>
+  <string name="price_duplicate_removable">Det andra elpriset kan tas bort under Enheter och tjänster.</string>
+  <string name="price_duplicate_fee_vat">moms %1$s</string>
+  <string name="price_duplicate_fee_tax">skatt %1$s</string>
+  <string name="price_duplicate_fee_transfer">nät %1$s</string>
 </resources>
