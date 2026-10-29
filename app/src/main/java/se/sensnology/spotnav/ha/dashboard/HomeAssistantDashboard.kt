@@ -383,7 +383,12 @@ internal data class Dashboard(
      * How many new plans Home Assistant told (`plan_notice.seq`, a whole number from 0): the app's own check
      * tells a new plan when it rises. `null` from an older Home Assistant or for a block this app cannot read.
      */
-    val planNotice: Long? = null
+    val planNotice: Long? = null,
+    /**
+     * The electricity price entry this charger uses (`price_source`, see [DashboardPriceSource]): `null` while it
+     * prices with its own settings, from an older Home Assistant, or for a block this app cannot read.
+     */
+    val priceSource: DashboardPriceSource? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -481,7 +486,8 @@ internal data class Dashboard(
                 identification = DashboardIdentification.parse(json.opt("identification")),
                 vehicleChoices = vehicleChoices(json.opt("vehicle_choices")),
                 cameraIdentification = DashboardCamera.parse(json.opt("camera_identification")),
-                planNotice = planNotice(json.opt("plan_notice"))
+                planNotice = planNotice(json.opt("plan_notice")),
+                priceSource = DashboardPriceSource.parse(json.opt("price_source"))
             )
         }
 

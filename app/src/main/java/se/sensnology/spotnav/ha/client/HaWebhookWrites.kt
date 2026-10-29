@@ -6,6 +6,7 @@ import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardForecastChoice
 import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
+import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
 import java.util.Locale
@@ -500,6 +501,64 @@ internal object ChargerPriorityUpdate {
             WriteEnvelope.INVALID_VALUE -> Outcome.Refused(priority)
             WriteEnvelope.NO_SITE -> Outcome.NoSite
             WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * The electricity price this charger uses, changed the card's way: `choose_price_source` points the charger (or its
+ * site, for every charger there) at another electricity price entry, and `answer_price_duplicate` answers the
+ * same-area question (keep one entry, or `null` to keep them all). Both answer `{ok, price_source, action}` with the
+ * dashboard's `price_source` block read again.
+ */
+internal object PriceSourceUpdate {
+    const val UNKNOWN_PRICE_ENTRY = "spotnav_unknown_price_entry"
+    const val UNKNOWN_PRICE_DUPLICATE = "spotnav_unknown_price_duplicate"
+    const val NOT_ADMIN = "spotnav_not_admin"
+    private const val UNSUPPORTED_ACTION = "Unsupported action"
+
+    fun choosePayload(priceEntryId: String): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "choose_price_source")
+        WebhookReads.put(this)
+        put("price_entry_id", priceEntryId)
+    }
+
+    fun duplicatePayload(areaId: String, keepEntryId: String?): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "answer_price_duplicate")
+        WebhookReads.put(this)
+        put("area_id", areaId)
+        put("keep_entry_id", keepEntryId ?: JSONObject.NULL)
+    }
+
+    sealed interface Outcome {
+        /** Written; [source] is the block read again (`null` when the charger now prices with its own settings). */
+        data class Updated(val source: DashboardPriceSource?) : Outcome
+
+        /** The entry or the question is gone (changed elsewhere first): nothing was written. */
+        data object Stale : Outcome
+
+        data object NotPermitted : Outcome
+
+        /** A Home Assistant without the action. */
+        data object NotSupported : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (head.ok) {
+            return if (head.error == null) Outcome.Updated(DashboardPriceSource.parse(head.json.opt("price_source")))
+            else Outcome.Failed(head.error)
+        }
+        return when (head.error) {
+            UNKNOWN_PRICE_ENTRY, UNKNOWN_PRICE_DUPLICATE -> Outcome.Stale
+            NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
+            UNSUPPORTED_ACTION, WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)
         }
     }

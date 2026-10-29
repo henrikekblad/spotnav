@@ -62,13 +62,14 @@ internal class WebhookHttpStatusException(
  * `balancing_paused`, the status line while load balancing holds the plan's charge back, and `car_ended_waiting`, the
  * status line while the plan waits for the car's level after the car ended its charge, and `wake_for_reading`, a
  * vehicle row's choice to wake the car for a reading, and `solar_one_phase`, the status line of a solar charge the sun
- * switched to one phase. Every request the app sends names them.
+ * switched to one phase, and `price_source`, the dashboard's block naming the electricity price the charger uses.
+ * Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
         "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
-        "car_ended_waiting", "wake_for_reading", "solar_one_phase"
+        "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
@@ -254,6 +255,18 @@ object HomeAssistantClient {
     internal fun updateChargerPriority(settings: HomeAssistantSettings, expected: String, priority: String): ChargerPriorityUpdate.Outcome {
         val (status, body) = write(settings, ChargerPriorityUpdate.payload(expected, priority))
         return ChargerPriorityUpdate.answer(status, body)
+    }
+
+    /** Point this charger (or its site) at another electricity price entry (webhook `choose_price_source`). */
+    internal fun choosePriceSource(settings: HomeAssistantSettings, priceEntryId: String): PriceSourceUpdate.Outcome {
+        val (status, body) = write(settings, PriceSourceUpdate.choosePayload(priceEntryId))
+        return PriceSourceUpdate.answer(status, body)
+    }
+
+    /** Answer the same-area question: keep [keepEntryId], or all of them (webhook `answer_price_duplicate`). */
+    internal fun answerPriceDuplicate(settings: HomeAssistantSettings, areaId: String, keepEntryId: String?): PriceSourceUpdate.Outcome {
+        val (status, body) = write(settings, PriceSourceUpdate.duplicatePayload(areaId, keepEntryId))
+        return PriceSourceUpdate.answer(status, body)
     }
 
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
