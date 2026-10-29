@@ -298,7 +298,7 @@
   <string name="site_car_first">Auto eerst</string>
   <string name="site_battery_first">Batterij eerst</string>
   <string name="site_forecast_title">Bronnen voor zonneprognose</string>
-  <string name="site_active_title">Actieve load balancing</string>
+  <string name="site_active_title">Load balancing</string>
   <string name="site_on">Aan</string>
   <string name="site_off">Uit</string>
   <string name="site_active_reason_duplicate">Niet beschikbaar: deze laadpaal hoort bij meer dan één locatie.</string>

@@ -303,7 +303,7 @@
   <string name="site_car_first">Voiture d\'abord</string>
   <string name="site_battery_first">Batterie d\'abord</string>
   <string name="site_forecast_title">Sources de prévision solaire</string>
-  <string name="site_active_title">Équilibrage de charge actif</string>
+  <string name="site_active_title">Équilibrage de charge</string>
   <string name="site_on">Activé</string>
   <string name="site_off">Désactivé</string>
   <string name="site_active_reason_duplicate">Indisponible : cette borne est revendiquée par plusieurs sites.</string>

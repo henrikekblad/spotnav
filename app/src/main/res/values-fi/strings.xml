@@ -298,7 +298,7 @@
   <string name="site_car_first">Auto ensin</string>
   <string name="site_battery_first">Akku ensin</string>
   <string name="site_forecast_title">Aurinkoennusteen lähteet</string>
-  <string name="site_active_title">Aktiivinen kuormanhallinta</string>
+  <string name="site_active_title">Kuormanhallinta</string>
   <string name="site_on">Päällä</string>
   <string name="site_off">Pois</string>
   <string name="site_active_reason_duplicate">Ei käytettävissä: tämä laturi kuuluu useampaan kuin yhteen kohteeseen.</string>

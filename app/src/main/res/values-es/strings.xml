@@ -303,7 +303,7 @@
   <string name="site_car_first">Primero el coche</string>
   <string name="site_battery_first">Primero la batería</string>
   <string name="site_forecast_title">Fuentes de previsión solar</string>
-  <string name="site_active_title">Equilibrado de carga activo</string>
+  <string name="site_active_title">Equilibrado de carga</string>
   <string name="site_on">Activado</string>
   <string name="site_off">Desactivado</string>
   <string name="site_active_reason_duplicate">No disponible: más de una instalación reclama este cargador.</string>

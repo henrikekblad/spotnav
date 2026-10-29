@@ -298,7 +298,7 @@
   <string name="site_car_first">Bilen först</string>
   <string name="site_battery_first">Batteriet först</string>
   <string name="site_forecast_title">Källor för solprognos</string>
-  <string name="site_active_title">Aktiv lastbalansering</string>
+  <string name="site_active_title">Lastbalansering</string>
   <string name="site_on">På</string>
   <string name="site_off">Av</string>
   <string name="site_active_reason_duplicate">Inte tillgänglig: den här laddaren tillhör mer än en anläggning.</string>
