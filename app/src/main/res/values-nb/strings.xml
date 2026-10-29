@@ -572,4 +572,25 @@
   <string name="chart_axis_from_now_help">Fra denne timen til slutten av det siste publiserte døgnet. Til morgendagens priser er ute, det samme som Døgn.</string>
   <string name="price_unit">Prisenhet</string>
   <string name="price_unit_example">For eksempel %1$s</string>
+  <string name="price_source_title">Strømpris %1$s</string>
+  <string name="price_source_used_by_all">%1$s · brukes av alle %2$s ladere</string>
+  <string name="price_source_used_by">%1$s · brukes av %2$s ladere</string>
+  <string name="price_source_shared">En endring her gjelder alle ladere som bruker denne strømprisen.</string>
+  <string name="price_from_label">Pris fra</string>
+  <string name="price_from_help">Strømprisen denne laderen bruker.</string>
+  <string name="price_from_help_site">Gjelder alle ladere på dette anlegget.</string>
+  <string name="price_choice_here">%1$s (brukes her)</string>
+  <string name="price_choice_other">%1$s (den andre)</string>
+  <string name="price_duplicate_question">To strømpriser for %1$s med ulike avgifter. Bruke én?</string>
+  <string name="price_duplicate_question_many">%1$s strømpriser for %2$s med ulike avgifter. Bruke én?</string>
+  <string name="price_duplicate_use">Bruk %1$s</string>
+  <string name="price_duplicate_keep_both">Behold begge</string>
+  <string name="price_duplicate_keep_all">Behold alle</string>
+  <string name="price_duplicate_removable">Den andre strømprisen kan fjernes under Enheter og tjenester.</string>
+  <string name="price_duplicate_fee_vat">MVA %1$s</string>
+  <string name="price_duplicate_fee_tax">avgift %1$s</string>
+  <string name="price_duplicate_fee_transfer">nett %1$s</string>
+  <string name="phase_switching_label">Faseveksling ved sollading</string>
+  <string name="phase_switching_automatic">Automatisk</string>
+  <string name="phase_switching_help">Når solen ikke rekker til lading på tre faser, lader bilen på én fase i stedet for å ta fra nettet. Noen biler lader dårlig etter et fasebytte: slå av hvis bilen slutter å lade.</string>
 </resources>

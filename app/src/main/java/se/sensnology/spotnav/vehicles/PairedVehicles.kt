@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
+import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
+import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.client.VehicleField
@@ -122,7 +124,7 @@ internal object PairedVehicles {
     }
 
     /** How the site card takes one `update_charger_priority` answer. */
-    enum class PriorityNotice { CONFLICT, INVALID, NO_SITE, NOT_SUPPORTED, FAILED }
+    enum class PriorityNotice { CONFLICT, INVALID, NO_SITE, NOT_PERMITTED, NOT_SUPPORTED, FAILED }
 
     /** [adopted] is the block to show from now on; a write that changed nothing keeps what was shown. */
     data class PriorityFeedback(val adopted: ChargerPriority?, val notice: PriorityNotice?, val reload: Boolean)
@@ -134,5 +136,19 @@ internal object PairedVehicles {
         ChargerPriorityUpdate.Outcome.NoSite -> PriorityFeedback(null, PriorityNotice.NO_SITE, reload = true)
         ChargerPriorityUpdate.Outcome.NotSupported -> PriorityFeedback(null, PriorityNotice.NOT_SUPPORTED, reload = false)
         is ChargerPriorityUpdate.Outcome.Failed -> PriorityFeedback(null, PriorityNotice.FAILED, reload = false)
+    }
+
+    /** How the charger card takes one `update_phase_switching` answer, with the priority's notices. */
+    data class PhaseSwitchingFeedback(val adopted: PhaseSwitching?, val notice: PriorityNotice?, val reload: Boolean)
+
+    fun feedback(outcome: PhaseSwitchingUpdate.Outcome): PhaseSwitchingFeedback = when (outcome) {
+        is PhaseSwitchingUpdate.Outcome.Updated -> PhaseSwitchingFeedback(outcome.block, null, reload = true)
+        is PhaseSwitchingUpdate.Outcome.Conflict -> PhaseSwitchingFeedback(outcome.block, PriorityNotice.CONFLICT, reload = true)
+        is PhaseSwitchingUpdate.Outcome.Refused -> PhaseSwitchingFeedback(outcome.block, PriorityNotice.INVALID, reload = false)
+        // No longer offered here: said, and the dashboard read again (which then has no row).
+        PhaseSwitchingUpdate.Outcome.NotOffered -> PhaseSwitchingFeedback(null, PriorityNotice.INVALID, reload = true)
+        PhaseSwitchingUpdate.Outcome.NotPermitted -> PhaseSwitchingFeedback(null, PriorityNotice.NOT_PERMITTED, reload = false)
+        PhaseSwitchingUpdate.Outcome.NotSupported -> PhaseSwitchingFeedback(null, PriorityNotice.NOT_SUPPORTED, reload = false)
+        is PhaseSwitchingUpdate.Outcome.Failed -> PhaseSwitchingFeedback(null, PriorityNotice.FAILED, reload = false)
     }
 }

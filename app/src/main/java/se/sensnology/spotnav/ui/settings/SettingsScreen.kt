@@ -220,6 +220,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 showNotifications()
             } else session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
+                // Where the price lives (the electricity price the charger uses), above the area and fees.
+                dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
                 dashboard?.let { LocalNotifications.observeIdentification(applicationContext, settingsProfile.localId, it) }
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
                     // A newer record (or one now stating its notifications) is what this screen writes against.
@@ -311,6 +313,29 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     session.updateChargerPriority(expected, chosen) { outcome ->
                         done(outcome)
                         if (PairedVehicles.feedback(outcome).reload) loadPaired()
+                    }
+                },
+                phaseSwitching = { expected, enabled, done ->
+                    session.updatePhaseSwitching(expected, enabled) { outcome ->
+                        done(outcome)
+                        if (PairedVehicles.feedback(outcome).reload) loadPaired()
+                    }
+                }
+            )
+            // The electricity price the charger uses: chosen, or the same-area question answered, the card's way.
+            pairedPrice?.attachSourceWrites(
+                choose = { priceEntryId, done ->
+                    session.choosePriceSource(priceEntryId) { outcome ->
+                        if (isDestroyed || viewGeneration != settingsGeneration) return@choosePriceSource
+                        done(outcome)
+                        if (PairedPriceCard.reloads(outcome)) loadPaired()
+                    }
+                },
+                answer = { areaId, keepEntryId, done ->
+                    session.answerPriceDuplicate(areaId, keepEntryId) { outcome ->
+                        if (isDestroyed || viewGeneration != settingsGeneration) return@answerPriceDuplicate
+                        done(outcome)
+                        if (PairedPriceCard.reloads(outcome)) loadPaired()
                     }
                 }
             )

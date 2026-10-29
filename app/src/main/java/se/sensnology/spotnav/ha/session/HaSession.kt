@@ -9,6 +9,8 @@ import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
+import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
+import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -46,6 +48,17 @@ internal interface HaTransport {
     /** `identify_vehicle`: which car is plugged in; never throws. */
     fun identifyVehicle(vehicleId: String): IdentifyVehicle.Outcome = IdentifyVehicle.Outcome.Failed(null)
 
+    /** `update_phase_switching`: phase switching for solar on or off; never throws. */
+    fun updatePhaseSwitching(expected: Boolean, enabled: Boolean): PhaseSwitchingUpdate.Outcome =
+        PhaseSwitchingUpdate.Outcome.Failed(null)
+
+    /** `choose_price_source`: the electricity price entry this charger (or its site) uses; never throws. */
+    fun choosePriceSource(priceEntryId: String): PriceSourceUpdate.Outcome = PriceSourceUpdate.Outcome.Failed(null)
+
+    /** `answer_price_duplicate`: the same-area question answered; never throws. */
+    fun answerPriceDuplicate(areaId: String, keepEntryId: String?): PriceSourceUpdate.Outcome =
+        PriceSourceUpdate.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -79,6 +92,14 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
         HomeAssistantClient.updateChargerPriority(connection, expected, priority)
 
     override fun identifyVehicle(vehicleId: String) = HomeAssistantClient.identifyVehicle(connection, vehicleId)
+
+    override fun updatePhaseSwitching(expected: Boolean, enabled: Boolean) =
+        HomeAssistantClient.updatePhaseSwitching(connection, expected, enabled)
+
+    override fun choosePriceSource(priceEntryId: String) = HomeAssistantClient.choosePriceSource(connection, priceEntryId)
+
+    override fun answerPriceDuplicate(areaId: String, keepEntryId: String?) =
+        HomeAssistantClient.answerPriceDuplicate(connection, areaId, keepEntryId)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -241,6 +262,30 @@ internal class HaSession(
     fun updateChargerPriority(expected: String, priority: String, done: (ChargerPriorityUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updateChargerPriority(expected, priority)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_phase_switching` (never throws). */
+    fun updatePhaseSwitching(expected: Boolean, enabled: Boolean, done: (PhaseSwitchingUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updatePhaseSwitching(expected, enabled)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `choose_price_source` (never throws). */
+    fun choosePriceSource(priceEntryId: String, done: (PriceSourceUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.choosePriceSource(priceEntryId)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `answer_price_duplicate` (never throws). */
+    fun answerPriceDuplicate(areaId: String, keepEntryId: String?, done: (PriceSourceUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.answerPriceDuplicate(areaId, keepEntryId)
             mainThread { done(outcome) }
         }
     }

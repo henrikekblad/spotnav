@@ -572,4 +572,25 @@
   <string name="chart_axis_from_now_help">Van dit uur tot het einde van de laatst gepubliceerde dag. Tot de prijzen van morgen er zijn, hetzelfde als Dag.</string>
   <string name="price_unit">Prijseenheid</string>
   <string name="price_unit_example">Bijvoorbeeld %1$s</string>
+  <string name="price_source_title">Stroomprijs %1$s</string>
+  <string name="price_source_used_by_all">%1$s · gebruikt door alle %2$s laadpalen</string>
+  <string name="price_source_used_by">%1$s · gebruikt door %2$s laadpalen</string>
+  <string name="price_source_shared">Een wijziging hier geldt voor elke laadpaal die deze stroomprijs gebruikt.</string>
+  <string name="price_from_label">Prijs van</string>
+  <string name="price_from_help">De stroomprijs die deze laadpaal gebruikt.</string>
+  <string name="price_from_help_site">Geldt voor alle laadpalen op deze locatie.</string>
+  <string name="price_choice_here">%1$s (hier gebruikt)</string>
+  <string name="price_choice_other">%1$s (de andere)</string>
+  <string name="price_duplicate_question">Twee stroomprijzen voor %1$s met verschillende kosten. Eén gebruiken?</string>
+  <string name="price_duplicate_question_many">%1$s stroomprijzen voor %2$s met verschillende kosten. Eén gebruiken?</string>
+  <string name="price_duplicate_use">%1$s gebruiken</string>
+  <string name="price_duplicate_keep_both">Beide houden</string>
+  <string name="price_duplicate_keep_all">Alle houden</string>
+  <string name="price_duplicate_removable">De andere stroomprijs kun je verwijderen onder Apparaten &amp; diensten.</string>
+  <string name="price_duplicate_fee_vat">btw %1$s</string>
+  <string name="price_duplicate_fee_tax">belasting %1$s</string>
+  <string name="price_duplicate_fee_transfer">net %1$s</string>
+  <string name="phase_switching_label">Fasewisseling bij zonneladen</string>
+  <string name="phase_switching_automatic">Automatisch</string>
+  <string name="phase_switching_help">Als de zon niet genoeg is om op drie fasen te laden, laadt de auto op één fase in plaats van stroom van het net te nemen. Sommige auto\'s laden slecht na een fasewissel: zet dit uit als je auto stopt met laden.</string>
 </resources>

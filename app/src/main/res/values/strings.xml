@@ -584,4 +584,25 @@
   <string name="chart_axis_from_now_help">From this hour to the end of the last published day. Until tomorrow\'s prices are out, the same as Day.</string>
   <string name="price_unit">Price unit</string>
   <string name="price_unit_example">For example %1$s</string>
+  <string name="price_source_title">Electricity price %1$s</string>
+  <string name="price_source_used_by_all">%1$s · used by all %2$s chargers</string>
+  <string name="price_source_used_by">%1$s · used by %2$s chargers</string>
+  <string name="price_source_shared">A change here applies to every charger that uses this electricity price.</string>
+  <string name="price_from_label">Price from</string>
+  <string name="price_from_help">The electricity price this charger uses.</string>
+  <string name="price_from_help_site">Applies to all chargers on this site.</string>
+  <string name="price_choice_here">%1$s (used here)</string>
+  <string name="price_choice_other">%1$s (the other)</string>
+  <string name="price_duplicate_question">Two electricity prices for %1$s with different fees. Use one?</string>
+  <string name="price_duplicate_question_many">%1$s electricity prices for %2$s with different fees. Use one?</string>
+  <string name="price_duplicate_use">Use %1$s</string>
+  <string name="price_duplicate_keep_both">Keep both</string>
+  <string name="price_duplicate_keep_all">Keep all</string>
+  <string name="price_duplicate_removable">The other electricity price can be removed under Devices &amp; services.</string>
+  <string name="price_duplicate_fee_vat">VAT %1$s</string>
+  <string name="price_duplicate_fee_tax">tax %1$s</string>
+  <string name="price_duplicate_fee_transfer">grid %1$s</string>
+  <string name="phase_switching_label">Phase switching for solar</string>
+  <string name="phase_switching_automatic">Automatic</string>
+  <string name="phase_switching_help">When the sun does not cover three-phase charging, charge on one phase instead of drawing from the grid. Some cars charge badly after a phase change: turn this off if your car stops charging.</string>
 </resources>

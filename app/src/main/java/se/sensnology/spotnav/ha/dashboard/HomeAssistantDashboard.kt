@@ -35,7 +35,15 @@ internal enum class StatusTone { NORMAL, NOTICE, BLOCKING }
 
 internal data class StatusLine(val code: String, val params: Map<String, Any?>)
 
-internal data class DashboardStatus(val lines: List<StatusLine>, val tone: StatusTone)
+internal data class DashboardStatus(
+    val lines: List<StatusLine>,
+    val tone: StatusTone,
+    /**
+     * The planning record's `publication_at` (`planning.publication_at`), as sent: when the prices the history
+     * wait (`waiting_for_history`) waits for are published. `null` when the dashboard does not say.
+     */
+    val publicationAt: String? = null
+)
 
 /**
  * The charger's live facts this app reads: whether the charge is on, and whether a schedule is
@@ -264,6 +272,23 @@ internal data class ChargerPriority(val value: String, val choices: List<String>
     }
 }
 
+/**
+ * The `phase_switching` block (Home Assistant 1.22, asked for with the `reads` value `phase_switching`): whether a solar
+ * charge may switch to one phase when the sun does not cover three, and whether this connection may change it. Sent
+ * only for a charger where the setting is offered; `null` elsewhere, from an older Home Assistant, or for a block
+ * this app cannot read.
+ */
+internal data class PhaseSwitching(val enabled: Boolean, val writable: Boolean) {
+    companion object {
+        /** Read leniently: a block without a boolean `value` is not there; `writable` is true only when it says so. */
+        fun parse(raw: Any?): PhaseSwitching? {
+            val block = raw as? JSONObject ?: return null
+            val value = block.opt("value") as? Boolean ?: return null
+            return PhaseSwitching(value, block.opt("writable") == true)
+        }
+    }
+}
+
 internal data class DashboardSite(
     val name: String?,
     val writable: Boolean,
@@ -375,7 +400,14 @@ internal data class Dashboard(
      * How many new plans Home Assistant told (`plan_notice.seq`, a whole number from 0): the app's own check
      * tells a new plan when it rises. `null` from an older Home Assistant or for a block this app cannot read.
      */
-    val planNotice: Long? = null
+    val planNotice: Long? = null,
+    /**
+     * The electricity price entry this charger uses (`price_source`, see [DashboardPriceSource]): `null` while it
+     * prices with its own settings, from an older Home Assistant, or for a block this app cannot read.
+     */
+    val priceSource: DashboardPriceSource? = null,
+    /** Phase switching for solar (`phase_switching`, see [PhaseSwitching]); `null` where it is not offered. */
+    val phaseSwitching: PhaseSwitching? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -429,7 +461,8 @@ internal data class Dashboard(
                 chargerId = requiredText(charger, "charger_id"),
                 chargerName = optText(charger, "charger_name"),
                 capabilities = capabilities(obj(charger, "capabilities")),
-                status = parseStatus(obj(json, "status")),
+                status = parseStatus(obj(json, "status"))
+                    .copy(publicationAt = json.optJSONObject("planning")?.opt("publication_at") as? String),
                 currentRange = obj(json, "current_range").let {
                     DashboardCurrentRange(requiredInt(it, "min_a"), requiredInt(it, "max_a"), optText(it, "source").orEmpty())
                 },
@@ -472,7 +505,9 @@ internal data class Dashboard(
                 identification = DashboardIdentification.parse(json.opt("identification")),
                 vehicleChoices = vehicleChoices(json.opt("vehicle_choices")),
                 cameraIdentification = DashboardCamera.parse(json.opt("camera_identification")),
-                planNotice = planNotice(json.opt("plan_notice"))
+                planNotice = planNotice(json.opt("plan_notice")),
+                priceSource = DashboardPriceSource.parse(json.opt("price_source")),
+                phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching"))
             )
         }
 

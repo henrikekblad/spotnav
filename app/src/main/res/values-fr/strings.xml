@@ -580,4 +580,25 @@
   <string name="chart_axis_from_now_help">De l\'heure en cours à la fin du dernier jour publié. Tant que les prix de demain ne sont pas publiés, identique à Journée.</string>
   <string name="price_unit">Unité de prix</string>
   <string name="price_unit_example">Par exemple %1$s</string>
+  <string name="price_source_title">Prix de l\'électricité %1$s</string>
+  <string name="price_source_used_by_all">%1$s · utilisé par les %2$s bornes</string>
+  <string name="price_source_used_by">%1$s · utilisé par %2$s bornes</string>
+  <string name="price_source_shared">Une modification ici s\'applique à chaque borne qui utilise ce prix de l\'électricité.</string>
+  <string name="price_from_label">Source du prix</string>
+  <string name="price_from_help">Le prix de l\'électricité utilisé par cette borne.</string>
+  <string name="price_from_help_site">S\'applique à toutes les bornes de ce site.</string>
+  <string name="price_choice_here">%1$s (utilisé ici)</string>
+  <string name="price_choice_other">%1$s (l\'autre)</string>
+  <string name="price_duplicate_question">Deux prix de l\'électricité pour %1$s avec des frais différents. En utiliser un ?</string>
+  <string name="price_duplicate_question_many">%1$s prix de l\'électricité pour %2$s avec des frais différents. En utiliser un ?</string>
+  <string name="price_duplicate_use">Utiliser %1$s</string>
+  <string name="price_duplicate_keep_both">Garder les deux</string>
+  <string name="price_duplicate_keep_all">Tout garder</string>
+  <string name="price_duplicate_removable">L\'autre prix de l\'électricité peut être supprimé dans Appareils et services.</string>
+  <string name="price_duplicate_fee_vat">TVA %1$s</string>
+  <string name="price_duplicate_fee_tax">taxe %1$s</string>
+  <string name="price_duplicate_fee_transfer">réseau %1$s</string>
+  <string name="phase_switching_label">Commutation de phases en charge solaire</string>
+  <string name="phase_switching_automatic">Automatique</string>
+  <string name="phase_switching_help">Quand le soleil ne suffit pas pour charger sur trois phases, la voiture charge sur une seule phase au lieu de prendre sur le réseau. Certaines voitures chargent mal après un changement de phase : désactivez ceci si votre voiture arrête de charger.</string>
 </resources>

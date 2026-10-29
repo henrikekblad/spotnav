@@ -216,25 +216,60 @@ class HaStatusTextTest {
         assertEquals("152 km", line("fi", java.util.Locale.forLanguageTag("fi")))
     }
 
-    @Test fun waitingForHistoryNamesTheWeekdayInThePluralOfEachLanguage() {
+    @Test fun aOnePhaseSolarChargeIsWordedWithItsPowerAsTheCardWordsIt() {
+        fun say(language: String, params: Map<String, Any?>) =
+            HaStatusText.line(StatusLine("solar_charging_one_phase", params), format(language), now)
+        assertEquals("Solar · 1 phase · 2.9 kW", say("en", mapOf("requested_a" to 12.5)))
+        assertEquals("Sol · 1 fas · 2,9 kW", say("sv", mapOf("requested_a" to 12.5)))
+        assertEquals("Solar · 1 Phase · 1,4 kW", say("de", mapOf("requested_a" to 6.0)))
+        // No current, or none above zero: only that it charges on one phase.
+        assertEquals("Solar · charging on 1 phase", say("en", emptyMap()))
+        assertEquals("Sol · laddar på 1 fas", say("sv", mapOf("requested_a" to 0.0)))
+    }
+
+    @Test fun waitingForHistoryIsWaitingForTheWeekdaysPricesInEachLanguage() {
         fun say(language: String, params: Map<String, Any?>) =
             HaStatusText.line(StatusLine("waiting_for_history", params), format(language), now)
-        val sunday = mapOf<String, Any?>("weekday" to 7.0, "percent" to 22.0, "weeks" to 4.0)
-        assertEquals("Waiting: Sundays were 22 % cheaper the last 4 weeks.", say("en", sunday))
-        assertEquals("Väntar: söndagar har varit 22 % billigare de senaste 4 veckorna.", say("sv", sunday))
-        assertEquals("Venter: søndage har været 22 % billigere de seneste 4 uger.", say("da", sunday))
-        assertEquals("Venter: søndager har vært 22 % billigere de siste 4 ukene.", say("nb", sunday))
-        assertEquals(
-            "Odotetaan: sunnuntaisin on ollut 22 % halvempaa viimeisten 4 viikon aikana.", say("fi", sunday)
-        )
-        assertEquals("Waiting: Mondays were 22 % cheaper the last 4 weeks.", say("en", sunday + ("weekday" to 1.0)))
-        assertEquals("Odotetaan: keskiviikkoisin", say("fi", sunday + ("weekday" to 3.0)).substringBefore(" on "))
+        val sunday = mapOf<String, Any?>("weekday" to 7.0, "percent" to 30.0, "weeks" to 4.0)
+        assertEquals("Waiting for Sunday's prices, which have been 30 % cheaper over the last 4 weeks.", say("en", sunday))
+        assertEquals("Väntar på priserna för söndag, som de senaste 4 veckorna varit 30 % billigare.", say("sv", sunday))
+        assertEquals("Venter på prisene for søndag, som de siste 4 ukene har vært 30 % billigere.", say("nb", sunday))
+        assertEquals("Venter på priserne for søndag, som de seneste 4 uger har været 30 % billigere.", say("da", sunday))
+        assertEquals("Odotetaan sunnuntain hintoja, jotka ovat olleet viimeiset 4 viikkoa 30 % halvempia.", say("fi", sunday))
+        assertEquals("Waiting for Monday's prices, which have been 30 % cheaper over the last 4 weeks.", say("en", sunday + ("weekday" to 1.0)))
         // Without all three facts, or with a weekday that is none, only the plain fact:
         val plain = "Waiting for hours that usually cost less, will plan then."
         assertEquals(plain, say("en", emptyMap()))
         assertEquals(plain, say("en", sunday + ("weekday" to 9.0)))
         assertEquals(plain, say("en", sunday - "weeks"))
         assertEquals("Väntar på timmar som brukar vara billigare, planerar då.", say("sv", emptyMap()))
+    }
+
+    @Test fun waitingForHistorySaysWhenThePricesComeWhileThatIsAhead() {
+        val thursday = StatusLine("waiting_for_history", mapOf("weekday" to 4.0, "percent" to 41.0, "weeks" to 4.0))
+        fun say(language: String, publicationAt: String?) =
+            HaStatusText.line(thursday, format(language), now, publicationAt)
+        val ahead = "2026-09-22T11:00:00+00:00"
+        assertEquals("Väntar på priserna för torsdag (kl. 13:00), som de senaste 4 veckorna varit 41 % billigare.", say("sv", ahead))
+        assertEquals("Waiting for Thursday's prices (at 13:00), which have been 41 % cheaper over the last 4 weeks.", say("en", ahead))
+        for (without in listOf(null, "2026-09-22T05:59:00+00:00", "not a time")) {
+            assertEquals("Waiting for Thursday's prices, which have been 41 % cheaper over the last 4 weeks.", say("en", without))
+        }
+        // No zone to read the time in: the time is left out rather than shown in another zone.
+        assertEquals(
+            "Waiting for Thursday's prices, which have been 41 % cheaper over the last 4 weeks.",
+            HaStatusText.line(thursday, StatusFormat("en", null, "SEK", "kr"), now, ahead)
+        )
+        // The dashboard's planning record carries the time to the status line.
+        val status = DashboardStatus(listOf(thursday), StatusTone.NORMAL, publicationAt = ahead)
+        assertEquals(
+            "Waiting for Thursday's prices (at 13:00), which have been 41 % cheaper over the last 4 weeks.",
+            HaStatusText.render(status, format("en"), now)
+        )
+        assertEquals(
+            "Waiting for Thursday's prices (at 13:00), which have been 41 % cheaper over the last 4 weeks",
+            HaStatusText.priceWait(status, format("en"), now)
+        )
     }
 
     @Test fun theIdentificationLinesAreWordedAsTheCardWordsThemAheadOfThePlan() {
@@ -609,14 +644,15 @@ class HaStatusTextTest {
         assertEquals("No charging plan could be calculated with the data available right now.", say("en", "something_new"))
     }
 
-    @Test fun theNewLanguagesNameWeekdaysInThePluralTheirSentencesTake() {
-        assertEquals("Sonntage", HaStatusText.weekdayPlural("de", 7.0))
-        assertEquals("Mittwoche", HaStatusText.weekdayPlural("de", 3.0))
-        assertEquals("zondagen", HaStatusText.weekdayPlural("nl", 7.0))
-        assertEquals("domingos", HaStatusText.weekdayPlural("es", 7.0))
-        assertEquals("lunes", HaStatusText.weekdayPlural("es", 1.0))
-        assertEquals("sábados", HaStatusText.weekdayPlural("es", 6.0))
-        assertEquals("dimanches", HaStatusText.weekdayPlural("fr", 7.0))
-        assertEquals(null, HaStatusText.weekdayPlural("fr", 8.0))
+    @Test fun aWeekdayIsNamedAsTheSentenceAboutItsPricesTakesIt() {
+        assertEquals("Thursday", HaStatusText.weekdaySingular("en", 4.0))
+        assertEquals("torsdag", HaStatusText.weekdaySingular("sv", 4.0))
+        assertEquals("Sonntag", HaStatusText.weekdaySingular("de", 7.0))
+        assertEquals("zondag", HaStatusText.weekdaySingular("nl", 7.0))
+        assertEquals("domingo", HaStatusText.weekdaySingular("es", 7.0))
+        assertEquals("dimanche", HaStatusText.weekdaySingular("fr", 7.0))
+        assertEquals("torstain", HaStatusText.weekdaySingular("fi", 4.0))
+        assertEquals("keskiviikon", HaStatusText.weekdaySingular("fi", 3.0))
+        assertEquals(null, HaStatusText.weekdaySingular("fr", 8.0))
     }
 }

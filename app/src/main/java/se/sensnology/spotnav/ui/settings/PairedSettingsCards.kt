@@ -18,12 +18,14 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
+import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.ChargerPriority
+import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
@@ -97,6 +99,13 @@ internal class PairedSettingsCards(
     private var writePriority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
 
+    // Phase switching for solar: written through its own webhook action; what a write answered is shown until the
+    // next dashboard.
+    private var writePhaseSwitching: (Boolean, Boolean, (PhaseSwitchingUpdate.Outcome) -> Unit) -> Unit =
+        { _, _, done -> done(PhaseSwitchingUpdate.Outcome.Failed(null)) }
+    private var adoptedPhaseSwitching: PhaseSwitching? = null
+    private var phaseSwitchingNotice: String? = null
+
     // A car's charge limit, written to the car through the integration (`set_charge_limit`).
     private var writeLimit: (String, Int, (ChargeLimit.Answer) -> Unit) -> Unit = { _, _, done -> done(ChargeLimit.Answer.Failed) }
 
@@ -163,11 +172,14 @@ internal class PairedSettingsCards(
         vehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit,
         site: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit,
         priority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
-            { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
+            { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) },
+        phaseSwitching: (Boolean, Boolean, (PhaseSwitchingUpdate.Outcome) -> Unit) -> Unit =
+            { _, _, done -> done(PhaseSwitchingUpdate.Outcome.Failed(null)) }
     ) {
         writeVehicle = vehicle
         writeSite = site
         writePriority = priority
+        writePhaseSwitching = phaseSwitching
     }
 
     /**
@@ -201,6 +213,7 @@ internal class PairedSettingsCards(
             adoptedVehicles.clear()
             adoptedSite = null
             adoptedPriority = null
+            adoptedPhaseSwitching = null
             adoptedIdentification = null
             adoptedPeriods = null
             adoptedCamera = null
@@ -508,6 +521,7 @@ internal class PairedSettingsCards(
         }
         // The priority is this charger's own setting (its place among the site's chargers), as in the card.
         addPriority(card.body)
+        addPhaseSwitching(card.body)
         addChargePeriods(card.body, dash)
         addIdentification(card.body, dash)
     }
@@ -783,6 +797,7 @@ internal class PairedSettingsCards(
             PairedVehicles.PriorityNotice.CONFLICT -> R.string.site_error_conflict
             PairedVehicles.PriorityNotice.INVALID -> R.string.paired_error_invalid
             PairedVehicles.PriorityNotice.NO_SITE -> R.string.site_error_unavailable
+            PairedVehicles.PriorityNotice.NOT_PERMITTED -> R.string.site_error_not_permitted
             PairedVehicles.PriorityNotice.NOT_SUPPORTED -> R.string.paired_error_version
             PairedVehicles.PriorityNotice.FAILED -> R.string.paired_error_generic
         }
@@ -812,6 +827,41 @@ internal class PairedSettingsCards(
             }) else null)
         if (!priority.writable) body.addView(muted(t(R.string.site_read_only), top = 4))
         priorityNotice?.let { body.addView(muted(it, top = 4)) }
+    }
+
+    // --- Phase switching for solar ------------------------------------------------------------------
+
+    private fun phaseSwitchingName(enabled: Boolean) =
+        t(if (enabled) R.string.phase_switching_automatic else R.string.site_off)
+
+    /**
+     * Phase switching for solar: Off or Automatic, as in the card. Home Assistant states it only for a charger whose
+     * integration can switch its phases, wired for three phases, on a site with a solar source; anywhere else (and
+     * from an older Home Assistant) there is no row.
+     */
+    private fun addPhaseSwitching(body: LinearLayout) {
+        val setting = adoptedPhaseSwitching ?: dashboard?.phaseSwitching ?: return
+        val label = t(R.string.phase_switching_label)
+        valueRow(body, label, phaseSwitchingName(setting.enabled), onTap = if (setting.writable) ({
+            val options = listOf(false, true)
+            chooseOne(label, options.map { phaseSwitchingName(it) }, options.indexOf(setting.enabled),
+                intro = t(R.string.phase_switching_help)) { index, done ->
+                val current = adoptedPhaseSwitching ?: dashboard?.phaseSwitching ?: return@chooseOne done(null)
+                writePhaseSwitching(current.enabled, options[index]) { outcome ->
+                    val feedback = PairedVehicles.feedback(outcome)
+                    feedback.adopted?.let { adoptedPhaseSwitching = it }
+                    val message = feedback.notice?.let { priorityNoticeText(it) }
+                    if (feedback.notice == null || feedback.reload) {
+                        phaseSwitchingNotice = message
+                        done(null)
+                        repaint()
+                    } else {
+                        done(message)
+                    }
+                }
+            }
+        }) else null)
+        phaseSwitchingNotice?.let { body.addView(muted(it, top = 4)) }
     }
 
     // --- Solar ----------------------------------------------------------------------------------
