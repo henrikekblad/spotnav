@@ -216,6 +216,17 @@ class HaStatusTextTest {
         assertEquals("152 km", line("fi", java.util.Locale.forLanguageTag("fi")))
     }
 
+    @Test fun aOnePhaseSolarChargeIsWordedWithItsPowerAsTheCardWordsIt() {
+        fun say(language: String, params: Map<String, Any?>) =
+            HaStatusText.line(StatusLine("solar_charging_one_phase", params), format(language), now)
+        assertEquals("Solar · 1 phase · 2.9 kW", say("en", mapOf("requested_a" to 12.5)))
+        assertEquals("Sol · 1 fas · 2,9 kW", say("sv", mapOf("requested_a" to 12.5)))
+        assertEquals("Solar · 1 Phase · 1,4 kW", say("de", mapOf("requested_a" to 6.0)))
+        // No current, or none above zero: only that it charges on one phase.
+        assertEquals("Solar · charging on 1 phase", say("en", emptyMap()))
+        assertEquals("Sol · laddar på 1 fas", say("sv", mapOf("requested_a" to 0.0)))
+    }
+
     @Test fun waitingForHistoryNamesTheWeekdayInThePluralOfEachLanguage() {
         fun say(language: String, params: Map<String, Any?>) =
             HaStatusText.line(StatusLine("waiting_for_history", params), format(language), now)

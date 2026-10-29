@@ -79,6 +79,9 @@ internal object HaStatusText {
 
     const val SEPARATOR = " · "
 
+    /** The nominal voltage of one phase, as the card's `nominalPowerKw` uses it. */
+    private const val ONE_PHASE_VOLTS = 230.0
+
     /** The `planning_unavailable` reasons the card words specifically (`status.ts`' `PLANNING_UNAVAILABLE_KEYS`). */
     private val PLANNING_UNAVAILABLE_KEYS = mapOf(
         "deadline_too_short" to "issue.planningUnavailable.deadlineTooShort",
@@ -216,6 +219,12 @@ internal object HaStatusText {
                 val amps = num(p["requested_a"])
                 if (amps == null) say("strategy.status.solar.chargingUnknown")
                 else say(key, mapOf("amps" to number(format.locale, amps, 0)))
+            }
+            "solar_charging_one_phase" -> {
+                // The sun switched the charge to one phase: the power is the current on that one phase (230 V).
+                val amps = num(p["requested_a"])?.takeIf { it > 0 }
+                if (amps == null) say("strategy.status.solar.chargingOnePhaseUnknown")
+                else say(key, mapOf("kw" to number(format.locale, ONE_PHASE_VOLTS * amps / 1000.0, 1)))
             }
             "hybrid_grid" -> {
                 val start = instant(p["window_start"])
