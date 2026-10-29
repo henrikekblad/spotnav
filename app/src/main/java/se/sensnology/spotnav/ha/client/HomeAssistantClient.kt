@@ -61,13 +61,14 @@ internal class WebhookHttpStatusException(
  * status line and the vehicle rows' `min_percent`), `auto_periods`, a `max_periods` of `null` (automatic), and
  * `balancing_paused`, the status line while load balancing holds the plan's charge back, and `car_ended_waiting`, the
  * status line while the plan waits for the car's level after the car ended its charge, and `wake_for_reading`, a
- * vehicle row's choice to wake the car for a reading. Every request the app sends names them.
+ * vehicle row's choice to wake the car for a reading, and `solar_one_phase`, the status line of a solar charge the sun
+ * switched to one phase. Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
         "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
-        "car_ended_waiting", "wake_for_reading"
+        "car_ended_waiting", "wake_for_reading", "solar_one_phase"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
