@@ -129,6 +129,18 @@ class ImmediateSettingsTest {
     }
 
     @Test
+    fun aFeeOnWithNoFigureShowsTheAreasSuggestion() {
+        // Home Assistant prices such a fee with the area's suggestion, so the card says that figure too.
+        val on = org.json.JSONObject().put("enabled", true).put("value", org.json.JSONObject.NULL)
+        val row = org.json.JSONObject().put("area_id", "SE4").put("vat", on).put("tax", on).put("transfer", on)
+        val record = SettingsFixtures.parsed(overrides = org.json.JSONArray().put(row))
+        val overview = PriceOverview.of(record) { id -> catalogue.firstOrNull { it.id == id } }
+        assertEquals(FiscalLine.Figure(25.0, "%"), overview.vat)
+        assertEquals(FiscalLine.Figure(36.0, "öre/kWh"), overview.tax)
+        assertEquals(FiscalLine.Figure(30.0, "öre/kWh"), overview.transfer)
+    }
+
+    @Test
     fun theLocalOverviewStatesThisPhonesOwnSettingsInTheSameRows() {
         val settings = WidgetSettings(area = "SE4", vat = true, tax = true, taxMinorUnit = 36.0, transfer = false)
         val overview = PriceOverview.ofLocal(settings) { id -> catalogue.firstOrNull { it.id == id } }
