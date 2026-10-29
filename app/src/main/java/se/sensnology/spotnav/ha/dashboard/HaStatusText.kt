@@ -49,7 +49,7 @@ internal object HaStatusText {
      */
     fun parts(status: DashboardStatus, format: StatusFormat, now: Instant): Parts {
         val (notes, rest) = status.lines.partition { it.code == NOTE_CODE }
-        val words = rest.map { line(it, format, now) }
+        val words = rest.map { line(it, format, now, status.publicationAt) }
         // A sentence's own full stop would sit oddly before the joined facts ("06:00. · 20 kWh").
         val headline = words.mapIndexed { index, part ->
             if (index < words.lastIndex) part.replace(Regex("[.。]$"), "") else part
@@ -74,7 +74,7 @@ internal object HaStatusText {
     fun priceWait(status: DashboardStatus, format: StatusFormat, now: Instant): String? {
         val wait = PRICE_WAIT_CODES.firstNotNullOfOrNull { code -> status.lines.firstOrNull { it.code == code } }
             ?: return null
-        return line(wait, format, now).replace(Regex("[.。]$"), "")
+        return line(wait, format, now, status.publicationAt).replace(Regex("[.。]$"), "")
     }
 
     const val SEPARATOR = " · "
@@ -116,7 +116,7 @@ internal object HaStatusText {
     }
 
     /** One line's sentence or fact, with its params formatted here. */
-    fun line(line: StatusLine, format: StatusFormat, now: Instant): String {
+    fun line(line: StatusLine, format: StatusFormat, now: Instant, publicationAt: String? = null): String {
         val language = format.language
         fun say(key: String, params: Map<String, String> = emptyMap()): String {
             var text = HaStatusWording.text(language, key) ?: return HaStatusWording.text(language, HaStatusWording.UNKNOWN_CODE).orEmpty()
@@ -160,17 +160,22 @@ internal object HaStatusText {
                 else say("status.waitingForPublication", mapOf("time" to clock(at)))
             }
             "waiting_for_history" -> {
-                // The weekday's plural, the saving and the weeks behind it; without all three, only
-                // the plain fact.
-                val weekday = weekdayPlural(language, num(p["weekday"]))
+                // SpotNav waits for the prices of the weekday's hours, which have been cheaper over the last
+                // weeks; without all three facts, only the plain fact. When they come is the planning record's
+                // publication time, worded only while it is still ahead.
+                val weekday = weekdaySingular(language, num(p["weekday"]))
                 val percent = num(p["percent"])
                 val weeks = num(p["weeks"])
                 if (weekday == null || percent == null || weeks == null) say("status.waitingForHistoryNoDetail")
-                else say(key, mapOf(
-                    "weekday" to weekday,
-                    "percent" to number(format.locale, percent, 0),
-                    "weeks" to number(format.locale, weeks, 0)
-                ))
+                else {
+                    val detail = mapOf(
+                        "weekday" to weekday,
+                        "percent" to number(format.locale, percent, 0),
+                        "weeks" to number(format.locale, weeks, 0)
+                    )
+                    val at = instant(publicationAt)?.takeIf { it.isAfter(now) && zone != null }
+                    if (at == null) say(key, detail) else say("status.waitingForHistoryAt", detail + ("time" to clock(at)))
+                }
             }
             "held_until_window" -> {
                 val at = instant(p["time"])
@@ -444,25 +449,18 @@ internal object HaStatusText {
     }
 
     /**
-     * A weekday in the plural the language uses for "every Sunday" (`Sundays`, `söndagar`,
-     * `søndager`, `søndage`, `sunnuntaisin`, `Sonntage`, `zondagen`, `domingos`, `dimanches`), or `null`
-     * for a number that is no ISO weekday.
+     * One weekday as the "prices for Thursday" sentence takes it (the card's `weekdaySingular`): the name in the
+     * language's own case (`Thursday`, `torsdag`, `Donnerstag`, `jeudi`), and in Finnish the genitive the sentence
+     * needs (`torstain`, `keskiviikon`); `null` for a number that is no ISO weekday.
      */
-    internal fun weekdayPlural(language: String, isoWeekday: Double?): String? {
+    internal fun weekdaySingular(language: String, isoWeekday: Double?): String? {
         val number = isoWeekday?.takeIf { it == Math.floor(it) && it >= 1 && it <= 7 }?.toInt() ?: return null
         val locale = if (language == "en") Locale.UK else Locale.forLanguageTag(language)
-        val name = DayOfWeek.of(number).getDisplayName(TextStyle.FULL_STANDALONE, locale).lowercase(locale)
-        return when (language) {
-            "sv" -> "${name}ar"
-            "nb" -> "${name}er"
-            "da" -> "${name}e"
-            "fi" -> if (name.endsWith("i")) "${name}sin" else "${name}isin"
-            "de" -> name.replaceFirstChar { it.titlecase(locale) } + "e"
-            "nl" -> "${name}en"
-            "es" -> if (name.endsWith("s")) name else "${name}s"
-            "fr" -> "${name}s"
-            else -> name.replaceFirstChar { it.titlecase(locale) } + "s"
-        }
+        val name = DayOfWeek.of(number).getDisplayName(TextStyle.FULL_STANDALONE, locale)
+        if (language != "fi") return name
+        // Every name takes -n; keskiviikko also loses a k (keskiviikon).
+        val lower = name.lowercase(locale)
+        return if (lower.endsWith("kko")) "${lower.dropLast(3)}kon" else "${lower}n"
     }
 
     /** [age] milliseconds as the card's own short age: minutes under an hour, whole hours after. */

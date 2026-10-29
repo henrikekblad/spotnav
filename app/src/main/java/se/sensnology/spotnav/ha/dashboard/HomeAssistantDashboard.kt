@@ -35,7 +35,15 @@ internal enum class StatusTone { NORMAL, NOTICE, BLOCKING }
 
 internal data class StatusLine(val code: String, val params: Map<String, Any?>)
 
-internal data class DashboardStatus(val lines: List<StatusLine>, val tone: StatusTone)
+internal data class DashboardStatus(
+    val lines: List<StatusLine>,
+    val tone: StatusTone,
+    /**
+     * The planning record's `publication_at` (`planning.publication_at`), as sent: when the prices the history
+     * wait (`waiting_for_history`) waits for are published. `null` when the dashboard does not say.
+     */
+    val publicationAt: String? = null
+)
 
 /**
  * The charger's live facts this app reads: whether the charge is on, and whether a schedule is
@@ -429,7 +437,8 @@ internal data class Dashboard(
                 chargerId = requiredText(charger, "charger_id"),
                 chargerName = optText(charger, "charger_name"),
                 capabilities = capabilities(obj(charger, "capabilities")),
-                status = parseStatus(obj(json, "status")),
+                status = parseStatus(obj(json, "status"))
+                    .copy(publicationAt = json.optJSONObject("planning")?.opt("publication_at") as? String),
                 currentRange = obj(json, "current_range").let {
                     DashboardCurrentRange(requiredInt(it, "min_a"), requiredInt(it, "max_a"), optText(it, "source").orEmpty())
                 },
