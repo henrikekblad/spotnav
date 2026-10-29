@@ -133,8 +133,8 @@ internal data class PriceOverview(
             return PriceOverview(
                 area = areaId?.let { areaMarket?.selectorLabel ?: it },
                 vat = line(HaAreaOverrideComponent.VAT, "%", areaMarket?.vatPercent),
-                tax = line(HaAreaOverrideComponent.TAX, areaMarket?.minorUnit?.let { "$it/kWh" }.orEmpty()),
-                transfer = line(HaAreaOverrideComponent.TRANSFER, areaMarket?.minorUnit?.let { "$it/kWh" }.orEmpty())
+                tax = line(HaAreaOverrideComponent.TAX, areaMarket?.minorUnit?.let { "$it/kWh" }.orEmpty(), areaMarket?.suggestedTax),
+                transfer = line(HaAreaOverrideComponent.TRANSFER, areaMarket?.minorUnit?.let { "$it/kWh" }.orEmpty(), areaMarket?.suggestedGridFee)
             )
         }
 
