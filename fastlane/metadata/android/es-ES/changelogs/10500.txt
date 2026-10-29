@@ -1,0 +1,5 @@
+- Ajustes → Precio de la electricidad muestra el precio que comparten tus cargadores en Home Assistant, con «Precio de» si hay varios
+- Responde a la pregunta sobre dos precios para una misma zona, con las tarifas de cada uno
+- Cambio de fases en la carga solar (Peblar) y «Solar · 1 fase» en el estado
+- La espera de los precios de un día de la semana dice cuándo llegan
+- Impuesto sobre la electricidad y peaje de acceso: sugerencia de la zona en vez de «Sin definir»

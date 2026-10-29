@@ -1,0 +1,5 @@
+- Einstellungen → Strompreis zeigt den Preis, den Ihre Ladestationen in Home Assistant teilen, mit „Preis von“, wenn es mehrere gibt
+- Beantworten Sie die Frage zu zwei Preisen für dasselbe Gebiet, mit den Gebühren beider
+- Phasenumschaltung beim Solarladen für Ladestationen, die umschalten können (Peblar), und „Solar · 1 Phase“ im Status
+- Das Warten auf die Preise eines Wochentags sagt, wann sie kommen
+- Stromsteuer und Netzentgelt zeigen den Vorschlag des Gebiets statt „Nicht festgelegt“

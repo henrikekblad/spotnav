@@ -1,0 +1,5 @@
+- Innstillinger → Strømpris viser prisen laderne deler i Home Assistant, med "Pris fra" når det finnes flere
+- Svar på spørsmålet om to priser for samme område, med avgiftene for hver
+- Faseveksling ved sollading for ladere som kan veksle (Peblar), og "Sol · 1 fase" i statusen
+- Ventingen på en ukedags priser sier når de kommer
+- Elavgift og nettleie viser områdets forslag i stedet for "Ikke angitt"

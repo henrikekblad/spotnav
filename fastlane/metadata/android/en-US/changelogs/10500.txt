@@ -1,0 +1,5 @@
+- Settings → Electricity price shows the price shared by your chargers in Home Assistant, with "Price from" when there are several
+- Answer the question about two prices for the same area, with each price's fees
+- Phase switching for solar on chargers that can switch (Peblar), and "Solar · 1 phase" in the status
+- The wait for a weekday's prices says when they come
+- Energy tax and grid fee show the area's suggestion instead of "Not set"

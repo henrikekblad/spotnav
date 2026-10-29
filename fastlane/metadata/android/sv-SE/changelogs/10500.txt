@@ -1,0 +1,5 @@
+- Inställningar → Elpris visar elpriset som dina laddare delar i Home Assistant, med "Pris från" när det finns flera
+- Svara på frågan om två elpriser för samma område, med avgifterna för varje
+- Fasväxling vid solladdning för laddare som kan växla (Peblar), och "Sol · 1 fas" i statusen
+- Väntan på en veckodags priser säger när de kommer
+- Energiskatt och nätavgift visar områdets förslag i stället för "Inte angivet"

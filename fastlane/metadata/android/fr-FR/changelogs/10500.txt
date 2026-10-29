@@ -1,0 +1,5 @@
+- Réglages → Prix de l'électricité affiche le prix partagé par vos bornes dans Home Assistant, avec « Source du prix » s'il y en a plusieurs
+- Répondez à la question sur deux prix pour une même zone, frais de chacun affichés
+- Commutation de phases en recharge solaire (Peblar) et « Solaire · 1 phase » dans l'état
+- L'attente des prix d'un jour de la semaine indique quand ils arrivent
+- Taxe sur l'électricité et frais de réseau : suggestion de la zone au lieu de « Non défini »

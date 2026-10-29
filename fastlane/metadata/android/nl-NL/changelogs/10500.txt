@@ -1,0 +1,5 @@
+- Instellingen → Stroomprijs toont de prijs die je laders in Home Assistant delen, met "Prijs van" als er meer zijn
+- Beantwoord de vraag over twee prijzen voor hetzelfde gebied, met de kosten van elk
+- Faseschakeling bij zonneladen voor laders die kunnen schakelen (Peblar), en "Zon · 1 fase" in de status
+- Het wachten op de prijzen van een weekdag zegt wanneer ze komen
+- Energiebelasting en netkosten tonen de suggestie van het gebied in plaats van "Niet ingesteld"

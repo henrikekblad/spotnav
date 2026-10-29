@@ -1,0 +1,5 @@
+- Asetukset → Sähkön hinta näyttää latureiden Home Assistantissa jakaman hinnan ja "Hinnan lähde", kun hintoja on useita
+- Vastaa kysymykseen saman alueen kahdesta hinnasta, kummankin maksut näkyvissä
+- Vaiheenvaihto aurinkolatauksessa latureille, jotka osaavat vaihtaa (Peblar), ja tilassa "Aurinko · 1 vaihe"
+- Viikonpäivän hintojen odotus kertoo, milloin ne tulevat
+- Sähkövero ja siirtomaksu näyttävät alueen ehdotuksen eikä "Ei asetettu"

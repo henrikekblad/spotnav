@@ -1,0 +1,5 @@
+- Indstillinger → Elpris viser prisen, som dine ladere deler i Home Assistant, med "Pris fra", når der er flere
+- Besvar spørgsmålet om to priser for samme område, med gebyrerne for hver
+- Faseskift ved solopladning for ladere, der kan skifte (Peblar), og "Sol · 1 fase" i status
+- Ventetiden på en ugedags priser siger, hvornår de kommer
+- Elafgift og nettarif viser områdets forslag i stedet for "Ikke angivet"
