@@ -90,6 +90,12 @@ internal class ChargingScreen(
     // text.
     internal var authorityNote: String? = null
     internal var authorityProfile: ChargerProfile? = null
+
+    /**
+     * Whether the charger's Home Assistant answered `price_days` as far as the last price load knew: a
+     * dashboard that says otherwise (the first one read, or an updated Home Assistant) loads them again.
+     */
+    @Volatile private var pricedWithPriceDays: Boolean? = null
     internal lateinit var authority: AuthorityController
     internal lateinit var widgetPlans: WidgetPlanPublication
 
@@ -448,9 +454,11 @@ internal class ChargingScreen(
         ioExecutor.execute {
             // The admission travels with the result:
             val resolution = authority.onDashboardResult(admission, result)
+            val priceDaysChanged = result.isSuccess && priceDaysNow() != pricedWithPriceDays
             runOnUiThread {
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 if (resolution is AuthorityResolution.State) applyState(resolution.authority)
+                if (priceDaysChanged) loadPrices()
             }
         }
     }
@@ -484,6 +492,7 @@ internal class ChargingScreen(
             }
             // Off the main thread, as the screen's own work always is:
             AreaCatalogue.refreshIfDue(applicationContext)
+            pricedWithPriceDays = priceDaysNow()
             val priced = PriceSubject(subject.profileId, area)
             val loaded = PriceRepository.load(applicationContext, priced)
             // Nothing to show and something the person can do about it: said in the graph's place.
@@ -508,6 +517,10 @@ internal class ChargingScreen(
             }
         }
     }
+
+    /** Whether the paired charger's Home Assistant answers `price_days`, as its profile now says. Off the main thread. */
+    private fun priceDaysNow(): Boolean? =
+        authorityProfile?.let { ChargerProfileStore.forContext(applicationContext).getProfile(it.localId)?.priceDays }
 
     /** Re-sync the charger controls with the dashboard now held; the render pass calls this. */
     internal fun refreshChargerControls() = refreshControls()
