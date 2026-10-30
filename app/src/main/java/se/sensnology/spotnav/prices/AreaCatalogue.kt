@@ -16,7 +16,7 @@ sealed interface CatalogueRefresh {
     /** Fetched and valid, but nothing about it changed. */
     data object Unchanged : CatalogueRefresh
 
-    /** Refused: the last-good catalogue (or the snapshot) stands. */
+    /** Refused: the last-good catalogue (or the bundled list) stands. */
     data class Failed(val reason: String) : CatalogueRefresh
 
     /** Another refresh is already in flight, so this caller did nothing. */
@@ -40,8 +40,11 @@ object AreaCatalogue {
     internal const val KEY_LAST_GOOD_V2 = "last_good_v2"
     internal const val KEY_REFRESHED_AT = "refreshed_at_v1"
 
-    /** The bundled 12-area snapshot, in the relay's own shape. */
-    const val SNAPSHOT_ASSET = "areas_snapshot.json"
+    /**
+     * The bundled area list: Home Assistant's own catalogue (contract v2 plus `routes`), copied byte
+     * for byte by `scripts/sync_ha_fixtures.sh`.
+     */
+    const val BUNDLED_ASSET = "areas.json"
 
     const val AREAS_URL = "https://spotnav.sensnology.se/v1/areas.json"
     const val AREAS_V2_URL = "https://spotnav.sensnology.se/v2/areas.json"
@@ -87,26 +90,46 @@ object AreaCatalogue {
     }
 
     /**
-     * The areas to start from: the last valid remote catalogue, else the bundled snapshot, else
-     * nothing.
+     * The areas to start from: the last valid remote catalogue, else the bundled list, else nothing.
+     * A held remote list takes each area's ENTSO-E route from the bundled list, because only the
+     * bundled list states routes.
      */
-    internal fun startupAreas(store: KeyValueStore, snapshot: () -> String?, log: RelayLog = RelayLog.NONE): List<PriceMarket> =
-        startup(store, snapshot, log).areas
+    internal fun startupAreas(store: KeyValueStore, bundled: () -> String?, log: RelayLog = RelayLog.NONE): List<PriceMarket> =
+        startup(store, bundled, log).areas
 
-    /** [startupAreas] with the version they were read in (the bundled snapshot is a v1 list). */
-    internal fun startup(store: KeyValueStore, snapshot: () -> String?, log: RelayLog = RelayLog.NONE): Versioned {
-        lastGoodVersioned(store, log)?.let { return it }
-        val body = snapshot()
+    /** [startupAreas] with the version they were read in (the bundled list is a v2 list). */
+    internal fun startup(store: KeyValueStore, bundled: () -> String?, log: RelayLog = RelayLog.NONE): Versioned {
+        val own = bundledAreas(bundled(), log)
+        lastGoodVersioned(store, log)?.let { return it.copy(areas = withRoutes(it.areas, own)) }
+        return Versioned(own, RelayContractVersion.V2)
+    }
+
+    /** The bundled list's areas, or none when this build has no readable one. */
+    internal fun bundledAreas(body: String?, log: RelayLog = RelayLog.NONE): List<PriceMarket> {
         if (body == null) {
-            log.log(LogLevel.WARN, "No stored catalogue and no bundled snapshot")
-            return Versioned(emptyList(), RelayContractVersion.V1)
+            log.log(LogLevel.WARN, "No bundled area list")
+            return emptyList()
         }
-        return when (val parsed = RelayAreasParser.parse(body)) {
+        return when (val parsed = RelayAreasParser.parse(body, RelayContractVersion.V2)) {
             is CatalogueParse.Invalid -> {
-                log.log(LogLevel.ERROR, "Bundled snapshot is invalid (${parsed.reason})")
-                Versioned(emptyList(), RelayContractVersion.V1)
+                log.log(LogLevel.ERROR, "Bundled area list is invalid (${parsed.reason})")
+                emptyList()
             }
-            is CatalogueParse.Ok -> Versioned(parsed.catalogue.areas.map(PriceMarket::of), RelayContractVersion.V1)
+            is CatalogueParse.Ok -> parsed.catalogue.areas.map(PriceMarket::of)
+        }
+    }
+
+    /**
+     * [areas] with each one's ENTSO-E route taken from the bundled area of the same id, when the area
+     * has none of its own and both name the same market calendar (a route asks for market days).
+     */
+    internal fun withRoutes(areas: List<PriceMarket>, bundled: List<PriceMarket>): List<PriceMarket> {
+        if (bundled.isEmpty()) return areas
+        val byId = bundled.associateBy { it.id }
+        return areas.map { area ->
+            val own = byId[area.id]
+            if (area.entsoe != null || own?.entsoe == null || own.marketTz != area.marketTz) area
+            else area.copy(entsoe = own.entsoe)
         }
     }
 
@@ -184,9 +207,16 @@ object AreaCatalogue {
 
     // Android-facing wrappers
 
+    /** The bundled areas, read once per process; refreshed lists take their routes from them. */
+    @Volatile
+    private var bundled: List<PriceMarket>? = null
+
+    private fun bundled(context: Context): List<PriceMarket> =
+        bundled ?: bundledAreas(readBundled(context), AndroidRelayLog).also { bundled = it }
+
     /** Load the catalogue the app will start from, and hold it. */
     fun load(context: Context) {
-        val held = startup(store(context), { readSnapshot(context) }, AndroidRelayLog)
+        val held = startup(store(context), { readBundled(context) }, AndroidRelayLog)
         AndroidRelayLog.log(LogLevel.INFO, "Catalogue: ${held.areas.size} areas loaded (v${held.version})")
         PriceMarkets.replace(held.areas, held.version)
     }
@@ -206,7 +236,7 @@ object AreaCatalogue {
         )
         if (result is CatalogueRefresh.Updated) {
             AndroidRelayLog.log(LogLevel.INFO, "Catalogue: ${result.areas.size} areas from the relay (v${result.version})")
-            PriceMarkets.replace(result.areas, result.version)
+            PriceMarkets.replace(withRoutes(result.areas, bundled(context)), result.version)
         }
         return result
     }
@@ -214,8 +244,8 @@ object AreaCatalogue {
     private fun store(context: Context): KeyValueStore =
         SharedPreferencesKeyValueStore(context, PREFS)
 
-    /** The bundled snapshot, or `null` when this build has none. */
-    private fun readSnapshot(context: Context): String? = runCatching {
-        context.assets.open(SNAPSHOT_ASSET).bufferedReader().use { it.readText() }
+    /** The bundled area list, or `null` when this build has none. */
+    private fun readBundled(context: Context): String? = runCatching {
+        context.assets.open(BUNDLED_ASSET).bufferedReader().use { it.readText() }
     }.getOrNull()
 }

@@ -25,7 +25,9 @@ data class PriceMarket(
     /** Where the prices come from (v2), shown under the area choice; `null` from a v1 list. */
     val source: AreaSource? = null,
     /** When tomorrow's prices are expected (v2's `publication`); 13:00 Brussels when none is stated. */
-    val publication: AreaPublication = AreaPublication.DEFAULT
+    val publication: AreaPublication = AreaPublication.DEFAULT,
+    /** How to ask ENTSO-E for this area's prices; `null` when the bundled list names no route. */
+    val entsoe: EntsoeRoute? = null
 ) {
     /** The zone this area's days are rendered in. */
     val zoneId: ZoneId get() = ZoneId.of(tz)
@@ -80,7 +82,8 @@ data class PriceMarket(
             marketTz = area.marketTz,
             included = area.included,
             source = area.source,
-            publication = area.publication
+            publication = area.publication,
+            entsoe = area.entsoe
         )
 
         /** The country code of the Great Britain regions (Octopus Agile). */

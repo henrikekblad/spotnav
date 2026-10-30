@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.prices
 
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -22,14 +23,14 @@ class AreaCatalogueTest {
 
     private fun areasBody(areas: List<PriceMarket>) = RelayFixtures.areasBody(areas)
 
-    /** The bundled snapshot as the app ships it, read from the source tree. */
+    /** The bundled area list as the app ships it, read from the source tree. */
     private fun bundledSnapshot(): String {
-        val file = File("src/main/assets/${AreaCatalogue.SNAPSHOT_ASSET}")
-        assertTrue("the bundled snapshot must exist at ${file.absolutePath}", file.isFile)
+        val file = File("src/main/assets/${AreaCatalogue.BUNDLED_ASSET}")
+        assertTrue("the bundled area list must exist at ${file.absolutePath}", file.isFile)
         return file.readText()
     }
 
-    private fun parse(body: String) = RelayAreasParser.parse(body)
+    private fun parse(body: String, version: Int = RelayContractVersion.V1) = RelayAreasParser.parse(body, version)
 
     // what the parser accepts, and what it refuses
 
@@ -158,7 +159,7 @@ class AreaCatalogueTest {
 
         // Nothing stored: the snapshot, parsed by the same parser as a fetch.
         val fresh = AreaCatalogue.startupAreas(store, { snapshot })
-        assertEquals(20, fresh.size)
+        assertEquals(39, fresh.size)
         assertTrue(fresh.any { it.id == "NO4" && it.vatPercent == 0.0 })
 
         // A persisted valid remote document wins over it.
@@ -166,14 +167,63 @@ class AreaCatalogueTest {
         assertEquals(listOf("SE4"), AreaCatalogue.startupAreas(store, { snapshot }).map { it.id })
 
         store.putString(AreaCatalogue.KEY_LAST_GOOD, "{\"v\":99}")
-        assertEquals(20, AreaCatalogue.startupAreas(store, { snapshot }).size)
+        assertEquals(39, AreaCatalogue.startupAreas(store, { snapshot }).size)
     }
 
     @Test
-    fun theBundledSnapshotListsTwentyAreasAndPortugalOnTheMadridClock() {
+    fun theBundledListHasThirtyNineAreasAndPortugalOnTheMadridMarketClock() {
+        val held = AreaCatalogue.startup(store, { bundledSnapshot() })
+        assertEquals(RelayContractVersion.V2, held.version)
+        assertEquals(39, held.areas.size)
+        val portugal = held.areas.single { it.id == "PT" }
+        assertEquals("Europe/Lisbon", portugal.tz)
+        assertEquals("Europe/Madrid", portugal.marketTz)
+    }
+
+    @Test
+    fun everyBundledAreaHasAnEntsoeRoute() {
         val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() })
-        assertEquals(20, areas.size)
-        assertEquals("Europe/Madrid", areas.single { it.id == "PT" }.tz)
+        assertTrue(areas.all { it.entsoe != null })
+        assertEquals(EntsoeRoute("10Y1001A1001A47J"), areas.single { it.id == "SE4" }.entsoe)
+        assertEquals(
+            EntsoeRoute("10Y1001A1001A82H", "1", listOf("1", "2")),
+            areas.single { it.id == "DE-LU" }.entsoe
+        )
+    }
+
+    @Test
+    fun aHeldRelayListTakesItsRoutesFromTheBundledList() {
+        store.putString(AreaCatalogue.KEY_LAST_GOOD, areasBody(listOf(RelayFixtures.se4)))
+
+        val held = AreaCatalogue.startupAreas(store, { bundledSnapshot() }).single()
+
+        assertEquals("SE4", held.id)
+        assertEquals("10Y1001A1001A47J", held.entsoe?.eic)
+    }
+
+    @Test
+    fun aRouteIsNotBorrowedAcrossDifferentMarketCalendars() {
+        val bundled = AreaCatalogue.bundledAreas(bundledSnapshot())
+        val portugalOnItsOwnClock = RelayFixtures.area("PT", "EUR", "€", "cent", tz = "Europe/Lisbon")
+        val routed = AreaCatalogue.withRoutes(listOf(portugalOnItsOwnClock), bundled).single()
+        assertNull(routed.entsoe)
+    }
+
+    @Test
+    fun anUnreadableRouteLeavesTheAreaListedWithoutOne() {
+        val body = JSONObject(bundledSnapshot())
+        val first = body.getJSONArray("areas").getJSONObject(0)
+        val id = first.getString("id")
+        first.getJSONObject("routes").getJSONObject("entsoe").put("eic", "not an eic")
+        val second = body.getJSONArray("areas").getJSONObject(1)
+        second.getJSONObject("routes").getJSONObject("entsoe").put("expected_sequences", "1")
+
+        val areas = AreaCatalogue.bundledAreas(body.toString())
+
+        assertEquals(39, areas.size)
+        assertNull(areas.single { it.id == id }.entsoe)
+        assertNull(areas[1].entsoe)
+        assertNotNull(areas[2].entsoe)
     }
 
     @Test
@@ -187,7 +237,7 @@ class AreaCatalogueTest {
 
         val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() }, sink)
 
-        assertEquals(20, areas.size)
+        assertEquals(39, areas.size)
         assertEquals(1, messages.size)
         assertTrue(messages.single().contains("no longer valid"))
     }
@@ -298,7 +348,7 @@ class AreaCatalogueTest {
     // selection: defaults, ordering, grouping, and a retired id
 
     private val realCatalogue: List<PriceMarket> by lazy {
-        (parse(bundledSnapshot()) as CatalogueParse.Ok).catalogue.areas.map(PriceMarket::of)
+        (parse(bundledSnapshot(), RelayContractVersion.V2) as CatalogueParse.Ok).catalogue.areas.map(PriceMarket::of)
     }
 
     @Test

@@ -53,6 +53,18 @@ data class AreaPublication(val time: LocalTime, val tz: String) {
     }
 }
 
+/**
+ * How to ask ENTSO-E for an area's day-ahead prices (the bundled list's `routes.entsoe`): the zone's
+ * [eic], the classified [sequence] it publishes (when it publishes more than one), the other labels it
+ * is known to publish beside it ([expectedSequences]), and whether its market trades half-hours.
+ */
+data class EntsoeRoute(
+    val eic: String,
+    val sequence: String? = null,
+    val expectedSequences: List<String> = emptyList(),
+    val halfHourly: Boolean = false
+)
+
 internal data class RelayArea(
     val id: String,
     /** The bidding zone's EIC; `null` for an area that has none (a Great Britain region, v2 only). */
@@ -75,7 +87,9 @@ internal data class RelayArea(
     /** The v2 list's attribution; `null` from a v1 list, which states none. */
     val source: AreaSource? = null,
     /** When tomorrow's prices are expected; the default from a v1 list or an area that states none. */
-    val publication: AreaPublication = AreaPublication.DEFAULT
+    val publication: AreaPublication = AreaPublication.DEFAULT,
+    /** The ENTSO-E route of the bundled list; `null` from the relay's lists, which state none. */
+    val entsoe: EntsoeRoute? = null
 ) {
     /** The zone, or `null` if this runtime cannot construct what the relay named. */
     val zoneId: ZoneId? get() = runCatching { ZoneId.of(tz) }.getOrNull()
@@ -163,6 +177,7 @@ internal object RelayAreasParser {
         var included = emptySet<IncludedPart>()
         var source: AreaSource? = null
         var publication = AreaPublication.DEFAULT
+        var entsoe: EntsoeRoute? = null
         if (version == RelayContractVersion.V2) {
             if (entry.has("market_tz")) {
                 marketTz = entry.strictText("market_tz") ?: return null
@@ -171,6 +186,7 @@ internal object RelayAreasParser {
             included = included(entry) ?: return null
             source = source(entry.opt("source")) ?: return null
             publication = publication(entry.opt("publication"))
+            entsoe = entsoeRoute(entry.optJSONObject("routes")?.opt("entsoe"))
         }
 
         val countries = entry.optJSONArray("countries") ?: return null
@@ -195,8 +211,37 @@ internal object RelayAreasParser {
             marketTz = marketTz,
             included = included,
             source = source,
-            publication = publication
+            publication = publication,
+            entsoe = entsoe
         )
+    }
+
+    private val EIC = Regex("""[0-9A-Z-]{16}""")
+
+    /**
+     * `routes.entsoe`: `{ "eic", "sequence"?, "expected_sequences"?, "half_hourly"? }`. Read leniently:
+     * anything this client cannot read leaves the area without an ENTSO-E route, and the area stays
+     * listed (it only cannot be fetched from ENTSO-E). Extra keys are ignored.
+     */
+    private fun entsoeRoute(raw: Any?): EntsoeRoute? {
+        val json = raw as? JSONObject ?: return null
+        val eic = json.strictText("eic")?.takeIf { EIC.matches(it) } ?: return null
+        val sequence = if (json.has("sequence")) json.strictText("sequence") ?: return null else null
+        val expected = ArrayList<String>()
+        if (json.has("expected_sequences")) {
+            val array = json.opt("expected_sequences") as? JSONArray ?: return null
+            for (index in 0 until array.length()) {
+                val label = (array.opt(index) as? String)?.trim()
+                if (label.isNullOrEmpty()) return null
+                expected.add(label)
+            }
+        }
+        val halfHourly = when (val value = json.opt("half_hourly")) {
+            null -> false
+            is Boolean -> value
+            else -> return null
+        }
+        return EntsoeRoute(eic, sequence?.trim(), expected, halfHourly)
     }
 
     private val PUBLICATION_TIME = Regex("""([01]\d|2[0-3]):[0-5]\d""")
