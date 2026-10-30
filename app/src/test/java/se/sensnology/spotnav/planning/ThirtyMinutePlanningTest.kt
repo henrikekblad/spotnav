@@ -13,7 +13,6 @@ import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceResult
 import se.sensnology.spotnav.prices.PriceTableModels
-import se.sensnology.spotnav.prices.RelayContractVersion
 import se.sensnology.spotnav.testing.FakeKeyValueStore
 import se.sensnology.spotnav.testing.RelayV2Fixtures
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -30,7 +29,7 @@ class ThirtyMinutePlanningTest {
 
     @Before
     fun catalogue() {
-        PriceMarkets.replace(RelayV2Fixtures.areas(), RelayContractVersion.V2)
+        PriceMarkets.replace(RelayV2Fixtures.areas())
         PriceRepository.clearMemoryCacheForTest()
     }
 
@@ -40,8 +39,8 @@ class ThirtyMinutePlanningTest {
     }
 
     private fun londonDay(files: List<String>): PriceResult = PriceRepository.load(
-        FakeKeyValueStore(), RelayV2Fixtures.transport(files), gb, LocalDate.parse("2026-10-04"), 1_000_000L,
-        forceRefresh = true, version = RelayContractVersion.V2
+        FakeKeyValueStore(), RelayV2Fixtures.source(files), gb, LocalDate.parse("2026-10-04"), 1_000_000L,
+        forceRefresh = true
     )
 
     private fun settings(departureHour: Int = 7, kwh: Int = 1) = WidgetSettings(
@@ -95,8 +94,7 @@ class ThirtyMinutePlanningTest {
 
         // A list that states no publication time falls back to 13:00 Brussels.
         PriceMarkets.replace(
-            RelayV2Fixtures.areas().map { if (it.id == "GB-C") it.copy(publication = AreaPublication.DEFAULT) else it },
-            RelayContractVersion.V2
+            RelayV2Fixtures.areas().map { if (it.id == "GB-C") it.copy(publication = AreaPublication.DEFAULT) else it }
         )
         val fallback = ChargingPlanner.outcome(result, LocalPlanningInputs.of(settings(departureHour = 7, kwh = 2)), now).waiting
         assertEquals(OffsetDateTime.parse("2026-10-04T13:45:00+02:00").toInstant(), fallback!!.expectedAt.toInstant())

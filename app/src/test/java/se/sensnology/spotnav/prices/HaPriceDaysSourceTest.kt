@@ -64,7 +64,7 @@ class HaPriceDaysSourceTest {
         // Helsinki's midnight is 23:00 in Brussels the day before: the last hour of the 29th's file.
         val file29 = JSONObject(body("price_days_nordpool_fi")).getJSONObject("files").getJSONObject("2026-10-29").getJSONArray("prices")
         assertEquals(file29.getDouble(92), result.today.first().pricePerKwh, 1e-9)
-        assertEquals(PriceSource.RELAY, result.todaySource)
+        assertEquals(PriceSource.FETCHED, result.todaySource)
         assertEquals(fiNow, result.todayFetchedAt)
     }
 
@@ -183,7 +183,7 @@ class HaPriceDaysSourceTest {
 
     @Test fun aRegionOnlyHomeAssistantPricesStaysKnownByItsAnswer() {
         val bundled = BundledAreas.all.filterNot { it.id == "GB-C" }
-        PriceMarkets.replace(bundled, RelayContractVersion.V2)
+        PriceMarkets.replace(bundled)
         try {
             assertNull(PriceMarkets.find("GB-C"))
             val now = Instant.parse("2026-10-04T12:00:00Z").toEpochMilli()

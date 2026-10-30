@@ -18,7 +18,7 @@ class LegacyPriceUserTest {
         assertFalse(ensure())
         // Whatever this version writes later does not change it.
         cache.putString("v1:SE4:2026-10-30", "{}")
-        catalogue.putString(AreaCatalogue.KEY_REFRESHED_AT, "5")
+        catalogue.putString(RelayLeftovers.KEY_REFRESHED_AT, "5")
         assertFalse(ensure(2_000L))
         assertEquals("1000", flags.rawOrNull(LegacyPriceUser.KEY_MIGRATED_AT))
     }
@@ -32,14 +32,31 @@ class LegacyPriceUserTest {
 
     @Test
     fun aCatalogueRefreshMakesALegacyUser() {
-        catalogue.putString(AreaCatalogue.KEY_REFRESHED_AT, "5")
+        catalogue.putString(RelayLeftovers.KEY_REFRESHED_AT, "5")
         assertTrue(ensure())
     }
 
     @Test
     fun anIndexAloneIsNotADay() {
-        cache.putString(PriceRepository.INDEX_KEY, "{}")
+        cache.putString(RelayLeftovers.INDEX_KEY, "{}")
         assertFalse(ensure())
+    }
+
+    @Test
+    fun theRelaysListsAndIndexesAreForgottenAfterTheFlagIsKept() {
+        cache.putString("v1:SE4:2026-10-30", "{}")
+        cache.putString(RelayLeftovers.INDEX_KEY, "{}")
+        cache.putString(RelayLeftovers.INDEX_V2_KEY, "{}")
+        catalogue.putString(RelayLeftovers.KEY_REFRESHED_AT, "5")
+        catalogue.putString(RelayLeftovers.KEY_LAST_GOOD, "{}")
+        catalogue.putString(RelayLeftovers.KEY_LAST_GOOD_V2, "{}")
+        assertTrue(ensure())
+
+        RelayLeftovers.forget(catalogue, cache)
+
+        assertEquals(setOf("v1:SE4:2026-10-30"), cache.keys().toSet())
+        assertTrue(catalogue.keys().isEmpty())
+        assertTrue("the flag outlives what it was read from", ensure(2_000L))
     }
 
     @Test

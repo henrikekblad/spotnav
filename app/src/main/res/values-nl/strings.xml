@@ -388,7 +388,6 @@
   <string name="price_value_included">Inbegrepen in de prijs</string>
   <string name="market_info_included">De gepubliceerde prijs bevat al btw, belastingen en kosten, dus er wordt niets bij opgeteld.</string>
   <string name="market_info_included_some">De gepubliceerde prijs bevat al de onderdelen die als inbegrepen zijn gemarkeerd, dus daarvoor wordt niets opgeteld. De rest wordt opgeteld zoals je het instelt, en btw wordt als laatste over het hele bedrag berekend.</string>
-  <string name="price_source">Prijsbron: %1$s</string>
   <string name="area_heading_great_britain">Groot-Brittannië</string>
   <string name="find_region_label">Mijn regio zoeken</string>
   <string name="find_region_description">Je postcode. Die wordt alleen naar Octopus Energy gestuurd om de regio op te zoeken en wordt niet opgeslagen.</string>
@@ -619,4 +618,21 @@
   <string name="price_need_pair">Koppelen met Home Assistant</string>
   <string name="widget_add_key">Voeg je ENTSO-E-sleutel toe in SpotNav</string>
   <string name="price_need_update_ha">Deze Home Assistant stuurt geen prijzen naar de app. Werk de SpotNav-integratie bij.</string>
+  <string name="ha_price_provider_nordpool">Prijzen van Nord Pool (via Home Assistant)</string>
+  <string name="ha_price_provider_entsoe">Prijzen van ENTSO-E (je eigen sleutel)</string>
+  <string name="ha_price_provider_pvpc">Prijzen van PVPC (Home Assistant)</string>
+  <string name="ha_price_provider_octopus">Prijzen van Octopus Energy (je Agile-tarief)</string>
+  <string name="ha_price_provider_relay">Prijzen van de SpotNav-relay</string>
+  <string name="ha_price_notice_add_nordpool">Haal de prijzen voor %1$s op via de ingebouwde Nord Pool-integratie van Home Assistant. Welk gebied je kiest bij het toevoegen maakt niet uit – SpotNav haalt zelf het gebied op dat nodig is.</string>
+  <string name="ha_price_notice_nordpool_not_loaded">Nord Pool is toegevoegd in Home Assistant, maar is niet gestart.</string>
+  <string name="ha_price_notice_add_pvpc">Haal de Spaanse PVPC-prijzen uit de eigen PVPC-integratie van Home Assistant.</string>
+  <string name="ha_price_notice_pvpc_not_loaded">De PVPC-integratie is toegevoegd in Home Assistant, maar is niet gestart.</string>
+  <string name="ha_price_notice_add_octopus">Je Agile-tarieven voor %1$s komen uit de integratie Octopus Energy, die via HACS wordt geïnstalleerd.</string>
+  <string name="ha_price_notice_octopus_not_loaded">Octopus Energy is toegevoegd in Home Assistant, maar is niet gestart.</string>
+  <string name="ha_price_notice_octopus_no_agile">Octopus Energy heeft geen meter met een Agile-tarief gevonden voor %1$s.</string>
+  <string name="ha_price_notice_octopus_region_mismatch">Je Octopus-meter staat in regio %1$s; de tarieven daarvan worden gebruikt voor %2$s. Kies regio %1$s als gebied, dan klopt het.</string>
+  <string name="ha_price_notice_source_missing">Er is geen bron voor prijzen in %1$s. Kies een ander gebied.</string>
+  <string name="ha_price_notice_add_entsoe_key">De prijzen voor %1$s komen van ENTSO-E, met je eigen gratis sleutel. Voeg die toe in Home Assistant.</string>
+  <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E heeft de opgeslagen sleutel niet geaccepteerd. Vul in Home Assistant een nieuwe in.</string>
+  <string name="ha_price_open_home_assistant">Home Assistant openen</string>
 </resources>

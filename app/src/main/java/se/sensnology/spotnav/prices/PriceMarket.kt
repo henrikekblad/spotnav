@@ -91,25 +91,17 @@ data class PriceMarket(
     }
 }
 
-/**
- * The catalogue the app is currently using: the last valid remote document, or the bundled
- * snapshot, or both refusing to load.
- */
+/** The catalogue the app is currently using: the bundled area list, or nothing when it refused to load. */
 object PriceMarkets {
-    private class Held(val areas: List<PriceMarket>, val version: Int)
-
     @Volatile
-    private var current: Held = Held(emptyList(), RelayContractVersion.V1)
+    private var current: List<PriceMarket> = emptyList()
 
     /** Every area currently selectable, in catalogue order. */
-    val all: List<PriceMarket> get() = current.areas
-
-    /** The contract version the held catalogue was read in; the index is read in the same one. */
-    val version: Int get() = current.version
+    val all: List<PriceMarket> get() = current
 
     /** Replace the catalogue atomically. */
-    fun replace(areas: List<PriceMarket>, version: Int = RelayContractVersion.V1) {
-        current = Held(areas, version)
+    fun replace(areas: List<PriceMarket>) {
+        current = areas
     }
 
     /**
@@ -125,7 +117,7 @@ object PriceMarkets {
     }
 
     /** The area with this id: the held list's, else one Home Assistant named; or `null`. */
-    fun find(area: String): PriceMarket? = current.areas.firstOrNull { it.id == area } ?: fromHomeAssistant[area]
+    fun find(area: String): PriceMarket? = current.firstOrNull { it.id == area } ?: fromHomeAssistant[area]
 
     /** Forget what Home Assistant named. For tests. */
     internal fun forgetLearnedForTest() {

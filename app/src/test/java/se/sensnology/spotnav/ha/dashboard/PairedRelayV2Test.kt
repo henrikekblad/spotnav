@@ -27,7 +27,6 @@ import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.IncludedPart
 import se.sensnology.spotnav.prices.PriceMarkets
-import se.sensnology.spotnav.prices.RelayContractVersion
 import se.sensnology.spotnav.testing.HaFixtures
 import se.sensnology.spotnav.testing.RelayV2Fixtures
 import java.time.OffsetDateTime
@@ -42,7 +41,7 @@ class PairedRelayV2Test {
 
     @Before
     fun catalogue() {
-        PriceMarkets.replace(RelayV2Fixtures.areas(), RelayContractVersion.V2)
+        PriceMarkets.replace(RelayV2Fixtures.areas())
     }
 
     @After
@@ -82,7 +81,8 @@ class PairedRelayV2Test {
         val dashboard = Dashboard.parse(HaFixtures.json("dashboard/proposal_ready.json"))
         assertEquals("Europe/Stockholm", dashboard.market.marketTimezone)
         assertTrue(dashboard.market.included.isEmpty())
-        assertNull(dashboard.market.source)
+        // The attribution of the source Home Assistant prices the area with now (the relay, in this capture).
+        assertEquals("SpotNav relay", dashboard.market.source?.name)
         assertEquals(listOf("SE"), dashboard.market.countries)
         assertFalse(dashboard.market.inGreatBritain)
         assertTrue(dashboard.settings!!.fiscalIncluded.isEmpty())

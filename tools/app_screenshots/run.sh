@@ -121,10 +121,10 @@ echo "== booting the $AVD emulator ($SERIAL)"
   -gpu swiftshader_indirect -timezone Europe/Stockholm >"$LOGS/emulator.log" 2>&1 &
 EMU_PID=$!
 
-# 6. The debug build, pointed at the relay stub (the emulator reaches the host's 127.0.0.1 as 10.0.2.2).
-#    The Play variant (what the store listing shows), without Firebase.
+# 6. The debug build: the Play variant (what the store listing shows), without Firebase. It asks the relay for
+#    nothing (its prices are the paired Home Assistant's, and push is off), so it is not pointed at the stub.
 echo "== building the debug app"
-(cd "$REPO" && ./gradlew -q -Pstore=play -Ppush=false -PrelayBaseUrl="http://10.0.2.2:$STUB_PORT" assembleDebug)
+(cd "$REPO" && ./gradlew -q -Pstore=play -Ppush=false assembleDebug)
 APK="$REPO/app/build/outputs/apk/debug/app-debug.apk"
 
 # 7. Home Assistant's demo devices and SpotNav entries.

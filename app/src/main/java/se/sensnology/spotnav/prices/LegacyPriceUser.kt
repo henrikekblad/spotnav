@@ -9,8 +9,8 @@ import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
  * what only reaching the relay ever wrote (a held day file, or a catalogue refresh), before anything of
  * this version writes price data, and stored in prefs `price_source`. A fresh install is `false` forever.
  *
- * A legacy user without a key keeps the relay's prices for now (the owner's end date comes later, step
- * A12), and sees the one-time explanation of why a key is needed (step A8: [whyShown]/[markWhyShown]).
+ * The flag no longer gives anyone the relay's prices (the owner's hard cut): it only decides who sees the
+ * one-time explanation of why a key is needed ([whyShown]/[markWhyShown]), because they had prices before.
  */
 internal object LegacyPriceUser {
     internal const val PREFS = "price_source"
@@ -25,7 +25,7 @@ internal object LegacyPriceUser {
     fun ensure(flags: KeyValueStore, priceCache: KeyValueStore, catalogue: KeyValueStore, nowMillis: Long): Boolean {
         flags.getString(KEY_LEGACY)?.let { return it.toBoolean() }
         val legacy = priceCache.keys().any { RELAY_DAY.matches(it) } ||
-            catalogue.getString(AreaCatalogue.KEY_REFRESHED_AT) != null
+            catalogue.getString(RelayLeftovers.KEY_REFRESHED_AT) != null
         flags.putString(KEY_LEGACY, legacy.toString())
         flags.putString(KEY_MIGRATED_AT, nowMillis.toString())
         return legacy

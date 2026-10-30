@@ -1,16 +1,14 @@
 package se.sensnology.spotnav.prices
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.testing.RelayFixtures
 
-/** One invalid entry is skipped, never the whole catalogue or index. */
+/** One invalid entry is skipped, never the whole catalogue. */
 class CatalogueRobustnessTest {
     private fun areas(vararg entries: String) =
-        """{"v":1,"generated":"2026-10-03T10:00:00+02:00","areas":[${entries.joinToString(",")}]}"""
+        """{"v":2,"generated":"2026-10-03T10:00:00+02:00","areas":[${entries.joinToString(",")}]}"""
 
     private val good = RelayFixtures.areasBody(listOf(RelayFixtures.se4))
         .substringAfter("\"areas\":[").substringBeforeLast("]}")
@@ -37,20 +35,5 @@ class CatalogueRobustnessTest {
     @Test
     fun `a duplicate id still refuses the catalogue`() {
         assertTrue(RelayAreasParser.parse(areas(good, good)) is CatalogueParse.Invalid)
-    }
-
-    @Test
-    fun `an index skips an invalid area and keeps the others`() {
-        val body = """{"v":1,"generated":"g","areas_rev":"r","areas":{
-            "SE4":{"days":["2026-10-03"],"res":60},
-            "BAD":{"days":["not-a-day"]},
-            "WORSE":"x"}}"""
-
-        val index = RelayIndexParser.parse(body)
-
-        assertNotNull(index)
-        assertTrue(index!!.lists("SE4", "2026-10-03"))
-        assertNull(index.daysByArea["BAD"])
-        assertNull(index.daysByArea["WORSE"])
     }
 }

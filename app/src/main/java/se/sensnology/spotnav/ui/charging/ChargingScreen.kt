@@ -478,7 +478,7 @@ internal class ChargingScreen(
         shell.priceRefresh.loadStarted()
         ioExecutor.execute {
             // Held prices first when what the screen shows is not today's: the load below may wait on the
-            // network for the index, and a stale day must not stay on screen meanwhile.
+            // network, and a stale day must not stay on screen meanwhile.
             val zone = PriceMarkets.find(area)?.zoneId ?: java.time.ZoneId.systemDefault()
             val shown = authority.currentPrices
             if (shown == null || !PriceDays.showsDate(shown, java.time.LocalDate.now(zone))) {
@@ -490,8 +490,6 @@ internal class ChargingScreen(
                     }
                 }
             }
-            // Off the main thread, as the screen's own work always is:
-            AreaCatalogue.refreshIfDue(applicationContext)
             pricedWithPriceDays = priceDaysNow()
             val priced = PriceSubject(subject.profileId, area)
             val loaded = PriceRepository.load(applicationContext, priced)

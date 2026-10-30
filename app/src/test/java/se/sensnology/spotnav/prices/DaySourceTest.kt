@@ -8,7 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import se.sensnology.spotnav.testing.FakeKeyValueStore
-import se.sensnology.spotnav.testing.FakeRelayTransport
 import se.sensnology.spotnav.testing.RelayFixtures
 import se.sensnology.spotnav.testing.TEST_TODAY
 import java.time.Instant
@@ -63,7 +62,7 @@ class DaySourceTest {
 
         assertEquals(96, result.today.size)
         assertEquals(96, result.tomorrow.size)
-        assertEquals(PriceSource.RELAY, result.todaySource)
+        assertEquals(PriceSource.FETCHED, result.todaySource)
         assertEquals(todayBody, store.rawOrNull("v1:SE4:$todayKey"))
         assertEquals("1000000", store.rawOrNull("v1:SE4:$todayKey:at"))
     }
@@ -122,22 +121,6 @@ class DaySourceTest {
         assertEquals(96, PriceRepository.heldOnly(store, RelayFixtures.se4, TEST_TODAY, 1_000_003L, "charger-a").today.size)
     }
 
-    @Test
-    fun theRelaySourceAsksOnlyForWhatItsIndexLists() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
-            days = mapOf("SE4:$todayKey" to todayBody)
-        )
-        val source = RelayDaySource(store, transport)
-        val now = Instant.ofEpochMilli(1L)
-
-        assertTrue(source.worthAsking(RelayFixtures.se4, TEST_TODAY, now, force = false, held = true))
-        assertFalse(source.worthAsking(RelayFixtures.se4, TEST_TODAY.plusDays(1), now, force = true, held = false))
-        assertEquals(DayFetch.Body(todayBody), source.fetch(RelayFixtures.se4, TEST_TODAY))
-        assertEquals(DayFetch.Failed(PriceFailure.NETWORK), source.fetch(RelayFixtures.se4, TEST_TODAY.plusDays(1)))
-        assertNotNull("the index read is held", store.rawOrNull(PriceRepository.INDEX_KEY))
-    }
-
     // pruning
 
     @Test
@@ -149,7 +132,7 @@ class DaySourceTest {
         store.putString("v1:NO1:$old", "x")
         store.putString("v1:GB-C:$kept", "x")
         store.putString("v1:GB-C:$kept:at", "1")
-        store.putString(PriceRepository.INDEX_KEY, "index")
+        store.putString("v1:index", "index")
         store.putString("v1:SE4:not-a-date", "x")
 
         load(ScriptedSource(mapOf(TEST_TODAY to DayFetch.Body(todayBody))))
@@ -159,7 +142,7 @@ class DaySourceTest {
         assertNull(store.rawOrNull("v1:NO1:$old"))
         assertEquals("x", store.rawOrNull("v1:GB-C:$kept"))
         assertEquals("1", store.rawOrNull("v1:GB-C:$kept:at"))
-        assertEquals("index", store.rawOrNull(PriceRepository.INDEX_KEY))
+        assertEquals("index", store.rawOrNull("v1:index"))
         assertEquals("x", store.rawOrNull("v1:SE4:not-a-date"))
         assertEquals(todayBody, store.rawOrNull("v1:SE4:$todayKey"))
     }
