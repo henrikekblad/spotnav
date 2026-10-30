@@ -21,6 +21,8 @@ class VendoredRelayFixturesTest {
 
     @Test fun theVendoredCopyIsNotEmpty() {
         assertTrue(RelayUpstream.files().any { it.name == "ecb_daily.xml" })
+        assertTrue(RelayUpstream.files().any { it.name == "entsoe_SE4_2026-09-21.xml" })
+        assertTrue(RelayUpstream.files().any { it.name == "synthetic_ack_999_auth.xml" })
     }
 
     @Test fun eachVendoredCaptureEqualsTheRelaysWhenItIsPresent() {
@@ -42,5 +44,7 @@ class VendoredRelayFixturesTest {
     }
 
     /** The names scripts/sync_relay_fixtures.sh copies. */
-    private fun copied(name: String): Boolean = name == "ecb_daily.xml"
+    private fun copied(name: String): Boolean =
+        name == "ecb_daily.xml" || name.endsWith(".xml") &&
+            (name.startsWith("entsoe_") || name.startsWith("synthetic_a44_") || name.startsWith("synthetic_ack_"))
 }
