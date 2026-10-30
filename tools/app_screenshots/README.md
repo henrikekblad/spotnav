@@ -32,12 +32,13 @@ thirty-five minutes, most of it the nine language passes.
 3. Creates the `SpotNavDocs` emulator once (`make_avd.sh`; the other AVDs are never touched): 1080x2160
    at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. Every run
    boots it wiped, headless, in Europe/Stockholm time.
-4. Builds the debug app as the Play variant without Firebase, pointed at the relay stub:
-   `./gradlew -Pstore=play -Ppush=false -PrelayBaseUrl=http://10.0.2.2:8130 assembleDebug` (the
-   emulator reaches the host's 127.0.0.1 as 10.0.2.2). `-PrelayBaseUrl` is for debug builds only: the
-   build refuses it for any other task, a release build compiles in the official address whatever is
-   given, and `RelayAddress` ignores a configured address outside a debug build (`RelayAddressTest`,
-   and `RelayAddressReleaseTest` under `testReleaseUnitTest`).
+4. Builds the debug app as the Play variant without Firebase:
+   `./gradlew -Pstore=play -Ppush=false assembleDebug`. The app asks the relay for nothing here: its prices
+   are the paired Home Assistant's, and push is off. (`-PrelayBaseUrl=http://10.0.2.2:8130` still points a
+   debug build's push registration at a stub; it is for debug builds only: the build refuses it for any
+   other task, a release build compiles in the official address whatever is given, and `RelayAddress`
+   ignores a configured address outside a debug build, `RelayAddressTest` and `RelayAddressReleaseTest`
+   under `testReleaseUnitTest`.)
 5. `drive.py` drives the app with `adb` (always `-s emulator-5584`) and `uiautomator dump`, finding
    things by the app's own strings in each language: dark theme, demo status bar (12:00, full battery
    and signal, no notifications);
@@ -92,7 +93,8 @@ en-US is uploaded as en-GB and nb-NO as no-NO. The release workflow itself never
 
 - Pairing types `http://localhost:8123`; the app accepts plain HTTP for loopback, and the approval hands
   back the same address because the setup sets it as Home Assistant's internal URL.
-- Prices are the Home Assistant repository's recorded relay fixture moved to today and tomorrow, so the
+- Prices are the Home Assistant repository's recorded relay fixture moved to today and tomorrow (Home
+  Assistant's, sent to the app by `price_days` and the dashboard), so the
   curves are the same every day; the "now" line, the price table's first rows and the plan's times move
   with the clock. The pairing code is random.
 - The launcher steps (long press, "Widgets", "Add") follow the Pixel launcher of the android-36 image

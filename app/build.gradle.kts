@@ -45,7 +45,8 @@ val push = when (val flag = findProperty("push") as String?) {
 if (push) apply(plugin = "com.google.gms.google-services")
 
 // The relay address is fixed in a release build. A debug build can be pointed somewhere else with
-// -PrelayBaseUrl=http://10.0.2.2:8130 (the documentation screenshots use a local relay stub);
+// -PrelayBaseUrl=http://10.0.2.2:8130 (a local relay stub, for the push registration: the app asks the
+// relay for no prices);
 // release builds always get the official address, and asking for one with the property set fails.
 val officialRelay = "https://spotnav.sensnology.se"
 val relayBaseUrl = (findProperty("relayBaseUrl") as String?)?.trim()?.trimEnd('/')?.takeIf { it.isNotEmpty() }
