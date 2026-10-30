@@ -104,6 +104,9 @@ internal class ScreenShell(
     /** The car the next settings screen opens at (its vehicle card, that car's tab); taken by that screen. */
     var settingsCar: String? = null
 
+    /** Whether the next settings screen opens at its Home Assistant card; taken by that screen. */
+    var settingsAtHomeAssistant: Boolean = false
+
     /**
      * The charger profile whose "Pair again" was pressed on the charging screen: the next settings
      * screen starts pairing its instance at once; taken by that screen.

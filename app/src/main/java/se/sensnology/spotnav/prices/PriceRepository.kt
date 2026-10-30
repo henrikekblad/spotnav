@@ -8,9 +8,11 @@ import se.sensnology.spotnav.app.RelayLog
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.prices.entsoe.EntsoeClient
+import se.sensnology.spotnav.prices.entsoe.EntsoeKey
 import se.sensnology.spotnav.prices.entsoe.EntsoeDaySource
 import se.sensnology.spotnav.prices.entsoe.EntsoeKeyStore
 import se.sensnology.spotnav.prices.entsoe.EntsoeLimiter
+import se.sensnology.spotnav.prices.entsoe.KeyCheck
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -516,7 +518,7 @@ object PriceRepository {
      * The source that prices [subject] now (design section 1). Until Home Assistant answers `price_days`
      * (step A10) a paired phone keeps the relay, as it does today (design 6.1); a standalone phone uses
      * its own ENTSO-E key, else the relay while this install is a legacy relay user, else nothing.
-     * Not shown anywhere yet: the UI that names it is step A8.
+     * The screens say what is missing through [missing].
      */
     internal fun choose(context: Context, subject: PriceSubject, market: PriceMarket?): ChosenSource {
         val legacy = LegacyPriceUser.ensure(context)
@@ -531,13 +533,45 @@ object PriceRepository {
         )
     }
 
+    /**
+     * Why no source can price [subject] now, or `null` when one can: what the screens and the widget say
+     * in place of a chart (step A8). Reads only what is stored; no request.
+     */
+    internal fun missing(context: Context, subject: PriceSubject): MissingSource? =
+        (choose(context, subject, PriceMarkets.find(subject.areaId)) as? ChosenSource.None)?.reason
+
+    /**
+     * Forget every result held in memory: a key saved or removed changes which source prices a subject,
+     * and the next load must ask that source rather than show the previous answer for ten minutes.
+     */
+    fun clearMemoryCache() {
+        cache.clear()
+    }
+
+    /**
+     * Check [key] with one ENTSO-E request for today's market day of [areaId] (or DE-LU when that area has
+     * no route), before it is saved. Network; never on the main thread.
+     */
+    internal fun checkEntsoeKey(context: Context, key: EntsoeKey, areaId: String?): KeyCheck =
+        EntsoeKeyStore.check(
+            key, areaId?.let { PriceMarkets.find(it) }, PriceMarkets.find(KEY_CHECK_FALLBACK_AREA), entsoeClient(context), Instant.now()
+        )
+
+    /** The area a key is checked against when the phone's own area has no ENTSO-E route. */
+    private const val KEY_CHECK_FALLBACK_AREA = "DE-LU"
+
+    private fun entsoeLimiter(context: Context) = EntsoeLimiter(SharedPreferencesKeyValueStore(context, EntsoeLimiter.PREFS))
+
+    private fun entsoeClient(context: Context, limiter: EntsoeLimiter = entsoeLimiter(context)) =
+        EntsoeClient(PlainHttp, limiter, log = AndroidRelayLog)
+
     /** The ENTSO-E source over the app's own key, limiter state and ECB rates. */
     private fun entsoeSource(context: Context): DaySource {
         val keys = EntsoeKeyStore.forContext(context)
-        val limiter = EntsoeLimiter(SharedPreferencesKeyValueStore(context, EntsoeLimiter.PREFS))
+        val limiter = entsoeLimiter(context)
         return EntsoeDaySource(
             key = keys::key,
-            client = EntsoeClient(PlainHttp, limiter, log = AndroidRelayLog),
+            client = entsoeClient(context, limiter),
             limiter = limiter,
             rates = EcbRates.forContext(context),
             log = AndroidRelayLog,

@@ -25,8 +25,11 @@ import se.sensnology.spotnav.ha.settings.PairedSettingsForm
 import se.sensnology.spotnav.prices.AreaSelection
 import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.GreatBritainRegion
+import se.sensnology.spotnav.prices.LegacyPriceUser
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.prices.entsoe.EntsoeKeyStore
+import se.sensnology.spotnav.prices.entsoe.KeyState
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.checkbox
 import se.sensnology.spotnav.ui.common.label
@@ -124,6 +127,9 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
             visibility = View.GONE
         }
         parent.addView(sourceLine)
+        // Unpaired, the line names this phone's own source: its ENTSO-E key, or why none can price the area.
+        val keyState = if (paired) KeyState.NONE else EntsoeKeyStore.forContext(applicationContext).state()
+        val relayUser = !paired && LegacyPriceUser.ensure(applicationContext)
         val findRegion = FindRegionField(
             selectRegion = { id ->
                 val index = choices.indexOfFirst { it.code == id }
@@ -219,9 +225,14 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
             if (HaAreaOverrideComponent.TRANSFER !in included) transfer.text = t(R.string.transfer)
             lock(transfer, transferValue, HaAreaOverrideComponent.TRANSFER, R.string.price_row_transfer, transferChoice)
             settingBoxes = false
-            val source = market?.source
-            sourceLine.visibility = if (source == null) View.GONE else View.VISIBLE
-            if (source != null) sourceLine.text = sourceText(source)
+            val shownSource: CharSequence? = when (if (paired || market == null) null else StandalonePrice.line(market, keyState)) {
+                StandalonePrice.Line.OWN_KEY -> t(R.string.entsoe_source_own_key)
+                StandalonePrice.Line.NEEDS_HOME_ASSISTANT -> t(R.string.area_needs_home_assistant)
+                // Unpaired without a usable key: the catalogue's source only while that is where prices come from.
+                null -> market?.source?.takeIf { paired || relayUser }?.let(::sourceText)
+            }
+            sourceLine.visibility = if (shownSource == null) View.GONE else View.VISIBLE
+            if (shownSource != null) sourceLine.text = shownSource
             findRegion.show(controlsEnabled && GreatBritainRegion.offered(PriceMarkets.all, market, region))
             // Four cases, not two: NO, DK and FI publish a tax figure and no grid fee, so claiming
             // the relay publishes neither would be false about them. A price that already includes

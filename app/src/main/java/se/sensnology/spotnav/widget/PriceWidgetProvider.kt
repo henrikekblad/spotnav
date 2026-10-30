@@ -33,6 +33,7 @@ import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.prices.PublicationOutcome
 import se.sensnology.spotnav.prices.runPublicationBatch
 import se.sensnology.spotnav.ui.WidgetConfigActivity
+import se.sensnology.spotnav.ui.settings.StandalonePrice
 import java.util.concurrent.Executors
 
 class PriceWidgetProvider : AppWidgetProvider() {
@@ -312,7 +313,20 @@ class PriceWidgetProvider : AppWidgetProvider() {
                 is WidgetPlanPass.Local -> {
                     // Unpaired: null inputs or prices both mean no market, so the placeholder.
                     val inputs = pass.inputs
-                    if (inputs == null || data == null) {
+                    // No prices and something to do about it in the app: one line saying what, and the tap opens the app.
+                    val need = if (area != null && data != null && data.today.isEmpty() && data.tomorrow.isEmpty()) {
+                        StandalonePrice.notice(PriceRepository.missing(context, PriceSubject(chargerProfileId, area)))
+                    } else null
+                    if (need != null) {
+                        ChartRenderer.noticeState(
+                            width, height,
+                            title = AppLanguageSettings.text(
+                                context,
+                                if (need == StandalonePrice.Notice.NEEDS_HOME_ASSISTANT) R.string.area_needs_home_assistant
+                                else R.string.widget_add_key
+                            )
+                        )
+                    } else if (inputs == null || data == null) {
                         ChartRenderer.emptyState(context, width, height)
                     } else {
                         ChartRenderer.render(
