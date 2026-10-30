@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ui.settings
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.text.InputType
 import android.text.SpannableString
@@ -81,6 +82,8 @@ internal class EntsoeKeyDialog(scope: ViewScope) : ViewScope(scope) {
         val field = EditText(context).apply {
             hint = t(R.string.entsoe_key_row)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            // The password variation switches to a monospace face; the dialog's own text face reads as the app does.
+            typeface = Typeface.DEFAULT
             // A secret: never kept across a re-creation of the screen, never offered to the keyboard's memory.
             isSaveEnabled = false
             importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
