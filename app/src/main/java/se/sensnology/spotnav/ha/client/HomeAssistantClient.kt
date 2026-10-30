@@ -282,6 +282,16 @@ object HomeAssistantClient {
         return PushRegister.accepted(status, body)
     }
 
+    /**
+     * The charger's prices for today and tomorrow as Home Assistant holds them (webhook `price_days`),
+     * timed as the dashboard is. Asked only where the last dashboard stated `capabilities.price_days`.
+     * Never throws.
+     */
+    internal fun priceDays(settings: HomeAssistantSettings): PriceDaysAnswer {
+        val (status, body) = write(settings, PriceDaysDecoder.payload())
+        return PriceDaysDecoder.answer(status, body)
+    }
+
     /** One month of charge history (webhook `sessions`); `null` asks for the current month. Never throws. */
     internal fun sessionsMonth(settings: HomeAssistantSettings, month: YearMonth?): SessionsOutcome<SessionsMonth> {
         val (status, body) = write(settings, SessionsRead.payload(month))
