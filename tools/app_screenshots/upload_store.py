@@ -5,7 +5,9 @@ One Play edit for all locales: each locale's phone screenshots are replaced by t
 name order), and the edit is committed with `changesNotSentForReview`, so the new pictures wait in Play
 Console's store listing until they are sent for review there by hand. An app whose changes Play sends for
 review automatically refuses that parameter; the edit is then committed without it and goes for review at
-once, so send any draft release for review first. Nothing else in the listing changes.
+once, so send any draft release for review first. With `--update-texts` each chosen locale's title, short and full
+description are replaced by its folder's title.txt, short_description.txt and full_description.txt in the same edit;
+`--no-screenshots` leaves the pictures as they are. Nothing else in the listing changes.
 
 The repository's locale folders are named as fastlane names them; Play's listing names two of them otherwise
 (en-US is the listing's British English, nb-NO its Norwegian), as the release workflow maps them too.
@@ -13,6 +15,7 @@ The repository's locale folders are named as fastlane names them; Play's listing
     upload_store.py --dry-run                      # check the files against Play's limits, contact nothing
     upload_store.py --key play.json                # upload (the release workflow's service account)
     upload_store.py --key play.json --locales sv-SE en-US
+    upload_store.py --key play.json --update-texts --no-screenshots   # the listing texts only
 """
 
 from __future__ import annotations
@@ -91,6 +94,12 @@ def main() -> int:
         action="store_true",
         help="add a language the store listing lacks, from its folder's title, short and full description",
     )
+    parser.add_argument(
+        "--update-texts",
+        action="store_true",
+        help="replace a listed language's title, short and full description with its folder's",
+    )
+    parser.add_argument("--no-screenshots", action="store_true", help="leave the screenshots as they are")
     args = parser.parse_args()
 
     locales = args.locales or sorted(p.name for p in ROOT.iterdir() if p.is_dir())
@@ -98,16 +107,21 @@ def main() -> int:
     repo_locale: dict[str, str] = {}
     failed = False
     for locale in locales:
-        files = shots(ROOT / locale)
+        files = [] if args.no_screenshots else shots(ROOT / locale)
         play = PLAY_LOCALE.get(locale, locale)
-        print(f"{locale} -> {play}: {', '.join(p.name for p in files) or 'no screenshots'}")
-        for problem in problems(files):
-            print(f"  {problem}")
+        if args.no_screenshots:
+            print(f"{locale} -> {play}: screenshots left as they are")
+        else:
+            print(f"{locale} -> {play}: {', '.join(p.name for p in files) or 'no screenshots'}")
+            for problem in problems(files):
+                print(f"  {problem}")
+                failed = True
+        if args.update_texts and listing_texts(ROOT / locale) is None:
             failed = True
         plan[play] = files
         repo_locale[play] = locale
     if failed:
-        print("Nothing uploaded: fix the screenshots above first.")
+        print("Nothing uploaded: fix the files above first.")
         return 1
     if args.dry_run:
         print("Dry run: nothing uploaded.")
@@ -140,6 +154,12 @@ def main() -> int:
             print(f"{play}: store listing added from {repo_locale[play]}")
         for play, files in plan.items():
             if play not in listed:
+                continue
+            if args.update_texts:
+                texts = listing_texts(ROOT / repo_locale[play])
+                edits.listings().update(packageName=PACKAGE, editId=edit_id, language=play, body=texts).execute()
+                print(f"{play}: title and descriptions updated from {repo_locale[play]}")
+            if args.no_screenshots:
                 continue
             edits.images().deleteall(
                 packageName=PACKAGE, editId=edit_id, language=play, imageType="phoneScreenshots"
