@@ -6,6 +6,7 @@ import se.sensnology.spotnav.app.KeyValueStore
 import se.sensnology.spotnav.app.LogLevel
 import se.sensnology.spotnav.app.RelayLog
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -114,6 +115,13 @@ internal object HttpRelayTransport : RelayTransport {
         "$BASE/$areaId/${dateKey.substring(0, 4)}/${dateKey.substring(5)}.json"
 }
 
+/**
+ * Who one price load is for: the charger profile it belongs to (`null` for this phone's own area) and
+ * the area. The profile is part of the subject because a paired charger's prices may come from another
+ * source than the same area's on an unpaired phone.
+ */
+data class PriceSubject(val profileId: String?, val areaId: String)
+
 /** The app's prices, and the only place a day document is requested. */
 object PriceRepository {
     /** A new preferences file, and versioned keys inside it: an old upstream body can never be parsed as a relay document. */
@@ -129,6 +137,11 @@ object PriceRepository {
 
     private const val MEMORY_CACHE_MS = 10 * 60 * 1000L
     private const val FORCE_REFRESH_DEDUP_MS = 30 * 1000L
+
+    /** Market days older than this many days before today are pruned from the disk cache. */
+    internal const val KEEP_DAYS_BEFORE_TODAY = 2L
+
+    private val DAY_KEY = Regex("""$SCHEMA:[A-Z0-9-]{1,32}:(\d{4}-\d{2}-\d{2})(:at)?""")
 
     private val cache = ConcurrentHashMap<String, PriceResult>()
 
@@ -164,10 +177,7 @@ object PriceRepository {
     internal fun holdInMemory(points: List<PricePoint>?, fetchedAt: Long?): HeldPrices? =
         if (points.isNullOrEmpty()) null else HeldPrices(points, fetchedAt)
 
-    /**
-     * The whole sequence for one area, as a function of a store, a transport and a clock -- no
-     * Android, no socket, no wall clock of its own.
-     */
+    /** The relay path of [load], kept for the tests written against the relay's transport. */
     internal fun load(
         store: KeyValueStore,
         transport: RelayTransport,
@@ -176,14 +186,33 @@ object PriceRepository {
         nowMillis: Long,
         forceRefresh: Boolean = false,
         log: RelayLog = RelayLog.NONE,
-        version: Int = RelayContractVersion.V1
+        version: Int = RelayContractVersion.V1,
+        profileId: String? = null
+    ): PriceResult = load(store, RelayDaySource(store, transport, log, version), area, today, nowMillis, forceRefresh, log, profileId)
+
+    /** The memory cache's key: one result per profile, area and display day. */
+    private fun memoryKey(profileId: String?, areaId: String, today: LocalDate): String = "${profileId.orEmpty()}:$areaId:$today"
+
+    /**
+     * The whole sequence for one area, as a function of a store, a day source and a clock -- no
+     * Android, no socket, no wall clock of its own.
+     */
+    internal fun load(
+        store: KeyValueStore,
+        source: DaySource,
+        area: PriceMarket?,
+        today: LocalDate,
+        nowMillis: Long,
+        forceRefresh: Boolean = false,
+        log: RelayLog = RelayLog.NONE,
+        profileId: String? = null
     ): PriceResult {
         // 1. An id the catalogue does not have is not a fetch, it is a refusal: nothing is
         // requested for it, today or tomorrow.
         if (area == null) return emptyResult(nowMillis)
 
         val todayKey = today.toString()
-        val memoryKey = "${area.id}:$todayKey"
+        val memoryKey = memoryKey(profileId, area.id, today)
         val previous = cache[memoryKey]
         val age = previous?.let { nowMillis - it.fetchedAt } ?: Long.MAX_VALUE
         if (previous != null &&
@@ -194,16 +223,17 @@ object PriceRepository {
         }
 
         // 2 is the caller's, because the settings screen refreshes the catalogue for its own
-        // reasons; 3 happens here, and its failure is not fatal.
-        val index = loadIndex(store, transport, nowMillis, log, version)
+        // reasons; 3 is the source's (the relay reads its index on the first question), and its
+        // failure is not fatal.
         val zone = area.zoneId
+        val asked = Asked(source, today, forceRefresh)
         val todayPrices = displayDay(
-            store, transport, area, today, index, previous?.today, previous?.todayFetchedAt, zone, nowMillis, log,
+            store, asked, area, today, previous?.today, previous?.todayFetchedAt, zone, nowMillis, log,
             requirePrincipal = false
         )
         // Tomorrow exists once its main market file is held, as Home Assistant and the web page say.
         val tomorrowPrices = displayDay(
-            store, transport, area, today.plusDays(1), index,
+            store, asked, area, today.plusDays(1),
             previous?.tomorrow, previous?.tomorrowFetchedAt, zone, nowMillis, log,
             requirePrincipal = true
         )
@@ -233,10 +263,11 @@ object PriceRepository {
         store: KeyValueStore,
         area: PriceMarket?,
         today: LocalDate,
-        nowMillis: Long
+        nowMillis: Long,
+        profileId: String? = null
     ): PriceResult {
         if (area == null) return emptyResult(nowMillis)
-        cache["${area.id}:$today"]?.let { return it }
+        cache[memoryKey(profileId, area.id, today)]?.let { return it }
         val zone = area.zoneId
         val todayDay = heldDisplayDay(store, area, today, zone, requirePrincipal = false)
         val tomorrowDay = heldDisplayDay(store, area, today.plusDays(1), zone, requirePrincipal = true)
@@ -269,10 +300,9 @@ object PriceRepository {
      */
     private fun displayDay(
         store: KeyValueStore,
-        transport: RelayTransport,
+        asked: Asked,
         area: PriceMarket,
         date: LocalDate,
-        index: RelayIndex?,
         memoryPoints: List<PricePoint>?,
         memoryFetchedAt: Long?,
         zone: ZoneId,
@@ -282,12 +312,12 @@ object PriceRepository {
     ): DayPrices {
         val keys = MarketDays.keysFor(date, area.tz, area.marketTz)
         if (keys.size == 1 && keys[0] == date) {
-            return dayFor(store, transport, area, date.toString(), index, memoryPoints, memoryFetchedAt, zone, nowMillis, log)
+            return dayFor(store, asked, area, date, memoryPoints, memoryFetchedAt, zone, nowMillis, log)
         }
         val marketZone = area.marketZoneId
         val pieces = keys.associateWith { key ->
             val memory = memoryPoints?.let { MarketDays.within(it, key, marketZone) }
-            dayFor(store, transport, area, key.toString(), index, memory, memoryFetchedAt, zone, nowMillis, log)
+            dayFor(store, asked, area, key, memory, memoryFetchedAt, zone, nowMillis, log)
         }
         return compose(pieces, MarketDays.principal(date, area.tz, area.marketTz), date, zone, requirePrincipal)
     }
@@ -327,39 +357,49 @@ object PriceRepository {
         return if (composed.points.isEmpty()) null else HeldPrices(composed.points, composed.fetchedAt)
     }
 
-    /** One market-day file, end to end: ask only when the index lists it, then resolve against what is held. */
+    /** One load's questions to its source: the source, the display day the load is for, and whether a person forced it. */
+    private class Asked(val source: DaySource, val today: LocalDate, val force: Boolean)
+
+    /** One market-day file, end to end: ask only when the source says it is worth it, then resolve against what is held. */
     private fun dayFor(
         store: KeyValueStore,
-        transport: RelayTransport,
+        asked: Asked,
         area: PriceMarket,
-        dateKey: String,
-        index: RelayIndex?,
+        marketDay: LocalDate,
         memoryPoints: List<PricePoint>?,
         memoryFetchedAt: Long?,
         zone: ZoneId,
         nowMillis: Long,
         log: RelayLog
     ): DayPrices {
+        val dateKey = marketDay.toString()
         val memory = holdInMemory(memoryPoints, memoryFetchedAt)
         val disk = if (memory == null) readCachedDay(store, area, dateKey, zone, log) else null
-        val outcome = if (index?.lists(area.id, dateKey) != true) {
-            FetchOutcome.NotListed
-        } else {
-            fetchDay(store, transport, area, dateKey, zone, nowMillis, log)
-        }
+        val worth = asked.source.worthAsking(
+            area, marketDay, Instant.ofEpochMilli(nowMillis), asked.force, held = memory != null || disk != null
+        )
+        val outcome = if (!worth) FetchOutcome.NotListed else fetchDay(store, asked, area, marketDay, zone, nowMillis, log)
         return resolveDay(outcome, memory, disk, nowMillis)
     }
 
     private fun fetchDay(
         store: KeyValueStore,
-        transport: RelayTransport,
+        asked: Asked,
         area: PriceMarket,
-        dateKey: String,
+        marketDay: LocalDate,
         zone: ZoneId,
         nowMillis: Long,
         log: RelayLog
     ): FetchOutcome {
-        val body = transport.day(area.id, dateKey) ?: return FetchOutcome.Failed
+        val dateKey = marketDay.toString()
+        val body = when (val fetched = asked.source.fetch(area, marketDay)) {
+            is DayFetch.Body -> fetched.json
+            DayFetch.NotPublished -> return FetchOutcome.NotListed
+            is DayFetch.Failed -> {
+                log.log(LogLevel.WARN, "No day document ${area.id} $dateKey: ${fetched.code}")
+                return FetchOutcome.Failed
+            }
+        }
         return when (val parsed = RelayDayParser.parse(body, area.id, area.marketTz, area.currency, dateKey)) {
             is DayParse.Invalid -> {
                 log.log(LogLevel.ERROR, "Invalid day document ${area.id} $dateKey: ${parsed.reason}")
@@ -368,52 +408,44 @@ object PriceRepository {
             is DayParse.Ok -> {
                 val points = RelayDayPoints.points(parsed.document, zone)
                 if (points.isEmpty()) return FetchOutcome.Failed
-                writeCachedDay(store, area.id, dateKey, body, nowMillis)
+                writeCachedDay(store, area.id, dateKey, body, nowMillis, asked.today)
                 FetchOutcome.Body(points)
             }
         }
     }
-
-    /** The index in the catalogue's contract [version], revalidated against the relay. */
-    private fun loadIndex(
-        store: KeyValueStore,
-        transport: RelayTransport,
-        nowMillis: Long,
-        log: RelayLog,
-        version: Int
-    ): RelayIndex? {
-        val held = heldIndex(store, version)
-        val body = transport.index(version) ?: return held
-        val parsed = RelayIndexParser.parse(body, version)
-        if (parsed == null) {
-            log.log(LogLevel.ERROR, "Malformed index; keeping the last valid one")
-            return held
-        }
-        store.putString(indexKey(version), body)
-        return parsed
-    }
-
-    private fun indexKey(version: Int): String = if (version == RelayContractVersion.V2) INDEX_V2_KEY else INDEX_KEY
-
-    private fun heldIndex(store: KeyValueStore, version: Int): RelayIndex? =
-        store.getString(indexKey(version))?.let { RelayIndexParser.parse(it, version) }
 
     // The on-disk day cache
 
     /** `v1:{area}:{date}`, inside a preferences file of its own. */
     private fun dayKey(areaId: String, dateKey: String): String = "$SCHEMA:$areaId:$dateKey"
 
-    private fun writeCachedDay(
+    internal fun writeCachedDay(
         store: KeyValueStore,
         areaId: String,
         dateKey: String,
         body: String,
-        fetchedAt: Long
+        fetchedAt: Long,
+        today: LocalDate
     ) {
         store.putString(dayKey(areaId, dateKey), body)
-        // When the relay was actually reached for this day, so a disk-held day is reported with a
+        // When the source was actually reached for this day, so a disk-held day is reported with a
         // real time instead of "now" or "unknown".
         store.putString(dayKey(areaId, dateKey) + ":at", fetchedAt.toString())
+        prune(store, today)
+    }
+
+    /**
+     * Drop every held market day older than [KEEP_DAYS_BEFORE_TODAY] days before [today], in every
+     * area: the app shows today and tomorrow only, and a display day reaches at most one market day
+     * back. Without this the cache grows by a day file per area per day for the life of the install.
+     */
+    internal fun prune(store: KeyValueStore, today: LocalDate) {
+        val oldest = today.minusDays(KEEP_DAYS_BEFORE_TODAY)
+        for (key in store.keys()) {
+            val date = DAY_KEY.matchEntire(key)?.groupValues?.get(1) ?: continue
+            val day = runCatching { LocalDate.parse(date) }.getOrNull() ?: continue
+            if (day.isBefore(oldest)) store.remove(key)
+        }
     }
 
     /** The day held on disk, or `null` when nothing usable is cached for it. */
@@ -439,40 +471,40 @@ object PriceRepository {
 
     // Android-facing wrappers
 
-    /** One price load for [areaId], against the catalogue currently held. */
     /**
-     * One publication refresh: what it accepted for [areaId], and whether that moved the area's
+     * One publication refresh: what it accepted for [subject], and whether that moved the area's
      * prices.
      */
-    internal fun loadForPublication(context: Context, areaId: String): PublishedPrices {
-        val before = held(areaId)
-        val result = load(context, areaId, forceRefresh = true)
+    internal fun loadForPublication(context: Context, subject: PriceSubject): PublishedPrices {
+        val before = held(subject)
+        val result = load(context, subject, forceRefresh = true)
         return PublishedPrices(result, priceDocumentsChanged(before, result))
     }
 
-    /** What the memory cache holds for an area right now, or `null`. No I/O, no request. */
-    private fun held(areaId: String): PriceResult? {
-        val market = PriceMarkets.find(areaId) ?: return null
-        val todayKey = LocalDate.now(market.zoneId).toString()
-        return cache["${market.id}:$todayKey"]
+    /** What the memory cache holds for a subject right now, or `null`. No I/O, no request. */
+    private fun held(subject: PriceSubject): PriceResult? {
+        val market = PriceMarkets.find(subject.areaId) ?: return null
+        return cache[memoryKey(subject.profileId, market.id, LocalDate.now(market.zoneId))]
     }
 
-    fun load(context: Context, areaId: String, forceRefresh: Boolean = false): PriceResult {
+    /** One price load for [subject], against the catalogue currently held. */
+    fun load(context: Context, subject: PriceSubject, forceRefresh: Boolean = false): PriceResult {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
-        val market = PriceMarkets.find(areaId)
+        val market = PriceMarkets.find(subject.areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
+        val source = RelayDaySource(store, HttpRelayTransport, AndroidRelayLog, PriceMarkets.version)
         return load(
-            store, HttpRelayTransport, market, LocalDate.now(zone), System.currentTimeMillis(), forceRefresh, AndroidRelayLog,
-            PriceMarkets.version
+            store, source, market, LocalDate.now(zone), System.currentTimeMillis(), forceRefresh, AndroidRelayLog,
+            subject.profileId
         )
     }
 
-    /** [heldOnly] for [areaId], against the catalogue currently held: no request, ever. */
-    fun heldOnly(context: Context, areaId: String): PriceResult {
+    /** [heldOnly] for [subject], against the catalogue currently held: no request, ever. */
+    fun heldOnly(context: Context, subject: PriceSubject): PriceResult {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
-        val market = PriceMarkets.find(areaId)
+        val market = PriceMarkets.find(subject.areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
-        return heldOnly(store, market, LocalDate.now(zone), System.currentTimeMillis())
+        return heldOnly(store, market, LocalDate.now(zone), System.currentTimeMillis(), subject.profileId)
     }
 
     /**

@@ -21,6 +21,7 @@ import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
+import se.sensnology.spotnav.prices.PriceSubject
 import se.sensnology.spotnav.prices.PriceTableCell
 import se.sensnology.spotnav.prices.PriceTableModel
 import se.sensnology.spotnav.prices.PriceTableModels
@@ -58,7 +59,7 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
             catalogue = PriceMarkets.all
         )
         ioExecutor.execute {
-            val result = PriceRepository.load(applicationContext, subject.areaId)
+            val result = PriceRepository.load(applicationContext, PriceSubject(subject.requestKey.profileId, subject.areaId))
             runOnUiThread {
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 // A late answer for a market the authority has since left is inert: this pass

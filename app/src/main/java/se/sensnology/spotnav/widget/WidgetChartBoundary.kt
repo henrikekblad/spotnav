@@ -19,6 +19,7 @@ import se.sensnology.spotnav.prices.PriceRepository
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import se.sensnology.spotnav.prices.PriceSubject
 
 /**
  * The widget's chart-boundary appointments: one inexact interval alarm and one allow-while-idle local-midnight
@@ -82,7 +83,7 @@ internal object WidgetChartBoundary {
             if (source is WidgetChartSource.Dashboard) return source.need
         }
         val inputs = LocalPlanningInputs.ofOrNull(settings) ?: return null
-        return ChartBoundaryNeed(ChartMarket.of(inputs), PriceRepository.heldOnly(context, settings.area))
+        return ChartBoundaryNeed(ChartMarket.of(inputs), PriceRepository.heldOnly(context, PriceSubject(chargerProfileId, settings.area)))
     }
 
     /** Asks every widget to redraw from what is held: no network, no planner. */

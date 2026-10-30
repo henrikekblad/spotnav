@@ -34,6 +34,7 @@ import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PriceDays
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
+import se.sensnology.spotnav.prices.PriceSubject
 import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenPart
@@ -463,7 +464,7 @@ internal class ChargingScreen(
             val zone = PriceMarkets.find(area)?.zoneId ?: java.time.ZoneId.systemDefault()
             val shown = authority.currentPrices
             if (shown == null || !PriceDays.showsDate(shown, java.time.LocalDate.now(zone))) {
-                val held = PriceRepository.heldOnly(applicationContext, area)
+                val held = PriceRepository.heldOnly(applicationContext, PriceSubject(subject.profileId, area))
                 if (held.today.isNotEmpty() || held.tomorrow.isNotEmpty()) {
                     runOnUiThread {
                         if (isDestroyed || generation != viewGeneration) return@runOnUiThread
@@ -473,7 +474,7 @@ internal class ChargingScreen(
             }
             // Off the main thread, as the screen's own work always is:
             AreaCatalogue.refreshIfDue(applicationContext)
-            val loaded = PriceRepository.load(applicationContext, area)
+            val loaded = PriceRepository.load(applicationContext, PriceSubject(subject.profileId, area))
             runOnUiThread {
                 // Whatever becomes of this answer below, the screen owes no load any longer:
                 shell.priceRefresh.loadFinished()

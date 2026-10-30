@@ -16,6 +16,8 @@ class FakeKeyValueStore : KeyValueStore {
         values.remove(key)
     }
 
+    override fun keys(): Set<String> = values.keys.toSet()
+
     /** Lets a test corrupt or hand-craft raw storage content directly. */
     fun setRaw(key: String, value: String) {
         values[key] = value

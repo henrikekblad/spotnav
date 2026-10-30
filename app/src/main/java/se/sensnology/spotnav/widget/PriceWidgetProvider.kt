@@ -27,6 +27,7 @@ import se.sensnology.spotnav.prices.PricePublicationBatch
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.prices.PriceRepository
 import se.sensnology.spotnav.prices.PriceResult
+import se.sensnology.spotnav.prices.PriceSubject
 import se.sensnology.spotnav.prices.PriceUnit
 import se.sensnology.spotnav.prices.PriceUnitPreference
 import se.sensnology.spotnav.prices.PublicationOutcome
@@ -244,7 +245,7 @@ class PriceWidgetProvider : AppWidgetProvider() {
                     // A publication operation still loads and announces this market so screens hear of a new day; the drawing does not depend on it.
                     batch.outcomes?.let { outcomes ->
                         source.areaId.takeIf { it.isNotBlank() }?.let { areaId ->
-                            outcomes += PublicationOutcome(areaId, PriceRepository.loadForPublication(context, areaId).changed)
+                            outcomes += PublicationOutcome(areaId, PriceRepository.loadForPublication(context, PriceSubject(chargerProfileId, areaId)).changed)
                         }
                     }
                     ChartRenderer.renderFrame(
@@ -275,14 +276,14 @@ class PriceWidgetProvider : AppWidgetProvider() {
         }
 
         /** The prices this widget's plan pass draws from, following what [batch] may fetch. */
-        private fun loadPrices(context: Context, areaId: String, batch: WidgetBatch): PriceResult {
+        private fun loadPrices(context: Context, subject: PriceSubject, batch: WidgetBatch): PriceResult {
             val outcomes = batch.outcomes
             return when {
-                outcomes != null -> PriceRepository.loadForPublication(context, areaId).also { published ->
-                    outcomes += PublicationOutcome(areaId, published.changed)
+                outcomes != null -> PriceRepository.loadForPublication(context, subject).also { published ->
+                    outcomes += PublicationOutcome(subject.areaId, published.changed)
                 }.result
-                batch.mode.network -> PriceRepository.load(context, areaId, batch.mode.force)
-                else -> PriceRepository.heldOnly(context, areaId)
+                batch.mode.network -> PriceRepository.load(context, subject, batch.mode.force)
+                else -> PriceRepository.heldOnly(context, subject)
             }
         }
 
@@ -306,7 +307,7 @@ class PriceWidgetProvider : AppWidgetProvider() {
             // A `null` area is a paired widget with nothing confirmed: nothing is fetched and it renders unavailable.
             val area = WidgetPlanDecision.priceArea(chargerProfileId, snapshot, settings.area)
             Log.i(TAG, "Update start widget=$id area=$area")
-            val data = area?.let { loadPrices(context, it, batch) }
+            val data = area?.let { loadPrices(context, PriceSubject(chargerProfileId, it), batch) }
             return when (val pass = WidgetPlanDecision.pass(chargerProfileId, chargerKnown, settings, snapshot, data)) {
                 is WidgetPlanPass.Local -> {
                     // Unpaired: null inputs or prices both mean no market, so the placeholder.
