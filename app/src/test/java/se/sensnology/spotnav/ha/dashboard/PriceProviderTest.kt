@@ -32,9 +32,10 @@ class PriceProviderTest {
 
     @Test fun homeAssistantsOwnDashboardIsRead() {
         val provider = DashboardFixtures.dashboard("start_idle.json").prices.provider!!
-        assertEquals("relay", provider.key)
-        assertEquals("SpotNav relay", provider.name)
-        assertEquals("https://spotnav.sensnology.se", provider.url)
+        // No source for the area (2.0: the relay gives no prices): no key, name or link, only the notice.
+        assertNull(provider.key)
+        assertNull(provider.name)
+        assertNull(provider.url)
         assertEquals(DashboardPriceProvider.Notice("add_nordpool", emptyMap()), provider.notice)
     }
 
@@ -47,7 +48,7 @@ class PriceProviderTest {
     @Test fun thePriceDaysAnswersCarryTheSameShape() {
         val nordpool = DashboardPriceProvider.parse(HaFixtures.json("webhook/price_days_nordpool_fi.json").get("provider"))!!
         assertEquals(DashboardPriceProvider("nordpool", "Nord Pool", "https://www.nordpoolgroup.com/", null), nordpool)
-        val gb = DashboardPriceProvider.parse(HaFixtures.json("webhook/price_days_relay_gb.json").get("provider"))!!
+        val gb = DashboardPriceProvider.parse(HaFixtures.json("webhook/price_days_held_gb.json").get("provider"))!!
         assertEquals("source_missing", gb.notice?.code)
     }
 

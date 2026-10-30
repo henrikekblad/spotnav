@@ -142,14 +142,14 @@ class HaPriceDaysSourceTest {
         val seNow = Instant.parse("2026-09-22T12:00:00Z").toEpochMilli()
         val seSubject = PriceSubject("charger-se", "SE4")
         PriceRepository.loadFromHomeAssistant(
-            source("charger-se", Fetch(answered("price_days_relay_se4"))), seSubject, LocalDate.parse("2026-09-22"), seNow, ask = true
+            source("charger-se", Fetch(answered("price_days_held_se4"))), seSubject, LocalDate.parse("2026-09-22"), seNow, ask = true
         )
         assertEquals(body("price_days_nordpool_fi"), store.held("charger-fi")?.body)
-        assertEquals(body("price_days_relay_se4"), store.held("charger-se")?.body)
+        assertEquals(body("price_days_held_se4"), store.held("charger-se")?.body)
 
         store.clear("charger-fi")
         assertNull(store.held("charger-fi"))
-        assertEquals(body("price_days_relay_se4"), store.held("charger-se")?.body)
+        assertEquals(body("price_days_held_se4"), store.held("charger-se")?.body)
         // Nothing of it reached the standalone day cache's keys.
         assertTrue(backing.keys().none { it.startsWith(PriceRepository.SCHEMA + ":") })
     }
@@ -161,7 +161,7 @@ class HaPriceDaysSourceTest {
         val dayCache = FakeKeyValueStore()
         PriceRepository.writeCachedDay(
             dayCache, "SE4", "2026-09-22",
-            JSONObject(body("price_days_relay_se4")).getJSONObject("files").getJSONObject("2026-09-22").toString(), seNow, today
+            JSONObject(body("price_days_held_se4")).getJSONObject("files").getJSONObject("2026-09-22").toString(), seNow, today
         )
         val standalone = PriceRepository.heldOnly(dayCache, BundledAreas.area("SE4"), today, seNow)
         assertEquals(96, standalone.today.size)
@@ -173,7 +173,7 @@ class HaPriceDaysSourceTest {
     @Test fun aSwedishAnswerIsPricedInKronorWithTheFilesRate() {
         val seNow = Instant.parse("2026-09-22T12:00:00Z").toEpochMilli()
         val result = PriceRepository.loadFromHomeAssistant(
-            source("charger-se", Fetch(answered("price_days_relay_se4"))), PriceSubject("charger-se", "SE4"),
+            source("charger-se", Fetch(answered("price_days_held_se4"))), PriceSubject("charger-se", "SE4"),
             LocalDate.parse("2026-09-22"), seNow, ask = true
         )
         assertEquals(96, result.today.size)
@@ -188,7 +188,7 @@ class HaPriceDaysSourceTest {
             assertNull(PriceMarkets.find("GB-C"))
             val now = Instant.parse("2026-10-04T12:00:00Z").toEpochMilli()
             val result = PriceRepository.loadFromHomeAssistant(
-                source("charger-gb", Fetch(answered("price_days_relay_gb"))), PriceSubject("charger-gb", "GB-C"),
+                source("charger-gb", Fetch(answered("price_days_held_gb"))), PriceSubject("charger-gb", "GB-C"),
                 LocalDate.parse("2026-10-04"), now, ask = true
             )
             assertEquals(96, result.today.size)
