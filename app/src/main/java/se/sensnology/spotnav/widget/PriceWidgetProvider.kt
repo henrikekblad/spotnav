@@ -324,8 +324,11 @@ class PriceWidgetProvider : AppWidgetProvider() {
                             width, height,
                             title = AppLanguageSettings.text(
                                 context,
-                                if (need == StandalonePrice.Notice.NEEDS_HOME_ASSISTANT) R.string.area_needs_home_assistant
-                                else R.string.widget_add_key
+                                when (need) {
+                                    StandalonePrice.Notice.NEEDS_HOME_ASSISTANT -> R.string.area_needs_home_assistant
+                                    StandalonePrice.Notice.UPDATE_HOME_ASSISTANT -> R.string.price_need_update_ha
+                                    StandalonePrice.Notice.ADD_KEY, StandalonePrice.Notice.REPLACE_KEY -> R.string.widget_add_key
+                                }
                             )
                         )
                     } else if (inputs == null || data == null) {

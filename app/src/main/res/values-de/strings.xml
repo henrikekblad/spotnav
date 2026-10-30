@@ -618,4 +618,5 @@
   <string name="price_need_replace_key">Schlüssel ersetzen</string>
   <string name="price_need_pair">Mit Home Assistant koppeln</string>
   <string name="widget_add_key">Füge deinen ENTSO-E-Schlüssel in SpotNav hinzu</string>
+  <string name="price_need_update_ha">Dieses Home Assistant sendet keine Preise an die App. Aktualisiere die SpotNav-Integration.</string>
 </resources>
