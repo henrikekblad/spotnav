@@ -188,6 +188,8 @@ class PriceWidgetProvider : AppWidgetProvider() {
                         }
                         // Whether the webhook is (still, or again) one Home Assistant recognises.
                         profiles.recordWebhookAnswer(profileId, read.exceptionOrNull())
+                        // Whether its prices can be asked of Home Assistant (`price_days`).
+                        read.getOrNull()?.let { profiles.recordPriceDays(profileId, it.dashboard.capabilities.priceDays) }
                         read.getOrThrow()
                     }
                 },

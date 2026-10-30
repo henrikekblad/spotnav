@@ -95,9 +95,18 @@ internal class ChargerProfileStore(
                     ?: existing.remoteChargerName,
                 detectedPhases = dashboard.detectedPhases ?: existing.detectedPhases,
                 phaseDetectionSource = dashboard.phaseDetectionSource ?: existing.phaseDetectionSource,
-                phaseDetectionConfidence = dashboard.phaseDetectionConfidence ?: existing.phaseDetectionConfidence
+                phaseDetectionConfidence = dashboard.phaseDetectionConfidence ?: existing.phaseDetectionConfidence,
+                priceDays = dashboard.capabilities.priceDays
             )
         }
+
+    /**
+     * Whether [localId]'s Home Assistant answers `price_days`, from a dashboard read that changes nothing
+     * else about the profile (the widget's own reads).
+     */
+    fun recordPriceDays(localId: String, priceDays: Boolean) {
+        updateProfile(localId) { it.copy(priceDays = priceDays) }
+    }
 
     /**
      * Applies a dashboard fetch's outcome to exactly [profileId] — never whichever profile happens
@@ -232,7 +241,8 @@ internal class ChargerProfileStore(
                 targetSocPercent = json.optIntOrNull("target_soc_percent")?.takeIf { it in 0..100 },
                 pairAgain = json.optLongOrNull("pair_again_marked_at")?.let { markedAt ->
                     PairAgainMark(markedAt, json.optLongOrNull("pair_again_checked_at") ?: markedAt)
-                }
+                },
+                priceDays = if (json.has("price_days") && !json.isNull("price_days")) json.opt("price_days") as? Boolean else null
             )
         }
 
@@ -255,6 +265,7 @@ internal class ChargerProfileStore(
                 put("pair_again_marked_at", it.markedAt)
                 put("pair_again_checked_at", it.checkedAt)
             }
+            priceDays?.let { put("price_days", it) }
         }
     }
 }

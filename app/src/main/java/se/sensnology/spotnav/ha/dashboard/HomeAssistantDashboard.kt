@@ -697,7 +697,8 @@ internal data class Dashboard(
         private fun capabilities(json: JSONObject) = ChargerCapabilities(
             refreshVehicle = json.strictBoolean("refresh_vehicle") == true,
             setChargeLimit = json.strictBoolean("set_charge_limit") == true,
-            setCurrent = json.strictBoolean("set_current") == true
+            setCurrent = json.strictBoolean("set_current") == true,
+            priceDays = json.strictBoolean("price_days") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(
