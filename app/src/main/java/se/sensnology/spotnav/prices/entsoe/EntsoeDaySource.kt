@@ -31,7 +31,9 @@ internal class EntsoeDaySource(
     private val clock: () -> Instant = Instant::now,
     private val log: RelayLog = RelayLog.NONE,
     /** Told when ENTSO-E rejects the key, so the key's state can say so. */
-    private val onKeyRejected: () -> Unit = {}
+    private val onKeyRejected: () -> Unit = {},
+    /** Told when ENTSO-E answers a request made with the key. */
+    private val onKeyAccepted: () -> Unit = {}
 ) : DaySource {
     override fun worthAsking(area: PriceMarket, marketDay: LocalDate, now: Instant, force: Boolean, held: Boolean): Boolean {
         if (area.entsoe == null || held) return false
@@ -51,6 +53,7 @@ internal class EntsoeDaySource(
         val held = key()?.takeUnless { it.isEmpty } ?: return DayFetch.Failed(PriceFailure.INVALID)
         return when (val fetched = client.fetch(held, area.id, route, area.marketZoneId, marketDay)) {
             EntsoeFetch.Missing -> {
+                onKeyAccepted()
                 notPublished[noteKey(area, marketDay)] = clock()
                 DayFetch.NotPublished
             }
@@ -59,6 +62,7 @@ internal class EntsoeDaySource(
                 DayFetch.Failed(fetched.failure, fetched.retryAfterMs)
             }
             is EntsoeFetch.Fetched -> {
+                onKeyAccepted()
                 notPublished.remove(noteKey(area, marketDay))
                 build(area, marketDay, fetched.day)
             }

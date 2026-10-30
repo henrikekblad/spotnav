@@ -216,6 +216,8 @@ object AreaCatalogue {
 
     /** Load the catalogue the app will start from, and hold it. */
     fun load(context: Context) {
+        // Before anything of this version writes the catalogue: whether this install used the relay.
+        LegacyPriceUser.ensure(context)
         val held = startup(store(context), { readBundled(context) }, AndroidRelayLog)
         AndroidRelayLog.log(LogLevel.INFO, "Catalogue: ${held.areas.size} areas loaded (v${held.version})")
         PriceMarkets.replace(held.areas, held.version)
@@ -227,6 +229,7 @@ object AreaCatalogue {
         nowMillis: Long = System.currentTimeMillis(),
         force: Boolean = false
     ): CatalogueRefresh? {
+        LegacyPriceUser.ensure(context)
         val result = refresh(
             store(context),
             { HttpRelayTransport.areas() },

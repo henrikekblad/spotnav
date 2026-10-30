@@ -6,6 +6,11 @@ import se.sensnology.spotnav.app.KeyValueStore
 import se.sensnology.spotnav.app.LogLevel
 import se.sensnology.spotnav.app.RelayLog
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
+import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.prices.entsoe.EntsoeClient
+import se.sensnology.spotnav.prices.entsoe.EntsoeDaySource
+import se.sensnology.spotnav.prices.entsoe.EntsoeKeyStore
+import se.sensnology.spotnav.prices.entsoe.EntsoeLimiter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -487,16 +492,65 @@ object PriceRepository {
         return cache[memoryKey(subject.profileId, market.id, LocalDate.now(market.zoneId))]
     }
 
-    /** One price load for [subject], against the catalogue currently held. */
+    /** One price load for [subject], against the catalogue currently held, from the source [choose] names. */
     fun load(context: Context, subject: PriceSubject, forceRefresh: Boolean = false): PriceResult {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
         val market = PriceMarkets.find(subject.areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
-        val source = RelayDaySource(store, HttpRelayTransport, AndroidRelayLog, PriceMarkets.version)
+        val source = when (val chosen = choose(context, subject, market)) {
+            ChosenSource.Entsoe -> entsoeSource(context)
+            ChosenSource.Relay -> RelayDaySource(store, HttpRelayTransport, AndroidRelayLog, PriceMarkets.version)
+            // Home Assistant's own source arrives with step A10; until then nothing asks for it.
+            is ChosenSource.HomeAssistant, is ChosenSource.None -> {
+                AndroidRelayLog.log(LogLevel.INFO, "No price source for ${subject.areaId}: $chosen; held days only")
+                HeldOnlySource
+            }
+        }
         return load(
             store, source, market, LocalDate.now(zone), System.currentTimeMillis(), forceRefresh, AndroidRelayLog,
             subject.profileId
         )
+    }
+
+    /**
+     * The source that prices [subject] now (design section 1). Until Home Assistant answers `price_days`
+     * (step A10) a paired phone keeps the relay, as it does today (design 6.1); a standalone phone uses
+     * its own ENTSO-E key, else the relay while this install is a legacy relay user, else nothing.
+     * Not shown anywhere yet: the UI that names it is step A8.
+     */
+    internal fun choose(context: Context, subject: PriceSubject, market: PriceMarket?): ChosenSource {
+        val legacy = LegacyPriceUser.ensure(context)
+        val paired = subject.profileId?.let { ChargerProfileStore.forContext(context).getProfile(it) } != null
+        return PriceSourceChoice.choose(
+            subject = subject,
+            profileConfigured = paired,
+            haCanPriceDays = null,
+            key = EntsoeKeyStore.forContext(context).state(),
+            area = market,
+            legacyRelayAllowed = legacy || paired
+        )
+    }
+
+    /** The ENTSO-E source over the app's own key, limiter state and ECB rates. */
+    private fun entsoeSource(context: Context): DaySource {
+        val keys = EntsoeKeyStore.forContext(context)
+        val limiter = EntsoeLimiter(SharedPreferencesKeyValueStore(context, EntsoeLimiter.PREFS))
+        return EntsoeDaySource(
+            key = keys::key,
+            client = EntsoeClient(PlainHttp, limiter, log = AndroidRelayLog),
+            limiter = limiter,
+            rates = EcbRates.forContext(context),
+            log = AndroidRelayLog,
+            onKeyRejected = keys::markRejected,
+            onKeyAccepted = keys::markAccepted
+        )
+    }
+
+    /** A source that asks for nothing: the repository shows what it holds. */
+    private object HeldOnlySource : DaySource {
+        override fun worthAsking(area: PriceMarket, marketDay: LocalDate, now: Instant, force: Boolean, held: Boolean) = false
+
+        override fun fetch(area: PriceMarket, marketDay: LocalDate): DayFetch = DayFetch.Failed(PriceFailure.INVALID)
     }
 
     /** [heldOnly] for [subject], against the catalogue currently held: no request, ever. */
