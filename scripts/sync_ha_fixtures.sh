@@ -6,7 +6,8 @@
 # The default source is ../elpris-home-assistant/tests/fixtures next to this repository. Only the
 # parts the app reads are copied (dashboard/, settings/v1/, site_settings/v1/, vehicle/v1/, sessions/, webhook/,
 # codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
-# so run this after the HA side changes a fixture.
+# so run this after the HA side changes a fixture. The integration's area catalogue
+# (custom_components/spotnav/pricing/areas.json) is copied to the app's assets as its bundled area list.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -28,3 +29,11 @@ cp "$src"/vehicle/v1/*.json "$dst/vehicle/v1/"
 cp "$src"/sessions/*.json "$dst/sessions/"
 cp "$src"/codes/dashboard_codes.json "$dst/codes/"
 echo "Vendored $(find "$dst" -type f | wc -l) fixtures into $dst"
+
+areas="$src/../../custom_components/spotnav/pricing/areas.json"
+if [ -f "$areas" ]; then
+    cp "$areas" "$root/app/src/main/assets/areas.json"
+    echo "Copied the area catalogue into app/src/main/assets/areas.json"
+else
+    echo "No area catalogue at $areas; app/src/main/assets/areas.json left as it is" >&2
+fi
