@@ -145,7 +145,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Unpaired: this phone's own price as value rows, whose dialog applies at once. Paired: the
         // record's, whose dialog writes through the paired path (wired below).
         val pairedPrice = if (paired) PairedPriceCard(this) else null
-        val localPrice = if (paired) null else LocalPriceCard(this)
+        val localPrice = if (paired) null else LocalPriceCard(this).apply { onKeyChanged = { refreshWidget() } }
         pairedPrice?.add(priceCard.body, old) { values, replay, done -> runFormSave(values, replay, done) }
         localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
             storeIfChanged(WidgetSettings.load(context, widgetId), next)
@@ -202,6 +202,17 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // The paired cards above belong to the instance: the page is built again with or without them.
             onInstanceChanged = { show() }
         ).add(homeAssistantCard.body)
+        // Opened from the charging screen's "Pair with Home Assistant": at this card, once.
+        if (shell.settingsAtHomeAssistant) {
+            shell.settingsAtHomeAssistant = false
+            val target = homeAssistantCard.body
+            target.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(v: View, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+                    target.removeOnLayoutChangeListener(this)
+                    shell.scrollView.post { shell.scrollView.smoothScrollTo(0, target.top) }
+                }
+            })
+        }
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
             fun showNotifications() {
