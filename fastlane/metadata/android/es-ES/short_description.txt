@@ -1,1 +1,1 @@
-Precio spot de la luz, tabla de precios y planificador de carga de VE en Europa.
+Carga tu VE en las horas más baratas – con Home Assistant o tu propia clave.

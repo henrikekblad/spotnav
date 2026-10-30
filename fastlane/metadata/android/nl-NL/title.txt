@@ -1,1 +1,1 @@
-SpotNav: spotprijs-widget
+SpotNav: slim laden van je EV

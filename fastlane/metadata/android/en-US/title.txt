@@ -1,1 +1,1 @@
-SpotNav: spot price widget
+SpotNav: smart EV charging

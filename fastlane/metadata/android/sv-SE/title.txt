@@ -1,1 +1,1 @@
-SpotNav: elpriswidget
+SpotNav: smart elbilsladdning

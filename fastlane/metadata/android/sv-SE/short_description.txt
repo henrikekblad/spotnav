@@ -1,1 +1,1 @@
-Spotpriser på el, pristabell och laddplanering för elbil i Europa.
+Ladda elbilen när elen är billigast – med Home Assistant eller egen nyckel.

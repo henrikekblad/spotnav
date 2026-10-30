@@ -1,1 +1,1 @@
-Prix spot de l'électricité, tableau des prix et recharge VE en Europe.
+Rechargez votre VE au meilleur prix – avec Home Assistant ou votre propre clé.
