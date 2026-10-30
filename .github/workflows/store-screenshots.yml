@@ -2,7 +2,8 @@ name: Upload store screenshots
 
 # Started by hand (Actions → Upload store screenshots → Run workflow), only after the pictures in
 # fastlane/metadata/android/<locale>/images/phoneScreenshots/ have been looked at. Each chosen locale's phone
-# screenshots in Play are replaced by those files, saved in Play Console without being sent for review: they go
+# screenshots in Play are replaced by those files (and, with update_texts, its title and descriptions by the folder's
+# texts), saved in Play Console without being sent for review: they go
 # for review with the next submission made there. Nothing else in the listing changes.
 on:
   workflow_dispatch:
@@ -19,6 +20,14 @@ on:
         description: "Add a language the store listing lacks, from its folder's title and descriptions"
         type: boolean
         default: false
+      update_texts:
+        description: "Replace each listed language's title and descriptions with its folder's"
+        type: boolean
+        default: false
+      screenshots:
+        description: "Upload the screenshots (off: leave them as they are)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -39,10 +48,14 @@ jobs:
           LOCALES: ${{ inputs.locales }}
           DRY_RUN: ${{ inputs.dry_run }}
           CREATE_LISTINGS: ${{ inputs.create_listings }}
+          UPDATE_TEXTS: ${{ inputs.update_texts }}
+          SCREENSHOTS: ${{ inputs.screenshots }}
         run: |
           args=()
           if [ -n "$LOCALES" ]; then args+=(--locales $LOCALES); fi
           if [ "$CREATE_LISTINGS" = "true" ]; then args+=(--create-listings); fi
+          if [ "$UPDATE_TEXTS" = "true" ]; then args+=(--update-texts); fi
+          if [ "$SCREENSHOTS" = "false" ]; then args+=(--no-screenshots); fi
           if [ "$DRY_RUN" = "true" ]; then
             python tools/app_screenshots/upload_store.py --dry-run "${args[@]}"
             exit 0
