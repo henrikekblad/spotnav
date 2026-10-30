@@ -50,6 +50,12 @@ internal object StandalonePrice {
         MissingSource.HA_TOO_OLD, null -> null
     }
 
+    /**
+     * Whether the plan card's answer ("No charging time can be calculated" and why) is shown: not beside a
+     * notice, which already says what is needed; in every other case, as before.
+     */
+    fun showsPlanReadout(notice: Notice?): Boolean = notice == null
+
     /** The explanation comes before the how-to once, and only for someone who had prices from the server before. */
     fun explainFirst(legacyUser: Boolean, alreadyShown: Boolean): Boolean = legacyUser && !alreadyShown
 }

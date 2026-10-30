@@ -493,7 +493,12 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         val distance = resultValue()
         val distanceRow = resultRow(card.body, t(R.string.range), distance)
         // The figures first, then the schedule they describe:
-        card.body.addView(title, LinearLayout.LayoutParams(
+        // The answer and its note, as one block the price notice can stand in for (see [ResultBox.showPriceNeed]).
+        val readout = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        card.body.addView(readout, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ))
+        readout.addView(title, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { topMargin = dp(10) })
         // No power row: it was amps × phases, and both of those are facts on the charger card one
@@ -513,7 +518,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             })
             visibility = View.GONE
         }
-        card.body.addView(note)
+        readout.addView(note)
         // The one status line the screen has, at the foot of the readouts it is about:
         val status = TextView(context).apply {
             textSize = 13f
@@ -541,7 +546,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             title = title, cost = cost, energyResult = energyResult, distance = distance,
             note = note, authorityNote = authorityNote, costRow = costRow, energyRow = energyRow,
             distanceRow = distanceRow, status = status,
-            chart = chart, priceNeed = priceNeed
+            chart = chart, priceNeed = priceNeed, readout = readout
         )
     }
 
@@ -580,12 +585,15 @@ internal class ResultBox(
      */
     val chart: PlanChartView,
     /** What stands in the graph's place when an unpaired phone has no source for prices. */
-    val priceNeed: PriceNeedNotice
+    val priceNeed: PriceNeedNotice,
+    /** The answer ([title]) and its [note], which the notice makes redundant ("no charging time: not enough prices"). */
+    val readout: View
 ) {
-    /** The notice in the graph's place, or the graph again for `null`. */
+    /** The notice in the graph's place, or the graph again for `null`; the answer's block only without a notice. */
     fun showPriceNeed(notice: StandalonePrice.Notice?) {
         priceNeed.show(notice)
         chart.visibility = if (notice == null) View.VISIBLE else View.GONE
+        readout.visibility = if (StandalonePrice.showsPlanReadout(notice)) View.VISIBLE else View.GONE
     }
 
     fun showFigures(visible: Boolean) {

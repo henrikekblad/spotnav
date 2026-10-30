@@ -52,6 +52,12 @@ class StandalonePriceTest {
     }
 
     @Test
+    fun theNoticeStandsInForThePlanAnswerAndOnlyThen() {
+        for (notice in StandalonePrice.Notice.entries) assertFalse("$notice", StandalonePrice.showsPlanReadout(notice))
+        assertTrue("prices, or nothing to act on: the answer as before", StandalonePrice.showsPlanReadout(null))
+    }
+
+    @Test
     fun theExplanationComesOnceAndOnlyForSomeoneWhoHadServerPrices() {
         assertTrue(StandalonePrice.explainFirst(legacyUser = true, alreadyShown = false))
         assertFalse(StandalonePrice.explainFirst(legacyUser = true, alreadyShown = true))
