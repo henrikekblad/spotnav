@@ -10,5 +10,10 @@ internal object RelayUpstream {
 
     fun read(name: String): String = File(root, name).readText()
 
+    /** One of the relay's frozen day files (`testdata/golden`). */
+    fun golden(name: String): String = File(
+        checkNotNull(RelayUpstream::class.java.getResource("/relay-golden/$name")) { "no vendored $name" }.toURI()
+    ).readText()
+
     fun files(): List<File> = root.listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }
 }

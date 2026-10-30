@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Vendor the relay's upstream captures (ENTSO-E documents, the ECB's rates) into the app's test resources.
+# Vendor the relay's upstream captures (ENTSO-E documents, the ECB's rates) and one frozen day file into the
+# app's test resources.
 #
 #   scripts/sync_relay_fixtures.sh [path/to/spotnav-relay/testdata/upstream]
 #
@@ -22,3 +23,9 @@ mkdir -p "$dst"
 cp "$src"/ecb_daily.xml "$dst/"
 cp "$src"/entsoe_*.xml "$src"/synthetic_a44_*.xml "$src"/synthetic_ack_*.xml "$dst/"
 echo "Vendored $(find "$dst" -type f | wc -l) captures into $dst"
+
+# The relay's frozen day file for the SE4 capture: what the app's own day document must equal byte for byte.
+golden="$root/app/src/test/resources/relay-golden"
+rm -rf "$golden"
+mkdir -p "$golden"
+cp "$src"/../golden/v1_day_SE4.json "$golden/"

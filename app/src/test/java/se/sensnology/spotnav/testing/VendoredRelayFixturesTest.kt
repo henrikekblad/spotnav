@@ -41,6 +41,11 @@ class VendoredRelayFixturesTest {
             source!!.listFiles().orEmpty().map { it.name }.filter { copied(it) }.sorted(),
             RelayUpstream.files().map { it.name }
         )
+        val golden = File(source.parentFile, "golden/v1_day_SE4.json")
+        assertTrue(
+            "relay-golden/v1_day_SE4.json differs (run scripts/sync_relay_fixtures.sh)",
+            golden.readBytes().contentEquals(RelayUpstream.golden("v1_day_SE4.json").toByteArray())
+        )
     }
 
     /** The names scripts/sync_relay_fixtures.sh copies. */
