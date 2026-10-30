@@ -212,7 +212,6 @@ class PriceWidgetProvider : AppWidgetProvider() {
                 Log.i(TAG, "Skipping unconfigured widget=$id")
                 return
             }
-            if (batch.mode.network) AreaCatalogue.refreshIfDue(context)
             val settings = WidgetSettings.load(context, id)
             val chargerProfileId = settings.chargerProfileId
             val chargerKnown = chargerProfileId != null &&

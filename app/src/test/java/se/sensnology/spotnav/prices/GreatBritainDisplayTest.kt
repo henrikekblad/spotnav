@@ -31,7 +31,7 @@ import java.util.Locale
 class GreatBritainDisplayTest {
     @Before
     fun catalogue() {
-        PriceMarkets.replace(RelayV2Fixtures.areas(), RelayContractVersion.V2)
+        PriceMarkets.replace(RelayV2Fixtures.areas())
     }
 
     @After

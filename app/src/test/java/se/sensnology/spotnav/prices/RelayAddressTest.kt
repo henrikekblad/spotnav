@@ -20,16 +20,15 @@ class RelayAddressTest {
 
     @Test
     fun `relay addresses move onto the base, others stay`() {
-        assertEquals("$stub/v1/index.json", RelayAddress.resolve(HttpRelayTransport.INDEX_URL, stub))
-        assertEquals(HttpRelayTransport.INDEX_URL, RelayAddress.resolve(HttpRelayTransport.INDEX_URL, RelayAddress.OFFICIAL))
+        val register = se.sensnology.spotnav.push.PushRelay.REGISTER_URL
+        assertEquals(stub + register.removePrefix(RelayAddress.OFFICIAL), RelayAddress.resolve(register, stub))
+        assertEquals(register, RelayAddress.resolve(register, RelayAddress.OFFICIAL))
         assertEquals("https://example.com/x", RelayAddress.resolve("https://example.com/x", stub))
     }
 
     @Test
-    fun `every fixed relay address starts with the official base`() {
-        listOf(AreaCatalogue.AREAS_URL, AreaCatalogue.AREAS_V2_URL, HttpRelayTransport.INDEX_URL,
-            HttpRelayTransport.INDEX_V2_URL, HttpRelayTransport.dayUrl("SE4", "2026-09-20"),
-            se.sensnology.spotnav.push.PushRelay.REGISTER_URL)
+    fun `the push registration starts with the official base`() {
+        listOf(se.sensnology.spotnav.push.PushRelay.REGISTER_URL)
             .forEach { assertEquals(it, true, it.startsWith(RelayAddress.OFFICIAL + "/")) }
     }
 }

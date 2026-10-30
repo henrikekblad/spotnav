@@ -14,9 +14,10 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 /**
- * The relay's wire documents as *shapes* plus the validation each must pass before anything else in
- * the app believes it: the area list and the index (`v2/…`, or `v1/…` from a relay that predates
- * contract v2) and `v1/{area}/{YYYY}/{MM-DD}.json`, which is the same document under both.
+ * The relay's documents as *shapes* plus the validation each must pass before anything else in the app
+ * believes it: the area list (contract v2, the shape of the bundled list and of Home Assistant's
+ * `price_days` area) and the `"v":1` day document, which Home Assistant's answers and the ENTSO-E builder
+ * share. The app no longer asks the relay for either.
  */
 
 /** The parts of a bill a published price may already contain (contract v2's `included`). */
@@ -67,7 +68,7 @@ data class EntsoeRoute(
 
 internal data class RelayArea(
     val id: String,
-    /** The bidding zone's EIC; `null` for an area that has none (a Great Britain region, v2 only). */
+    /** The bidding zone's EIC; `null` for an area that has none (a Great Britain region). */
     val eic: String?,
     val countries: List<String>,
     val name: String,
@@ -80,15 +81,15 @@ internal data class RelayArea(
     val vatPercent: Double?,
     val suggestedTax: Double?,
     val suggestedGridFee: Double?,
-    /** The zone whose calendar day one day file covers; equal to [tz] unless a v2 list says otherwise. */
+    /** The zone whose calendar day one day file covers; equal to [tz] unless the list says otherwise. */
     val marketTz: String = tz,
     /** What the published price already contains; those parts are locked, never added. */
     val included: Set<IncludedPart> = emptySet(),
-    /** The v2 list's attribution; `null` from a v1 list, which states none. */
+    /** The list's attribution, or `null`. */
     val source: AreaSource? = null,
-    /** When tomorrow's prices are expected; the default from a v1 list or an area that states none. */
+    /** When tomorrow's prices are expected; the default for an area that states none. */
     val publication: AreaPublication = AreaPublication.DEFAULT,
-    /** The ENTSO-E route of the bundled list; `null` from the relay's lists, which state none. */
+    /** The ENTSO-E route of the bundled list; `null` where none is stated. */
     val entsoe: EntsoeRoute? = null
 ) {
     /** The zone, or `null` if this runtime cannot construct what the relay named. */
@@ -109,12 +110,6 @@ private sealed interface Fiscal {
     data object Absent : Fiscal
 }
 
-/** The two published contracts of the area list and the index. Day files are one document in both. */
-internal object RelayContractVersion {
-    const val V1 = 1
-    const val V2 = 2
-}
-
 /** The resolutions this client can plan with: whole minutes that divide an hour, on the quarter-hour grid. */
 internal val RELAY_RESOLUTIONS: Set<Int> = setOf(15, 30, 60)
 
@@ -124,17 +119,15 @@ internal fun isValidAreaId(id: String): Boolean =
         id.all { it in 'A'..'Z' || it in '0'..'9' || it == '-' }
 
 internal object RelayAreasParser {
-    const val SUPPORTED_VERSION = RelayContractVersion.V1
+    /** The list's contract: v2, as the relay published it and as Home Assistant bundles it. */
+    const val SUPPORTED_VERSION = 2
     const val MAX_ID_LENGTH = 32
 
-    /**
-     * Parse and validate a whole catalogue document of [version] (`/v1/areas.json` or `/v2/areas.json`):
-     * a document must say the version it was asked for.
-     */
-    fun parse(body: String, version: Int = RelayContractVersion.V1): CatalogueParse {
+    /** Parse and validate a whole area list, which must say it is contract v2. */
+    fun parse(body: String): CatalogueParse {
         val json = runCatching { JSONObject(body) }.getOrNull()
             ?: return CatalogueParse.Invalid("not a JSON object")
-        if (json.strictPositiveInt("v") != version) {
+        if (json.strictPositiveInt("v") != SUPPORTED_VERSION) {
             return CatalogueParse.Invalid("unsupported version")
         }
         val generated = json.strictText("generated")
@@ -147,22 +140,21 @@ internal object RelayAreasParser {
         val seen = HashSet<String>(array.length())
         for (index in 0 until array.length()) {
             // One bad entry is skipped, never the whole catalogue: the rest stays usable.
-            val parsed = array.optJSONObject(index)?.let { parseArea(it, version) } ?: continue
+            val parsed = array.optJSONObject(index)?.let(::parseArea) ?: continue
             if (!seen.add(parsed.id)) return CatalogueParse.Invalid("duplicate area id ${parsed.id}")
             areas.add(parsed)
         }
         if (areas.isEmpty()) return CatalogueParse.Invalid("no valid area")
-        return CatalogueParse.Ok(RelayCatalogue(version, generated, areas))
+        return CatalogueParse.Ok(RelayCatalogue(SUPPORTED_VERSION, generated, areas))
     }
 
     /** One entry, or `null` when anything required is missing, blank, the wrong shape, or unusable. */
-    internal fun parseArea(entry: JSONObject, version: Int): RelayArea? {
+    internal fun parseArea(entry: JSONObject): RelayArea? {
         val id = entry.strictText("id") ?: return null
         if (!isValidAreaId(id)) return null
-        // Required in v1; optional in v2, where a Great Britain region has none. Present means a
-        // real code, in either.
+        // Optional: a Great Britain region has none. Present means a real code.
         val eic = entry.strictText("eic")
-        if (eic == null && (version == RelayContractVersion.V1 || entry.has("eic"))) return null
+        if (eic == null && entry.has("eic")) return null
         val name = entry.strictText("name") ?: return null
         val tz = entry.strictText("tz") ?: return null
         val currency = entry.strictText("currency") ?: return null
@@ -172,22 +164,15 @@ internal object RelayAreasParser {
         // does not know would otherwise fail later, on a screen, with nothing to explain why.
         if (runCatching { ZoneId.of(tz) }.isFailure) return null
 
-        // The v2 properties. A v1 list states none of them, and its zone is both calendars.
         var marketTz = tz
-        var included = emptySet<IncludedPart>()
-        var source: AreaSource? = null
-        var publication = AreaPublication.DEFAULT
-        var entsoe: EntsoeRoute? = null
-        if (version == RelayContractVersion.V2) {
-            if (entry.has("market_tz")) {
-                marketTz = entry.strictText("market_tz") ?: return null
-                if (runCatching { ZoneId.of(marketTz) }.isFailure) return null
-            }
-            included = included(entry) ?: return null
-            source = source(entry.opt("source")) ?: return null
-            publication = publication(entry.opt("publication"))
-            entsoe = entsoeRoute(entry.optJSONObject("routes")?.opt("entsoe"))
+        if (entry.has("market_tz")) {
+            marketTz = entry.strictText("market_tz") ?: return null
+            if (runCatching { ZoneId.of(marketTz) }.isFailure) return null
         }
+        val included = included(entry) ?: return null
+        val source = source(entry.opt("source")) ?: return null
+        val publication = publication(entry.opt("publication"))
+        val entsoe = entsoeRoute(entry.optJSONObject("routes")?.opt("entsoe"))
 
         val countries = entry.optJSONArray("countries") ?: return null
         if (countries.length() == 0) return null
@@ -297,63 +282,6 @@ internal object RelayAreasParser {
         if (entry.isNull(key)) return null
         val number = (entry.opt(key) as? Number)?.toDouble() ?: return null
         return if (number.isFinite()) Fiscal.Num(number) else null
-    }
-}
-
-/** `v1/index.json` or `v2/index.json`: which immutable day documents exist, per area. */
-internal data class RelayIndex(
-    val v: Int,
-    val generated: String,
-    val areasRev: String,
-    val resDefault: Int?,
-    val daysByArea: Map<String, Set<String>>,
-    val resByArea: Map<String, Int>
-) {
-    fun lists(area: String, date: String): Boolean = daysByArea[area]?.contains(date) == true
-}
-
-internal object RelayIndexParser {
-    const val SUPPORTED_VERSION = RelayContractVersion.V1
-
-    private val DAY_PATTERN = Regex("""\d{4}-\d{2}-\d{2}""")
-
-    /** Parse an index of [version], or `null` when it is not one this client can use. */
-    fun parse(body: String, version: Int = RelayContractVersion.V1): RelayIndex? {
-        val json = runCatching { JSONObject(body) }.getOrNull() ?: return null
-        if (json.strictPositiveInt("v") != version) return null
-        val areas = json.optJSONObject("areas") ?: return null
-        val days = HashMap<String, Set<String>>()
-        val resolutions = HashMap<String, Int>()
-        for (id in areas.keys()) {
-            // An invalid area entry is skipped; the other areas keep their days.
-            if (!isValidAreaId(id)) continue
-            val entry = areas.optJSONObject(id) ?: continue
-            val array = entry.optJSONArray("days") ?: continue
-            val listed = ArrayList<String>(array.length())
-            var valid = true
-            for (index in 0 until array.length()) {
-                val day = array.opt(index) as? String
-                if (day == null || !DAY_PATTERN.matches(day)) {
-                    valid = false
-                    break
-                }
-                listed.add(day)
-            }
-            if (!valid) continue
-            // A resolution this client cannot plan with skips the area, not the index.
-            val res = entry.strictPositiveInt("res")
-            if (entry.has("res") && res !in RELAY_RESOLUTIONS) continue
-            days[id] = listed.toSet()
-            res?.let { resolutions[id] = it }
-        }
-        return RelayIndex(
-            v = version,
-            generated = json.strictText("generated").orEmpty(),
-            areasRev = json.strictText("areas_rev").orEmpty(),
-            resDefault = json.strictPositiveInt("res_default"),
-            daysByArea = days,
-            resByArea = resolutions
-        )
     }
 }
 

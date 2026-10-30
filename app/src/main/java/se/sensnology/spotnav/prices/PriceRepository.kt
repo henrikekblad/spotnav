@@ -55,13 +55,13 @@ data class PriceResult(
 )
 
 /**
- * What the relay said about one day, in three outcomes that must stay apart: a body, a genuine "the
- * index does not list this day", and a failure.
+ * What a source said about one day, in three outcomes that must stay apart: a body, a genuine "not
+ * there yet (or not worth asking now)", and a failure.
  */
 internal sealed interface FetchOutcome {
     data class Body(val points: List<PricePoint>) : FetchOutcome
 
-    /** The index does not list this area/date. No request was made. */
+    /** Not published yet, or not worth asking now; when the source's schedule said so, no request was made. */
     data object NotListed : FetchOutcome
 
     /** A timeout, a connection error, or a status that is neither. */
@@ -88,47 +88,6 @@ internal fun priceDocumentsChanged(before: PriceResult?, after: PriceResult): Bo
     return before.today != after.today || before.tomorrow != after.tomorrow
 }
 
-/** The relay's three documents, as a seam a test can replace. */
-internal interface RelayTransport {
-    fun areas(): String?
-    fun index(): String?
-    fun day(areaId: String, dateKey: String): String?
-
-    /** `/v2/areas.json`, keeping a 404 (a relay before contract v2) apart from a failure. */
-    fun areasV2(): RelayFetch = RelayFetch.NotFound
-
-    /** `/v2/index.json`, or `null`. */
-    fun indexV2(): String? = null
-
-    /** The index in the catalogue's own contract [version]. */
-    fun index(version: Int): String? = if (version == RelayContractVersion.V2) indexV2() else index()
-}
-
-/** The production transport: plain GETs, no cache-buster, no fallback host. */
-internal object HttpRelayTransport : RelayTransport {
-    const val INDEX_URL = "https://spotnav.sensnology.se/v1/index.json"
-    const val INDEX_V2_URL = "https://spotnav.sensnology.se/v2/index.json"
-    private const val BASE = "https://spotnav.sensnology.se/v1"
-
-    override fun areas(): String? = RelayHttp.get(AreaCatalogue.AREAS_URL)
-
-    override fun areasV2(): RelayFetch = RelayHttp.fetch(AreaCatalogue.AREAS_V2_URL)
-
-    override fun index(): String? = RelayHttp.get(INDEX_URL)
-
-    override fun indexV2(): String? = RelayHttp.get(INDEX_V2_URL)
-
-    override fun day(areaId: String, dateKey: String): String? = RelayHttp.get(dayUrl(areaId, dateKey))
-
-    /**
-     * `v1/{area}/{YYYY}/{MM-DD}.json` from a `YYYY-MM-DD` key, exactly the path the relay
-     * publishes (under contract v2 as under v1). The area id comes from the validated catalogue,
-     * never from anything a person typed.
-     */
-    fun dayUrl(areaId: String, dateKey: String): String =
-        "$BASE/$areaId/${dateKey.substring(0, 4)}/${dateKey.substring(5)}.json"
-}
-
 /**
  * Who one price load is for: the charger profile it belongs to (`null` for this phone's own area) and
  * the area. The profile is part of the subject because a paired charger's prices may come from another
@@ -141,13 +100,6 @@ object PriceRepository {
     /** A new preferences file, and versioned keys inside it: an old upstream body can never be parsed as a relay document. */
     internal const val CACHE_PREFS = "relay_price_cache"
     internal const val SCHEMA = "v1"
-    internal const val INDEX_KEY = "$SCHEMA:index"
-
-    /**
-     * The held v2 index, beside the v1 one: day files are one document under both contracts, so the
-     * held days (`v1:{area}:{date}`) are read as they are whichever list the app reads.
-     */
-    internal const val INDEX_V2_KEY = "$SCHEMA:index_v2"
 
     private const val MEMORY_CACHE_MS = 10 * 60 * 1000L
     private const val FORCE_REFRESH_DEDUP_MS = 30 * 1000L
@@ -169,7 +121,7 @@ object PriceRepository {
     }
 
     /**
-     * Rule: what a day's prices are, given what the relay said ([outcome]) and what we already hold
+     * Rule: what a day's prices are, given what the source said ([outcome]) and what we already hold
      * ([memory], then [disk]).
      */
     internal fun resolveDay(
@@ -190,19 +142,6 @@ object PriceRepository {
     /** A day we hold in memory, for the current result. */
     internal fun holdInMemory(points: List<PricePoint>?, fetchedAt: Long?): HeldPrices? =
         if (points.isNullOrEmpty()) null else HeldPrices(points, fetchedAt)
-
-    /** The relay path of [load], kept for the tests written against the relay's transport. */
-    internal fun load(
-        store: KeyValueStore,
-        transport: RelayTransport,
-        area: PriceMarket?,
-        today: LocalDate,
-        nowMillis: Long,
-        forceRefresh: Boolean = false,
-        log: RelayLog = RelayLog.NONE,
-        version: Int = RelayContractVersion.V1,
-        profileId: String? = null
-    ): PriceResult = load(store, RelayDaySource(store, transport, log, version), area, today, nowMillis, forceRefresh, log, profileId)
 
     /** The memory cache's key: one result per profile, area and display day. */
     private fun memoryKey(profileId: String?, areaId: String, today: LocalDate): String = "${profileId.orEmpty()}:$areaId:$today"
@@ -236,9 +175,8 @@ object PriceRepository {
             return previous
         }
 
-        // 2 is the caller's, because the settings screen refreshes the catalogue for its own
-        // reasons; 3 is the source's (the relay reads its index on the first question), and its
-        // failure is not fatal.
+        // 2 is the source's: its own schedule decides which days are worth a request, and a failure
+        // is not fatal.
         val zone = area.zoneId
         val asked = Asked(source, today, forceRefresh)
         val todayPrices = displayDay(
@@ -314,7 +252,7 @@ object PriceRepository {
 
     /**
      * One display day, end to end: the market-day files that cover it, each asked for only when the
-     * index lists it and resolved against what is held, then cut to the display day. Each piece keeps
+     * source's schedule says it is worth it and resolved against what is held, then cut to the display day. Each piece keeps
      * its own file's rate. With one calendar this is exactly one file, resolved as it always was.
      */
     private fun displayDay(
@@ -485,7 +423,7 @@ object PriceRepository {
 
     /**
      * Today and tomorrow, on the answer's own area and in its zone, cut from the answer's files exactly as
-     * held relay days are: through [RelayDayParser] and [MarketDays]. Days of an answer fetched just now are
+     * held days are: through [RelayDayParser] and [MarketDays]. Days of an answer fetched just now are
      * [PriceSource.FETCHED] ("fetched now"); a held answer's are [PriceSource.DISK] with its own stamp.
      */
     internal fun fromHomeAssistant(prices: HaPrices, nowMillis: Long): PriceResult {

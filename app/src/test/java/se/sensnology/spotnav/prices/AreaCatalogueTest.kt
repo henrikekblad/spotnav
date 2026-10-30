@@ -8,19 +8,13 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.app.RelayLog
-import se.sensnology.spotnav.testing.FakeKeyValueStore
 import se.sensnology.spotnav.testing.RelayFixtures
 import se.sensnology.spotnav.ui.settings.AreaSelectionState
 import se.sensnology.spotnav.ui.settings.SettingsAreaController
 import java.io.File
 import java.util.Locale
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 
 class AreaCatalogueTest {
-    private val store = FakeKeyValueStore()
-
     private fun areasBody(areas: List<PriceMarket>) = RelayFixtures.areasBody(areas)
 
     /** The bundled area list as the app ships it, read from the source tree. */
@@ -30,7 +24,7 @@ class AreaCatalogueTest {
         return file.readText()
     }
 
-    private fun parse(body: String, version: Int = RelayContractVersion.V1) = RelayAreasParser.parse(body, version)
+    private fun parse(body: String) = RelayAreasParser.parse(body)
 
     // what the parser accepts, and what it refuses
 
@@ -122,7 +116,7 @@ class AreaCatalogueTest {
         val good = areasBody(listOf(RelayFixtures.se4))
         for (broken in listOf(
             good.replace("\"name\":\"SE4 name\",", ""),
-            good.replace("\"eic\":\"10YTEST---------\",", ""),
+            good.replace("\"eic\":\"10YTEST---------\"", "\"eic\":\"  \""),
             good.replace("\"countries\":[\"SE\"]", "\"countries\":[]"),
             good.replace("\"countries\":[\"SE\"]", "\"countries\":[\"  \"]"),
             good.replace("\"tz\":\"Europe/Stockholm\"", "\"tz\":\"\"")
@@ -134,15 +128,17 @@ class AreaCatalogueTest {
 
     @Test
     fun aWrongVersionIsNotACatalogueAtAll() {
-        val wrong = areasBody(listOf(RelayFixtures.se4)).replace("\"v\":1", "\"v\":2")
-
-        assertTrue(parse(wrong) is CatalogueParse.Invalid)
+        val good = areasBody(listOf(RelayFixtures.se4))
+        for (wrong in listOf(good.replace("\"v\":2", "\"v\":1"), good.replace("\"v\":2", "\"v\":3"))) {
+            assertFixtureChanged(good, wrong)
+            assertTrue(parse(wrong) is CatalogueParse.Invalid)
+        }
     }
 
     @Test
     fun unknownAdditiveFieldsAreAccepted() {
         val withExtras = areasBody(listOf(RelayFixtures.se4))
-            .replace("\"v\":1", "\"v\":1,\"something_new\":{\"a\":1}")
+            .replace("\"v\":2", "\"v\":2,\"something_new\":{\"a\":1}")
             .replace("\"currency\":\"SEK\"", "\"currency\":\"SEK\",\"future_field\":[1,2]")
 
         val parsed = parse(withExtras)
@@ -151,38 +147,21 @@ class AreaCatalogueTest {
         assertEquals("SE4", (parsed as CatalogueParse.Ok).catalogue.areas.single().id)
     }
 
-    // storage, priority, and what a failure leaves behind
-
-    @Test
-    fun theBundledSnapshotIsUsedOnlyWhenNothingValidIsPersisted() {
-        val snapshot = bundledSnapshot()
-
-        // Nothing stored: the snapshot, parsed by the same parser as a fetch.
-        val fresh = AreaCatalogue.startupAreas(store, { snapshot })
-        assertEquals(54, fresh.size)
-        assertTrue(fresh.any { it.id == "NO4" && it.vatPercent == 0.0 })
-
-        // A persisted valid remote document wins over it.
-        store.putString(AreaCatalogue.KEY_LAST_GOOD, areasBody(listOf(RelayFixtures.se4)))
-        assertEquals(listOf("SE4"), AreaCatalogue.startupAreas(store, { snapshot }).map { it.id })
-
-        store.putString(AreaCatalogue.KEY_LAST_GOOD, "{\"v\":99}")
-        assertEquals(54, AreaCatalogue.startupAreas(store, { snapshot }).size)
-    }
+    // the bundled list
 
     @Test
     fun theBundledListHasFiftyFourAreasAndPortugalOnTheMadridMarketClock() {
-        val held = AreaCatalogue.startup(store, { bundledSnapshot() })
-        assertEquals(RelayContractVersion.V2, held.version)
-        assertEquals(54, held.areas.size)
-        val portugal = held.areas.single { it.id == "PT" }
+        val held = AreaCatalogue.bundledAreas(bundledSnapshot())
+        assertEquals(54, held.size)
+        assertTrue(held.any { it.id == "NO4" && it.vatPercent == 0.0 })
+        val portugal = held.single { it.id == "PT" }
         assertEquals("Europe/Lisbon", portugal.tz)
         assertEquals("Europe/Madrid", portugal.marketTz)
     }
 
     @Test
     fun everyBundledAreaButTheGreatBritainRegionsAndPvpcHasAnEntsoeRoute() {
-        val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() })
+        val areas = AreaCatalogue.bundledAreas(bundledSnapshot())
         // Great Britain (Octopus Agile) and Spain's PVPC are not on ENTSO-E: Home Assistant prices them.
         val unrouted = areas.filter { it.entsoe == null }.map { it.id }
         assertEquals(15, unrouted.size)
@@ -193,24 +172,6 @@ class AreaCatalogueTest {
             EntsoeRoute("10Y1001A1001A82H", "1", listOf("1", "2")),
             areas.single { it.id == "DE-LU" }.entsoe
         )
-    }
-
-    @Test
-    fun aHeldRelayListTakesItsRoutesFromTheBundledList() {
-        store.putString(AreaCatalogue.KEY_LAST_GOOD, areasBody(listOf(RelayFixtures.se4)))
-
-        val held = AreaCatalogue.startupAreas(store, { bundledSnapshot() }).single()
-
-        assertEquals("SE4", held.id)
-        assertEquals("10Y1001A1001A47J", held.entsoe?.eic)
-    }
-
-    @Test
-    fun aRouteIsNotBorrowedAcrossDifferentMarketCalendars() {
-        val bundled = AreaCatalogue.bundledAreas(bundledSnapshot())
-        val portugalOnItsOwnClock = RelayFixtures.area("PT", "EUR", "€", "cent", tz = "Europe/Lisbon")
-        val routed = AreaCatalogue.withRoutes(listOf(portugalOnItsOwnClock), bundled).single()
-        assertNull(routed.entsoe)
     }
 
     @Test
@@ -231,128 +192,21 @@ class AreaCatalogueTest {
     }
 
     @Test
-    fun aStoredDocumentThatNoLongerValidatesIsReportedThroughTheSink() {
-        // The startup path reaches `lastGood`, and the sink it was given has to reach too --
-        // otherwise a catalogue silently ignored by a newer build is invisible, which is the one
-        // thing a log is for here.
-        store.putString(AreaCatalogue.KEY_LAST_GOOD, "{\"v\":99}")
+    fun aMissingOrInvalidBundledListIsNoAreasAndIsReportedThroughTheSink() {
         val messages = mutableListOf<String>()
         val sink = RelayLog { level, message -> messages.add("$level $message") }
 
-        val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() }, sink)
+        assertTrue(AreaCatalogue.bundledAreas(null, sink).isEmpty())
+        assertTrue(AreaCatalogue.bundledAreas("{\"v\":99}", sink).isEmpty())
 
-        assertEquals(54, areas.size)
-        assertEquals(1, messages.size)
-        assertTrue(messages.single().contains("no longer valid"))
-    }
-
-    @Test
-    fun aRefusedRefreshLeavesTheAcceptedDocumentByteForByte() {
-        val accepted = areasBody(listOf(RelayFixtures.se4))
-        assertTrue(AreaCatalogue.adopt(store, accepted, 1L) is CatalogueRefresh.Updated)
-        assertEquals(accepted, store.rawOrNull(AreaCatalogue.KEY_LAST_GOOD))
-
-        // One malformed entry, and a body that is not JSON at all.
-        assertTrue(AreaCatalogue.adopt(store, "{\"v\":1,\"generated\":\"x\",\"areas\":[{}]}", 2L) is CatalogueRefresh.Failed)
-        assertTrue(AreaCatalogue.adopt(store, "not json", 3L) is CatalogueRefresh.Failed)
-
-        assertEquals("a refused body must not be persisted", accepted, store.rawOrNull(AreaCatalogue.KEY_LAST_GOOD))
-        assertEquals(listOf("SE4"), AreaCatalogue.lastGood(store)!!.map { it.id })
-    }
-
-    @Test
-    fun anIdenticalDocumentIsUnchanged() {
-        val body = areasBody(listOf(RelayFixtures.se4))
-        AreaCatalogue.adopt(store, body, 1L)
-
-        val result = AreaCatalogue.refresh(store, { body }, nowMillis = 10_000_000L, force = true)
-
-        assertEquals(CatalogueRefresh.Unchanged, result)
-        assertEquals(body, store.rawOrNull(AreaCatalogue.KEY_LAST_GOOD))
-    }
-
-    @Test
-    fun aFailedFetchKeepsTheAcceptedDocument() {
-        val body = areasBody(listOf(RelayFixtures.se4))
-        AreaCatalogue.adopt(store, body, 1L)
-
-        val failed = AreaCatalogue.refresh(store, { null }, nowMillis = 10_000_000L, force = true)
-
-        assertTrue(failed is CatalogueRefresh.Failed)
-        assertEquals(body, store.rawOrNull(AreaCatalogue.KEY_LAST_GOOD))
-        assertEquals(listOf("SE4"), AreaCatalogue.lastGood(store)!!.map { it.id })
-    }
-
-    @Test
-    fun nothingIsRefreshedBeforeItIsDue() {
-        val body = areasBody(listOf(RelayFixtures.se4))
-        AreaCatalogue.adopt(store, body, nowMillis = 1_000L)
-
-        assertNull(AreaCatalogue.refresh(store, { body }, nowMillis = 1_000L + 59_000L))
-        assertNotNull(AreaCatalogue.refresh(store, { body }, nowMillis = 1_000L + AreaCatalogue.FRESH_FOR_MS))
-    }
-
-    // one refresh at a time, and never a blocked local load
-
-    @Test
-    fun twoSimultaneousDueRefreshesFetchOnce() {
-        val body = areasBody(listOf(RelayFixtures.se4))
-        val fetches = AtomicInteger(0)
-        val entered = CountDownLatch(1)
-        val release = CountDownLatch(1)
-
-        // The first caller parks *inside* its fetch, so the second one meets a refresh that is
-        // genuinely in flight rather than racing a start.
-        val first = Thread {
-            AreaCatalogue.refresh(store, {
-                fetches.incrementAndGet()
-                entered.countDown()
-                release.await(5, TimeUnit.SECONDS)
-                body
-            }, nowMillis = 1_000L, force = true)
-        }
-        first.start()
-        assertTrue("the first fetch must start", entered.await(5, TimeUnit.SECONDS))
-
-        val second = AreaCatalogue.refresh(store, { fetches.incrementAndGet(); body }, 1_000L, force = true)
-        assertEquals(CatalogueRefresh.AlreadyRefreshing, second)
-
-        release.countDown()
-        first.join(5_000)
-        assertEquals("exactly one fetch for two due callers", 1, fetches.get())
-        assertEquals(listOf("SE4"), AreaCatalogue.lastGood(store)!!.map { it.id })
-    }
-
-    @Test
-    fun aLocalLoadIsNotBlockedByARefreshInFlight() {
-        val accepted = areasBody(listOf(RelayFixtures.se4))
-        AreaCatalogue.adopt(store, accepted, 1L)
-
-        val entered = CountDownLatch(1)
-        val release = CountDownLatch(1)
-        val fetchThread = Thread {
-            AreaCatalogue.refresh(store, {
-                entered.countDown()
-                release.await(5, TimeUnit.SECONDS)
-                accepted
-            }, nowMillis = 2_000L, force = true)
-        }
-        fetchThread.start()
-        assertTrue(entered.await(5, TimeUnit.SECONDS))
-
-        // The main-thread path: it takes no gate at all, so a socket eight seconds away cannot make
-        // a widget wait.
-        val loaded = AreaCatalogue.startupAreas(store, { bundledSnapshot() })
-
-        assertEquals(listOf("SE4"), loaded.map { it.id })
-        release.countDown()
-        fetchThread.join(5_000)
+        assertEquals(2, messages.size)
+        assertTrue(messages.last().contains("invalid"))
     }
 
     // selection: defaults, ordering, grouping, and a retired id
 
     private val realCatalogue: List<PriceMarket> by lazy {
-        (parse(bundledSnapshot(), RelayContractVersion.V2) as CatalogueParse.Ok).catalogue.areas.map(PriceMarket::of)
+        (parse(bundledSnapshot()) as CatalogueParse.Ok).catalogue.areas.map(PriceMarket::of)
     }
 
     @Test

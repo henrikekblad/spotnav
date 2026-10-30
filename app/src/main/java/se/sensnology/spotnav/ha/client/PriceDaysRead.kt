@@ -4,7 +4,6 @@ import org.json.JSONObject
 import se.sensnology.spotnav.prices.DayParse
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.RelayAreasParser
-import se.sensnology.spotnav.prices.RelayContractVersion
 import se.sensnology.spotnav.prices.RelayDayParser
 import java.time.LocalDate
 
@@ -50,7 +49,7 @@ internal object PriceDaysDecoder {
         if (json.opt("ok") != true) return null
         if ((json.opt("v") as? Int) != VERSION) return null
         val entry = json.optJSONObject("area") ?: return null
-        val area = RelayAreasParser.parseArea(entry, RelayContractVersion.V2)?.let(PriceMarket::of) ?: return null
+        val area = RelayAreasParser.parseArea(entry)?.let(PriceMarket::of) ?: return null
         val files = sortedMapOf<LocalDate, String>()
         json.optJSONObject("files")?.let { held ->
             for (key in held.keys()) {

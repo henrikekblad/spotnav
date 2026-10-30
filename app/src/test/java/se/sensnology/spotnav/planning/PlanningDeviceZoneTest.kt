@@ -19,7 +19,6 @@ class PlanningDeviceZoneTest {
     @Test fun everyPlanningScenarioHoldsInEveryDeviceZone() {
         val savedZone = TimeZone.getDefault()
         val savedCatalogue = PriceMarkets.all
-        val savedVersion = PriceMarkets.version
         val failures = mutableListOf<String>()
         try {
             for (catalogue in listOf(emptyList(), listOf(RelayFixtures.se4))) {
@@ -40,7 +39,7 @@ class PlanningDeviceZoneTest {
             }
         } finally {
             TimeZone.setDefault(savedZone)
-            PriceMarkets.replace(savedCatalogue, savedVersion)
+            PriceMarkets.replace(savedCatalogue)
         }
         if (failures.isNotEmpty()) fail(failures.joinToString("\n"))
     }

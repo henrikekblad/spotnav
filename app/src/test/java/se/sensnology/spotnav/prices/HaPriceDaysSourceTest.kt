@@ -183,7 +183,7 @@ class HaPriceDaysSourceTest {
 
     @Test fun aRegionOnlyHomeAssistantPricesStaysKnownByItsAnswer() {
         val bundled = BundledAreas.all.filterNot { it.id == "GB-C" }
-        PriceMarkets.replace(bundled, RelayContractVersion.V2)
+        PriceMarkets.replace(bundled)
         try {
             assertNull(PriceMarkets.find("GB-C"))
             val now = Instant.parse("2026-10-04T12:00:00Z").toEpochMilli()

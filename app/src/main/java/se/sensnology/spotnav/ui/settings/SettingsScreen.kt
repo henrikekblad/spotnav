@@ -48,7 +48,6 @@ import se.sensnology.spotnav.ha.settings.SettingsSave
 import se.sensnology.spotnav.ha.settings.SettingsEditSend
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
-import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.PriceMarkets
@@ -357,17 +356,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 }
             )
             loadPaired()
-        }
-        // Revalidate the catalogue off the main thread, as the rest of this screen's work is.
-        ioExecutor.execute {
-            val result = AreaCatalogue.refreshIfDue(applicationContext)
-            if (result is CatalogueRefresh.Updated) {
-                runOnUiThread {
-                    if (isDestroyed || settingsGeneration != viewGeneration) return@runOnUiThread
-                    localPrice?.show()
-                    pairedPrice?.show(confirmedRecord, priceControlsEnabled(true, settingsAuthority.authority))
-                }
-            }
         }
 
 

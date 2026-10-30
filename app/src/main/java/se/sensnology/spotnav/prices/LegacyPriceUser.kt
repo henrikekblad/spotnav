@@ -25,7 +25,7 @@ internal object LegacyPriceUser {
     fun ensure(flags: KeyValueStore, priceCache: KeyValueStore, catalogue: KeyValueStore, nowMillis: Long): Boolean {
         flags.getString(KEY_LEGACY)?.let { return it.toBoolean() }
         val legacy = priceCache.keys().any { RELAY_DAY.matches(it) } ||
-            catalogue.getString(AreaCatalogue.KEY_REFRESHED_AT) != null
+            catalogue.getString(RelayLeftovers.KEY_REFRESHED_AT) != null
         flags.putString(KEY_LEGACY, legacy.toString())
         flags.putString(KEY_MIGRATED_AT, nowMillis.toString())
         return legacy

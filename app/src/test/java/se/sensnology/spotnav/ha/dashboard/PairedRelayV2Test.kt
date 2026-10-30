@@ -27,7 +27,6 @@ import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.IncludedPart
 import se.sensnology.spotnav.prices.PriceMarkets
-import se.sensnology.spotnav.prices.RelayContractVersion
 import se.sensnology.spotnav.testing.HaFixtures
 import se.sensnology.spotnav.testing.RelayV2Fixtures
 import java.time.OffsetDateTime
@@ -42,7 +41,7 @@ class PairedRelayV2Test {
 
     @Before
     fun catalogue() {
-        PriceMarkets.replace(RelayV2Fixtures.areas(), RelayContractVersion.V2)
+        PriceMarkets.replace(RelayV2Fixtures.areas())
     }
 
     @After
