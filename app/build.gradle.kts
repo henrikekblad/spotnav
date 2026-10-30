@@ -74,6 +74,8 @@ android {
         versionName = appVersionName
         buildConfigField("String", "STORE", "\"$store\"")
         buildConfigField("boolean", "PUSH_AVAILABLE", push.toString())
+        // A plain android.app.Instrumentation of the app's own: no AndroidX test library (see DeviceChecks).
+        testInstrumentationRunner = "se.sensnology.spotnav.DeviceChecks"
     }
 
     sourceSets {
@@ -82,7 +84,16 @@ android {
             res.srcDir("src/$store/res")
             java.srcDir(if (push) "src/push/java" else "src/nopush/java")
         }
-        getByName("test") { java.srcDir("src/$store/test/java") }
+        getByName("test") {
+            java.srcDir("src/$store/test/java")
+            java.srcDir("src/sharedTest/java")
+        }
+        // The emulator checks (DeviceChecks, run with `am instrument`, no test library): the parity lines
+        // shared with the unit tests, and the captures they read.
+        getByName("androidTest") {
+            java.srcDir("src/sharedTest/java")
+            assets.srcDir("src/test/resources")
+        }
     }
 
     if (hasReleaseSigning) {
