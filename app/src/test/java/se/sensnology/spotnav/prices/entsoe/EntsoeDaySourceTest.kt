@@ -144,7 +144,7 @@ class EntsoeDaySourceTest {
 
         val first = load()
         assertEquals(96, first.today.size)
-        assertEquals(PriceSource.RELAY, first.todaySource)
+        assertEquals(PriceSource.FETCHED, first.todaySource)
         assertTrue(first.tomorrow.isEmpty())
         assertEquals("no request for tomorrow before its publication", listOf("entsoe:20260920"), upstream.asked)
 

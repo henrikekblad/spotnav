@@ -63,7 +63,7 @@ class DaySourceTest {
 
         assertEquals(96, result.today.size)
         assertEquals(96, result.tomorrow.size)
-        assertEquals(PriceSource.RELAY, result.todaySource)
+        assertEquals(PriceSource.FETCHED, result.todaySource)
         assertEquals(todayBody, store.rawOrNull("v1:SE4:$todayKey"))
         assertEquals("1000000", store.rawOrNull("v1:SE4:$todayKey:at"))
     }

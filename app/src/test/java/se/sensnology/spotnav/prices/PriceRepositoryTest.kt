@@ -69,7 +69,7 @@ class PriceRepositoryTest {
 
         assertEquals(listOf(todayUrl, tomorrowUrl), transport.dayRequests.sorted())
         assertEquals(96, result.tomorrow.size)
-        assertEquals(PriceSource.RELAY, result.tomorrowSource)
+        assertEquals(PriceSource.FETCHED, result.tomorrowSource)
     }
 
     @Test
@@ -129,7 +129,7 @@ class PriceRepositoryTest {
         val result = load(RelayFixtures.se4, dead, nowMillis = 1_000_000L + 60_000L, force = true)
 
         assertEquals(96, result.today.size)
-        assertTrue("held prices must not be presented as freshly fetched", result.todaySource != PriceSource.RELAY)
+        assertTrue("held prices must not be presented as freshly fetched", result.todaySource != PriceSource.FETCHED)
         // The URLs it asked for may have been tried; what matters is what it kept.
         assertTrue(result.todayFetchedAt != null)
     }

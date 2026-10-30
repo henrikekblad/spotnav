@@ -32,8 +32,11 @@ import java.util.concurrent.ConcurrentHashMap
  */
 data class PricePoint(val start: OffsetDateTime, val pricePerKwh: Double, val minutes: Int = 15)
 
-/** Where one day's prices came from, so held data is never presented as though it had just arrived. */
-enum class PriceSource { RELAY, MEMORY, DISK, NONE }
+/**
+ * Where one day's prices came from, so held data is never presented as though it had just arrived:
+ * [FETCHED] from the subject's source just now (ENTSO-E, or Home Assistant), else held in memory or on disk.
+ */
+enum class PriceSource { FETCHED, MEMORY, DISK, NONE }
 
 data class PriceResult(
     val today: List<PricePoint>,
@@ -46,7 +49,7 @@ data class PriceResult(
     val fetchedAt: Long,
     val todaySource: PriceSource = PriceSource.NONE,
     val tomorrowSource: PriceSource = PriceSource.NONE,
-    /** When the relay was last actually reached for this day, if that is known. */
+    /** When the source was last actually reached for this day, if that is known. */
     val todayFetchedAt: Long? = null,
     val tomorrowFetchedAt: Long? = null
 )
@@ -175,7 +178,7 @@ object PriceRepository {
         disk: HeldPrices?,
         nowMillis: Long
     ): DayPrices {
-        if (outcome is FetchOutcome.Body) return DayPrices(outcome.points, PriceSource.RELAY, nowMillis)
+        if (outcome is FetchOutcome.Body) return DayPrices(outcome.points, PriceSource.FETCHED, nowMillis)
         val held = memory ?: disk ?: return DayPrices(emptyList(), PriceSource.NONE, null)
         return DayPrices(
             points = held.points,
@@ -483,7 +486,7 @@ object PriceRepository {
     /**
      * Today and tomorrow, on the answer's own area and in its zone, cut from the answer's files exactly as
      * held relay days are: through [RelayDayParser] and [MarketDays]. Days of an answer fetched just now are
-     * [PriceSource.RELAY] ("fetched now"); a held answer's are [PriceSource.DISK] with its own stamp.
+     * [PriceSource.FETCHED] ("fetched now"); a held answer's are [PriceSource.DISK] with its own stamp.
      */
     internal fun fromHomeAssistant(prices: HaPrices, nowMillis: Long): PriceResult {
         val area = prices.read.area
@@ -497,8 +500,8 @@ object PriceRepository {
         val held = daysHeldIn(files, area, today, nowMillis)
         if (!prices.fresh) return held
         return held.copy(
-            todaySource = if (held.today.isEmpty()) PriceSource.NONE else PriceSource.RELAY,
-            tomorrowSource = if (held.tomorrow.isEmpty()) PriceSource.NONE else PriceSource.RELAY
+            todaySource = if (held.today.isEmpty()) PriceSource.NONE else PriceSource.FETCHED,
+            tomorrowSource = if (held.tomorrow.isEmpty()) PriceSource.NONE else PriceSource.FETCHED
         )
     }
 
@@ -611,7 +614,6 @@ object PriceRepository {
         }
         val source = when (chosen) {
             ChosenSource.Entsoe -> entsoeSource(context)
-            ChosenSource.Relay -> RelayDaySource(store, HttpRelayTransport, AndroidRelayLog, PriceMarkets.version)
             is ChosenSource.HomeAssistant, is ChosenSource.None -> {
                 AndroidRelayLog.log(LogLevel.INFO, "No price source for ${subject.areaId}: $chosen; held days only")
                 HeldOnlySource
@@ -625,12 +627,11 @@ object PriceRepository {
 
     /**
      * The source that prices [subject] now (design section 1). A paired charger is its Home Assistant's
-     * when its last dashboard says it answers `price_days`, and has no source otherwise (never the relay);
-     * a standalone phone uses its own ENTSO-E key, else the relay while this install is a legacy relay
-     * user, else nothing. The screens say what is missing through [missing].
+     * when its last dashboard says it answers `price_days`, and has no source otherwise; a standalone phone
+     * uses its own ENTSO-E key, else nothing. Never the relay. The screens say what is missing through
+     * [missing].
      */
     internal fun choose(context: Context, subject: PriceSubject, market: PriceMarket?): ChosenSource {
-        val legacy = LegacyPriceUser.ensure(context)
         val profile = subject.profileId?.let { ChargerProfileStore.forContext(context).getProfile(it) }
         // A profile stored before the app read this capability: the widget's last dashboard may already say.
         val canPriceDays = profile?.let {
@@ -641,8 +642,7 @@ object PriceRepository {
             profileConfigured = profile != null,
             haCanPriceDays = canPriceDays,
             key = EntsoeKeyStore.forContext(context).state(),
-            area = market,
-            legacyRelayAllowed = legacy
+            area = market
         )
     }
 

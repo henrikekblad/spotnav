@@ -27,7 +27,6 @@ internal enum class MissingSource {
 internal sealed interface ChosenSource {
     data class HomeAssistant(val profileId: String) : ChosenSource
     data object Entsoe : ChosenSource
-    data object Relay : ChosenSource
     data class None(val reason: MissingSource) : ChosenSource
 }
 
@@ -38,11 +37,11 @@ internal sealed interface ChosenSource {
  *    it answers `price_days`; an older Home Assistant gets nothing (it is updated, the relay is never
  *    asked for a paired charger), and so does one whose dashboard has not been read yet;
  * 2. else an area with an ENTSO-E route and a key that is held and not rejected uses ENTSO-E;
- * 3. else the relay, while that is allowed;
- * 4. else nothing, with the reason the UI shows.
+ * 3. else nothing, with the reason the UI shows.
  *
- * A paired charger never falls back to ENTSO-E or the relay: two sources for one charger would show two
- * rates and two truths about "now". [legacyRelayAllowed] is a standalone phone's alone.
+ * The relay is no source: SpotNav's server no longer passes prices on, so a phone that used to get them
+ * from it gets them like everyone else (the owner's hard cut, no grace period). A paired charger never falls
+ * back to ENTSO-E: two sources for one charger would show two rates and two truths about "now".
  */
 internal object PriceSourceChoice {
     fun choose(
@@ -50,8 +49,7 @@ internal object PriceSourceChoice {
         profileConfigured: Boolean,
         haCanPriceDays: Boolean?,
         key: KeyState,
-        area: PriceMarket?,
-        legacyRelayAllowed: Boolean
+        area: PriceMarket?
     ): ChosenSource {
         val profileId = subject.profileId
         if (profileId != null && profileConfigured) {
@@ -64,7 +62,6 @@ internal object PriceSourceChoice {
         val routed = area?.entsoe != null
         val usableKey = key == KeyState.OK || key == KeyState.UNCHECKED
         if (routed && usableKey) return ChosenSource.Entsoe
-        if (legacyRelayAllowed) return ChosenSource.Relay
         return ChosenSource.None(
             when {
                 !routed -> MissingSource.NO_ROUTE
