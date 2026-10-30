@@ -62,15 +62,16 @@ internal class WebhookHttpStatusException(
  * `balancing_paused`, the status line while load balancing holds the plan's charge back, and `car_ended_waiting`, the
  * status line while the plan waits for the car's level after the car ended its charge, and `wake_for_reading`, a
  * vehicle row's choice to wake the car for a reading, and `solar_one_phase`, the status line of a solar charge the sun
- * switched to one phase, `price_source`, the dashboard's block naming the electricity price the charger uses, and
- * `phase_switching`, the dashboard's block for phase switching for solar. Every request the app sends names them.
+ * switched to one phase, `price_source`, the dashboard's block naming the electricity price the charger uses,
+ * `phase_switching`, the dashboard's block for phase switching for solar, and `price_provider`, the prices block's
+ * `provider` (where the area's prices come from, and Home Assistant's notice when it has no source of its own). Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
         "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
-        "phase_switching"
+        "phase_switching", "price_provider"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
