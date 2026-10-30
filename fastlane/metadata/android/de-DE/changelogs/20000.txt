@@ -1,0 +1,4 @@
+- Mit Home Assistant gekoppelt: Die Preise kommen jetzt aus deinem Home Assistant, Einstellungen → Strompreis zeigt die Quelle
+- Ohne Home Assistant: Die Preise kommen direkt von ENTSO-E mit deinem eigenen kostenlosen Schlüssel – die App zeigt, wie du ihn bekommst
+- Der SpotNav-Server liefert keine Strompreise mehr
+- Gekoppelt ist SpotNav für Home Assistant 2.0 nötig

@@ -1,0 +1,4 @@
+- Paired with Home Assistant: prices now come from your Home Assistant, and Settings → Electricity price shows from where
+- Without Home Assistant: prices come straight from ENTSO-E with your own free key – the app shows how to get one
+- The SpotNav server no longer delivers electricity prices
+- Needs SpotNav for Home Assistant 2.0 when paired

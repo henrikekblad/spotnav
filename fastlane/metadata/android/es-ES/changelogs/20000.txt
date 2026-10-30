@@ -1,0 +1,4 @@
+- Vinculada a Home Assistant: los precios llegan ahora de tu Home Assistant, y Ajustes → Precio de la electricidad muestra de dónde
+- Sin Home Assistant: los precios llegan directamente de ENTSO-E con tu propia clave gratuita; la app explica cómo conseguirla
+- El servidor de SpotNav ya no entrega precios de la electricidad
+- Vinculada, necesita SpotNav para Home Assistant 2.0

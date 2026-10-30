@@ -1,0 +1,4 @@
+- Parret med Home Assistant: priserne kommer nu fra din Home Assistant, og Indstillinger → Elpris viser hvorfra
+- Uden Home Assistant: priserne hentes direkte fra ENTSO-E med din egen gratis nøgle – appen viser, hvordan du får den
+- SpotNav-serveren leverer ikke længere elpriser
+- Kræver SpotNav til Home Assistant 2.0, når appen er parret

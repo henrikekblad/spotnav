@@ -1,0 +1,4 @@
+- Associée à Home Assistant : les prix viennent désormais de votre Home Assistant, et Paramètres → Prix de l'électricité indique la source
+- Sans Home Assistant : les prix viennent directement d'ENTSO-E avec votre propre clé gratuite ; l'app explique comment l'obtenir
+- Le serveur SpotNav ne fournit plus de prix de l'électricité
+- Associée, elle nécessite SpotNav pour Home Assistant 2.0

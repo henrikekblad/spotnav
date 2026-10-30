@@ -1,0 +1,4 @@
+- Gekoppeld aan Home Assistant: de prijzen komen nu uit je Home Assistant, en Instellingen → Stroomprijs toont de bron
+- Zonder Home Assistant: de prijzen komen rechtstreeks van ENTSO-E met je eigen gratis sleutel – de app laat zien hoe je die krijgt
+- De SpotNav-server levert geen stroomprijzen meer
+- Gekoppeld is SpotNav voor Home Assistant 2.0 nodig

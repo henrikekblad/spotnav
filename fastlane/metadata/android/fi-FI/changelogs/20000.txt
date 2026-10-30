@@ -1,0 +1,4 @@
+- Home Assistantiin yhdistettynä: hinnat tulevat nyt omasta Home Assistantistasi, ja Asetukset → Sähkön hinta kertoo mistä
+- Ilman Home Assistantia: hinnat haetaan suoraan ENTSO-E:stä omalla maksuttomalla avaimellasi – sovellus neuvoo, miten sen saa
+- SpotNav-palvelin ei enää toimita sähkön hintoja
+- Yhdistettynä vaatii SpotNav for Home Assistant 2.0:n
