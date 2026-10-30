@@ -16,12 +16,13 @@ class PriceDaysReadTest {
 
     private fun read(name: String): PriceDaysRead = checkNotNull(PriceDaysDecoder.decode(body(name))) { "$name decodes" }
 
-    @Test fun theRelaysSwedishDaysAreReadWithTheirRate() {
-        val read = read("price_days_relay_se4")
+    @Test fun heldSwedishDaysAreReadWithTheirRate() {
+        val read = read("price_days_held_se4")
         assertEquals("SE4", read.area.id)
         assertEquals("SEK", read.area.currency)
         assertEquals("Europe/Stockholm", read.area.marketTz)
-        assertEquals("relay", read.providerKey)
+        // Days held from before 2.0, with no source for the area now: no provider key.
+        assertNull(read.providerKey)
         assertEquals(listOf(LocalDate.parse("2026-09-22"), LocalDate.parse("2026-09-23")), read.files.keys.toList())
     }
 
@@ -37,7 +38,7 @@ class PriceDaysReadTest {
     }
 
     @Test fun aGreatBritainRegionWithoutAnEicIsReadWithItsIncludedParts() {
-        val read = read("price_days_relay_gb")
+        val read = read("price_days_held_gb")
         assertEquals("GB-C", read.area.id)
         assertEquals("GBP", read.area.currency)
         assertEquals("Europe/Paris", read.area.marketTz)
