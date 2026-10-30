@@ -49,7 +49,7 @@ internal class AreaPickerState(
      */
     private val notSetLabel: String? = null
 ) {
-    private var areas: List<PriceMarket> = areas
+    private val areas: List<PriceMarket> = areas
     private var installedRows: List<AreaPickerRow> = emptyList()
     private var installedIndex: Int = -1
 
@@ -83,19 +83,6 @@ internal class AreaPickerState(
             replaceAdapter = false,
             userPicked = true
         )
-    }
-
-    /**
-     * A refreshed catalogue. The identity stays; its state is recomputed, so a selection the relay
-     * has retired becomes [AreaSelectionState.Missing] -- of *its own* id, never of the saved one.
-     */
-    fun onCatalogueRefreshed(areas: List<PriceMarket>): AreaPickerView {
-        this.areas = areas
-        val built = build(selectedId)
-        val replace = built.rows != installedRows || built.index != installedIndex
-        installedRows = built.rows
-        installedIndex = built.index
-        return view(built, replaceAdapter = replace, userPicked = false)
     }
 
     private fun view(built: Built, replaceAdapter: Boolean, userPicked: Boolean) = AreaPickerView(

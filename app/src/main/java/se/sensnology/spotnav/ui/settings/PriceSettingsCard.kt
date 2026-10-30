@@ -283,13 +283,7 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
                 taxValue.error = if (FigureField.TAX in invalid) message else null
                 transferValue.error = if (FigureField.GRID_FEE in invalid) message else null
             },
-            state = { picker.state },
-            applyCatalogue = { areas ->
-                // Only the picker and the labels that depend on the selected area are touched.
-                val refreshed = picker.onCatalogueRefreshed(areas)
-                if (refreshed.replaceAdapter) replaceChoices(refreshed)
-                updateMarketText(applySuggestions = false)
-            }
+            state = { picker.state }
         )
     }
 
@@ -401,7 +395,5 @@ internal class PriceSettings(
     /** Put the existing "not a number" error under the named fields, and take it off the others. */
     val showInvalid: (Set<FigureField>) -> Unit,
     /** What the picker represents. */
-    val state: () -> AreaSelectionState,
-    /** Apply a refreshed catalogue to the picker and its labels only. */
-    val applyCatalogue: (List<PriceMarket>) -> Unit
+    val state: () -> AreaSelectionState
 )
