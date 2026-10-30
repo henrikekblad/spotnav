@@ -13,8 +13,14 @@ internal enum class MissingSource {
     /** Standalone, and the area has no ENTSO-E route (or is not in the list). */
     NO_ROUTE,
 
-    /** Paired with a Home Assistant that cannot answer `price_days` yet, and the relay is not allowed. */
-    HA_TOO_OLD
+    /** Paired with a Home Assistant that cannot answer `price_days`: updating SpotNav there fixes it. */
+    HA_TOO_OLD,
+
+    /** Paired, and no dashboard has said yet whether Home Assistant answers `price_days`: nothing to act on. */
+    HA_NOT_READ;
+
+    /** Whether this is a paired charger's: its prices are Home Assistant's alone, held or asked for. */
+    val paired: Boolean get() = this == HA_TOO_OLD || this == HA_NOT_READ
 }
 
 /** The one source a subject's day files come from. There is no fallback between sources per attempt. */
@@ -29,13 +35,14 @@ internal sealed interface ChosenSource {
  * Which source prices a subject, as one pure rule (design section 1):
  *
  * 1. a subject that names a configured charger profile is Home Assistant's, when its last dashboard says
- *    it answers `price_days`; an older Home Assistant gets the relay while that is allowed, else nothing;
+ *    it answers `price_days`; an older Home Assistant gets nothing (it is updated, the relay is never
+ *    asked for a paired charger), and so does one whose dashboard has not been read yet;
  * 2. else an area with an ENTSO-E route and a key that is held and not rejected uses ENTSO-E;
  * 3. else the relay, while that is allowed;
  * 4. else nothing, with the reason the UI shows.
  *
- * A paired charger never falls back to ENTSO-E: two sources for one charger would show two rates and two
- * truths about "now".
+ * A paired charger never falls back to ENTSO-E or the relay: two sources for one charger would show two
+ * rates and two truths about "now". [legacyRelayAllowed] is a standalone phone's alone.
  */
 internal object PriceSourceChoice {
     fun choose(
@@ -48,10 +55,10 @@ internal object PriceSourceChoice {
     ): ChosenSource {
         val profileId = subject.profileId
         if (profileId != null && profileConfigured) {
-            return when {
-                haCanPriceDays == true -> ChosenSource.HomeAssistant(profileId)
-                legacyRelayAllowed -> ChosenSource.Relay
-                else -> ChosenSource.None(MissingSource.HA_TOO_OLD)
+            return when (haCanPriceDays) {
+                true -> ChosenSource.HomeAssistant(profileId)
+                false -> ChosenSource.None(MissingSource.HA_TOO_OLD)
+                null -> ChosenSource.None(MissingSource.HA_NOT_READ)
             }
         }
         val routed = area?.entsoe != null

@@ -7,6 +7,10 @@ import se.sensnology.spotnav.app.LogLevel
 import se.sensnology.spotnav.app.RelayLog
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
 import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.chargers.toHomeAssistantSettings
+import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.client.PriceDaysAnswer
+import se.sensnology.spotnav.widget.WidgetDashboardStore
 import se.sensnology.spotnav.prices.entsoe.EntsoeClient
 import se.sensnology.spotnav.prices.entsoe.EntsoeKey
 import se.sensnology.spotnav.prices.entsoe.EntsoeDaySource
@@ -275,6 +279,11 @@ object PriceRepository {
     ): PriceResult {
         if (area == null) return emptyResult(nowMillis)
         cache[memoryKey(profileId, area.id, today)]?.let { return it }
+        return daysHeldIn(store, area, today, nowMillis)
+    }
+
+    /** The display days [store] holds for [area], composed from its market-day files; no memory, no request. */
+    private fun daysHeldIn(store: KeyValueStore, area: PriceMarket, today: LocalDate, nowMillis: Long): PriceResult {
         val zone = area.zoneId
         val todayDay = heldDisplayDay(store, area, today, zone, requirePrincipal = false)
         val tomorrowDay = heldDisplayDay(store, area, today.plusDays(1), zone, requirePrincipal = true)
@@ -421,6 +430,97 @@ object PriceRepository {
         }
     }
 
+    // Home Assistant's prices (paired chargers)
+
+    /**
+     * A paired charger's prices from its Home Assistant (design 2.3): the memory result while it is fresh,
+     * else one `price_days` request when [ask] (else none), else the answer held from before. The display
+     * days are cut from the answer's files on the **answer's** area -- its market calendar is Home
+     * Assistant's provider's, not the list's -- and the result is kept in memory under [subject].
+     */
+    internal fun loadFromHomeAssistant(
+        source: HaPriceDaysSource,
+        subject: PriceSubject,
+        subjectToday: LocalDate,
+        nowMillis: Long,
+        ask: Boolean,
+        forceRefresh: Boolean = false,
+        log: RelayLog = RelayLog.NONE
+    ): PriceResult {
+        val memoryKey = memoryKey(subject.profileId, subject.areaId, subjectToday)
+        val previous = cache[memoryKey]
+        val age = previous?.let { nowMillis - it.fetchedAt } ?: Long.MAX_VALUE
+        if (previous != null &&
+            ((!forceRefresh && age < MEMORY_CACHE_MS) || (forceRefresh && age < FORCE_REFRESH_DEDUP_MS))
+        ) {
+            log.log(LogLevel.INFO, "Memory cache hit ${subject.areaId} today=$subjectToday (Home Assistant)")
+            return previous
+        }
+        val prices = if (ask) source.load(nowMillis) else source.held()
+        // The answer's area stays known for an id the list lacks (a region only Home Assistant prices).
+        prices?.let { PriceMarkets.learn(it.read.area) }
+        val result = prices?.let { fromHomeAssistant(it, nowMillis) }
+        if (result == null || (result.today.isEmpty() && result.tomorrow.isEmpty())) {
+            log.log(LogLevel.WARN, "No prices from Home Assistant for ${subject.areaId} today=$subjectToday")
+            return previous ?: emptyResult(nowMillis)
+        }
+        if (prices.read.area.id != subject.areaId) {
+            log.log(LogLevel.INFO, "Home Assistant prices ${prices.read.area.id} for a charger set to ${subject.areaId}")
+        }
+        // Only an answer just fetched is kept in memory: a held one must not stand in for a request for ten minutes.
+        if (prices.fresh) cache[memoryKey] = result
+        return result
+    }
+
+    /** What a paired charger's Home Assistant answer holds for it, with nothing asked; memory first. */
+    internal fun heldFromHomeAssistant(source: HaPriceDaysSource, subject: PriceSubject, subjectToday: LocalDate, nowMillis: Long): PriceResult {
+        cache[memoryKey(subject.profileId, subject.areaId, subjectToday)]?.let { return it }
+        val prices = source.held() ?: return emptyResult(nowMillis)
+        PriceMarkets.learn(prices.read.area)
+        return fromHomeAssistant(prices, nowMillis)
+    }
+
+    /**
+     * Today and tomorrow, on the answer's own area and in its zone, cut from the answer's files exactly as
+     * held relay days are: through [RelayDayParser] and [MarketDays]. Days of an answer fetched just now are
+     * [PriceSource.RELAY] ("fetched now"); a held answer's are [PriceSource.DISK] with its own stamp.
+     */
+    internal fun fromHomeAssistant(prices: HaPrices, nowMillis: Long): PriceResult {
+        val area = prices.read.area
+        val today = Instant.ofEpochMilli(nowMillis).atZone(area.zoneId).toLocalDate()
+        val files = AnswerFiles()
+        for ((date, text) in prices.read.files) {
+            val key = dayKey(area.id, date.toString())
+            files.putString(key, text)
+            prices.fetchedAt?.let { files.putString("$key:at", it.toString()) }
+        }
+        val held = daysHeldIn(files, area, today, nowMillis)
+        if (!prices.fresh) return held
+        return held.copy(
+            todaySource = if (held.today.isEmpty()) PriceSource.NONE else PriceSource.RELAY,
+            tomorrowSource = if (held.tomorrow.isEmpty()) PriceSource.NONE else PriceSource.RELAY
+        )
+    }
+
+    /** One answer's files, keyed as the day cache keys them, for the composition that reads that cache. */
+    private class AnswerFiles : KeyValueStore {
+        private val values = HashMap<String, String>()
+        override fun getString(key: String): String? = values[key]
+        override fun putString(key: String, value: String) {
+            values[key] = value
+        }
+        override fun remove(key: String) {
+            values.remove(key)
+        }
+    }
+
+    /** Whether tomorrow's main file is in a paired charger's held answer, on that answer's calendar. */
+    internal fun holdsTomorrow(prices: HaPrices, nowMillis: Long): Boolean {
+        val area = prices.read.area
+        val today = Instant.ofEpochMilli(nowMillis).atZone(area.zoneId).toLocalDate()
+        return MarketDays.principal(today.plusDays(1), area.tz, area.marketTz) in prices.read.files
+    }
+
     // The on-disk day cache
 
     /** `v1:{area}:{date}`, inside a preferences file of its own. */
@@ -499,10 +599,19 @@ object PriceRepository {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
         val market = PriceMarkets.find(subject.areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
-        val source = when (val chosen = choose(context, subject, market)) {
+        val chosen = choose(context, subject, market)
+        // A paired charger's prices are its Home Assistant's: asked for when it answers `price_days`, else
+        // only what it answered before. Never the relay, never ENTSO-E, never the standalone day cache.
+        homeAssistantProfile(subject, chosen)?.let { profileId ->
+            AndroidRelayLog.log(LogLevel.INFO, "Prices for ${subject.areaId} from Home Assistant: $chosen")
+            return loadFromHomeAssistant(
+                haSource(context, profileId), subject, LocalDate.now(zone), System.currentTimeMillis(),
+                ask = chosen is ChosenSource.HomeAssistant, forceRefresh = forceRefresh, log = AndroidRelayLog
+            )
+        }
+        val source = when (chosen) {
             ChosenSource.Entsoe -> entsoeSource(context)
             ChosenSource.Relay -> RelayDaySource(store, HttpRelayTransport, AndroidRelayLog, PriceMarkets.version)
-            // Home Assistant's own source arrives with step A10; until then nothing asks for it.
             is ChosenSource.HomeAssistant, is ChosenSource.None -> {
                 AndroidRelayLog.log(LogLevel.INFO, "No price source for ${subject.areaId}: $chosen; held days only")
                 HeldOnlySource
@@ -515,23 +624,50 @@ object PriceRepository {
     }
 
     /**
-     * The source that prices [subject] now (design section 1). Until Home Assistant answers `price_days`
-     * (step A10) a paired phone keeps the relay, as it does today (design 6.1); a standalone phone uses
-     * its own ENTSO-E key, else the relay while this install is a legacy relay user, else nothing.
-     * The screens say what is missing through [missing].
+     * The source that prices [subject] now (design section 1). A paired charger is its Home Assistant's
+     * when its last dashboard says it answers `price_days`, and has no source otherwise (never the relay);
+     * a standalone phone uses its own ENTSO-E key, else the relay while this install is a legacy relay
+     * user, else nothing. The screens say what is missing through [missing].
      */
     internal fun choose(context: Context, subject: PriceSubject, market: PriceMarket?): ChosenSource {
         val legacy = LegacyPriceUser.ensure(context)
-        val paired = subject.profileId?.let { ChargerProfileStore.forContext(context).getProfile(it) } != null
+        val profile = subject.profileId?.let { ChargerProfileStore.forContext(context).getProfile(it) }
+        // A profile stored before the app read this capability: the widget's last dashboard may already say.
+        val canPriceDays = profile?.let {
+            it.priceDays ?: WidgetDashboardStore.forContext(context).dashboardFor(it.localId)?.dashboard?.capabilities?.priceDays
+        }
         return PriceSourceChoice.choose(
             subject = subject,
-            profileConfigured = paired,
-            haCanPriceDays = null,
+            profileConfigured = profile != null,
+            haCanPriceDays = canPriceDays,
             key = EntsoeKeyStore.forContext(context).state(),
             area = market,
-            legacyRelayAllowed = legacy || paired
+            legacyRelayAllowed = legacy
         )
     }
+
+    /** The profile whose Home Assistant alone prices [subject] under [chosen], or `null` for a standalone subject. */
+    private fun homeAssistantProfile(subject: PriceSubject, chosen: ChosenSource): String? = when (chosen) {
+        is ChosenSource.HomeAssistant -> chosen.profileId
+        is ChosenSource.None -> subject.profileId?.takeIf { chosen.reason.paired }
+        else -> null
+    }
+
+    private fun haSource(context: Context, profileId: String): HaPriceDaysSource {
+        val profiles = ChargerProfileStore.forContext(context)
+        return HaPriceDaysSource(
+            store = HaPriceDaysStore.forContext(context),
+            profileId = profileId,
+            fetch = {
+                val profile = profiles.getProfile(profileId)
+                // A charger waiting to be paired again is left to the dashboard's slow check: its prices are the held ones.
+                if (profile == null || !profile.configured || profile.needsPairing) PriceDaysAnswer.Failed
+                else HomeAssistantClient.priceDays(profile.toHomeAssistantSettings())
+            },
+            log = AndroidRelayLog
+        )
+    }
+
 
     /**
      * Why no source can price [subject] now, or `null` when one can: what the screens and the widget say
@@ -592,14 +728,40 @@ object PriceRepository {
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
         val market = PriceMarkets.find(subject.areaId)
         val zone = market?.zoneId ?: ZoneId.systemDefault()
+        pairedProfile(context, subject)?.let { profileId ->
+            return heldFromHomeAssistant(haSource(context, profileId), subject, LocalDate.now(zone), System.currentTimeMillis())
+        }
         return heldOnly(store, market, LocalDate.now(zone), System.currentTimeMillis(), subject.profileId)
+    }
+
+    /** [subject]'s profile when it is a paired charger's (its prices are Home Assistant's), else `null`. */
+    private fun pairedProfile(context: Context, subject: PriceSubject): String? =
+        subject.profileId?.takeIf { ChargerProfileStore.forContext(context).getProfile(it) != null }
+
+    /**
+     * Whether tomorrow is held for [subject]: for a paired charger, in its Home Assistant's held answer;
+     * else tomorrow's main file in the day cache.
+     */
+    fun hasCachedTomorrow(context: Context, subject: PriceSubject): Boolean {
+        val profileId = pairedProfile(context, subject) ?: return hasCachedTomorrow(context, subject.areaId)
+        val held = haSource(context, profileId).held() ?: return false
+        return holdsTomorrow(held, System.currentTimeMillis())
+    }
+
+    /**
+     * When [subject]'s tomorrow is expected: a paired charger's from its Home Assistant's held answer (the
+     * provider it uses now, Nord Pool 12:45 or ENTSO-E 13:00), else the list's for the area.
+     */
+    fun publicationFor(context: Context, subject: PriceSubject): AreaPublication? {
+        val held = pairedProfile(context, subject)?.let { haSource(context, it).held() }
+        return held?.read?.area?.publication ?: PriceMarkets.find(subject.areaId)?.publication
     }
 
     /**
      * Whether a usable day is held for tomorrow -- the scheduler's publication check: tomorrow's main
      * market file (see [MarketDays.principal]).
      */
-    fun hasCachedTomorrow(context: Context, areaId: String): Boolean {
+    private fun hasCachedTomorrow(context: Context, areaId: String): Boolean {
         val market = PriceMarkets.find(areaId) ?: return false
         val store = SharedPreferencesKeyValueStore(context, CACHE_PREFS)
         return holdsTomorrow(store, market, LocalDate.now(market.zoneId), AndroidRelayLog)

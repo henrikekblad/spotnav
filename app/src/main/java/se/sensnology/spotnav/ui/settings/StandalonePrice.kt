@@ -47,7 +47,7 @@ internal object StandalonePrice {
         MissingSource.NO_KEY -> Notice.ADD_KEY
         MissingSource.KEY_REJECTED -> Notice.REPLACE_KEY
         MissingSource.NO_ROUTE -> Notice.NEEDS_HOME_ASSISTANT
-        MissingSource.HA_TOO_OLD, null -> null
+        MissingSource.HA_TOO_OLD, MissingSource.HA_NOT_READ, null -> null
     }
 
     /**
