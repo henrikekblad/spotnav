@@ -1,28 +1,25 @@
-SpotNav visar elens spotpris som widget på hemskärmen och i en färgkodad pristabell, och hjälper dig att planera elbilsladdning till de billigaste timmarna.
+SpotNav planerar elbilsladdningen till dygnets billigaste timmar och visar elens spotpris som widget och färgkodad pristabell.
+
+LADDNING MED HOME ASSISTANT
+- Koppla appen till SpotNav-integrationen i din Home Assistant. Där körs laddstyrning, sol- och hybridladdning och lastbalansering, även när telefonen är avstängd.
+- Se och ändra laddinställningar, avresa och laddmål från telefonen.
+- Priserna kommer från din Home Assistant, via dess inbyggda Nord Pool-integration eller andra priskällor du lagt till där. Ingen nyckel behövs i appen.
+- Appen får ett webhook-ID per laddbox, aldrig lösenord eller token till Home Assistant.
+
+UTAN HOME ASSISTANT
+- Appen hämtar priserna direkt från ENTSO-E med en egen, kostnadsfri nyckel. Appen visar steg för steg hur du skaffar den.
+- Ställ in ström, faser, energi att ladda, förbrukning och avresetid. Appen väljer de billigaste kvartarna och visar kostnad och räckvidd.
 
 PRISER
-- Idag och imorgon i ett 24-timmarsdiagram, med aktuellt intervall, lägsta, högsta och nuvarande pris markerade.
-- Elområden i Norden och Baltikum, Tyskland och Nederländerna.
-- Priser som varje område publicerar dem, per 15, 30 eller 60 minuter, i lokal valuta.
-- Valfri moms, energiskatt och nätavgift. Föreslagna skattevärden kan ändras; kontrollera dem mot ditt eget avtal.
-- Widget som går att ändra storlek på, lokal cache vid nätverksfel och automatisk kontroll av morgondagens priser.
+- Idag och imorgon i ett diagram, med lägsta, högsta och nuvarande pris markerade.
+- Elområden i stora delar av Europa, per 15, 30 eller 60 minuter, i lokal valuta (ECB:s växelkurser).
+- Valfri moms, energiskatt och nätavgift.
+- Planen bygger bara på publicerade priser. Morgondagens priser kommer runt 13.00.
 - Finns på svenska, norska, danska, finska, engelska, tyska, nederländska, spanska och franska.
 
-LADDPLANERARE FÖR ELBIL
-- Ställ in enfas- eller trefasladdning, ström, energi att ladda, bilens förbrukning, avresetid och upp till åtta laddperioder.
-- Appen väljer den billigaste kombinationen av kvartar och visar kostnad och räckvidd. De valda perioderna skuggas i widgeten.
-- Planen bygger bara på publicerade priser. Behöver laddfönstret morgondagens priser innan de har kommit (runt 13.00) väntar appen på dem, och laddar nu bara det som inte hinner vänta till avresan. Laddförluster och bilens laddkurva ingår inte.
-
-HOME ASSISTANT (VALFRITT)
-- Koppla appen till din Home Assistant via SpotNav-integrationen för att se och ändra laddinställningar från telefonen.
-- Laddstyrning, sol- och hybridplanering samt lastbalansering körs i SpotNav-integrationen för Home Assistant, som installeras separat. Appen behöver inte vara uppkopplad för att schemat ska köras.
-- Appen får ett webhook-ID per laddbox, aldrig lösenord eller token till Home Assistant.
-- Allt utom Home Assistant-funktionerna fungerar utan koppling.
-
 DATA OCH INTEGRITET
-- Priserna är day-ahead-priser från ENTSO-E, publicerade av SpotNav-reläet, med valutor omräknade med ECB:s växelkurser. Priset som visas är spotpris; moms, skatt och avgifter läggs till bara om du slår på dem.
 - Inget konto, ingen annonsering, ingen analys. Utvecklaren tar inte emot några data från appen.
-- Appen hämtar priser från reläet (elområde och datum) och pratar, om du kopplat den, bara med din egen Home Assistant.
+- Appen pratar bara med din egen Home Assistant, eller med ENTSO-E och ECB om du använder den utan Home Assistant. Din ENTSO-E-nyckel lagras krypterad på telefonen.
 - Integritetspolicy: https://spotnav.sensnology.se/privacy
 
 SpotNav har ingen koppling till ENTSO-E, ECB, Nord Pool, elhandlare eller nätägare. Priser och laddberäkningar är vägledning; kontrollera dem mot ditt avtal och din faktura.

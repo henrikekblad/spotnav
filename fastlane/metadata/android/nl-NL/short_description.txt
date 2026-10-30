@@ -1,1 +1,1 @@
-Spotprijzen voor stroom, prijstabel en laadplanner voor je EV in Europa.
+Laad je EV in de goedkoopste uren – met Home Assistant of je eigen sleutel.

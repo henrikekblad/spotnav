@@ -1,1 +1,1 @@
-SpotNav: elpris-widget
+SpotNav: smart elbilslading

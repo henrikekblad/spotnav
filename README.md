@@ -2,7 +2,7 @@
   <img src="assets/spotnav-social-preview.png" alt="SpotNav: spot prices and smart EV charging">
 </p>
 
-SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas the SpotNav relay publishes, and is available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
+SpotNav is an Android home-screen widget and EV charging planner. It shows today's and tomorrow's electricity spot prices on one 24-hour chart, finds the cheapest charging periods and can control a charger through Home Assistant. It covers the European day-ahead price areas, with prices from your own Home Assistant or straight from ENTSO-E, and is available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
 
 <p align="center">
   <img src="docs/images/app-main.png" alt="SpotNav main screen paired with Home Assistant: charger status, vehicle and planning" width="360">
@@ -44,11 +44,10 @@ The app receives one secret webhook ID per charger, never a Home Assistant passw
 
 ## Prices
 
-Prices come from the SpotNav relay ([spotnav.sensnology.se](https://spotnav.sensnology.se)), which collects them once for everyone. It publishes them in EUR together with the day's ECB exchange rate, and the app shows them in the area's own currency:
+The app gets prices in one of two ways and shows them in the area's own currency:
 
-- **Day-ahead spot prices** from the ENTSO-E Transparency Platform for 26 countries: the Nordic and Baltic countries, Germany/Luxembourg, the Netherlands, Belgium, France, Austria, Switzerland, Poland, Czechia, Slovakia, Hungary, Slovenia, Croatia, Romania, Bulgaria, Greece, Italy (all zones), Spain and Portugal.
-- **Spain – PVPC (regulated)** from Red Eléctrica, with the network charges already in the price.
-- **Great Britain – Octopus Agile** in all 14 regions, with VAT and network charges already in the price.
+- **Paired with Home Assistant**: from the SpotNav integration, which gets them through your Home Assistant's own price integrations (Nord Pool, Spain's PVPC, Octopus Energy for Great Britain's Agile) or your ENTSO-E key there. The app needs no key.
+- **Without Home Assistant**: day-ahead spot prices straight from the [ENTSO-E Transparency Platform](https://transparency.entsoe.eu/) with your own free ENTSO-E key, converted with the ECB's daily exchange rates. The app shows step by step how to get a key, and stores it encrypted on the phone. Areas ENTSO-E does not publish (Spain's PVPC, Great Britain's Agile) need Home Assistant.
 
 A spot price has no VAT, tax or grid fee. The enabled additions are applied as:
 
@@ -56,7 +55,7 @@ A spot price has no VAT, tax or grid fee. The enabled additions are applied as:
 (spot price + electricity tax + grid fee) × (1 + VAT)
 ```
 
-A part the price already includes (PVPC's network charges, everything in Agile) is shown as "Included in the price" and not added again. Suggested VAT and tax are per price area and editable, and a few areas also suggest a grid fee; grid fees depend on your network operator and agreement, and fixed monthly charges are not included, so check the values against your contract. More detail, including the relay's published files, is in [SpotNav for Home Assistant's price documentation](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/prices.md).
+A part the price already includes (PVPC's network charges, everything in Agile) is shown as "Included in the price" and not added again. Suggested VAT and tax are per price area and editable, and a few areas also suggest a grid fee; grid fees depend on your network operator and agreement, and fixed monthly charges are not included, so check the values against your contract. More detail is in [SpotNav for Home Assistant's price documentation](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/prices.md).
 
 When the app is paired with Home Assistant, the price settings are the integration's, and the app shows the same prices and plan as the dashboard card.
 
