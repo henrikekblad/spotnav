@@ -388,7 +388,6 @@
   <string name="price_value_included">Inbegrepen in de prijs</string>
   <string name="market_info_included">De gepubliceerde prijs bevat al btw, belastingen en kosten, dus er wordt niets bij opgeteld.</string>
   <string name="market_info_included_some">De gepubliceerde prijs bevat al de onderdelen die als inbegrepen zijn gemarkeerd, dus daarvoor wordt niets opgeteld. De rest wordt opgeteld zoals je het instelt, en btw wordt als laatste over het hele bedrag berekend.</string>
-  <string name="price_source">Prijsbron: %1$s</string>
   <string name="area_heading_great_britain">Groot-Brittannië</string>
   <string name="find_region_label">Mijn regio zoeken</string>
   <string name="find_region_description">Je postcode. Die wordt alleen naar Octopus Energy gestuurd om de regio op te zoeken en wordt niet opgeslagen.</string>

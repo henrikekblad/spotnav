@@ -388,7 +388,6 @@
   <string name="price_value_included">Sisältyy hintaan</string>
   <string name="market_info_included">Julkaistu hinta sisältää jo arvonlisäveron, verot ja maksut, joten mitään ei lisätä.</string>
   <string name="market_info_included_some">Julkaistu hinta sisältää jo hintaan sisältyviksi merkityt osat, joten niistä ei lisätä mitään. Loput lisätään asetustesi mukaan, ja arvonlisävero lasketaan viimeisenä koko summasta.</string>
-  <string name="price_source">Hintojen lähde: %1$s</string>
   <string name="area_heading_great_britain">Iso-Britannia</string>
   <string name="find_region_label">Etsi alueeni</string>
   <string name="find_region_description">Postinumerosi. Se lähetetään vain Octopus Energylle alueen hakemista varten, eikä sitä tallenneta.</string>

@@ -394,7 +394,6 @@
   <string name="price_value_included">Incluido en el precio</string>
   <string name="market_info_included">El precio publicado ya incluye IVA, impuestos y cargos, así que no se añade nada.</string>
   <string name="market_info_included_some">El precio publicado ya incluye las partes marcadas como incluidas, así que no se añade nada por ellas. El resto se añade según lo configures, y el IVA se aplica al final sobre el importe total.</string>
-  <string name="price_source">Fuente de precios: %1$s</string>
   <string name="area_heading_great_britain">Gran Bretaña</string>
   <string name="find_region_label">Buscar mi región</string>
   <string name="find_region_description">Tu código postal. Solo se envía a Octopus Energy para buscar la región y no se guarda.</string>

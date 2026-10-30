@@ -388,7 +388,6 @@
   <string name="price_value_included">Im Preis enthalten</string>
   <string name="market_info_included">Der veröffentlichte Preis enthält bereits MwSt., Steuern und Entgelte, daher wird nichts hinzugefügt.</string>
   <string name="market_info_included_some">Der veröffentlichte Preis enthält bereits die als enthalten markierten Teile, dafür wird nichts hinzugefügt. Der Rest wird wie eingestellt hinzugefügt, und die MwSt. wird zuletzt auf den Gesamtbetrag angewendet.</string>
-  <string name="price_source">Preisquelle: %1$s</string>
   <string name="area_heading_great_britain">Großbritannien</string>
   <string name="find_region_label">Meine Region finden</string>
   <string name="find_region_description">Deine Postleitzahl. Sie wird nur an Octopus Energy gesendet, um die Region zu finden, und nicht gespeichert.</string>

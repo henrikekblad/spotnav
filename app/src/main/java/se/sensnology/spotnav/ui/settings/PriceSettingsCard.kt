@@ -2,10 +2,6 @@ package se.sensnology.spotnav.ui.settings
 
 import android.graphics.Typeface
 import android.text.InputType
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.URLSpan
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -23,9 +19,7 @@ import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsEditor
 import se.sensnology.spotnav.ha.settings.PairedSettingsForm
 import se.sensnology.spotnav.prices.AreaSelection
-import se.sensnology.spotnav.prices.AreaSource
 import se.sensnology.spotnav.prices.GreatBritainRegion
-import se.sensnology.spotnav.prices.LegacyPriceUser
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.entsoe.EntsoeKeyStore
@@ -123,13 +117,12 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
         // Where the selected area's prices come from, right under the choice it belongs to.
         val sourceLine = TextView(context).apply {
             textSize = 13f; setTextColor(muted); setPadding(0, dp(6), 0, 0)
-            movementMethod = LinkMovementMethod.getInstance()
             visibility = View.GONE
         }
         parent.addView(sourceLine)
-        // Unpaired, the line names this phone's own source: its ENTSO-E key, or why none can price the area.
+        // Unpaired, the line names this phone's own source: its ENTSO-E key, or why none can price the area. A
+        // paired phone's source is Home Assistant's, said under the area by the paired card.
         val keyState = if (paired) KeyState.NONE else EntsoeKeyStore.forContext(applicationContext).state()
-        val relayUser = !paired && LegacyPriceUser.ensure(applicationContext)
         val findRegion = FindRegionField(
             selectRegion = { id ->
                 val index = choices.indexOfFirst { it.code == id }
@@ -225,11 +218,11 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
             if (HaAreaOverrideComponent.TRANSFER !in included) transfer.text = t(R.string.transfer)
             lock(transfer, transferValue, HaAreaOverrideComponent.TRANSFER, R.string.price_row_transfer, transferChoice)
             settingBoxes = false
-            val shownSource: CharSequence? = when (if (paired || market == null) null else StandalonePrice.line(market, keyState)) {
+            val shownSource: String? = when (if (paired || market == null) null else StandalonePrice.line(market, keyState)) {
                 StandalonePrice.Line.OWN_KEY -> t(R.string.entsoe_source_own_key)
                 StandalonePrice.Line.NEEDS_HOME_ASSISTANT -> t(R.string.area_needs_home_assistant)
-                // Unpaired without a usable key: the catalogue's source only while that is where prices come from.
-                null -> market?.source?.takeIf { paired || relayUser }?.let(::sourceText)
+                // Unpaired without a usable key, the key row says what is missing; paired, the paired card says.
+                null -> null
             }
             sourceLine.visibility = if (shownSource == null) View.GONE else View.VISIBLE
             if (shownSource != null) sourceLine.text = shownSource
@@ -298,15 +291,6 @@ internal class PriceSettingsCard(scope: ViewScope) : ViewScope(scope) {
                 updateMarketText(applySuggestions = false)
             }
         )
-    }
-
-    /** "Price source: Octopus Energy (Agile)", the name linked to the source's own page. */
-    private fun sourceText(source: AreaSource): CharSequence {
-        val text = t(R.string.price_source, source.name)
-        val start = text.lastIndexOf(source.name)
-        return SpannableString(text).apply {
-            if (start >= 0) setSpan(URLSpan(source.url), start, start + source.name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
     }
 
     /**
