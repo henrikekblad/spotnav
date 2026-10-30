@@ -627,4 +627,21 @@
   <string name="price_need_pair">Vincular con Home Assistant</string>
   <string name="widget_add_key">Añade tu clave de ENTSO-E en SpotNav</string>
   <string name="price_need_update_ha">Este Home Assistant no envía precios a la app. Actualiza la integración SpotNav.</string>
+  <string name="ha_price_provider_nordpool">Precios de Nord Pool (a través de Home Assistant)</string>
+  <string name="ha_price_provider_entsoe">Precios de ENTSO-E (tu clave)</string>
+  <string name="ha_price_provider_pvpc">Precios PVPC (Home Assistant)</string>
+  <string name="ha_price_provider_octopus">Precios de Octopus Energy (tu tarifa Agile)</string>
+  <string name="ha_price_provider_relay">Precios del relé de SpotNav</string>
+  <string name="ha_price_notice_add_nordpool">Obtén los precios de %1$s a través de la integración Nord Pool incluida en Home Assistant. Da igual qué zona elijas al añadirla: SpotNav obtiene por sí mismo la que necesita.</string>
+  <string name="ha_price_notice_nordpool_not_loaded">Nord Pool está añadido en Home Assistant, pero no se ha iniciado.</string>
+  <string name="ha_price_notice_add_pvpc">Obtén los precios PVPC de España con la integración PVPC de Home Assistant.</string>
+  <string name="ha_price_notice_pvpc_not_loaded">La integración PVPC está añadida en Home Assistant, pero no se ha iniciado.</string>
+  <string name="ha_price_notice_add_octopus">Tus tarifas Agile de %1$s vienen de la integración Octopus Energy, que se instala desde HACS.</string>
+  <string name="ha_price_notice_octopus_not_loaded">Octopus Energy está añadido en Home Assistant, pero no se ha iniciado.</string>
+  <string name="ha_price_notice_octopus_no_agile">Octopus Energy no encontró ningún contador con tarifa Agile para %1$s.</string>
+  <string name="ha_price_notice_octopus_region_mismatch">Tu contador de Octopus está en la región %1$s; sus tarifas se usan para %2$s. Elige la región %1$s como zona para que coincidan.</string>
+  <string name="ha_price_notice_source_missing">No hay ninguna fuente de precios para %1$s. Elige otra zona.</string>
+  <string name="ha_price_notice_add_entsoe_key">Los precios de %1$s vienen de ENTSO-E, con tu propia clave gratuita. Añádela en Home Assistant.</string>
+  <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E no aceptó la clave guardada. Introduce una nueva en Home Assistant.</string>
+  <string name="ha_price_open_home_assistant">Abrir Home Assistant</string>
 </resources>

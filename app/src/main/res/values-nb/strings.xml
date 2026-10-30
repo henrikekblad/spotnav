@@ -619,4 +619,21 @@
   <string name="price_need_pair">Par med Home Assistant</string>
   <string name="widget_add_key">Legg til ENTSO-E-nøkkelen din i SpotNav</string>
   <string name="price_need_update_ha">Denne Home Assistant sender ikke priser til appen. Oppdater SpotNav-integrasjonen.</string>
+  <string name="ha_price_provider_nordpool">Priser fra Nord Pool (via Home Assistant)</string>
+  <string name="ha_price_provider_entsoe">Priser fra ENTSO-E (din nøkkel)</string>
+  <string name="ha_price_provider_pvpc">Priser fra PVPC (Home Assistant)</string>
+  <string name="ha_price_provider_octopus">Priser fra Octopus Energy (din Agile-tariff)</string>
+  <string name="ha_price_provider_relay">Priser fra SpotNav-reléet</string>
+  <string name="ha_price_notice_add_nordpool">Hent prisene for %1$s via Home Assistants innebygde Nord Pool-integrasjon. Hvilket område du velger når du legger den til, spiller ingen rolle – SpotNav henter selv området som trengs.</string>
+  <string name="ha_price_notice_nordpool_not_loaded">Nord Pool er lagt til i Home Assistant, men startet ikke.</string>
+  <string name="ha_price_notice_add_pvpc">Hent Spanias PVPC-priser fra Home Assistants egen PVPC-integrasjon.</string>
+  <string name="ha_price_notice_pvpc_not_loaded">PVPC-integrasjonen er lagt til i Home Assistant, men startet ikke.</string>
+  <string name="ha_price_notice_add_octopus">Agile-prisene dine for %1$s kommer fra integrasjonen Octopus Energy, som installeres via HACS.</string>
+  <string name="ha_price_notice_octopus_not_loaded">Octopus Energy er lagt til i Home Assistant, men startet ikke.</string>
+  <string name="ha_price_notice_octopus_no_agile">Octopus Energy fant ingen måler med Agile-tariff for %1$s.</string>
+  <string name="ha_price_notice_octopus_region_mismatch">Octopus-måleren din er i region %1$s; prisene dens brukes for %2$s. Velg region %1$s som område så det stemmer.</string>
+  <string name="ha_price_notice_source_missing">Det finnes ingen kilde for priser i %1$s. Velg et annet område.</string>
+  <string name="ha_price_notice_add_entsoe_key">Prisene for %1$s kommer fra ENTSO-E med din egen gratis nøkkel. Legg den til i Home Assistant.</string>
+  <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtok ikke den lagrede nøkkelen. Skriv inn en ny i Home Assistant.</string>
+  <string name="ha_price_open_home_assistant">Åpne Home Assistant</string>
 </resources>

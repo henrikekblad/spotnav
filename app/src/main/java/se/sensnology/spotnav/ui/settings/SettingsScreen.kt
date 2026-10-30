@@ -233,6 +233,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 pairedCards.show(dashboard)
                 // Where the price lives (the electricity price the charger uses), above the area and fees.
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
+                // Where the area's prices come from, and Home Assistant's notice when it has none of its own.
+                dashboard?.let {
+                    val areaId = it.market.areaId
+                    val area = areaId?.let { id -> PriceMarkets.find(id)?.selectorLabel ?: id }.orEmpty()
+                    pairedPrice?.showProvider(it.prices.provider, area, settingsProfile.baseUrl)
+                }
                 dashboard?.let { LocalNotifications.observeIdentification(applicationContext, settingsProfile.localId, it) }
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
                     // A newer record (or one now stating its notifications) is what this screen writes against.

@@ -619,4 +619,21 @@
   <string name="price_need_pair">Liitä Home Assistantiin</string>
   <string name="widget_add_key">Lisää ENTSO-E-avaimesi SpotNaviin</string>
   <string name="price_need_update_ha">Tämä Home Assistant ei lähetä hintoja sovellukseen. Päivitä SpotNav-integraatio.</string>
+  <string name="ha_price_provider_nordpool">Hinnat Nord Poolilta (Home Assistantin kautta)</string>
+  <string name="ha_price_provider_entsoe">Hinnat ENTSO-E:ltä (oma avaimesi)</string>
+  <string name="ha_price_provider_pvpc">Hinnat PVPC:stä (Home Assistant)</string>
+  <string name="ha_price_provider_octopus">Hinnat Octopus Energyltä (oma Agile-tariffisi)</string>
+  <string name="ha_price_provider_relay">Hinnat SpotNav-välityspalvelimelta</string>
+  <string name="ha_price_notice_add_nordpool">Hae alueen %1$s hinnat Home Assistantin sisäänrakennetun Nord Pool -integraation kautta. Sillä ei ole väliä, minkä alueen valitset integraatiota lisätessäsi – SpotNav hakee itse tarvitsemansa alueen.</string>
+  <string name="ha_price_notice_nordpool_not_loaded">Nord Pool on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
+  <string name="ha_price_notice_add_pvpc">Hae Espanjan PVPC-hinnat Home Assistantin omasta PVPC-integraatiosta.</string>
+  <string name="ha_price_notice_pvpc_not_loaded">PVPC-integraatio on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
+  <string name="ha_price_notice_add_octopus">Alueen %1$s Agile-hintasi tulevat Octopus Energy -integraatiosta, joka asennetaan HACSin kautta.</string>
+  <string name="ha_price_notice_octopus_not_loaded">Octopus Energy on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
+  <string name="ha_price_notice_octopus_no_agile">Octopus Energy ei löytänyt Agile-tariffin mittaria alueelle %1$s.</string>
+  <string name="ha_price_notice_octopus_region_mismatch">Octopus-mittarisi on alueella %1$s; sen hintoja käytetään alueelle %2$s. Valitse alueeksi %1$s, niin ne täsmäävät.</string>
+  <string name="ha_price_notice_source_missing">Alueelle %1$s ei ole hintojen lähdettä. Valitse toinen alue.</string>
+  <string name="ha_price_notice_add_entsoe_key">Alueen %1$s hinnat tulevat ENTSO-E:ltä omalla maksuttomalla avaimellasi. Lisää se Home Assistantiin.</string>
+  <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E ei hyväksynyt tallennettua avainta. Anna uusi Home Assistantissa.</string>
+  <string name="ha_price_open_home_assistant">Avaa Home Assistant</string>
 </resources>
