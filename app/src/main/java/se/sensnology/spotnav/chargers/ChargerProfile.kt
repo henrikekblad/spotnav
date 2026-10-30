@@ -15,7 +15,9 @@ data class ChargerCapabilities(
     /** Whether it can *write* a vehicle's charge limit, which [ChargeLimit] drives. */
     val setChargeLimit: Boolean = false,
     /** Whether SpotNav may write a charging current to this charger (the settings overview words it). */
-    val setCurrent: Boolean = false
+    val setCurrent: Boolean = false,
+    /** Whether the webhook answers `price_days`: the charger's prices come from Home Assistant itself. */
+    val priceDays: Boolean = false
 )
 
 /**
@@ -38,7 +40,12 @@ data class ChargerProfile(
      * Set while SpotNav in Home Assistant no longer recognises [webhookId] (see [PairAgain]): the
      * charger is to be paired again, and its webhook is only asked at the slow check's pace.
      */
-    val pairAgain: PairAgainMark? = null
+    val pairAgain: PairAgainMark? = null,
+    /**
+     * Whether this charger's Home Assistant answers `price_days`, as its last dashboard stated it; `null`
+     * until a dashboard has been read since the app learnt to ask.
+     */
+    val priceDays: Boolean? = null
 ) {
     val configured: Boolean get() = baseUrl.isNotBlank() && webhookId.isNotBlank()
 
@@ -76,7 +83,8 @@ data class ChargerProfile(
         "remoteChargerName=$remoteChargerName, " +
         "detectedPhases=$detectedPhases, " +
         "phaseDetectionSource=$phaseDetectionSource, phaseDetectionConfidence=$phaseDetectionConfidence, " +
-        "selectedVehicleId=$selectedVehicleId, targetSocPercent=$targetSocPercent, pairAgain=$pairAgain)"
+        "selectedVehicleId=$selectedVehicleId, targetSocPercent=$targetSocPercent, pairAgain=$pairAgain, " +
+        "priceDays=$priceDays)"
 }
 
 /**

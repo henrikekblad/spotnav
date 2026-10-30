@@ -47,14 +47,25 @@ class StandalonePriceTest {
         assertEquals(StandalonePrice.Notice.ADD_KEY, StandalonePrice.notice(MissingSource.NO_KEY))
         assertEquals(StandalonePrice.Notice.REPLACE_KEY, StandalonePrice.notice(MissingSource.KEY_REJECTED))
         assertEquals(StandalonePrice.Notice.NEEDS_HOME_ASSISTANT, StandalonePrice.notice(MissingSource.NO_ROUTE))
-        assertNull("fixed in Home Assistant, said by the paired card", StandalonePrice.notice(MissingSource.HA_TOO_OLD))
+        assertEquals(
+            "fixed by updating SpotNav in Home Assistant",
+            StandalonePrice.Notice.UPDATE_HOME_ASSISTANT, StandalonePrice.notice(MissingSource.HA_TOO_OLD)
+        )
+        assertNull("not known yet: nothing to act on", StandalonePrice.notice(MissingSource.HA_NOT_READ))
         assertNull(StandalonePrice.notice(null))
     }
 
     @Test
     fun theNoticeStandsInForThePlanAnswerAndOnlyThen() {
-        for (notice in StandalonePrice.Notice.entries) assertFalse("$notice", StandalonePrice.showsPlanReadout(notice))
+        for (notice in StandalonePrice.Notice.entries - StandalonePrice.Notice.UPDATE_HOME_ASSISTANT) {
+            assertFalse("$notice", StandalonePrice.showsPlanReadout(notice))
+            assertTrue("$notice stands in the graph's place", StandalonePrice.replacesChart(notice))
+        }
         assertTrue("prices, or nothing to act on: the answer as before", StandalonePrice.showsPlanReadout(null))
+        // A paired charger's graph and answer are its Home Assistant's own: the update notice stands beside them.
+        assertTrue(StandalonePrice.showsPlanReadout(StandalonePrice.Notice.UPDATE_HOME_ASSISTANT))
+        assertFalse(StandalonePrice.replacesChart(StandalonePrice.Notice.UPDATE_HOME_ASSISTANT))
+        assertFalse(StandalonePrice.replacesChart(null))
     }
 
     @Test

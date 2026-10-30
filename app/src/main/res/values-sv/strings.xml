@@ -618,4 +618,5 @@
   <string name="price_need_replace_key">Byt nyckel</string>
   <string name="price_need_pair">Parkoppla med Home Assistant</string>
   <string name="widget_add_key">Lägg till din ENTSO-E-nyckel i SpotNav</string>
+  <string name="price_need_update_ha">Den här Home Assistant skickar inga priser till appen. Uppdatera SpotNav-integrationen.</string>
 </resources>

@@ -112,8 +112,25 @@ object PriceMarkets {
         current = Held(areas, version)
     }
 
-    /** The area with this id, or `null`. */
-    fun find(area: String): PriceMarket? = current.areas.firstOrNull { it.id == area }
+    /**
+     * Areas a paired charger's Home Assistant named in its `price_days` answer, for an id the held list
+     * lacks (design 2.3): its zone, currency and units stay known. Never consulted before the list, so
+     * Home Assistant's market calendar never replaces the list's own for an area the list has.
+     */
+    private val fromHomeAssistant = java.util.concurrent.ConcurrentHashMap<String, PriceMarket>()
+
+    /** Remember [area] as Home Assistant states it, for [find]. */
+    fun learn(area: PriceMarket) {
+        fromHomeAssistant[area.id] = area
+    }
+
+    /** The area with this id: the held list's, else one Home Assistant named; or `null`. */
+    fun find(area: String): PriceMarket? = current.areas.firstOrNull { it.id == area } ?: fromHomeAssistant[area]
+
+    /** Forget what Home Assistant named. For tests. */
+    internal fun forgetLearnedForTest() {
+        fromHomeAssistant.clear()
+    }
 }
 
 /**

@@ -156,7 +156,7 @@ internal object RelayAreasParser {
     }
 
     /** One entry, or `null` when anything required is missing, blank, the wrong shape, or unusable. */
-    private fun parseArea(entry: JSONObject, version: Int): RelayArea? {
+    internal fun parseArea(entry: JSONObject, version: Int): RelayArea? {
         val id = entry.strictText("id") ?: return null
         if (!isValidAreaId(id)) return null
         // Required in v1; optional in v2, where a Great Britain region has none. Present means a

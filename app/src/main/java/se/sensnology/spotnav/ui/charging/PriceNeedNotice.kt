@@ -14,7 +14,8 @@ import se.sensnology.spotnav.ui.settings.StandalonePrice
 /**
  * What the plan card shows in place of its chart when an unpaired phone has no source for prices (design
  * 5.2): what is missing, and the way to fix it here -- add or replace the ENTSO-E key, or pair with Home
- * Assistant, which needs no key. Hidden whenever there are prices or nothing to act on.
+ * Assistant, which needs no key. A paired phone whose Home Assistant is too old to send prices is told to
+ * update SpotNav there, with no action here. Hidden whenever there are prices or nothing to act on.
  */
 internal class PriceNeedNotice(scope: ViewScope) : ViewScope(scope) {
     /** Open the key's how-to (set by the screen). */
@@ -54,12 +55,15 @@ internal class PriceNeedNotice(scope: ViewScope) : ViewScope(scope) {
                 StandalonePrice.Notice.ADD_KEY -> R.string.price_need_key
                 StandalonePrice.Notice.REPLACE_KEY -> R.string.price_need_rejected
                 StandalonePrice.Notice.NEEDS_HOME_ASSISTANT -> R.string.area_needs_home_assistant
+                StandalonePrice.Notice.UPDATE_HOME_ASSISTANT -> R.string.price_need_update_ha
             }
         )
-        keyButton.visibility = if (notice == StandalonePrice.Notice.NEEDS_HOME_ASSISTANT) View.GONE else View.VISIBLE
+        val keyed = notice == StandalonePrice.Notice.ADD_KEY || notice == StandalonePrice.Notice.REPLACE_KEY
+        keyButton.visibility = if (keyed) View.VISIBLE else View.GONE
         keyButton.text = t(if (notice == StandalonePrice.Notice.REPLACE_KEY) R.string.price_need_replace_key else R.string.price_need_add_key)
-        // A key someone has but ENTSO-E refuses is fixed by replacing it: one action.
-        pairButton.visibility = if (notice == StandalonePrice.Notice.REPLACE_KEY) View.GONE else View.VISIBLE
+        // A key someone has but ENTSO-E refuses is fixed by replacing it: one action. A paired phone is paired.
+        pairButton.visibility =
+            if (notice == StandalonePrice.Notice.ADD_KEY || notice == StandalonePrice.Notice.NEEDS_HOME_ASSISTANT) View.VISIBLE else View.GONE
     }
 
     val shown: Boolean get() = view.visibility == View.VISIBLE

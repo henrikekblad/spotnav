@@ -1,4 +1,4 @@
-areas 39 routed 39
+areas 54 routed 39
 entsoe_DE-LU_2026-09-21_sequences.xml day rows=96 first=2026-09-20T22:00:00Z last=2026-09-21T21:45:00Z published=2026-09-21T12:50:21Z fold=3657734786383558999
 entsoe_DK1_2026-09-21_sequences.xml day rows=96 first=2026-09-20T22:00:00Z last=2026-09-21T21:45:00Z published=2026-09-21T13:51:28Z fold=-4727695466858727817
 entsoe_DK2_2026-09-19_sequences.xml day rows=96 first=2026-09-18T22:00:00Z last=2026-09-19T21:45:00Z published=2026-09-21T13:51:36Z fold=4634491420975227476

@@ -592,7 +592,7 @@ internal class ResultBox(
     /** The notice in the graph's place, or the graph again for `null`; the answer's block only without a notice. */
     fun showPriceNeed(notice: StandalonePrice.Notice?) {
         priceNeed.show(notice)
-        chart.visibility = if (notice == null) View.VISIBLE else View.GONE
+        chart.visibility = if (StandalonePrice.replacesChart(notice)) View.GONE else View.VISIBLE
         readout.visibility = if (StandalonePrice.showsPlanReadout(notice)) View.VISIBLE else View.GONE
     }
 

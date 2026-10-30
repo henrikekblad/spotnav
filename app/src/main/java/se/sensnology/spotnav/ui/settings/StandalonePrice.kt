@@ -7,7 +7,8 @@ import se.sensnology.spotnav.prices.entsoe.KeyState
 /**
  * What an unpaired phone says about where its prices come from (design 5.1-5.3): the ENTSO-E key row of
  * the price card, the line under it, the notice in place of the charging screen's chart, and whether the
- * one-time explanation comes first. Pure: the screens hand in what is stored.
+ * one-time explanation comes first. Pure: the screens hand in what is stored. A paired phone's one notice is
+ * here too: a Home Assistant too old to send the app its prices.
  */
 internal object StandalonePrice {
     /** The key row's value: a short status word. */
@@ -16,8 +17,11 @@ internal object StandalonePrice {
     /** The line under the area: where prices come from, or why none can. */
     enum class Line { OWN_KEY, NEEDS_HOME_ASSISTANT }
 
-    /** The charging screen's notice, with its one action besides pairing. */
-    enum class Notice { ADD_KEY, REPLACE_KEY, NEEDS_HOME_ASSISTANT }
+    /**
+     * The charging screen's notice, with its one action besides pairing. [UPDATE_HOME_ASSISTANT] is a
+     * paired phone's: its fix is made in Home Assistant, so it has no action here.
+     */
+    enum class Notice { ADD_KEY, REPLACE_KEY, NEEDS_HOME_ASSISTANT, UPDATE_HOME_ASSISTANT }
 
     /** Whether ENTSO-E can price [area] at all: an area no key can price needs Home Assistant (O-A5). */
     fun routed(area: PriceMarket?): Boolean = area?.entsoe != null
@@ -47,14 +51,23 @@ internal object StandalonePrice {
         MissingSource.NO_KEY -> Notice.ADD_KEY
         MissingSource.KEY_REJECTED -> Notice.REPLACE_KEY
         MissingSource.NO_ROUTE -> Notice.NEEDS_HOME_ASSISTANT
-        MissingSource.HA_TOO_OLD, null -> null
+        MissingSource.HA_TOO_OLD -> Notice.UPDATE_HOME_ASSISTANT
+        // Not known until the next dashboard read says: nothing to act on yet.
+        MissingSource.HA_NOT_READ, null -> null
     }
 
     /**
-     * Whether the plan card's answer ("No charging time can be calculated" and why) is shown: not beside a
-     * notice, which already says what is needed; in every other case, as before.
+     * Whether [notice] stands in the graph's place. A paired charger's graph is its Home Assistant's own
+     * (the dashboard), which an old Home Assistant still draws, so the update notice stands beside it.
      */
-    fun showsPlanReadout(notice: Notice?): Boolean = notice == null
+    fun replacesChart(notice: Notice?): Boolean = notice != null && notice != Notice.UPDATE_HOME_ASSISTANT
+
+    /**
+     * Whether the plan card's answer ("No charging time can be calculated" and why) is shown: not beside a
+     * notice that stands in the graph's place, which already says what is needed; in every other case, as
+     * before.
+     */
+    fun showsPlanReadout(notice: Notice?): Boolean = !replacesChart(notice)
 
     /** The explanation comes before the how-to once, and only for someone who had prices from the server before. */
     fun explainFirst(legacyUser: Boolean, alreadyShown: Boolean): Boolean = legacyUser && !alreadyShown

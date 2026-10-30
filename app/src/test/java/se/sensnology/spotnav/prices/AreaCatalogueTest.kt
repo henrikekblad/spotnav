@@ -159,7 +159,7 @@ class AreaCatalogueTest {
 
         // Nothing stored: the snapshot, parsed by the same parser as a fetch.
         val fresh = AreaCatalogue.startupAreas(store, { snapshot })
-        assertEquals(39, fresh.size)
+        assertEquals(54, fresh.size)
         assertTrue(fresh.any { it.id == "NO4" && it.vatPercent == 0.0 })
 
         // A persisted valid remote document wins over it.
@@ -167,23 +167,27 @@ class AreaCatalogueTest {
         assertEquals(listOf("SE4"), AreaCatalogue.startupAreas(store, { snapshot }).map { it.id })
 
         store.putString(AreaCatalogue.KEY_LAST_GOOD, "{\"v\":99}")
-        assertEquals(39, AreaCatalogue.startupAreas(store, { snapshot }).size)
+        assertEquals(54, AreaCatalogue.startupAreas(store, { snapshot }).size)
     }
 
     @Test
-    fun theBundledListHasThirtyNineAreasAndPortugalOnTheMadridMarketClock() {
+    fun theBundledListHasFiftyFourAreasAndPortugalOnTheMadridMarketClock() {
         val held = AreaCatalogue.startup(store, { bundledSnapshot() })
         assertEquals(RelayContractVersion.V2, held.version)
-        assertEquals(39, held.areas.size)
+        assertEquals(54, held.areas.size)
         val portugal = held.areas.single { it.id == "PT" }
         assertEquals("Europe/Lisbon", portugal.tz)
         assertEquals("Europe/Madrid", portugal.marketTz)
     }
 
     @Test
-    fun everyBundledAreaHasAnEntsoeRoute() {
+    fun everyBundledAreaButTheGreatBritainRegionsAndPvpcHasAnEntsoeRoute() {
         val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() })
-        assertTrue(areas.all { it.entsoe != null })
+        // Great Britain (Octopus Agile) and Spain's PVPC are not on ENTSO-E: Home Assistant prices them.
+        val unrouted = areas.filter { it.entsoe == null }.map { it.id }
+        assertEquals(15, unrouted.size)
+        assertTrue(unrouted.toString(), unrouted.all { it.startsWith("GB-") || it == "ES-PVPC" })
+        assertEquals(39, areas.count { it.entsoe != null })
         assertEquals(EntsoeRoute("10Y1001A1001A47J"), areas.single { it.id == "SE4" }.entsoe)
         assertEquals(
             EntsoeRoute("10Y1001A1001A82H", "1", listOf("1", "2")),
@@ -220,7 +224,7 @@ class AreaCatalogueTest {
 
         val areas = AreaCatalogue.bundledAreas(body.toString())
 
-        assertEquals(39, areas.size)
+        assertEquals(54, areas.size)
         assertNull(areas.single { it.id == id }.entsoe)
         assertNull(areas[1].entsoe)
         assertNotNull(areas[2].entsoe)
@@ -237,7 +241,7 @@ class AreaCatalogueTest {
 
         val areas = AreaCatalogue.startupAreas(store, { bundledSnapshot() }, sink)
 
-        assertEquals(39, areas.size)
+        assertEquals(54, areas.size)
         assertEquals(1, messages.size)
         assertTrue(messages.single().contains("no longer valid"))
     }

@@ -618,4 +618,5 @@
   <string name="price_need_replace_key">Vaihda avain</string>
   <string name="price_need_pair">Liitä Home Assistantiin</string>
   <string name="widget_add_key">Lisää ENTSO-E-avaimesi SpotNaviin</string>
+  <string name="price_need_update_ha">Tämä Home Assistant ei lähetä hintoja sovellukseen. Päivitä SpotNav-integraatio.</string>
 </resources>

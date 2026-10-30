@@ -12,6 +12,7 @@ import se.sensnology.spotnav.prices.AreaPublication
 import se.sensnology.spotnav.prices.AreaSelection
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
+import se.sensnology.spotnav.prices.PriceSubject
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -31,8 +32,8 @@ object PriceUpdateScheduler {
         val manager = AppWidgetManager.getInstance(context)
         val ids = manager.getAppWidgetIds(ComponentName(context, PriceWidgetProvider::class.java))
             .filter { WidgetSettings.isConfigured(context, it) }
-        // An area missing from the catalogue contributes no clock.
-        val configured = ids.mapNotNull { PriceMarkets.find(WidgetSettings.load(context, it).area)?.publication }
+        // An area missing from the catalogue contributes no clock; a paired widget's comes from its Home Assistant's answer.
+        val configured = ids.mapNotNull { PriceRepository.publicationFor(context, subjectOf(context, it)) }
         val default = AreaSelection.defaultArea(PriceMarkets.all, AppLanguageSettings.region(context))
             ?.let { PriceMarkets.find(it)?.publication }
         // No area to schedule against.
@@ -69,9 +70,13 @@ object PriceUpdateScheduler {
         val manager = AppWidgetManager.getInstance(context)
         val ids = manager.getAppWidgetIds(ComponentName(context, PriceWidgetProvider::class.java))
             .filter { WidgetSettings.isConfigured(context, it) }
-        val areas = ids.map { WidgetSettings.load(context, it).area }.distinct()
-        scheduleNext(context, areas.isNotEmpty() && areas.all { PriceRepository.hasCachedTomorrow(context, it) })
+        val subjects = ids.map { subjectOf(context, it) }.distinct()
+        scheduleNext(context, subjects.isNotEmpty() && subjects.all { PriceRepository.hasCachedTomorrow(context, it) })
     }
+
+    /** Whose prices one widget shows: its charger's, when it is bound to one, with its area. */
+    private fun subjectOf(context: Context, id: Int): PriceSubject =
+        WidgetSettings.load(context, id).let { PriceSubject(it.chargerProfileId, it.area) }
 
     fun cancel(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pendingIntent(context))

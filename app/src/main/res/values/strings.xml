@@ -630,4 +630,5 @@
   <string name="price_need_replace_key">Replace key</string>
   <string name="price_need_pair">Pair with Home Assistant</string>
   <string name="widget_add_key">Add your ENTSO-E key in SpotNav</string>
+  <string name="price_need_update_ha">This Home Assistant does not send prices to the app. Update the SpotNav integration.</string>
 </resources>

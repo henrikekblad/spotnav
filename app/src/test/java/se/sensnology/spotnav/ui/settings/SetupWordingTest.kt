@@ -31,7 +31,7 @@ class SetupWordingTest {
         "entsoe_howto_4", "entsoe_key_saved", "entsoe_key_checking", "entsoe_key_not_accepted", "entsoe_key_empty",
         "entsoe_key_not_saved", "entsoe_key_remove", "entsoe_why_title", "entsoe_why_body", "entsoe_why_continue",
         "price_need_key", "price_need_rejected", "price_need_add_key", "price_need_replace_key", "price_need_pair",
-        "widget_add_key"
+        "widget_add_key", "price_need_update_ha"
     )
 
     @Test fun everySetupValueIsShortInEveryLanguage() {
