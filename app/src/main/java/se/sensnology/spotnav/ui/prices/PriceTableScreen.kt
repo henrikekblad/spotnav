@@ -17,10 +17,12 @@ import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.planning.LocalPlanningInputs
 import se.sensnology.spotnav.prices.ChargeCoverage
+import se.sensnology.spotnav.prices.MissingSource
 import se.sensnology.spotnav.prices.PriceAggregation
 import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
+import se.sensnology.spotnav.prices.PriceSubject
 import se.sensnology.spotnav.prices.PriceTableCell
 import se.sensnology.spotnav.prices.PriceTableModel
 import se.sensnology.spotnav.prices.PriceTableModels
@@ -58,7 +60,10 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
             catalogue = PriceMarkets.all
         )
         ioExecutor.execute {
-            val result = PriceRepository.load(applicationContext, subject.areaId)
+            val priced = PriceSubject(subject.requestKey.profileId, subject.areaId)
+            val result = PriceRepository.load(applicationContext, priced)
+            // With nothing to show, what can be done about it: a paired charger's Home Assistant may need updating.
+            val missing = if (result.today.isEmpty() && result.tomorrow.isEmpty()) PriceRepository.missing(applicationContext, priced) else null
             runOnUiThread {
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 // A late answer for a market the authority has since left is inert: this pass
@@ -100,7 +105,10 @@ internal class PriceTableScreen(shell: ScreenShell) : ScreenPart(shell) {
                     )
                 }
                 val rowViews = model.rows.map { row -> addRow(row, model, prices) }
-                if (model.rows.isEmpty()) content.addView(TextView(context).apply { text = t(R.string.no_prices); setPadding(0, dp(20), 0, 0) })
+                if (model.rows.isEmpty()) {
+                    val empty = if (missing == MissingSource.HA_TOO_OLD) R.string.price_need_update_ha else R.string.no_prices
+                    content.addView(TextView(context).apply { text = t(empty); setPadding(0, dp(20), 0, 0) })
+                }
                 if (model.currentIndex >= 0) {
                     content.post {
                         // The row's own view, not an index into the content's children:

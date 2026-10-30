@@ -10,16 +10,18 @@ import java.io.File
 class VendoredHaFixturesTest {
     private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes")
 
-    private fun sourceRoot(): File? {
+    /** This repository's root: the directory holding the sync script. */
+    private fun repoRoot(): File? {
         var dir: File? = File(System.getProperty("user.dir")).absoluteFile
         while (dir != null) {
-            if (File(dir, "scripts/sync_ha_fixtures.sh").isFile) {
-                return File(dir.parentFile, "elpris-home-assistant/tests/fixtures").takeIf { it.isDirectory }
-            }
+            if (File(dir, "scripts/sync_ha_fixtures.sh").isFile) return dir
             dir = dir.parentFile
         }
         return null
     }
+
+    private fun sourceRoot(): File? =
+        repoRoot()?.let { File(it.parentFile, "elpris-home-assistant/tests/fixtures") }?.takeIf { it.isDirectory }
 
     @Test fun theVendoredCopyIsNotEmpty() {
         assertTrue(HaFixtures.files("dashboard").size >= 10)
@@ -46,5 +48,19 @@ class VendoredHaFixturesTest {
                 assertTrue("$part/$name differs (run scripts/sync_ha_fixtures.sh)", bytes.contentEquals(ours.getValue(name)))
             }
         }
+    }
+
+    @Test fun theBundledAreaListEqualsTheIntegrationsCatalogueWhenItIsPresent() {
+        val root = repoRoot()
+        assertTrue("the repository root must be found", root != null)
+        val ours = File(root, "app/src/main/assets/areas.json")
+        assertTrue("the bundled area list must exist", ours.isFile)
+        val theirs = File(root!!.parentFile, "elpris-home-assistant/custom_components/spotnav/pricing/areas.json")
+        // The integration's checkout may be on a branch from before its own catalogue.
+        assumeTrue("the integration's area catalogue is not next to this repository", theirs.isFile)
+        assertTrue(
+            "app/src/main/assets/areas.json differs from the integration's (run scripts/sync_ha_fixtures.sh)",
+            theirs.readBytes().contentEquals(ours.readBytes())
+        )
     }
 }

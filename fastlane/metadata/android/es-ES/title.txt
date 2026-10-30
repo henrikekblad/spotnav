@@ -1,1 +1,1 @@
-SpotNav: widget de precio spot
+SpotNav: carga inteligente VE

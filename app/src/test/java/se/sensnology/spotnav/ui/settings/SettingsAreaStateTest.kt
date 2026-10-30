@@ -110,123 +110,7 @@ class SettingsAreaStateTest {
         assertEquals("SE", rows.first().label)
     }
 
-    // refresh, and the identity that must survive it
-
-    @Test
-    fun aCatalogueRefreshThatChangesNothingAsksForNoRedraw() {
-        val machine = picker("SE4")
-        val opened = machine.open()
-
-        val refreshed = machine.onCatalogueRefreshed(catalogue)
-
-        assertFalse("nothing to redraw", refreshed.replaceAdapter)
-        assertFalse("a refresh is never a choice", refreshed.userPicked)
-        assertEquals(AreaSelectionState.Available("SE4"), refreshed.state)
-        assertEquals(opened.selectedIndex, refreshed.selectedIndex)
-    }
-
-    @Test
-    fun aNewAreaIsOfferedWithoutMovingTheSelection() {
-        val machine = picker("NO1")
-        machine.open()
-        // Inserted *before* the selected area, so a selection kept by index would silently slide
-        // onto a different area.
-        val no2 = RelayFixtures.area("NO2", "NOK", "kr", "øre", tz = "Europe/Oslo")
-
-        val refreshed = machine.onCatalogueRefreshed(listOf(se4, no2, no1, fi))
-
-        assertTrue(refreshed.replaceAdapter)
-        assertEquals(AreaSelectionState.Available("NO1"), refreshed.state)
-        assertEquals("NO1", refreshed.rows[refreshed.selectedIndex].id)
-        assertTrue(refreshed.rows.any { it.id == "NO2" })
-    }
-
-    @Test
-    fun aSelectionThatDisappearsBecomesThePlaceholderAndIsNeverReplaced() {
-        val machine = picker("NO1")
-        machine.open()
-
-        val refreshed = machine.onCatalogueRefreshed(listOf(se4, fi))
-
-        assertTrue(refreshed.replaceAdapter)
-        assertEquals(AreaSelectionState.Missing("NO1"), refreshed.state)
-        assertEquals("the identity stays, it is not reverted to the saved one", "NO1", machine.selectedId)
-        assertEquals("the placeholder is selected, not another area", null, refreshed.rows[refreshed.selectedIndex].id)
-        assertFalse(refreshed.canSave)
-    }
-
-    @Test
-    fun aRefreshIsIdempotentSoARedrawCannotLoop() {
-        val machine = picker("SE4")
-        machine.open()
-        val grown = catalogue + listOf(RelayFixtures.area("SE5", "SEK", "kr", "øre"))
-
-        val once = machine.onCatalogueRefreshed(grown)
-        val twice = machine.onCatalogueRefreshed(grown)
-
-        assertTrue(once.replaceAdapter)
-        assertFalse("the second identical refresh must not redraw", twice.replaceAdapter)
-    }
-
-    // the whole sequence, saved -> unsaved -> retired -> replaced
-
-    /**
-     * A person picks NO1 without saving, a refresh retires NO1, and the form must stand for NO1 as
-     * unavailable -- not silently fall back to the SE4 that was saved.
-     */
-    @Test
-    fun anUnsavedPickThatARefreshRetiresIsNeverReplacedByTheSavedArea() {
-        // A. the widget has SE4 saved
-        val machine = picker("SE4")
-        val opened = machine.open()
-        assertEquals(AreaSelectionState.Available("SE4"), opened.state)
-
-        // B. the person picks NO1 and has not saved it yet
-        val picked = machine.onRowSelected(opened.indexOf("NO1"), "NO1")!!
-        assertTrue(picked.userPicked)
-        assertFalse("the Spinner already moved itself", picked.replaceAdapter)
-        assertEquals(AreaSelectionState.Available("NO1"), machine.state)
-        assertEquals("NO1", machine.selectedId)
-
-        // C. a catalogue refresh removes NO1
-        val refreshed = machine.onCatalogueRefreshed(listOf(se4, fi))
-
-        // D. the form stands for NO1, shown as unavailable
-        assertEquals(AreaSelectionState.Missing("NO1"), refreshed.state)
-        assertEquals("NO1", machine.selectedId)
-        assertEquals("the placeholder, not another area", null, refreshed.rows[refreshed.selectedIndex].id)
-        assertTrue(refreshed.rows[refreshed.selectedIndex].label.contains("NO1"))
-        assertTrue("the saved area must not come back", machine.selectedId != machine.savedId)
-
-        // E. and it may not be saved as if it worked
-        assertFalse(machine.canSave)
-        assertFalse(refreshed.canSave)
-
-        // F. the person explicitly chooses FI
-        val replaced = machine.onRowSelected(refreshed.indexOf("FI"), "FI")!!
-        assertTrue(replaced.userPicked)
-
-        // G.
-        assertEquals(AreaSelectionState.Available("FI"), machine.state)
-        assertTrue(machine.canSave)
-        assertEquals("FI", machine.selectedId)
-    }
-
     // an echo is not a choice
-
-    @Test
-    fun aRefreshThatKeepsTheSelectedAreaIsNotAUserChoice() {
-        val machine = picker("NO1")
-        machine.open()
-
-        // A refresh that adds an unrelated area, leaving the selection in place.
-        val no2 = RelayFixtures.area("NO2", "NOK", "kr", "øre", tz = "Europe/Oslo")
-        val refreshed = machine.onCatalogueRefreshed(listOf(se4, no2, no1, fi))
-
-        assertFalse("a refresh must not apply fiscal suggestions again", refreshed.userPicked)
-        assertEquals(AreaSelectionState.Available("NO1"), refreshed.state)
-        assertEquals("NO1", machine.selectedId)
-    }
 
     @Test
     fun aDeferredCallbackForTheRowWeInstalledIsNotAUserChoice() {
@@ -238,11 +122,6 @@ class SettingsAreaStateTest {
         assertNull(machine.onRowSelected(opened.selectedIndex, "SE4"))
         assertEquals(AreaSelectionState.Available("SE4"), machine.state)
         assertEquals("SE4", machine.selectedId)
-
-        // The same holds after a refresh, when the index may have moved.
-        val refreshed = machine.onCatalogueRefreshed(catalogue + listOf(RelayFixtures.area("SE5", "SEK", "kr", "øre")))
-        assertNull(machine.onRowSelected(refreshed.selectedIndex, "SE4"))
-        assertEquals(AreaSelectionState.Available("SE4"), machine.state)
     }
 
     @Test

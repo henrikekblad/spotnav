@@ -34,6 +34,7 @@ import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PriceDays
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.prices.PriceRepository
+import se.sensnology.spotnav.prices.PriceSubject
 import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenPart
@@ -45,6 +46,8 @@ import se.sensnology.spotnav.ui.common.pairAgainNotice
 import se.sensnology.spotnav.ui.haSession
 import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
+import se.sensnology.spotnav.ui.settings.EntsoeKeyDialog
+import se.sensnology.spotnav.ui.settings.StandalonePrice
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerResolver
@@ -87,6 +90,12 @@ internal class ChargingScreen(
     // text.
     internal var authorityNote: String? = null
     internal var authorityProfile: ChargerProfile? = null
+
+    /**
+     * Whether the charger's Home Assistant answered `price_days` as far as the last price load knew: a
+     * dashboard that says otherwise (the first one read, or an updated Home Assistant) loads them again.
+     */
+    @Volatile private var pricedWithPriceDays: Boolean? = null
     internal lateinit var authority: AuthorityController
     internal lateinit var widgetPlans: WidgetPlanPublication
 
@@ -234,6 +243,14 @@ internal class ChargingScreen(
             }
         }
         targetSoc = planCard.targetSoc
+        // The price notice's two ways out: the key's how-to here, or pairing in Settings.
+        planCard.result.priceNeed.onKey = {
+            EntsoeKeyDialog(this).open(settings.area) { loadPrices() }
+        }
+        planCard.result.priceNeed.onPair = {
+            shell.settingsAtHomeAssistant = true
+            shell.navigate(Screen.SETTINGS)
+        }
         // The consumption slider is on the vehicle card, so this reads it through that handle.
         consumption = vehicleCard.consumption
         energy = planCard.energy
@@ -437,9 +454,11 @@ internal class ChargingScreen(
         ioExecutor.execute {
             // The admission travels with the result:
             val resolution = authority.onDashboardResult(admission, result)
+            val priceDaysChanged = result.isSuccess && priceDaysNow() != pricedWithPriceDays
             runOnUiThread {
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 if (resolution is AuthorityResolution.State) applyState(resolution.authority)
+                if (priceDaysChanged) loadPrices()
             }
         }
     }
@@ -459,11 +478,11 @@ internal class ChargingScreen(
         shell.priceRefresh.loadStarted()
         ioExecutor.execute {
             // Held prices first when what the screen shows is not today's: the load below may wait on the
-            // network for the index, and a stale day must not stay on screen meanwhile.
+            // network, and a stale day must not stay on screen meanwhile.
             val zone = PriceMarkets.find(area)?.zoneId ?: java.time.ZoneId.systemDefault()
             val shown = authority.currentPrices
             if (shown == null || !PriceDays.showsDate(shown, java.time.LocalDate.now(zone))) {
-                val held = PriceRepository.heldOnly(applicationContext, area)
+                val held = PriceRepository.heldOnly(applicationContext, PriceSubject(subject.profileId, area))
                 if (held.today.isNotEmpty() || held.tomorrow.isNotEmpty()) {
                     runOnUiThread {
                         if (isDestroyed || generation != viewGeneration) return@runOnUiThread
@@ -471,15 +490,20 @@ internal class ChargingScreen(
                     }
                 }
             }
-            // Off the main thread, as the screen's own work always is:
-            AreaCatalogue.refreshIfDue(applicationContext)
-            val loaded = PriceRepository.load(applicationContext, area)
+            pricedWithPriceDays = priceDaysNow()
+            val priced = PriceSubject(subject.profileId, area)
+            val loaded = PriceRepository.load(applicationContext, priced)
+            // Nothing to show and something the person can do about it: said in the graph's place.
+            val need = if (loaded.today.isEmpty() && loaded.tomorrow.isEmpty()) {
+                StandalonePrice.notice(PriceRepository.missing(applicationContext, priced))
+            } else null
             runOnUiThread {
                 // Whatever becomes of this answer below, the screen owes no load any longer:
                 shell.priceRefresh.loadFinished()
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 // A late answer for another subject is dropped, never rendered.
                 if (authority.onPriceLoaded(subject, loaded) == null) return@runOnUiThread
+                planCard.result.showPriceNeed(need)
                 render()
                 // The footer's facts come from the same tested formatter the money tests cover, so
                 // what is asserted about "area id plus ISO currency, never a borrowed currency" is
@@ -491,6 +515,10 @@ internal class ChargingScreen(
             }
         }
     }
+
+    /** Whether the paired charger's Home Assistant answers `price_days`, as its profile now says. Off the main thread. */
+    private fun priceDaysNow(): Boolean? =
+        authorityProfile?.let { ChargerProfileStore.forContext(applicationContext).getProfile(it.localId)?.priceDays }
 
     /** Re-sync the charger controls with the dashboard now held; the render pass calls this. */
     internal fun refreshChargerControls() = refreshControls()

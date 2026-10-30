@@ -1,11 +1,16 @@
 package se.sensnology.spotnav.ui.settings
 
+import android.content.Intent
+import android.graphics.drawable.GradientDrawable
+import android.net.Uri
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
+import se.sensnology.spotnav.ha.dashboard.DashboardPriceProvider
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -19,13 +24,15 @@ import se.sensnology.spotnav.widget.WidgetSettings
 /**
  * The "Electricity price" card of a paired charger: where the price lives (the electricity price Home Assistant's
  * charger uses, how many chargers share it, the same-area question and the "Price from" choice, see
- * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]). Each of
+ * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then where
+ * the area's prices come from and Home Assistant's notice when it has no source of its own ([showProvider]). Each of
  * those changes its one value through the paired settings path ([submit], the whole record with that one field
  * changed); the screen owns that path and says what came of it.
  */
 internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     private val sourceRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val rows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private val providerRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private var old: WidgetSettings? = null
     private var submit: (SettingsFormValues, ((HaPlanningSettings) -> SettingsFormValues)?, done: () -> Unit) -> Unit =
         { _, _, done -> done() }
@@ -55,6 +62,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         this.old = old
         parent.addView(sourceRows)
         parent.addView(rows)
+        parent.addView(providerRows)
     }
 
     /** Where the price source's two writes go (the screen owns the connection and reads the dashboard again). */
@@ -91,6 +99,40 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         shown = Shown(source, chargerTotal, onSite)
         adopted = null
         repaintSource()
+    }
+
+    /**
+     * Paint Home Assistant's `prices.provider`: the source line under the area ("Prices from Nord Pool (via Home
+     * Assistant)"), and its notice with one action, opening Home Assistant at [homeAssistantUrl], where the fix is
+     * made (design 5.4, O-A3). [area] is the area as the notice names it. `null`: nothing is shown.
+     */
+    fun showProvider(provider: DashboardPriceProvider?, area: String, homeAssistantUrl: String?) {
+        providerRows.removeAllViews()
+        HaPriceProviderText.line(provider)?.let { providerRows.addView(muted(t(it), top = 8)) }
+        val notice = HaPriceProviderText.notice(provider, area) ?: return
+        val box = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(6))
+            background = GradientDrawable().apply {
+                setColor(0x00000000)
+                setStroke(dp(1), muted)
+                cornerRadius = dp(8).toFloat()
+            }
+        }
+        box.addView(TextView(context).apply {
+            text = t(notice.text, *notice.args.toTypedArray()); textSize = 14f; setTextColor(dark)
+        })
+        val address = homeAssistantUrl?.trim()?.trimEnd('/')?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
+        if (address != null) {
+            box.addView(Button(context).apply {
+                text = t(R.string.ha_price_open_home_assistant)
+                isAllCaps = false
+                setOnClickListener { runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(address))) } }
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(4) })
+        }
+        providerRows.addView(box, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(8)
+        })
     }
 
     private val words = object : PriceSourceText.Words {

@@ -48,7 +48,6 @@ import se.sensnology.spotnav.ha.settings.SettingsSave
 import se.sensnology.spotnav.ha.settings.SettingsEditSend
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.prices.AreaCatalogue
-import se.sensnology.spotnav.prices.CatalogueRefresh
 import se.sensnology.spotnav.prices.PriceFormat
 import se.sensnology.spotnav.prices.PriceMarket
 import se.sensnology.spotnav.prices.PriceMarkets
@@ -145,7 +144,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Unpaired: this phone's own price as value rows, whose dialog applies at once. Paired: the
         // record's, whose dialog writes through the paired path (wired below).
         val pairedPrice = if (paired) PairedPriceCard(this) else null
-        val localPrice = if (paired) null else LocalPriceCard(this)
+        val localPrice = if (paired) null else LocalPriceCard(this).apply { onKeyChanged = { refreshWidget() } }
         pairedPrice?.add(priceCard.body, old) { values, replay, done -> runFormSave(values, replay, done) }
         localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
             storeIfChanged(WidgetSettings.load(context, widgetId), next)
@@ -202,6 +201,17 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             // The paired cards above belong to the instance: the page is built again with or without them.
             onInstanceChanged = { show() }
         ).add(homeAssistantCard.body)
+        // Opened from the charging screen's "Pair with Home Assistant": at this card, once.
+        if (shell.settingsAtHomeAssistant) {
+            shell.settingsAtHomeAssistant = false
+            val target = homeAssistantCard.body
+            target.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(v: View, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+                    target.removeOnLayoutChangeListener(this)
+                    shell.scrollView.post { shell.scrollView.smoothScrollTo(0, target.top) }
+                }
+            })
+        }
         if (settingsProfile != null && pairedCards != null) {
             val session = shell.haSession(settingsProfile)
             fun showNotifications() {
@@ -222,6 +232,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 pairedCards.show(dashboard)
                 // Where the price lives (the electricity price the charger uses), above the area and fees.
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
+                // Where the area's prices come from, and Home Assistant's notice when it has none of its own.
+                dashboard?.let {
+                    val areaId = it.market.areaId
+                    val area = areaId?.let { id -> PriceMarkets.find(id)?.selectorLabel ?: id }.orEmpty()
+                    pairedPrice?.showProvider(it.prices.provider, area, settingsProfile.baseUrl)
+                }
                 dashboard?.let { LocalNotifications.observeIdentification(applicationContext, settingsProfile.localId, it) }
                 if (dashboard != null && settingsCache.observeDashboard(settingsProfile.localId, dashboard) is ConfirmedSettingsStore.Merge.Stored) {
                     // A newer record (or one now stating its notifications) is what this screen writes against.
@@ -340,17 +356,6 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 }
             )
             loadPaired()
-        }
-        // Revalidate the catalogue off the main thread, as the rest of this screen's work is.
-        ioExecutor.execute {
-            val result = AreaCatalogue.refreshIfDue(applicationContext)
-            if (result is CatalogueRefresh.Updated) {
-                runOnUiThread {
-                    if (isDestroyed || settingsGeneration != viewGeneration) return@runOnUiThread
-                    localPrice?.show()
-                    pairedPrice?.show(confirmedRecord, priceControlsEnabled(true, settingsAuthority.authority))
-                }
-            }
         }
 
 

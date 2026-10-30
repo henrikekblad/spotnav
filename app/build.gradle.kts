@@ -45,7 +45,8 @@ val push = when (val flag = findProperty("push") as String?) {
 if (push) apply(plugin = "com.google.gms.google-services")
 
 // The relay address is fixed in a release build. A debug build can be pointed somewhere else with
-// -PrelayBaseUrl=http://10.0.2.2:8130 (the documentation screenshots use a local relay stub);
+// -PrelayBaseUrl=http://10.0.2.2:8130 (a local relay stub, for the push registration: the app asks the
+// relay for no prices);
 // release builds always get the official address, and asking for one with the property set fails.
 val officialRelay = "https://spotnav.sensnology.se"
 val relayBaseUrl = (findProperty("relayBaseUrl") as String?)?.trim()?.trimEnd('/')?.takeIf { it.isNotEmpty() }
@@ -74,6 +75,8 @@ android {
         versionName = appVersionName
         buildConfigField("String", "STORE", "\"$store\"")
         buildConfigField("boolean", "PUSH_AVAILABLE", push.toString())
+        // A plain android.app.Instrumentation of the app's own: no AndroidX test library (see DeviceChecks).
+        testInstrumentationRunner = "se.sensnology.spotnav.DeviceChecks"
     }
 
     sourceSets {
@@ -82,7 +85,16 @@ android {
             res.srcDir("src/$store/res")
             java.srcDir(if (push) "src/push/java" else "src/nopush/java")
         }
-        getByName("test") { java.srcDir("src/$store/test/java") }
+        getByName("test") {
+            java.srcDir("src/$store/test/java")
+            java.srcDir("src/sharedTest/java")
+        }
+        // The emulator checks (DeviceChecks, run with `am instrument`, no test library): the parity lines
+        // shared with the unit tests, and the captures they read.
+        getByName("androidTest") {
+            java.srcDir("src/sharedTest/java")
+            assets.srcDir("src/test/resources")
+        }
     }
 
     if (hasReleaseSigning) {

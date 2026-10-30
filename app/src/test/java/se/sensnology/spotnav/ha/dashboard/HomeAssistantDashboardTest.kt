@@ -186,13 +186,18 @@ class HomeAssistantDashboardTest {
             return Dashboard.parse(json).capabilities
         }
 
-        assertEquals(ChargerCapabilities(refreshVehicle = true, setChargeLimit = true), capabilities { })
-        assertEquals(ChargerCapabilities(refreshVehicle = false, setChargeLimit = true), capabilities { put("refresh_vehicle", false) })
-        // Not a boolean at all is "cannot".
+        assertEquals(ChargerCapabilities(refreshVehicle = true, setChargeLimit = true, priceDays = true), capabilities { })
+        assertEquals(
+            ChargerCapabilities(refreshVehicle = false, setChargeLimit = true, priceDays = true),
+            capabilities { put("refresh_vehicle", false) }
+        )
+        // Not a boolean at all is "cannot"; so is an older Home Assistant that does not state price_days.
         assertEquals(ChargerCapabilities(refreshVehicle = false, setChargeLimit = false), capabilities {
             put("refresh_vehicle", "true")
             remove("set_charge_limit")
+            remove("price_days")
         })
+        assertEquals(false, capabilities { put("price_days", 1) }.priceDays)
     }
 
     @Test fun phaseDetectionIsReadAndAnOutOfRangeCountIsNotDetected() {

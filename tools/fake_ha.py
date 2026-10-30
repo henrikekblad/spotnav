@@ -46,7 +46,15 @@ path is allowed, the rest is not.
 The one read the app makes, `dashboard`, answers a contract fixture the
 integration's own tests are pinned to (see DASHBOARD_FIXTURES), so what the
 app parses here is what it parses in real life; each scenario picks the
-fixture that puts the screen it is for on display.
+fixture that puts the screen it is for on display. `price_days` answers the
+pinned SE4 answer with its two files moved to today and tomorrow, except in
+the `oldprices` scenario, a Home Assistant from before `price_days`: its
+dashboard does not state the capability and the action is refused.
+
+The prices block's `provider` (sent, as by Home Assistant, only to a request
+whose `reads` names `price_provider`) says Nord Pool prices the area, except
+in the `addnordpool` scenario, an area with no source of its own: the relay
+still serves it and the notice asks for Nord Pool to be added.
 """
 
 from __future__ import annotations
@@ -59,7 +67,9 @@ import secrets
 import socket
 import threading
 import time
+from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 #: The `dashboard` action answers a vendored contract fixture (`scripts/sync_ha_fixtures.sh` keeps
@@ -73,6 +83,24 @@ DASHBOARD_BY_SCENARIO = {
     "novehicle": "no_settings.json",
     "busy": "stop_charging.json",
     "manual": "manual_stop.json",
+    "oldprices": "cheapest_no_site.json",
+    "addnordpool": "cheapest_no_site.json",
+}
+
+#: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
+PRICE_DAYS_FIXTURE = DASHBOARD_FIXTURES.parent / "webhook/price_days_relay_se4.json"
+
+#: Scenarios standing for a Home Assistant from before `price_days`.
+NO_PRICE_DAYS = {"oldprices"}
+
+#: Where the area's prices come from (`prices.provider`): Nord Pool through Home Assistant, unless the scenario
+#: names another block.
+NORDPOOL_PROVIDER = {"key": "nordpool", "name": "Nord Pool", "url": "https://www.nordpoolgroup.com/", "notice": None}
+PROVIDER_BY_SCENARIO = {
+    "addnordpool": {
+        "key": "relay", "name": "SpotNav relay", "url": "https://spotnav.sensnology.se",
+        "notice": {"code": "add_nordpool", "params": {}},
+    },
 }
 
 #: The `manual` scenario's status, set with `GET /spotnav-mock/manual?action=start|stop&ends=unplug|
@@ -98,11 +126,34 @@ def _manual_status(body: dict) -> dict:
     return {"tone": "normal", "lines": lines}
 
 
-def dashboard_body(scenario: str) -> dict:
+def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
+    # Home Assistant sends the provider only to an app that reads it (APP_DASHBOARD_NESTED_READS).
+    if isinstance(body.get("prices"), dict):
+        if "price_provider" in (reads or []):
+            body["prices"]["provider"] = PROVIDER_BY_SCENARIO.get(scenario, NORDPOOL_PROVIDER)
+        else:
+            body["prices"].pop("provider", None)
     if scenario == "manual":
         body["status"] = _manual_status(body)
+    if scenario in NO_PRICE_DAYS:
+        body["charger"]["capabilities"].pop("price_days", None)
+    return body
+
+
+def price_days_body() -> dict:
+    """The pinned SE4 answer, its files dated today and tomorrow in the area's own zone."""
+    body = json.loads(PRICE_DAYS_FIXTURE.read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["area"]["market_tz"])
+    today = datetime.now(zone).date()
+    files = {}
+    for offset, (_, document) in enumerate(sorted(body["files"].items())[:2]):
+        day: date = today + timedelta(days=offset)
+        document = dict(document, date=day.isoformat())
+        document["start"] = datetime(day.year, day.month, day.day, tzinfo=zone).isoformat()
+        files[day.isoformat()] = document
+    body["files"] = files
     return body
 
 
@@ -160,6 +211,14 @@ SCENARIOS: dict[str, Charger] = {
     "manual": Charger(
         "Manuell",
         why="a person's Start or Stop pausing Auto (HA 1.11): set the state at /spotnav-mock/manual",
+    ),
+    "oldprices": Charger(
+        "Gammal HA",
+        why="a Home Assistant from before price_days: the app asks it to be updated for prices",
+    ),
+    "addnordpool": Charger(
+        "Utan priskälla",
+        why="an area with no price source of its own in Home Assistant: the notice asking for Nord Pool",
     ),
 }
 
@@ -486,7 +545,14 @@ class Handler(BaseHTTPRequestHandler):
             action = payload.get("action")
             with _lock:
                 if action == "dashboard":
-                    self._json(200, dashboard_body(key))
+                    self._json(200, dashboard_body(key, payload.get("reads")))
+                    return
+                if action == "price_days":
+                    if key in NO_PRICE_DAYS:
+                        # What an integration from before the action answers.
+                        self._json(400, {"ok": False, "error": "Unsupported action"})
+                    else:
+                        self._json(200, price_days_body())
                     return
                 if key == "manual" and action == "start" and MANUAL["no_car"]:
                     self._json(409, {"ok": False, "error": "vehicle_not_connected"})

@@ -1,1 +1,1 @@
-Sähkön pörssihinnat, hintataulukko ja sähköauton latauksen suunnittelu.
+Lataa sähköauto halvimpina tunteina – Home Assistantilla tai omalla avaimella.

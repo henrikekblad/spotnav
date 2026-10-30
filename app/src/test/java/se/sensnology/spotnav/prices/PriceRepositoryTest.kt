@@ -6,12 +6,12 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.testing.FakeKeyValueStore
-import se.sensnology.spotnav.testing.FakeRelayTransport
+import se.sensnology.spotnav.testing.FakeDaySource
 import se.sensnology.spotnav.testing.RelayFixtures
 import se.sensnology.spotnav.testing.TEST_TODAY
 
 /**
- * The relay-era price path: which URLs are requested, when a held day survives, and what a day
+ * The price path over a day source: which days are requested, when a held day survives, and what a day
  * document means once it is parsed.
  */
 class PriceRepositoryTest {
@@ -25,131 +25,90 @@ class PriceRepositoryTest {
     }
     private val todayKey = "2026-09-20"
     private val tomorrowKey = "2026-09-21"
-    private val todayUrl = "https://spotnav.sensnology.se/v1/SE4/2026/09-20.json"
-    private val tomorrowUrl = "https://spotnav.sensnology.se/v1/SE4/2026/09-21.json"
+    private val todayDay = "SE4:2026-09-20"
+    private val tomorrowDay = "SE4:2026-09-21"
 
     private fun load(
         area: PriceMarket?,
-        transport: RelayTransport,
+        source: DaySource,
         nowMillis: Long = 1_000_000L,
         force: Boolean = false
-    ) = PriceRepository.load(store, transport, area, TEST_TODAY, nowMillis, force)
+    ) = PriceRepository.load(store, source, area, TEST_TODAY, nowMillis, force)
 
     private fun day(area: PriceMarket, date: String, count: Int, start: String, res: Int = 15) =
         RelayFixtures.dayBody(area, date, RelayFixtures.prices(count), start, res)
 
-    // the index decides what is requested
+    // the source decides what is worth a request
 
     @Test
-    fun tomorrowAbsentFromTheIndexIsNeverRequested() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+    fun tomorrowTheSourceDoesNotOfferIsNeverRequested() {
+        val source = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
 
-        val result = load(RelayFixtures.se4, transport)
+        val result = load(RelayFixtures.se4, source)
 
-        assertEquals(listOf(todayUrl), transport.dayRequests)
+        assertEquals(listOf(todayDay), source.dayRequests)
         assertEquals(96, result.today.size)
         assertTrue(result.tomorrow.isEmpty())
         assertEquals(PriceSource.NONE, result.tomorrowSource)
     }
 
     @Test
-    fun tomorrowListedIsRequestedAtTheExactRelayUrl() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey, tomorrowKey)),
+    fun tomorrowOfferedIsRequested() {
+        val source = FakeDaySource(
             days = mapOf(
                 "SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"),
                 "SE4:$tomorrowKey" to day(RelayFixtures.se4, tomorrowKey, 96, "2026-09-21T00:00:00+02:00")
             )
         )
 
-        val result = load(RelayFixtures.se4, transport)
+        val result = load(RelayFixtures.se4, source)
 
-        assertEquals(listOf(todayUrl, tomorrowUrl), transport.dayRequests.sorted())
+        assertEquals(listOf(todayDay, tomorrowDay), source.dayRequests.sorted())
         assertEquals(96, result.tomorrow.size)
-        assertEquals(PriceSource.RELAY, result.tomorrowSource)
+        assertEquals(PriceSource.FETCHED, result.tomorrowSource)
     }
 
     @Test
-    fun anAreaTheIndexDoesNotListIsNotRequestedAtAll() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("NO1"), listOf(todayKey)),
+    fun anAreaTheSourceDoesNotOfferIsNotRequestedAtAll() {
+        val source = FakeDaySource(
+            listed = setOf("NO1:$todayKey"),
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
 
-        val result = load(RelayFixtures.se4, transport)
+        val result = load(RelayFixtures.se4, source)
 
-        assertTrue(transport.dayRequests.isEmpty())
+        assertTrue(source.dayRequests.isEmpty())
         assertTrue(result.today.isEmpty())
     }
 
     @Test
     fun anUnknownAreaIsAnsweredWithoutTouchingTheNetwork() {
-        val transport = FakeRelayTransport(index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)))
+        val source = FakeDaySource(listed = setOf(todayDay))
 
-        val result = load(null, transport)
+        val result = load(null, source)
 
-        assertTrue(transport.indexRequests.isEmpty())
-        assertTrue(transport.dayRequests.isEmpty())
+        assertTrue(source.questions.isEmpty())
+        assertTrue(source.dayRequests.isEmpty())
         assertTrue(result.today.isEmpty())
     }
 
     @Test
-    fun noRequestCarriesACacheBusterOrAnOldProviderHost() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
-            days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
-        )
-
-        load(RelayFixtures.se4, transport)
-
-        val urls = transport.indexRequests + transport.dayRequests + transport.areasRequests
-        assertTrue(urls.isNotEmpty())
-        for (url in urls) {
-            assertFalse(url, url.contains("?_="))
-            assertFalse(url, url.contains("elprisetjustnu"))
-            assertFalse(url, url.contains("hvakosterstrommen"))
-            assertFalse(url, url.contains("elprisenligenu"))
-            assertFalse(url, url.contains("sahkonhintatanaan"))
-        }
-    }
-
-    @Test
     fun aFailedRequestKeepsTheHeldDayAndSaysSo() {
-        val good = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+        val good = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
         assertEquals(96, load(RelayFixtures.se4, good).today.size)
 
-        // The relay is gone: no index, no day. Nothing may be erased.
-        val dead = FakeRelayTransport()
+        // The source fails. Nothing may be erased.
+        val dead = FakeDaySource(days = mapOf("SE4:$todayKey" to "unused"), failDays = true)
         val result = load(RelayFixtures.se4, dead, nowMillis = 1_000_000L + 60_000L, force = true)
 
         assertEquals(96, result.today.size)
-        assertTrue("held prices must not be presented as freshly fetched", result.todaySource != PriceSource.RELAY)
+        assertTrue("held prices must not be presented as freshly fetched", result.todaySource != PriceSource.FETCHED)
         // The URLs it asked for may have been tried; what matters is what it kept.
         assertTrue(result.todayFetchedAt != null)
-    }
-
-    @Test
-    fun aMalformedIndexCannotReplaceTheStoredOne() {
-        val good = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey))
-        val transport = FakeRelayTransport(
-            index = good,
-            days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
-        )
-        load(RelayFixtures.se4, transport)
-        val stored = store.rawOrNull(PriceRepository.INDEX_KEY)
-        assertEquals(good, stored)
-
-        // A body that is not an index at all, and one with the wrong version.
-        load(RelayFixtures.se4, FakeRelayTransport(index = "{\"nope\":true}"), nowMillis = 2_000_000L, force = true)
-        assertEquals(good, store.rawOrNull(PriceRepository.INDEX_KEY))
-        load(RelayFixtures.se4, FakeRelayTransport(index = "{\"v\":99}"), nowMillis = 3_000_000L, force = true)
-        assertEquals(good, store.rawOrNull(PriceRepository.INDEX_KEY))
     }
 
     @Test
@@ -159,9 +118,7 @@ class PriceRepositoryTest {
             "v1:SE4:$todayKey",
             "[{\"time_start\":\"2026-09-20T00:00:00+02:00\",\"SEK_per_kWh\":1.25}]"
         )
-        val transport = FakeRelayTransport(index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)))
-
-        val result = load(RelayFixtures.se4, transport)
+        val result = load(RelayFixtures.se4, FakeDaySource())
 
         assertTrue(result.today.isEmpty())
     }
@@ -331,20 +288,19 @@ class PriceRepositoryTest {
     /** A publication refresh that re-read the very same documents accepts nothing new. */
     @Test
     fun aForcedRefreshOfTheSameDocumentsAcceptsNothingNew() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+        val source = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
 
-        val first = load(RelayFixtures.se4, transport, force = true)
+        val first = load(RelayFixtures.se4, source, force = true)
         // Nothing was held before it, and it accepted a whole day: that *is* new prices -- a screen
         // showing nothing has just gained something to show (see the rule's own KDoc).
         assertTrue(priceDocumentsChanged(null, first))
 
-        // A later forced refresh, past the memory cache's own dedup window, so the relay really is
+        // A later forced refresh, past the memory cache's own dedup window, so the source really is
         // asked again -- and answers exactly what it answered before.
-        val again = load(RelayFixtures.se4, transport, nowMillis = 2_000_000L, force = true)
-        assertEquals(listOf(todayUrl, todayUrl), transport.dayRequests)
+        val again = load(RelayFixtures.se4, source, nowMillis = 2_000_000L, force = true)
+        assertEquals(listOf(todayDay, todayDay), source.dayRequests)
         assertEquals(first.today, again.today)
         assertFalse(priceDocumentsChanged(first, again))
     }
@@ -352,15 +308,13 @@ class PriceRepositoryTest {
     /** Tomorrow appearing is exactly what the event exists for. */
     @Test
     fun tomorrowAppearingIsNewPrices() {
-        val todayOnly = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+        val todayOnly = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
         val before = load(RelayFixtures.se4, todayOnly)
         assertTrue(before.tomorrow.isEmpty())
 
-        val published = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey, tomorrowKey)),
+        val published = FakeDaySource(
             days = mapOf(
                 "SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"),
                 "SE4:$tomorrowKey" to day(RelayFixtures.se4, tomorrowKey, 96, "2026-09-21T00:00:00+02:00")
@@ -375,15 +329,13 @@ class PriceRepositoryTest {
     /** A first publication, from a process that held nothing, is a publication. */
     @Test
     fun aFirstAcceptedResultIsAPublicationAndAnEmptyOneIsNot() {
-        val todayOnly = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+        val todayOnly = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"))
         )
         val firstToday = load(RelayFixtures.se4, todayOnly)
         assertTrue(priceDocumentsChanged(null, firstToday))
 
-        val both = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey, tomorrowKey)),
+        val both = FakeDaySource(
             days = mapOf(
                 "SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"),
                 "SE4:$tomorrowKey" to day(RelayFixtures.se4, tomorrowKey, 96, "2026-09-21T00:00:00+02:00")
@@ -399,15 +351,14 @@ class PriceRepositoryTest {
 
     @Test
     fun aFailedRefreshAndAnEmptyResultAreNeverNewPrices() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey)),
+        val source = FakeDaySource(
             days = mapOf("SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00")),
             failDays = true
         )
-        val held = load(RelayFixtures.se4, transport)
+        val held = load(RelayFixtures.se4, source)
 
         // A refresh that failed keeps what was held: the same prices, and therefore no event.
-        val afterFailure = load(RelayFixtures.se4, transport, nowMillis = 2_000_000L, force = true)
+        val afterFailure = load(RelayFixtures.se4, source, nowMillis = 2_000_000L, force = true)
         assertFalse(priceDocumentsChanged(held, afterFailure))
 
         // And an empty result is "no prices", which is never "new prices".
@@ -422,27 +373,26 @@ class PriceRepositoryTest {
      */
     @Test
     fun theScreensOwnReadAfterAPublicationRequestsNothing() {
-        val transport = FakeRelayTransport(
-            index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey, tomorrowKey)),
+        val source = FakeDaySource(
             days = mapOf(
                 "SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"),
                 "SE4:$tomorrowKey" to day(RelayFixtures.se4, tomorrowKey, 96, "2026-09-21T00:00:00+02:00")
             )
         )
 
-        // The widget's alarm: forced, and this is the request the relay answers.
-        val published = load(RelayFixtures.se4, transport, force = true)
-        val dayCalls = transport.dayRequests.size
-        val indexCalls = transport.indexRequests.size
+        // The widget's alarm: forced, and this is the request the source answers.
+        val published = load(RelayFixtures.se4, source, force = true)
+        val dayCalls = source.dayRequests.size
+        val questions = source.questions.size
         assertTrue(dayCalls > 0)
 
         // The screen's read afterwards, at the same clock: held prices, no fetch, no index, no day.
-        val rendered = load(RelayFixtures.se4, transport)
+        val rendered = load(RelayFixtures.se4, source)
 
         assertEquals(published.today, rendered.today)
         assertEquals(published.tomorrow, rendered.tomorrow)
-        assertEquals(dayCalls, transport.dayRequests.size)
-        assertEquals(indexCalls, transport.indexRequests.size)
+        assertEquals(dayCalls, source.dayRequests.size)
+        assertEquals(questions, source.questions.size)
     }
 
     // held only: the widget's boundary redraw asks nothing of anyone
@@ -450,9 +400,8 @@ class PriceRepositoryTest {
     private fun heldOnly(area: PriceMarket?, nowMillis: Long = 2_000_000L) =
         PriceRepository.heldOnly(store, area, TEST_TODAY, nowMillis)
 
-    private fun bothDays() = FakeRelayTransport(
-        index = RelayFixtures.indexBody(listOf("SE4"), listOf(todayKey, tomorrowKey)),
-        days = mapOf(
+    private fun bothDays() = FakeDaySource(
+            days = mapOf(
             "SE4:$todayKey" to day(RelayFixtures.se4, todayKey, 96, "2026-09-20T00:00:00+02:00"),
             "SE4:$tomorrowKey" to day(RelayFixtures.se4, tomorrowKey, 96, "2026-09-21T00:00:00+02:00")
         )
@@ -493,10 +442,10 @@ class PriceRepositoryTest {
         PriceRepository.clearMemoryCacheForTest()
         heldOnly(RelayFixtures.se4)
 
-        // The ordinary load after a held-only read still owes the relay its request.
-        val transport = bothDays()
-        load(RelayFixtures.se4, transport)
+        // The ordinary load after a held-only read still owes the source its question.
+        val source = bothDays()
+        load(RelayFixtures.se4, source)
 
-        assertTrue(transport.indexRequests.isNotEmpty())
+        assertTrue(source.questions.isNotEmpty())
     }
 }

@@ -5,7 +5,6 @@ import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import se.sensnology.spotnav.testing.FakeKeyValueStore
 import se.sensnology.spotnav.testing.RelayFixtures
 import se.sensnology.spotnav.testing.RelayV2Fixtures
 import java.time.LocalTime
@@ -19,8 +18,8 @@ class AreaPublicationTest {
     private val london = AreaPublication(LocalTime.of(16, 0), "Europe/London")
     private val madrid = AreaPublication(LocalTime.of(20, 15), "Europe/Madrid")
 
-    private fun parsed(body: String, version: Int = RelayContractVersion.V2): List<PriceMarket> {
-        val result = RelayAreasParser.parse(body, version)
+    private fun parsed(body: String): List<PriceMarket> {
+        val result = RelayAreasParser.parse(body)
         check(result is CatalogueParse.Ok) { "does not parse: $result" }
         return result.catalogue.areas.map(PriceMarket::of)
     }
@@ -41,7 +40,7 @@ class AreaPublicationTest {
     @Test
     fun aStatedTimeIsReadInItsOwnZone() {
         assertEquals(london, RelayV2Fixtures.area("GB-C").publication)
-        val built = parsed(RelayFixtures.areasV2Body(listOf(RelayFixtures.gbC, RelayFixtures.esPvpc, RelayFixtures.se4)))
+        val built = parsed(RelayFixtures.areasBody(listOf(RelayFixtures.gbC, RelayFixtures.esPvpc, RelayFixtures.se4)))
         assertEquals(listOf(london, madrid, AreaPublication.DEFAULT), built.map { it.publication })
     }
 
@@ -88,21 +87,5 @@ class AreaPublicationTest {
         val area = parsed(withAreas(extra)).single()
         assertEquals("GB-C", area.id)
         assertEquals(london, area.publication)
-    }
-
-    @Test
-    fun aV1ListNeverReadsIt() {
-        val stray = JSONObject(RelayV2Fixtures.read("areas-v1.json"))
-        stray.getJSONArray("areas").getJSONObject(0)
-            .put("publication", JSONObject().put("time", "20:15").put("tz", "Europe/Madrid"))
-        assertTrue(parsed(stray.toString(), RelayContractVersion.V1).all { it.publication == AreaPublication.DEFAULT })
-    }
-
-    @Test
-    fun aHeldV2ListKeepsThePublicationAcrossARestart() {
-        val store = FakeKeyValueStore()
-        val body = RelayFixtures.areasV2Body(listOf(RelayFixtures.esPvpc))
-        AreaCatalogue.refresh(store, { null }, 10_000_000L, true, fetchV2 = { RelayFetch.Body(body) })
-        assertEquals(madrid, AreaCatalogue.startup(store, { null }).areas.single().publication)
     }
 }

@@ -31,6 +31,8 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
         editable: Boolean,
         /** The area picker's controls, built for the record (paired) or this phone's settings. */
         areaControls: (LinearLayout) -> PriceSettings,
+        /** Rows that belong right under the area (an unpaired phone's ENTSO-E key). */
+        afterArea: (LinearLayout) -> Unit = {},
         edit: (PriceEdit, (String?) -> Unit) -> Unit
     ) {
         val market = areaId?.let { PriceMarkets.find(it) }
@@ -43,6 +45,7 @@ internal class PriceRows(scope: ViewScope) : ViewScope(scope) {
         }
         settingRow(parent, t(R.string.price_row_area), overview.area ?: t(R.string.value_not_set),
             onTap = if (editable) ({ openArea(areaControls, edit) }) else null)
+        afterArea(parent)
         val vatSettable = editable && overview.vat != FiscalLine.Included && (market?.vatPercent ?: 0.0) > 0.0
         settingRow(parent, t(R.string.price_row_vat), text(overview.vat), onTap = if (vatSettable) ({
             // What VAT is here, above the choice: "VAT 25 %", the area's own rate.

@@ -365,6 +365,28 @@ class ChargerProfileStoreTest {
         assertEquals(65, reloaded?.targetSocPercent)
     }
 
+    /**
+     * Whether Home Assistant answers `price_days` follows each dashboard, survives a reload, and is
+     * unknown until a dashboard has been read.
+     */
+    @Test fun thePriceDaysCapabilityFollowsTheDashboardAndSurvivesAReload() {
+        val backing = FakeKeyValueStore()
+        store(backing).upsertProfile(ChargerProfile("a", "Charger A", "https://a.example.com", "hook-a"))
+        assertNull(store(backing).getProfile("a")?.priceDays)
+
+        store(backing).applyDashboardResult("a", Result.success(dashboard()))
+        assertEquals(true, store(backing).getProfile("a")?.priceDays)
+
+        val older = DashboardFixtures.dashboard { getJSONObject("charger").getJSONObject("capabilities").remove("price_days") }
+        store(backing).applyDashboardResult("a", Result.success(older))
+        assertEquals(false, store(backing).getProfile("a")?.priceDays)
+
+        store(backing).recordPriceDays("a", true)
+        assertEquals(true, store(backing).getProfile("a")?.priceDays)
+        store(backing).applyDashboardResult("a", Result.failure(java.io.IOException("offline")))
+        assertEquals("a failed read keeps what the last dashboard said", true, store(backing).getProfile("a")?.priceDays)
+    }
+
     /** Both fields default to "nothing chosen yet", which is a normal state. */
     @Test fun aProfileWithoutAVehicleChoiceRoundTripsBothFieldsAsNull() {
         val backing = FakeKeyValueStore()

@@ -1,28 +1,25 @@
-SpotNav shows electricity spot prices as a home-screen widget and a colour-coded price table, and helps you plan EV charging for the cheapest hours.
+SpotNav plans your EV charging for the cheapest hours of the day and shows electricity spot prices as a widget and a colour-coded price table.
+
+CHARGING WITH HOME ASSISTANT
+- Pair the app with the SpotNav integration in your Home Assistant. Charging control, solar and hybrid charging and load balancing run there, even when the phone is off.
+- See and change charging settings, departure and charge target from the phone.
+- Prices come from your Home Assistant, through its built-in Nord Pool integration or other price sources you have added there. No key is needed in the app.
+- The app receives one webhook ID per charger, never a Home Assistant password or token.
+
+WITHOUT HOME ASSISTANT
+- The app fetches prices directly from ENTSO-E with your own free key. The app shows step by step how to get one.
+- Set current, phases, energy to add, consumption and departure time. The app picks the cheapest quarter-hours and shows cost and range.
 
 PRICES
-- Today and tomorrow on one 24-hour chart, with the current interval, minimum, maximum and current price marked.
-- Price areas in the Nordic and Baltic countries, Germany and the Netherlands.
-- Prices as each area publishes them, every 15, 30 or 60 minutes, in the local currency.
-- Optional VAT, electricity tax and grid fee. Suggested tax values can be edited; check them against your own agreement.
-- Resizable widget, a local cache for network failures and automatic checks for tomorrow's prices.
+- Today and tomorrow on one chart, with the minimum, maximum and current price marked.
+- Price areas across much of Europe, every 15, 30 or 60 minutes, in the local currency (ECB exchange rates).
+- Optional VAT, electricity tax and grid fee.
+- Plans use published prices only. Tomorrow's prices arrive around 13:00 CET.
 - Available in English, Swedish, Norwegian, Danish, Finnish, German, Dutch, Spanish and French.
 
-EV CHARGING PLANNER
-- Set single-phase or three-phase charging, current, energy to add, vehicle consumption, departure time and up to eight charging periods.
-- The app picks the cheapest combination of quarter-hours and shows cost and range. The chosen periods are shaded in the widget.
-- Plans use published prices only. If the charging window needs tomorrow's prices before they are out (around 13:00 CET), the app waits for them, and buys now only what cannot wait for the departure. Charging losses and the vehicle's charging curve are not included.
-
-HOME ASSISTANT (OPTIONAL)
-- Pair the app with your Home Assistant through the SpotNav integration to see and change charging settings from the phone.
-- Charging control, solar and hybrid planning and load balancing run in the SpotNav Home Assistant integration, which is installed separately. The app does not need to stay online for the schedule to run.
-- The app receives one webhook ID per charger, never a Home Assistant password or token.
-- Everything except the Home Assistant features works without pairing.
-
 DATA AND PRIVACY
-- Prices are day-ahead prices from ENTSO-E, published by the SpotNav relay, with currencies converted using ECB exchange rates. The price shown is a spot price; VAT, tax and fees are added only if you enable them.
 - No account, no advertising, no analytics. The developer receives no data from the app.
-- The app requests prices from the relay (price area and date) and, if paired, talks only to your own Home Assistant.
+- The app talks only to your own Home Assistant, or to ENTSO-E and the ECB when you use it without Home Assistant. Your ENTSO-E key is stored encrypted on the phone.
 - Privacy policy: https://spotnav.sensnology.se/privacy
 
 SpotNav is not affiliated with ENTSO-E, the ECB, Nord Pool, electricity retailers or grid operators. Prices and charging calculations are guidance only; verify them against your agreement and invoice.

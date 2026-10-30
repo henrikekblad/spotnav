@@ -245,7 +245,12 @@ internal data class DashboardPrices(
     val tomorrow: String?,
     val resolutionMinutes: Int?,
     val unpriced: Boolean,
-    val intervals: List<DashboardPriceInterval>
+    val intervals: List<DashboardPriceInterval>,
+    /**
+     * Where the area's prices come from and what to do when it has no source of its own (`provider`, see
+     * [DashboardPriceProvider]); `null` without an area, from an older Home Assistant, or unreadable.
+     */
+    val provider: DashboardPriceProvider? = null
 )
 
 /**
@@ -697,7 +702,8 @@ internal data class Dashboard(
         private fun capabilities(json: JSONObject) = ChargerCapabilities(
             refreshVehicle = json.strictBoolean("refresh_vehicle") == true,
             setChargeLimit = json.strictBoolean("set_charge_limit") == true,
-            setCurrent = json.strictBoolean("set_current") == true
+            setCurrent = json.strictBoolean("set_current") == true,
+            priceDays = json.strictBoolean("price_days") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(
@@ -759,7 +765,8 @@ internal data class Dashboard(
                     proposalPlanned = it.opt("proposal_planned") == true,
                     installedPlanned = it.opt("installed_planned") == true
                 )
-            }
+            },
+            provider = DashboardPriceProvider.parse(json.opt("provider"))
         )
 
         private fun instant(text: String): OffsetDateTime? = runCatching { OffsetDateTime.parse(text) }.getOrNull()

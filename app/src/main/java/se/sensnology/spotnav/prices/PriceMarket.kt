@@ -25,7 +25,9 @@ data class PriceMarket(
     /** Where the prices come from (v2), shown under the area choice; `null` from a v1 list. */
     val source: AreaSource? = null,
     /** When tomorrow's prices are expected (v2's `publication`); 13:00 Brussels when none is stated. */
-    val publication: AreaPublication = AreaPublication.DEFAULT
+    val publication: AreaPublication = AreaPublication.DEFAULT,
+    /** How to ask ENTSO-E for this area's prices; `null` when the bundled list names no route. */
+    val entsoe: EntsoeRoute? = null
 ) {
     /** The zone this area's days are rendered in. */
     val zoneId: ZoneId get() = ZoneId.of(tz)
@@ -80,7 +82,8 @@ data class PriceMarket(
             marketTz = area.marketTz,
             included = area.included,
             source = area.source,
-            publication = area.publication
+            publication = area.publication,
+            entsoe = area.entsoe
         )
 
         /** The country code of the Great Britain regions (Octopus Agile). */
@@ -88,29 +91,38 @@ data class PriceMarket(
     }
 }
 
-/**
- * The catalogue the app is currently using: the last valid remote document, or the bundled
- * snapshot, or both refusing to load.
- */
+/** The catalogue the app is currently using: the bundled area list, or nothing when it refused to load. */
 object PriceMarkets {
-    private class Held(val areas: List<PriceMarket>, val version: Int)
-
     @Volatile
-    private var current: Held = Held(emptyList(), RelayContractVersion.V1)
+    private var current: List<PriceMarket> = emptyList()
 
     /** Every area currently selectable, in catalogue order. */
-    val all: List<PriceMarket> get() = current.areas
-
-    /** The contract version the held catalogue was read in; the index is read in the same one. */
-    val version: Int get() = current.version
+    val all: List<PriceMarket> get() = current
 
     /** Replace the catalogue atomically. */
-    fun replace(areas: List<PriceMarket>, version: Int = RelayContractVersion.V1) {
-        current = Held(areas, version)
+    fun replace(areas: List<PriceMarket>) {
+        current = areas
     }
 
-    /** The area with this id, or `null`. */
-    fun find(area: String): PriceMarket? = current.areas.firstOrNull { it.id == area }
+    /**
+     * Areas a paired charger's Home Assistant named in its `price_days` answer, for an id the held list
+     * lacks (design 2.3): its zone, currency and units stay known. Never consulted before the list, so
+     * Home Assistant's market calendar never replaces the list's own for an area the list has.
+     */
+    private val fromHomeAssistant = java.util.concurrent.ConcurrentHashMap<String, PriceMarket>()
+
+    /** Remember [area] as Home Assistant states it, for [find]. */
+    fun learn(area: PriceMarket) {
+        fromHomeAssistant[area.id] = area
+    }
+
+    /** The area with this id: the held list's, else one Home Assistant named; or `null`. */
+    fun find(area: String): PriceMarket? = current.firstOrNull { it.id == area } ?: fromHomeAssistant[area]
+
+    /** Forget what Home Assistant named. For tests. */
+    internal fun forgetLearnedForTest() {
+        fromHomeAssistant.clear()
+    }
 }
 
 /**
