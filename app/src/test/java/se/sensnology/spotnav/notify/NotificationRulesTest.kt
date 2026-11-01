@@ -97,6 +97,30 @@ class NotificationRulesTest {
         assertEquals(emptyList<LocalEvent>(), events(running, stopped, chosen = setOf(CHARGE_COMPLETE)))
     }
 
+    @Test fun aPersonsStopInTheLastWindowIsNotAPlanThatIsDone() {
+        // 1 November: a person stopped the charge in the plan's last window; the stop cleared the plan, which read
+        // as the plan done ("the planned charge is complete") at the next check.
+        val running = snap(charging = true, windowOpen = true, windowsLeft = true)
+        val stopped = snap(at = later).copy(personPaused = true)
+        assertEquals(emptyList<LocalEvent>(), events(running, stopped).filter { it.event == CHARGE_COMPLETE })
+        assertEquals(
+            listOf(LocalEvent(CHARGE_COMPLETE, reason = "plan_done")),
+            events(running, snap(at = later)).filter { it.event == CHARGE_COMPLETE }
+        )
+    }
+
+    @Test fun aPersonsPauseIsReadFromTheStatusLineAndKeptAcrossAStore() {
+        val json = startIdle()
+        json.getJSONObject("status").put("lines", org.json.JSONArray().put(
+            JSONObject().put("code", "paused").put("params", JSONObject().put("choice", "manual").put("action", "stop"))
+        ))
+        val dashboard = Dashboard.parse(json)
+        val snapshot = NotificationRules.snapshot(dashboard, t0, ZoneId.of("UTC"))
+        assertTrue(snapshot.personPaused)
+        assertTrue(NotificationSnapshot.fromJson(snapshot.toJson())!!.personPaused)
+        assertFalse(NotificationSnapshot.fromJson(snap().toJson().apply { remove("person_paused") })!!.personPaused)
+    }
+
     @Test fun aDepartureAtRiskIsToldWithItsTime() {
         assertEquals(
             listOf(LocalEvent(PLAN_AT_RISK, time = "07:30")),
