@@ -62,7 +62,9 @@ internal data class NotificationSnapshot(
      * The estimated level the car ended the plan's charge at while the plan waits for the car's level
      * (`car_ended_waiting` with `estimated`), `null` otherwise: Home Assistant tells that end as a completion.
      */
-    val carEndedEstimate: Double? = null
+    val carEndedEstimate: Double? = null,
+    /** A person stopped or paused the charge (the status line `paused`): the plan's charge ending then is theirs, not done. */
+    val personPaused: Boolean = false
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -84,6 +86,7 @@ internal data class NotificationSnapshot(
         put("remaining_kwh", remainingKwh ?: JSONObject.NULL)
         put("planned_kwh", plannedKwh ?: JSONObject.NULL)
         put("plan_notice", planNotice ?: JSONObject.NULL)
+        put("person_paused", personPaused)
     }
 
     companion object {
@@ -111,7 +114,8 @@ internal data class NotificationSnapshot(
                 carEndedEstimate = number("car_ended_estimate"),
                 remainingKwh = number("remaining_kwh"),
                 plannedKwh = number("planned_kwh"),
-                planNotice = (json.opt("plan_notice") as? Number)?.toLong()
+                planNotice = (json.opt("plan_notice") as? Number)?.toLong(),
+                personPaused = json.opt("person_paused") as? Boolean ?: false
             )
         }.getOrNull()
     }
@@ -221,7 +225,8 @@ internal object NotificationRules {
             carEndedEstimate = carEnded?.takeIf { it["estimated"] == true }?.get("soc_percent") as? Double,
             remainingKwh = remaining,
             plannedKwh = dashboard.plan.proposal?.plannedKwh,
-            planNotice = dashboard.planNotice
+            planNotice = dashboard.planNotice,
+            personPaused = "paused" in codes
         )
     }
 
@@ -285,7 +290,9 @@ internal object NotificationRules {
                 event, reason = "target", percent = now.targetPercent, level = now.carEndedEstimate, basis = "estimate"
             )
             was != null && was > NEED_MET_KWH && left != null && left <= NEED_MET_KWH -> LocalEvent(event, reason = "energy")
-            before.charging && before.windowOpen && !now.charging && !now.windowsLeft -> LocalEvent(event, reason = "plan_done")
+            // A person's Stop clears the plan too: their stop, not a plan that is done.
+            before.charging && before.windowOpen && !now.charging && !now.windowsLeft && !now.personPaused ->
+                LocalEvent(event, reason = "plan_done")
             else -> null
         }
     }
