@@ -234,8 +234,8 @@ internal class PairedSettingsCards(
 
     /** A value row that opens [onTap] (its dialog), or a read-only one while [onTap] is `null`. */
     private fun valueRow(
-        parent: LinearLayout, label: String, value: String, help: String? = null, onTap: (() -> Unit)?, target: String? = null
-    ) = settingRow(parent, label, value, help, onTap, target)
+        parent: LinearLayout, label: String, value: String, help: String? = null, target: String? = null, onTap: (() -> Unit)?
+    ) = settingRow(parent, label, value, help, target, onTap)
 
     private fun repaint() {
         container.removeAllViews()

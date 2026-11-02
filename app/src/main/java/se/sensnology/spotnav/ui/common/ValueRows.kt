@@ -157,9 +157,9 @@ internal fun ViewScope.settingRow(
     label: String,
     value: String,
     help: String? = null,
-    onTap: (() -> Unit)? = null,
     /** What the row is called by a screen that opens Settings at it (see `SettingsTarget`), else `null`. */
-    target: String? = null
+    target: String? = null,
+    onTap: (() -> Unit)? = null
 ) {
     val valueView = TextView(context).apply {
         text = value
