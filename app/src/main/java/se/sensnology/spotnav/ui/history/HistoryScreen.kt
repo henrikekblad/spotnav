@@ -474,7 +474,7 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
         val hint: String
         if (day != null) {
             card.body.addView(Button(context).apply {
-                this.text = "‹ ${words.say("power.back")}"
+                this.text = String.format(textLocale, "‹ %s", words.say("power.back"))
                 isAllCaps = false
                 setOnClickListener {
                     powerDay = null

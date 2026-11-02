@@ -36,6 +36,7 @@ internal class PowerBarsView(context: Context) : View(context) {
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 11f * density }
     private val box = RectF()
+    private val dashes by lazy { DashPathEffect(floatArrayOf(5f * density, 4f * density), 0f) }
 
     init {
         isClickable = true
@@ -170,7 +171,7 @@ internal class PowerBarsView(context: Context) : View(context) {
             val at = y(kw)
             line.color = colours.text
             line.strokeWidth = 1.5f * density
-            line.pathEffect = DashPathEffect(floatArrayOf(5f * density, 4f * density), 0f)
+            line.pathEffect = dashes
             canvas.drawLine(left, at, left + width, at, line)
             line.pathEffect = null
             text.textAlign = Paint.Align.RIGHT

@@ -1,12 +1,14 @@
 package se.sensnology.spotnav.ui.history
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.view.View
 
-/** One key of the Power view's legend, drawn as the chart draws what it names. */
+/** One key of the Power view's legend, drawn as the chart draws what it names. Made in code only. */
+@SuppressLint("ViewConstructor")
 internal class LegendSwatch(
     context: Context,
     private val key: PowerModel.LegendKey,
@@ -15,6 +17,7 @@ internal class LegendSwatch(
     private val density = resources.displayMetrics.density
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 1.5f * density }
+    private val dashes = DashPathEffect(floatArrayOf(4f * density, 3f * density), 0f)
     private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 10f * density; textAlign = Paint.Align.CENTER }
 
     init {
@@ -30,7 +33,7 @@ internal class LegendSwatch(
             PowerModel.LegendKey.Unsplit -> { fill.color = colours.unsplit; canvas.drawRect(0f, 0f, w, h, fill) }
             PowerModel.LegendKey.Target -> {
                 line.color = colours.text
-                line.pathEffect = DashPathEffect(floatArrayOf(4f * density, 3f * density), 0f)
+                line.pathEffect = dashes
                 canvas.drawLine(0f, h / 2, w, h / 2, line)
             }
             is PowerModel.LegendKey.Counted -> {
