@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ha.session
 
+import org.json.JSONObject
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.client.CameraPicture
@@ -9,6 +10,7 @@ import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
+import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.OwnModeFix
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.PlanPreview
@@ -71,6 +73,9 @@ internal interface HaTransport {
     /** `fix_own_mode`: the charger's own setting set back; never throws. */
     fun fixOwnMode(entityId: String, value: String): OwnModeFix.Outcome = OwnModeFix.Outcome.Failed(null)
 
+    /** `update_grid_tariff`: the grid tariff written with [body]; never throws. */
+    fun updateGridTariff(expectedRevision: Int, body: JSONObject): GridTariffUpdate.Outcome = GridTariffUpdate.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -118,6 +123,9 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun dismissSetupItem(item: String) = HomeAssistantClient.dismissSetupItem(connection, item)
 
     override fun fixOwnMode(entityId: String, value: String) = HomeAssistantClient.fixOwnMode(connection, entityId, value)
+
+    override fun updateGridTariff(expectedRevision: Int, body: JSONObject) =
+        HomeAssistantClient.updateGridTariff(connection, expectedRevision, body)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -304,6 +312,14 @@ internal class HaSession(
     fun dismissSetupItem(item: String, done: (SetupDismiss.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.dismissSetupItem(item)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_grid_tariff` (never throws). */
+    fun updateGridTariff(expectedRevision: Int, body: JSONObject, done: (GridTariffUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateGridTariff(expectedRevision, body)
             mainThread { done(outcome) }
         }
     }
