@@ -698,4 +698,28 @@ class HaStatusTextTest {
             HaStatusText.line(own, format("sv"), now)
         )
     }
+
+    @Test fun aChargersOwnModeUsesHomeAssistantsNamesWhenTheyAreSent() {
+        val own = StatusLine(
+            "charger_own_mode",
+            mapOf(
+                "entity" to "select.p", "label" to "smart charging", "state" to "pure_solar", "value" to "default",
+                "entity_name" to "Smart charging", "state_name" to "Pure solar", "value_name" to "Default"
+            )
+        )
+        assertEquals(
+            "The charger's own smart charging is on (Pure solar). It works against SpotNav. Change it on the charger's device page in Home Assistant.",
+            HaStatusText.line(own, format("en"), now)
+        )
+        // An abbreviation keeps its capitals, and German its noun.
+        assertEquals("PV surplus", HaStatusText.inSentence("en", "PV surplus"))
+        assertEquals("Smart charging", HaStatusText.inSentence("de", "Smart charging"))
+    }
+
+    @Test fun theSunPastATargetNamesTheCarsLimit() {
+        assertEquals(
+            "Målet nått – solen fyller på till bilens gräns 80 %",
+            HaStatusText.line(StatusLine("sun_past_target", mapOf("percent" to 80.0)), format("sv"), now)
+        )
+    }
 }

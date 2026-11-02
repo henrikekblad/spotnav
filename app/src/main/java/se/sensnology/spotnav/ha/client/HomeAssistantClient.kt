@@ -66,14 +66,14 @@ internal class WebhookHttpStatusException(
  * `phase_switching`, the dashboard's block for phase switching for solar, and `price_provider`, the prices block's
  * `provider` (where the area's prices come from, and Home Assistant's notice when it has no source of its own),
  * `plan_facts`, the status lines for what a plan saves and the sun a forecast promises (and the sun hybrid counts on), and
- * `own_mode_status`, the status line while the charger's own mode works against SpotNav. Every request the app sends names them.
+ * `own_mode_status`, the status line while the charger's own mode works against SpotNav, `sun_past_target`, the status line while the sun tops a car up past its target, and `setup`, the dashboard's "Get started" rows. Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
         "departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode",
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
-        "phase_switching", "price_provider", "plan_facts", "own_mode_status"
+        "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
