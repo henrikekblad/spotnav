@@ -232,6 +232,9 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     if scenario == "started" and "setup" in (reads or []):
         body["setup"] = {"items": [{"id": row, "dismissible": dismissible} for row, dismissible in SETUP_ROWS
                                    if row not in DISMISSED]}
+    # Phase switching for solar is offered on the `started` charger (the row its Get started line opens in Settings).
+    if scenario == "started" and "phase_switching" in (reads or []):
+        body["phase_switching"] = {"value": False, "writable": True}
     if scenario == "ownmode":
         body["status"] = _own_mode_status()
     return body
