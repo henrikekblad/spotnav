@@ -641,4 +641,5 @@
   <string name="ha_price_notice_add_entsoe_key">Priserna för %1$s kommer från ENTSO-E med din egen kostnadsfria nyckel. Lägg till den i Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtog inte den sparade nyckeln. Ange en ny i Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Öppna Home Assistant</string>
+  <string name="plan_preview_title">Planen med den här ändringen</string>
 </resources>

@@ -26,6 +26,8 @@ import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
 import se.sensnology.spotnav.ha.settings.DepartureDays
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
 import se.sensnology.spotnav.ha.settings.HaSettingsEdit
+import se.sensnology.spotnav.ha.settings.HaSettingsEditResult
+import se.sensnology.spotnav.ha.settings.HaSettingsEditor
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ha.settings.HaTargetIntent
 import se.sensnology.spotnav.planning.LocalPlanningInputs
@@ -79,6 +81,8 @@ internal class ChargingScreen(
     internal lateinit var connection: ConnectionControls
     internal lateinit var vehicleCard: VehicleCard
     internal lateinit var planCard: PlanCard
+    /** The plan a held slider would make, asked of Home Assistant (see [PlanPreviewController]). */
+    internal lateinit var planPreview: PlanPreviewController
     internal lateinit var targetSoc: TargetSocControls
     internal lateinit var consumption: ConsumptionControls
     internal lateinit var energy: EnergyControls
@@ -243,6 +247,7 @@ internal class ChargingScreen(
             }
         }
         targetSoc = planCard.targetSoc
+        planPreview = PlanPreviewController(this, planCard.result.preview, session = { session }, dashboard = { pairedNow() })
         // The price notice's two ways out: the key's how-to here, or pairing in Settings.
         planCard.result.priceNeed.onKey = {
             EntsoeKeyDialog(this).open(settings.area) { loadPrices() }
@@ -585,6 +590,22 @@ internal class ChargingScreen(
         commitEdit(HaSettingsEdit.Driver(driver, targetIntentFor(driver)))
     }
 
+    /** The plan the slider held would make if it were let go, for the edit it names (paired charger only). */
+    private fun previewHeld(seekBar: SeekBar?) {
+        when {
+            seekBar === connection.ampsSeek -> previewEdit(HaSettingsEdit.Amps(connection.amps()))
+            seekBar === energy.energy -> previewEdit(HaSettingsEdit.Energy(energyEnergy(), energy.filling()))
+            seekBar === planCard.periods -> previewEdit(HaSettingsEdit.MaxPeriods(planCard.periods.progress + 1))
+        }
+    }
+
+    /** Ask Home Assistant what [edit] would plan on the record held, with nothing saved. */
+    private fun previewEdit(edit: HaSettingsEdit) {
+        val record = authority.authority?.takeIf { it.haOwnsPlanning }?.remoteSettings ?: return
+        val ready = HaSettingsEditor.replacement(record, edit) as? HaSettingsEditResult.Ready
+        planPreview.request(ready?.settings)
+    }
+
     /** Every control's listener, attached where the authority, the note and `render` all exist. */
     private fun wireControls() {
         // The paired vehicle picker: a choice is Home Assistant's own field, written through the
@@ -602,9 +623,11 @@ internal class ChargingScreen(
                 energy.refreshValueLabel()
                 planCard.refreshPeriodsLabel()
                 render()
+                if (fromUser) previewHeld(seekBar)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                planPreview.clear()
                 // The slider that was let go names the edit: one field, one replacement, one
                 // request at the commit boundary -- never a write per tick.
                 when {
@@ -635,9 +658,11 @@ internal class ChargingScreen(
                 targetSoc.refreshValueLabel()
                 // A new target means new derived energy:
                 planCard.refreshDriver()
+                if (fromUser) previewEdit(HaSettingsEdit.Driver(HaSettingsDriver.TARGET_SOC, targetIntentFor(HaSettingsDriver.TARGET_SOC)))
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                planPreview.clear()
                 // Only a real drag decides the target:
                 commitTargetPercent()
             }

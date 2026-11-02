@@ -649,4 +649,5 @@
   <string name="ha_price_notice_add_entsoe_key">Los precios de %1$s vienen de ENTSO-E, con tu propia clave gratuita. Añádela en Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E no aceptó la clave guardada. Introduce una nueva en Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Abrir Home Assistant</string>
+  <string name="plan_preview_title">Plan con este cambio</string>
 </resources>

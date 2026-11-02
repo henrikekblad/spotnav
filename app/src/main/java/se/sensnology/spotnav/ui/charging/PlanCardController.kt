@@ -474,6 +474,11 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             // a colour or a point on a canvas.
             chart.contentDescription = chartDescription(lines)
         }
+        // While a slider is held: the plan Home Assistant would make if it were let go (shown only then).
+        val preview = PlanPreviewPanel(this)
+        card.body.addView(preview.view, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { bottomMargin = dp(6) })
         // The answer, in a frame of its own: the computed windows, or the reason there are none.
         val title = TextView(context).apply {
             textSize = 17f
@@ -546,7 +551,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             title = title, cost = cost, energyResult = energyResult, distance = distance,
             note = note, authorityNote = authorityNote, costRow = costRow, energyRow = energyRow,
             distanceRow = distanceRow, status = status,
-            chart = chart, priceNeed = priceNeed, readout = readout
+            chart = chart, priceNeed = priceNeed, readout = readout, preview = preview
         )
     }
 
@@ -587,7 +592,9 @@ internal class ResultBox(
     /** What stands in the graph's place when an unpaired phone has no source for prices. */
     val priceNeed: PriceNeedNotice,
     /** The answer ([title]) and its [note], which the notice makes redundant ("no charging time: not enough prices"). */
-    val readout: View
+    val readout: View,
+    /** The plan a held slider would make (see [PlanPreviewPanel]). */
+    val preview: PlanPreviewPanel
 ) {
     /** The notice in the graph's place, or the graph again for `null`; the answer's block only without a notice. */
     fun showPriceNeed(notice: StandalonePrice.Notice?) {

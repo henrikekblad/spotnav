@@ -641,4 +641,5 @@
   <string name="ha_price_notice_add_entsoe_key">De prijzen voor %1$s komen van ENTSO-E, met je eigen gratis sleutel. Voeg die toe in Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E heeft de opgeslagen sleutel niet geaccepteerd. Vul in Home Assistant een nieuwe in.</string>
   <string name="ha_price_open_home_assistant">Home Assistant openen</string>
+  <string name="plan_preview_title">Plan met deze wijziging</string>
 </resources>

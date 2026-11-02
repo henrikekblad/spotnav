@@ -641,4 +641,5 @@
   <string name="ha_price_notice_add_entsoe_key">Alueen %1$s hinnat tulevat ENTSO-E:ltä omalla maksuttomalla avaimellasi. Lisää se Home Assistantiin.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E ei hyväksynyt tallennettua avainta. Anna uusi Home Assistantissa.</string>
   <string name="ha_price_open_home_assistant">Avaa Home Assistant</string>
+  <string name="plan_preview_title">Suunnitelma tällä muutoksella</string>
 </resources>
