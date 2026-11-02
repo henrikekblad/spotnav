@@ -8,7 +8,7 @@
 # fixtures and the catalogue are taken from that commit of the integration's repository instead of its
 # working tree, so a branch can be vendored without checking it out. Only the
 # parts the app reads are copied (dashboard/, settings/v1/, site_settings/v1/, vehicle/v1/, sessions/, webhook/,
-# codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
+# grid_tariff/, codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
 # so run this after the HA side changes a fixture. The integration's area catalogue
 # (custom_components/spotnav/pricing/areas.json) is copied to the app's assets as its bundled area list.
 set -euo pipefail
@@ -32,7 +32,7 @@ if [ ! -d "$src" ]; then
     exit 1
 fi
 
-rm -rf "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings" "$dst/site_settings" "$dst/vehicle" "$dst/sessions"
+rm -rf "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings" "$dst/site_settings" "$dst/vehicle" "$dst/sessions" "$dst/grid_tariff"
 mkdir -p "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings/v1" "$dst/site_settings/v1" "$dst/vehicle/v1" "$dst/sessions"
 cp "$src"/webhook/*.json "$dst/webhook/"
 cp "$src"/dashboard/*.json "$dst/dashboard/"
@@ -41,6 +41,11 @@ cp "$src"/site_settings/v1/*.json "$dst/site_settings/v1/"
 cp "$src"/vehicle/v1/*.json "$dst/vehicle/v1/"
 cp "$src"/sessions/*.json "$dst/sessions/"
 cp "$src"/codes/dashboard_codes.json "$dst/codes/"
+# The grid tariff's examples (the demand charge since 2.4); an older integration has none.
+if [ -d "$src/grid_tariff" ]; then
+    mkdir -p "$dst/grid_tariff"
+    cp "$src"/grid_tariff/*.json "$dst/grid_tariff/"
+fi
 echo "Vendored $(find "$dst" -type f | wc -l) fixtures into $dst"
 
 areas="$src/../../custom_components/spotnav/pricing/areas.json"
