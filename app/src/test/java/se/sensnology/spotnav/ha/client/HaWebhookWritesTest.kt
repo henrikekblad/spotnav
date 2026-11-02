@@ -299,6 +299,7 @@ class HaWebhookWritesTest {
         assertEquals(SiteFacts.Reason.DUPLICATE_MEMBERSHIP, SiteFacts.reason("legacy_duplicate_membership"))
         assertEquals(SiteFacts.Reason.NO_COMMANDABLE_CHARGER, SiteFacts.reason("no_commandable_charger"))
         assertEquals(SiteFacts.Reason.MEASUREMENT, SiteFacts.reason("site_measurement_configured_missing"))
+        assertEquals(SiteFacts.Reason.DIRECTION_UNKNOWN, SiteFacts.reason("site_direction_unknown"))
         assertEquals(SiteFacts.Reason.UNKNOWN, SiteFacts.reason("something_new"))
     }
 

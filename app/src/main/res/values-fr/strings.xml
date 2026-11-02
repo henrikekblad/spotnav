@@ -309,6 +309,7 @@
   <string name="site_active_reason_duplicate">Indisponible : cette borne est revendiquée par plusieurs sites.</string>
   <string name="site_active_reason_no_charger">Indisponible : aucune borne de ce site n\'accepte de consigne de courant.</string>
   <string name="site_active_reason_measurement">Indisponible : la mesure de puissance propre à ce site n\'est pas fiable.</string>
+  <string name="site_active_reason_direction_unknown">L\'équilibrage de charge ne peut pas savoir si le courant est soutiré du réseau ou injecté : il protège seulement le fusible et n\'utilise pas toute la marge. Modifiez les réglages du compteur dans Home Assistant.</string>
   <string name="site_active_reason_unknown">Indisponible, pour une raison que cette application ne connaît pas encore.</string>
   <string name="site_active_note">Au mieux, ce n\'est pas un dispositif de protection. Le désactiver rend tout courant qu\'il avait réduit.</string>
   <string name="site_error_conflict">Modifié ailleurs. Les valeurs actuelles sont affichées.</string>

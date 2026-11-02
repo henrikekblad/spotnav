@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Nicht verfügbar: Diese Ladestation wird von mehr als einem Standort beansprucht.</string>
   <string name="site_active_reason_no_charger">Nicht verfügbar: Keine Ladestation an diesem Standort nimmt einen Strombefehl an.</string>
   <string name="site_active_reason_measurement">Nicht verfügbar: Die eigene Leistungsmessung dieses Standorts ist nicht in Ordnung.</string>
+  <string name="site_active_reason_direction_unknown">Das Lastmanagement kann nicht erkennen, ob der Strom aus dem Netz bezogen oder eingespeist wird. Es schützt daher nur die Sicherung und nutzt nicht den ganzen Spielraum. Ändere die Einstellungen des Zählers in Home Assistant.</string>
   <string name="site_active_reason_unknown">Nicht verfügbar, aus einem Grund, den diese App noch nicht kennt.</string>
   <string name="site_active_note">Nach bestem Bemühen, keine Schutzeinrichtung. Beim Ausschalten wird jeder abgesenkte Strom zurückgegeben.</string>
   <string name="site_error_conflict">Woanders geändert. Die aktuellen Werte werden angezeigt.</string>

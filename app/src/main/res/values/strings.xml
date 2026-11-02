@@ -314,6 +314,7 @@
   <string name="site_active_reason_duplicate">Not available: this charger is claimed by more than one site.</string>
   <string name="site_active_reason_no_charger">Not available: no charger on this site accepts a current command.</string>
   <string name="site_active_reason_measurement">Not available: this site\'s own power measurement is not healthy.</string>
+  <string name="site_active_reason_direction_unknown">Load balancing cannot tell whether the current is drawn from the grid or exported, so it only protects the fuse and does not use all the room there is. Change the meter\'s settings in Home Assistant.</string>
   <string name="site_active_reason_unknown">Not available, for a reason this app does not know yet.</string>
   <string name="site_active_note">Best effort, not a protective device. Turning it off gives any current it had lowered back.</string>
   <string name="site_error_conflict">Changed elsewhere. The current values are shown.</string>

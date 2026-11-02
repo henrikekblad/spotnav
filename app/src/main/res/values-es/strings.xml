@@ -309,6 +309,7 @@
   <string name="site_active_reason_duplicate">No disponible: más de una instalación reclama este cargador.</string>
   <string name="site_active_reason_no_charger">No disponible: ningún cargador de esta instalación acepta una orden de corriente.</string>
   <string name="site_active_reason_measurement">No disponible: la medición de potencia propia de esta instalación no está en buen estado.</string>
+  <string name="site_active_reason_direction_unknown">El equilibrado de carga no puede saber si la corriente se toma de la red o se vierte a ella, así que solo protege el fusible y no aprovecha todo el margen. Cambia los ajustes del contador en Home Assistant.</string>
   <string name="site_active_reason_unknown">No disponible, por un motivo que esta app aún no conoce.</string>
   <string name="site_active_note">Funciona lo mejor posible, pero no es un dispositivo de protección. Al desactivarlo se devuelve la corriente que hubiera reducido.</string>
   <string name="site_error_conflict">Se ha cambiado en otro sitio. Se muestran los valores actuales.</string>

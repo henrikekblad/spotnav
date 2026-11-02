@@ -776,6 +776,7 @@ internal class PairedSettingsCards(
             SiteFacts.Reason.DUPLICATE_MEMBERSHIP -> t(R.string.site_active_reason_duplicate)
             SiteFacts.Reason.NO_COMMANDABLE_CHARGER -> t(R.string.site_active_reason_no_charger)
             SiteFacts.Reason.MEASUREMENT -> t(R.string.site_active_reason_measurement)
+            SiteFacts.Reason.DIRECTION_UNKNOWN -> t(R.string.site_active_reason_direction_unknown)
             SiteFacts.Reason.UNKNOWN -> t(R.string.site_active_reason_unknown)
         }
         // State and reason only: the row speaks for itself about where it is changed.

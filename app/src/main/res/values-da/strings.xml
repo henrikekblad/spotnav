@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Ikke tilgængelig: denne lader tilhører mere end ét anlæg.</string>
   <string name="site_active_reason_no_charger">Ikke tilgængelig: ingen lader på anlægget tager imod et strømkommando.</string>
   <string name="site_active_reason_measurement">Ikke tilgængelig: anlæggets egen effektmåling er ikke i orden.</string>
+  <string name="site_active_reason_direction_unknown">Lastbalanceringen kan ikke se, om strømmen tages fra nettet eller sendes ud på det, så den beskytter kun sikringen og udnytter ikke al pladsen. Ret målerens indstillinger i Home Assistant.</string>
   <string name="site_active_reason_unknown">Ikke tilgængelig af en årsag, appen endnu ikke kender.</string>
   <string name="site_active_note">Bedste indsats, ingen beskyttelsesanordning. Når den slås fra, får laderen den strøm tilbage, som var sænket.</string>
   <string name="site_error_conflict">Ændret et andet sted. De aktuelle værdier vises.</string>

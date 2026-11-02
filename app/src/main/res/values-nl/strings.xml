@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Niet beschikbaar: deze laadpaal hoort bij meer dan één locatie.</string>
   <string name="site_active_reason_no_charger">Niet beschikbaar: geen enkele laadpaal op deze locatie accepteert een stroomcommando.</string>
   <string name="site_active_reason_measurement">Niet beschikbaar: de eigen vermogensmeting van deze locatie is niet in orde.</string>
+  <string name="site_active_reason_direction_unknown">Load balancing kan niet zien of de stroom van het net komt of wordt teruggeleverd, dus beschermt het alleen de zekering en benut het niet alle ruimte. Wijzig de instellingen van de meter in Home Assistant.</string>
   <string name="site_active_reason_unknown">Niet beschikbaar, om een reden die deze app nog niet kent.</string>
   <string name="site_active_note">Naar beste vermogen, geen beveiligingsapparaat. Uitzetten geeft de stroom die werd verlaagd weer terug.</string>
   <string name="site_error_conflict">Elders gewijzigd. De huidige waarden worden getoond.</string>

@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Ei käytettävissä: tämä laturi kuuluu useampaan kuin yhteen kohteeseen.</string>
   <string name="site_active_reason_no_charger">Ei käytettävissä: yksikään kohteen laturi ei ota vastaan virtakomentoa.</string>
   <string name="site_active_reason_measurement">Ei käytettävissä: kohteen oma tehomittaus ei ole kunnossa.</string>
+  <string name="site_active_reason_direction_unknown">Kuormanhallinta ei näe, otetaanko virta verkosta vai syötetäänkö se verkkoon, joten se vain suojaa sulaketta eikä käytä kaikkea tilaa. Muuta mittarin asetuksia Home Assistantissa.</string>
   <string name="site_active_reason_unknown">Ei käytettävissä syystä, jota sovellus ei vielä tunne.</string>
   <string name="site_active_note">Toimii parhaan kyvyn mukaan, ei ole suojalaite. Kun kytket pois, laturi saa takaisin sen virran, jota oli laskettu.</string>
   <string name="site_error_conflict">Muutettu muualla. Nykyiset arvot näytetään.</string>

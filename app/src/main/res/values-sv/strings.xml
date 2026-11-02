@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Inte tillgänglig: den här laddaren tillhör mer än en anläggning.</string>
   <string name="site_active_reason_no_charger">Inte tillgänglig: ingen laddare på anläggningen tar emot ett strömkommando.</string>
   <string name="site_active_reason_measurement">Inte tillgänglig: anläggningens egen effektmätning är inte i gott skick.</string>
+  <string name="site_active_reason_direction_unknown">Lastbalanseringen kan inte se om strömmen tas från nätet eller går ut på det, så den skyddar bara säkringen och utnyttjar inte allt utrymme. Ändra mätarens inställningar i Home Assistant.</string>
   <string name="site_active_reason_unknown">Inte tillgänglig, av en orsak som appen inte känner till ännu.</string>
   <string name="site_active_note">Görs efter bästa förmåga och är ingen skyddsanordning. När den slås av får laddaren tillbaka den ström som sänkts.</string>
   <string name="site_error_conflict">Ändrat någon annanstans. De aktuella värdena visas.</string>

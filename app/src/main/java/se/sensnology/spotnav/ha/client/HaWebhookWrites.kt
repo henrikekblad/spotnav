@@ -652,13 +652,14 @@ internal object PushRegister {
 /** What the site section of a paired charger shows, decided once from the dashboard's `site`. */
 internal object SiteFacts {
     /** Why active load balancing is not available, as the card words it. */
-    enum class Reason { NONE, DUPLICATE_MEMBERSHIP, NO_COMMANDABLE_CHARGER, MEASUREMENT, UNKNOWN }
+    enum class Reason { NONE, DUPLICATE_MEMBERSHIP, NO_COMMANDABLE_CHARGER, MEASUREMENT, DIRECTION_UNKNOWN, UNKNOWN }
 
     fun reason(code: String?): Reason = when {
         code == null -> Reason.NONE
         code == "legacy_duplicate_membership" -> Reason.DUPLICATE_MEMBERSHIP
         code == "no_commandable_charger" -> Reason.NO_COMMANDABLE_CHARGER
         code.startsWith("site_measurement_") -> Reason.MEASUREMENT
+        code == "site_direction_unknown" -> Reason.DIRECTION_UNKNOWN
         else -> Reason.UNKNOWN
     }
 
