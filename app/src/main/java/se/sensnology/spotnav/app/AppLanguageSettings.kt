@@ -30,6 +30,7 @@ object AppLanguageSettings {
 
     fun save(context: Context, code: String) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY, code).apply()
+        se.sensnology.spotnav.prices.PriceMarkets.labelLocale = locale(context)
     }
 
     fun language(context: Context): String {

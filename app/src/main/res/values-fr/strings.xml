@@ -309,6 +309,7 @@
   <string name="site_active_reason_duplicate">Indisponible : cette borne est revendiquée par plusieurs sites.</string>
   <string name="site_active_reason_no_charger">Indisponible : aucune borne de ce site n\'accepte de consigne de courant.</string>
   <string name="site_active_reason_measurement">Indisponible : la mesure de puissance propre à ce site n\'est pas fiable.</string>
+  <string name="site_active_reason_direction_unknown">L\'équilibrage de charge ne peut pas savoir si le courant est soutiré du réseau ou injecté : il protège seulement le fusible et n\'utilise pas toute la marge. Modifiez les réglages du compteur dans Home Assistant.</string>
   <string name="site_active_reason_unknown">Indisponible, pour une raison que cette application ne connaît pas encore.</string>
   <string name="site_active_note">Au mieux, ce n\'est pas un dispositif de protection. Le désactiver rend tout courant qu\'il avait réduit.</string>
   <string name="site_error_conflict">Modifié ailleurs. Les valeurs actuelles sont affichées.</string>
@@ -639,6 +640,11 @@
   <string name="ha_price_notice_octopus_not_loaded">Octopus Energy est ajouté dans Home Assistant mais n\'a pas démarré.</string>
   <string name="ha_price_notice_octopus_no_agile">Octopus Energy n\'a trouvé aucun compteur au tarif Agile pour %1$s.</string>
   <string name="ha_price_notice_octopus_region_mismatch">Votre compteur Octopus est dans la région %1$s ; ses tarifs sont utilisés pour %2$s. Choisissez la région %1$s comme zone pour qu\'elles correspondent.</string>
+  <string name="ha_price_provider_zonneplan">Prix de Zonneplan (votre tarif, taxe et TVA comprises)</string>
+  <string name="ha_price_notice_add_zonneplan">Le tarif Zonneplan pour %1$s vient de l\'intégration Zonneplan, installée via HACS.</string>
+  <string name="ha_price_notice_zonneplan_not_loaded">Zonneplan est ajouté dans Home Assistant mais n\'a pas démarré.</string>
+  <string name="ha_price_notice_zonneplan_no_tariff">Le capteur Zonneplan du tarif d\'électricité au quart d\'heure n\'est pas activé, donc %1$s n\'a pas de prix. Activez-le parmi les entités de l\'intégration Zonneplan.</string>
+  <string name="ha_price_notice_zonneplan_area">Zonneplan est configuré dans Home Assistant. Pour planifier sur votre tarif Zonneplan, taxe sur l\'énergie et TVA comprises, choisissez la zone Netherlands – Zonneplan.</string>
   <string name="ha_price_notice_source_missing">Il n\'y a pas de source de prix pour %1$s. Choisissez une autre zone.</string>
   <string name="ha_price_notice_add_entsoe_key">Les prix de %1$s viennent d\'ENTSO-E, avec votre propre clé gratuite. Ajoutez-la dans Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E n\'a pas accepté la clé enregistrée. Saisissez-en une nouvelle dans Home Assistant.</string>

@@ -304,6 +304,7 @@
   <string name="site_active_reason_duplicate">Ikke tilgjengelig: denne laderen tilhører mer enn ett anlegg.</string>
   <string name="site_active_reason_no_charger">Ikke tilgjengelig: ingen lader på anlegget tar imot en strømkommando.</string>
   <string name="site_active_reason_measurement">Ikke tilgjengelig: anleggets egen effektmåling er ikke i orden.</string>
+  <string name="site_active_reason_direction_unknown">Lastbalanseringen kan ikke se om strømmen tas fra nettet eller går ut på det, så den beskytter bare sikringen og utnytter ikke all plassen. Endre målerens innstillinger i Home Assistant.</string>
   <string name="site_active_reason_unknown">Ikke tilgjengelig av en årsak appen ikke kjenner ennå.</string>
   <string name="site_active_note">Best effort, ingen verneinnretning. Når den slås av, får laderen tilbake strømmen som var senket.</string>
   <string name="site_error_conflict">Endret et annet sted. De gjeldende verdiene vises.</string>
@@ -631,6 +632,11 @@
   <string name="ha_price_notice_octopus_not_loaded">Octopus Energy er lagt til i Home Assistant, men startet ikke.</string>
   <string name="ha_price_notice_octopus_no_agile">Octopus Energy fant ingen måler med Agile-tariff for %1$s.</string>
   <string name="ha_price_notice_octopus_region_mismatch">Octopus-måleren din er i region %1$s; prisene dens brukes for %2$s. Velg region %1$s som område så det stemmer.</string>
+  <string name="ha_price_provider_zonneplan">Priser fra Zonneplan (din tariff, avgift og mva. inkludert)</string>
+  <string name="ha_price_notice_add_zonneplan">Zonneplans tariff for %1$s kommer fra Zonneplan-integrasjonen, som installeres via HACS.</string>
+  <string name="ha_price_notice_zonneplan_not_loaded">Zonneplan er lagt til i Home Assistant, men startet ikke.</string>
+  <string name="ha_price_notice_zonneplan_no_tariff">Zonneplans sensor for strømtariffen per kvarter er ikke slått på, så %1$s har ingen priser. Slå den på blant Zonneplan-integrasjonens entiteter.</string>
+  <string name="ha_price_notice_zonneplan_area">Zonneplan er satt opp i Home Assistant. Velg området Netherlands – Zonneplan for å planlegge etter Zonneplan-tariffen din, med energiavgift og mva. inkludert.</string>
   <string name="ha_price_notice_source_missing">Det finnes ingen kilde for priser i %1$s. Velg et annet område.</string>
   <string name="ha_price_notice_add_entsoe_key">Prisene for %1$s kommer fra ENTSO-E med din egen gratis nøkkel. Legg den til i Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtok ikke den lagrede nøkkelen. Skriv inn en ny i Home Assistant.</string>

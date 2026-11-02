@@ -299,6 +299,7 @@ class HaWebhookWritesTest {
         assertEquals(SiteFacts.Reason.DUPLICATE_MEMBERSHIP, SiteFacts.reason("legacy_duplicate_membership"))
         assertEquals(SiteFacts.Reason.NO_COMMANDABLE_CHARGER, SiteFacts.reason("no_commandable_charger"))
         assertEquals(SiteFacts.Reason.MEASUREMENT, SiteFacts.reason("site_measurement_configured_missing"))
+        assertEquals(SiteFacts.Reason.DIRECTION_UNKNOWN, SiteFacts.reason("site_direction_unknown"))
         assertEquals(SiteFacts.Reason.UNKNOWN, SiteFacts.reason("something_new"))
     }
 
@@ -319,6 +320,6 @@ class HaWebhookWritesTest {
             VehicleUpdate.payload("v", VehicleField.CAPACITY, 60.0, null),
             SiteUpdate.priorityRequest("car_first", "battery_first").payload()
         ).map { body -> List(body.getJSONArray("reads").length()) { body.getJSONArray("reads").getString(it) } }
-        reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode", "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused", "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source", "phase_switching", "price_provider"), it) }
+        reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode", "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused", "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source", "phase_switching", "price_provider", "plan_facts", "own_mode_status"), it) }
     }
 }

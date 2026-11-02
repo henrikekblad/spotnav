@@ -285,7 +285,7 @@ class HomeAssistantDashboardTest {
             json.getJSONObject("control").apply(edit)
             val d = Dashboard.parse(json)
             assertNull(d.control)
-            assertEquals(4, d.status.lines.size)
+            assertEquals(5, d.status.lines.size)
         }
         // A member that is not text is an axis this build cannot read, not a value nobody wrote.
         val odd = v1("start_idle")

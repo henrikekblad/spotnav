@@ -18,6 +18,7 @@ internal object HaPriceProviderText {
         "entsoe" to R.string.ha_price_provider_entsoe,
         "pvpc" to R.string.ha_price_provider_pvpc,
         "octopus" to R.string.ha_price_provider_octopus,
+        "zonneplan" to R.string.ha_price_provider_zonneplan,
         "relay" to R.string.ha_price_provider_relay
     )
 
@@ -42,6 +43,10 @@ internal object HaPriceProviderText {
             "octopus_not_loaded" -> Sentence(R.string.ha_price_notice_octopus_not_loaded)
             "octopus_no_agile" -> Sentence(R.string.ha_price_notice_octopus_no_agile, listOf(area))
             "octopus_region_mismatch" -> Sentence(R.string.ha_price_notice_octopus_region_mismatch, listOf(region, area))
+            "add_zonneplan" -> Sentence(R.string.ha_price_notice_add_zonneplan, listOf(area))
+            "zonneplan_not_loaded" -> Sentence(R.string.ha_price_notice_zonneplan_not_loaded)
+            "zonneplan_no_tariff" -> Sentence(R.string.ha_price_notice_zonneplan_no_tariff, listOf(area))
+            "zonneplan_area" -> Sentence(R.string.ha_price_notice_zonneplan_area)
             "source_missing" -> Sentence(R.string.ha_price_notice_source_missing, listOf(area))
             else -> null
         }

@@ -22,6 +22,7 @@ class HaPriceProviderTextTest {
         assertEquals(R.string.ha_price_provider_entsoe, HaPriceProviderText.line(provider("entsoe")))
         assertEquals(R.string.ha_price_provider_pvpc, HaPriceProviderText.line(provider("pvpc")))
         assertEquals(R.string.ha_price_provider_octopus, HaPriceProviderText.line(provider("octopus")))
+        assertEquals(R.string.ha_price_provider_zonneplan, HaPriceProviderText.line(provider("zonneplan")))
         assertEquals(R.string.ha_price_provider_relay, HaPriceProviderText.line(provider("relay")))
         assertNull("no source at all", HaPriceProviderText.line(provider(null)))
         assertNull("a source this app has no words for", HaPriceProviderText.line(provider("tibber")))
@@ -31,7 +32,8 @@ class HaPriceProviderTextTest {
     @Test fun eachNoticeHasItsSentenceWithTheArea() {
         val codes = listOf(
             "add_nordpool", "nordpool_not_loaded", "add_entsoe_key", "entsoe_key_rejected", "add_pvpc", "pvpc_not_loaded",
-            "add_octopus", "octopus_not_loaded", "octopus_no_agile", "octopus_region_mismatch", "source_missing"
+            "add_octopus", "octopus_not_loaded", "octopus_no_agile", "octopus_region_mismatch", "add_zonneplan",
+            "zonneplan_not_loaded", "zonneplan_no_tariff", "zonneplan_area", "source_missing"
         )
         val texts = codes.map { code ->
             val sentence = HaPriceProviderText.notice(provider("relay", code), "SE4")
@@ -68,7 +70,8 @@ class HaPriceProviderTextTest {
         "ha_price_notice_add_entsoe_key", "ha_price_notice_entsoe_key_rejected", "ha_price_notice_add_pvpc",
         "ha_price_notice_pvpc_not_loaded", "ha_price_notice_add_octopus", "ha_price_notice_octopus_not_loaded",
         "ha_price_notice_octopus_no_agile", "ha_price_notice_octopus_region_mismatch", "ha_price_notice_source_missing",
-        "ha_price_open_home_assistant"
+        "ha_price_provider_zonneplan", "ha_price_notice_add_zonneplan", "ha_price_notice_zonneplan_not_loaded",
+        "ha_price_notice_zonneplan_no_tariff", "ha_price_notice_zonneplan_area", "ha_price_open_home_assistant"
     )
 
     private val PLACEHOLDER = Regex("%[0-9][$]s")

@@ -150,9 +150,9 @@ class AreaCatalogueTest {
     // the bundled list
 
     @Test
-    fun theBundledListHasFiftyFourAreasAndPortugalOnTheMadridMarketClock() {
+    fun theBundledListHasFiftyFiveAreasAndPortugalOnTheMadridMarketClock() {
         val held = AreaCatalogue.bundledAreas(bundledSnapshot())
-        assertEquals(54, held.size)
+        assertEquals(55, held.size)
         assertTrue(held.any { it.id == "NO4" && it.vatPercent == 0.0 })
         val portugal = held.single { it.id == "PT" }
         assertEquals("Europe/Lisbon", portugal.tz)
@@ -162,10 +162,10 @@ class AreaCatalogueTest {
     @Test
     fun everyBundledAreaButTheGreatBritainRegionsAndPvpcHasAnEntsoeRoute() {
         val areas = AreaCatalogue.bundledAreas(bundledSnapshot())
-        // Great Britain (Octopus Agile) and Spain's PVPC are not on ENTSO-E: Home Assistant prices them.
+        // Great Britain (Octopus Agile) and Spain's PVPC and Zonneplan are not on ENTSO-E: Home Assistant prices them.
         val unrouted = areas.filter { it.entsoe == null }.map { it.id }
-        assertEquals(15, unrouted.size)
-        assertTrue(unrouted.toString(), unrouted.all { it.startsWith("GB-") || it == "ES-PVPC" })
+        assertEquals(16, unrouted.size)
+        assertTrue(unrouted.toString(), unrouted.all { it.startsWith("GB-") || it == "ES-PVPC" || it == "NL-ZONNEPLAN" })
         assertEquals(39, areas.count { it.entsoe != null })
         assertEquals(EntsoeRoute("10Y1001A1001A47J"), areas.single { it.id == "SE4" }.entsoe)
         assertEquals(
@@ -185,7 +185,7 @@ class AreaCatalogueTest {
 
         val areas = AreaCatalogue.bundledAreas(body.toString())
 
-        assertEquals(54, areas.size)
+        assertEquals(55, areas.size)
         assertNull(areas.single { it.id == id }.entsoe)
         assertNull(areas[1].entsoe)
         assertNotNull(areas[2].entsoe)
@@ -272,5 +272,20 @@ class AreaCatalogueTest {
         assertNull(withoutNo4.firstOrNull { it.id == "NO4" })
         assertEquals(AreaSelectionState.Missing("NO4"), SettingsAreaController.state("NO4", withoutNo4))
         assertFalse(SettingsAreaController.canSave(SettingsAreaController.state("NO4", withoutNo4)))
+    }
+
+    @Test
+    fun anAreaWhoseIdIsNotAPlainZoneCodeIsLabelledByItsNameInTheReadersLanguage() {
+        val areas = AreaCatalogue.bundledAreas(bundledSnapshot()).associateBy { it.id }
+        val sv = Locale.forLanguageTag("sv")
+        assertEquals("Nederl\u00e4nderna \u2013 Zonneplan", areas.getValue("NL-ZONNEPLAN").selectorLabel(sv))
+        assertEquals("Netherlands \u2013 Zonneplan", areas.getValue("NL-ZONNEPLAN").selectorLabel(Locale.ENGLISH))
+        assertEquals("NL \u2013 Nederl\u00e4nderna", areas.getValue("NL").selectorLabel(sv))
+        assertEquals("GB C \u2013 London", areas.getValue("GB-C").selectorLabel(sv))
+        assertEquals("SE4 \u2013 Malm\u00f6", areas.getValue("SE4").selectorLabel(sv))
+        for (language in listOf("sv", "nb", "da", "fi", "de", "nl", "es", "fr")) {
+            val label = areas.getValue("NL-ZONNEPLAN").selectorLabel(Locale.forLanguageTag(language))
+            assertTrue(label, label.endsWith("\u2013 Zonneplan") && !label.contains("NL-") && !label.contains("Netherlands"))
+        }
     }
 }

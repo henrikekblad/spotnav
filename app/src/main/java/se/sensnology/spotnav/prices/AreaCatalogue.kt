@@ -45,6 +45,7 @@ object AreaCatalogue {
         )
         val areas = bundledAreas(readBundled(context), AndroidRelayLog)
         AndroidRelayLog.log(LogLevel.INFO, "Catalogue: ${areas.size} areas loaded")
+        PriceMarkets.labelLocale = se.sensnology.spotnav.app.AppLanguageSettings.locale(context)
         PriceMarkets.replace(areas)
     }
 

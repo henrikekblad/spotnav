@@ -133,6 +133,15 @@ internal object HaStatusText {
             val day = DateTimeFormatter.ofPattern("EEE d MMM", format.locale).format(zoned)
             return "$day ${clock(instant)}"
         }
+        // An amount of money as the market writes it: its own major unit when the amount is in the market's currency,
+        // else the code; the pound as the locale writes money ("£1.33"), every other unit after the number.
+        fun money(params: Map<String, Any?>, decimals: Int): String {
+            val major = (num(params["amount_minor"]) ?: 0.0) / 100.0
+            val currency = params["currency"] as? String ?: ""
+            val unit = if (currency == format.currency && format.majorUnit != null) format.majorUnit else currency
+            return if (currency == "GBP") MoneyText.amount(major, currency, unit, format.locale)
+            else "${number(format.locale, major, decimals)} $unit".trim()
+        }
         return when (line.code) {
             "paused" -> {
                 val until = instant(p["until"])
@@ -190,16 +199,29 @@ internal object HaStatusText {
                 else say(key, mapOf("time" to clock(start)))
             }
             "plan_energy" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
-            "plan_cost" -> {
-                val major = (num(p["amount_minor"]) ?: 0.0) / 100.0
-                val currency = p["currency"] as? String ?: ""
-                // The market's own major unit when the amount is in the market's currency, else the
-                // code.
-                val unit = if (currency == format.currency && format.majorUnit != null) format.majorUnit else currency
-                // The pound is written as the locale writes money ("£1.33"); every other unit as before.
-                val cost = if (currency == "GBP") MoneyText.amount(major, currency, unit, format.locale)
-                    else "${number(format.locale, major, 2)} $unit".trim()
-                say(key, mapOf("cost" to cost))
+            "plan_cost" -> say(key, mapOf("cost" to money(p, 2)))
+            // "About": the comparison is an estimate, so one decimal is enough.
+            "plan_saving" -> say(key, mapOf("amount" to money(p, 1)))
+            "charger_own_mode" -> {
+                // The charger's own mode as the profile names it: the card words the entity as Home Assistant shows
+                // it, which this app has no access to. The hint says where the setting is changed.
+                val label = (p["label"] as? String).orEmpty()
+                val state = (p["state"] as? String).orEmpty()
+                say(key, mapOf("label" to label, "state" to state)) + " " + say("issue.ownMode.where")
+            }
+            "solar_forecast" -> {
+                // The sun the forecast promises for the rest of today, else tomorrow, with its hours.
+                val start = instant(p["start"])
+                val end = instant(p["end"])
+                val kwh = number(format.locale, num(p["kwh"]) ?: 0.0, 1)
+                if (start == null || end == null || zone == null) say("strategy.status.solar.forecastNoTime", mapOf("kwh" to kwh))
+                else {
+                    val today = start.atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()
+                    say(
+                        if (today) key else "strategy.status.solar.forecastTomorrow",
+                        mapOf("kwh" to kwh, "from" to clock(start), "to" to clock(end))
+                    )
+                }
             }
             "plan_distance" -> {
                 // Home Assistant states mil; the unit follows the app's language (km elsewhere).
@@ -238,7 +260,15 @@ internal object HaStatusText {
                 val grid = say(key, mapOf("grid" to number(format.locale, num(p["grid_kwh"]) ?: 0.0, 1), "window" to window))
                 val credit = num(p["credit_kwh"])
                 if (credit != null && credit > 0) {
-                    grid + say("strategy.status.hybrid.creditSuffix", mapOf("credit" to number(format.locale, credit, 1)))
+                    val kwh = number(format.locale, credit, 1)
+                    val sunStart = instant(p["sun_start"])
+                    val sunEnd = instant(p["sun_end"])
+                    if (sunStart != null && sunEnd != null && zone != null) {
+                        grid + say(
+                            "strategy.status.hybrid.creditSuffixWindow",
+                            mapOf("credit" to kwh, "from" to clock(sunStart), "to" to clock(sunEnd))
+                        )
+                    } else grid + say("strategy.status.hybrid.creditSuffix", mapOf("credit" to kwh))
                 } else grid
             }
             "balancing_paused" -> {
