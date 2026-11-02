@@ -193,7 +193,9 @@ def _demand_status() -> dict:
     """The import target's status line the scenario is set to, before the plan's facts."""
     zone = ZoneInfo("Europe/Stockholm")
     next_hour = (datetime.now(zone).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)).isoformat()
-    departure = (datetime.now(zone).replace(hour=7, minute=0, second=0, microsecond=0) + timedelta(days=1)).isoformat()
+    # The next 07:00 on the area's clock: the coming morning's departure.
+    seven = datetime.now(zone).replace(hour=7, minute=0, second=0, microsecond=0)
+    departure = (seven if seven > datetime.now(zone) else seven + timedelta(days=1)).isoformat()
     line = DEMAND["line"]
     if DEMAND["released"] and line in ("at_risk", "hold"):
         line = "released"
