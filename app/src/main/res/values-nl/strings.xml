@@ -770,4 +770,5 @@
   <string name="card_grid_fee_window_next" formatted="false">Volgende</string>
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
   <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
+  <string name="card_settings_error_range" formatted="false">Tussen {min} en {max}.</string>
 </resources>

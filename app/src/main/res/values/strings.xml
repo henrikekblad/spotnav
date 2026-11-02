@@ -782,4 +782,5 @@
   <string name="card_grid_fee_window_next" formatted="false">Next</string>
   <string name="card_market_included" formatted="false">Included in the price</string>
   <string name="card_settings_value_unset" formatted="false">Not set</string>
+  <string name="card_settings_error_range" formatted="false">Between {min} and {max}.</string>
 </resources>

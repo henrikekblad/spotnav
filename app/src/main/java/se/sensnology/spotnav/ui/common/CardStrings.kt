@@ -109,7 +109,8 @@ internal object CardStrings {
         "gridFee.window.first" to R.string.card_grid_fee_window_first,
         "gridFee.window.next" to R.string.card_grid_fee_window_next,
         "market.included" to R.string.card_market_included,
-        "settings.value.unset" to R.string.card_settings_value_unset
+        "settings.value.unset" to R.string.card_settings_value_unset,
+        "settings.error.range" to R.string.card_settings_error_range
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

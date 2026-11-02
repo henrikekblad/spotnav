@@ -770,4 +770,5 @@
   <string name="card_grid_fee_window_next" formatted="false">Nästa</string>
   <string name="card_market_included" formatted="false">Ingår i priset</string>
   <string name="card_settings_value_unset" formatted="false">Inte inställt</string>
+  <string name="card_settings_error_range" formatted="false">Mellan {min} och {max}.</string>
 </resources>
