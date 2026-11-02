@@ -85,6 +85,8 @@ DASHBOARD_BY_SCENARIO = {
     "manual": "manual_stop.json",
     "oldprices": "cheapest_no_site.json",
     "addnordpool": "cheapest_no_site.json",
+    "direction": "solar_direct_site_with_total.json",
+    "zonneplan": "cheapest_no_site.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -96,7 +98,11 @@ NO_PRICE_DAYS = {"oldprices"}
 #: Where the area's prices come from (`prices.provider`): Nord Pool through Home Assistant, unless the scenario
 #: names another block.
 NORDPOOL_PROVIDER = {"key": "nordpool", "name": "Nord Pool", "url": "https://www.nordpoolgroup.com/", "notice": None}
+ZONNEPLAN_PROVIDER = {
+    "key": "zonneplan", "name": "Zonneplan", "url": "https://www.zonneplan.nl/", "notice": None,
+}
 PROVIDER_BY_SCENARIO = {
+    "zonneplan": ZONNEPLAN_PROVIDER,
     "addnordpool": {
         "key": "relay", "name": "SpotNav relay", "url": "https://spotnav.sensnology.se",
         "notice": {"code": "add_nordpool", "params": {}},
@@ -126,6 +132,23 @@ def _manual_status(body: dict) -> dict:
     return {"tone": "normal", "lines": lines}
 
 
+def _in_zonneplan(body: dict) -> None:
+    """The charger's area is `NL-ZONNEPLAN` (HA 2.2): VAT and tax are in the price."""
+    body["market"].update(
+        area_id="NL-ZONNEPLAN", area_name="Netherlands \u2013 Zonneplan", countries=["NL"], currency="EUR",
+        included=["vat", "tax"], major_unit="\u20ac", minor_unit="cent", market_timezone="Europe/Amsterdam",
+        timezone="Europe/Amsterdam", suggested_grid_fee=None, suggested_tax=None, suggested_vat_percent=None,
+    )
+    body["prices"]["area_id"] = "NL-ZONNEPLAN"
+    body["settings"]["area_id"] = "NL-ZONNEPLAN"
+    body["settings"]["fiscal_included"] = ["vat", "tax"]
+    for part in ("vat", "tax"):
+        body["fiscal"][part].update(policy="included", effective_value=None, suggested_value=None, value_source="included")
+    for line in body["status"]["lines"]:
+        if line["params"].get("currency"):
+            line["params"]["currency"] = "EUR"
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -135,6 +158,8 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
             body["prices"]["provider"] = PROVIDER_BY_SCENARIO.get(scenario, NORDPOOL_PROVIDER)
         else:
             body["prices"].pop("provider", None)
+    if scenario == "zonneplan":
+        _in_zonneplan(body)
     if scenario == "manual":
         body["status"] = _manual_status(body)
     if scenario in NO_PRICE_DAYS:
@@ -215,6 +240,14 @@ SCENARIOS: dict[str, Charger] = {
     "oldprices": Charger(
         "Gammal HA",
         why="a Home Assistant from before price_days: the app asks it to be updated for prices",
+    ),
+    "direction": Charger(
+        "Utan riktning",
+        why="a site whose meter does not tell import from export: load balancing only protects the fuse (information)",
+    ),
+    "zonneplan": Charger(
+        "Zonneplan",
+        why="the area Netherlands \u2013 Zonneplan (HA 2.2): VAT and tax included, prices from the Zonneplan integration",
     ),
     "addnordpool": Charger(
         "Utan priskälla",
