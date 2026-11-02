@@ -41,6 +41,7 @@ import se.sensnology.spotnav.ha.settings.IdentifyMode
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
+import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.chooseMany
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.NumberSpec
@@ -761,6 +762,14 @@ internal class PairedSettingsCards(
         }
         summary.setup?.let { setup ->
             setup.mainFuseA?.let { readRow(card.body, t(R.string.site_main_fuse_label), t(R.string.site_main_fuse_value, ampsText(it))) }
+        }
+        // Beside the fuse, as the card has it: the import target and the hour running now against it (Home Assistant
+        // 2.4; it is set in Home Assistant's site settings).
+        dashboard?.gridTariff?.demand?.let { demand ->
+            val words = demandText(dashboard)
+            readRow(card.body, cardWords().say("site.importTarget"), words.targetText(demand), words.hourLine(demand))
+        }
+        summary.setup?.let { setup ->
             setup.measurementMode?.let { mode ->
                 readRow(card.body, t(R.string.site_measurement_label), t(
                     when (mode) {
