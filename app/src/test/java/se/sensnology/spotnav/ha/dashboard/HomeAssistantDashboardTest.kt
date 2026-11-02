@@ -189,7 +189,7 @@ class HomeAssistantDashboardTest {
         assertEquals(ChargerCapabilities(
                 refreshVehicle = true, setChargeLimit = true, priceDays = true,
                 planPreview = true, dismissSetupItem = true, fixOwnMode = true,
-                releaseImportTarget = true, getPowerMonth = true
+                releaseImportTarget = true, getPowerMonth = true, siteImportTarget = true
             ),
             capabilities { }
         )
@@ -197,7 +197,7 @@ class HomeAssistantDashboardTest {
             ChargerCapabilities(
                 refreshVehicle = false, setChargeLimit = true, priceDays = true,
                 planPreview = true, dismissSetupItem = true, fixOwnMode = true,
-                releaseImportTarget = true, getPowerMonth = true
+                releaseImportTarget = true, getPowerMonth = true, siteImportTarget = true
             ),
             capabilities { put("refresh_vehicle", false) }
         )
@@ -211,6 +211,7 @@ class HomeAssistantDashboardTest {
             remove("fix_own_mode")
             remove("release_import_target")
             remove("get_power_month")
+            remove("site_import_target")
         })
         assertEquals(false, capabilities { put("price_days", 1) }.priceDays)
         // An older Home Assistant states none of the three webhook actions of 2.3: the features stay hidden.

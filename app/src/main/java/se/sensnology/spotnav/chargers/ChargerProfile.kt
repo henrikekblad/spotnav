@@ -27,7 +27,9 @@ data class ChargerCapabilities(
     /** Whether the webhook answers `release_import_target`: the site's import target set aside for this charge. */
     val releaseImportTarget: Boolean = false,
     /** Whether the webhook answers `get_power_month`: one month of the site's measured import. */
-    val getPowerMonth: Boolean = false
+    val getPowerMonth: Boolean = false,
+    /** Whether the webhook's `update_site_settings` sets the site's import target (`import_target_kw`). */
+    val siteImportTarget: Boolean = false
 )
 
 /**

@@ -126,3 +126,35 @@ class HaImportTargetActionsTest {
         assertEquals(PowerMonthRead.Outcome.Failed(null), PowerMonthRead.answer(200, broken.toString()))
     }
 }
+
+/** The site's import target over the webhook's `update_site_settings` (Home Assistant 2.4). */
+class SiteImportTargetWriteTest {
+    @Test fun theCapabilityIsReadStrictly() {
+        assertTrue(Dashboard.parse(HaFixtures.json("webhook/dashboard.json")).capabilities.siteImportTarget)
+        val json = HaFixtures.json("webhook/dashboard.json")
+        json.getJSONObject("charger").getJSONObject("capabilities").remove("site_import_target")
+        assertFalse(Dashboard.parse(json).capabilities.siteImportTarget)
+    }
+
+    @Test fun aWriteNamesTheValueShownAndTheNewOne() {
+        val body = SiteUpdate.importTargetRequest(null, 6.0).payload()
+        assertEquals("update_site_settings", body.getString("action"))
+        assertTrue(body.getJSONObject("expected").isNull("import_target_kw"))
+        assertEquals(6.0, body.getJSONObject("changes").getDouble("import_target_kw"), 0.0)
+        assertEquals(setOf("import_target_kw"), body.getJSONObject("changes").keys().asSequence().toSet())
+        val cleared = SiteUpdate.importTargetRequest(6.0, null).payload()
+        assertEquals(6.0, cleared.getJSONObject("expected").getDouble("import_target_kw"), 0.0)
+        assertTrue(cleared.getJSONObject("changes").has("import_target_kw"))
+        assertTrue(cleared.getJSONObject("changes").isNull("import_target_kw"))
+        // A solar write names no target, so the stored one is kept.
+        assertFalse(SiteUpdate.priorityRequest("car_first", "battery_first").payload().getJSONObject("changes").has("import_target_kw"))
+    }
+
+    @Test fun theAnswersAreTheSiteWritesOwn() {
+        val ok = SiteUpdate.answer(200, HaFixtures.root.resolve("webhook/update_site_settings_import_target.json").readText())
+        assertTrue(ok is SiteUpdate.Outcome.Updated)
+        val site = HaFixtures.json("webhook/update_site_settings_import_target.json").getJSONObject("site").toString()
+        assertTrue(SiteUpdate.answer(409, """{"api_version": 1, "ok": false, "error": "spotnav_conflict", "site": $site, "import_target_kw": 7.0}""") is SiteUpdate.Outcome.Conflict)
+        assertTrue(SiteUpdate.answer(400, """{"api_version": 1, "ok": false, "error": "spotnav_invalid_value", "site": $site, "import_target_kw": null}""") is SiteUpdate.Outcome.Refused)
+    }
+}
