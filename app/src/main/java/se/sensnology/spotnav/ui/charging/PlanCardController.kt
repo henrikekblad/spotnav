@@ -286,8 +286,14 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { topMargin = dp(DRIVER_SLOT_TOP_DP) })
 
+        // While a slider is held: the plan Home Assistant would make if it were let go, right under the sliders
+        // (shown only then), where the finger is.
+        val preview = PlanPreviewPanel(this)
+        card.body.addView(preview.view, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { bottomMargin = dp(6) })
         // The other card: what came out.
-        val result = addPlanResultCard(parent)
+        val result = addPlanResultCard(parent, preview)
         val status = result.status
 
         /** target-SoC mode is driving it, and the target asks for no energy at all. */
@@ -420,7 +426,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
     }
 
     /** what came out, after the card that holds what you set. */
-    private fun addPlanResultCard(parent: LinearLayout): ResultBox {
+    private fun addPlanResultCard(parent: LinearLayout, preview: PlanPreviewPanel): ResultBox {
         // The marker says what this card *is*:
         val card = card(parent, t(R.string.card_charging_plan_title), R.drawable.ic_plan_clock)
         // The header is an ordinary card header: a title, and a 24 dp glyph at its end in a box the
@@ -474,11 +480,6 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             // a colour or a point on a canvas.
             chart.contentDescription = chartDescription(lines)
         }
-        // While a slider is held: the plan Home Assistant would make if it were let go (shown only then).
-        val preview = PlanPreviewPanel(this)
-        card.body.addView(preview.view, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply { bottomMargin = dp(6) })
         // The answer, in a frame of its own: the computed windows, or the reason there are none.
         val title = TextView(context).apply {
             textSize = 17f
