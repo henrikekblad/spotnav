@@ -21,7 +21,9 @@ internal data class StatusFormat(
     /** The locale numbers and dates are written in: the same one the screen's own rows use. */
     val locale: Locale = Locale.forLanguageTag(language),
     /** Whether a distance is written in miles: the market is in Great Britain. */
-    val miles: Boolean = false
+    val miles: Boolean = false,
+    /** Whether the own-mode button is shown under the line: it then stands in for the hint where to change the setting. */
+    val ownModeButton: Boolean = false
 ) {
     companion object {
         fun of(language: String, market: DashboardMarket, locale: Locale? = null) = StatusFormat(
@@ -219,7 +221,8 @@ internal object HaStatusText {
                 val name = (p["entity_name"] as? String)?.takeIf { it.isNotBlank() }
                 val label = name?.let { inSentence(language, it) } ?: (p["label"] as? String).orEmpty()
                 val state = (p["state_name"] as? String)?.takeIf { it.isNotBlank() } ?: (p["state"] as? String).orEmpty()
-                say(key, mapOf("label" to label, "state" to state)) + " " + say("issue.ownMode.where")
+                val sentence = say(key, mapOf("label" to label, "state" to state))
+                if (format.ownModeButton) sentence else sentence + " " + say("issue.ownMode.where")
             }
             "sun_past_target" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "solar_forecast" -> {

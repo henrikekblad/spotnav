@@ -716,6 +716,14 @@ class HaStatusTextTest {
         assertEquals("Smart charging", HaStatusText.inSentence("de", "Smart charging"))
     }
 
+    @Test fun theWhereToChangeItHintIsLeftOutWhileTheButtonIsShown() {
+        val own = StatusLine("charger_own_mode", mapOf("entity" to "select.p", "label" to "smart charging", "state" to "Pure solar", "value" to "default"))
+        assertEquals(
+            "Laddboxens egen smart charging är på (Pure solar). Den motverkar SpotNav.",
+            HaStatusText.line(own, format("sv").copy(ownModeButton = true), now)
+        )
+    }
+
     @Test fun theSunPastATargetNamesTheCarsLimit() {
         assertEquals(
             "Målet nått – solen fyller på till bilens gräns 80 %",
