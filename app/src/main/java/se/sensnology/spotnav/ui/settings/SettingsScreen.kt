@@ -729,7 +729,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         const val SEEK_ATTEMPTS = 12
         const val SEEK_DELAY_MS = 300L
         const val SEEK_MARGIN_DP = 24
-        const val SEEK_MARK_MS = 1800L
+        const val SEEK_MARK_MS = 2500L
         const val SPOTNAV_ISSUES = "https://github.com/henrikekblad/spotnav/issues"
     }
 }
