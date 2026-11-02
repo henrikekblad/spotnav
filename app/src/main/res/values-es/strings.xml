@@ -671,4 +671,8 @@
   </plurals>
   <string name="own_mode_fix_failed">No se pudo cambiar el ajuste del cargador. Cámbialo en Home Assistant.</string>
   <string name="setup_dismiss_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+  <string name="if_not_ready_title">Si el coche no puede estar listo a tiempo</string>
+  <string name="if_not_ready_ask">Preguntar</string>
+  <string name="if_not_ready_release">Dejar el objetivo de consumo</string>
+  <string name="if_not_ready_hold">Mantener el objetivo de consumo</string>
 </resources>

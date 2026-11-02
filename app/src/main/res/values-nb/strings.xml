@@ -663,4 +663,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Kunne ikke endre ladeboksens innstilling. Endre den i Home Assistant.</string>
   <string name="setup_dismiss_failed">Kunne ikke lagre det. Prøv igen.</string>
+  <string name="if_not_ready_title">Hvis bilen ikke rekker å bli ferdig</string>
+  <string name="if_not_ready_ask">Spør</string>
+  <string name="if_not_ready_release">Slipp effektmålet</string>
+  <string name="if_not_ready_hold">Hold effektmålet</string>
 </resources>

@@ -663,4 +663,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Die Einstellung der Ladestation konnte nicht geändert werden. Ändere sie in Home Assistant.</string>
   <string name="setup_dismiss_failed">Das konnte nicht gespeichert werden. Versuche es erneut.</string>
+  <string name="if_not_ready_title">Wenn das Auto nicht rechtzeitig fertig wird</string>
+  <string name="if_not_ready_ask">Fragen</string>
+  <string name="if_not_ready_release">Bezugsziel aussetzen</string>
+  <string name="if_not_ready_hold">Bezugsziel halten</string>
 </resources>

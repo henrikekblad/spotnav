@@ -663,4 +663,8 @@
   </plurals>
   <string name="own_mode_fix_failed">De instelling van de lader kon niet worden gewijzigd. Wijzig haar in Home Assistant.</string>
   <string name="setup_dismiss_failed">Opslaan is mislukt. Probeer het opnieuw.</string>
+  <string name="if_not_ready_title">Als de auto niet op tijd klaar kan zijn</string>
+  <string name="if_not_ready_ask">Vragen</string>
+  <string name="if_not_ready_release">Afnamedoel loslaten</string>
+  <string name="if_not_ready_hold">Afnamedoel aanhouden</string>
 </resources>

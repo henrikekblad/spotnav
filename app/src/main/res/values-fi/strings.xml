@@ -663,4 +663,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Laturin asetusta ei voitu muuttaa. Muuta se Home Assistantissa.</string>
   <string name="setup_dismiss_failed">Tallennus epäonnistui. Yritä uudelleen.</string>
+  <string name="if_not_ready_title">Jos auto ei ehdi valmiiksi</string>
+  <string name="if_not_ready_ask">Kysy</string>
+  <string name="if_not_ready_release">Ohita tehotavoite</string>
+  <string name="if_not_ready_hold">Pidä tehotavoite</string>
 </resources>

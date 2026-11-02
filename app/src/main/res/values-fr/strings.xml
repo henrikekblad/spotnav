@@ -671,4 +671,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Impossible de modifier le réglage de la borne. Modifiez-le dans Home Assistant.</string>
   <string name="setup_dismiss_failed">Enregistrement impossible. Réessayez.</string>
+  <string name="if_not_ready_title">Si la voiture ne peut pas être prête à temps</string>
+  <string name="if_not_ready_ask">Demander</string>
+  <string name="if_not_ready_release">Lever l\'objectif de soutirage</string>
+  <string name="if_not_ready_hold">Garder l\'objectif de soutirage</string>
 </resources>

@@ -29,3 +29,21 @@ class IfNotReadyCodecTest {
         HaSettingsCodec.parseResponse(HaFixtures.json("settings/v1/success.json").getJSONObject("settings").put("if_not_ready", "maybe"))
     }
 }
+
+class IfNotReadyEditTest {
+    private fun record() = HaSettingsCodec.parseResponse(HaFixtures.json("settings/v1/success.json").getJSONObject("settings"))
+
+    @Test fun theChoiceIsOneEditOverTheWholeRecord() {
+        val result = HaSettingsEditor.replacement(record(), HaSettingsEdit.IfNotReady("release")) as HaSettingsEditResult.Ready
+        assertEquals("release", result.settings.ifNotReady)
+        assertEquals(record().copy(ifNotReady = "release"), result.settings)
+    }
+
+    @Test fun aRecordWithoutTheChoiceCannotTakeIt() {
+        val older = record().copy(ifNotReady = null)
+        assertEquals(
+            HaSettingsEditResult.Refused("invalid_departure"),
+            HaSettingsEditor.replacement(older, HaSettingsEdit.IfNotReady("hold"))
+        )
+    }
+}

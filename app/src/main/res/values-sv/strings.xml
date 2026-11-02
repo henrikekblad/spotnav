@@ -663,4 +663,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Det gick inte att ändra laddboxens inställning. Ändra den i Home Assistant.</string>
   <string name="setup_dismiss_failed">Det gick inte att spara. Försök igen.</string>
+  <string name="if_not_ready_title">Om bilen inte hinner bli klar</string>
+  <string name="if_not_ready_ask">Fråga</string>
+  <string name="if_not_ready_release">Släpp effektmålet</string>
+  <string name="if_not_ready_hold">Håll effektmålet</string>
 </resources>

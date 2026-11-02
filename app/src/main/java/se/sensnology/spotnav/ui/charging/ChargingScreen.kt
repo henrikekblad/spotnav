@@ -753,6 +753,15 @@ internal class ChargingScreen(
                 datePicker.maxDate = days.max.atStartOfDay(zone).toInstant().toEpochMilli()
             }.show()
         }
+        planCard.ifNotReadyRadios.forEach { radio ->
+            radio.setOnClickListener {
+                if (authorityApplying) return@setOnClickListener
+                val choice = radio.tag as String
+                // One choice at a time, as a radio group; the record's answer paints it again.
+                planCard.setIfNotReady(choice, true)
+                commitEdit(HaSettingsEdit.IfNotReady(choice))
+            }
+        }
         planCard.weekdayBoxes.forEach { box ->
             box.setOnCheckedChangeListener { _, checked ->
                 if (authorityApplying) return@setOnCheckedChangeListener

@@ -675,4 +675,8 @@
   </plurals>
   <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
   <string name="setup_dismiss_failed">Could not save that. Try again.</string>
+  <string name="if_not_ready_title">If the car cannot be ready in time</string>
+  <string name="if_not_ready_ask">Ask</string>
+  <string name="if_not_ready_release">Release the import target</string>
+  <string name="if_not_ready_hold">Keep the import target</string>
 </resources>
