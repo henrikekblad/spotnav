@@ -278,11 +278,31 @@
     "users_change_plan": false,
     "vehicle_ids": null
   },
+  "setup": {
+    "items": [
+      {
+        "dismissible": true,
+        "id": "vehicle"
+      },
+      {
+        "dismissible": true,
+        "id": "solar_forecast"
+      },
+      {
+        "dismissible": true,
+        "id": "phone"
+      },
+      {
+        "dismissible": true,
+        "id": "app"
+      }
+    ]
+  },
   "site": {
     "active_control": {
-      "available": false,
+      "available": true,
       "enabled": false,
-      "reason": "no_commandable_charger",
+      "reason": "site_direction_unknown",
       "writable": true
     },
     "charger_count": 1,

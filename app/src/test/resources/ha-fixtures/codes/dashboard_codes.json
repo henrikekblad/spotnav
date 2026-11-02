@@ -2,6 +2,7 @@
   "active_control_reasons": [
     "duplicate_membership",
     "no_commandable_charger",
+    "site_direction_unknown",
     "site_measurement_configured_missing",
     "site_measurement_inconsistent",
     "site_measurement_invalid",
@@ -158,12 +159,23 @@
       "tone": "normal"
     },
     "charger_disabled": {
-      "params": [],
+      "params": [
+        "entity"
+      ],
       "tone": "notice"
     },
     "charger_ignores_stop": {
       "params": [],
       "tone": "blocking"
+    },
+    "charger_own_mode": {
+      "params": [
+        "entity",
+        "label",
+        "state",
+        "value"
+      ],
+      "tone": "notice"
     },
     "charger_unavailable": {
       "params": [
@@ -233,6 +245,8 @@
       "params": [
         "credit_kwh",
         "grid_kwh",
+        "sun_end",
+        "sun_start",
         "window_end",
         "window_start"
       ],
@@ -315,6 +329,13 @@
     "plan_energy": {
       "params": [
         "kwh"
+      ],
+      "tone": "normal"
+    },
+    "plan_saving": {
+      "params": [
+        "amount_minor",
+        "currency"
       ],
       "tone": "normal"
     },
@@ -446,6 +467,14 @@
     },
     "solar_disarming": {
       "params": [],
+      "tone": "normal"
+    },
+    "solar_forecast": {
+      "params": [
+        "end",
+        "kwh",
+        "start"
+      ],
       "tone": "normal"
     },
     "solar_no_car": {
