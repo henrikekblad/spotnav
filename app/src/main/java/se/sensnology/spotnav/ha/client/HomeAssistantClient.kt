@@ -279,6 +279,24 @@ object HomeAssistantClient {
         return PhaseSwitchingUpdate.answer(status, body)
     }
 
+    /** What a Save of [replacement] would plan, with nothing saved (webhook `plan_preview`). Never throws. */
+    internal fun planPreview(settings: HomeAssistantSettings, replacement: HaPlanningSettings): PlanPreview.Outcome {
+        val (status, body) = write(settings, PlanPreview.payload(replacement))
+        return PlanPreview.answer(status, body)
+    }
+
+    /** A "Get started" row answered "Not needed" (webhook `dismiss_setup_item`). Never throws. */
+    internal fun dismissSetupItem(settings: HomeAssistantSettings, item: String): SetupDismiss.Outcome {
+        val (status, body) = write(settings, SetupDismiss.payload(item))
+        return SetupDismiss.answer(status, body)
+    }
+
+    /** The charger's own setting set back (webhook `fix_own_mode`). Never throws. */
+    internal fun fixOwnMode(settings: HomeAssistantSettings, entityId: String, value: String): OwnModeFix.Outcome {
+        val (status, body) = write(settings, OwnModeFix.payload(entityId, value))
+        return OwnModeFix.answer(status, body)
+    }
+
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
     internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
         val (status, body) = write(settings, PushRegister.payload(pushRef, events))

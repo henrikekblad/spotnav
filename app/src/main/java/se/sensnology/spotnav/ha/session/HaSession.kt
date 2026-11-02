@@ -9,7 +9,10 @@ import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
+import se.sensnology.spotnav.ha.client.OwnModeFix
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
+import se.sensnology.spotnav.ha.client.PlanPreview
+import se.sensnology.spotnav.ha.client.SetupDismiss
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
@@ -59,6 +62,15 @@ internal interface HaTransport {
     fun answerPriceDuplicate(areaId: String, keepEntryId: String?): PriceSourceUpdate.Outcome =
         PriceSourceUpdate.Outcome.Failed(null)
 
+    /** `plan_preview`: what a Save of [replacement] would plan; never throws. */
+    fun planPreview(replacement: HaPlanningSettings): PlanPreview.Outcome = PlanPreview.Outcome.Failed(null)
+
+    /** `dismiss_setup_item`: a "Get started" row answered "Not needed"; never throws. */
+    fun dismissSetupItem(item: String): SetupDismiss.Outcome = SetupDismiss.Outcome.Failed(null)
+
+    /** `fix_own_mode`: the charger's own setting set back; never throws. */
+    fun fixOwnMode(entityId: String, value: String): OwnModeFix.Outcome = OwnModeFix.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -100,6 +112,12 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun answerPriceDuplicate(areaId: String, keepEntryId: String?) =
         HomeAssistantClient.answerPriceDuplicate(connection, areaId, keepEntryId)
+
+    override fun planPreview(replacement: HaPlanningSettings) = HomeAssistantClient.planPreview(connection, replacement)
+
+    override fun dismissSetupItem(item: String) = HomeAssistantClient.dismissSetupItem(connection, item)
+
+    override fun fixOwnMode(entityId: String, value: String) = HomeAssistantClient.fixOwnMode(connection, entityId, value)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -270,6 +288,30 @@ internal class HaSession(
     fun updatePhaseSwitching(expected: Boolean, enabled: Boolean, done: (PhaseSwitchingUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updatePhaseSwitching(expected, enabled)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `plan_preview` (never throws). */
+    fun planPreview(replacement: HaPlanningSettings, done: (PlanPreview.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.planPreview(replacement)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `dismiss_setup_item` (never throws). */
+    fun dismissSetupItem(item: String, done: (SetupDismiss.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.dismissSetupItem(item)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `fix_own_mode` (never throws). */
+    fun fixOwnMode(entityId: String, value: String, done: (OwnModeFix.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.fixOwnMode(entityId, value)
             mainThread { done(outcome) }
         }
     }
