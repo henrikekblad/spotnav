@@ -5,6 +5,7 @@ import se.sensnology.spotnav.app.MoneyText
 import se.sensnology.spotnav.prices.PriceMarkets
 import java.text.NumberFormat
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -298,6 +299,71 @@ internal object HaStatusText {
                     say(if (battery) "status.balancingPausedBattery" else key, mapOf("time" to clock(at)))
                 }
             }
+            "import_target_held" -> {
+                // The site's import target, not the fuse, holds the car: to what, the target, and the hour's mean so far;
+                // above the target as set, the month's peak already paid for (the card's `monthPeak`).
+                val limit = num(p["limit_a"])
+                val peak = monthPeak(p)
+                val kw = mapOf(
+                    "target" to fixed(format.locale, num(p["target_kw"]) ?: 0.0, 1),
+                    "hour" to fixed(format.locale, num(p["hour_kw"]) ?: 0.0, 1),
+                    "set" to fixed(format.locale, num(p["set_kw"]) ?: 0.0, 1)
+                )
+                if (limit == null) say(if (peak) "status.importTargetHeldPeakNoLimit" else "status.importTargetHeldNoLimit", kw)
+                else say(if (peak) "status.importTargetHeldPeak" else key, kw + ("limit" to number(format.locale, limit, 0)))
+            }
+            "import_target_paused" -> {
+                // Paused to the next clock hour so the running one stays under the target; where the house alone is
+                // over it, that is said in place of "so the hour stays under it".
+                val params = mapOf(
+                    "target" to fixed(format.locale, num(p["target_kw"]) ?: 0.0, 1),
+                    "set" to fixed(format.locale, num(p["set_kw"]) ?: 0.0, 1)
+                )
+                val house = p["house_over"] == true
+                val base = when {
+                    house && monthPeak(p) -> "status.importTargetPausedHousePeak"
+                    house -> "status.importTargetPausedHouse"
+                    monthPeak(p) -> "status.importTargetPausedPeak"
+                    else -> key
+                }
+                val until = instant(p["until"])
+                if (until == null || zone == null) say("${base}NextHour", params)
+                else say(base, params + ("time" to clock(until)))
+            }
+            "import_target_house_over" -> say(
+                if (monthPeak(p)) "status.importTargetHouseOverPeak" else key,
+                mapOf(
+                    "target" to fixed(format.locale, num(p["target_kw"]) ?: 0.0, 1),
+                    "set" to fixed(format.locale, num(p["set_kw"]) ?: 0.0, 1)
+                )
+            )
+            "import_target_at_risk" -> {
+                // Under the target the plan misses its departure: by how much, and when (the coming night's departure by
+                // its time, one further ahead with its day).
+                val peak = monthPeak(p)
+                val params = mapOf(
+                    "target" to fixed(format.locale, num(p["target_kw"]) ?: 0.0, 1),
+                    "kwh" to number(format.locale, num(p["missing_kwh"]) ?: 0.0, 0),
+                    "set" to fixed(format.locale, num(p["set_kw"]) ?: 0.0, 1)
+                )
+                val departure = instant(p["departure"])
+                if (departure == null || zone == null) {
+                    say(if (peak) "status.importTargetAtRiskPeakNoTime" else "status.importTargetAtRiskNoTime", params)
+                } else {
+                    val time = if (Duration.between(now, departure) < Duration.ofHours(24)) clock(departure) else moment(departure)
+                    say(if (peak) "status.importTargetAtRiskPeak" else key, params + ("time" to time))
+                }
+            }
+            "import_target_released" -> {
+                // Set aside for this charge until its departure: by a person, or by the plan's own choice.
+                val automatic = p["automatic"] == true
+                val departure = instant(p["departure"])
+                if (departure == null || zone == null) {
+                    say(if (automatic) "status.importTargetReleasedAutoNoTime" else "status.importTargetReleasedNoTime")
+                } else {
+                    say(if (automatic) "status.importTargetReleasedAuto" else key, mapOf("time" to moment(departure)))
+                }
+            }
             "load_balancing_limited" -> {
                 val limit = num(p["limit_a"])
                 // The cause names who shares the fuse; an unknown (or absent) cause is the plain sentence.
@@ -532,6 +598,21 @@ internal object HaStatusText {
         (value as? String)?.let { runCatching { OffsetDateTime.parse(it).toInstant() }.getOrNull() }
 
     private fun num(value: Any?): Double? = (value as? Double)?.takeIf { it.isFinite() }
+
+    /** Whether a line's level is the month's peak (a demand charge's, already paid for) above the target as set. */
+    private fun monthPeak(params: Map<String, Any?>): Boolean {
+        val target = num(params["target_kw"]) ?: return false
+        val set = num(params["set_kw"]) ?: return false
+        return target > set + 1e-9
+    }
+
+    /** A number with exactly [digits] decimals, as the card's `formatFixed` writes it ("6,0"). */
+    internal fun fixed(locale: Locale, value: Double, digits: Int): String =
+        NumberFormat.getNumberInstance(locale).apply {
+            minimumFractionDigits = digits
+            maximumFractionDigits = digits
+            roundingMode = java.math.RoundingMode.HALF_UP
+        }.format(value)
 
     private fun number(locale: Locale, value: Double, digits: Int): String =
         NumberFormat.getNumberInstance(locale).apply {

@@ -740,3 +740,70 @@ class HaStatusTextTest {
         )
     }
 }
+
+class ImportTargetStatusTextTest {
+    private val now = Instant.parse("2026-09-22T18:10:00Z")
+    private fun format(language: String) = StatusFormat(language, ZoneId.of("Europe/Stockholm"), "SEK", "kr")
+    private fun say(code: String, params: Map<String, Any?>, language: String = "sv") =
+        HaStatusText.line(StatusLine(code, params), format(language), now)
+
+    @Test fun aHeldChargeSaysTheLimitTheTargetAndTheHourSoFar() {
+        val held = mapOf("limit_a" to 9.0, "target_kw" to 6.0, "hour_kw" to 4.24, "set_kw" to 6.0)
+        assertEquals("Hålls på 9 A så att timmen stannar under 6,0 kW (nu 4,2 kW).", say("import_target_held", held))
+        assertEquals(
+            "Held back to keep this hour under 6.0 kW (now 4.2 kW).",
+            say("import_target_held", held + ("limit_a" to null), "en")
+        )
+    }
+
+    @Test fun aLevelAboveTheTargetAsSetIsTheMonthsPeak() {
+        val held = mapOf("limit_a" to 9.0, "target_kw" to 6.975, "hour_kw" to 4.2, "set_kw" to 6.0)
+        assertEquals(
+            "Hålls på 9 A så att timmen stannar under 7,0 kW, månadens topp (effektmål 6,0 kW; nu 4,2 kW).",
+            say("import_target_held", held)
+        )
+        // An older Home Assistant without `set_kw`: the plain sentence.
+        assertEquals("Hålls på 9 A så att timmen stannar under 7,0 kW (nu 4,2 kW).", say("import_target_held", held - "set_kw"))
+    }
+
+    @Test fun aPauseSaysUntilTheNextHourAndWhetherTheHouseAloneIsOver() {
+        val paused = mapOf("until" to "2026-09-22T19:00:00+00:00", "target_kw" to 6.0, "set_kw" to 6.0, "house_over" to false)
+        assertEquals("Pausad till kl. 21:00 så att timmen stannar under 6,0 kW.", say("import_target_paused", paused))
+        assertEquals(
+            "Pausad till kl. 21:00 – huset ensamt ligger över effektmålet på 6,0 kW den här timmen.",
+            say("import_target_paused", paused + ("house_over" to true))
+        )
+        assertEquals(
+            "Pausad till nästa hela timme så att timmen stannar under 6,0 kW.",
+            say("import_target_paused", paused + ("until" to null))
+        )
+    }
+
+    @Test fun theHouseAloneOverTheTargetIsOneLine() {
+        assertEquals(
+            "Huset ensamt ligger över effektmålet på 6,0 kW den här timmen.",
+            say("import_target_house_over", mapOf("target_kw" to 6.0, "set_kw" to 6.0))
+        )
+    }
+
+    @Test fun theShortfallUnderTheTargetSaysTheDepartureAndWhatIsMissing() {
+        val risk = mapOf("departure" to "2026-09-23T05:00:00+00:00", "missing_kwh" to 4.4, "target_kw" to 6.0, "set_kw" to 6.0, "releasable" to true)
+        assertEquals("Bilen blir inte klar till 07:00 under effektmålet 6,0 kW – 4 kWh saknas.", say("import_target_at_risk", risk))
+        assertEquals(
+            "Bilen blir inte klar till avresan under effektmålet 6,0 kW – 4 kWh saknas.",
+            say("import_target_at_risk", risk + ("departure" to null))
+        )
+    }
+
+    @Test fun aReleasedTargetSaysWhoSetItAsideAndUntilWhen() {
+        val released = mapOf("departure" to "2026-09-23T05:00:00+00:00", "target_kw" to 6.0, "automatic" to false)
+        assertEquals("Effektmålet är släppt av dig till kl. ${day()} 07:00.", say("import_target_released", released))
+        assertEquals(
+            "Effektmålet släpps: bilen behöver effekten för att bli klar till avresan.",
+            say("import_target_released", released + mapOf("automatic" to true, "departure" to null))
+        )
+    }
+
+    private fun day() = java.time.format.DateTimeFormatter.ofPattern("EEE d MMM", java.util.Locale.forLanguageTag("sv"))
+        .format(java.time.ZonedDateTime.parse("2026-09-23T07:00:00+02:00[Europe/Stockholm]"))
+}
