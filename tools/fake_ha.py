@@ -93,7 +93,7 @@ DASHBOARD_BY_SCENARIO = {
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
-PRICE_DAYS_FIXTURE = DASHBOARD_FIXTURES.parent / "webhook/price_days_relay_se4.json"
+PRICE_DAYS_FIXTURE = DASHBOARD_FIXTURES.parent / "webhook/price_days_held_se4.json"
 
 #: Scenarios standing for a Home Assistant from before `price_days`.
 NO_PRICE_DAYS = {"oldprices"}
