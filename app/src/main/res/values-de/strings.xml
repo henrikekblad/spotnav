@@ -663,4 +663,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Die Einstellung der Ladestation konnte nicht geändert werden. Ändere sie in Home Assistant.</string>
   <string name="setup_dismiss_failed">Das konnte nicht gespeichert werden. Versuche es erneut.</string>
+  <string name="card_grid_fee_percent" formatted="false">Netzentgelt, % vom Spotpreis</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Manche Netzbetreiber berechnen einen Teil des Netzentgelts als Anteil am Spotpreis. Er kommt zum Netzentgelt hinzu.</string>
+  <string name="card_grid_fee_high" formatted="false">Netzentgelt in Hochlastzeiten</string>
+  <string name="card_grid_fee_high_help" formatted="false">Ersetzt das Netzentgelt in den Hochlastzeiten.</string>
+  <string name="card_grid_fee_window" formatted="false">Hochlastzeiten</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Werktags</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Jeden Tag</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mo–Sa</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">ganzjährig</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">Jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">Feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">März</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">Apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">Mai</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">Juni</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">Juli</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">Aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">Sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">Okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">Nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">Dez</string>
+  <string name="card_grid_fee_window_from" formatted="false">Von</string>
+  <string name="card_grid_fee_window_to" formatted="false">Bis</string>
+  <string name="card_grid_fee_window_days" formatted="false">Tage</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Erster Monat</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Letzter Monat</string>
+  <string name="card_grid_fee_window_help" formatted="false">Die Stunden, in denen Ihr Netzbetreiber sein höheres Entgelt berechnet. Ein Ende vor dem Beginn reicht über Mitternacht, und die Nacht zählt zu dem Tag, an dem sie beginnt.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Eine übliche Wahl. Prüfen Sie sie anhand des Tarifs Ihres Netzbetreibers.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Das Hochlastentgelt gilt nur in seinen Stunden. Bestätigen Sie zuerst die Stunden, dann das Entgelt.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Weiter</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Von und Bis dürfen nicht dieselbe Stunde sein.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Der Strompreis wurde an anderer Stelle geändert und neu gelesen. Nichts wurde gespeichert: Speichern Sie erneut, um Ihre Änderung zu übernehmen.</string>
+  <string name="card_market_included" formatted="false">Im Preis enthalten</string>
+  <string name="card_settings_value_off" formatted="false">Aus</string>
+  <string name="card_settings_value_unset" formatted="false">Nicht festgelegt</string>
 </resources>

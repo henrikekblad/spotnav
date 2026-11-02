@@ -663,4 +663,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Det gick inte att ändra laddboxens inställning. Ändra den i Home Assistant.</string>
   <string name="setup_dismiss_failed">Det gick inte att spara. Försök igen.</string>
+  <string name="card_grid_fee_percent" formatted="false">Nätavgift, % av spotpriset</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Vissa nätbolag tar ut en del av nätavgiften som en andel av spotpriset. Den läggs till ovanpå nätavgiften.</string>
+  <string name="card_grid_fee_high" formatted="false">Nätavgift under höglasttid</string>
+  <string name="card_grid_fee_high_help" formatted="false">Ersätter nätavgiften under höglasttid.</string>
+  <string name="card_grid_fee_window" formatted="false">Höglasttid</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Vardagar</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Alla dagar</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mån–lör</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">hela året</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">maj</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">Från</string>
+  <string name="card_grid_fee_window_to" formatted="false">Till</string>
+  <string name="card_grid_fee_window_days" formatted="false">Dagar</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Första månad</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Sista månad</string>
+  <string name="card_grid_fee_window_help" formatted="false">Timmarna då ditt nätbolag tar ut sin högre avgift. Ett slut före starten går över midnatt, och natten räknas till dagen den börjar.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Ett vanligt val. Kontrollera mot ditt nätbolags tariff.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Avgiften gäller bara under höglasttiden. Bekräfta tiderna först, sedan avgiften.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Nästa</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Från och Till kan inte vara samma timme.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Elpriset ändrades någon annanstans och har lästs om. Inget sparades: spara igen för att göra din ändring.</string>
+  <string name="card_market_included" formatted="false">Ingår i priset</string>
+  <string name="card_settings_value_off" formatted="false">Av</string>
+  <string name="card_settings_value_unset" formatted="false">Inte inställt</string>
 </resources>

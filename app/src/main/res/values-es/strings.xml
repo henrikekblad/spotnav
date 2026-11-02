@@ -671,4 +671,40 @@
   </plurals>
   <string name="own_mode_fix_failed">No se pudo cambiar el ajuste del cargador. Cámbialo en Home Assistant.</string>
   <string name="setup_dismiss_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+  <string name="card_grid_fee_percent" formatted="false">Peaje de acceso, % del precio spot</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Algunas distribuidoras cobran parte del peaje de acceso como un porcentaje del precio spot. Se suma al peaje de acceso.</string>
+  <string name="card_grid_fee_high" formatted="false">Peaje de acceso en horas punta</string>
+  <string name="card_grid_fee_high_help" formatted="false">Sustituye al peaje de acceso en las horas punta.</string>
+  <string name="card_grid_fee_window" formatted="false">Horas punta</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Laborables</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Todos los días</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Lun–sáb</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">todo el año</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">ene</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">abr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">may</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">ago</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">oct</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dic</string>
+  <string name="card_grid_fee_window_from" formatted="false">Desde</string>
+  <string name="card_grid_fee_window_to" formatted="false">Hasta</string>
+  <string name="card_grid_fee_window_days" formatted="false">Días</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Primer mes</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Último mes</string>
+  <string name="card_grid_fee_window_help" formatted="false">Las horas en que tu distribuidora cobra su peaje más alto. Un fin anterior al inicio pasa la medianoche, y la noche cuenta para el día en que empieza.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Una elección habitual. Compruébala con la tarifa de tu distribuidora.</string>
+  <string name="card_grid_fee_window_first" formatted="false">El peaje de horas punta solo se aplica en sus horas. Confirma primero las horas y después el peaje.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Siguiente</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">«Desde» y «Hasta» no pueden ser la misma hora.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">El precio de la electricidad se cambió en otro lugar y se ha vuelto a leer. No se guardó nada: guarda de nuevo para aplicar tu cambio.</string>
+  <string name="card_market_included" formatted="false">Incluido en el precio</string>
+  <string name="card_settings_value_off" formatted="false">Desactivado</string>
+  <string name="card_settings_value_unset" formatted="false">Sin definir</string>
 </resources>
