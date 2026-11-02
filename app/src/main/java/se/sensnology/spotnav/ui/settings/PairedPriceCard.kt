@@ -9,7 +9,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
+import org.json.JSONObject
+import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
+import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceProvider
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
@@ -17,6 +21,7 @@ import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsFormValues
 import se.sensnology.spotnav.prices.PriceMarkets
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -24,7 +29,8 @@ import se.sensnology.spotnav.widget.WidgetSettings
 /**
  * The "Electricity price" card of a paired charger: where the price lives (the electricity price Home Assistant's
  * charger uses, how many chargers share it, the same-area question and the "Price from" choice, see
- * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then where
+ * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then the demand
+ * charge's parts as the card shows them ([showDemand], written with the grid tariff), then where
  * the area's prices come from and Home Assistant's notice when it has no source of its own ([showProvider]). Each of
  * those changes its one value through the paired settings path ([submit], the whole record with that one field
  * changed); the screen owns that path and says what came of it.
@@ -32,7 +38,13 @@ import se.sensnology.spotnav.widget.WidgetSettings
 internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     private val sourceRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val rows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private val demandRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val providerRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    // The grid tariff: as the last dashboard stated it, or as a write here answered until the next one.
+    private var tariff: DashboardGridTariff? = null
+    private var tariffDashboard: Dashboard? = null
+    private var writeTariff: (Int, JSONObject, (GridTariffUpdate.Outcome) -> Unit) -> Unit =
+        { _, _, done -> done(GridTariffUpdate.Outcome.Failed(null)) }
     private var old: WidgetSettings? = null
     private var submit: (SettingsFormValues, ((HaPlanningSettings) -> SettingsFormValues)?, done: () -> Unit) -> Unit =
         { _, _, done -> done() }
@@ -62,6 +74,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         this.old = old
         parent.addView(sourceRows)
         parent.addView(rows)
+        parent.addView(demandRows)
         parent.addView(providerRows)
     }
 
@@ -72,6 +85,60 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     ) {
         this.choose = choose
         this.answer = answer
+    }
+
+    /** Where the grid tariff's write goes (`update_grid_tariff`; the screen owns the connection and reads again). */
+    fun attachTariffWrite(write: (Int, JSONObject, (GridTariffUpdate.Outcome) -> Unit) -> Unit) {
+        writeTariff = write
+    }
+
+    /**
+     * Paint the demand charge of [dashboard]'s grid tariff, as the card's price section does: "Effektavgift: Inget" until
+     * a part is added, then each part with its prices and this month's mean and peaks beneath, and a row adding another
+     * (at most three). Editable where the tariff is writable. Nothing from a Home Assistant before 2.4.
+     */
+    fun showDemand(dashboard: Dashboard?) {
+        tariffDashboard = dashboard
+        tariff = dashboard?.gridTariff
+        repaintDemand()
+    }
+
+    private fun repaintDemand() {
+        demandRows.removeAllViews()
+        val block = tariff ?: return
+        val words = demandText(tariffDashboard)
+        for (row in words.rows(block.demand)) {
+            settingRow(demandRows, row.label, row.value, onTap = if (block.writable) ({ editDemand(row.index) }) else null)
+            row.lines.forEach { demandRows.addView(demandLine(it)) }
+        }
+    }
+
+    /** One part's editor ([index] `null` adds one): Save writes the tariff with it, Remove without it. */
+    private fun editDemand(index: Int?) {
+        val block = tariff ?: return
+        val parts = block.demand?.components.orEmpty()
+        val at = index ?: parts.size
+        editDemandComponent(cardWords(), index?.let { parts.getOrNull(it) }, block.demand?.priceUnit) { part, done ->
+            // Built on the tariff held when it is sent: a change to one part keeps the fees and the other parts as stored.
+            val held = tariff ?: return@editDemandComponent done(t(R.string.paired_error_generic))
+            writeTariff(held.writeRevision, held.bodyWith(at, part)) { outcome ->
+                when (outcome) {
+                    is GridTariffUpdate.Outcome.Updated -> {
+                        outcome.block?.let { tariff = it }
+                        done(null)
+                        repaintDemand()
+                    }
+                    is GridTariffUpdate.Outcome.Conflict -> {
+                        outcome.block?.let { tariff = it }
+                        repaintDemand()
+                        done(cardWords().say("gridFee.error.conflict"))
+                    }
+                    GridTariffUpdate.Outcome.Refused -> done(t(R.string.paired_error_invalid))
+                    GridTariffUpdate.Outcome.NotPermitted -> done(t(R.string.site_error_not_permitted))
+                    is GridTariffUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))
+                }
+            }
+        }
     }
 
     /** Paint the confirmed [record]; its rows are editable only while the authority lets it be written. */
