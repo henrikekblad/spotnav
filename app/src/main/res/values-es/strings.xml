@@ -640,6 +640,11 @@
   <string name="ha_price_notice_octopus_not_loaded">Octopus Energy está añadido en Home Assistant, pero no se ha iniciado.</string>
   <string name="ha_price_notice_octopus_no_agile">Octopus Energy no encontró ningún contador con tarifa Agile para %1$s.</string>
   <string name="ha_price_notice_octopus_region_mismatch">Tu contador de Octopus está en la región %1$s; sus tarifas se usan para %2$s. Elige la región %1$s como zona para que coincidan.</string>
+  <string name="ha_price_provider_zonneplan">Precios de Zonneplan (tu tarifa, impuesto e IVA incluidos)</string>
+  <string name="ha_price_notice_add_zonneplan">La tarifa de Zonneplan para %1$s viene de la integración Zonneplan, que se instala a través de HACS.</string>
+  <string name="ha_price_notice_zonneplan_not_loaded">Zonneplan está añadido en Home Assistant, pero no se inició.</string>
+  <string name="ha_price_notice_zonneplan_no_tariff">El sensor de Zonneplan de la tarifa eléctrica por cuarto de hora no está activado, así que %1$s no tiene precios. Actívalo entre las entidades de la integración Zonneplan.</string>
+  <string name="ha_price_notice_zonneplan_area">Zonneplan está configurado en Home Assistant. Para planificar con tu tarifa de Zonneplan, con el impuesto sobre la energía y el IVA incluidos, elige la zona Netherlands – Zonneplan.</string>
   <string name="ha_price_notice_source_missing">No hay ninguna fuente de precios para %1$s. Elige otra zona.</string>
   <string name="ha_price_notice_add_entsoe_key">Los precios de %1$s vienen de ENTSO-E, con tu propia clave gratuita. Añádela en Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E no aceptó la clave guardada. Introduce una nueva en Home Assistant.</string>

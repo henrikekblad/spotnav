@@ -644,6 +644,11 @@
   <string name="ha_price_notice_octopus_not_loaded">Octopus Energy is added in Home Assistant but did not start.</string>
   <string name="ha_price_notice_octopus_no_agile">Octopus Energy found no meter on an Agile tariff for %1$s.</string>
   <string name="ha_price_notice_octopus_region_mismatch">Your Octopus meter is in region %1$s; its rates are used for %2$s. Choose region %1$s as the area to match.</string>
+  <string name="ha_price_provider_zonneplan">Prices from Zonneplan (your tariff, tax and VAT included)</string>
+  <string name="ha_price_notice_add_zonneplan">Zonneplan\'s tariff for %1$s comes from the Zonneplan integration, installed through HACS.</string>
+  <string name="ha_price_notice_zonneplan_not_loaded">Zonneplan is added in Home Assistant but did not start.</string>
+  <string name="ha_price_notice_zonneplan_no_tariff">Zonneplan\'s quarter-hourly electricity tariff sensor is not turned on, so %1$s has no prices. Turn it on among the Zonneplan integration\'s entities.</string>
+  <string name="ha_price_notice_zonneplan_area">Zonneplan is set up in Home Assistant. To plan on your Zonneplan tariff, with energy tax and VAT included, choose the area Netherlands – Zonneplan.</string>
   <string name="ha_price_notice_source_missing">There is no source for prices in %1$s. Choose another area.</string>
   <string name="ha_price_notice_add_entsoe_key">Prices for %1$s come from ENTSO-E with your own free key. Add it in Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E did not accept the saved key. Enter a new one in Home Assistant.</string>

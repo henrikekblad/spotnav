@@ -5,7 +5,7 @@ import java.net.URI
 
 /**
  * The dashboard's `prices.provider` block (asked for with the `reads` value `price_provider`): where the area's
- * prices come from ([key] `nordpool`, `entsoe`, `pvpc`, `octopus` or `relay`; `null` when the area has no source at
+ * prices come from ([key] `nordpool`, `entsoe`, `pvpc`, `octopus`, `zonneplan` or `relay`; `null` when the area has no source at
  * all), and, while the area has no source of its own, the one thing an administrator can do about it in Home
  * Assistant ([notice]). `null` on the dashboard without an area, from an older Home Assistant, or for a block this
  * app cannot read.

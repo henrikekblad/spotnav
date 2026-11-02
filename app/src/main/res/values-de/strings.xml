@@ -632,6 +632,11 @@
   <string name="ha_price_notice_octopus_not_loaded">Octopus Energy ist in Home Assistant hinzugefügt, ist aber nicht gestartet.</string>
   <string name="ha_price_notice_octopus_no_agile">Octopus Energy hat keinen Zähler mit Agile-Tarif für %1$s gefunden.</string>
   <string name="ha_price_notice_octopus_region_mismatch">Dein Octopus-Zähler liegt in Region %1$s; seine Preise werden für %2$s verwendet. Wähle Region %1$s als Preiszone, damit es passt.</string>
+  <string name="ha_price_provider_zonneplan">Preise von Zonneplan (dein Tarif, Steuer und MwSt. enthalten)</string>
+  <string name="ha_price_notice_add_zonneplan">Der Zonneplan-Tarif für %1$s kommt aus der Zonneplan-Integration, die über HACS installiert wird.</string>
+  <string name="ha_price_notice_zonneplan_not_loaded">Zonneplan ist in Home Assistant hinzugefügt, wurde aber nicht gestartet.</string>
+  <string name="ha_price_notice_zonneplan_no_tariff">Der Zonneplan-Sensor für den Viertelstunden-Stromtarif ist nicht aktiviert, daher hat %1$s keine Preise. Aktiviere ihn unter den Entitäten der Zonneplan-Integration.</string>
+  <string name="ha_price_notice_zonneplan_area">Zonneplan ist in Home Assistant eingerichtet. Wähle die Preiszone Netherlands – Zonneplan, um mit deinem Zonneplan-Tarif zu planen, Energiesteuer und MwSt. inklusive.</string>
   <string name="ha_price_notice_source_missing">Für %1$s gibt es keine Preisquelle. Wähle eine andere Preiszone.</string>
   <string name="ha_price_notice_add_entsoe_key">Die Preise für %1$s kommen von ENTSO-E, mit deinem eigenen kostenlosen Schlüssel. Füge ihn in Home Assistant hinzu.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E hat den gespeicherten Schlüssel nicht akzeptiert. Gib in Home Assistant einen neuen ein.</string>
