@@ -641,4 +641,26 @@
   <string name="ha_price_notice_add_entsoe_key">Die Preise für %1$s kommen von ENTSO-E, mit deinem eigenen kostenlosen Schlüssel. Füge ihn in Home Assistant hinzu.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E hat den gespeicherten Schlüssel nicht akzeptiert. Gib in Home Assistant einen neuen ein.</string>
   <string name="ha_price_open_home_assistant">Home Assistant öffnen</string>
+  <string name="plan_preview_title">Plan mit dieser Änderung</string>
+  <string name="setup_heading">Erste Schritte</string>
+  <string name="setup_dismiss">Nicht nötig</string>
+  <string name="setup_vehicle_text">Füge dein Auto hinzu, damit ein Ziel in Prozent und die Reichweite stimmen.</string>
+  <string name="setup_vehicle_action">Integration des Autos hinzufügen</string>
+  <string name="setup_car_level_text">Ladestand des Autos hinzufügen: Der Plan lädt auf einen Zielstand, aber noch meldet nichts den Ladestand des Autos.</string>
+  <string name="setup_car_level_open">Auto öffnen</string>
+  <string name="setup_site_text">Einen Standort mit dem Stromzähler des Hauses hinzufügen, für Lastmanagement unter der Hauptsicherung und Laden mit Solarstrom.</string>
+  <string name="setup_site_action">Standort hinzufügen</string>
+  <string name="setup_solar_forecast_text">Füge eine Solarprognose hinzu (zum Beispiel Forecast.Solar oder Solcast), damit Hybrid mit der Sonne rechnen kann und der Status sagt, wann sie erwartet wird.</string>
+  <string name="setup_solar_forecast_action">Prognose wählen</string>
+  <string name="setup_solar_forecast_add">Forecast.Solar hinzufügen</string>
+  <string name="setup_phase_switching_text">Phasenumschaltung für Solar einschalten: an einem bewölkten Tag lädt das Auto einphasig von der Sonne statt aus dem Netz.</string>
+  <string name="setup_phase_switching_action">Einstellung öffnen</string>
+  <string name="setup_phone_text">Wähle, welche Telefone Lade-Benachrichtigungen bekommen, über die Home-Assistant-App oder die SpotNav-App.</string>
+  <string name="setup_phone_action">Telefone wählen</string>
+  <plurals name="setup_line">
+    <item quantity="one">Erste Schritte: noch %1$d Punkt offen</item>
+    <item quantity="other">Erste Schritte: noch %1$d Punkte offen</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Die Einstellung der Ladestation konnte nicht geändert werden. Ändere sie in Home Assistant.</string>
+  <string name="setup_dismiss_failed">Das konnte nicht gespeichert werden. Versuche es erneut.</string>
 </resources>

@@ -30,6 +30,7 @@ internal object ChargerConnectionContract {
 /** When the `vehicle_not_requesting_current` advisory is not a fault, as the card judges it. */
 internal object FullCarRule {
     private const val NEED_MET_LINE = "hybrid_satisfied"
+    private const val SUN_PAST_LINE = "sun_past_target"
 
     /** A charge to the car's own limit (Home Assistant 1.9): a car that stops taking current there is full. */
     private const val CAR_ENDS_LINE = "charging_to_vehicle_limit"
@@ -50,7 +51,7 @@ internal object FullCarRule {
     }
 
     fun needAlreadyMet(status: DashboardStatus): Boolean =
-        status.lines.any { it.code == NEED_MET_LINE || it.code == CAR_ENDS_LINE || it.code == TOP_OFF_LINE }
+        status.lines.any { it.code == NEED_MET_LINE || it.code == SUN_PAST_LINE || it.code == CAR_ENDS_LINE || it.code == TOP_OFF_LINE }
 
     /** Whether this dashboard puts the advisory on screen. */
     fun advisory(dashboard: Dashboard?): Boolean =

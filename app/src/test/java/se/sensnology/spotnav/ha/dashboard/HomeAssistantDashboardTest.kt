@@ -186,9 +186,17 @@ class HomeAssistantDashboardTest {
             return Dashboard.parse(json).capabilities
         }
 
-        assertEquals(ChargerCapabilities(refreshVehicle = true, setChargeLimit = true, priceDays = true), capabilities { })
+        assertEquals(ChargerCapabilities(
+                refreshVehicle = true, setChargeLimit = true, priceDays = true,
+                planPreview = true, dismissSetupItem = true, fixOwnMode = true
+            ),
+            capabilities { }
+        )
         assertEquals(
-            ChargerCapabilities(refreshVehicle = false, setChargeLimit = true, priceDays = true),
+            ChargerCapabilities(
+                refreshVehicle = false, setChargeLimit = true, priceDays = true,
+                planPreview = true, dismissSetupItem = true, fixOwnMode = true
+            ),
             capabilities { put("refresh_vehicle", false) }
         )
         // Not a boolean at all is "cannot"; so is an older Home Assistant that does not state price_days.
@@ -196,8 +204,31 @@ class HomeAssistantDashboardTest {
             put("refresh_vehicle", "true")
             remove("set_charge_limit")
             remove("price_days")
+            remove("plan_preview")
+            remove("dismiss_setup_item")
+            remove("fix_own_mode")
         })
         assertEquals(false, capabilities { put("price_days", 1) }.priceDays)
+        // An older Home Assistant states none of the three webhook actions of 2.3: the features stay hidden.
+        assertEquals(false, capabilities { remove("plan_preview") }.planPreview)
+        assertEquals(false, capabilities { put("dismiss_setup_item", "yes") }.dismissSetupItem)
+        assertEquals(false, capabilities { remove("fix_own_mode") }.fixOwnMode)
+    }
+
+    @Test fun theGetStartedRowsAreReadInTheCardsOrderAndAnUnknownRowIsSkipped() {
+        val json = v1("start_idle")
+        val rows = Dashboard.parse(json).setup
+        assertEquals(json.getJSONObject("setup").getJSONArray("items").length(), rows.size)
+        json.put("setup", JSONObject("""{"items": [{"id": "phone", "dismissible": true}, {"id": "new_thing", "dismissible": true}, {"id": "car_level", "dismissible": false}]}"""))
+        assertEquals(
+            listOf(SetupRow("car_level", false), SetupRow("phone", true)),
+            Dashboard.parse(json).setup
+        )
+        // An unreadable block is no rows; the dashboard is still read.
+        json.put("setup", JSONObject("""{"items": [{"id": "phone"}]}"""))
+        assertEquals(emptyList<SetupRow>(), Dashboard.parse(json).setup)
+        json.remove("setup")
+        assertEquals(emptyList<SetupRow>(), Dashboard.parse(json).setup)
     }
 
     @Test fun phaseDetectionIsReadAndAnOutOfRangeCountIsNotDetected() {

@@ -21,7 +21,9 @@ internal data class StatusFormat(
     /** The locale numbers and dates are written in: the same one the screen's own rows use. */
     val locale: Locale = Locale.forLanguageTag(language),
     /** Whether a distance is written in miles: the market is in Great Britain. */
-    val miles: Boolean = false
+    val miles: Boolean = false,
+    /** Whether the own-mode button is shown under the line: it then stands in for the hint where to change the setting. */
+    val ownModeButton: Boolean = false
 ) {
     companion object {
         fun of(language: String, market: DashboardMarket, locale: Locale? = null) = StatusFormat(
@@ -115,6 +117,17 @@ internal object HaStatusText {
         else -> "control.pausedManualStop"
     }
 
+    /**
+     * A name starts in lower case inside the sentence ("smart charging"), except in German, where a noun keeps its
+     * capital, and for a name that starts with an abbreviation ("PV surplus") (the card's `inSentence`).
+     */
+    internal fun inSentence(language: String, name: String): String {
+        val first = name.firstOrNull() ?: return name
+        val second = name.getOrNull(1)
+        val lowers = language != "de" && first != first.lowercaseChar() && second != null && second == second.lowercaseChar()
+        return if (lowers) first.lowercaseChar() + name.substring(1) else name
+    }
+
     /** One line's sentence or fact, with its params formatted here. */
     fun line(line: StatusLine, format: StatusFormat, now: Instant, publicationAt: String? = null): String {
         val language = format.language
@@ -203,12 +216,15 @@ internal object HaStatusText {
             // "About": the comparison is an estimate, so one decimal is enough.
             "plan_saving" -> say(key, mapOf("amount" to money(p, 1)))
             "charger_own_mode" -> {
-                // The charger's own mode as the profile names it: the card words the entity as Home Assistant shows
-                // it, which this app has no access to. The hint says where the setting is changed.
-                val label = (p["label"] as? String).orEmpty()
-                val state = (p["state"] as? String).orEmpty()
-                say(key, mapOf("label" to label, "state" to state)) + " " + say("issue.ownMode.where")
+                // The charger's own mode as Home Assistant names it (`entity_name`, `state_name`), else as the
+                // profile does (`label`, `state`); the hint says where the setting is changed.
+                val name = (p["entity_name"] as? String)?.takeIf { it.isNotBlank() }
+                val label = name?.let { inSentence(language, it) } ?: (p["label"] as? String).orEmpty()
+                val state = (p["state_name"] as? String)?.takeIf { it.isNotBlank() } ?: (p["state"] as? String).orEmpty()
+                val sentence = say(key, mapOf("label" to label, "state" to state))
+                if (format.ownModeButton) sentence else sentence + " " + say("issue.ownMode.where")
             }
+            "sun_past_target" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "solar_forecast" -> {
                 // The sun the forecast promises for the rest of today, else tomorrow, with its hours.
                 val start = instant(p["start"])

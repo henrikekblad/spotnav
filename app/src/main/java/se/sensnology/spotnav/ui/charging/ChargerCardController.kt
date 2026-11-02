@@ -181,6 +181,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             })
         }
         card.body.addView(status)
+        // The button and the "Get started" line Home Assistant's dashboard can ask for, right under the status.
+        val attention = ChargerAttention(this)
+        card.body.addView(attention.view)
 
         // The charge's progress, right under the status that says it charges: a slim bar and one line
         // ("62 % klart · klart ca 14:35"), there only while a charge is on and the dashboard carries
@@ -308,6 +311,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         return ChargerCard(
             body = card.body,
             status = status,
+            attention = attention,
             showChargeBar = { bar, now -> paintChargeBar(bar, now, chargeBarBlock, chargeBarView, chargeBarLine) },
             advisory = advisory,
             vehicleLine = vehicleLine,
@@ -516,6 +520,8 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
 internal class ChargerCard(
     val body: LinearLayout,
     val status: TextView,
+    /** The own-mode button and the "Get started" line under the status (see [ChargerAttention]). */
+    val attention: ChargerAttention,
     /** Show the charge bar for the dashboard read at `now`, or hide it (`null`). */
     val showChargeBar: (ChargeBar?, java.time.Instant) -> Unit,
     /**

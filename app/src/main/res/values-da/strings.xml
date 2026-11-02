@@ -641,4 +641,26 @@
   <string name="ha_price_notice_add_entsoe_key">Priserne for %1$s kommer fra ENTSO-E med din egen gratis nøgle. Tilføj den i Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtog ikke den gemte nøgle. Indtast en ny i Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Åbn Home Assistant</string>
+  <string name="plan_preview_title">Planen med denne ændring</string>
+  <string name="setup_heading">Kom i gang</string>
+  <string name="setup_dismiss">Ikke nødvendigt</string>
+  <string name="setup_vehicle_text">Tilføj din bil, så bliver et mål i procent og rækkevidden rigtige.</string>
+  <string name="setup_vehicle_action">Tilføj bilens integration</string>
+  <string name="setup_car_level_text">Tilføj bilens ladetilstand: planen lader til et mål, men intet rapporterer bilens niveau endnu.</string>
+  <string name="setup_car_level_open">Åbn bilen</string>
+  <string name="setup_site_text">Tilføj et anlæg med husets elmåler, til lastbalancering under hovedsikringen og opladning med solstrøm.</string>
+  <string name="setup_site_action">Tilføj anlæg</string>
+  <string name="setup_solar_forecast_text">Tilføj en solprognose (for eksempel Forecast.Solar eller Solcast), så kan Hybrid regne med solen og status vise, hvornår den ventes.</string>
+  <string name="setup_solar_forecast_action">Vælg prognose</string>
+  <string name="setup_solar_forecast_add">Tilføj Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Slå faseskift for sol til: en overskyet dag lader bilen på én fase fra solen i stedet for fra nettet.</string>
+  <string name="setup_phase_switching_action">Åbn indstillingen</string>
+  <string name="setup_phone_text">Vælg, hvilke telefoner der får ladebeskeder, via Home Assistant-appen eller SpotNav-appen.</string>
+  <string name="setup_phone_action">Vælg telefoner</string>
+  <plurals name="setup_line">
+    <item quantity="one">Kom i gang: %1$d ting tilbage</item>
+    <item quantity="other">Kom i gang: %1$d ting tilbage</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Kunne ikke ændre laderens indstilling. Skift den i Home Assistant.</string>
+  <string name="setup_dismiss_failed">Kunne ikke gemme det. Prøv igen.</string>
 </resources>

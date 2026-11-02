@@ -641,4 +641,26 @@
   <string name="ha_price_notice_add_entsoe_key">Priserna för %1$s kommer från ENTSO-E med din egen kostnadsfria nyckel. Lägg till den i Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtog inte den sparade nyckeln. Ange en ny i Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Öppna Home Assistant</string>
+  <string name="plan_preview_title">Planen med den här ändringen</string>
+  <string name="setup_heading">Kom igång</string>
+  <string name="setup_dismiss">Behövs inte</string>
+  <string name="setup_vehicle_text">Lägg till din bil, så blir ett mål i procent och räckvidden rätt.</string>
+  <string name="setup_vehicle_action">Lägg till bilens integration</string>
+  <string name="setup_car_level_text">Lägg till bilens laddnivå: planen laddar till en målnivå, men inget rapporterar bilens nivå ännu.</string>
+  <string name="setup_car_level_open">Öppna bilen</string>
+  <string name="setup_site_text">Lägg till en anläggning med husets elmätare, för lastbalansering under huvudsäkringen och laddning med solel.</string>
+  <string name="setup_site_action">Lägg till anläggning</string>
+  <string name="setup_solar_forecast_text">Lägg till en solprognos (till exempel Forecast.Solar eller Solcast), så kan Hybrid räkna med solen och statusen visa när den väntas.</string>
+  <string name="setup_solar_forecast_action">Välj prognos</string>
+  <string name="setup_solar_forecast_add">Lägg till Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Slå på fasväxling för sol: en molnig dag laddar bilen på en fas från solen i stället för från nätet.</string>
+  <string name="setup_phase_switching_action">Öppna inställningen</string>
+  <string name="setup_phone_text">Välj vilka telefoner som får laddnotiser, via Home Assistant-appen eller SpotNav-appen.</string>
+  <string name="setup_phone_action">Välj telefoner</string>
+  <plurals name="setup_line">
+    <item quantity="one">Kom igång: %1$d sak kvar</item>
+    <item quantity="other">Kom igång: %1$d saker kvar</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Det gick inte att ändra laddboxens inställning. Ändra den i Home Assistant.</string>
+  <string name="setup_dismiss_failed">Det gick inte att spara. Försök igen.</string>
 </resources>

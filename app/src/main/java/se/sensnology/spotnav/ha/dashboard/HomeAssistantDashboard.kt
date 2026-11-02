@@ -412,7 +412,9 @@ internal data class Dashboard(
      */
     val priceSource: DashboardPriceSource? = null,
     /** Phase switching for solar (`phase_switching`, see [PhaseSwitching]); `null` where it is not offered. */
-    val phaseSwitching: PhaseSwitching? = null
+    val phaseSwitching: PhaseSwitching? = null,
+    /** The "Get started" rows still left (`setup.items`, see [SetupRow]); empty when none, from an older Home Assistant or unreadable. */
+    val setup: List<SetupRow> = emptyList()
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -512,7 +514,8 @@ internal data class Dashboard(
                 cameraIdentification = DashboardCamera.parse(json.opt("camera_identification")),
                 planNotice = planNotice(json.opt("plan_notice")),
                 priceSource = DashboardPriceSource.parse(json.opt("price_source")),
-                phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching"))
+                phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching")),
+                setup = SetupRow.parse(json.opt("setup"))
             )
         }
 
@@ -703,7 +706,10 @@ internal data class Dashboard(
             refreshVehicle = json.strictBoolean("refresh_vehicle") == true,
             setChargeLimit = json.strictBoolean("set_charge_limit") == true,
             setCurrent = json.strictBoolean("set_current") == true,
-            priceDays = json.strictBoolean("price_days") == true
+            priceDays = json.strictBoolean("price_days") == true,
+            planPreview = json.strictBoolean("plan_preview") == true,
+            dismissSetupItem = json.strictBoolean("dismiss_setup_item") == true,
+            fixOwnMode = json.strictBoolean("fix_own_mode") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(

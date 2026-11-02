@@ -233,8 +233,9 @@ internal class PairedSettingsCards(
         settingRow(parent, label, value, help)
 
     /** A value row that opens [onTap] (its dialog), or a read-only one while [onTap] is `null`. */
-    private fun valueRow(parent: LinearLayout, label: String, value: String, help: String? = null, onTap: (() -> Unit)?) =
-        settingRow(parent, label, value, help, onTap)
+    private fun valueRow(
+        parent: LinearLayout, label: String, value: String, help: String? = null, target: String? = null, onTap: (() -> Unit)?
+    ) = settingRow(parent, label, value, help, target, onTap)
 
     private fun repaint() {
         container.removeAllViews()
@@ -843,7 +844,7 @@ internal class PairedSettingsCards(
     private fun addPhaseSwitching(body: LinearLayout) {
         val setting = adoptedPhaseSwitching ?: dashboard?.phaseSwitching ?: return
         val label = t(R.string.phase_switching_label)
-        valueRow(body, label, phaseSwitchingName(setting.enabled), onTap = if (setting.writable) ({
+        valueRow(body, label, phaseSwitchingName(setting.enabled), target = SettingsTarget.PHASE_SWITCHING.tag, onTap = if (setting.writable) ({
             val options = listOf(false, true)
             chooseOne(label, options.map { phaseSwitchingName(it) }, options.indexOf(setting.enabled),
                 intro = t(R.string.phase_switching_help)) { index, done ->
@@ -887,7 +888,7 @@ internal class PairedSettingsCards(
         val forecastOffered = summary.editable && site.solarForecastChoices.isNotEmpty()
         valueRow(card.body, t(R.string.site_forecast_title),
             if (summary.forecastTitles.isEmpty()) t(R.string.value_none) else summary.forecastTitles.joinToString(", "),
-            onTap = if (forecastOffered) ({
+            target = SettingsTarget.SOLAR_FORECAST.tag, onTap = if (forecastOffered) ({
                 val selected = PairedOverview.solarSelection(site)
                 chooseMany(t(R.string.site_forecast_title), site.solarForecastChoices.map { it.title },
                     site.solarForecastChoices.map { it.id in selected }) { ticks, done ->

@@ -649,4 +649,26 @@
   <string name="ha_price_notice_add_entsoe_key">Los precios de %1$s vienen de ENTSO-E, con tu propia clave gratuita. Añádela en Home Assistant.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E no aceptó la clave guardada. Introduce una nueva en Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Abrir Home Assistant</string>
+  <string name="plan_preview_title">Plan con este cambio</string>
+  <string name="setup_heading">Primeros pasos</string>
+  <string name="setup_dismiss">No es necesario</string>
+  <string name="setup_vehicle_text">Añade tu coche, para que un objetivo en porcentaje y la autonomía sean correctos.</string>
+  <string name="setup_vehicle_action">Añadir la integración del coche</string>
+  <string name="setup_car_level_text">Añade el nivel de carga del coche: el plan carga hasta un nivel objetivo, pero nada informa todavía del nivel del coche.</string>
+  <string name="setup_car_level_open">Abrir el coche</string>
+  <string name="setup_site_text">Añade una instalación con el contador eléctrico de la casa, para el equilibrado de carga bajo el interruptor general y la carga solar.</string>
+  <string name="setup_site_action">Añadir instalación</string>
+  <string name="setup_solar_forecast_text">Añade una previsión solar (por ejemplo Forecast.Solar o Solcast), para que Híbrida pueda contar con el sol y el estado diga cuándo se espera.</string>
+  <string name="setup_solar_forecast_action">Elegir previsión</string>
+  <string name="setup_solar_forecast_add">Añadir Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Activa el cambio de fases para solar: en un día nublado el coche carga en una fase desde el sol en lugar de desde la red.</string>
+  <string name="setup_phase_switching_action">Abrir el ajuste</string>
+  <string name="setup_phone_text">Elige qué teléfonos reciben avisos de carga, a través de la app de Home Assistant o la app SpotNav.</string>
+  <string name="setup_phone_action">Elegir teléfonos</string>
+  <plurals name="setup_line">
+    <item quantity="one">Primeros pasos: queda %1$d cosa</item>
+    <item quantity="other">Primeros pasos: quedan %1$d cosas</item>
+  </plurals>
+  <string name="own_mode_fix_failed">No se pudo cambiar el ajuste del cargador. Cámbialo en Home Assistant.</string>
+  <string name="setup_dismiss_failed">No se pudo guardar. Inténtalo de nuevo.</string>
 </resources>

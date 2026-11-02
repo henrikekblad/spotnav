@@ -17,7 +17,13 @@ data class ChargerCapabilities(
     /** Whether SpotNav may write a charging current to this charger (the settings overview words it). */
     val setCurrent: Boolean = false,
     /** Whether the webhook answers `price_days`: the charger's prices come from Home Assistant itself. */
-    val priceDays: Boolean = false
+    val priceDays: Boolean = false,
+    /** Whether the webhook answers `plan_preview`: what a change would plan, with nothing saved. */
+    val planPreview: Boolean = false,
+    /** Whether the webhook answers `dismiss_setup_item`: a "Get started" row answered "Not needed". */
+    val dismissSetupItem: Boolean = false,
+    /** Whether the webhook answers `fix_own_mode`: the charger's own setting set back to the value SpotNav works with. */
+    val fixOwnMode: Boolean = false
 )
 
 /**

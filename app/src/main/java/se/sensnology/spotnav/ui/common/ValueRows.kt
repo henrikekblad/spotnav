@@ -157,6 +157,8 @@ internal fun ViewScope.settingRow(
     label: String,
     value: String,
     help: String? = null,
+    /** What the row is called by a screen that opens Settings at it (see `SettingsTarget`), else `null`. */
+    target: String? = null,
     onTap: (() -> Unit)? = null
 ) {
     val valueView = TextView(context).apply {
@@ -174,6 +176,7 @@ internal fun ViewScope.settingRow(
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
     row.view.contentDescription = description
+    row.view.tag = target
     if (help != null) {
         parent.addView(TextView(context).apply {
             text = help; textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(6))

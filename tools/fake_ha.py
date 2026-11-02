@@ -87,10 +87,13 @@ DASHBOARD_BY_SCENARIO = {
     "addnordpool": "cheapest_no_site.json",
     "direction": "solar_direct_site_with_total.json",
     "zonneplan": "cheapest_no_site.json",
+    "ownmode": "cheapest_direct_site_admin.json",
+    "started": "start_idle.json",
+    "oldwebhook": "cheapest_no_site.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
-PRICE_DAYS_FIXTURE = DASHBOARD_FIXTURES.parent / "webhook/price_days_relay_se4.json"
+PRICE_DAYS_FIXTURE = DASHBOARD_FIXTURES.parent / "webhook/price_days_held_se4.json"
 
 #: Scenarios standing for a Home Assistant from before `price_days`.
 NO_PRICE_DAYS = {"oldprices"}
@@ -149,6 +152,63 @@ def _in_zonneplan(body: dict) -> None:
             line["params"]["currency"] = "EUR"
 
 
+#: What the 2.3 webhook actions have done in this run: the Get started rows answered "Not needed", and whether the
+#: charger's own mode was set back (the `ownmode` scenario's status line is then gone).
+SETUP_ROWS = [("vehicle", True), ("car_level", False), ("site", True), ("phase_switching", True), ("phone", True), ("app", True)]
+DISMISSED: set[str] = set()
+OWN_MODE = {"fixed": False}
+
+#: A Home Assistant from before the 2.3 webhook actions: the dashboard states none of them.
+NO_2_3_ACTIONS = {"oldwebhook", "oldprices"}
+NEW_ACTIONS = ("plan_preview", "dismiss_setup_item", "fix_own_mode")
+
+
+def _own_mode_status() -> dict:
+    if OWN_MODE["fixed"]:
+        return {"tone": "normal", "lines": [{"code": "plan_energy", "params": {"kwh": 20.0}}]}
+    return {"tone": "notice", "lines": [
+        {"code": "charger_own_mode", "params": {
+            "entity": "select.garage_smart_charging", "label": "smart charging", "state": "pure_solar",
+            "value": "default", "entity_name": "Smart charging", "state_name": "Pure solar", "value_name": "Default",
+        }},
+        {"code": "plan_energy", "params": {"kwh": 20.0}},
+    ]}
+
+
+def plan_preview_body(payload: dict) -> dict:
+    """What a Save of the body would plan: the wanted energy charged at 6.9 kW from the next whole hour, over a strip of
+    made-up quarters that are dearest around the evening peak."""
+    settings = payload.get("settings") or {}
+    kwh = float(settings.get("requested_kwh") or 20.0)
+    now = datetime.now(ZoneInfo("Europe/Stockholm")).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    quarters_needed = max(1, round(kwh / 6.9 * 4))
+    start = now
+    prices = [60 + 55 * abs(((i // 4) % 24) - 18) / 18 + (i % 4) for i in range(40)]
+    cheapest = sorted(range(40), key=lambda i: prices[i])[:quarters_needed]
+    quarters = [{"start": (start + timedelta(minutes=15 * i)).astimezone(ZoneInfo("UTC")).isoformat(),
+                 "price": round(prices[i], 1), "planned": i in cheapest} for i in range(40)]
+    planned = sorted(cheapest)
+    end_of = lambda i: (start + timedelta(minutes=15 * (i + 1))).isoformat()
+    periods, run = [], [planned[0]]
+    for i in planned[1:]:
+        if i == run[-1] + 1:
+            run.append(i)
+        else:
+            periods.append({"start": (start + timedelta(minutes=15 * run[0])).isoformat(), "end": end_of(run[-1])})
+            run = [i]
+    periods.append({"start": (start + timedelta(minutes=15 * run[0])).isoformat(), "end": end_of(run[-1])})
+    cost = round(sum(prices[i] for i in planned) / len(planned) * kwh / 100, 2)
+    return {"api_version": 1, "ok": True, "error": None, "action": "plan_preview", "preview": {
+        "state": "proposal_ready", "reason": "ready",
+        "plan": {"periods": periods, "planned_kwh": kwh, "requested_kwh": kwh, "power_kw": 6.9,
+                 "cost": {"value": cost, "currency": "SEK"}, "finish": periods[-1]["end"],
+                 "unpriced": False, "short_of_deadline": False},
+        "status": {"tone": "normal", "lines": []},
+        "strip": {"start": quarters[0]["start"], "end": (start + timedelta(minutes=15 * 40)).astimezone(ZoneInfo("UTC")).isoformat(),
+                  "quarters": quarters},
+    }}
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -164,6 +224,19 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["status"] = _manual_status(body)
     if scenario in NO_PRICE_DAYS:
         body["charger"]["capabilities"].pop("price_days", None)
+    if scenario in NO_2_3_ACTIONS:
+        for action in NEW_ACTIONS:
+            body["charger"]["capabilities"].pop(action, None)
+    # Home Assistant sends the Get started rows only to an app that reads `setup`.
+    body.pop("setup", None)
+    if scenario == "started" and "setup" in (reads or []):
+        body["setup"] = {"items": [{"id": row, "dismissible": dismissible} for row, dismissible in SETUP_ROWS
+                                   if row not in DISMISSED]}
+    # Phase switching for solar is offered on the `started` charger (the row its Get started line opens in Settings).
+    if scenario == "started" and "phase_switching" in (reads or []):
+        body["phase_switching"] = {"value": False, "writable": True}
+    if scenario == "ownmode":
+        body["status"] = _own_mode_status()
     return body
 
 
@@ -248,6 +321,18 @@ SCENARIOS: dict[str, Charger] = {
     "zonneplan": Charger(
         "Zonneplan",
         why="the area Netherlands \u2013 Zonneplan (HA 2.2): VAT and tax included, prices from the Zonneplan integration",
+    ),
+    "ownmode": Charger(
+        "Egen laddläge",
+        why="the charger's own smart-charging mode works against SpotNav (HA 2.3): the status line with Home Assistant's names and the Set to Default button",
+    ),
+    "started": Charger(
+        "Kom igång",
+        why="Get started rows left to set up (HA 2.3): the line under the status, the dialog and Not needed",
+    ),
+    "oldwebhook": Charger(
+        "Äldre HA",
+        why="a Home Assistant from before the 2.3 webhook actions: no plan preview, no Get started dismiss, no own-mode button",
     ),
     "addnordpool": Charger(
         "Utan priskälla",
@@ -586,6 +671,28 @@ class Handler(BaseHTTPRequestHandler):
                         self._json(400, {"ok": False, "error": "Unsupported action"})
                     else:
                         self._json(200, price_days_body())
+                    return
+                if action in NEW_ACTIONS and key in NO_2_3_ACTIONS:
+                    self._json(400, {"ok": False, "error": "Unsupported action"})
+                    return
+                if action == "plan_preview":
+                    self._json(200, plan_preview_body(payload))
+                    return
+                if action == "dismiss_setup_item":
+                    item = payload.get("item")
+                    if item == "car_level" or item not in dict(SETUP_ROWS):
+                        self._json(400, {"ok": False, "error": "spotnav_setup_item_not_dismissible", "action": action})
+                    else:
+                        DISMISSED.add(item)
+                        self._json(200, {"ok": True, "action": action})
+                    return
+                if action == "fix_own_mode":
+                    if key == "ownmode" and not OWN_MODE["fixed"] and payload.get("entity_id") == "select.garage_smart_charging" \
+                            and payload.get("value") == "default":
+                        OWN_MODE["fixed"] = True
+                        self._json(200, {"api_version": 1, "ok": True, "error": None, "action": action})
+                    else:
+                        self._json(400, {"api_version": 1, "ok": False, "error": "spotnav_no_conflict", "action": action})
                     return
                 if key == "manual" and action == "start" and MANUAL["no_car"]:
                     self._json(409, {"ok": False, "error": "vehicle_not_connected"})

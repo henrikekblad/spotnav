@@ -641,4 +641,26 @@
   <string name="ha_price_notice_add_entsoe_key">Alueen %1$s hinnat tulevat ENTSO-E:ltä omalla maksuttomalla avaimellasi. Lisää se Home Assistantiin.</string>
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E ei hyväksynyt tallennettua avainta. Anna uusi Home Assistantissa.</string>
   <string name="ha_price_open_home_assistant">Avaa Home Assistant</string>
+  <string name="plan_preview_title">Suunnitelma tällä muutoksella</string>
+  <string name="setup_heading">Aloitus</string>
+  <string name="setup_dismiss">Ei tarvita</string>
+  <string name="setup_vehicle_text">Lisää autosi, jotta prosenttitavoite ja toimintamatka ovat oikein.</string>
+  <string name="setup_vehicle_action">Lisää auton integraatio</string>
+  <string name="setup_car_level_text">Lisää auton lataustaso: suunnitelma lataa tavoitetasoon, mutta mikään ei vielä kerro auton tasoa.</string>
+  <string name="setup_car_level_open">Avaa auto</string>
+  <string name="setup_site_text">Lisää kohde, jossa on talon sähkömittari, kuormanhallintaa pääsulakkeen alla ja aurinkolatausta varten.</string>
+  <string name="setup_site_action">Lisää kohde</string>
+  <string name="setup_solar_forecast_text">Lisää aurinkoennuste (esimerkiksi Forecast.Solar tai Solcast), jotta Hybridi voi luottaa aurinkoon ja tila kertoo, milloin sitä odotetaan.</string>
+  <string name="setup_solar_forecast_action">Valitse ennuste</string>
+  <string name="setup_solar_forecast_add">Lisää Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Ota käyttöön vaiheenvaihto aurinkolataukselle: pilvisenä päivänä auto latautuu yhdellä vaiheella auringosta eikä verkosta.</string>
+  <string name="setup_phase_switching_action">Avaa asetus</string>
+  <string name="setup_phone_text">Valitse, mitkä puhelimet saavat latausilmoitukset Home Assistant -sovelluksen tai SpotNav-sovelluksen kautta.</string>
+  <string name="setup_phone_action">Valitse puhelimet</string>
+  <plurals name="setup_line">
+    <item quantity="one">Aloitus: %1$d asia jäljellä</item>
+    <item quantity="other">Aloitus: %1$d asiaa jäljellä</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Laturin asetusta ei voitu muuttaa. Muuta se Home Assistantissa.</string>
+  <string name="setup_dismiss_failed">Tallennus epäonnistui. Yritä uudelleen.</string>
 </resources>
