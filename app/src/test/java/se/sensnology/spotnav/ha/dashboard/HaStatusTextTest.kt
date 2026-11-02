@@ -655,4 +655,47 @@ class HaStatusTextTest {
         assertEquals("keskiviikon", HaStatusText.weekdaySingular("fi", 3.0))
         assertEquals(null, HaStatusText.weekdaySingular("fr", 8.0))
     }
+
+    @Test fun aPlanThatSavesMoneySaysSoWithOneDecimal() {
+        val saving = StatusLine("plan_saving", mapOf("amount_minor" to 260.0, "currency" to "SEK"))
+        assertEquals("sparar ~2,6 kr mot att ladda nu", HaStatusText.line(saving, format("sv"), now))
+        assertEquals("saves ~2.6 kr against charging now", HaStatusText.line(saving, format("en"), now))
+    }
+
+    @Test fun theSunAForecastPromisesIsToldWithItsHoursTodayOrTomorrow() {
+        fun sun(start: String, end: String) =
+            StatusLine("solar_forecast", mapOf("kwh" to 12.34, "start" to start, "end" to end))
+        assertEquals(
+            "12,3 kWh väntas från solen 10:00–15:00",
+            HaStatusText.line(sun("2026-09-22T08:00:00+00:00", "2026-09-22T13:00:00+00:00"), format("sv"), now)
+        )
+        assertEquals(
+            "12.3 kWh expected from the sun tomorrow 09:00–14:00",
+            HaStatusText.line(sun("2026-09-23T07:00:00+00:00", "2026-09-23T12:00:00+00:00"), format("en"), now)
+        )
+        assertEquals("12,3 kWh väntas från solen", HaStatusText.line(StatusLine("solar_forecast", mapOf("kwh" to 12.34)), format("sv"), now))
+    }
+
+    @Test fun theSunAHybridPlanCountsOnIsToldWithItsHoursWhenTheyAreStated() {
+        val params = mapOf("grid_kwh" to 8.0, "credit_kwh" to 4.0, "window_start" to "2026-09-22T01:00:00+00:00", "window_end" to "2026-09-22T03:00:00+00:00")
+        assertEquals(
+            "Hybrid · 8 kWh from grid 03:00–05:00, 4 kWh expected from sun 10:00–15:00",
+            HaStatusText.line(
+                StatusLine("hybrid_grid", params + mapOf("sun_start" to "2026-09-22T08:00:00+00:00", "sun_end" to "2026-09-22T13:00:00+00:00")),
+                format("en"), now
+            )
+        )
+        assertEquals(
+            "Hybrid · 8 kWh from grid 03:00–05:00, 4 kWh expected from sun",
+            HaStatusText.line(StatusLine("hybrid_grid", params + mapOf("sun_start" to null, "sun_end" to null)), format("en"), now)
+        )
+    }
+
+    @Test fun aChargersOwnModeThatWorksAgainstSpotNavIsToldWithWhereToChangeIt() {
+        val own = StatusLine("charger_own_mode", mapOf("entity" to "select.p", "label" to "smart charging", "state" to "Pure solar", "value" to "default"))
+        assertEquals(
+            "Laddboxens egen smart charging är på (Pure solar). Den motverkar SpotNav. Ändra den på laddboxens enhetssida i Home Assistant.",
+            HaStatusText.line(own, format("sv"), now)
+        )
+    }
 }
