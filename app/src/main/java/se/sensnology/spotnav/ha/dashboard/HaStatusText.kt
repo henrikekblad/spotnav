@@ -400,6 +400,7 @@ internal object HaStatusText {
             "solar_battery_unreadable" -> say(key, mapOf("entity" to (entity(p) ?: "")))
             "solar_charger_current_missing" ->
                 entity(p)?.let { say("strategy.status.solar.chargerCurrentUnreadable", mapOf("entity" to it)) }
+                    ?: ownCurrentSensors(p)?.let { say("strategy.status.solar.chargerCurrentNotSetOwn", it) }
                     ?: say(key)
             "solar_site_incomplete" -> say(key, mapOf("phases" to strings(p["phases"]).joinToString(", ")))
             // A charger that cannot say when a car is plugged in: only a Start or a plan window ends the Stop.
@@ -461,6 +462,13 @@ internal object HaStatusText {
     }
 
     private fun strings(value: Any?): List<String> = (value as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+
+    /** The charger integration's own current sensors a line names, when it names both (the card's wording). */
+    private fun ownCurrentSensors(params: Map<String, Any?>): Map<String, String>? {
+        val integration = (params["integration"] as? String)?.takeIf { it.isNotEmpty() } ?: return null
+        val sensors = (params["sensors"] as? String)?.takeIf { it.isNotEmpty() } ?: return null
+        return mapOf("integration" to integration, "sensors" to sensors)
+    }
 
     /** The entity a line names: its friendly name (`entity_name`) when given, else its id. */
     private fun entity(params: Map<String, Any?>): String? =

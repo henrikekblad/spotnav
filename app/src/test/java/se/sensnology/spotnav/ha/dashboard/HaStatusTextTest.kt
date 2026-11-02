@@ -510,9 +510,18 @@ class HaStatusTextTest {
             mapOf("entities" to listOf("sensor.solax_grid_current_l1"), "cause" to "inverter_standby")
         )
         assertEquals(
-            "The charger's own current is not set — choose it under Site wiring (e.g. Easee Current); " +
+            "The charger's own current is not set — choose it under Site wiring; " +
                 "until then solar starts only at the minimum current.",
             HaStatusText.line(notSet, format("en"), now)
+        )
+        val own = StatusLine(
+            "solar_charger_current_missing",
+            mapOf("entity" to null, "integration" to "Peblar", "sensors" to "Current phase 1–3")
+        )
+        assertEquals(
+            "Laddarens egen ström är inte vald — välj Current phase 1–3 från Peblar under Anläggningens koppling, " +
+                "eller tryck på Använd där; till dess startar sol bara på minsta ström.",
+            HaStatusText.line(own, format("sv"), now)
         )
         assertEquals(
             "Laddarens egen ström (sensor.easee_current) har ingen mätning; till dess startar sol bara på minsta ström.",
