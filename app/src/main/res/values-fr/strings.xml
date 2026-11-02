@@ -675,4 +675,58 @@
   <string name="if_not_ready_ask">Demander</string>
   <string name="if_not_ready_release">Lever l\'objectif de soutirage</string>
   <string name="if_not_ready_hold">Garder l\'objectif de soutirage</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">En semaine</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Tous les jours</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Lun–sam</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">toute l\'année</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">janv</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">févr</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mars</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">avr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">mai</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">juin</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">juil</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">août</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sept</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">oct</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">déc</string>
+  <string name="card_grid_fee_window_from" formatted="false">De</string>
+  <string name="card_grid_fee_window_to" formatted="false">À</string>
+  <string name="card_grid_fee_window_days" formatted="false">Jours</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Premier mois</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Dernier mois</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">« De » et « À » ne peuvent pas être la même heure.</string>
+  <string name="card_demand_title" formatted="false">Tarif de puissance</string>
+  <string name="card_demand_part" formatted="false">Tarif de puissance {n}</string>
+  <string name="card_demand_add_part" formatted="false">Une autre part du tarif de puissance</string>
+  <string name="card_demand_add" formatted="false">Ajouter</string>
+  <string name="card_demand_top_1" formatted="false">Heure la plus haute</string>
+  <string name="card_demand_top_3" formatted="false">Moyenne des 3 jours les plus hauts</string>
+  <string name="card_demand_top_5" formatted="false">Moyenne des 5 jours les plus hauts</string>
+  <string name="card_demand_all_hours" formatted="false">Toutes les heures</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (hiver / été)</string>
+  <string name="card_demand_month" formatted="false">Ce mois-ci : {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Pas encore de pic ce mois-ci</string>
+  <string name="card_demand_reason_no_site" formatted="false">Mesuré dès que la borne fait partie d\'un site avec compteur électrique.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Mesuré dès que le site a sa puissance réseau totale.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Ce site ne peut pas le mesurer.</string>
+  <string name="card_demand_help" formatted="false">Votre gestionnaire de réseau facture par kW votre plus haute moyenne horaire de soutirage du mois. SpotNav la mesure sur le compteur du site et l\'affiche ici ; la recharge ne change pas.</string>
+  <string name="card_demand_counted" formatted="false">Heures comptées</string>
+  <string name="card_demand_counted_all" formatted="false">Toutes les heures</string>
+  <string name="card_demand_counted_window" formatted="false">Seulement certaines heures</string>
+  <string name="card_demand_top_n" formatted="false">Pics par mois</string>
+  <string name="card_demand_price_winter" formatted="false">Prix par kW, nov–mars</string>
+  <string name="card_demand_price_summer" formatted="false">Prix par kW, avr–oct</string>
+  <string name="card_demand_remove" formatted="false">Supprimer</string>
+  <string name="card_demand_error_price" formatted="false">Un prix est un nombre, pas en dessous de 0, ou vide.</string>
+  <string name="card_site_import_target" formatted="false">Objectif de soutirage</string>
+  <string name="card_site_import_target_help" formatted="false">La moyenne horaire de soutirage sous laquelle vous voulez rester. L\'équilibrage de charge retient les bornes pour que l\'heure reste en dessous, et met une recharge en pause jusqu\'à l\'heure suivante quand même son courant minimum ne tient plus. Sous le niveau minimum de la voiture, elle charge tout de suite ; le Plan dit ce qui se passe si la voiture ne peut pas être prête à temps.</string>
+  <string name="card_site_import_target_hour" formatted="false">Cette heure : {kw} sur {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Cette heure : pas encore mesurée</string>
+  <string name="card_settings_value_none" formatted="false">Aucun</string>
+  <string name="card_settings_value_off" formatted="false">Désactivé</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Le prix de l\'électricité a été modifié ailleurs et a été relu. Rien n\'a été enregistré : enregistrez à nouveau pour appliquer votre modification.</string>
 </resources>

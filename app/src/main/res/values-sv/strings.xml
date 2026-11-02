@@ -667,4 +667,58 @@
   <string name="if_not_ready_ask">Fråga</string>
   <string name="if_not_ready_release">Släpp effektmålet</string>
   <string name="if_not_ready_hold">Håll effektmålet</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Vardagar</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Alla dagar</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mån–lör</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">hela året</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">maj</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">Från</string>
+  <string name="card_grid_fee_window_to" formatted="false">Till</string>
+  <string name="card_grid_fee_window_days" formatted="false">Dagar</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Första månad</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Sista månad</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Från och Till kan inte vara samma timme.</string>
+  <string name="card_demand_title" formatted="false">Effektavgift</string>
+  <string name="card_demand_part" formatted="false">Effektavgift {n}</string>
+  <string name="card_demand_add_part" formatted="false">Ytterligare en del av effektavgiften</string>
+  <string name="card_demand_add" formatted="false">Lägg till</string>
+  <string name="card_demand_top_1" formatted="false">Högsta timmen</string>
+  <string name="card_demand_top_3" formatted="false">Snitt av de 3 högsta dagarna</string>
+  <string name="card_demand_top_5" formatted="false">Snitt av de 5 högsta dagarna</string>
+  <string name="card_demand_all_hours" formatted="false">Alla timmar</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (vinter / sommar)</string>
+  <string name="card_demand_month" formatted="false">Den här månaden: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Ingen topp än den här månaden</string>
+  <string name="card_demand_reason_no_site" formatted="false">Mäts när laddaren ingår i en anläggning med elmätare.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Mäts när anläggningen har nätets totala effekt.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Den här anläggningen kan inte mäta den.</string>
+  <string name="card_demand_help" formatted="false">Ditt nätbolag tar betalt per kW av månadens högsta timmedeleffekt från nätet. SpotNav mäter den på anläggningens elmätare och visar den här; laddningen ändras inte.</string>
+  <string name="card_demand_counted" formatted="false">Timmar som räknas</string>
+  <string name="card_demand_counted_all" formatted="false">Alla timmar</string>
+  <string name="card_demand_counted_window" formatted="false">Bara vissa timmar</string>
+  <string name="card_demand_top_n" formatted="false">Toppar per månad</string>
+  <string name="card_demand_price_winter" formatted="false">Pris per kW, nov–mar</string>
+  <string name="card_demand_price_summer" formatted="false">Pris per kW, apr–okt</string>
+  <string name="card_demand_remove" formatted="false">Ta bort</string>
+  <string name="card_demand_error_price" formatted="false">Ett pris är ett tal, inte under 0, eller tomt.</string>
+  <string name="card_site_import_target" formatted="false">Effektmål</string>
+  <string name="card_site_import_target_help" formatted="false">Den timmedeleffekt från nätet du vill hålla dig under. Lastbalanseringen håller laddarna så att timmen stannar under den och pausar en laddning till nästa hela timme när inte ens dess lägsta ström ryms. Under bilens lägsta nivå laddas den direkt; Plan säger vad som händer om bilen inte hinner bli klar.</string>
+  <string name="card_site_import_target_hour" formatted="false">Den här timmen: {kw} av {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Den här timmen: inte uppmätt än</string>
+  <string name="card_settings_value_none" formatted="false">Inget</string>
+  <string name="card_settings_value_off" formatted="false">Av</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Elpriset ändrades någon annanstans och har lästs om. Inget sparades: spara igen för att göra din ändring.</string>
 </resources>

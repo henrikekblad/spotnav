@@ -667,4 +667,58 @@
   <string name="if_not_ready_ask">Vragen</string>
   <string name="if_not_ready_release">Afnamedoel loslaten</string>
   <string name="if_not_ready_hold">Afnamedoel aanhouden</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Werkdagen</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Elke dag</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Ma–za</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">het hele jaar</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mrt</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">mei</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">Van</string>
+  <string name="card_grid_fee_window_to" formatted="false">Tot</string>
+  <string name="card_grid_fee_window_days" formatted="false">Dagen</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Eerste maand</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Laatste maand</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Van en Tot kunnen niet hetzelfde uur zijn.</string>
+  <string name="card_demand_title" formatted="false">Capaciteitstarief</string>
+  <string name="card_demand_part" formatted="false">Capaciteitstarief {n}</string>
+  <string name="card_demand_add_part" formatted="false">Nog een deel van het capaciteitstarief</string>
+  <string name="card_demand_add" formatted="false">Toevoegen</string>
+  <string name="card_demand_top_1" formatted="false">Hoogste uur</string>
+  <string name="card_demand_top_3" formatted="false">Gemiddelde van de 3 hoogste dagen</string>
+  <string name="card_demand_top_5" formatted="false">Gemiddelde van de 5 hoogste dagen</string>
+  <string name="card_demand_all_hours" formatted="false">Alle uren</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (winter / zomer)</string>
+  <string name="card_demand_month" formatted="false">Deze maand: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Nog geen piek deze maand</string>
+  <string name="card_demand_reason_no_site" formatted="false">Wordt gemeten zodra de laadpaal bij een locatie met elektriciteitsmeter hoort.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Wordt gemeten zodra de locatie het totale netvermogen heeft.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Deze locatie kan het niet meten.</string>
+  <string name="card_demand_help" formatted="false">Je netbeheerder rekent per kW van je hoogste uurgemiddelde afname in de maand. SpotNav meet het op de meter van de locatie en toont het hier; het laden verandert niet.</string>
+  <string name="card_demand_counted" formatted="false">Uren die tellen</string>
+  <string name="card_demand_counted_all" formatted="false">Alle uren</string>
+  <string name="card_demand_counted_window" formatted="false">Alleen bepaalde uren</string>
+  <string name="card_demand_top_n" formatted="false">Pieken per maand</string>
+  <string name="card_demand_price_winter" formatted="false">Prijs per kW, nov–mrt</string>
+  <string name="card_demand_price_summer" formatted="false">Prijs per kW, apr–okt</string>
+  <string name="card_demand_remove" formatted="false">Verwijderen</string>
+  <string name="card_demand_error_price" formatted="false">Een prijs is een getal, niet onder 0, of leeg.</string>
+  <string name="card_site_import_target" formatted="false">Afnamedoel</string>
+  <string name="card_site_import_target_help" formatted="false">Het uurgemiddelde van de afname waar je onder wilt blijven. De load balancing houdt de laders zo dat het uur eronder blijft, en pauzeert een laadbeurt tot het volgende uur zodra zelfs de minimumstroom niet meer past. Onder het minimumniveau van de auto laadt hij meteen; het Plan zegt wat er gebeurt als de auto niet op tijd klaar kan zijn.</string>
+  <string name="card_site_import_target_hour" formatted="false">Dit uur: {kw} van {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Dit uur: nog niet gemeten</string>
+  <string name="card_settings_value_none" formatted="false">Geen</string>
+  <string name="card_settings_value_off" formatted="false">Uit</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">De stroomprijs is elders gewijzigd en opnieuw gelezen. Er is niets opgeslagen: sla opnieuw op om je wijziging door te voeren.</string>
 </resources>

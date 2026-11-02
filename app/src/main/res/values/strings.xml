@@ -679,4 +679,58 @@
   <string name="if_not_ready_ask">Ask</string>
   <string name="if_not_ready_release">Release the import target</string>
   <string name="if_not_ready_hold">Keep the import target</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Weekdays</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Every day</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mon–Sat</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">all year</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">Jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">Feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">Mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">Apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">May</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">Jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">Jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">Aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">Sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">Oct</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">Nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">Dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">From</string>
+  <string name="card_grid_fee_window_to" formatted="false">To</string>
+  <string name="card_grid_fee_window_days" formatted="false">Days</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">First month</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Last month</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">From and To cannot be the same hour.</string>
+  <string name="card_demand_title" formatted="false">Demand charge</string>
+  <string name="card_demand_part" formatted="false">Demand charge {n}</string>
+  <string name="card_demand_add_part" formatted="false">Another part of the demand charge</string>
+  <string name="card_demand_add" formatted="false">Add</string>
+  <string name="card_demand_top_1" formatted="false">Highest hour</string>
+  <string name="card_demand_top_3" formatted="false">Mean of the 3 highest days</string>
+  <string name="card_demand_top_5" formatted="false">Mean of the 5 highest days</string>
+  <string name="card_demand_all_hours" formatted="false">All hours</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (winter / summer)</string>
+  <string name="card_demand_month" formatted="false">This month: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">No peak yet this month</string>
+  <string name="card_demand_reason_no_site" formatted="false">Measured once the charger is in a site with a grid meter.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Measured once the site has its total grid power.</string>
+  <string name="card_demand_reason_unknown" formatted="false">This site cannot measure it.</string>
+  <string name="card_demand_help" formatted="false">Your grid company charges per kW of your highest hourly mean import in the month. SpotNav measures it on the site\'s meter and shows it here; it does not change the charging.</string>
+  <string name="card_demand_counted" formatted="false">Hours that count</string>
+  <string name="card_demand_counted_all" formatted="false">All hours</string>
+  <string name="card_demand_counted_window" formatted="false">Only certain hours</string>
+  <string name="card_demand_top_n" formatted="false">Peaks per month</string>
+  <string name="card_demand_price_winter" formatted="false">Price per kW, Nov–Mar</string>
+  <string name="card_demand_price_summer" formatted="false">Price per kW, Apr–Oct</string>
+  <string name="card_demand_remove" formatted="false">Remove</string>
+  <string name="card_demand_error_price" formatted="false">A price is a number, not below 0, or empty.</string>
+  <string name="card_site_import_target" formatted="false">Import target</string>
+  <string name="card_site_import_target_help" formatted="false">The hourly mean of import you want to stay under. Load balancing holds the chargers so the hour stays under it, and pauses a charge until the next hour once even its minimum current no longer fits. Below the car\'s minimum level it charges at once; the Plan says what happens if the car cannot be ready in time.</string>
+  <string name="card_site_import_target_hour" formatted="false">This hour: {kw} of {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">This hour: not measured yet</string>
+  <string name="card_settings_value_none" formatted="false">None</string>
+  <string name="card_settings_value_off" formatted="false">Off</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">The electricity price was changed elsewhere and has been read again. Nothing was saved: save again to apply your change.</string>
 </resources>

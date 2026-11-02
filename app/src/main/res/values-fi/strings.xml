@@ -667,4 +667,58 @@
   <string name="if_not_ready_ask">Kysy</string>
   <string name="if_not_ready_release">Ohita tehotavoite</string>
   <string name="if_not_ready_hold">Pidä tehotavoite</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Arkipäivät</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Joka päivä</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Ma–la</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">koko vuoden</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">tammi</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">helmi</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">maalis</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">huhti</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">touko</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">kesä</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">heinä</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">elo</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">syys</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">loka</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">marras</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">joulu</string>
+  <string name="card_grid_fee_window_from" formatted="false">Alkaa</string>
+  <string name="card_grid_fee_window_to" formatted="false">Päättyy</string>
+  <string name="card_grid_fee_window_days" formatted="false">Päivät</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Ensimmäinen kuukausi</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Viimeinen kuukausi</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Alku ja päättyminen eivät voi olla sama tunti.</string>
+  <string name="card_demand_title" formatted="false">Tehomaksu</string>
+  <string name="card_demand_part" formatted="false">Tehomaksu {n}</string>
+  <string name="card_demand_add_part" formatted="false">Tehomaksun toinen osa</string>
+  <string name="card_demand_add" formatted="false">Lisää</string>
+  <string name="card_demand_top_1" formatted="false">Suurin tunti</string>
+  <string name="card_demand_top_3" formatted="false">3 suurimman päivän keskiarvo</string>
+  <string name="card_demand_top_5" formatted="false">5 suurimman päivän keskiarvo</string>
+  <string name="card_demand_all_hours" formatted="false">Kaikki tunnit</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (talvi / kesä)</string>
+  <string name="card_demand_month" formatted="false">Tässä kuussa: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Ei vielä huippua tässä kuussa</string>
+  <string name="card_demand_reason_no_site" formatted="false">Mitataan, kun laturi kuuluu kohteeseen, jossa on sähkömittari.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Mitataan, kun kohteella on verkon kokonaisteho.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Tämä kohde ei voi mitata sitä.</string>
+  <string name="card_demand_help" formatted="false">Verkkoyhtiösi laskuttaa kuukauden suurimman tuntikeskitehon kilowateista. SpotNav mittaa sen kohteen sähkömittarista ja näyttää sen tässä; lataus ei muutu.</string>
+  <string name="card_demand_counted" formatted="false">Laskettavat tunnit</string>
+  <string name="card_demand_counted_all" formatted="false">Kaikki tunnit</string>
+  <string name="card_demand_counted_window" formatted="false">Vain tietyt tunnit</string>
+  <string name="card_demand_top_n" formatted="false">Huippuja kuukaudessa</string>
+  <string name="card_demand_price_winter" formatted="false">Hinta per kW, marras–maalis</string>
+  <string name="card_demand_price_summer" formatted="false">Hinta per kW, huhti–loka</string>
+  <string name="card_demand_remove" formatted="false">Poista</string>
+  <string name="card_demand_error_price" formatted="false">Hinta on luku, vähintään 0, tai tyhjä.</string>
+  <string name="card_site_import_target" formatted="false">Tehotavoite</string>
+  <string name="card_site_import_target_help" formatted="false">Tuntikeskiteho verkosta, jonka alle haluat pysyä. Kuormanhallinta rajoittaa latureita niin, että tunti pysyy sen alla, ja keskeyttää latauksen seuraavaan tasatuntiin, kun edes sen vähimmäisvirta ei mahdu. Auton vähimmäistason alapuolella se latautuu heti; Suunnitelma kertoo, mitä tapahtuu, jos auto ei ehdi valmiiksi.</string>
+  <string name="card_site_import_target_hour" formatted="false">Tämä tunti: {kw} / {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Tämä tunti: ei vielä mitattu</string>
+  <string name="card_settings_value_none" formatted="false">Ei mitään</string>
+  <string name="card_settings_value_off" formatted="false">Pois</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Sähkön hintaa muutettiin muualla, ja se on luettu uudelleen. Mitään ei tallennettu: tallenna uudelleen tehdäksesi muutoksen.</string>
 </resources>

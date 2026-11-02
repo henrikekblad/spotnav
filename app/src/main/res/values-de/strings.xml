@@ -667,4 +667,58 @@
   <string name="if_not_ready_ask">Fragen</string>
   <string name="if_not_ready_release">Bezugsziel aussetzen</string>
   <string name="if_not_ready_hold">Bezugsziel halten</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Werktags</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Jeden Tag</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mo–Sa</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">ganzjährig</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">Jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">Feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">März</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">Apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">Mai</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">Juni</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">Juli</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">Aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">Sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">Okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">Nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">Dez</string>
+  <string name="card_grid_fee_window_from" formatted="false">Von</string>
+  <string name="card_grid_fee_window_to" formatted="false">Bis</string>
+  <string name="card_grid_fee_window_days" formatted="false">Tage</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Erster Monat</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Letzter Monat</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Von und Bis dürfen nicht dieselbe Stunde sein.</string>
+  <string name="card_demand_title" formatted="false">Leistungspreis</string>
+  <string name="card_demand_part" formatted="false">Leistungspreis {n}</string>
+  <string name="card_demand_add_part" formatted="false">Ein weiterer Teil des Leistungspreises</string>
+  <string name="card_demand_add" formatted="false">Hinzufügen</string>
+  <string name="card_demand_top_1" formatted="false">Höchste Stunde</string>
+  <string name="card_demand_top_3" formatted="false">Mittel der 3 höchsten Tage</string>
+  <string name="card_demand_top_5" formatted="false">Mittel der 5 höchsten Tage</string>
+  <string name="card_demand_all_hours" formatted="false">Alle Stunden</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (Winter / Sommer)</string>
+  <string name="card_demand_month" formatted="false">Diesen Monat: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Noch keine Spitze in diesem Monat</string>
+  <string name="card_demand_reason_no_site" formatted="false">Wird gemessen, sobald die Ladestation zu einem Standort mit Stromzähler gehört.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Wird gemessen, sobald der Standort die gesamte Netzleistung hat.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Dieser Standort kann ihn nicht messen.</string>
+  <string name="card_demand_help" formatted="false">Dein Netzbetreiber berechnet je kW deines höchsten Stundenmittels des Netzbezugs im Monat. SpotNav misst es am Zähler des Standorts und zeigt es hier; das Laden ändert sich nicht.</string>
+  <string name="card_demand_counted" formatted="false">Gezählte Stunden</string>
+  <string name="card_demand_counted_all" formatted="false">Alle Stunden</string>
+  <string name="card_demand_counted_window" formatted="false">Nur bestimmte Stunden</string>
+  <string name="card_demand_top_n" formatted="false">Spitzen pro Monat</string>
+  <string name="card_demand_price_winter" formatted="false">Preis je kW, Nov–Mär</string>
+  <string name="card_demand_price_summer" formatted="false">Preis je kW, Apr–Okt</string>
+  <string name="card_demand_remove" formatted="false">Entfernen</string>
+  <string name="card_demand_error_price" formatted="false">Ein Preis ist eine Zahl, nicht unter 0, oder leer.</string>
+  <string name="card_site_import_target" formatted="false">Bezugsziel</string>
+  <string name="card_site_import_target_help" formatted="false">Das Stundenmittel des Netzbezugs, unter dem du bleiben willst. Das Lastmanagement hält die Ladegeräte so, dass die Stunde darunter bleibt, und pausiert eine Ladung bis zur nächsten vollen Stunde, sobald nicht einmal ihr Mindeststrom Platz hat. Unter dem Mindeststand des Autos lädt es sofort; der Plan sagt, was geschieht, wenn das Auto nicht rechtzeitig fertig wird.</string>
+  <string name="card_site_import_target_hour" formatted="false">Diese Stunde: {kw} von {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Diese Stunde: noch nicht gemessen</string>
+  <string name="card_settings_value_none" formatted="false">Keine</string>
+  <string name="card_settings_value_off" formatted="false">Aus</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Der Strompreis wurde an anderer Stelle geändert und neu gelesen. Nichts wurde gespeichert: Speichern Sie erneut, um Ihre Änderung zu übernehmen.</string>
 </resources>
