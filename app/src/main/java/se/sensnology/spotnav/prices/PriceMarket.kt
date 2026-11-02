@@ -36,11 +36,28 @@ data class PriceMarket(
     val marketZoneId: ZoneId get() = ZoneId.of(marketTz)
 
     /**
-     * The picker's label: `"SE4 – Malmö"`, or the relay's own name when it already starts with the
-     * id as people write it (`"GB C – London"` for `GB-C`), so the id is not said twice.
+     * The area's name with each of its countries' English names written in [locale] ("Netherlands – Zonneplan"
+     * is "Nederländerna – Zonneplan" in Swedish); the rest of the name is the catalogue's own.
      */
-    val selectorLabel: String
-        get() = if ('-' in id && name.startsWith(id.replace('-', ' ') + " ")) name else "$id – $name"
+    fun localizedName(locale: Locale): String {
+        var text = name
+        for (code in countries) {
+            val country = Locale("", code)
+            val english = country.getDisplayCountry(Locale.ENGLISH)
+            if (english.isNotEmpty() && english != code) text = text.replace(english, country.getDisplayCountry(locale))
+        }
+        return text
+    }
+
+    /**
+     * The picker's label: `"SE4 – Malmö"` for an area whose id is a plain bidding-zone code. An id that is
+     * not one (`GB-C`, `NL-ZONNEPLAN`, `IT-NORTH`) is not said at all: the name stands alone, as written in
+     * [locale] (`"GB C – London"`, `"Nederländerna – Zonneplan"`).
+     */
+    fun selectorLabel(locale: Locale = PriceMarkets.labelLocale): String =
+        if ('-' in id) localizedName(locale) else "$id – ${localizedName(locale)}"
+
+    val selectorLabel: String get() = selectorLabel(PriceMarkets.labelLocale)
 
     /** Whether the published price already contains [part]. */
     fun includes(part: IncludedPart): Boolean = part in included
@@ -93,6 +110,9 @@ data class PriceMarket(
 
 /** The catalogue the app is currently using: the bundled area list, or nothing when it refused to load. */
 object PriceMarkets {
+    /** The language area names are written in: the app's own (set where the language is chosen). */
+    @Volatile
+    var labelLocale: java.util.Locale = java.util.Locale.ENGLISH
     @Volatile
     private var current: List<PriceMarket> = emptyList()
 

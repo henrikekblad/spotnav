@@ -273,4 +273,19 @@ class AreaCatalogueTest {
         assertEquals(AreaSelectionState.Missing("NO4"), SettingsAreaController.state("NO4", withoutNo4))
         assertFalse(SettingsAreaController.canSave(SettingsAreaController.state("NO4", withoutNo4)))
     }
+
+    @Test
+    fun anAreaWhoseIdIsNotAPlainZoneCodeIsLabelledByItsNameInTheReadersLanguage() {
+        val areas = AreaCatalogue.bundledAreas(bundledSnapshot()).associateBy { it.id }
+        val sv = Locale.forLanguageTag("sv")
+        assertEquals("Nederl\u00e4nderna \u2013 Zonneplan", areas.getValue("NL-ZONNEPLAN").selectorLabel(sv))
+        assertEquals("Netherlands \u2013 Zonneplan", areas.getValue("NL-ZONNEPLAN").selectorLabel(Locale.ENGLISH))
+        assertEquals("NL \u2013 Nederl\u00e4nderna", areas.getValue("NL").selectorLabel(sv))
+        assertEquals("GB C \u2013 London", areas.getValue("GB-C").selectorLabel(sv))
+        assertEquals("SE4 \u2013 Malm\u00f6", areas.getValue("SE4").selectorLabel(sv))
+        for (language in listOf("sv", "nb", "da", "fi", "de", "nl", "es", "fr")) {
+            val label = areas.getValue("NL-ZONNEPLAN").selectorLabel(Locale.forLanguageTag(language))
+            assertTrue(label, label.endsWith("\u2013 Zonneplan") && !label.contains("NL-") && !label.contains("Netherlands"))
+        }
+    }
 }
