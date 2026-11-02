@@ -19,8 +19,6 @@ import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.editorBody
 import se.sensnology.spotnav.ui.common.errorLine
-import java.time.Month
-import java.time.format.TextStyle
 
 /**
  * One part of the demand charge, the card's `componentEditor`: which hours count (all, or a window of days, months and
@@ -35,7 +33,6 @@ internal fun ViewScope.editDemandComponent(
     save: (DemandComponent?, (String?) -> Unit) -> Unit
 ) {
     val body = editorBody()
-    val locale = AppLanguageSettings.locale(activity)
     fun label(text: String) = TextView(context).apply {
         this.text = text; textSize = 14f; setTextColor(dark); setPadding(0, dp(10), 0, dp(2))
     }
@@ -43,35 +40,16 @@ internal fun ViewScope.editDemandComponent(
         adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, items)
         setSelection(selected.coerceIn(0, items.lastIndex))
     }
-    fun pair(left: View, right: View) = LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        addView(left, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        addView(right, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-    }
-    fun column(title: String, control: View) = LinearLayout(context).apply {
-        orientation = LinearLayout.VERTICAL
-        addView(label(title))
-        addView(control)
-    }
     body.addView(TextView(context).apply {
         text = words.say("demand.help"); textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(6))
     })
     val counted = spinner(listOf(words.say("demand.counted.all"), words.say("demand.counted.window")), if (current?.window != null) 1 else 0)
     body.addView(label(words.say("demand.counted")))
     body.addView(counted)
-    val shown = current?.window ?: HighLoadWindow.SUGGESTED
-    val days = spinner(HighLoadWindow.DAYS.map { words.say(DemandText.DAY_KEYS.getValue(it)) }, HighLoadWindow.DAYS.indexOf(shown.days))
-    val months = (1..12).map { Month.of(it).getDisplayName(TextStyle.FULL_STANDALONE, locale).replaceFirstChar { c -> c.titlecase(locale) } }
-    val fromMonth = spinner(months, shown.fromMonth - 1)
-    val toMonth = spinner(months, shown.toMonth - 1)
-    val fromHour = spinner((0..23).map { "%02d:00".format(it) }, shown.fromHour)
-    val toHour = spinner((1..24).map { "%02d:00".format(it) }, shown.toHour - 1)
+    val window = highLoadWindowFields(words, current?.window ?: HighLoadWindow.SUGGESTED)
     val windowBox = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
-        addView(label(words.say("gridFee.window.days")))
-        addView(days)
-        addView(pair(column(words.say("gridFee.window.fromMonth"), fromMonth), column(words.say("gridFee.window.toMonth"), toMonth)))
-        addView(pair(column(words.say("gridFee.window.from"), fromHour), column(words.say("gridFee.window.to"), toHour)))
+        window.nodes.forEach(::addView)
         visibility = if (counted.selectedItemPosition == 1) View.VISIBLE else View.GONE
     }
     counted.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -126,18 +104,12 @@ internal fun ViewScope.editDemandComponent(
     }
     dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener { send(null) }
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-        val window = if (counted.selectedItemPosition == 1) HighLoadWindow(
-            HighLoadWindow.DAYS[days.selectedItemPosition],
-            fromMonth.selectedItemPosition + 1,
-            toMonth.selectedItemPosition + 1,
-            fromHour.selectedItemPosition,
-            toHour.selectedItemPosition + 1
-        ) else null
-        if (window != null && window.fromHour == window.toHour) return@setOnClickListener refuse(words.say("gridFee.window.sameHours"))
+        val hours = if (counted.selectedItemPosition == 1) window.read() else null
+        if (hours != null && hours.fromHour == hours.toHour) return@setOnClickListener refuse(words.say("gridFee.window.sameHours"))
         val winterPrice = DemandText.parsePrice(winter.text.toString())
         val summerPrice = DemandText.parsePrice(summer.text.toString())
         if (winterPrice?.isNaN() == true || summerPrice?.isNaN() == true) return@setOnClickListener refuse(words.say("demand.error.price"))
-        val chosen = DemandComponent(window, DemandComponent.TOP_N[topN.selectedItemPosition], winterPrice, summerPrice)
+        val chosen = DemandComponent(hours, DemandComponent.TOP_N[topN.selectedItemPosition], winterPrice, summerPrice)
         // The part as stored, unchanged: nothing to write.
         if (chosen == current) dialog.dismiss() else send(chosen)
     }

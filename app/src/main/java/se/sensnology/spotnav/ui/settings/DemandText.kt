@@ -45,27 +45,17 @@ internal class DemandText(
         roundingMode = RoundingMode.HALF_UP
     }.format(value)
 
-    private fun hour(value: Int) = value.toString().padStart(2, '0')
-
-    private fun month(number: Int) = words.say("gridFee.window.month.$number")
+    /** The hours' words, as the grid tariff's high-load hours are worded. */
+    private val hours = GridTariffText(words, numbers)
 
     /** The days' words: every day, weekdays, Monday to Saturday. */
-    fun daysText(days: String): String = words.say(DAY_KEYS[days] ?: DAY_KEYS.getValue("all"))
+    fun daysText(days: String): String = hours.daysText(days)
 
     /** The months: "nov–mar", one month on its own, or "hela året" when they take in all twelve. */
-    fun monthsText(window: HighLoadWindow): String = when {
-        window.allYear -> words.say("gridFee.window.allYear")
-        window.fromMonth == window.toMonth -> month(window.fromMonth)
-        else -> "${month(window.fromMonth)}–${month(window.toMonth)}"
-    }
+    fun monthsText(window: HighLoadWindow): String = hours.monthsText(window)
 
     /** The hours on one line: "Vardagar 07–19, nov–mar", "Alla dagar 22–06, hela året". */
-    fun windowText(window: HighLoadWindow): String = words.say(
-        "gridFee.window.line",
-        "days" to daysText(window.days),
-        "hours" to "${hour(window.fromHour)}–${hour(window.toHour)}",
-        "months" to monthsText(window)
-    )
+    fun windowText(window: HighLoadWindow): String = hours.windowText(window)
 
     fun topText(topN: Int): String = words.say("demand.top.$topN")
 
@@ -149,12 +139,6 @@ internal class DemandText(
     }
 
     companion object {
-        val DAY_KEYS: Map<String, String> = mapOf(
-            "all" to "gridFee.window.everyDay",
-            "weekdays" to "gridFee.window.weekdays",
-            "mon_sat" to "gridFee.window.monSat"
-        )
-
         private val REASON_KEYS = mapOf(
             "no_site" to "demand.reason.no_site",
             "needs_total_grid_power" to "demand.reason.needs_total_grid_power"
