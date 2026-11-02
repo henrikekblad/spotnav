@@ -27,4 +27,10 @@ class SetupChecklistTest {
         assertTrue(SetupChecklist.canDismiss(d, SetupRow("site", true)))
         assertFalse(SetupChecklist.canDismiss(dashboard("[]", dismiss = false), SetupRow("site", true)))
     }
+
+    @Test fun theDemandChargesGridPowerRowSitsAfterTheForecastAsOnTheCard() {
+        val d = dashboard("""[{"id": "phone", "dismissible": true}, {"id": "demand_grid_power", "dismissible": false}, {"id": "solar_forecast", "dismissible": true}]""")
+        assertEquals(listOf("solar_forecast", "demand_grid_power", "phone"), SetupChecklist.rows(d).map { it.id })
+        assertFalse(SetupChecklist.canDismiss(d, SetupRow("demand_grid_power", false)))
+    }
 }

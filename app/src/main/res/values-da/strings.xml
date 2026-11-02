@@ -757,4 +757,6 @@
   <string name="card_power_legend_target" formatted="false">Effektmål {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Top der tæller, {part}</string>
   <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prik) eller satte på pause (ring)</string>
+  <string name="setup_demand_grid_power_text">Effektbetalingen eller effektmålet kræver anlæggets samlede netteffekt for at kunne måles.</string>
+  <string name="setup_demand_grid_power_action">Angiv nettets samlede effekt</string>
 </resources>

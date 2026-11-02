@@ -617,6 +617,8 @@ internal class ChargingScreen(
             "vehicle" -> homeAssistant("/config/integrations/dashboard")
             "site" -> homeAssistant("/config/integrations/dashboard/add?domain=spotnav")
             "solar_forecast" -> homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
+            // The site's total grid power is chosen among its entities in Home Assistant (the card opens that dialog).
+            "demand_grid_power" -> homeAssistant("/config/integrations/integration/spotnav")
             "car_level" -> {
                 shell.settingsCar = dashboard.soc?.vehicleId
                 shell.navigate(Screen.SETTINGS)

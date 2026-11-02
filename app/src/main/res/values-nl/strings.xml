@@ -757,4 +757,6 @@
   <string name="card_power_legend_target" formatted="false">Afnamedoel {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Piek die telt, {part}</string>
   <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
+  <string name="setup_demand_grid_power_text">Het capaciteitstarief of het afnamedoel heeft het totale netvermogen van de locatie nodig om gemeten te worden.</string>
+  <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
 </resources>

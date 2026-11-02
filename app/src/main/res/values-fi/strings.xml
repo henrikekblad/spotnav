@@ -757,4 +757,6 @@
   <string name="card_power_legend_target" formatted="false">Tehotavoite {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Laskettava huippu, {part}</string>
   <string name="card_power_legend_marks" formatted="false">Tehotavoite rajoitti (piste) tai keskeytti (rengas) latauksen</string>
+  <string name="setup_demand_grid_power_text">Tehomaksu tai tehotavoite tarvitsee kohteen verkon kokonaistehon, jotta sen voi mitata.</string>
+  <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
 </resources>

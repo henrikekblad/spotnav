@@ -765,4 +765,6 @@
   <string name="card_power_legend_target" formatted="false">Objectif de soutirage {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Pic retenu, {part}</string>
   <string name="card_power_legend_marks" formatted="false">L\'objectif de soutirage a freiné (point) ou mis en pause (anneau) la recharge</string>
+  <string name="setup_demand_grid_power_text">Le tarif de puissance ou l\'objectif de soutirage a besoin de la puissance réseau totale du site pour être mesuré.</string>
+  <string name="setup_demand_grid_power_action">Définir la puissance réseau totale</string>
 </resources>

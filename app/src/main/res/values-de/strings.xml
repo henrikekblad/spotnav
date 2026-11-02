@@ -757,4 +757,6 @@
   <string name="card_power_legend_target" formatted="false">Bezugsziel {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Zählende Spitze, {part}</string>
   <string name="card_power_legend_marks" formatted="false">Das Bezugsziel hat das Laden gedrosselt (Punkt) oder pausiert (Ring)</string>
+  <string name="setup_demand_grid_power_text">Der Leistungspreis oder das Bezugsziel braucht die gesamte Netzleistung des Standorts, um gemessen zu werden.</string>
+  <string name="setup_demand_grid_power_action">Gesamte Netzleistung festlegen</string>
 </resources>

@@ -757,4 +757,6 @@
   <string name="card_power_legend_target" formatted="false">Effektmål {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Topp som räknas, {part}</string>
   <string name="card_power_legend_marks" formatted="false">Effektmålet höll nere (prick) eller pausade (ring) laddningen</string>
+  <string name="setup_demand_grid_power_text">Effektavgiften eller effektmålet kan bara mätas när anläggningen har nätets totala effekt.</string>
+  <string name="setup_demand_grid_power_action">Ange nätets totala effekt</string>
 </resources>

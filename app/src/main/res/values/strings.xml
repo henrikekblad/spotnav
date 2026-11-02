@@ -769,4 +769,6 @@
   <string name="card_power_legend_target" formatted="false">Import target {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Counted peak, {part}</string>
   <string name="card_power_legend_marks" formatted="false">The import target held back (dot) or paused (ring) the charging</string>
+  <string name="setup_demand_grid_power_text">The demand charge or the import target needs the site\'s total grid power to be measured.</string>
+  <string name="setup_demand_grid_power_action">Set total grid power</string>
 </resources>

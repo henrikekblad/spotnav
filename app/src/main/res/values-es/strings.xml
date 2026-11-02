@@ -765,4 +765,6 @@
   <string name="card_power_legend_target" formatted="false">Objetivo de consumo {kw}</string>
   <string name="card_power_legend_counted_part" formatted="false">Pico que cuenta, {part}</string>
   <string name="card_power_legend_marks" formatted="false">El objetivo de consumo frenó (punto) o pausó (anillo) la carga</string>
+  <string name="setup_demand_grid_power_text">El término de potencia o el objetivo de consumo necesita la potencia total de red de la instalación para poder medirse.</string>
+  <string name="setup_demand_grid_power_action">Indicar la potencia total de red</string>
 </resources>

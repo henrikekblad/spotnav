@@ -25,6 +25,7 @@ internal class SetupDialog(scope: ViewScope) : ViewScope(scope) {
         "site" -> R.string.setup_site_text to R.string.setup_site_action
         "solar_forecast" -> R.string.setup_solar_forecast_text to
             if (forecastChoosable) R.string.setup_solar_forecast_action else R.string.setup_solar_forecast_add
+        "demand_grid_power" -> R.string.setup_demand_grid_power_text to R.string.setup_demand_grid_power_action
         "phase_switching" -> R.string.setup_phase_switching_text to R.string.setup_phase_switching_action
         "phone" -> R.string.setup_phone_text to R.string.setup_phone_action
         else -> null
