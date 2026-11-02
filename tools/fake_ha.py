@@ -154,7 +154,7 @@ def _in_zonneplan(body: dict) -> None:
 
 #: What the 2.3 webhook actions have done in this run: the Get started rows answered "Not needed", and whether the
 #: charger's own mode was set back (the `ownmode` scenario's status line is then gone).
-SETUP_ROWS = [("vehicle", True), ("car_level", False), ("site", True), ("phone", True), ("app", True)]
+SETUP_ROWS = [("vehicle", True), ("car_level", False), ("site", True), ("phase_switching", True), ("phone", True), ("app", True)]
 DISMISSED: set[str] = set()
 OWN_MODE = {"fixed": False}
 
