@@ -65,7 +65,8 @@ its `grid_tariff` block (sent only to a request whose `reads` names it) is the
 pilot's two-part tariff, written with `update_grid_tariff`; `get_power_month`
 answers the pilot's months; the status line is the import target's, chosen with
 `GET /spotnav-mock/import-target?line=held|peak|paused|house|house_over|released|auto|at_risk|hold|none`,
-and `release_import_target` turns an at-risk line into a released one. A request
+and `release_import_target` turns an at-risk line into a released one; `update_site_settings` sets or clears the
+import target (`import_target_kw`, compare-and-set on the value last seen). A request
 that does not read `import_target_status` gets the load-balancing lines an older
 app knows in their place, as Home Assistant sends them.
 """
@@ -248,6 +249,21 @@ def power_month_body(month: str | None) -> tuple[int, dict]:
     if not re.match(r"^\d{4}-(0[1-9]|1[0-2])$", str(month)) or month > running["month"]:
         return 400, {"ok": False, "error": "spotnav_invalid_range", "action": "get_power_month"}
     return 200, {"ok": True, "action": "get_power_month", **dict(running, month=month, days=[], hours=[], bars=[None] * len(running["bars"]))}
+
+
+def update_site_import_target(body: dict, payload: dict) -> tuple[int, dict]:
+    """`update_site_settings` with `import_target_kw` (HA 2.4): a number 0.1-1000 or `null`, against the value shown."""
+    tariff = _demand_tariff()
+    stored = tariff["demand"]["import_target_kw"]
+    answer = {"api_version": 1, "site": body["site"], "restore": None, "action": "update_site_settings"}
+    expected = payload.get("expected") or {}
+    if "import_target_kw" in expected and expected["import_target_kw"] != stored:
+        return 409, {**answer, "ok": False, "error": "spotnav_conflict", "import_target_kw": stored}
+    value = (payload.get("changes") or {}).get("import_target_kw")
+    if value is not None and (isinstance(value, bool) or not isinstance(value, (int, float)) or not 0.1 <= value <= 1000):
+        return 400, {**answer, "ok": False, "error": "spotnav_invalid_value", "import_target_kw": stored}
+    tariff["demand"]["import_target_kw"] = value
+    return 200, {**answer, "ok": True, "error": None, "import_target_kw": value}
 
 
 def update_grid_tariff(payload: dict) -> tuple[int, dict]:
@@ -861,6 +877,9 @@ class Handler(BaseHTTPRequestHandler):
                         self._json(*update_grid_tariff(payload))
                     else:
                         self._json(400, {"ok": False, "error": "spotnav_no_price_entry", "action": action})
+                    return
+                if action == "update_site_settings" and key == "demand" and "import_target_kw" in (payload.get("changes") or {}):
+                    self._json(*update_site_import_target(dashboard_body(key, ["grid_tariff"]), payload))
                     return
                 if action == "release_import_target":
                     if key != "demand":
