@@ -23,7 +23,11 @@ data class ChargerCapabilities(
     /** Whether the webhook answers `dismiss_setup_item`: a "Get started" row answered "Not needed". */
     val dismissSetupItem: Boolean = false,
     /** Whether the webhook answers `fix_own_mode`: the charger's own setting set back to the value SpotNav works with. */
-    val fixOwnMode: Boolean = false
+    val fixOwnMode: Boolean = false,
+    /** Whether the webhook answers `release_import_target`: the site's import target set aside for this charge. */
+    val releaseImportTarget: Boolean = false,
+    /** Whether the webhook answers `get_power_month`: one month of the site's measured import. */
+    val getPowerMonth: Boolean = false
 )
 
 /**

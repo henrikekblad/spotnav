@@ -188,14 +188,16 @@ class HomeAssistantDashboardTest {
 
         assertEquals(ChargerCapabilities(
                 refreshVehicle = true, setChargeLimit = true, priceDays = true,
-                planPreview = true, dismissSetupItem = true, fixOwnMode = true
+                planPreview = true, dismissSetupItem = true, fixOwnMode = true,
+                releaseImportTarget = true, getPowerMonth = true
             ),
             capabilities { }
         )
         assertEquals(
             ChargerCapabilities(
                 refreshVehicle = false, setChargeLimit = true, priceDays = true,
-                planPreview = true, dismissSetupItem = true, fixOwnMode = true
+                planPreview = true, dismissSetupItem = true, fixOwnMode = true,
+                releaseImportTarget = true, getPowerMonth = true
             ),
             capabilities { put("refresh_vehicle", false) }
         )
@@ -207,12 +209,17 @@ class HomeAssistantDashboardTest {
             remove("plan_preview")
             remove("dismiss_setup_item")
             remove("fix_own_mode")
+            remove("release_import_target")
+            remove("get_power_month")
         })
         assertEquals(false, capabilities { put("price_days", 1) }.priceDays)
         // An older Home Assistant states none of the three webhook actions of 2.3: the features stay hidden.
         assertEquals(false, capabilities { remove("plan_preview") }.planPreview)
         assertEquals(false, capabilities { put("dismiss_setup_item", "yes") }.dismissSetupItem)
         assertEquals(false, capabilities { remove("fix_own_mode") }.fixOwnMode)
+        // Nor one of 2.4 the two actions of the import target and the power view.
+        assertEquals(false, capabilities { remove("release_import_target") }.releaseImportTarget)
+        assertEquals(false, capabilities { put("get_power_month", "true") }.getPowerMonth)
     }
 
     @Test fun theGetStartedRowsAreReadInTheCardsOrderAndAnUnknownRowIsSkipped() {

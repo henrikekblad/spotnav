@@ -3,11 +3,15 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
+import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.DashboardStatus
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
 import java.time.Instant
+import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.YearMonth
 
 /**
  * `plan_preview`: what a `settings` replacement of this body would plan, with nothing saved (`docs/api.md`, "Plan
@@ -172,5 +176,223 @@ internal object OwnModeFix {
             "spotnav_own_mode_failed" -> Outcome.Refused
             else -> Outcome.Failed(head.error)
         }
+    }
+}
+
+/**
+ * `release_import_target`: the site's import target set aside for this charger's charge until its plan's departure,
+ * the button beside the status line `import_target_at_risk` ("Release the import target tonight"). Any user may press
+ * it, as a Start. Offered only where the dashboard states `capabilities.release_import_target`.
+ */
+internal object ReleaseImportTarget {
+    fun payload(): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "release_import_target")
+        WebhookReads.put(this)
+        put("api_version", 1)
+    }
+
+    sealed interface Outcome {
+        data object Released : Outcome
+
+        /**
+         * Nothing to set aside: the site has no import target, no site, or the plan no departure ahead
+         * (`spotnav_no_import_target`, `spotnav_no_site`, `spotnav_no_departure`). The read after it shows how it stands.
+         */
+        data class NothingToRelease(val code: String) : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    private val NOTHING = setOf("spotnav_no_import_target", "spotnav_no_site", "spotnav_no_departure")
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (head.ok) return Outcome.Released
+        val code = head.error ?: return Outcome.Failed(null)
+        return if (code in NOTHING) Outcome.NothingToRelease(code) else Outcome.Failed(code)
+    }
+}
+
+/**
+ * `update_grid_tariff`: the electricity price's grid tariff replaced in full, here to set the demand charge's parts
+ * (`demand_components`) with the three fees as read (`DashboardGridTariff.bodyWith`). Compare-and-set on the
+ * electricity price's `write_revision`; the answer carries the block read again.
+ */
+internal object GridTariffUpdate {
+    private const val REVISION_CONFLICT = "revision_conflict"
+
+    fun payload(expectedRevision: Int, body: JSONObject): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_grid_tariff")
+        WebhookReads.put(this)
+        put("expected_write_revision", expectedRevision)
+        put("grid_tariff", body)
+    }
+
+    sealed interface Outcome {
+        /** Written; [block] is the tariff read again (`null` when it could not be read). */
+        data class Updated(val block: DashboardGridTariff?) : Outcome
+
+        /** The electricity price was written elsewhere since it was read: nothing was written; [block] is the new one. */
+        data class Conflict(val block: DashboardGridTariff?) : Outcome
+
+        /** A value Home Assistant refuses (`invalid_fiscal`): nothing was written. */
+        data object Refused : Outcome
+
+        data object NotPermitted : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        val block = DashboardGridTariff.parse(head.json.opt("grid_tariff"))
+        if (head.ok) return Outcome.Updated(block)
+        return when (head.error) {
+            REVISION_CONFLICT -> Outcome.Conflict(block)
+            "invalid_fiscal" -> Outcome.Refused
+            PriceSourceUpdate.NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * `get_power_month`: one month of the charger's site's measured import, by day and (for the running month and the
+ * month before) by hour, against the demand charge's parts and the import target (the card's `power-view.ts`). Asked
+ * only where the dashboard states `capabilities.get_power_month`.
+ */
+internal object PowerMonthRead {
+    fun payload(month: YearMonth?): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "get_power_month")
+        WebhookReads.put(this)
+        put("api_version", 1)
+        month?.let { put("month", it.toString()) }
+    }
+
+    data class Day(
+        val date: LocalDate,
+        val peakKw: Double,
+        /** The peak hour's start as Home Assistant wrote it: local time with its offset. */
+        val peakStart: String,
+        val houseKw: Double?,
+        /** The parts (indexes into [Month.components]) whose counted peaks fall on this day. */
+        val counted: List<Int>,
+        val held: Boolean,
+        val paused: Boolean
+    )
+
+    data class Hour(
+        val start: String,
+        val kw: Double,
+        val houseKw: Double?,
+        val incomplete: Boolean,
+        val held: Boolean,
+        val paused: Boolean,
+        val counted: List<Int>
+    )
+
+    data class Month(
+        val month: YearMonth,
+        /** Newest first. */
+        val availableMonths: List<YearMonth>,
+        val importTargetKw: Double?,
+        val components: List<DemandComponent>,
+        val days: List<Day>,
+        /** `null` for a month that keeps its days only. */
+        val hours: List<Hour>?,
+        val bars: List<Double?>
+    )
+
+    sealed interface Outcome {
+        data class Read(val month: Month) : Outcome
+
+        /** An answer of another version. */
+        data object Unsupported : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (!head.ok) return Outcome.Failed(head.error)
+        val version = head.json.opt("api_version")
+        if (version != 1) return if (version is Number) Outcome.Unsupported else Outcome.Failed(null)
+        return runCatching { Outcome.Read(decode(head.json)) }.getOrElse { Outcome.Failed(null) }
+    }
+
+    private val MONTH = Regex("^\\d{4}-(0[1-9]|1[0-2])$")
+    private val INSTANT = Regex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.*")
+
+    /** The answer, strictly typed as the card reads it: a missing or mistyped key is no answer at all. */
+    fun decode(json: JSONObject): Month {
+        require(json.opt("unit") == "kW")
+        val components = list(json.opt("components")).map(DemandComponent::parse)
+        val count = components.size
+        val bars = list(json.opt("bars")).map(::powerOrNull)
+        require(bars.size == count)
+        val days = list(json.opt("days")).map { entry ->
+            val day = entry as JSONObject
+            Day(
+                date = LocalDate.parse(day.get("date") as String),
+                peakKw = power(day.opt("peak_kw")),
+                peakStart = instantText(day.opt("peak_start")),
+                houseKw = powerOrNull(day.opt("house_kw")),
+                counted = indexes(day.opt("counted"), count),
+                held = day.get("held") as Boolean,
+                paused = day.get("paused") as Boolean
+            )
+        }
+        val hours = json.opt("hours").let { raw ->
+            if (raw == JSONObject.NULL) null else list(raw).map { entry ->
+                val hour = entry as JSONObject
+                Hour(
+                    start = instantText(hour.opt("start")),
+                    kw = power(hour.opt("kw")),
+                    houseKw = powerOrNull(hour.opt("house_kw")),
+                    incomplete = hour.get("incomplete") as Boolean,
+                    held = hour.get("held") as Boolean,
+                    paused = hour.get("paused") as Boolean,
+                    counted = indexes(hour.opt("counted"), count)
+                )
+            }
+        }
+        return Month(
+            month = yearMonth(json.opt("month")),
+            availableMonths = list(json.opt("available_months")).map(::yearMonth),
+            importTargetKw = powerOrNull(json.opt("import_target_kw")),
+            components = components,
+            days = days,
+            hours = hours,
+            bars = bars
+        )
+    }
+
+    private fun list(raw: Any?): List<Any?> {
+        val array = raw as JSONArray
+        return (0 until array.length()).map { array.opt(it) }
+    }
+
+    private fun yearMonth(raw: Any?): YearMonth {
+        val text = raw as String
+        require(MONTH.matches(text))
+        return YearMonth.parse(text)
+    }
+
+    private fun instantText(raw: Any?): String = (raw as String).also { require(INSTANT.matches(it)) }
+
+    private fun power(raw: Any?): Double = (raw as Number).toDouble().also { require(it.isFinite() && it >= 0) }
+
+    private fun powerOrNull(raw: Any?): Double? = if (raw == JSONObject.NULL) null else power(raw)
+
+    private fun indexes(raw: Any?, count: Int): List<Int> = list(raw).map { entry ->
+        val number = (entry as Number).toDouble()
+        require(number == Math.floor(number) && number >= 0 && number < count)
+        number.toInt()
     }
 }
