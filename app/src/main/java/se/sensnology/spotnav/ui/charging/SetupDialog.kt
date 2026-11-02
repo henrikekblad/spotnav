@@ -21,7 +21,7 @@ internal class SetupDialog(scope: ViewScope) : ViewScope(scope) {
     /** The row's sentence and its button's words, or `null` for a row this app has no words for. */
     private fun words(id: String, forecastChoosable: Boolean): Pair<Int, Int>? = when (id) {
         "vehicle" -> R.string.setup_vehicle_text to R.string.setup_vehicle_action
-        "car_level" -> R.string.setup_car_level_text to R.string.setup_car_level_action
+        "car_level" -> R.string.setup_car_level_text to R.string.setup_car_level_open
         "site" -> R.string.setup_site_text to R.string.setup_site_action
         "solar_forecast" -> R.string.setup_solar_forecast_text to
             if (forecastChoosable) R.string.setup_solar_forecast_action else R.string.setup_solar_forecast_add

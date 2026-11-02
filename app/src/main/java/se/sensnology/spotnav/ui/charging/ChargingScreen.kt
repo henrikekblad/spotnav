@@ -44,6 +44,7 @@ import se.sensnology.spotnav.testmode.TestMode
 import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
+import se.sensnology.spotnav.ui.settings.SettingsTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
 import se.sensnology.spotnav.ui.common.addMainHeader
 import se.sensnology.spotnav.ui.common.chooseOne
@@ -606,17 +607,20 @@ internal class ChargingScreen(
                 runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(base + path))) }
             }
         }
+        // The rows changed in this app open Settings scrolled to that row, as the card opens its own setting.
+        SettingsTarget.ofSetupRow(row.id, dashboard.site?.solarForecastChoices?.isNotEmpty() == true)?.let { target ->
+            shell.settingsTarget = target
+            shell.navigate(Screen.SETTINGS)
+            return
+        }
         when (row.id) {
             "vehicle" -> homeAssistant("/config/integrations/dashboard")
             "site" -> homeAssistant("/config/integrations/dashboard/add?domain=spotnav")
-            "solar_forecast" ->
-                if (dashboard.site?.solarForecastChoices?.isNotEmpty() == true) shell.navigate(Screen.SETTINGS)
-                else homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
+            "solar_forecast" -> homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
             "car_level" -> {
                 shell.settingsCar = dashboard.soc?.vehicleId
                 shell.navigate(Screen.SETTINGS)
             }
-            "phase_switching", "phone" -> shell.navigate(Screen.SETTINGS)
         }
     }
 

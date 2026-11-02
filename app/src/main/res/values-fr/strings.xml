@@ -655,7 +655,7 @@
   <string name="setup_vehicle_text">Ajoutez votre voiture, pour qu\'un objectif en pourcentage et l\'autonomie soient justes.</string>
   <string name="setup_vehicle_action">Ajouter l\'intégration de la voiture</string>
   <string name="setup_car_level_text">Ajoutez le niveau de charge de la voiture : le plan charge jusqu\'à un niveau cible, mais rien ne donne encore le niveau de la voiture.</string>
-  <string name="setup_car_level_action">Ouvrir Plan</string>
+  <string name="setup_car_level_open">Ouvrir la voiture</string>
   <string name="setup_site_text">Ajoutez un site avec le compteur électrique de la maison, pour l\'équilibrage de charge sous le disjoncteur principal et la recharge solaire.</string>
   <string name="setup_site_action">Ajouter un site</string>
   <string name="setup_solar_forecast_text">Ajoutez une prévision solaire (par exemple Forecast.Solar ou Solcast), pour que Hybride puisse compter sur le soleil et que le statut dise quand il est attendu.</string>

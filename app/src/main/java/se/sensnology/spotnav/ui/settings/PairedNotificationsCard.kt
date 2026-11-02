@@ -120,7 +120,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         val body = card.body
         record?.let { settings ->
             settingRow(body, t(R.string.notify_companion_title), NotificationsOverview.homeAssistant(settings, texts, identifies),
-                onTap = { openHomeAssistant() })
+                onTap = { openHomeAssistant() }, target = SettingsTarget.PHONES.tag)
             if (!writable) body.addView(muted(t(R.string.settings_paired_read_only), bottom = 4))
         }
         settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts, identifies == true),

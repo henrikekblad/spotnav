@@ -647,7 +647,7 @@
   <string name="setup_vehicle_text">Lisää autosi, jotta prosenttitavoite ja toimintamatka ovat oikein.</string>
   <string name="setup_vehicle_action">Lisää auton integraatio</string>
   <string name="setup_car_level_text">Lisää auton lataustaso: suunnitelma lataa tavoitetasoon, mutta mikään ei vielä kerro auton tasoa.</string>
-  <string name="setup_car_level_action">Avaa Suunnitelma</string>
+  <string name="setup_car_level_open">Avaa auto</string>
   <string name="setup_site_text">Lisää kohde, jossa on talon sähkömittari, kuormanhallintaa pääsulakkeen alla ja aurinkolatausta varten.</string>
   <string name="setup_site_action">Lisää kohde</string>
   <string name="setup_solar_forecast_text">Lisää aurinkoennuste (esimerkiksi Forecast.Solar tai Solcast), jotta Hybridi voi luottaa aurinkoon ja tila kertoo, milloin sitä odotetaan.</string>

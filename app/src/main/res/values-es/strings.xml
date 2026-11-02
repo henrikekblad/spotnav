@@ -655,7 +655,7 @@
   <string name="setup_vehicle_text">Añade tu coche, para que un objetivo en porcentaje y la autonomía sean correctos.</string>
   <string name="setup_vehicle_action">Añadir la integración del coche</string>
   <string name="setup_car_level_text">Añade el nivel de carga del coche: el plan carga hasta un nivel objetivo, pero nada informa todavía del nivel del coche.</string>
-  <string name="setup_car_level_action">Abrir Plan</string>
+  <string name="setup_car_level_open">Abrir el coche</string>
   <string name="setup_site_text">Añade una instalación con el contador eléctrico de la casa, para el equilibrado de carga bajo el interruptor general y la carga solar.</string>
   <string name="setup_site_action">Añadir instalación</string>
   <string name="setup_solar_forecast_text">Añade una previsión solar (por ejemplo Forecast.Solar o Solcast), para que Híbrida pueda contar con el sol y el estado diga cuándo se espera.</string>

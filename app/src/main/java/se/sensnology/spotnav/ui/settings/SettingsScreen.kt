@@ -191,6 +191,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Opened from the charger card's car row: at that car, once.
         shell.settingsCar?.let { car -> pairedCards?.openAtCar(car) { y -> shell.scrollView.post { shell.scrollView.smoothScrollTo(0, y) } } }
         shell.settingsCar = null
+        // Opened from a "Get started" row: at that row, once it is drawn, marked for a moment.
+        shell.settingsTarget?.let { target -> shell.settingsTarget = null; seekRow(target) }
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
         val settingsGeneration = viewGeneration
@@ -473,6 +475,31 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 
     /** The paired dialog's values, stored as the phone's own when the paired contract cannot be used. */
+    /**
+     * Scroll to the row tagged for [target] and mark it for a moment. The cards under the Home Assistant read fill in when
+     * the dashboard arrives, so the row is looked for a few times before it is given up on.
+     */
+    private fun seekRow(target: SettingsTarget, attempt: Int = 0) {
+        shell.content.postDelayed({
+            if (isDestroyed) return@postDelayed
+            val row = shell.content.findViewWithTag<View>(target.tag)
+            if (row == null) {
+                if (attempt < SEEK_ATTEMPTS) seekRow(target, attempt + 1)
+                return@postDelayed
+            }
+            var top = row.top
+            var parent = row.parent as? View
+            while (parent != null && parent !== shell.content) {
+                top += parent.top
+                parent = parent.parent as? View
+            }
+            shell.scrollView.smoothScrollTo(0, SettingsTarget.scrollY(top, dp(SEEK_MARGIN_DP)))
+            val before = row.background
+            row.setBackgroundColor((accent and 0x00FFFFFF) or 0x40000000)
+            row.postDelayed({ row.background = before }, SEEK_MARK_MS)
+        }, SEEK_DELAY_MS)
+    }
+
     private fun storeDialogValues(values: SettingsFormValues) {
         val current = WidgetSettings.load(context, widgetId)
         val draft = LocalSettingsDraft(
@@ -699,6 +726,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
     }
 
     private companion object {
+        const val SEEK_ATTEMPTS = 12
+        const val SEEK_DELAY_MS = 300L
+        const val SEEK_MARGIN_DP = 24
+        const val SEEK_MARK_MS = 1800L
         const val SPOTNAV_ISSUES = "https://github.com/henrikekblad/spotnav/issues"
     }
 }

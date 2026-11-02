@@ -647,7 +647,7 @@
   <string name="setup_vehicle_text">Legg til bilen din, så blir et mål i prosent og rekkevidden riktig.</string>
   <string name="setup_vehicle_action">Legg til bilens integrasjon</string>
   <string name="setup_car_level_text">Legg til bilens ladenivå: planen lader til et mål, men ingenting rapporterer bilens nivå ennå.</string>
-  <string name="setup_car_level_action">Åpne Plan</string>
+  <string name="setup_car_level_open">Åpne bilen</string>
   <string name="setup_site_text">Legg til et anlegg med husets strømmåler, for lastbalansering under hovedsikringen og lading med solstrøm.</string>
   <string name="setup_site_action">Legg til anlegg</string>
   <string name="setup_solar_forecast_text">Legg til en solprognose (for eksempel Forecast.Solar eller Solcast), så kan Hybrid regne med solen og statusen vise når den ventes.</string>

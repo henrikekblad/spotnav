@@ -659,7 +659,7 @@
   <string name="setup_vehicle_text">Add your car, so a target in percent and the range are right.</string>
   <string name="setup_vehicle_action">Add the car\'s integration</string>
   <string name="setup_car_level_text">Add the car\'s charge level: the plan charges to a target level, but nothing reports the car\'s level yet.</string>
-  <string name="setup_car_level_action">Open Plan</string>
+  <string name="setup_car_level_open">Open the car</string>
   <string name="setup_site_text">Add a site with your home\'s grid meter, for load balancing under the main fuse and charging from solar.</string>
   <string name="setup_site_action">Add a site</string>
   <string name="setup_solar_forecast_text">Add a solar forecast (for example Forecast.Solar or Solcast), so Hybrid can count on the sun and the status says when it is expected.</string>

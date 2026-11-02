@@ -647,7 +647,7 @@
   <string name="setup_vehicle_text">Füge dein Auto hinzu, damit ein Ziel in Prozent und die Reichweite stimmen.</string>
   <string name="setup_vehicle_action">Integration des Autos hinzufügen</string>
   <string name="setup_car_level_text">Ladestand des Autos hinzufügen: Der Plan lädt auf einen Zielstand, aber noch meldet nichts den Ladestand des Autos.</string>
-  <string name="setup_car_level_action">Plan öffnen</string>
+  <string name="setup_car_level_open">Auto öffnen</string>
   <string name="setup_site_text">Einen Standort mit dem Stromzähler des Hauses hinzufügen, für Lastmanagement unter der Hauptsicherung und Laden mit Solarstrom.</string>
   <string name="setup_site_action">Standort hinzufügen</string>
   <string name="setup_solar_forecast_text">Füge eine Solarprognose hinzu (zum Beispiel Forecast.Solar oder Solcast), damit Hybrid mit der Sonne rechnen kann und der Status sagt, wann sie erwartet wird.</string>

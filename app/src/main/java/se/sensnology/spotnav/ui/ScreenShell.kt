@@ -104,6 +104,9 @@ internal class ScreenShell(
     /** The car the next settings screen opens at (its vehicle card, that car's tab); taken by that screen. */
     var settingsCar: String? = null
 
+    /** The row the next settings screen scrolls to and marks (a "Get started" row's place); taken by that screen. */
+    var settingsTarget: se.sensnology.spotnav.ui.settings.SettingsTarget? = null
+
     /** Whether the next settings screen opens at its Home Assistant card; taken by that screen. */
     var settingsAtHomeAssistant: Boolean = false
 
