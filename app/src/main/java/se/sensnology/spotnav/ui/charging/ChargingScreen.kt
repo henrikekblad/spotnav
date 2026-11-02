@@ -3,6 +3,8 @@ package se.sensnology.spotnav.ui.charging
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
+import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -21,6 +23,7 @@ import se.sensnology.spotnav.ha.authority.SettingsAuthorityCoordinator
 import se.sensnology.spotnav.ha.authority.VisibleAuthority
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.SetupRow
 import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
 import se.sensnology.spotnav.ha.settings.DepartureDays
@@ -432,6 +435,8 @@ internal class ChargingScreen(
                 }
 
                 override fun onVehiclePicked(vehicleId: String) = pickPairedVehicle(vehicleId)
+
+                override fun onOpenSetupRow(row: SetupRow, dashboard: Dashboard) = openSetupPlace(row, dashboard)
             }
         )
         // A charger whose webhook Home Assistant no longer has is asked only at the slow check's
@@ -588,6 +593,31 @@ internal class ChargingScreen(
         planCard.setDriver(chosen)
         val driver = if (chosen == PlanDriver.TARGET_SOC) HaSettingsDriver.TARGET_SOC else HaSettingsDriver.MANUAL_KWH
         commitEdit(HaSettingsEdit.Driver(driver, targetIntentFor(driver)))
+    }
+
+    /**
+     * Where a "Get started" row is done: this app's own Settings where it has the place (the car's, the phase switching,
+     * the phones, the forecast source), else Home Assistant's own page for it, as the card does.
+     */
+    private fun openSetupPlace(row: SetupRow, dashboard: Dashboard) {
+        val base = resolvedChargerProfile?.baseUrl?.trim()?.trimEnd('/').orEmpty()
+        fun homeAssistant(path: String) {
+            if (base.startsWith("http://") || base.startsWith("https://")) {
+                runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(base + path))) }
+            }
+        }
+        when (row.id) {
+            "vehicle" -> homeAssistant("/config/integrations/dashboard")
+            "site" -> homeAssistant("/config/integrations/dashboard/add?domain=spotnav")
+            "solar_forecast" ->
+                if (dashboard.site?.solarForecastChoices?.isNotEmpty() == true) shell.navigate(Screen.SETTINGS)
+                else homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
+            "car_level" -> {
+                shell.settingsCar = dashboard.soc?.vehicleId
+                shell.navigate(Screen.SETTINGS)
+            }
+            "phase_switching", "phone" -> shell.navigate(Screen.SETTINGS)
+        }
     }
 
     /** The plan the slider held would make if it were let go, for the edit it names (paired charger only). */

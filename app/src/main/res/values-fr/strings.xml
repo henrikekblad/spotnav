@@ -650,4 +650,25 @@
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E n\'a pas accepté la clé enregistrée. Saisissez-en une nouvelle dans Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Ouvrir Home Assistant</string>
   <string name="plan_preview_title">Plan avec ce changement</string>
+  <string name="setup_heading">Pour commencer</string>
+  <string name="setup_dismiss">Pas nécessaire</string>
+  <string name="setup_vehicle_text">Ajoutez votre voiture, pour qu\'un objectif en pourcentage et l\'autonomie soient justes.</string>
+  <string name="setup_vehicle_action">Ajouter l\'intégration de la voiture</string>
+  <string name="setup_car_level_text">Ajoutez le niveau de charge de la voiture : le plan charge jusqu\'à un niveau cible, mais rien ne donne encore le niveau de la voiture.</string>
+  <string name="setup_car_level_action">Ouvrir Plan</string>
+  <string name="setup_site_text">Ajoutez un site avec le compteur électrique de la maison, pour l\'équilibrage de charge sous le disjoncteur principal et la recharge solaire.</string>
+  <string name="setup_site_action">Ajouter un site</string>
+  <string name="setup_solar_forecast_text">Ajoutez une prévision solaire (par exemple Forecast.Solar ou Solcast), pour que Hybride puisse compter sur le soleil et que le statut dise quand il est attendu.</string>
+  <string name="setup_solar_forecast_action">Choisir une prévision</string>
+  <string name="setup_solar_forecast_add">Ajouter Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Activez le basculement de phases pour le solaire : par temps nuageux, la voiture charge sur une phase depuis le soleil plutôt que depuis le réseau.</string>
+  <string name="setup_phase_switching_action">Ouvrir le réglage</string>
+  <string name="setup_phone_text">Choisissez quels téléphones reçoivent les notifications de recharge, via l\'application Home Assistant ou l\'application SpotNav.</string>
+  <string name="setup_phone_action">Choisir les téléphones</string>
+  <plurals name="setup_line">
+    <item quantity="one">Pour commencer : encore %1$d point</item>
+    <item quantity="other">Pour commencer : encore %1$d points</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Impossible de modifier le réglage de la borne. Modifiez-le dans Home Assistant.</string>
+  <string name="setup_dismiss_failed">Enregistrement impossible. Réessayez.</string>
 </resources>

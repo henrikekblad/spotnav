@@ -654,4 +654,25 @@
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E did not accept the saved key. Enter a new one in Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Open Home Assistant</string>
   <string name="plan_preview_title">Plan with this change</string>
+  <string name="setup_heading">Get started</string>
+  <string name="setup_dismiss">Not needed</string>
+  <string name="setup_vehicle_text">Add your car, so a target in percent and the range are right.</string>
+  <string name="setup_vehicle_action">Add the car\'s integration</string>
+  <string name="setup_car_level_text">Add the car\'s charge level: the plan charges to a target level, but nothing reports the car\'s level yet.</string>
+  <string name="setup_car_level_action">Open Plan</string>
+  <string name="setup_site_text">Add a site with your home\'s grid meter, for load balancing under the main fuse and charging from solar.</string>
+  <string name="setup_site_action">Add a site</string>
+  <string name="setup_solar_forecast_text">Add a solar forecast (for example Forecast.Solar or Solcast), so Hybrid can count on the sun and the status says when it is expected.</string>
+  <string name="setup_solar_forecast_action">Choose a forecast</string>
+  <string name="setup_solar_forecast_add">Add Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Turn on phase switching for solar: on a cloudy day the car charges on one phase from the sun instead of from the grid.</string>
+  <string name="setup_phase_switching_action">Open the setting</string>
+  <string name="setup_phone_text">Choose which phones get charging notifications, through the Home Assistant app or the SpotNav app.</string>
+  <string name="setup_phone_action">Choose phones</string>
+  <plurals name="setup_line">
+    <item quantity="one">Get started: %1$d thing left</item>
+    <item quantity="other">Get started: %1$d things left</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
+  <string name="setup_dismiss_failed">Could not save that. Try again.</string>
 </resources>

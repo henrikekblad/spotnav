@@ -642,4 +642,25 @@
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E heeft de opgeslagen sleutel niet geaccepteerd. Vul in Home Assistant een nieuwe in.</string>
   <string name="ha_price_open_home_assistant">Home Assistant openen</string>
   <string name="plan_preview_title">Plan met deze wijziging</string>
+  <string name="setup_heading">Aan de slag</string>
+  <string name="setup_dismiss">Niet nodig</string>
+  <string name="setup_vehicle_text">Voeg je auto toe, zodat een doel in procent en de actieradius kloppen.</string>
+  <string name="setup_vehicle_action">Integratie van de auto toevoegen</string>
+  <string name="setup_car_level_text">Voeg het laadniveau van de auto toe: het plan laadt tot een doel, maar nog niets meldt het niveau van de auto.</string>
+  <string name="setup_car_level_action">Plan openen</string>
+  <string name="setup_site_text">Voeg een locatie toe met de elektriciteitsmeter van je huis, voor load balancing onder de hoofdzekering en laden met zonnestroom.</string>
+  <string name="setup_site_action">Locatie toevoegen</string>
+  <string name="setup_solar_forecast_text">Voeg een zonneprognose toe (bijvoorbeeld Forecast.Solar of Solcast), zodat Hybride op de zon kan rekenen en de status zegt wanneer die verwacht wordt.</string>
+  <string name="setup_solar_forecast_action">Prognose kiezen</string>
+  <string name="setup_solar_forecast_add">Forecast.Solar toevoegen</string>
+  <string name="setup_phase_switching_text">Zet faseomschakeling voor zon aan: op een bewolkte dag laadt de auto op één fase van de zon in plaats van van het net.</string>
+  <string name="setup_phase_switching_action">Instelling openen</string>
+  <string name="setup_phone_text">Kies welke telefoons laadmeldingen krijgen, via de Home Assistant-app of de SpotNav-app.</string>
+  <string name="setup_phone_action">Telefoons kiezen</string>
+  <plurals name="setup_line">
+    <item quantity="one">Aan de slag: nog %1$d punt</item>
+    <item quantity="other">Aan de slag: nog %1$d punten</item>
+  </plurals>
+  <string name="own_mode_fix_failed">De instelling van de lader kon niet worden gewijzigd. Wijzig haar in Home Assistant.</string>
+  <string name="setup_dismiss_failed">Opslaan is mislukt. Probeer het opnieuw.</string>
 </resources>

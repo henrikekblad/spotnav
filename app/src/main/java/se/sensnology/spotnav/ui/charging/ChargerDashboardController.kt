@@ -9,11 +9,16 @@ import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.CommandRefusal
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
+import se.sensnology.spotnav.ha.client.OwnModeFix
+import se.sensnology.spotnav.ha.client.SetupDismiss
 import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
+import se.sensnology.spotnav.ha.dashboard.OwnModeAction
+import se.sensnology.spotnav.ha.dashboard.SetupChecklist
+import se.sensnology.spotnav.ha.dashboard.SetupRow
 import se.sensnology.spotnav.ha.dashboard.PlannerControl
 import se.sensnology.spotnav.ha.dashboard.StatusFormat
 import se.sensnology.spotnav.ha.dashboard.StatusTone
@@ -75,6 +80,9 @@ internal class ChargerDashboardController(
          * plans for, through the ordinary settings write.
          */
         fun onVehiclePicked(vehicleId: String)
+
+        /** A "Get started" row's button: the place where it is done (the screen knows the places). */
+        fun onOpenSetupRow(row: SetupRow, dashboard: Dashboard)
 
         /** Home Assistant's dashboard each time one was read (`null` when the read failed). */
         fun onDashboard(dashboard: Dashboard?)
@@ -275,7 +283,53 @@ internal class ChargerDashboardController(
                 colour = ERROR_COLOUR
             )
         }
+        showAttention(dashboard)
         cells.refresh()
+    }
+
+    /** The button of a charger's own mode that works against SpotNav, and the "Get started" line, from the dashboard held. */
+    private fun showAttention(held: Dashboard?) {
+        val language = AppLanguageSettings.language(context)
+        val action = OwnModeAction.of(held)
+        chargerCard.attention.showOwnMode(action?.label(language)) { action?.let(::fixOwnMode) }
+        val rows = SetupChecklist.rows(held)
+        chargerCard.attention.showSetup(
+            if (rows.isEmpty()) null else tq(R.plurals.setup_line, rows.size, rows.size)
+        ) { openSetup() }
+    }
+
+    /** `fix_own_mode`: write the one safe value back, then read the dashboard again whatever came of it. */
+    private fun fixOwnMode(action: OwnModeAction) {
+        chargerCard.attention.setOwnModeEnabled(false)
+        session.fixOwnMode(action.entityId, action.value) { outcome ->
+            chargerCard.attention.setOwnModeEnabled(true)
+            // A conflict that has ended is no fault: the read below shows it gone. A refusal is said once.
+            if (outcome is OwnModeFix.Outcome.Refused || outcome is OwnModeFix.Outcome.Failed) {
+                Toast.makeText(context, t(R.string.own_mode_fix_failed), Toast.LENGTH_LONG).show()
+            }
+            fetchDashboard()
+        }
+    }
+
+    /** The "Get started" rows in a dialog, each with its way to the place, and "Not needed" where it may be left. */
+    private fun openSetup() {
+        val held = dashboard ?: return
+        val rows = SetupChecklist.rows(held)
+        if (rows.isEmpty()) return
+        SetupDialog(this).show(
+            rows,
+            canDismiss = { SetupChecklist.canDismiss(held, it) },
+            forecastChoosable = held.site?.solarForecastChoices?.isNotEmpty() == true,
+            onOpen = { listener.onOpenSetupRow(it, held) },
+            onDismiss = { row ->
+                session.dismissSetupItem(row.id) { outcome ->
+                    if (outcome !is SetupDismiss.Outcome.Dismissed) {
+                        Toast.makeText(context, t(R.string.setup_dismiss_failed), Toast.LENGTH_LONG).show()
+                    }
+                    fetchDashboard()
+                }
+            }
+        )
     }
 
     /** The charger's connection state in words ("Ansluten"); `null` when the dashboard states none. */

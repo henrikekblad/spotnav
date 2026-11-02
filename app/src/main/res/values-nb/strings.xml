@@ -642,4 +642,25 @@
   <string name="ha_price_notice_entsoe_key_rejected">ENTSO-E godtok ikke den lagrede nøkkelen. Skriv inn en ny i Home Assistant.</string>
   <string name="ha_price_open_home_assistant">Åpne Home Assistant</string>
   <string name="plan_preview_title">Planen med denne endringen</string>
+  <string name="setup_heading">Kom i gang</string>
+  <string name="setup_dismiss">Ikke nødvendig</string>
+  <string name="setup_vehicle_text">Legg til bilen din, så blir et mål i prosent og rekkevidden riktig.</string>
+  <string name="setup_vehicle_action">Legg til bilens integrasjon</string>
+  <string name="setup_car_level_text">Legg til bilens ladenivå: planen lader til et mål, men ingenting rapporterer bilens nivå ennå.</string>
+  <string name="setup_car_level_action">Åpne Plan</string>
+  <string name="setup_site_text">Legg til et anlegg med husets strømmåler, for lastbalansering under hovedsikringen og lading med solstrøm.</string>
+  <string name="setup_site_action">Legg til anlegg</string>
+  <string name="setup_solar_forecast_text">Legg til en solprognose (for eksempel Forecast.Solar eller Solcast), så kan Hybrid regne med solen og statusen vise når den ventes.</string>
+  <string name="setup_solar_forecast_action">Velg prognose</string>
+  <string name="setup_solar_forecast_add">Legg til Forecast.Solar</string>
+  <string name="setup_phase_switching_text">Slå på faseveksling for sol: en overskyet dag lader bilen på én fase fra solen i stedet for fra nettet.</string>
+  <string name="setup_phase_switching_action">Åpne innstillingen</string>
+  <string name="setup_phone_text">Velg hvilke telefoner som får ladevarsler, via Home Assistant-appen eller SpotNav-appen.</string>
+  <string name="setup_phone_action">Velg telefoner</string>
+  <plurals name="setup_line">
+    <item quantity="one">Kom i gang: %1$d ting igjen</item>
+    <item quantity="other">Kom i gang: %1$d ting igjen</item>
+  </plurals>
+  <string name="own_mode_fix_failed">Kunne ikke endre ladeboksens innstilling. Endre den i Home Assistant.</string>
+  <string name="setup_dismiss_failed">Kunne ikke lagre det. Prøv igen.</string>
 </resources>
