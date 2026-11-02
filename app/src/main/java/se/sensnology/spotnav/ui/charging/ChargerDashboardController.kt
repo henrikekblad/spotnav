@@ -16,6 +16,7 @@ import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
+import se.sensnology.spotnav.ha.dashboard.ImportTargetRelease
 import se.sensnology.spotnav.ha.dashboard.OwnModeAction
 import se.sensnology.spotnav.ha.dashboard.SetupChecklist
 import se.sensnology.spotnav.ha.dashboard.SetupRow
@@ -293,6 +294,7 @@ internal class ChargerDashboardController(
         val language = AppLanguageSettings.language(context)
         val action = OwnModeAction.of(held)
         chargerCard.attention.showOwnMode(action?.label(language)) { action?.let(::fixOwnMode) }
+        chargerCard.attention.showRelease(ImportTargetRelease.label(held, language)) { releaseImportTarget() }
         val rows = SetupChecklist.rows(held)
         chargerCard.attention.showSetup(
             if (rows.isEmpty()) null else tq(R.plurals.setup_line, rows.size, rows.size)
@@ -308,6 +310,16 @@ internal class ChargerDashboardController(
             if (outcome is OwnModeFix.Outcome.Refused || outcome is OwnModeFix.Outcome.Failed) {
                 Toast.makeText(context, t(R.string.own_mode_fix_failed), Toast.LENGTH_LONG).show()
             }
+            fetchDashboard()
+        }
+    }
+
+    /** `release_import_target`: the import target set aside for this charge, then the dashboard read again whatever came of it. */
+    private fun releaseImportTarget() {
+        chargerCard.attention.setReleaseEnabled(false)
+        session.releaseImportTarget { _ ->
+            chargerCard.attention.setReleaseEnabled(true)
+            // As the card: not set aside, the line stays until the next read says otherwise; that read shows how it stands.
             fetchDashboard()
         }
     }

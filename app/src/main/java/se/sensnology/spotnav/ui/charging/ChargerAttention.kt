@@ -10,11 +10,16 @@ import se.sensnology.spotnav.ui.common.ViewScope
 
 /**
  * What Home Assistant asks the person to do about this charger, under the status line: the button of a charger's own
- * mode that works against SpotNav, and the "Get started" line that opens the rows left to set up. Each is hidden
+ * mode that works against SpotNav, "Release the import target tonight" while the import target would make the plan
+ * miss its departure, and the "Get started" line that opens the rows left to set up. Each is hidden
  * unless there is something to act on.
  */
 internal class ChargerAttention(scope: ViewScope) : ViewScope(scope) {
     private val ownMode = Button(context).apply {
+        isAllCaps = false
+        visibility = View.GONE
+    }
+    private val release = Button(context).apply {
         isAllCaps = false
         visibility = View.GONE
     }
@@ -29,6 +34,7 @@ internal class ChargerAttention(scope: ViewScope) : ViewScope(scope) {
     val view: LinearLayout = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         addView(ownMode, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)).apply { bottomMargin = dp(4) })
+        addView(release, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)).apply { bottomMargin = dp(4) })
         addView(setup)
     }
 
@@ -41,6 +47,17 @@ internal class ChargerAttention(scope: ViewScope) : ViewScope(scope) {
 
     fun setOwnModeEnabled(enabled: Boolean) {
         ownMode.isEnabled = enabled
+    }
+
+    /** "Release the import target tonight" with [label], or hidden for `null`. */
+    fun showRelease(label: String?, onClick: () -> Unit) {
+        release.visibility = if (label == null) View.GONE else View.VISIBLE
+        release.text = label.orEmpty()
+        release.setOnClickListener { onClick() }
+    }
+
+    fun setReleaseEnabled(enabled: Boolean) {
+        release.isEnabled = enabled
     }
 
     /** The "Get started: 2 things left" line, or hidden for `null`. */
