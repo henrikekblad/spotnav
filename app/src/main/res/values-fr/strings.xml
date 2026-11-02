@@ -729,4 +729,40 @@
   <string name="card_settings_value_none" formatted="false">Aucun</string>
   <string name="card_settings_value_off" formatted="false">Désactivé</string>
   <string name="card_grid_fee_error_conflict" formatted="false">Le prix de l\'électricité a été modifié ailleurs et a été relu. Rien n\'a été enregistré : enregistrez à nouveau pour appliquer votre modification.</string>
+  <string name="card_history_view_label" formatted="false">Affichage</string>
+  <string name="card_history_view_charges" formatted="false">Recharges</string>
+  <string name="card_history_view_power" formatted="false">Puissance</string>
+  <string name="card_power_intro" formatted="false">Pour chaque jour, la plus forte moyenne horaire soutirée au réseau, mesurée par le compteur du site, répartie entre la maison et la voiture.</string>
+  <string name="card_power_loading" formatted="false">Chargement de la puissance…</string>
+  <string name="card_power_failed" formatted="false">La puissance n\'a pas pu être lue.</string>
+  <string name="card_power_empty" formatted="false">Aucune heure mesurée ce mois-ci.</string>
+  <string name="card_power_chart_label" formatted="false">Plus forte moyenne horaire par jour</string>
+  <string name="card_power_day_chart_label" formatted="false">Moyennes horaires, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Touchez un jour pour voir ses heures ; survolez une barre pour ses chiffres.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Touchez ou survolez une barre pour voir les chiffres du jour. Pour ce mois, seuls les jours sont conservés.</string>
+  <string name="card_power_hint_day" formatted="false">Touchez ou survolez une heure pour voir ses chiffres.</string>
+  <string name="card_power_back" formatted="false">Tout le mois</string>
+  <string name="card_power_day" formatted="false">{date} : au plus {kw} à {time}</string>
+  <string name="card_power_hour" formatted="false">{time} : {kw}</string>
+  <string name="card_power_split" formatted="false">maison {house}, voiture {car}</string>
+  <string name="card_power_counted" formatted="false">compte pour le tarif de puissance</string>
+  <string name="card_power_counted_part" formatted="false">compte pour le tarif de puissance ({part})</string>
+  <string name="card_power_held" formatted="false">l\'objectif de soutirage a freiné la recharge</string>
+  <string name="card_power_paused" formatted="false">l\'objectif de soutirage a mis la recharge en pause</string>
+  <string name="card_power_incomplete" formatted="false">mesure incomplète</string>
+  <string name="card_power_no_data" formatted="false">{date} : rien de mesuré</string>
+  <string name="card_power_no_peak" formatted="false">pas encore de pic</string>
+  <string name="card_power_part_day" formatted="false">Jour {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">jour {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nuit {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">nuit {hours}</string>
+  <string name="card_power_part_all" formatted="false">Toutes les heures</string>
+  <string name="card_power_part_all_inline" formatted="false">toutes les heures</string>
+  <string name="card_power_legend" formatted="false">Légende</string>
+  <string name="card_power_legend_house" formatted="false">Maison</string>
+  <string name="card_power_legend_car" formatted="false">Voiture</string>
+  <string name="card_power_legend_unsplit" formatted="false">Maison et voiture, non réparties</string>
+  <string name="card_power_legend_target" formatted="false">Objectif de soutirage {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Pic retenu, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">L\'objectif de soutirage a freiné (point) ou mis en pause (anneau) la recharge</string>
 </resources>

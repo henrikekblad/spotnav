@@ -729,4 +729,40 @@
   <string name="card_settings_value_none" formatted="false">Ninguno</string>
   <string name="card_settings_value_off" formatted="false">Desactivado</string>
   <string name="card_grid_fee_error_conflict" formatted="false">El precio de la electricidad se cambió en otro lugar y se ha vuelto a leer. No se guardó nada: guarda de nuevo para aplicar tu cambio.</string>
+  <string name="card_history_view_label" formatted="false">Vista</string>
+  <string name="card_history_view_charges" formatted="false">Cargas</string>
+  <string name="card_history_view_power" formatted="false">Potencia</string>
+  <string name="card_power_intro" formatted="false">La mayor media horaria de consumo de la red de cada día, según el contador del sitio, repartida entre la casa y el coche.</string>
+  <string name="card_power_loading" formatted="false">Cargando la potencia…</string>
+  <string name="card_power_failed" formatted="false">No se ha podido leer la potencia.</string>
+  <string name="card_power_empty" formatted="false">Este mes no se ha medido ninguna hora.</string>
+  <string name="card_power_chart_label" formatted="false">Mayor media horaria por día</string>
+  <string name="card_power_day_chart_label" formatted="false">Medias horarias, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Toca un día para ver sus horas; pasa el cursor sobre una barra para ver sus cifras.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Toca o pasa el cursor sobre una barra para ver las cifras del día. De este mes solo se guardan los días.</string>
+  <string name="card_power_hint_day" formatted="false">Toca o pasa el cursor sobre una hora para ver sus cifras.</string>
+  <string name="card_power_back" formatted="false">Todo el mes</string>
+  <string name="card_power_day" formatted="false">{date}: máximo {kw} a las {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">casa {house}, coche {car}</string>
+  <string name="card_power_counted" formatted="false">cuenta para el término de potencia</string>
+  <string name="card_power_counted_part" formatted="false">cuenta para el término de potencia ({part})</string>
+  <string name="card_power_held" formatted="false">el objetivo de consumo frenó la carga</string>
+  <string name="card_power_paused" formatted="false">el objetivo de consumo pausó la carga</string>
+  <string name="card_power_incomplete" formatted="false">huecos en la medida</string>
+  <string name="card_power_no_data" formatted="false">{date}: nada medido</string>
+  <string name="card_power_no_peak" formatted="false">aún sin pico</string>
+  <string name="card_power_part_day" formatted="false">Día {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">día {hours}</string>
+  <string name="card_power_part_night" formatted="false">Noche {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">noche {hours}</string>
+  <string name="card_power_part_all" formatted="false">Todas las horas</string>
+  <string name="card_power_part_all_inline" formatted="false">todas las horas</string>
+  <string name="card_power_legend" formatted="false">Leyenda</string>
+  <string name="card_power_legend_house" formatted="false">Casa</string>
+  <string name="card_power_legend_car" formatted="false">Coche</string>
+  <string name="card_power_legend_unsplit" formatted="false">Casa y coche, sin repartir</string>
+  <string name="card_power_legend_target" formatted="false">Objetivo de consumo {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Pico que cuenta, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">El objetivo de consumo frenó (punto) o pausó (anillo) la carga</string>
 </resources>

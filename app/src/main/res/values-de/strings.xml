@@ -721,4 +721,40 @@
   <string name="card_settings_value_none" formatted="false">Keine</string>
   <string name="card_settings_value_off" formatted="false">Aus</string>
   <string name="card_grid_fee_error_conflict" formatted="false">Der Strompreis wurde an anderer Stelle geändert und neu gelesen. Nichts wurde gespeichert: Speichern Sie erneut, um Ihre Änderung zu übernehmen.</string>
+  <string name="card_history_view_label" formatted="false">Ansicht</string>
+  <string name="card_history_view_charges" formatted="false">Ladevorgänge</string>
+  <string name="card_history_view_power" formatted="false">Leistung</string>
+  <string name="card_power_intro" formatted="false">Der höchste Stundenmittelwert des Netzbezugs je Tag, wie der Zähler des Standorts ihn gemessen hat, aufgeteilt auf Haus und Auto.</string>
+  <string name="card_power_loading" formatted="false">Leistung wird geladen…</string>
+  <string name="card_power_failed" formatted="false">Die Leistung konnte nicht gelesen werden.</string>
+  <string name="card_power_empty" formatted="false">In diesem Monat wurden keine Stunden gemessen.</string>
+  <string name="card_power_chart_label" formatted="false">Höchster Stundenmittelwert je Tag</string>
+  <string name="card_power_day_chart_label" formatted="false">Stundenmittelwerte, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tippe auf einen Tag für seine Stunden; fahre über einen Balken für seine Werte.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Tippe auf einen Balken oder fahre darüber für die Werte des Tages. Für diesen Monat sind nur die Tage gespeichert.</string>
+  <string name="card_power_hint_day" formatted="false">Tippe auf eine Stunde oder fahre darüber für ihre Werte.</string>
+  <string name="card_power_back" formatted="false">Ganzer Monat</string>
+  <string name="card_power_day" formatted="false">{date}: höchstens {kw} um {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">Haus {house}, Auto {car}</string>
+  <string name="card_power_counted" formatted="false">zählt für den Leistungspreis</string>
+  <string name="card_power_counted_part" formatted="false">zählt für {part}</string>
+  <string name="card_power_held" formatted="false">das Bezugsziel hat das Laden gedrosselt</string>
+  <string name="card_power_paused" formatted="false">das Bezugsziel hat das Laden pausiert</string>
+  <string name="card_power_incomplete" formatted="false">Lücken in der Messung</string>
+  <string name="card_power_no_data" formatted="false">{date}: nichts gemessen</string>
+  <string name="card_power_no_peak" formatted="false">noch keine Spitze</string>
+  <string name="card_power_part_day" formatted="false">Tag {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">Tag {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_all" formatted="false">Alle Stunden</string>
+  <string name="card_power_part_all_inline" formatted="false">alle Stunden</string>
+  <string name="card_power_legend" formatted="false">Legende</string>
+  <string name="card_power_legend_house" formatted="false">Haus</string>
+  <string name="card_power_legend_car" formatted="false">Auto</string>
+  <string name="card_power_legend_unsplit" formatted="false">Haus und Auto, nicht aufgeteilt</string>
+  <string name="card_power_legend_target" formatted="false">Bezugsziel {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Zählende Spitze, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Das Bezugsziel hat das Laden gedrosselt (Punkt) oder pausiert (Ring)</string>
 </resources>

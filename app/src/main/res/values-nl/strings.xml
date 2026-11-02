@@ -721,4 +721,40 @@
   <string name="card_settings_value_none" formatted="false">Geen</string>
   <string name="card_settings_value_off" formatted="false">Uit</string>
   <string name="card_grid_fee_error_conflict" formatted="false">De stroomprijs is elders gewijzigd en opnieuw gelezen. Er is niets opgeslagen: sla opnieuw op om je wijziging door te voeren.</string>
+  <string name="card_history_view_label" formatted="false">Weergave</string>
+  <string name="card_history_view_charges" formatted="false">Laadsessies</string>
+  <string name="card_history_view_power" formatted="false">Vermogen</string>
+  <string name="card_power_intro" formatted="false">Per dag het hoogste uurgemiddelde van de afname van het net, zoals de meter van de locatie het mat, verdeeld over huis en auto.</string>
+  <string name="card_power_loading" formatted="false">Vermogen wordt geladen…</string>
+  <string name="card_power_failed" formatted="false">Het vermogen kon niet worden gelezen.</string>
+  <string name="card_power_empty" formatted="false">Deze maand zijn geen uren gemeten.</string>
+  <string name="card_power_chart_label" formatted="false">Hoogste uurgemiddelde per dag</string>
+  <string name="card_power_day_chart_label" formatted="false">Uurgemiddelden, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tik op een dag voor de uren; beweeg over een staaf voor de cijfers.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Tik op een staaf of beweeg erover voor de cijfers van die dag. Van deze maand zijn alleen de dagen bewaard.</string>
+  <string name="card_power_hint_day" formatted="false">Tik op een uur of beweeg erover voor de cijfers.</string>
+  <string name="card_power_back" formatted="false">Hele maand</string>
+  <string name="card_power_day" formatted="false">{date}: hoogste {kw} om {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">huis {house}, auto {car}</string>
+  <string name="card_power_counted" formatted="false">telt voor het capaciteitstarief</string>
+  <string name="card_power_counted_part" formatted="false">telt voor {part}</string>
+  <string name="card_power_held" formatted="false">het afnamedoel hield het laden in</string>
+  <string name="card_power_paused" formatted="false">het afnamedoel pauzeerde het laden</string>
+  <string name="card_power_incomplete" formatted="false">gaten in de meting</string>
+  <string name="card_power_no_data" formatted="false">{date}: niets gemeten</string>
+  <string name="card_power_no_peak" formatted="false">nog geen piek</string>
+  <string name="card_power_part_day" formatted="false">Dag {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">dag {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">nacht {hours}</string>
+  <string name="card_power_part_all" formatted="false">Alle uren</string>
+  <string name="card_power_part_all_inline" formatted="false">alle uren</string>
+  <string name="card_power_legend" formatted="false">Legenda</string>
+  <string name="card_power_legend_house" formatted="false">Huis</string>
+  <string name="card_power_legend_car" formatted="false">Auto</string>
+  <string name="card_power_legend_unsplit" formatted="false">Huis en auto, niet verdeeld</string>
+  <string name="card_power_legend_target" formatted="false">Afnamedoel {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Piek die telt, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
 </resources>

@@ -721,4 +721,40 @@
   <string name="card_settings_value_none" formatted="false">Ingen</string>
   <string name="card_settings_value_off" formatted="false">Fra</string>
   <string name="card_grid_fee_error_conflict" formatted="false">Elprisen blev ændret et andet sted og er læst igen. Intet blev gemt: gem igen for at foretage din ændring.</string>
+  <string name="card_history_view_label" formatted="false">Vis</string>
+  <string name="card_history_view_charges" formatted="false">Opladninger</string>
+  <string name="card_history_view_power" formatted="false">Effekt</string>
+  <string name="card_power_intro" formatted="false">Hver dags højeste timemiddel af effekt fra nettet, som anlæggets elmåler målte det, fordelt på huset og bilen.</string>
+  <string name="card_power_loading" formatted="false">Henter effekten…</string>
+  <string name="card_power_failed" formatted="false">Effekten kunne ikke læses.</string>
+  <string name="card_power_empty" formatted="false">Ingen timer blev målt denne måned.</string>
+  <string name="card_power_chart_label" formatted="false">Højeste timemiddel pr. dag</string>
+  <string name="card_power_day_chart_label" formatted="false">Timemiddel, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tryk på en dag for dens timer; peg på en søjle for dens tal.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Tryk på eller peg på en søjle for dagens tal. For denne måned gemmes kun dagene.</string>
+  <string name="card_power_hint_day" formatted="false">Tryk på eller peg på en time for dens tal.</string>
+  <string name="card_power_back" formatted="false">Hele måneden</string>
+  <string name="card_power_day" formatted="false">{date}: højst {kw} kl. {time}</string>
+  <string name="card_power_hour" formatted="false">kl. {time}: {kw}</string>
+  <string name="card_power_split" formatted="false">huset {house}, bilen {car}</string>
+  <string name="card_power_counted" formatted="false">tæller med i effektbetalingen</string>
+  <string name="card_power_counted_part" formatted="false">tæller for {part}</string>
+  <string name="card_power_held" formatted="false">effektmålet holdt opladningen nede</string>
+  <string name="card_power_paused" formatted="false">effektmålet satte opladningen på pause</string>
+  <string name="card_power_incomplete" formatted="false">huller i målingen</string>
+  <string name="card_power_no_data" formatted="false">{date}: intet målt</string>
+  <string name="card_power_no_peak" formatted="false">ingen top endnu</string>
+  <string name="card_power_part_day" formatted="false">Dag {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">dag {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nat {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">nat {hours}</string>
+  <string name="card_power_part_all" formatted="false">Alle timer</string>
+  <string name="card_power_part_all_inline" formatted="false">alle timer</string>
+  <string name="card_power_legend" formatted="false">Forklaring</string>
+  <string name="card_power_legend_house" formatted="false">Huset</string>
+  <string name="card_power_legend_car" formatted="false">Bilen</string>
+  <string name="card_power_legend_unsplit" formatted="false">Huset og bilen, ikke fordelt</string>
+  <string name="card_power_legend_target" formatted="false">Effektmål {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Top der tæller, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prik) eller satte på pause (ring)</string>
 </resources>

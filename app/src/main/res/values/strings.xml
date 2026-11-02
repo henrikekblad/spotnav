@@ -733,4 +733,40 @@
   <string name="card_settings_value_none" formatted="false">None</string>
   <string name="card_settings_value_off" formatted="false">Off</string>
   <string name="card_grid_fee_error_conflict" formatted="false">The electricity price was changed elsewhere and has been read again. Nothing was saved: save again to apply your change.</string>
+  <string name="card_history_view_label" formatted="false">View</string>
+  <string name="card_history_view_charges" formatted="false">Charges</string>
+  <string name="card_history_view_power" formatted="false">Power</string>
+  <string name="card_power_intro" formatted="false">Each day\'s highest hourly mean of import from the grid, as the site\'s meter measured it, split into the house and the car.</string>
+  <string name="card_power_loading" formatted="false">Reading the power…</string>
+  <string name="card_power_failed" formatted="false">The power could not be read.</string>
+  <string name="card_power_empty" formatted="false">No hours were measured this month.</string>
+  <string name="card_power_chart_label" formatted="false">Highest hourly mean per day</string>
+  <string name="card_power_day_chart_label" formatted="false">Hourly means, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tap a day for its hours; hover or focus a bar for its figures.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Hover, focus or tap a bar for the day\'s figures. Only the days are kept for this month.</string>
+  <string name="card_power_hint_day" formatted="false">Hover, focus or tap an hour for its figures.</string>
+  <string name="card_power_back" formatted="false">Whole month</string>
+  <string name="card_power_day" formatted="false">{date}: highest {kw} at {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">house {house}, car {car}</string>
+  <string name="card_power_counted" formatted="false">counts for the demand charge</string>
+  <string name="card_power_counted_part" formatted="false">counts for {part}</string>
+  <string name="card_power_held" formatted="false">the import target held the charging back</string>
+  <string name="card_power_paused" formatted="false">the import target paused the charging</string>
+  <string name="card_power_incomplete" formatted="false">gaps in the reading</string>
+  <string name="card_power_no_data" formatted="false">{date}: nothing measured</string>
+  <string name="card_power_no_peak" formatted="false">no peak yet</string>
+  <string name="card_power_part_day" formatted="false">Day {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">day {hours}</string>
+  <string name="card_power_part_night" formatted="false">Night {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">night {hours}</string>
+  <string name="card_power_part_all" formatted="false">All hours</string>
+  <string name="card_power_part_all_inline" formatted="false">all hours</string>
+  <string name="card_power_legend" formatted="false">Legend</string>
+  <string name="card_power_legend_house" formatted="false">House</string>
+  <string name="card_power_legend_car" formatted="false">Car</string>
+  <string name="card_power_legend_unsplit" formatted="false">House and car, not split</string>
+  <string name="card_power_legend_target" formatted="false">Import target {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Counted peak, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">The import target held back (dot) or paused (ring) the charging</string>
 </resources>
