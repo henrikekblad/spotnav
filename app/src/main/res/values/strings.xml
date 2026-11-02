@@ -679,6 +679,11 @@
   <string name="if_not_ready_ask">Ask</string>
   <string name="if_not_ready_release">Release the import target</string>
   <string name="if_not_ready_hold">Keep the import target</string>
+  <string name="card_grid_fee_percent" formatted="false">Grid fee, % of spot</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Some grid companies charge part of the grid fee as a share of the spot price. It is added on top of the grid fee.</string>
+  <string name="card_grid_fee_high" formatted="false">Grid fee in high-load hours</string>
+  <string name="card_grid_fee_high_help" formatted="false">Replaces the grid fee in the high-load hours.</string>
+  <string name="card_grid_fee_window" formatted="false">High-load hours</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Weekdays</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Every day</string>
@@ -771,4 +776,10 @@
   <string name="card_power_legend_marks" formatted="false">The import target held back (dot) or paused (ring) the charging</string>
   <string name="setup_demand_grid_power_text">The demand charge or the import target needs the site\'s total grid power to be measured.</string>
   <string name="setup_demand_grid_power_action">Set total grid power</string>
+  <string name="card_grid_fee_window_help" formatted="false">The hours your grid company charges its higher fee in. An end before the start runs over midnight, and the night counts as the day it starts on.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">A common choice. Check it against your grid company\'s tariff.</string>
+  <string name="card_grid_fee_window_first" formatted="false">The high-load fee applies only in its hours. Confirm the hours first, then the fee.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Next</string>
+  <string name="card_market_included" formatted="false">Included in the price</string>
+  <string name="card_settings_value_unset" formatted="false">Not set</string>
 </resources>

@@ -14,14 +14,17 @@ import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
+import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceProvider
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsFormValues
 import se.sensnology.spotnav.prices.PriceMarkets
+import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
+import se.sensnology.spotnav.ui.common.editNumber
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.widget.WidgetSettings
@@ -29,8 +32,9 @@ import se.sensnology.spotnav.widget.WidgetSettings
 /**
  * The "Electricity price" card of a paired charger: where the price lives (the electricity price Home Assistant's
  * charger uses, how many chargers share it, the same-area question and the "Price from" choice, see
- * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then the demand
- * charge's parts as the card shows them ([showDemand], written with the grid tariff), then where
+ * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then the grid
+ * tariff beside the grid fee as the card has it ([showTariff]: the grid fee as a percentage of spot, the high-load fee
+ * and its hours, written with `update_grid_tariff`) and the demand charge's parts under them, then where
  * the area's prices come from and Home Assistant's notice when it has no source of its own ([showProvider]). Each of
  * those changes its one value through the paired settings path ([submit], the whole record with that one field
  * changed); the screen owns that path and says what came of it.
@@ -38,6 +42,7 @@ import se.sensnology.spotnav.widget.WidgetSettings
 internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     private val sourceRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val rows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private val tariffRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val demandRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val providerRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     // The grid tariff: as the last dashboard stated it, or as a write here answered until the next one.
@@ -74,6 +79,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         this.old = old
         parent.addView(sourceRows)
         parent.addView(rows)
+        parent.addView(tariffRows)
         parent.addView(demandRows)
         parent.addView(providerRows)
     }
@@ -93,14 +99,61 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     }
 
     /**
-     * Paint the demand charge of [dashboard]'s grid tariff, as the card's price section does: "Effektavgift: Inget" until
-     * a part is added, then each part with its prices and this month's mean and peaks beneath, and a row adding another
-     * (at most three). Editable where the tariff is writable. Nothing from a Home Assistant before 2.4.
+     * Paint the grid tariff of [dashboard] beside the grid fee, as the card does: the percentage of spot, the high-load
+     * fee and, while that fee is on or hours are stored, its hours. Locked where the price already includes the grid
+     * fee, and read-only where the tariff is not writable. Then the demand charge (Home Assistant 2.4): "Effektavgift:
+     * Inget" until a part is added, then each part with its prices and this month's mean and peaks beneath, and a row
+     * adding another (at most three). Nothing where Home Assistant sends no tariff.
      */
-    fun showDemand(dashboard: Dashboard?) {
+    fun showTariff(dashboard: Dashboard?) {
         tariffDashboard = dashboard
         tariff = dashboard?.gridTariff
+        repaintTariff()
+    }
+
+    private fun tariffText() = GridTariffText(cardWords(), AppLanguageSettings.numberLocale(activity))
+
+    private fun repaintTariff() {
+        tariffRows.removeAllViews()
         repaintDemand()
+        val block = tariff ?: return
+        for (row in tariffText().rows(block)) {
+            val edit: (() -> Unit)? = if (row.included || !block.writable) null else when (row.key) {
+                GridTariffText.Key.PERCENT -> ({ editPercent() })
+                GridTariffText.Key.HIGH -> ({ editHigh() })
+                GridTariffText.Key.WINDOW -> ({ editWindow() })
+            }
+            settingRow(tariffRows, row.label, row.value, onTap = edit)
+        }
+    }
+
+    /**
+     * One change of the tariff: [change] builds the body on the tariff held when it is sent, so the other parts are kept
+     * as stored; [done] hears `null` when it took, or what to say.
+     */
+    private fun writeTariffChange(change: (DashboardGridTariff) -> JSONObject, done: (String?) -> Unit) {
+        val held = tariff ?: return done(t(R.string.paired_error_generic))
+        val body = change(held)
+        // The tariff as stored: nothing to write.
+        if (body.toString() == held.storedBody().toString()) return done(null)
+        writeTariff(held.writeRevision, body) { outcome ->
+            when (outcome) {
+                is GridTariffUpdate.Outcome.Updated -> {
+                    outcome.block?.let { tariff = it }
+                    done(null)
+                    repaintTariff()
+                }
+                is GridTariffUpdate.Outcome.Conflict -> {
+                    // Written elsewhere since this read: read again, and the next Save applies the change to what is stored now.
+                    outcome.block?.let { tariff = it }
+                    repaintTariff()
+                    done(cardWords().say("gridFee.error.conflict"))
+                }
+                GridTariffUpdate.Outcome.Refused -> done(t(R.string.paired_error_invalid))
+                GridTariffUpdate.Outcome.NotPermitted -> done(t(R.string.site_error_not_permitted))
+                is GridTariffUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))
+            }
+        }
     }
 
     private fun repaintDemand() {
@@ -119,25 +172,56 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         val parts = block.demand?.components.orEmpty()
         val at = index ?: parts.size
         editDemandComponent(cardWords(), index?.let { parts.getOrNull(it) }, block.demand?.priceUnit) { part, done ->
-            // Built on the tariff held when it is sent: a change to one part keeps the fees and the other parts as stored.
-            val held = tariff ?: return@editDemandComponent done(t(R.string.paired_error_generic))
-            writeTariff(held.writeRevision, held.bodyWith(at, part)) { outcome ->
-                when (outcome) {
-                    is GridTariffUpdate.Outcome.Updated -> {
-                        outcome.block?.let { tariff = it }
-                        done(null)
-                        repaintDemand()
-                    }
-                    is GridTariffUpdate.Outcome.Conflict -> {
-                        outcome.block?.let { tariff = it }
-                        repaintDemand()
-                        done(cardWords().say("gridFee.error.conflict"))
-                    }
-                    GridTariffUpdate.Outcome.Refused -> done(t(R.string.paired_error_invalid))
-                    GridTariffUpdate.Outcome.NotPermitted -> done(t(R.string.site_error_not_permitted))
-                    is GridTariffUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))
-                }
+            writeTariffChange({ it.bodyWith(at, part) }, done)
+        }
+    }
+
+    /** The grid fee as a percentage of spot, 0-100 with two decimals, or off (its stored figure kept). */
+    private fun editPercent() {
+        val fee = tariff?.transferPercent ?: return
+        val words = cardWords()
+        editNumber(
+            words.say("gridFee.percent"), NumberSpec(0.0, 100.0, 2), fee.unit ?: "%", fee.effectiveValue ?: fee.explicitValue,
+            t(R.string.paired_error_number), help = words.say("gridFee.percent.help"),
+            noneLabel = words.say("settings.value.off"), noneChecked = fee.effectiveValue == null
+        ) { value, done -> writeTariffChange({ it.bodyWithPercent(value) }, done) }
+    }
+
+    /**
+     * The high-load fee. With no hours stored, turning it on asks for the hours first (prefilled with a common window
+     * the person confirms), then the fee; one write carries both, and Cancel at either step writes nothing.
+     */
+    private fun editHigh() {
+        val block = tariff ?: return
+        if (block.transferHigh.policy == "off" && block.highLoadWindow == null) {
+            val words = cardWords()
+            editHighLoadWindow(words, null, intro = words.say("gridFee.window.first"), positive = words.say("gridFee.window.next")) { window, done ->
+                done(null)
+                editHighFigure(window)
             }
+            return
+        }
+        editHighFigure(null)
+    }
+
+    /** The high-load fee's figure; [window] is hours just confirmed in the step before, else the stored ones are kept. */
+    private fun editHighFigure(window: HighLoadWindow?) {
+        val fee = tariff?.transferHigh ?: return
+        val words = cardWords()
+        editNumber(
+            words.say("gridFee.high"), NumberSpec(0.0, 100000.0, 2), fee.unit.orEmpty(), fee.effectiveValue ?: fee.explicitValue,
+            t(R.string.paired_error_number), help = words.say("gridFee.high.help"),
+            // Turning it on after confirming the hours: there is nothing to turn off.
+            noneLabel = if (window == null) words.say("settings.value.off") else null,
+            noneChecked = window == null && fee.effectiveValue == null
+        ) { value, done -> writeTariffChange({ it.bodyWithHigh(value, window) }, done) }
+    }
+
+    /** The high-load hours on their own: Save writes them. */
+    private fun editWindow() {
+        val block = tariff ?: return
+        editHighLoadWindow(cardWords(), block.highLoadWindow) { window, done ->
+            writeTariffChange({ it.bodyWithWindow(window) }, done)
         }
     }
 

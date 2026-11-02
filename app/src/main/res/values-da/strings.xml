@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Spørg</string>
   <string name="if_not_ready_release">Slip effektmålet</string>
   <string name="if_not_ready_hold">Hold effektmålet</string>
+  <string name="card_grid_fee_percent" formatted="false">Nettarif, % af spotprisen</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Nogle netselskaber opkræver en del af nettariffen som en andel af spotprisen. Den lægges oven i nettariffen.</string>
+  <string name="card_grid_fee_high" formatted="false">Nettarif i spidslasttimer</string>
+  <string name="card_grid_fee_high_help" formatted="false">Erstatter nettariffen i spidslasttimerne.</string>
+  <string name="card_grid_fee_window" formatted="false">Spidslasttimer</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Hverdage</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Alle dage</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prik) eller satte på pause (ring)</string>
   <string name="setup_demand_grid_power_text">Effektbetalingen eller effektmålet kræver anlæggets samlede netteffekt for at kunne måles.</string>
   <string name="setup_demand_grid_power_action">Angiv nettets samlede effekt</string>
+  <string name="card_grid_fee_window_help" formatted="false">De timer, dit netselskab opkræver sin højere tarif i. En slutning før starten går over midnat, og natten regnes til den dag, den begynder.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Et almindeligt valg. Tjek det mod dit netselskabs tarif.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Spidslasttariffen gælder kun i spidslasttimerne. Bekræft timerne først, derefter tariffen.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Næste</string>
+  <string name="card_market_included" formatted="false">Indgår i prisen</string>
+  <string name="card_settings_value_unset" formatted="false">Ikke angivet</string>
 </resources>

@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Fragen</string>
   <string name="if_not_ready_release">Bezugsziel aussetzen</string>
   <string name="if_not_ready_hold">Bezugsziel halten</string>
+  <string name="card_grid_fee_percent" formatted="false">Netzentgelt, % vom Spotpreis</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Manche Netzbetreiber berechnen einen Teil des Netzentgelts als Anteil am Spotpreis. Er kommt zum Netzentgelt hinzu.</string>
+  <string name="card_grid_fee_high" formatted="false">Netzentgelt in Hochlastzeiten</string>
+  <string name="card_grid_fee_high_help" formatted="false">Ersetzt das Netzentgelt in den Hochlastzeiten.</string>
+  <string name="card_grid_fee_window" formatted="false">Hochlastzeiten</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Werktags</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Jeden Tag</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Das Bezugsziel hat das Laden gedrosselt (Punkt) oder pausiert (Ring)</string>
   <string name="setup_demand_grid_power_text">Der Leistungspreis oder das Bezugsziel braucht die gesamte Netzleistung des Standorts, um gemessen zu werden.</string>
   <string name="setup_demand_grid_power_action">Gesamte Netzleistung festlegen</string>
+  <string name="card_grid_fee_window_help" formatted="false">Die Stunden, in denen Ihr Netzbetreiber sein höheres Entgelt berechnet. Ein Ende vor dem Beginn reicht über Mitternacht, und die Nacht zählt zu dem Tag, an dem sie beginnt.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Eine übliche Wahl. Prüfen Sie sie anhand des Tarifs Ihres Netzbetreibers.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Das Hochlastentgelt gilt nur in seinen Stunden. Bestätigen Sie zuerst die Stunden, dann das Entgelt.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Weiter</string>
+  <string name="card_market_included" formatted="false">Im Preis enthalten</string>
+  <string name="card_settings_value_unset" formatted="false">Nicht festgelegt</string>
 </resources>

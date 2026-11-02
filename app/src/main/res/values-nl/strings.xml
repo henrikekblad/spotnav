@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Vragen</string>
   <string name="if_not_ready_release">Afnamedoel loslaten</string>
   <string name="if_not_ready_hold">Afnamedoel aanhouden</string>
+  <string name="card_grid_fee_percent" formatted="false">Nettarief, % van de spotprijs</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Sommige netbeheerders rekenen een deel van het nettarief als aandeel van de spotprijs. Het komt bovenop het nettarief.</string>
+  <string name="card_grid_fee_high" formatted="false">Nettarief in piekuren</string>
+  <string name="card_grid_fee_high_help" formatted="false">Vervangt het nettarief in de piekuren.</string>
+  <string name="card_grid_fee_window" formatted="false">Piekuren</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Werkdagen</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Elke dag</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
   <string name="setup_demand_grid_power_text">Het capaciteitstarief of het afnamedoel heeft het totale netvermogen van de locatie nodig om gemeten te worden.</string>
   <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
+  <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Het piektarief geldt alleen in zijn uren. Bevestig eerst de uren, dan het tarief.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Volgende</string>
+  <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
+  <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
 </resources>

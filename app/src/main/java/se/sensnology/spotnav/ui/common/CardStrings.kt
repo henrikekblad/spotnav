@@ -9,6 +9,11 @@ import se.sensnology.spotnav.R
  */
 internal object CardStrings {
     val IDS: Map<String, Int> = mapOf(
+        "gridFee.percent" to R.string.card_grid_fee_percent,
+        "gridFee.percent.help" to R.string.card_grid_fee_percent_help,
+        "gridFee.high" to R.string.card_grid_fee_high,
+        "gridFee.high.help" to R.string.card_grid_fee_high_help,
+        "gridFee.window" to R.string.card_grid_fee_window,
         "gridFee.window.line" to R.string.card_grid_fee_window_line,
         "gridFee.window.weekdays" to R.string.card_grid_fee_window_weekdays,
         "gridFee.window.everyDay" to R.string.card_grid_fee_window_every_day,
@@ -98,7 +103,13 @@ internal object CardStrings {
         "power.legend.unsplit" to R.string.card_power_legend_unsplit,
         "power.legend.target" to R.string.card_power_legend_target,
         "power.legend.countedPart" to R.string.card_power_legend_counted_part,
-        "power.legend.marks" to R.string.card_power_legend_marks
+        "power.legend.marks" to R.string.card_power_legend_marks,
+        "gridFee.window.help" to R.string.card_grid_fee_window_help,
+        "gridFee.window.suggestion" to R.string.card_grid_fee_window_suggestion,
+        "gridFee.window.first" to R.string.card_grid_fee_window_first,
+        "gridFee.window.next" to R.string.card_grid_fee_window_next,
+        "market.included" to R.string.card_market_included,
+        "settings.value.unset" to R.string.card_settings_value_unset
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

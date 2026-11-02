@@ -675,6 +675,11 @@
   <string name="if_not_ready_ask">Demander</string>
   <string name="if_not_ready_release">Lever l\'objectif de soutirage</string>
   <string name="if_not_ready_hold">Garder l\'objectif de soutirage</string>
+  <string name="card_grid_fee_percent" formatted="false">Frais de réseau, % du prix spot</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Certains gestionnaires de réseau facturent une partie des frais de réseau en pourcentage du prix spot. Elle s\'ajoute aux frais de réseau.</string>
+  <string name="card_grid_fee_high" formatted="false">Frais de réseau en heures de pointe</string>
+  <string name="card_grid_fee_high_help" formatted="false">Remplace les frais de réseau pendant les heures de pointe.</string>
+  <string name="card_grid_fee_window" formatted="false">Heures de pointe</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">En semaine</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Tous les jours</string>
@@ -767,4 +772,10 @@
   <string name="card_power_legend_marks" formatted="false">L\'objectif de soutirage a freiné (point) ou mis en pause (anneau) la recharge</string>
   <string name="setup_demand_grid_power_text">Le tarif de puissance ou l\'objectif de soutirage a besoin de la puissance réseau totale du site pour être mesuré.</string>
   <string name="setup_demand_grid_power_action">Définir la puissance réseau totale</string>
+  <string name="card_grid_fee_window_help" formatted="false">Les heures où votre gestionnaire de réseau facture ses frais plus élevés. Une fin avant le début passe minuit, et la nuit compte pour le jour où elle commence.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Un choix courant. Vérifiez-le dans le tarif de votre gestionnaire de réseau.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Les frais de pointe ne s\'appliquent que pendant leurs heures. Confirmez d\'abord les heures, puis les frais.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Suivant</string>
+  <string name="card_market_included" formatted="false">Inclus dans le prix</string>
+  <string name="card_settings_value_unset" formatted="false">Non défini</string>
 </resources>

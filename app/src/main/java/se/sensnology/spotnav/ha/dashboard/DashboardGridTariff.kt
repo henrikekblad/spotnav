@@ -104,7 +104,8 @@ internal data class GridTariffFee(val policy: String, val explicitValue: Double?
 
 /**
  * The dashboard's `grid_tariff` block (asked for with the `reads` value `grid_tariff`): the electricity price's grid
- * tariff and, since 2.4, its demand charge with the site's import target. Read strictly, as the card does: a block this
+ * tariff (a percentage of spot, a high-load fee and its hours) and, since 2.4, its demand charge with the site's import
+ * target. Read strictly, as the card does: a block this
  * app cannot read is no block at all.
  */
 internal data class DashboardGridTariff(
@@ -118,14 +119,45 @@ internal data class DashboardGridTariff(
     val demand: DemandBlock?,
     val writable: Boolean
 ) {
+    /** Whether the area's published price already holds the grid fee: the tariff's rows are then locked. */
+    val included: Boolean get() = transferPercent.policy == "included" || transferHigh.policy == "included"
+
+    /**
+     * The body of `update_grid_tariff` with the tariff as stored (the card's `storedBody`): a write replaces the three
+     * parts in full, so every change is made on the block held when it is sent. The demand charge's parts go only to a
+     * Home Assistant that states them (an older one refuses the key, and keeps its parts without it).
+     */
+    fun storedBody(): JSONObject = JSONObject()
+        .put("transfer_percent", transferPercent.toJson())
+        .put("transfer_high", transferHigh.toJson())
+        .put("high_load_window", highLoadWindow?.toJson() ?: JSONObject.NULL)
+        .also { body -> demand?.let { body.put("demand_components", JSONArray(it.components.map { part -> part.toJson() })) } }
+
+    /** A fee turned on with [value], or off (`null`) keeping its stored figure, so turning it on again is one step. */
+    private fun feeChange(fee: GridTariffFee, value: Double?): JSONObject =
+        if (value == null) JSONObject().put("enabled", false).put("value", fee.explicitValue ?: JSONObject.NULL)
+        else JSONObject().put("enabled", true).put("value", value)
+
+    /** The percentage of spot set (`null` is off), the rest as stored (the card's `withPercent`). */
+    fun bodyWithPercent(value: Double?): JSONObject = storedBody().put("transfer_percent", feeChange(transferPercent, value))
+
+    /**
+     * The high-load fee set (`null` is off), with [window] when the person has just confirmed one, else the stored
+     * window (the card's `withHigh`). Home Assistant refuses a fee that is on without a window; none is made up here.
+     */
+    fun bodyWithHigh(value: Double?, window: HighLoadWindow? = null): JSONObject =
+        storedBody().put("transfer_high", feeChange(transferHigh, value)).also { body ->
+            window?.let { body.put("high_load_window", it.toJson()) }
+        }
+
+    /** The high-load hours set, the fees as stored (the card's `withWindow`). */
+    fun bodyWithWindow(window: HighLoadWindow): JSONObject = storedBody().put("high_load_window", window.toJson())
+
     /**
      * The body of `update_grid_tariff` with the demand charge's parts set to [components] and the rest as stored (the
      * card's `withComponents`): a write replaces the three fees in full, so they are sent as read.
      */
-    fun bodyWith(components: List<DemandComponent>): JSONObject = JSONObject()
-        .put("transfer_percent", transferPercent.toJson())
-        .put("transfer_high", transferHigh.toJson())
-        .put("high_load_window", highLoadWindow?.toJson() ?: JSONObject.NULL)
+    fun bodyWith(components: List<DemandComponent>): JSONObject = storedBody()
         .put("demand_components", JSONArray(components.map { it.toJson() }))
 
     /** The part at [index] replaced (`null` removes it; an index past the end adds one), the rest as stored. */

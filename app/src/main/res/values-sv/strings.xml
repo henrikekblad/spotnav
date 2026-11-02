@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Fråga</string>
   <string name="if_not_ready_release">Släpp effektmålet</string>
   <string name="if_not_ready_hold">Håll effektmålet</string>
+  <string name="card_grid_fee_percent" formatted="false">Nätavgift, % av spotpriset</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Vissa nätbolag tar ut en del av nätavgiften som en andel av spotpriset. Den läggs till ovanpå nätavgiften.</string>
+  <string name="card_grid_fee_high" formatted="false">Nätavgift under höglasttid</string>
+  <string name="card_grid_fee_high_help" formatted="false">Ersätter nätavgiften under höglasttid.</string>
+  <string name="card_grid_fee_window" formatted="false">Höglasttid</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Vardagar</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Alla dagar</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet höll nere (prick) eller pausade (ring) laddningen</string>
   <string name="setup_demand_grid_power_text">Effektavgiften eller effektmålet kan bara mätas när anläggningen har nätets totala effekt.</string>
   <string name="setup_demand_grid_power_action">Ange nätets totala effekt</string>
+  <string name="card_grid_fee_window_help" formatted="false">Timmarna då ditt nätbolag tar ut sin högre avgift. Ett slut före starten går över midnatt, och natten räknas till dagen den börjar.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Ett vanligt val. Kontrollera mot ditt nätbolags tariff.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Avgiften gäller bara under höglasttiden. Bekräfta tiderna först, sedan avgiften.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Nästa</string>
+  <string name="card_market_included" formatted="false">Ingår i priset</string>
+  <string name="card_settings_value_unset" formatted="false">Inte inställt</string>
 </resources>

@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Spør</string>
   <string name="if_not_ready_release">Slipp effektmålet</string>
   <string name="if_not_ready_hold">Hold effektmålet</string>
+  <string name="card_grid_fee_percent" formatted="false">Nettleie, % av spotprisen</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Noen nettselskaper tar en del av nettleien som en andel av spotprisen. Den legges til i tillegg til nettleien.</string>
+  <string name="card_grid_fee_high" formatted="false">Nettleie i høylasttimer</string>
+  <string name="card_grid_fee_high_help" formatted="false">Erstatter nettleien i høylasttimene.</string>
+  <string name="card_grid_fee_window" formatted="false">Høylasttimer</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Hverdager</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Alle dager</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prikk) eller pauset (ring) ladingen</string>
   <string name="setup_demand_grid_power_text">Effektleddet eller effektmålet trenger anleggets samlede netteffekt for å kunne måles.</string>
   <string name="setup_demand_grid_power_action">Angi nettets samlede effekt</string>
+  <string name="card_grid_fee_window_help" formatted="false">Timene nettselskapet ditt tar sin høyere avgift. En slutt før starten går over midnatt, og natten regnes til dagen den begynner.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Et vanlig valg. Sjekk det mot nettselskapets tariff.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Høylastavgiften gjelder bare i høylasttimene. Bekreft timene først, deretter avgiften.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Neste</string>
+  <string name="card_market_included" formatted="false">Inkludert i prisen</string>
+  <string name="card_settings_value_unset" formatted="false">Ikke angitt</string>
 </resources>

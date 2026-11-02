@@ -56,6 +56,10 @@ whose `reads` names `price_provider`) says Nord Pool prices the area, except
 in the `addnordpool` scenario, an area with no source of its own: the relay
 still serves it and the notice asks for Nord Pool to be added.
 
+The `gridfee` scenario is Home Assistant 2.3's grid tariff: its `grid_tariff` block (sent only to a request whose
+`reads` names it) starts with a percentage of spot on and the high-load fee off with no hours, and
+`update_grid_tariff` writes it on its write revision, refusing a high-load fee that is on without hours.
+
 The `demand` scenario is Home Assistant 2.4's demand charge and import target:
 its `grid_tariff` block (sent only to a request whose `reads` names it) is the
 pilot's two-part tariff, written with `update_grid_tariff`; `get_power_month`
@@ -100,6 +104,7 @@ DASHBOARD_BY_SCENARIO = {
     "started": "start_idle.json",
     "oldwebhook": "cheapest_no_site.json",
     "demand": "cheapest_direct_site_admin.json",
+    "gridfee": "cheapest_direct_site_admin.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -315,6 +320,38 @@ def plan_preview_body(payload: dict) -> dict:
     }}
 
 
+#: The `gridfee` scenario's grid tariff (HA 2.3), as `update_grid_tariff` last wrote it.
+GRID_FEE = {
+    "entry_id": "price_a", "write_revision": 0,
+    "transfer_percent": {"policy": "manual", "explicit_value": 5.0, "effective_value": 5.0, "unit": "%"},
+    "transfer_high": {"policy": "off", "explicit_value": None, "effective_value": None, "unit": "öre/kWh"},
+    "high_load_window": None,
+    "writable": True,
+}
+
+
+def update_grid_fee(payload: dict) -> tuple[int, dict]:
+    """`update_grid_tariff` (HA 2.3): the three parts in full, compare-and-set on the write revision."""
+    answer = {"action": "update_grid_tariff", "field_errors": []}
+    if payload.get("expected_write_revision") != GRID_FEE["write_revision"]:
+        return 409, {**answer, "ok": False, "error": "revision_conflict", "grid_tariff": GRID_FEE}
+    body = payload.get("grid_tariff") or {}
+    if set(body) != {"transfer_percent", "transfer_high", "high_load_window"}:
+        return 400, {**answer, "ok": False, "error": "invalid_fiscal", "grid_tariff": GRID_FEE,
+                     "field_errors": [{"field": "grid_tariff", "code": "invalid_value"}]}
+    high = body["transfer_high"]
+    if high.get("enabled") and body["high_load_window"] is None:
+        return 400, {**answer, "ok": False, "error": "invalid_fiscal", "grid_tariff": GRID_FEE,
+                     "field_errors": [{"field": "high_load_window", "code": "invalid_value"}]}
+    for key in ("transfer_percent", "transfer_high"):
+        fee = body[key]
+        GRID_FEE[key] = dict(GRID_FEE[key], policy="manual" if fee["enabled"] else "off", explicit_value=fee["value"],
+                             effective_value=fee["value"] if fee["enabled"] else None)
+    GRID_FEE["high_load_window"] = body["high_load_window"]
+    GRID_FEE["write_revision"] += 1
+    return 200, {**answer, "ok": True, "error": None, "grid_tariff": GRID_FEE}
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -343,8 +380,10 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["phase_switching"] = {"value": False, "writable": True}
     if scenario == "ownmode":
         body["status"] = _own_mode_status()
-    # The grid tariff with the demand charge and the import target (HA 2.4), only to an app that reads it.
+    # The grid tariff, only to an app that reads it: HA 2.3's fees, or 2.4's with the demand charge and import target.
     body.pop("grid_tariff", None)
+    if scenario == "gridfee" and "grid_tariff" in (reads or []):
+        body["grid_tariff"] = GRID_FEE
     if scenario == "demand":
         if "grid_tariff" in (reads or []):
             body["grid_tariff"] = _demand_tariff()
@@ -457,6 +496,10 @@ SCENARIOS: dict[str, Charger] = {
     "addnordpool": Charger(
         "Utan priskälla",
         why="an area with no price source of its own in Home Assistant: the notice asking for Nord Pool",
+    ),
+    "gridfee": Charger(
+        "Nätavgift",
+        why="the grid tariff (HA 2.3): the grid fee as a percentage of spot, the high-load fee and its hours",
     ),
     "demand": Charger(
         "Effektmål",
@@ -812,10 +855,12 @@ class Handler(BaseHTTPRequestHandler):
                     self._json(200, plan_preview_body(payload))
                     return
                 if action == "update_grid_tariff":
-                    if key != "demand":
-                        self._json(400, {"ok": False, "error": "spotnav_no_price_entry", "action": action})
-                    else:
+                    if key == "gridfee":
+                        self._json(*update_grid_fee(payload))
+                    elif key == "demand":
                         self._json(*update_grid_tariff(payload))
+                    else:
+                        self._json(400, {"ok": False, "error": "spotnav_no_price_entry", "action": action})
                     return
                 if action == "release_import_target":
                     if key != "demand":

@@ -235,8 +235,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 pairedCards.show(dashboard)
                 // Where the price lives (the electricity price the charger uses), above the area and fees.
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
-                // The demand charge's parts under the fees (Home Assistant 2.4).
-                dashboard?.let { pairedPrice?.showDemand(it) }
+                // The grid tariff beside the grid fee: a percentage of spot, the high-load fee and its hours, and the demand charge.
+                dashboard?.let { pairedPrice?.showTariff(it) }
                 // Where the area's prices come from, and Home Assistant's notice when it has none of its own.
                 dashboard?.let {
                     val areaId = it.market.areaId
@@ -344,7 +344,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 }
             )
             // The electricity price the charger uses: chosen, or the same-area question answered, the card's way.
-            // The demand charge's parts, written with the grid tariff.
+            // The grid tariff, written whole with the part changed.
             pairedPrice?.attachTariffWrite { revision, body, done ->
                 session.updateGridTariff(revision, body) { outcome ->
                     if (isDestroyed || viewGeneration != settingsGeneration) return@updateGridTariff

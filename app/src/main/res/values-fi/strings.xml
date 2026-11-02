@@ -667,6 +667,11 @@
   <string name="if_not_ready_ask">Kysy</string>
   <string name="if_not_ready_release">Ohita tehotavoite</string>
   <string name="if_not_ready_hold">Pidä tehotavoite</string>
+  <string name="card_grid_fee_percent" formatted="false">Siirtomaksu, % spot-hinnasta</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Jotkin verkkoyhtiöt perivät osan siirtomaksusta osuutena spot-hinnasta. Se lisätään siirtomaksun päälle.</string>
+  <string name="card_grid_fee_high" formatted="false">Siirtomaksu huippukuormitustunteina</string>
+  <string name="card_grid_fee_high_help" formatted="false">Korvaa siirtomaksun huippukuormitustunteina.</string>
+  <string name="card_grid_fee_window" formatted="false">Huippukuormitustunnit</string>
   <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
   <string name="card_grid_fee_window_weekdays" formatted="false">Arkipäivät</string>
   <string name="card_grid_fee_window_every_day" formatted="false">Joka päivä</string>
@@ -759,4 +764,10 @@
   <string name="card_power_legend_marks" formatted="false">Tehotavoite rajoitti (piste) tai keskeytti (rengas) latauksen</string>
   <string name="setup_demand_grid_power_text">Tehomaksu tai tehotavoite tarvitsee kohteen verkon kokonaistehon, jotta sen voi mitata.</string>
   <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
+  <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Huippukuormitusmaksu koskee vain sen tunteja. Vahvista ensin tunnit, sitten maksu.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Seuraava</string>
+  <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
+  <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
 </resources>
