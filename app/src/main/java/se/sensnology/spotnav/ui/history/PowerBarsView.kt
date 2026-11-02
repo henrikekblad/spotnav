@@ -216,6 +216,6 @@ internal class PowerBarsView(context: Context) : View(context) {
         const val TOP_ROOM_DP = 16
         const val LABEL_ROOM_DP = 16
         const val MARK_ROOM_DP = 10
-        const val AXIS_DP = 34
+        const val AXIS_DP = 48
     }
 }
