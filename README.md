@@ -69,6 +69,19 @@ Requires JDK 17 and Android SDK 36.
 
 The APK is written to `app/build/outputs/apk/debug/`. See [PRIVACY.md](PRIVACY.md) for what the app stores and sends.
 
+## Support SpotNav
+
+- **Report a problem.** Open an issue with the [bug report form](https://github.com/henrikekblad/spotnav/issues/new/choose),
+  and say which app version and phone you use. For a problem with charging control, the Home Assistant
+  integration's [debug file](https://github.com/henrikekblad/spotnav-home-assistant#support-spotnav) helps most.
+- **Contribute.** Pull requests are welcome, for code as well as translations (`app/src/main/res/values-*/strings.xml`);
+  see [Build locally](#build-locally).
+- **Star the repository.** Stars help others find SpotNav on GitHub.
+- **Rate the app** on [Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav). A review helps
+  others decide.
+- **Sponsor.** If SpotNav saves you money, [GitHub Sponsors](https://github.com/sponsors/henrikekblad) takes a
+  one-time or monthly contribution and keeps the project going.
+
 ## Disclaimer
 
 SpotNav is not affiliated with ENTSO-E, the ECB, Nord Pool, electricity retailers or grid operators. Prices and charging calculations are guidance only; always verify them against your agreement and invoice.
