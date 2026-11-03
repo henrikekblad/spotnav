@@ -10,7 +10,7 @@ import se.sensnology.spotnav.ui.common.ViewScope
 
 /**
  * What Home Assistant asks the person to do about this charger, under the status line: the button of a charger's own
- * mode that works against SpotNav, "Release the import target tonight" while the import target would make the plan
+ * mode that works against SpotNav, "Release the import target for this charge" while the import target would make the plan
  * miss its departure, and the "Get started" line that opens the rows left to set up. Each is hidden
  * unless there is something to act on.
  */
@@ -49,7 +49,7 @@ internal class ChargerAttention(scope: ViewScope) : ViewScope(scope) {
         ownMode.isEnabled = enabled
     }
 
-    /** "Release the import target tonight" with [label], or hidden for `null`. */
+    /** "Release the import target for this charge" with [label], or hidden for `null`. */
     fun showRelease(label: String?, onClick: () -> Unit) {
         release.visibility = if (label == null) View.GONE else View.VISIBLE
         release.text = label.orEmpty()

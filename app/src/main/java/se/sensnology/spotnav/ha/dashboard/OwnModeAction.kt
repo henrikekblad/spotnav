@@ -42,7 +42,7 @@ internal data class OwnModeAction(val entityId: String, val value: String, val l
 }
 
 /**
- * "Release the import target tonight" (the card's release button): offered while the site's import target holds or
+ * "Release the import target for this charge" (the card's release button): offered while the site's import target holds or
  * pauses the charge (`import_target_held`, `import_target_paused` with `releasable`), and beside `import_target_at_risk`
  * where the plan asks (`releasable` not `false`), to any user, and only where the dashboard states
  * `capabilities.release_import_target`. It is sent only after a confirmation that says what it means ([confirmText]).

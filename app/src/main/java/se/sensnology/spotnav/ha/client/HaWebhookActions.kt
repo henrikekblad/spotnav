@@ -181,7 +181,7 @@ internal object OwnModeFix {
 
 /**
  * `release_import_target`: the site's import target set aside for this charger's charge until its plan's departure,
- * the button beside the status line `import_target_at_risk` ("Release the import target tonight"). Any user may press
+ * the button beside the status line `import_target_at_risk` ("Release the import target for this charge"). Any user may press
  * it, as a Start. Offered only where the dashboard states `capabilities.release_import_target`.
  */
 internal object ReleaseImportTarget {

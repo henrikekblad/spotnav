@@ -316,7 +316,7 @@ internal class ChargerDashboardController(
     }
 
     /**
-     * "Release the import target tonight": what it would mean, and Avbryt or Släpp; only Släpp sends it (an accidental
+     * "Release the import target for this charge": what it would mean, and Avbryt or Släpp; only Släpp sends it (an accidental
      * press must not cost the month's peak), as the card asks.
      */
     private fun confirmRelease() {

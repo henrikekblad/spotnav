@@ -6,7 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import se.sensnology.spotnav.testing.HaFixtures
 
-/** "Release the import target tonight": beside the at-risk line where the plan asks, and only where Home Assistant answers it. */
+/** "Release the import target for this charge": beside the at-risk line where the plan asks, and only where Home Assistant answers it. */
 class ImportTargetReleaseTest {
     private fun dashboard(releasable: Any?, capability: Boolean = true): Dashboard {
         val json = HaFixtures.json("webhook/dashboard.json")
@@ -18,8 +18,8 @@ class ImportTargetReleaseTest {
     }
 
     @Test fun offeredBesideTheAtRiskLineWhereThePlanAsks() {
-        assertEquals("Släpp effektmålet i natt", ImportTargetRelease.label(dashboard(true), "sv"))
-        assertEquals("Release the import target tonight", ImportTargetRelease.label(dashboard(null), "en"))
+        assertEquals("Släpp effektmålet för den här laddningen", ImportTargetRelease.label(dashboard(true), "sv"))
+        assertEquals("Release the import target for this charge", ImportTargetRelease.label(dashboard(null), "en"))
     }
 
     @Test fun notOfferedWhereThePlanHoldsTheTargetOrHomeAssistantCannot() {
@@ -44,7 +44,7 @@ class ImportTargetReleaseConfirmTest {
         .put("set_kw", 6.0).put("releasable", releasable).put("release_until", until ?: JSONObject.NULL).put("release_peak_kw", 11.0)
 
     @Test fun offeredUnderAHeldOrPausedLineThatIsReleasable() {
-        assertEquals("Släpp effektmålet i natt", ImportTargetRelease.label(dashboard("import_target_held", held(true, null)), "sv"))
+        assertEquals("Släpp effektmålet för den här laddningen", ImportTargetRelease.label(dashboard("import_target_held", held(true, null)), "sv"))
         assertNull(ImportTargetRelease.label(dashboard("import_target_held", held(false, null)), "sv"))
         assertNull(ImportTargetRelease.label(dashboard("import_target_paused", JSONObject().put("target_kw", 6.0)), "sv"))
     }
