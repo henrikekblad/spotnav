@@ -147,17 +147,18 @@ internal data class DashboardGridTariff(
     /** The percentage of spot set (`null` is off), the rest as stored (the card's `withPercent`). */
     fun bodyWithPercent(value: Double?): JSONObject = storedBody().put("transfer_percent", feeChange(transferPercent, value))
 
-    /**
-     * The high-load fee set (`null` is off), with [window] when the person has just confirmed one, else the stored
-     * window (the card's `withHigh`). Home Assistant refuses a fee that is on without a window; none is made up here.
-     */
-    fun bodyWithHigh(value: Double?, window: HighLoadWindow? = null): JSONObject =
-        storedBody().put("transfer_high", feeChange(transferHigh, value)).also { body ->
-            window?.let { body.put("high_load_window", it.toJson()) }
-        }
+    /** The high-load fee on with [value] over [window], the rest as stored: the one dialog's Save (the card's `withHighLoad`). */
+    fun bodyWithHighLoad(value: Double, window: HighLoadWindow): JSONObject = storedBody()
+        .put("transfer_high", JSONObject().put("enabled", true).put("value", value))
+        .put("high_load_window", window.toJson())
 
-    /** The high-load hours set, the fees as stored (the card's `withWindow`). */
-    fun bodyWithWindow(window: HighLoadWindow): JSONObject = storedBody().put("high_load_window", window.toJson())
+    /**
+     * The high-load fee off (its figure kept, as any fee turned off) and the hours cleared: the dialog's Remove (the
+     * card's `withoutHighLoad`).
+     */
+    fun bodyWithoutHighLoad(): JSONObject = storedBody()
+        .put("transfer_high", feeChange(transferHigh, null))
+        .put("high_load_window", JSONObject.NULL)
 
     /**
      * The body of `update_grid_tariff` with the demand charge's parts set to [components] and the rest as stored (the

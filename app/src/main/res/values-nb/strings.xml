@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Angi nettets samlede effekt</string>
   <string name="card_grid_fee_window_help" formatted="false">Timene nettselskapet ditt tar sin høyere avgift. En slutt før starten går over midnatt, og natten regnes til dagen den begynner.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Et vanlig valg. Sjekk det mot nettselskapets tariff.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Høylastavgiften gjelder bare i høylasttimene. Bekreft timene først, deretter avgiften.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Neste</string>
   <string name="card_market_included" formatted="false">Inkludert i prisen</string>
   <string name="card_settings_value_unset" formatted="false">Ikke angitt</string>
   <string name="card_settings_error_range" formatted="false">Mellom {min} og {max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
   <string name="card_release_confirm_release" formatted="false">Slipp</string>
   <string name="card_settings_cancel" formatted="false">Avbryt</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Avgift</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Fjern høylastavgiften</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Angi avgiften i høylasttimene.</string>
 </resources>

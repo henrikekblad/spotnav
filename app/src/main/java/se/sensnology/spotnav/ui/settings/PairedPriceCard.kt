@@ -14,7 +14,6 @@ import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
-import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceProvider
 import se.sensnology.spotnav.ha.dashboard.DashboardPriceSource
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
@@ -120,8 +119,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         for (row in tariffText().rows(block)) {
             val edit: (() -> Unit)? = if (row.included || !block.writable) null else when (row.key) {
                 GridTariffText.Key.PERCENT -> ({ editPercent() })
-                GridTariffText.Key.HIGH -> ({ editHigh() })
-                GridTariffText.Key.WINDOW -> ({ editWindow() })
+                GridTariffText.Key.HIGH, GridTariffText.Key.WINDOW -> ({ editHighLoad() })
             }
             settingRow(tariffRows, row.label, row.value, onTap = edit)
         }
@@ -188,40 +186,15 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     }
 
     /**
-     * The high-load fee. With no hours stored, turning it on asks for the hours first (prefilled with a common window
-     * the person confirms), then the fee; one write carries both, and Cancel at either step writes nothing.
+     * The grid fee in high-load hours and its hours, in one dialog, from either row: Save writes the fee and the hours in
+     * one write, Remove turns the fee off and clears the hours in one write.
      */
-    private fun editHigh() {
+    private fun editHighLoad() {
         val block = tariff ?: return
-        if (block.transferHigh.policy == "off" && block.highLoadWindow == null) {
-            val words = cardWords()
-            editHighLoadWindow(words, null, intro = words.say("gridFee.window.first"), positive = words.say("gridFee.window.next")) { window, done ->
-                done(null)
-                editHighFigure(window)
-            }
-            return
-        }
-        editHighFigure(null)
-    }
-
-    /** The high-load fee's figure; [window] is hours just confirmed in the step before, else the stored ones are kept. */
-    private fun editHighFigure(window: HighLoadWindow?) {
-        val fee = tariff?.transferHigh ?: return
-        val words = cardWords()
-        editNumber(
-            words.say("gridFee.high"), NumberSpec(0.0, 100000.0, 2), fee.unit.orEmpty(), fee.effectiveValue ?: fee.explicitValue,
-            t(R.string.paired_error_number), help = words.say("gridFee.high.help"),
-            // Turning it on after confirming the hours: there is nothing to turn off.
-            noneLabel = if (window == null) words.say("settings.value.off") else null,
-            noneChecked = window == null && fee.effectiveValue == null
-        ) { value, done -> writeTariffChange({ it.bodyWithHigh(value, window) }, done) }
-    }
-
-    /** The high-load hours on their own: Save writes them. */
-    private fun editWindow() {
-        val block = tariff ?: return
-        editHighLoadWindow(cardWords(), block.highLoadWindow) { window, done ->
-            writeTariffChange({ it.bodyWithWindow(window) }, done)
+        editHighLoad(cardWords(), block.transferHigh, block.highLoadWindow) { choice, done ->
+            writeTariffChange({ held ->
+                if (choice == null) held.bodyWithoutHighLoad() else held.bodyWithHighLoad(choice.first, choice.second)
+            }, done)
         }
     }
 

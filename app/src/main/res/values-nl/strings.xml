@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
   <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Het piektarief geldt alleen in zijn uren. Bevestig eerst de uren, dan het tarief.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Volgende</string>
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
   <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
   <string name="card_settings_error_range" formatted="false">Tussen {min} en {max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Afnamedoel loslaten\?</string>
   <string name="card_release_confirm_release" formatted="false">Loslaten</string>
   <string name="card_settings_cancel" formatted="false">Annuleren</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Tarief</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Piektarief verwijderen</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Vul het tarief voor de piekuren in.</string>
 </resources>

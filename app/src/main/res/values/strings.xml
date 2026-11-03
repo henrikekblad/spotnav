@@ -778,8 +778,6 @@
   <string name="setup_demand_grid_power_action">Set total grid power</string>
   <string name="card_grid_fee_window_help" formatted="false">The hours your grid company charges its higher fee in. An end before the start runs over midnight, and the night counts as the day it starts on.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">A common choice. Check it against your grid company\'s tariff.</string>
-  <string name="card_grid_fee_window_first" formatted="false">The high-load fee applies only in its hours. Confirm the hours first, then the fee.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Next</string>
   <string name="card_market_included" formatted="false">Included in the price</string>
   <string name="card_settings_value_unset" formatted="false">Not set</string>
   <string name="card_settings_error_range" formatted="false">Between {min} and {max}.</string>
@@ -802,4 +800,7 @@
   <string name="card_release_confirm_title" formatted="false">Release the import target\?</string>
   <string name="card_release_confirm_release" formatted="false">Release</string>
   <string name="card_settings_cancel" formatted="false">Cancel</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Fee</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Remove the high-load fee</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Enter the fee for the high-load hours.</string>
 </resources>

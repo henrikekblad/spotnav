@@ -774,8 +774,6 @@
   <string name="setup_demand_grid_power_action">Définir la puissance réseau totale</string>
   <string name="card_grid_fee_window_help" formatted="false">Les heures où votre gestionnaire de réseau facture ses frais plus élevés. Une fin avant le début passe minuit, et la nuit compte pour le jour où elle commence.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Un choix courant. Vérifiez-le dans le tarif de votre gestionnaire de réseau.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Les frais de pointe ne s\'appliquent que pendant leurs heures. Confirmez d\'abord les heures, puis les frais.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Suivant</string>
   <string name="card_market_included" formatted="false">Inclus dans le prix</string>
   <string name="card_settings_value_unset" formatted="false">Non défini</string>
   <string name="card_settings_error_range" formatted="false">Entre {min} et {max}.</string>
@@ -798,4 +796,7 @@
   <string name="card_release_confirm_title" formatted="false">Lever l\'objectif de soutirage \?</string>
   <string name="card_release_confirm_release" formatted="false">Lever</string>
   <string name="card_settings_cancel" formatted="false">Annuler</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Frais</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Supprimer les frais en heures de pointe</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Saisissez les frais en heures de pointe.</string>
 </resources>

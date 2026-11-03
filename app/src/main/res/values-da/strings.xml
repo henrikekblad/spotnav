@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Angiv nettets samlede effekt</string>
   <string name="card_grid_fee_window_help" formatted="false">De timer, dit netselskab opkræver sin højere tarif i. En slutning før starten går over midnat, og natten regnes til den dag, den begynder.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Et almindeligt valg. Tjek det mod dit netselskabs tarif.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Spidslasttariffen gælder kun i spidslasttimerne. Bekræft timerne først, derefter tariffen.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Næste</string>
   <string name="card_market_included" formatted="false">Indgår i prisen</string>
   <string name="card_settings_value_unset" formatted="false">Ikke angivet</string>
   <string name="card_settings_error_range" formatted="false">Mellem {min} og {max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
   <string name="card_release_confirm_release" formatted="false">Slip</string>
   <string name="card_settings_cancel" formatted="false">Annuller</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Afgift</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Fjern spidslastafgiften</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Angiv afgiften i spidslasttimerne.</string>
 </resources>

@@ -774,8 +774,6 @@
   <string name="setup_demand_grid_power_action">Indicar la potencia total de red</string>
   <string name="card_grid_fee_window_help" formatted="false">Las horas en que tu distribuidora cobra su peaje más alto. Un fin anterior al inicio pasa la medianoche, y la noche cuenta para el día en que empieza.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Una elección habitual. Compruébala con la tarifa de tu distribuidora.</string>
-  <string name="card_grid_fee_window_first" formatted="false">El peaje de horas punta solo se aplica en sus horas. Confirma primero las horas y después el peaje.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Siguiente</string>
   <string name="card_market_included" formatted="false">Incluido en el precio</string>
   <string name="card_settings_value_unset" formatted="false">Sin definir</string>
   <string name="card_settings_error_range" formatted="false">Entre {min} y {max}.</string>
@@ -798,4 +796,7 @@
   <string name="card_release_confirm_title" formatted="false">¿Dejar el objetivo de consumo\?</string>
   <string name="card_release_confirm_release" formatted="false">Dejar</string>
   <string name="card_settings_cancel" formatted="false">Cancelar</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Peaje</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Quitar el peaje en horas punta</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Indica el peaje en horas punta.</string>
 </resources>

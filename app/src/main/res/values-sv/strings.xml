@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Ange nätets totala effekt</string>
   <string name="card_grid_fee_window_help" formatted="false">Timmarna då ditt nätbolag tar ut sin högre avgift. Ett slut före starten går över midnatt, och natten räknas till dagen den börjar.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Ett vanligt val. Kontrollera mot ditt nätbolags tariff.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Avgiften gäller bara under höglasttiden. Bekräfta tiderna först, sedan avgiften.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Nästa</string>
   <string name="card_market_included" formatted="false">Ingår i priset</string>
   <string name="card_settings_value_unset" formatted="false">Inte inställt</string>
   <string name="card_settings_error_range" formatted="false">Mellan {min} och {max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Släppa effektmålet\?</string>
   <string name="card_release_confirm_release" formatted="false">Släpp</string>
   <string name="card_settings_cancel" formatted="false">Avbryt</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Avgift</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Ta bort höglastavgift</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Ange avgiften under höglasttid.</string>
 </resources>

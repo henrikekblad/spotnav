@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
   <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Huippukuormitusmaksu koskee vain sen tunteja. Vahvista ensin tunnit, sitten maksu.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Seuraava</string>
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
   <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
   <string name="card_settings_error_range" formatted="false">Väliltä {min}–{max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Ohitetaanko tehotavoite\?</string>
   <string name="card_release_confirm_release" formatted="false">Ohita</string>
   <string name="card_settings_cancel" formatted="false">Peruuta</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Maksu</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Poista huippukuormitusmaksu</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Anna huippukuormitustuntien maksu.</string>
 </resources>

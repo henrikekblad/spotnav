@@ -766,8 +766,6 @@
   <string name="setup_demand_grid_power_action">Gesamte Netzleistung festlegen</string>
   <string name="card_grid_fee_window_help" formatted="false">Die Stunden, in denen Ihr Netzbetreiber sein höheres Entgelt berechnet. Ein Ende vor dem Beginn reicht über Mitternacht, und die Nacht zählt zu dem Tag, an dem sie beginnt.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Eine übliche Wahl. Prüfen Sie sie anhand des Tarifs Ihres Netzbetreibers.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Das Hochlastentgelt gilt nur in seinen Stunden. Bestätigen Sie zuerst die Stunden, dann das Entgelt.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Weiter</string>
   <string name="card_market_included" formatted="false">Im Preis enthalten</string>
   <string name="card_settings_value_unset" formatted="false">Nicht festgelegt</string>
   <string name="card_settings_error_range" formatted="false">Zwischen {min} und {max}.</string>
@@ -790,4 +788,7 @@
   <string name="card_release_confirm_title" formatted="false">Bezugsziel aussetzen\?</string>
   <string name="card_release_confirm_release" formatted="false">Aussetzen</string>
   <string name="card_settings_cancel" formatted="false">Abbrechen</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Entgelt</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Hochlastentgelt entfernen</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Geben Sie das Entgelt für die Hochlaststunden ein.</string>
 </resources>
