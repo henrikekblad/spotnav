@@ -771,4 +771,6 @@
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
   <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
   <string name="card_settings_error_range" formatted="false">Väliltä {min}–{max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Tuntikeskiteho verkosta, jonka alle haluat pysyä. Kuormanhallinta rajoittaa latureita niin, että tunti pysyy sen alla, ja keskeyttää latauksen seuraavaan tasatuntiin, kun edes sen vähimmäisvirta ei mahdu. Auton vähimmäistason alapuolella se latautuu heti; Lähtö kertoo, mitä tapahtuu, jos auto ei ehdi valmiiksi.</string>
 </resources>

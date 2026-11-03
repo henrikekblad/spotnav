@@ -771,4 +771,6 @@
   <string name="card_market_included" formatted="false">Inkludert i prisen</string>
   <string name="card_settings_value_unset" formatted="false">Ikke angitt</string>
   <string name="card_settings_error_range" formatted="false">Mellom {min} og {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Timesgjennomsnittet fra nettet du vil holde deg under. Lastbalanseringen holder laderne så timen holder seg under det, og pauser en lading til neste hele time når ikke engang den laveste strømmen får plass. Under bilens laveste nivå lader den med en gang; Avreise sier hva som skjer hvis bilen ikke rekker å bli ferdig.</string>
 </resources>

@@ -779,4 +779,6 @@
   <string name="card_market_included" formatted="false">Incluido en el precio</string>
   <string name="card_settings_value_unset" formatted="false">Sin definir</string>
   <string name="card_settings_error_range" formatted="false">Entre {min} y {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">La media horaria de consumo de la red por debajo de la que quieres quedarte. El equilibrado de carga limita los cargadores para que la hora quede por debajo y pausa una carga hasta la próxima hora cuando ni siquiera su corriente mínima cabe. Por debajo del nivel mínimo del coche carga enseguida; Salida dice qué ocurre si el coche no puede estar listo a tiempo.</string>
 </resources>

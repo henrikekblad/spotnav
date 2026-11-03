@@ -927,7 +927,7 @@ internal class PairedSettingsCards(
         editNumber(
             label, spec, "kW", current,
             words.say("settings.error.range", "min" to spec.fieldText(IMPORT_TARGET_MIN, locale), "max" to "1000"),
-            help = words.say("site.importTarget.help"), noneLabel = words.say("settings.value.off")
+            help = t(R.string.import_target_help), noneLabel = words.say("settings.value.off")
         ) { value, done ->
             if (value == current) return@editNumber done(null)
             writeSite(SiteUpdate.importTargetRequest(current, value)) { outcome ->

@@ -783,4 +783,6 @@
   <string name="card_market_included" formatted="false">Included in the price</string>
   <string name="card_settings_value_unset" formatted="false">Not set</string>
   <string name="card_settings_error_range" formatted="false">Between {min} and {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">The hourly mean of import you want to stay under. Load balancing holds the chargers so the hour stays under it, and pauses a charge until the next hour once even its minimum current no longer fits. Below the car\'s minimum level it charges at once; Departure says what happens if the car cannot be ready in time.</string>
 </resources>

@@ -779,4 +779,6 @@
   <string name="card_market_included" formatted="false">Inclus dans le prix</string>
   <string name="card_settings_value_unset" formatted="false">Non défini</string>
   <string name="card_settings_error_range" formatted="false">Entre {min} et {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">La moyenne horaire de soutirage sous laquelle vous voulez rester. L\'équilibrage de charge retient les bornes pour que l\'heure reste en dessous, et met une recharge en pause jusqu\'à l\'heure suivante quand même son courant minimum ne tient plus. Sous le niveau minimum de la voiture, elle charge tout de suite ; Départ dit ce qui se passe si la voiture ne peut pas être prête à temps.</string>
 </resources>

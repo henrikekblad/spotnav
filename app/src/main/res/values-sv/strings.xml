@@ -771,4 +771,6 @@
   <string name="card_market_included" formatted="false">Ingår i priset</string>
   <string name="card_settings_value_unset" formatted="false">Inte inställt</string>
   <string name="card_settings_error_range" formatted="false">Mellan {min} och {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Den timmedeleffekt från nätet du vill hålla dig under. Lastbalanseringen håller laddarna så att timmen stannar under den och pausar en laddning till nästa hela timme när inte ens dess lägsta ström ryms. Under bilens lägsta nivå laddas den direkt; Avresa säger vad som händer om bilen inte hinner bli klar.</string>
 </resources>

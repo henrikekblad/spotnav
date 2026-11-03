@@ -771,4 +771,6 @@
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
   <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
   <string name="card_settings_error_range" formatted="false">Tussen {min} en {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Het uurgemiddelde van de afname waar je onder wilt blijven. De load balancing houdt de laders zo dat het uur eronder blijft, en pauzeert een laadbeurt tot het volgende uur zodra zelfs de minimumstroom niet meer past. Onder het minimumniveau van de auto laadt hij meteen; Vertrek zegt wat er gebeurt als de auto niet op tijd klaar kan zijn.</string>
 </resources>
