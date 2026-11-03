@@ -663,4 +663,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Laturin asetusta ei voitu muuttaa. Muuta se Home Assistantissa.</string>
   <string name="setup_dismiss_failed">Tallennus epäonnistui. Yritä uudelleen.</string>
+  <string name="card_grid_fee_percent" formatted="false">Siirtomaksu, % spot-hinnasta</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Jotkin verkkoyhtiöt perivät osan siirtomaksusta osuutena spot-hinnasta. Se lisätään siirtomaksun päälle.</string>
+  <string name="card_grid_fee_high" formatted="false">Siirtomaksu huippukuormitustunteina</string>
+  <string name="card_grid_fee_high_help" formatted="false">Korvaa siirtomaksun huippukuormitustunteina.</string>
+  <string name="card_grid_fee_window" formatted="false">Huippukuormitustunnit</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Arkipäivät</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Joka päivä</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Ma–la</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">koko vuoden</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">tammi</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">helmi</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">maalis</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">huhti</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">touko</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">kesä</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">heinä</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">elo</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">syys</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">loka</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">marras</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">joulu</string>
+  <string name="card_grid_fee_window_from" formatted="false">Alkaa</string>
+  <string name="card_grid_fee_window_to" formatted="false">Päättyy</string>
+  <string name="card_grid_fee_window_days" formatted="false">Päivät</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Ensimmäinen kuukausi</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Viimeinen kuukausi</string>
+  <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Huippukuormitusmaksu koskee vain sen tunteja. Vahvista ensin tunnit, sitten maksu.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Seuraava</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Alku ja päättyminen eivät voi olla sama tunti.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Sähkön hintaa muutettiin muualla, ja se on luettu uudelleen. Mitään ei tallennettu: tallenna uudelleen tehdäksesi muutoksen.</string>
+  <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
+  <string name="card_settings_value_off" formatted="false">Pois</string>
+  <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
 </resources>

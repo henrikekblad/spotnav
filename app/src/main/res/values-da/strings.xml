@@ -663,4 +663,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Kunne ikke ændre laderens indstilling. Skift den i Home Assistant.</string>
   <string name="setup_dismiss_failed">Kunne ikke gemme det. Prøv igen.</string>
+  <string name="card_grid_fee_percent" formatted="false">Nettarif, % af spotprisen</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Nogle netselskaber opkræver en del af nettariffen som en andel af spotprisen. Den lægges oven i nettariffen.</string>
+  <string name="card_grid_fee_high" formatted="false">Nettarif i spidslasttimer</string>
+  <string name="card_grid_fee_high_help" formatted="false">Erstatter nettariffen i spidslasttimerne.</string>
+  <string name="card_grid_fee_window" formatted="false">Spidslasttimer</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Hverdage</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Alle dage</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Man–lør</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">hele året</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">maj</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">Fra</string>
+  <string name="card_grid_fee_window_to" formatted="false">Til</string>
+  <string name="card_grid_fee_window_days" formatted="false">Dage</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Første måned</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Sidste måned</string>
+  <string name="card_grid_fee_window_help" formatted="false">De timer, dit netselskab opkræver sin højere tarif i. En slutning før starten går over midnat, og natten regnes til den dag, den begynder.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Et almindeligt valg. Tjek det mod dit netselskabs tarif.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Spidslasttariffen gælder kun i spidslasttimerne. Bekræft timerne først, derefter tariffen.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Næste</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Fra og Til kan ikke være samme time.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Elprisen blev ændret et andet sted og er læst igen. Intet blev gemt: gem igen for at foretage din ændring.</string>
+  <string name="card_market_included" formatted="false">Indgår i prisen</string>
+  <string name="card_settings_value_off" formatted="false">Fra</string>
+  <string name="card_settings_value_unset" formatted="false">Ikke angivet</string>
 </resources>

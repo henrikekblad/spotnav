@@ -671,4 +671,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Impossible de modifier le réglage de la borne. Modifiez-le dans Home Assistant.</string>
   <string name="setup_dismiss_failed">Enregistrement impossible. Réessayez.</string>
+  <string name="card_grid_fee_percent" formatted="false">Frais de réseau, % du prix spot</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Certains gestionnaires de réseau facturent une partie des frais de réseau en pourcentage du prix spot. Elle s\'ajoute aux frais de réseau.</string>
+  <string name="card_grid_fee_high" formatted="false">Frais de réseau en heures de pointe</string>
+  <string name="card_grid_fee_high_help" formatted="false">Remplace les frais de réseau pendant les heures de pointe.</string>
+  <string name="card_grid_fee_window" formatted="false">Heures de pointe</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">En semaine</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Tous les jours</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Lun–sam</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">toute l\'année</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">janv</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">févr</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mars</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">avr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">mai</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">juin</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">juil</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">août</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sept</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">oct</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">déc</string>
+  <string name="card_grid_fee_window_from" formatted="false">De</string>
+  <string name="card_grid_fee_window_to" formatted="false">À</string>
+  <string name="card_grid_fee_window_days" formatted="false">Jours</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Premier mois</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Dernier mois</string>
+  <string name="card_grid_fee_window_help" formatted="false">Les heures où votre gestionnaire de réseau facture ses frais plus élevés. Une fin avant le début passe minuit, et la nuit compte pour le jour où elle commence.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Un choix courant. Vérifiez-le dans le tarif de votre gestionnaire de réseau.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Les frais de pointe ne s\'appliquent que pendant leurs heures. Confirmez d\'abord les heures, puis les frais.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Suivant</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">« De » et « À » ne peuvent pas être la même heure.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Le prix de l\'électricité a été modifié ailleurs et a été relu. Rien n\'a été enregistré : enregistrez à nouveau pour appliquer votre modification.</string>
+  <string name="card_market_included" formatted="false">Inclus dans le prix</string>
+  <string name="card_settings_value_off" formatted="false">Désactivé</string>
+  <string name="card_settings_value_unset" formatted="false">Non défini</string>
 </resources>

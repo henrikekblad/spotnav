@@ -414,7 +414,12 @@ internal data class Dashboard(
     /** Phase switching for solar (`phase_switching`, see [PhaseSwitching]); `null` where it is not offered. */
     val phaseSwitching: PhaseSwitching? = null,
     /** The "Get started" rows still left (`setup.items`, see [SetupRow]); empty when none, from an older Home Assistant or unreadable. */
-    val setup: List<SetupRow> = emptyList()
+    val setup: List<SetupRow> = emptyList(),
+    /**
+     * The electricity price's grid tariff with, since 2.4, the demand charge and the site's import target
+     * (`grid_tariff`, see [DashboardGridTariff]); `null` where it is not sent or cannot be read.
+     */
+    val gridTariff: DashboardGridTariff? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -515,7 +520,8 @@ internal data class Dashboard(
                 planNotice = planNotice(json.opt("plan_notice")),
                 priceSource = DashboardPriceSource.parse(json.opt("price_source")),
                 phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching")),
-                setup = SetupRow.parse(json.opt("setup"))
+                setup = SetupRow.parse(json.opt("setup")),
+                gridTariff = DashboardGridTariff.parse(json.opt("grid_tariff"))
             )
         }
 

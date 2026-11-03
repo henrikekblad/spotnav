@@ -663,4 +663,40 @@
   </plurals>
   <string name="own_mode_fix_failed">De instelling van de lader kon niet worden gewijzigd. Wijzig haar in Home Assistant.</string>
   <string name="setup_dismiss_failed">Opslaan is mislukt. Probeer het opnieuw.</string>
+  <string name="card_grid_fee_percent" formatted="false">Nettarief, % van de spotprijs</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Sommige netbeheerders rekenen een deel van het nettarief als aandeel van de spotprijs. Het komt bovenop het nettarief.</string>
+  <string name="card_grid_fee_high" formatted="false">Nettarief in piekuren</string>
+  <string name="card_grid_fee_high_help" formatted="false">Vervangt het nettarief in de piekuren.</string>
+  <string name="card_grid_fee_window" formatted="false">Piekuren</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Werkdagen</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Elke dag</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Ma–za</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">het hele jaar</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">mrt</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">mei</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">okt</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">Van</string>
+  <string name="card_grid_fee_window_to" formatted="false">Tot</string>
+  <string name="card_grid_fee_window_days" formatted="false">Dagen</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">Eerste maand</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Laatste maand</string>
+  <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
+  <string name="card_grid_fee_window_first" formatted="false">Het piektarief geldt alleen in zijn uren. Bevestig eerst de uren, dan het tarief.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Volgende</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Van en Tot kunnen niet hetzelfde uur zijn.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">De stroomprijs is elders gewijzigd en opnieuw gelezen. Er is niets opgeslagen: sla opnieuw op om je wijziging door te voeren.</string>
+  <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
+  <string name="card_settings_value_off" formatted="false">Uit</string>
+  <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
 </resources>

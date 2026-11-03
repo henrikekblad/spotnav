@@ -35,6 +35,7 @@ import se.sensnology.spotnav.app.StoreAction
 import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
+import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
@@ -234,6 +235,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 pairedCards.show(dashboard)
                 // Where the price lives (the electricity price the charger uses), above the area and fees.
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
+                // The grid tariff beside the grid fee: a percentage of spot, the high-load fee and its hours.
+                dashboard?.let { pairedPrice?.showTariff(it) }
                 // Where the area's prices come from, and Home Assistant's notice when it has none of its own.
                 dashboard?.let {
                     val areaId = it.market.areaId
@@ -341,6 +344,14 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 }
             )
             // The electricity price the charger uses: chosen, or the same-area question answered, the card's way.
+            // The grid tariff, written whole with the part changed.
+            pairedPrice?.attachTariffWrite { revision, body, done ->
+                session.updateGridTariff(revision, body) { outcome ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@updateGridTariff
+                    done(outcome)
+                    if (outcome is GridTariffUpdate.Outcome.Updated || outcome is GridTariffUpdate.Outcome.Conflict) loadPaired()
+                }
+            }
             pairedPrice?.attachSourceWrites(
                 choose = { priceEntryId, done ->
                     session.choosePriceSource(priceEntryId) { outcome ->

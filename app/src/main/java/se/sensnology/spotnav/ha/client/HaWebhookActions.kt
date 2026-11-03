@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
 import se.sensnology.spotnav.ha.dashboard.DashboardStatus
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -170,6 +171,51 @@ internal object OwnModeFix {
         return when (head.error) {
             "spotnav_no_conflict" -> Outcome.NoConflict
             "spotnav_own_mode_failed" -> Outcome.Refused
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * `update_grid_tariff`: the electricity price's grid tariff replaced in full, its percentage of spot, high-load fee and hours
+ * (and, since 2.4, the demand charge's parts), every part as read but the one changed (`DashboardGridTariff`). Compare-and-set on the
+ * electricity price's `write_revision`; the answer carries the block read again.
+ */
+internal object GridTariffUpdate {
+    private const val REVISION_CONFLICT = "revision_conflict"
+
+    fun payload(expectedRevision: Int, body: JSONObject): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_grid_tariff")
+        WebhookReads.put(this)
+        put("expected_write_revision", expectedRevision)
+        put("grid_tariff", body)
+    }
+
+    sealed interface Outcome {
+        /** Written; [block] is the tariff read again (`null` when it could not be read). */
+        data class Updated(val block: DashboardGridTariff?) : Outcome
+
+        /** The electricity price was written elsewhere since it was read: nothing was written; [block] is the new one. */
+        data class Conflict(val block: DashboardGridTariff?) : Outcome
+
+        /** A value Home Assistant refuses (`invalid_fiscal`): nothing was written. */
+        data object Refused : Outcome
+
+        data object NotPermitted : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        val block = DashboardGridTariff.parse(head.json.opt("grid_tariff"))
+        if (head.ok) return Outcome.Updated(block)
+        return when (head.error) {
+            REVISION_CONFLICT -> Outcome.Conflict(block)
+            "invalid_fiscal" -> Outcome.Refused
+            PriceSourceUpdate.NOT_ADMIN, WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
             else -> Outcome.Failed(head.error)
         }
     }

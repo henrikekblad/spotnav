@@ -675,4 +675,40 @@
   </plurals>
   <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
   <string name="setup_dismiss_failed">Could not save that. Try again.</string>
+  <string name="card_grid_fee_percent" formatted="false">Grid fee, % of spot</string>
+  <string name="card_grid_fee_percent_help" formatted="false">Some grid companies charge part of the grid fee as a share of the spot price. It is added on top of the grid fee.</string>
+  <string name="card_grid_fee_high" formatted="false">Grid fee in high-load hours</string>
+  <string name="card_grid_fee_high_help" formatted="false">Replaces the grid fee in the high-load hours.</string>
+  <string name="card_grid_fee_window" formatted="false">High-load hours</string>
+  <string name="card_grid_fee_window_line" formatted="false">{days} {hours}, {months}</string>
+  <string name="card_grid_fee_window_weekdays" formatted="false">Weekdays</string>
+  <string name="card_grid_fee_window_every_day" formatted="false">Every day</string>
+  <string name="card_grid_fee_window_mon_sat" formatted="false">Mon–Sat</string>
+  <string name="card_grid_fee_window_all_year" formatted="false">all year</string>
+  <string name="card_grid_fee_window_month_1" formatted="false">Jan</string>
+  <string name="card_grid_fee_window_month_2" formatted="false">Feb</string>
+  <string name="card_grid_fee_window_month_3" formatted="false">Mar</string>
+  <string name="card_grid_fee_window_month_4" formatted="false">Apr</string>
+  <string name="card_grid_fee_window_month_5" formatted="false">May</string>
+  <string name="card_grid_fee_window_month_6" formatted="false">Jun</string>
+  <string name="card_grid_fee_window_month_7" formatted="false">Jul</string>
+  <string name="card_grid_fee_window_month_8" formatted="false">Aug</string>
+  <string name="card_grid_fee_window_month_9" formatted="false">Sep</string>
+  <string name="card_grid_fee_window_month_10" formatted="false">Oct</string>
+  <string name="card_grid_fee_window_month_11" formatted="false">Nov</string>
+  <string name="card_grid_fee_window_month_12" formatted="false">Dec</string>
+  <string name="card_grid_fee_window_from" formatted="false">From</string>
+  <string name="card_grid_fee_window_to" formatted="false">To</string>
+  <string name="card_grid_fee_window_days" formatted="false">Days</string>
+  <string name="card_grid_fee_window_from_month" formatted="false">First month</string>
+  <string name="card_grid_fee_window_to_month" formatted="false">Last month</string>
+  <string name="card_grid_fee_window_help" formatted="false">The hours your grid company charges its higher fee in. An end before the start runs over midnight, and the night counts as the day it starts on.</string>
+  <string name="card_grid_fee_window_suggestion" formatted="false">A common choice. Check it against your grid company\'s tariff.</string>
+  <string name="card_grid_fee_window_first" formatted="false">The high-load fee applies only in its hours. Confirm the hours first, then the fee.</string>
+  <string name="card_grid_fee_window_next" formatted="false">Next</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">From and To cannot be the same hour.</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">The electricity price was changed elsewhere and has been read again. Nothing was saved: save again to apply your change.</string>
+  <string name="card_market_included" formatted="false">Included in the price</string>
+  <string name="card_settings_value_off" formatted="false">Off</string>
+  <string name="card_settings_value_unset" formatted="false">Not set</string>
 </resources>
