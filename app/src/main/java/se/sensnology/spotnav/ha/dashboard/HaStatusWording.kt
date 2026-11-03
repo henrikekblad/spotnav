@@ -172,6 +172,10 @@ internal object HaStatusWording {
         "status.importTargetReleasedAuto",
         "status.importTargetReleasedAutoNoTime",
         "issue.importTargetRelease",
+        "status.importTargetReleasedUnplug",
+        "release.confirm.unplug",
+        "release.confirm.departure",
+        "release.confirm.peak",
     )
 
     /** The app's own additions: a status this app version cannot word, and the age of a kept one. */
