@@ -61,7 +61,7 @@ class DemandTextTest {
     }
 
     @Test fun theHourAgainstTheImportTarget() {
-        assertEquals("Den här timmen: 3,1 av 6,8 kW – månadens topp (effektmål 6,0 kW)", text().hourLine(pilot))
+        assertEquals("Den här timmen: 3,1 av 7,0 kW – månadens topp (effektmål 6,0 kW)", text().hourLine(pilot))
         assertEquals("Den här timmen: 3,1 av 6,0 kW", text().hourLine(pilot.copy(effectiveTargetKw = 6.0)))
         val pilot = pilot.copy(effectiveTargetKw = null)
         assertEquals("Den här timmen: 3,1 av 6,0 kW", text().hourLine(pilot))
