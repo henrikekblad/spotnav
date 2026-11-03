@@ -1,0 +1,5 @@
+- Bezugsziel: hält das Laden unter einer gewählten Stundenleistung, mit Vorschlag aus deinem Verbrauch
+- Leistungspreis: die Spitzen des Monats und eine neue Leistungsansicht im Verlauf
+- Netzentgelt als Prozent des Spotpreises und höheres Entgelt in Hochlastzeiten
+- Planvorschau vor dem Speichern und die Erste-Schritte-Liste
+- Benötigt SpotNav für Home Assistant 2.3

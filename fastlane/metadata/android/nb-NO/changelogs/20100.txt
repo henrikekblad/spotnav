@@ -1,0 +1,5 @@
+- Effektmål: holder ladingen under en timeeffekt du velger, med forslag fra ditt eget forbruk
+- Effektledd: se månedens topper og en ny effektvisning i historikken
+- Nettleie i prosent av spotprisen og høyere ledd i høylasttimer
+- Forhåndsvisning av planen før du lagrer, og Kom i gang-listen
+- Krever SpotNav for Home Assistant 2.3

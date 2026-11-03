@@ -1,0 +1,5 @@
+- Objetivo de consumo: mantiene la carga bajo una potencia horaria que eliges, con sugerencia según tu consumo
+- Término de potencia: picos del mes y una nueva vista de potencia en el historial
+- Peaje como porcentaje del precio spot y peaje más alto en horas punta
+- Vista previa del plan antes de guardar y la lista Primeros pasos
+- Requiere SpotNav para Home Assistant 2.3

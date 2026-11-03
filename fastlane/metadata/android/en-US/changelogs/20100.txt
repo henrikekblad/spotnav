@@ -1,0 +1,5 @@
+- Import target: keeps charging under an hourly power you choose, with a suggestion from your own use
+- Demand charge: see the month's peaks and a new Power view in the history
+- Grid fee as a percentage of spot and a higher fee in high-load hours
+- Plan preview before you save, and the Get started list
+- Needs SpotNav for Home Assistant 2.3

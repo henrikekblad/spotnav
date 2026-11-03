@@ -1,0 +1,5 @@
+- Effektmål: holder opladningen under en timeeffekt, du vælger, med forslag ud fra dit eget forbrug
+- Effektafgift: se månedens toppe og en ny effektvisning i historikken
+- Nettarif i procent af spotprisen og højere tarif i spidslasttimer
+- Forhåndsvisning af planen før du gemmer, og Kom godt i gang-listen
+- Kræver SpotNav til Home Assistant 2.3

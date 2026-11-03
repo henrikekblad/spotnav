@@ -1,0 +1,5 @@
+- Tehotavoite: pitää latauksen valitsemasi tuntitehon alla, ehdotus omasta kulutuksestasi
+- Tehomaksu: kuukauden huiput ja uusi tehonäkymä historiassa
+- Siirtomaksu prosentteina spot-hinnasta ja korkeampi maksu huippukuormatunteina
+- Suunnitelman esikatselu ennen tallennusta ja Aloitus-lista
+- Vaatii SpotNav for Home Assistant 2.3:n

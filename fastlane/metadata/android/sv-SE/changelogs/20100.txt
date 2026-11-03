@@ -1,0 +1,5 @@
+- Effektmål: håller bilens laddning under en timeffekt du väljer, med förslag från din egen förbrukning
+- Effektavgift: se månadens toppar och en ny effektvy i historiken
+- Nätavgift i procent av spotpriset och högre avgift under höglasttid
+- Förhandsvisning av planen innan du sparar, och Kom igång-listan
+- Kräver SpotNav för Home Assistant 2.3

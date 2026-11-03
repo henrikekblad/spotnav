@@ -1,0 +1,5 @@
+- Objectif de soutirage : garde la recharge sous une puissance horaire choisie, avec une suggestion selon votre consommation
+- Composante de puissance : pics du mois et nouvelle vue Puissance dans l'historique
+- Tarif réseau en pourcentage du prix spot et tarif plus élevé aux heures de pointe
+- Aperçu du plan avant d'enregistrer et liste Premiers pas
+- Nécessite SpotNav pour Home Assistant 2.3

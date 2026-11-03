@@ -1,0 +1,5 @@
+- Afnamedoel: houdt het laden onder een gekozen uurvermogen, met een voorstel uit je eigen verbruik
+- Capaciteitstarief: de pieken van de maand en een nieuwe vermogensweergave in de geschiedenis
+- Netbeheerkosten als percentage van de spotprijs en hoger tarief in piekuren
+- Voorbeeld van het plan vóór opslaan, en de lijst Aan de slag
+- Vereist SpotNav voor Home Assistant 2.3
