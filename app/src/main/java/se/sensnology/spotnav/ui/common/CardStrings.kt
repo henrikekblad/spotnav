@@ -106,11 +106,29 @@ internal object CardStrings {
         "power.legend.marks" to R.string.card_power_legend_marks,
         "gridFee.window.help" to R.string.card_grid_fee_window_help,
         "gridFee.window.suggestion" to R.string.card_grid_fee_window_suggestion,
-        "gridFee.window.first" to R.string.card_grid_fee_window_first,
-        "gridFee.window.next" to R.string.card_grid_fee_window_next,
         "market.included" to R.string.card_market_included,
         "settings.value.unset" to R.string.card_settings_value_unset,
-        "settings.error.range" to R.string.card_settings_error_range
+        "settings.error.range" to R.string.card_settings_error_range,
+        "site.importTarget.hourPeak" to R.string.card_site_import_target_hour_peak,
+        "target.suggest.loading" to R.string.card_target_suggest_loading,
+        "target.suggest.text" to R.string.card_target_suggest_text,
+        "target.suggest.use" to R.string.card_target_suggest_use,
+        "target.suggest.chargerMissing" to R.string.card_target_suggest_charger_missing,
+        "target.suggest.none.no_recorder" to R.string.card_target_suggest_none_no_recorder,
+        "target.suggest.none.no_grid_statistics" to R.string.card_target_suggest_none_no_grid_statistics,
+        "target.suggest.none.too_few_days" to R.string.card_target_suggest_none_too_few_days,
+        "target.suggest.none.no_chargers" to R.string.card_target_suggest_none_no_chargers,
+        "power.legend.peak" to R.string.card_power_legend_peak,
+        "power.legend.imported" to R.string.card_power_legend_imported,
+        "power.importedNote" to R.string.card_power_imported_note,
+        "power.peak" to R.string.card_power_peak,
+        "power.imported" to R.string.card_power_imported,
+        "release.confirm.title" to R.string.card_release_confirm_title,
+        "release.confirm.release" to R.string.card_release_confirm_release,
+        "settings.cancel" to R.string.card_settings_cancel,
+        "gridFee.high.fee" to R.string.card_grid_fee_high_fee,
+        "gridFee.high.remove" to R.string.card_grid_fee_high_remove,
+        "gridFee.high.needsFee" to R.string.card_grid_fee_high_needs_fee
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

@@ -17,6 +17,7 @@ import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
 import se.sensnology.spotnav.ha.dashboard.ImportTargetRelease
+import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ha.dashboard.OwnModeAction
 import se.sensnology.spotnav.ha.dashboard.SetupChecklist
 import se.sensnology.spotnav.ha.dashboard.SetupRow
@@ -294,7 +295,7 @@ internal class ChargerDashboardController(
         val language = AppLanguageSettings.language(context)
         val action = OwnModeAction.of(held)
         chargerCard.attention.showOwnMode(action?.label(language)) { action?.let(::fixOwnMode) }
-        chargerCard.attention.showRelease(ImportTargetRelease.label(held, language)) { releaseImportTarget() }
+        chargerCard.attention.showRelease(ImportTargetRelease.label(held, language)) { confirmRelease() }
         val rows = SetupChecklist.rows(held)
         chargerCard.attention.showSetup(
             if (rows.isEmpty()) null else tq(R.plurals.setup_line, rows.size, rows.size)
@@ -312,6 +313,24 @@ internal class ChargerDashboardController(
             }
             fetchDashboard()
         }
+    }
+
+    /**
+     * "Release the import target tonight": what it would mean, and Avbryt or Släpp; only Släpp sends it (an accidental
+     * press must not cost the month's peak), as the card asks.
+     */
+    private fun confirmRelease() {
+        val held = dashboard ?: return
+        val language = AppLanguageSettings.language(context)
+        val format = StatusFormat.of(language, held.market, AppLanguageSettings.numberLocale(context))
+        val text = ImportTargetRelease.confirmText(held, format, java.time.Instant.now()) ?: return
+        val words = cardWords()
+        android.app.AlertDialog.Builder(context)
+            .setTitle(words.say("release.confirm.title"))
+            .setMessage(text)
+            .setNegativeButton(words.say("settings.cancel"), null)
+            .setPositiveButton(words.say("release.confirm.release")) { _, _ -> releaseImportTarget() }
+            .show()
     }
 
     /** `release_import_target`: the import target set aside for this charge, then the dashboard read again whatever came of it. */

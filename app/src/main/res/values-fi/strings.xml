@@ -766,11 +766,29 @@
   <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
   <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Huippukuormitusmaksu koskee vain sen tunteja. Vahvista ensin tunnit, sitten maksu.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Seuraava</string>
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
   <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
   <string name="card_settings_error_range" formatted="false">Väliltä {min}–{max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">Tuntikeskiteho verkosta, jonka alle haluat pysyä. Kuormanhallinta rajoittaa latureita niin, että tunti pysyy sen alla, ja keskeyttää latauksen seuraavaan tasatuntiin, kun edes sen vähimmäisvirta ei mahdu. Auton vähimmäistason alapuolella se latautuu heti; Lähtö kertoo, mitä tapahtuu, jos auto ei ehdi valmiiksi.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Tämä tunti: {kw} / {target} – kuukauden huippu (tehotavoite {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Luetaan Home Assistantin tilastoja …</string>
+  <string name="card_target_suggest_text" formatted="false">Talo yksin: yleensä enintään {typical} tunnin aikana vuorokaudessa, enimmillään {highest} ({date}). Ehdotus: {suggestion} – auto saa silloin useimpina tunteina noin {car}. Niinä harvoina iltoina, kun talo yksin ylittää sen, auto pysäytetään, ja tavoite nostetaan siihen huippuun kuukauden loppuun asti.</string>
+  <string name="card_target_suggest_use" formatted="false">Käytä</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">Laturin omaa tehoa ei ole tilastoissa, joten talon luvut sisältävät latauksen.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Ei ehdotusta: Home Assistantin tilastot (recorder) eivät ole käynnissä.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Ei ehdotusta: verkon teholla ei ole pitkän aikavälin tilastoja Home Assistantissa.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Ei vielä ehdotusta: Home Assistantin tilastot ulottuvat vain {days} päivän taakse.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Ei ehdotusta: kohteessa ei ole laturia.</string>
+  <string name="card_power_legend_peak" formatted="false">Kuukauden huippu {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Home Assistantin tilastoista</string>
+  <string name="card_power_imported_note" formatted="false">Home Assistantin tilastoista luetut tunnit ovat likimääräisiä: ne lasketaan kuukauden huippuihin, mutta ne eivät koskaan nosta tehotavoitetta.</string>
+  <string name="card_power_peak" formatted="false">kuukauden huippu {kw}</string>
+  <string name="card_power_imported" formatted="false">Home Assistantin tilastoista</string>
+  <string name="card_release_confirm_title" formatted="false">Ohitetaanko tehotavoite\?</string>
+  <string name="card_release_confirm_release" formatted="false">Ohita</string>
+  <string name="card_settings_cancel" formatted="false">Peruuta</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Maksu</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Poista huippukuormitusmaksu</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Anna huippukuormitustuntien maksu.</string>
 </resources>

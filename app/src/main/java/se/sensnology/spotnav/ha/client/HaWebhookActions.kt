@@ -283,7 +283,11 @@ internal object PowerMonthRead {
         /** The parts (indexes into [Month.components]) whose counted peaks fall on this day. */
         val counted: List<Int>,
         val held: Boolean,
-        val paused: Boolean
+        val paused: Boolean,
+        /** The peak hour was read from Home Assistant's statistics, not measured (`false` from an older one). */
+        val imported: Boolean = false,
+        /** The level the month's peak lifted the import target to at the peak hour, `null` where it did not. */
+        val monthPeakKw: Double? = null
     )
 
     data class Hour(
@@ -293,7 +297,9 @@ internal object PowerMonthRead {
         val incomplete: Boolean,
         val held: Boolean,
         val paused: Boolean,
-        val counted: List<Int>
+        val counted: List<Int>,
+        val imported: Boolean = false,
+        val monthPeakKw: Double? = null
     )
 
     data class Month(
@@ -345,7 +351,9 @@ internal object PowerMonthRead {
                 houseKw = powerOrNull(day.opt("house_kw")),
                 counted = indexes(day.opt("counted"), count),
                 held = day.get("held") as Boolean,
-                paused = day.get("paused") as Boolean
+                paused = day.get("paused") as Boolean,
+                imported = additive(day, "imported", false) { it as Boolean },
+                monthPeakKw = additive(day, "month_peak_kw", null, ::powerOrNull)
             )
         }
         val hours = json.opt("hours").let { raw ->
@@ -358,7 +366,9 @@ internal object PowerMonthRead {
                     incomplete = hour.get("incomplete") as Boolean,
                     held = hour.get("held") as Boolean,
                     paused = hour.get("paused") as Boolean,
-                    counted = indexes(hour.opt("counted"), count)
+                    counted = indexes(hour.opt("counted"), count),
+                    imported = additive(hour, "imported", false) { it as Boolean },
+                    monthPeakKw = additive(hour, "month_peak_kw", null, ::powerOrNull)
                 )
             }
         }
@@ -372,6 +382,10 @@ internal object PowerMonthRead {
             bars = bars
         )
     }
+
+    /** A field an older Home Assistant did not state: absent reads as [fallback], present must be its shape. */
+    private fun <T> additive(json: JSONObject, key: String, fallback: T, read: (Any?) -> T): T =
+        if (json.has(key)) read(json.opt(key)) else fallback
 
     private fun list(raw: Any?): List<Any?> {
         val array = raw as JSONArray
@@ -394,5 +408,61 @@ internal object PowerMonthRead {
         val number = (entry as Number).toDouble()
         require(number == Math.floor(number) && number >= 0 && number < count)
         number.toInt()
+    }
+}
+
+/**
+ * `suggest_import_target`: a suggested import target for this charger's site from Home Assistant's statistics (the
+ * card's `target-suggestion.ts`), read when the target's editor opens. Asked only where the dashboard states
+ * `capabilities.suggest_import_target`. Home Assistant does every sum; this only reads them.
+ */
+internal object SuggestImportTarget {
+    fun payload(): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "suggest_import_target")
+        WebhookReads.put(this)
+        put("api_version", 1)
+    }
+
+    data class Suggestion(
+        val available: Boolean,
+        /** Why there is none: `no_recorder`, `no_grid_statistics`, `too_few_days`, `no_chargers`. */
+        val reason: String?,
+        val suggestionKw: Double?,
+        /** The house's typical daily peak: the median of the days' highest hours. */
+        val typicalKw: Double?,
+        val highestKw: Double?,
+        val highestDate: LocalDate?,
+        /** What the car gets at the suggestion in a typical evening or night hour. */
+        val carKw: Double?,
+        val days: Int,
+        /** A member charger's own draw is not in the statistics: the grid alone stood for the house. */
+        val chargerMissing: Boolean
+    )
+
+    /** The answer, or `null` for one this app does not read (a refusal, another version, or not its shape). */
+    fun answer(status: Int?, body: String?): Suggestion? {
+        if (status != 200) return null
+        val json = runCatching { JSONObject(body ?: return null) }.getOrNull() ?: return null
+        if (json.opt("ok") != true || json.opt("api_version") != 1) return null
+        val available = json.opt("available") as? Boolean ?: return null
+        fun power(key: String): Double? = (json.opt(key) as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 }
+        val highest = json.optJSONObject("highest")
+        val highestKw = (highest?.opt("kw") as? Number)?.toDouble()?.takeIf { it.isFinite() && it >= 0 }
+        val highestDate = (highest?.opt("date") as? String)?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+        val chargers = json.optJSONArray("chargers")
+        val suggestion = Suggestion(
+            available = available,
+            reason = json.opt("reason") as? String,
+            suggestionKw = power("suggestion_kw"),
+            typicalKw = power("typical_kw"),
+            highestKw = highestKw.takeIf { highestDate != null },
+            highestDate = highestDate.takeIf { highestKw != null },
+            carKw = power("car_kw"),
+            days = (json.opt("days") as? Int) ?: 0,
+            chargerMissing = chargers != null && (0 until chargers.length()).any { chargers.optJSONObject(it)?.opt("has_statistics") == false }
+        )
+        if (available && listOf(suggestion.suggestionKw, suggestion.typicalKw, suggestion.highestKw, suggestion.carKw).any { it == null }) return null
+        return suggestion
     }
 }

@@ -91,7 +91,13 @@ internal data class DemandBlock(
     /** Aligned with [components] while the site measures, else empty. */
     val perComponent: List<DemandMonth>,
     val hour: DemandHour?,
-    val importTargetKw: Double?
+    val importTargetKw: Double?,
+    /**
+     * The level the running hour is held under (`effective_target_kw`, asked for with the `reads` value
+     * `effective_target`): the import target lifted to the month's peak where a part counts the hour, else the target;
+     * `null` without a target, where the site cannot measure, or from a Home Assistant that does not send it.
+     */
+    val effectiveTargetKw: Double? = null
 )
 
 /** One fee of the grid tariff: `off`, `manual` or `included` (the area's price already holds the grid fee). */
@@ -141,17 +147,18 @@ internal data class DashboardGridTariff(
     /** The percentage of spot set (`null` is off), the rest as stored (the card's `withPercent`). */
     fun bodyWithPercent(value: Double?): JSONObject = storedBody().put("transfer_percent", feeChange(transferPercent, value))
 
-    /**
-     * The high-load fee set (`null` is off), with [window] when the person has just confirmed one, else the stored
-     * window (the card's `withHigh`). Home Assistant refuses a fee that is on without a window; none is made up here.
-     */
-    fun bodyWithHigh(value: Double?, window: HighLoadWindow? = null): JSONObject =
-        storedBody().put("transfer_high", feeChange(transferHigh, value)).also { body ->
-            window?.let { body.put("high_load_window", it.toJson()) }
-        }
+    /** The high-load fee on with [value] over [window], the rest as stored: the one dialog's Save (the card's `withHighLoad`). */
+    fun bodyWithHighLoad(value: Double, window: HighLoadWindow): JSONObject = storedBody()
+        .put("transfer_high", JSONObject().put("enabled", true).put("value", value))
+        .put("high_load_window", window.toJson())
 
-    /** The high-load hours set, the fees as stored (the card's `withWindow`). */
-    fun bodyWithWindow(window: HighLoadWindow): JSONObject = storedBody().put("high_load_window", window.toJson())
+    /**
+     * The high-load fee off (its figure kept, as any fee turned off) and the hours cleared: the dialog's Remove (the
+     * card's `withoutHighLoad`).
+     */
+    fun bodyWithoutHighLoad(): JSONObject = storedBody()
+        .put("transfer_high", feeChange(transferHigh, null))
+        .put("high_load_window", JSONObject.NULL)
 
     /**
      * The body of `update_grid_tariff` with the demand charge's parts set to [components] and the rest as stored (the
@@ -210,7 +217,9 @@ internal data class DashboardGridTariff(
 
         private fun demand(raw: Any?): DemandBlock {
             val json = raw as? JSONObject ?: bad()
-            exactKeys(json, "components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
+            val keys = arrayOf("components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
+            // `effective_target_kw` is additive: sent only to an app that reads it.
+            if (json.has("effective_target_kw")) exactKeys(json, *keys, "effective_target_kw") else exactKeys(json, *keys)
             val components = list(json.opt("components")).map(DemandComponent::parse)
             if (components.size > DemandComponent.MAX) bad()
             val months = list(json.opt("per_component")).map(::month)
@@ -229,7 +238,8 @@ internal data class DashboardGridTariff(
                 priceUnit = textOrNull(json.opt("price_unit")),
                 perComponent = months,
                 hour = hour,
-                importTargetKw = nonNegativeOrNull(json.opt("import_target_kw"))
+                importTargetKw = nonNegativeOrNull(json.opt("import_target_kw")),
+                effectiveTargetKw = if (json.has("effective_target_kw")) nonNegativeOrNull(json.opt("effective_target_kw")) else null
             )
         }
 

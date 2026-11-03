@@ -358,7 +358,10 @@ internal object HaStatusText {
                 // Set aside for this charge until its departure: by a person, or by the plan's own choice.
                 val automatic = p["automatic"] == true
                 val departure = instant(p["departure"])
-                if (departure == null || zone == null) {
+                if (!automatic && p.containsKey("departure") && p["departure"] == null) {
+                    // A person's release with no departure ahead (a Start): until the car is unplugged.
+                    say("status.importTargetReleasedUnplug")
+                } else if (departure == null || zone == null) {
                     say(if (automatic) "status.importTargetReleasedAutoNoTime" else "status.importTargetReleasedNoTime")
                 } else {
                     say(if (automatic) "status.importTargetReleasedAuto" else key, mapOf("time" to moment(departure)))
@@ -614,7 +617,7 @@ internal object HaStatusText {
             roundingMode = java.math.RoundingMode.HALF_UP
         }.format(value)
 
-    private fun number(locale: Locale, value: Double, digits: Int): String =
+    internal fun number(locale: Locale, value: Double, digits: Int): String =
         NumberFormat.getNumberInstance(locale).apply {
             minimumFractionDigits = 0
             maximumFractionDigits = digits

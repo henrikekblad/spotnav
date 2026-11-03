@@ -766,11 +766,29 @@
   <string name="setup_demand_grid_power_action">Angiv nettets samlede effekt</string>
   <string name="card_grid_fee_window_help" formatted="false">De timer, dit netselskab opkræver sin højere tarif i. En slutning før starten går over midnat, og natten regnes til den dag, den begynder.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Et almindeligt valg. Tjek det mod dit netselskabs tarif.</string>
-  <string name="card_grid_fee_window_first" formatted="false">Spidslasttariffen gælder kun i spidslasttimerne. Bekræft timerne først, derefter tariffen.</string>
-  <string name="card_grid_fee_window_next" formatted="false">Næste</string>
   <string name="card_market_included" formatted="false">Indgår i prisen</string>
   <string name="card_settings_value_unset" formatted="false">Ikke angivet</string>
   <string name="card_settings_error_range" formatted="false">Mellem {min} og {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">Det timegennemsnit fra nettet, du vil holde dig under. Lastbalanceringen holder laderne, så timen bliver under det, og sætter en opladning på pause til næste hele time, når selv dens laveste strøm ikke kan rummes. Under bilens laveste niveau lader den med det samme; Afgang siger, hvad der sker, hvis bilen ikke kan blive klar i tide.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Denne time: {kw} af {target} – månedens top (effektmål {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Læser Home Assistants statistik …</string>
+  <string name="card_target_suggest_text" formatted="false">Huset alene: oftest højst {typical} i en time pr. døgn, højst {highest} ({date}). Forslag: {suggestion} – bilen får så omkring {car} de fleste timer. De få aftener huset alene går over, sættes bilen på pause, og målet løftes til den top resten af måneden.</string>
+  <string name="card_target_suggest_use" formatted="false">Brug</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">Laderens egen effekt findes ikke i statistikken, så husets tal regner opladningen med.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Intet forslag: Home Assistants statistik (recorder) kører ikke.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Intet forslag: nettets effekt har ingen langtidsstatistik i Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Intet forslag endnu: Home Assistants statistik går kun {days} dage tilbage.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Intet forslag: anlægget har ingen lader.</string>
+  <string name="card_power_legend_peak" formatted="false">Månedens top {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Fra Home Assistants statistik</string>
+  <string name="card_power_imported_note" formatted="false">Timerne fra Home Assistants statistik er omtrentlige: de tæller i månedens toppe, men løfter aldrig effektmålet.</string>
+  <string name="card_power_peak" formatted="false">månedens top {kw}</string>
+  <string name="card_power_imported" formatted="false">fra Home Assistants statistik</string>
+  <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
+  <string name="card_release_confirm_release" formatted="false">Slip</string>
+  <string name="card_settings_cancel" formatted="false">Annuller</string>
+  <string name="card_grid_fee_high_fee" formatted="false">Afgift</string>
+  <string name="card_grid_fee_high_remove" formatted="false">Fjern spidslastafgiften</string>
+  <string name="card_grid_fee_high_needs_fee" formatted="false">Angiv afgiften i spidslasttimerne.</string>
 </resources>

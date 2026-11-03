@@ -718,7 +718,8 @@ internal data class Dashboard(
             fixOwnMode = json.strictBoolean("fix_own_mode") == true,
             releaseImportTarget = json.strictBoolean("release_import_target") == true,
             getPowerMonth = json.strictBoolean("get_power_month") == true,
-            siteImportTarget = json.strictBoolean("site_import_target") == true
+            siteImportTarget = json.strictBoolean("site_import_target") == true,
+            suggestImportTarget = json.strictBoolean("suggest_import_target") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(

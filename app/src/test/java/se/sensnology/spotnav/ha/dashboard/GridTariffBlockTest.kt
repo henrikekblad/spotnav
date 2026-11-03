@@ -47,12 +47,19 @@ class GridTariffBlockTest {
         assertEquals(5.0, percent.getJSONObject("transfer_percent").getDouble("value"), 0.0)
         assertEquals(false, percent.getJSONObject("transfer_high").getBoolean("enabled"))
         assertEquals(40.0, percent.getJSONObject("transfer_high").getDouble("value"), 0.0)
-        val high = block.bodyWithHigh(55.0, HighLoadWindow("mon_sat", 1, 12, 22, 6))
+        // The one dialog's Save: the fee on and its hours, in one write.
+        val high = block.bodyWithHighLoad(55.0, HighLoadWindow("mon_sat", 1, 12, 22, 6))
         assertEquals(true, high.getJSONObject("transfer_high").getBoolean("enabled"))
+        assertEquals(55.0, high.getJSONObject("transfer_high").getDouble("value"), 0.0)
         assertEquals("mon_sat", high.getJSONObject("high_load_window").getString("days"))
         assertEquals(22, high.getJSONObject("high_load_window").getInt("from_hour"))
-        assertEquals(19, block.bodyWithHigh(55.0).getJSONObject("high_load_window").getInt("to_hour"))
-        assertEquals(6, block.bodyWithWindow(HighLoadWindow("all", 1, 12, 22, 6)).getJSONObject("high_load_window").getInt("to_hour"))
+        assertEquals(5.0, high.getJSONObject("transfer_percent").getDouble("value"), 0.0)
+        // Remove: the fee off with its figure kept, and the hours cleared, in one write.
+        val removed = block.bodyWithoutHighLoad()
+        assertEquals(false, removed.getJSONObject("transfer_high").getBoolean("enabled"))
+        assertEquals(40.0, removed.getJSONObject("transfer_high").getDouble("value"), 0.0)
+        assertTrue(removed.isNull("high_load_window"))
+        assertEquals(true, removed.getJSONObject("transfer_percent").getBoolean("enabled"))
     }
 
     @Test fun aWriteAnswersTheBlockAgainAConflictOrARefusal() {

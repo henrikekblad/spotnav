@@ -25,6 +25,10 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
         val held: Boolean,
         val paused: Boolean,
         val incomplete: Boolean,
+        /** Read from Home Assistant's statistics, not measured: hatched. */
+        val imported: Boolean,
+        /** The month's peak level over this column (`null`: the target was not lifted): a thin line. */
+        val peak: Double?,
         val figures: String
     )
 
@@ -74,7 +78,10 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
     /** The wall clock as Home Assistant wrote it (the area's own zone): `2026-09-22T19:00:00+02:00` is `19:00`. */
     private fun clockOf(iso: String): String = Regex("T(\\d{2}:\\d{2})").find(iso)?.groupValues?.get(1).orEmpty()
 
-    private fun notes(kw: Double, house: Double?, counted: List<Int>, held: Boolean, paused: Boolean, incomplete: Boolean, parts: List<String>): List<String> {
+    private fun notes(
+        kw: Double, house: Double?, counted: List<Int>, held: Boolean, paused: Boolean, incomplete: Boolean,
+        parts: List<String>, peak: Double?, imported: Boolean
+    ): List<String> {
         val notes = mutableListOf<String>()
         if (house != null) {
             notes += words.say("power.split", "house" to text.kw(minOf(house, kw)), "car" to text.kw(maxOf(0.0, kw - house)))
@@ -88,18 +95,20 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
             held -> notes += words.say("power.held")
         }
         if (incomplete) notes += words.say("power.incomplete")
+        peak?.let { notes += words.say("power.peak", "kw" to text.kw(it)) }
+        if (imported) notes += words.say("power.imported")
         return notes
     }
 
     /** One day's figures: "tis 22 sep: högst 5,9 kW kl. 19:00 · huset 2,3 kW, bilen 3,6 kW · räknas för dag 06–23". */
     fun dayFigures(day: PowerMonthRead.Day, parts: List<String> = emptyList()): String {
         val head = words.say("power.day", "date" to text.dateText(day.date), "kw" to text.kw(day.peakKw), "time" to clockOf(day.peakStart))
-        return (listOf(head) + notes(day.peakKw, day.houseKw, day.counted, day.held, day.paused, false, parts)).joinToString(" · ")
+        return (listOf(head) + notes(day.peakKw, day.houseKw, day.counted, day.held, day.paused, false, parts, day.monthPeakKw, day.imported)).joinToString(" · ")
     }
 
     fun hourFigures(hour: PowerMonthRead.Hour, parts: List<String> = emptyList()): String {
         val head = words.say("power.hour", "time" to clockOf(hour.start), "kw" to text.kw(hour.kw))
-        return (listOf(head) + notes(hour.kw, hour.houseKw, hour.counted, hour.held, hour.paused, hour.incomplete, parts)).joinToString(" · ")
+        return (listOf(head) + notes(hour.kw, hour.houseKw, hour.counted, hour.held, hour.paused, hour.incomplete, parts, hour.monthPeakKw, hour.imported)).joinToString(" · ")
     }
 
     /** Every day of the month, measured or not: the 1st, every 5th (not too near the end) and the last are labelled. */
@@ -120,6 +129,8 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
                 held = day?.held ?: false,
                 paused = day?.paused ?: false,
                 incomplete = false,
+                imported = day?.imported ?: false,
+                peak = day?.monthPeakKw,
                 figures = day?.let { dayFigures(it, parts) } ?: words.say("power.noData", "date" to text.dateText(date))
             )
         }
@@ -142,6 +153,8 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
                     held = hour.held,
                     paused = hour.paused,
                     incomplete = hour.incomplete,
+                    imported = hour.imported,
+                    peak = hour.monthPeakKw,
                     figures = hourFigures(hour, parts)
                 )
             }
@@ -165,6 +178,8 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
         )
         if (columns.any { it.kw != null && it.house == null }) entries += LegendKey.Unsplit to words.say("power.legend.unsplit")
         month.importTargetKw?.let { entries += LegendKey.Target to words.say("power.legend.target", "kw" to text.kw(it)) }
+        columns.mapNotNull { it.peak }.maxOrNull()?.let { entries += LegendKey.Peak to words.say("power.legend.peak", "kw" to text.kw(it)) }
+        if (columns.any { it.imported }) entries += LegendKey.Imported to words.say("power.legend.imported")
         val names = partNames(month.components)
         month.components.indices.forEach { index ->
             entries += LegendKey.Counted(index + 1) to words.say("power.legend.countedPart", "part" to names.inline.getOrElse(index) { "" })
@@ -173,11 +188,16 @@ internal class PowerModel(private val words: CardWords, private val text: Demand
         return entries
     }
 
+    /** The note under the legend where any column was read from Home Assistant's statistics, else `null`. */
+    fun importedNote(columns: List<Column>): String? = if (columns.any { it.imported }) words.say("power.importedNote") else null
+
     sealed interface LegendKey {
         data object House : LegendKey
         data object Car : LegendKey
         data object Unsplit : LegendKey
         data object Target : LegendKey
+        data object Peak : LegendKey
+        data object Imported : LegendKey
         data class Counted(val number: Int) : LegendKey
         data object Marks : LegendKey
     }

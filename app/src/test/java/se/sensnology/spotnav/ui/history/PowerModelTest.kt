@@ -89,4 +89,35 @@ class PowerModelTest {
         assertFalse(PowerModel.offered(Dashboard.parse(json)))
         assertFalse(PowerModel.offered(null))
     }
+
+    private val imported: PowerMonthRead.Month get() {
+        val json = HaFixtures.json("power_month/pilot_imported_month.json").put("ok", true)
+        return (PowerMonthRead.answer(200, json.toString()) as PowerMonthRead.Outcome.Read).month
+    }
+
+    @Test fun importedDaysAreMarkedWithTheirNoteAndLegendRow() {
+        val columns = model().monthColumns(imported)
+        val first = columns.first()
+        assertTrue(first.imported)
+        assertTrue(first.figures, first.figures.endsWith("från Home Assistants statistik"))
+        val legend = model().legend(imported, columns)
+        assertTrue(legend.any { it.first == PowerModel.LegendKey.Imported && it.second == "Från Home Assistants statistik" })
+        assertTrue(model().importedNote(columns)!!.startsWith("Timmarna från Home Assistants statistik är ungefärliga"))
+        // A month without imported hours has no note.
+        assertEquals(null, model().importedNote(model().monthColumns(month)))
+    }
+
+    @Test fun theMonthsPeakIsALineWithItsLegendRow() {
+        val columns = model().monthColumns(imported)
+        val lifted = columns.first { it.peak != null }
+        assertTrue(lifted.figures, lifted.figures.contains("månadens topp "))
+        val peak = model().legend(imported, columns).first { it.first == PowerModel.LegendKey.Peak }.second
+        assertTrue(peak, peak.startsWith("Månadens topp "))
+    }
+
+    @Test fun anOlderAnswerWithoutTheFieldsReadsAsMeasuredAndUnlifted() {
+        val day = month.days.first()
+        assertEquals(false, day.imported)
+        assertEquals(null, day.monthPeakKw)
+    }
 }

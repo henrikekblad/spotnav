@@ -495,7 +495,7 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
         val readout = TextView(context).apply {
             this.text = hint; textSize = 14f; setTextColor(muted); setPadding(0, dp(8), 0, 0)
         }
-        val top = PowerModel.scaleTop(columns.mapNotNull { it.kw }, month.importTargetKw)
+        val top = PowerModel.scaleTop(columns.map { maxOf(it.kw ?: 0.0, it.peak ?: 0.0) }, month.importTargetKw)
         val ticks = listOf(0.0, top / 2, top).map { value ->
             if (value == top) text.kw(value) else text.number(value, if (value % 1 == 0.0) 0 else 1)
         }
@@ -519,6 +519,7 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
         ).apply { topMargin = dp(8) })
         card.body.addView(readout)
         addLegend(card.body, model.legend(month, columns))
+        model.importedNote(columns)?.let { card.body.addView(note(it).apply { textSize = 13f; setPadding(0, dp(6), 0, 0) }) }
     }
 
     private fun powerColours() = PowerBarsView.Colours(

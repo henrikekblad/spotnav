@@ -21,6 +21,7 @@ import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.SiteUpdate
+import se.sensnology.spotnav.ha.client.SuggestImportTarget
 import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
@@ -44,6 +45,7 @@ import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.chooseMany
 import se.sensnology.spotnav.ui.common.chooseOne
+import se.sensnology.spotnav.ui.common.Advice
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.editNumber
 import se.sensnology.spotnav.ui.common.editOnOff
@@ -166,6 +168,13 @@ internal class PairedSettingsCards(
     /** Where the camera's actions are carried out (the screen owns the connection and decodes pictures off the main thread). */
     fun attachCamera(call: (CameraCommands.Request, Int?, (CameraCommands.Outcome, Bitmap?) -> Unit) -> Unit) {
         cameraCall = call
+    }
+
+    private var suggestTarget: ((SuggestImportTarget.Suggestion?) -> Unit) -> Unit = { done -> done(null) }
+
+    /** Where the suggested import target is read (`suggest_import_target`; the screen owns the connection). */
+    fun attachSuggestion(suggest: ((SuggestImportTarget.Suggestion?) -> Unit) -> Unit) {
+        suggestTarget = suggest
     }
 
     /** Where the two writes are carried out (the screen owns the connection). */
@@ -771,7 +780,7 @@ internal class PairedSettingsCards(
             val label = cardWords().say("site.importTarget")
             val settable = held.capabilities.siteImportTarget && site.writable
             valueRow(card.body, label, words.targetText(demand), words.hourLine(demand), onTap = if (settable) ({
-                editImportTarget(label, demand.importTargetKw)
+                editImportTarget(label, demand.importTargetKw, suggest = held.capabilities.suggestImportTarget, text = words)
             }) else null)
         }
         summary.setup?.let { setup ->
@@ -920,14 +929,18 @@ internal class PairedSettingsCards(
      * `update_site_settings` against the value shown; a conflict keeps the dialog open with the reason while the screen
      * reads the stored value again.
      */
-    private fun editImportTarget(label: String, current: Double?) {
+    private fun editImportTarget(label: String, current: Double?, suggest: Boolean, text: DemandText) {
         val words = cardWords()
         val spec = NumberSpec(IMPORT_TARGET_MIN, IMPORT_TARGET_MAX, 1, minDecimals = 1)
         val locale = AppLanguageSettings.numberLocale(activity)
         editNumber(
             label, spec, "kW", current,
             words.say("settings.error.range", "min" to spec.fieldText(IMPORT_TARGET_MIN, locale), "max" to "1000"),
-            help = t(R.string.import_target_help), noneLabel = words.say("settings.value.off")
+            help = t(R.string.import_target_help), noneLabel = words.say("settings.value.off"),
+            // The suggestion from Home Assistant's statistics, read when the editor opens; nothing is saved until Spara.
+            advice = if (!suggest) null else Advice(words.say("target.suggest.loading"), words.say("target.suggest.use")) { done ->
+                suggestTarget { suggestion -> done(suggestion?.let { text.advice(words, it) }?.let { it.text to it.value }) }
+            }
         ) { value, done ->
             if (value == current) return@editNumber done(null)
             writeSite(SiteUpdate.importTargetRequest(current, value)) { outcome ->

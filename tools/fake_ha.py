@@ -66,7 +66,10 @@ pilot's two-part tariff, written with `update_grid_tariff`; `get_power_month`
 answers the pilot's months; the status line is the import target's, chosen with
 `GET /spotnav-mock/import-target?line=held|peak|paused|house|house_over|released|auto|at_risk|hold|none`,
 and `release_import_target` turns an at-risk line into a released one; `update_site_settings` sets or clears the
-import target (`import_target_kw`, compare-and-set on the value last seen). A request
+import target (`import_target_kw`, compare-and-set on the value last seen). Its month's peak lifts the hour to 7.0 kW
+(`effective_target_kw`, only to an app that reads `effective_target`); the held and paused lines offer the release
+(a person's Start: until the unplug); `suggest_import_target` answers the pinned suggestion; the running month's power
+has days and hours from Home Assistant's statistics. `line=unplug` is a release without a departure. A request
 that does not read `import_target_status` gets the load-balancing lines an older
 app knows in their place, as Home Assistant sends them.
 """
@@ -176,7 +179,7 @@ OWN_MODE = {"fixed": False}
 
 #: A Home Assistant from before the 2.3 webhook actions: the dashboard states none of them (nor 2.4's).
 NO_2_3_ACTIONS = {"oldwebhook", "oldprices"}
-NEW_ACTIONS = ("plan_preview", "dismiss_setup_item", "fix_own_mode", "release_import_target", "get_power_month")
+NEW_ACTIONS = ("plan_preview", "dismiss_setup_item", "fix_own_mode", "release_import_target", "get_power_month", "suggest_import_target")
 
 #: The `demand` scenario (HA 2.4): the pilot's grid tariff with its demand charge, as `update_grid_tariff` last wrote
 #: it, the import target's status line, and whether a person released the target for this charge.
@@ -192,6 +195,17 @@ def _demand_tariff() -> dict:
     # The running hour, now, on the area's clock.
     hour = datetime.now(ZoneInfo("Europe/Stockholm")).replace(minute=0, second=0, microsecond=0)
     tariff["demand"]["hour"] = {"start": hour.astimezone(ZoneInfo("UTC")).isoformat(), "kw_so_far": 2.8, "kwh_so_far": 1.4}
+    # The month's peak lifts the running hour above the target as set.
+    target = tariff["demand"]["import_target_kw"]
+    tariff["demand"]["effective_target_kw"] = None if target is None else max(target, 7.0)
+    return tariff
+
+
+def _demand_tariff_for(reads: list | None) -> dict:
+    """The tariff as an app reads it: `effective_target_kw` only to one that asks for `effective_target`."""
+    tariff = json.loads(json.dumps(_demand_tariff()))
+    if "effective_target" not in (reads or []):
+        tariff["demand"].pop("effective_target_kw", None)
     return tariff
 
 
@@ -205,10 +219,15 @@ def _demand_status() -> dict:
     line = DEMAND["line"]
     if DEMAND["released"] and line in ("at_risk", "hold"):
         line = "released"
+    if DEMAND["released"] and line in ("held", "paused"):
+        line = "unplug"
     lines = {
-        "held": ("normal", {"code": "import_target_held", "params": {"limit_a": 9, "target_kw": 6.0, "hour_kw": 4.2, "set_kw": 6.0}}),
+        "held": ("normal", {"code": "import_target_held", "params": {"limit_a": 9, "target_kw": 6.0, "hour_kw": 4.2, "set_kw": 6.0,
+                                                                    "releasable": True, "release_until": None, "release_peak_kw": 11.0}}),
+        "unplug": ("normal", {"code": "import_target_released", "params": {"target_kw": 6.0, "departure": None, "automatic": False}}),
         "peak": ("normal", {"code": "import_target_held", "params": {"limit_a": 9, "target_kw": 6.975, "hour_kw": 4.2, "set_kw": 6.0}}),
-        "paused": ("normal", {"code": "import_target_paused", "params": {"until": next_hour, "target_kw": 6.0, "set_kw": 6.0, "house_over": False}}),
+        "paused": ("normal", {"code": "import_target_paused", "params": {"until": next_hour, "target_kw": 6.0, "set_kw": 6.0, "house_over": False,
+                                                                        "releasable": True, "release_until": departure, "release_peak_kw": 11.0}}),
         "house": ("normal", {"code": "import_target_paused", "params": {"until": next_hour, "target_kw": 6.0, "set_kw": 6.0, "house_over": True}}),
         "house_over": ("normal", {"code": "import_target_house_over", "params": {"target_kw": 6.0, "set_kw": 6.0}}),
         "released": ("normal", {"code": "import_target_released", "params": {"target_kw": 6.0, "departure": departure, "automatic": False}}),
@@ -241,7 +260,8 @@ def _for_older_app(status: dict) -> dict:
 def power_month_body(month: str | None) -> tuple[int, dict]:
     """The pilot's running month (2026-09) and the month before it (2026-08, its days only); any other month in range
     has nothing measured, and one past them is refused as Home Assistant refuses it."""
-    running = json.loads((POWER_MONTH_FIXTURES / "pilot_month.json").read_text(encoding="utf-8"))
+    # The running month with days and hours from Home Assistant's statistics, and the month's peak lifting the target.
+    running = json.loads((POWER_MONTH_FIXTURES / "pilot_imported_month.json").read_text(encoding="utf-8"))
     if month is None or month == running["month"]:
         return 200, {"ok": True, "action": "get_power_month", **running}
     if month == "2026-08":
@@ -402,7 +422,7 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["grid_tariff"] = GRID_FEE
     if scenario == "demand":
         if "grid_tariff" in (reads or []):
-            body["grid_tariff"] = _demand_tariff()
+            body["grid_tariff"] = _demand_tariff_for(reads)
         body["status"] = _demand_status()
         body["settings"]["departure_enabled"] = True
         body["settings"]["departure_time"] = "07:00"
@@ -884,11 +904,17 @@ class Handler(BaseHTTPRequestHandler):
                 if action == "release_import_target":
                     if key != "demand":
                         self._json(400, {"api_version": 1, "ok": False, "error": "spotnav_no_import_target", "action": action})
-                    elif DEMAND["line"] != "at_risk" or DEMAND["released"]:
+                    elif DEMAND["line"] not in ("at_risk", "held", "paused") or DEMAND["released"]:
                         self._json(400, {"api_version": 1, "ok": False, "error": "spotnav_no_departure", "action": action})
                     else:
                         DEMAND["released"] = True
                         self._json(200, {"api_version": 1, "ok": True, "error": None, "action": action})
+                    return
+                if action == "suggest_import_target":
+                    if key != "demand":
+                        self._json(400, {"ok": False, "error": "spotnav_no_site", "action": action})
+                    else:
+                        self._json(200, json.loads((DASHBOARD_FIXTURES.parent / "webhook/suggest_import_target_success.json").read_text(encoding="utf-8")))
                     return
                 if action == "get_power_month":
                     if key != "demand":

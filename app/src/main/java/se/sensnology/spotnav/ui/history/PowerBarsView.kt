@@ -121,6 +121,22 @@ internal class PowerBarsView(context: Context) : View(context) {
                     box.set(x0, barTop, x1, houseTop)
                     canvas.drawRect(box, fill)
                 }
+                if (column.imported) {
+                    // From Home Assistant's statistics: hatched across the whole bar.
+                    canvas.save()
+                    box.set(x0, barTop, x1, bottom)
+                    canvas.clipRect(box)
+                    line.color = colours.text
+                    line.alpha = 110
+                    line.strokeWidth = 1f * density
+                    var x = x0 - (bottom - barTop)
+                    while (x < x1) {
+                        canvas.drawLine(x, bottom, x + (bottom - barTop), barTop, line)
+                        x += HATCH_DP * density
+                    }
+                    line.alpha = 255
+                    canvas.restore()
+                }
                 if (column.incomplete) {
                     fill.color = colours.text
                     fill.alpha = 60
@@ -142,6 +158,14 @@ internal class PowerBarsView(context: Context) : View(context) {
                 box.set(x0, bottom - 1.5f * density, x1, bottom)
                 canvas.drawRect(box, fill)
                 fill.alpha = 255
+            }
+            // The month's peak where it lifted the target: a thin solid line at that level over this column.
+            column.peak?.let { peak ->
+                line.color = colours.text
+                line.strokeWidth = 1.5f * density
+                line.pathEffect = null
+                val at = y(peak)
+                canvas.drawLine(x0 - gap / 2, at, x1 + gap / 2, at, line)
             }
             // The target's marks under the bar: a dot where it held the charging back, a ring where it paused it.
             val markY = bottom + MARK_ROOM_DP * density / 2
@@ -176,7 +200,9 @@ internal class PowerBarsView(context: Context) : View(context) {
             line.pathEffect = null
             text.textAlign = Paint.Align.RIGHT
             text.color = colours.text
-            canvas.drawText(targetLabel, left + width, at - 4f * density, text)
+            // Above the dashed line, or under it where the month's peak line runs just above (within a tenth of the scale).
+            val below = columns.any { c -> c.peak != null && c.peak >= kw && c.peak - kw <= top * 0.1 }
+            canvas.drawText(targetLabel, left + width, if (below) at + 13f * density else at - 4f * density, text)
         }
     }
 
@@ -218,5 +244,6 @@ internal class PowerBarsView(context: Context) : View(context) {
         const val LABEL_ROOM_DP = 16
         const val MARK_ROOM_DP = 10
         const val AXIS_DP = 48
+        const val HATCH_DP = 5
     }
 }
