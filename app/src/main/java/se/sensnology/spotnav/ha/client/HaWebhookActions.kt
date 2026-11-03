@@ -283,7 +283,11 @@ internal object PowerMonthRead {
         /** The parts (indexes into [Month.components]) whose counted peaks fall on this day. */
         val counted: List<Int>,
         val held: Boolean,
-        val paused: Boolean
+        val paused: Boolean,
+        /** The peak hour was read from Home Assistant's statistics, not measured (`false` from an older one). */
+        val imported: Boolean = false,
+        /** The level the month's peak lifted the import target to at the peak hour, `null` where it did not. */
+        val monthPeakKw: Double? = null
     )
 
     data class Hour(
@@ -293,7 +297,9 @@ internal object PowerMonthRead {
         val incomplete: Boolean,
         val held: Boolean,
         val paused: Boolean,
-        val counted: List<Int>
+        val counted: List<Int>,
+        val imported: Boolean = false,
+        val monthPeakKw: Double? = null
     )
 
     data class Month(
@@ -345,7 +351,9 @@ internal object PowerMonthRead {
                 houseKw = powerOrNull(day.opt("house_kw")),
                 counted = indexes(day.opt("counted"), count),
                 held = day.get("held") as Boolean,
-                paused = day.get("paused") as Boolean
+                paused = day.get("paused") as Boolean,
+                imported = additive(day, "imported", false) { it as Boolean },
+                monthPeakKw = additive(day, "month_peak_kw", null, ::powerOrNull)
             )
         }
         val hours = json.opt("hours").let { raw ->
@@ -358,7 +366,9 @@ internal object PowerMonthRead {
                     incomplete = hour.get("incomplete") as Boolean,
                     held = hour.get("held") as Boolean,
                     paused = hour.get("paused") as Boolean,
-                    counted = indexes(hour.opt("counted"), count)
+                    counted = indexes(hour.opt("counted"), count),
+                    imported = additive(hour, "imported", false) { it as Boolean },
+                    monthPeakKw = additive(hour, "month_peak_kw", null, ::powerOrNull)
                 )
             }
         }
@@ -372,6 +382,10 @@ internal object PowerMonthRead {
             bars = bars
         )
     }
+
+    /** A field an older Home Assistant did not state: absent reads as [fallback], present must be its shape. */
+    private fun <T> additive(json: JSONObject, key: String, fallback: T, read: (Any?) -> T): T =
+        if (json.has(key)) read(json.opt(key)) else fallback
 
     private fun list(raw: Any?): List<Any?> {
         val array = raw as JSONArray

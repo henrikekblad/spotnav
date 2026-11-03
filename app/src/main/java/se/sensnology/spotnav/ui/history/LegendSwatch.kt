@@ -36,6 +36,24 @@ internal class LegendSwatch(
                 line.pathEffect = dashes
                 canvas.drawLine(0f, h / 2, w, h / 2, line)
             }
+            PowerModel.LegendKey.Peak -> {
+                line.color = colours.text
+                line.pathEffect = null
+                canvas.drawLine(0f, h / 2, w, h / 2, line)
+            }
+            PowerModel.LegendKey.Imported -> {
+                fill.color = colours.house
+                canvas.drawRect(0f, 0f, w, h, fill)
+                line.color = colours.text
+                line.pathEffect = null
+                line.strokeWidth = 1f * density
+                var x = -h
+                while (x < w) {
+                    canvas.drawLine(x, h, x + h, 0f, line)
+                    x += 5f * density
+                }
+                line.strokeWidth = 1.5f * density
+            }
             is PowerModel.LegendKey.Counted -> {
                 line.color = colours.text
                 line.pathEffect = null
