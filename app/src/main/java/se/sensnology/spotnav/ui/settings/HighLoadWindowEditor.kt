@@ -97,7 +97,8 @@ internal fun ViewScope.editHighLoad(
     }.format(value)
     help(words.say("gridFee.high.help"))
     body.addView(TextView(context).apply {
-        text = words.say("gridFee.high.fee") + (fee.unit?.let { " ($it)" } ?: "")
+        // The card's label, its unit beside it in brackets as the card writes it.
+        text = listOfNotNull(words.say("gridFee.high.fee"), fee.unit?.let { "($it)" }).joinToString(" ")
         textSize = 14f; setTextColor(dark); setPadding(0, dp(4), 0, dp(2))
     })
     val field = EditText(context).apply {
