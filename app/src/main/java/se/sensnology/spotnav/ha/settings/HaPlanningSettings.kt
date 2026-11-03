@@ -110,7 +110,13 @@ data class HaPlanningSettings(
      * chooses it in Home Assistant), kept in the stored copy and never sent; `null` from a Home Assistant
      * that does not state it, and then nothing about it is shown.
      */
-    val camera: HaCameraChoice? = null
+    val camera: HaCameraChoice? = null,
+    /**
+     * What the site's import target does when the plan cannot be ready by its departure under it (`if_not_ready`,
+     * Home Assistant 2.4): `ask`, `release` or `hold` ([IF_NOT_READY]); `null` from a Home Assistant that does not
+     * state it, and then it is never offered nor sent.
+     */
+    val ifNotReady: String? = null
 ) {
     /**
      * This record with the read-only facts of [confirmed] carried over: a replacement body never
@@ -123,6 +129,9 @@ data class HaPlanningSettings(
         notifications = notifications?.copy(available = confirmed.notifications?.available.orEmpty())
     )
 }
+
+/** `if_not_ready`'s values: ask, release the import target, or hold it. */
+val IF_NOT_READY: List<String> = listOf("ask", "release", "hold")
 
 /** How the car plugged in at a charger more than one car can charge at is found (`identify_mode`). */
 enum class IdentifyMode(val wire: String) {

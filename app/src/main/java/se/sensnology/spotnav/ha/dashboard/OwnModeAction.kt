@@ -35,3 +35,21 @@ internal data class OwnModeAction(val entityId: String, val value: String, val l
         }
     }
 }
+
+/**
+ * "Release the import target tonight" (the card's `release_import_target` fix): offered beside the status line
+ * `import_target_at_risk` where the plan asks (`releasable`, its `if_not_ready` `ask`), to any user, and only where the
+ * dashboard states `capabilities.release_import_target`.
+ */
+internal object ImportTargetRelease {
+    const val LABEL_KEY = "issue.importTargetRelease"
+
+    fun offered(dashboard: Dashboard?): Boolean {
+        if (dashboard == null || !dashboard.capabilities.releaseImportTarget) return false
+        return dashboard.status.lines.any { it.code == "import_target_at_risk" && it.params["releasable"] != false }
+    }
+
+    /** The button's words in [language], or `null` where it is not offered. */
+    fun label(dashboard: Dashboard?, language: String): String? =
+        if (offered(dashboard)) HaStatusWording.text(language, LABEL_KEY) else null
+}

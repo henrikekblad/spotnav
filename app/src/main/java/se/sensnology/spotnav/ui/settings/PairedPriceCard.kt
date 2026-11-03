@@ -34,7 +34,7 @@ import se.sensnology.spotnav.widget.WidgetSettings
  * charger uses, how many chargers share it, the same-area question and the "Price from" choice, see
  * [showSource]), then the confirmed area, VAT, energy tax and grid fee as value rows (see [PriceRows]), then the grid
  * tariff beside the grid fee as the card has it ([showTariff]: the grid fee as a percentage of spot, the high-load fee
- * and its hours, written with `update_grid_tariff`), then where
+ * and its hours, written with `update_grid_tariff`) and the demand charge's parts under them, then where
  * the area's prices come from and Home Assistant's notice when it has no source of its own ([showProvider]). Each of
  * those changes its one value through the paired settings path ([submit], the whole record with that one field
  * changed); the screen owns that path and says what came of it.
@@ -43,9 +43,11 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     private val sourceRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val rows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val tariffRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private val demandRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val providerRows = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     // The grid tariff: as the last dashboard stated it, or as a write here answered until the next one.
     private var tariff: DashboardGridTariff? = null
+    private var tariffDashboard: Dashboard? = null
     private var writeTariff: (Int, JSONObject, (GridTariffUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(GridTariffUpdate.Outcome.Failed(null)) }
     private var old: WidgetSettings? = null
@@ -78,6 +80,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         parent.addView(sourceRows)
         parent.addView(rows)
         parent.addView(tariffRows)
+        parent.addView(demandRows)
         parent.addView(providerRows)
     }
 
@@ -98,9 +101,12 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
     /**
      * Paint the grid tariff of [dashboard] beside the grid fee, as the card does: the percentage of spot, the high-load
      * fee and, while that fee is on or hours are stored, its hours. Locked where the price already includes the grid
-     * fee, and read-only where the tariff is not writable. Nothing where Home Assistant sends no tariff.
+     * fee, and read-only where the tariff is not writable. Then the demand charge (Home Assistant 2.4): "Effektavgift:
+     * Inget" until a part is added, then each part with its prices and this month's mean and peaks beneath, and a row
+     * adding another (at most three). Nothing where Home Assistant sends no tariff.
      */
     fun showTariff(dashboard: Dashboard?) {
+        tariffDashboard = dashboard
         tariff = dashboard?.gridTariff
         repaintTariff()
     }
@@ -109,6 +115,7 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
 
     private fun repaintTariff() {
         tariffRows.removeAllViews()
+        repaintDemand()
         val block = tariff ?: return
         for (row in tariffText().rows(block)) {
             val edit: (() -> Unit)? = if (row.included || !block.writable) null else when (row.key) {
@@ -146,6 +153,26 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
                 GridTariffUpdate.Outcome.NotPermitted -> done(t(R.string.site_error_not_permitted))
                 is GridTariffUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))
             }
+        }
+    }
+
+    private fun repaintDemand() {
+        demandRows.removeAllViews()
+        val block = tariff ?: return
+        val words = demandText(tariffDashboard)
+        for (row in words.rows(block.demand)) {
+            settingRow(demandRows, row.label, row.value, onTap = if (block.writable) ({ editDemand(row.index) }) else null)
+            row.lines.forEach { demandRows.addView(demandLine(it)) }
+        }
+    }
+
+    /** One part's editor ([index] `null` adds one): Save writes the tariff with it, Remove without it. */
+    private fun editDemand(index: Int?) {
+        val block = tariff ?: return
+        val parts = block.demand?.components.orEmpty()
+        val at = index ?: parts.size
+        editDemandComponent(cardWords(), index?.let { parts.getOrNull(it) }, block.demand?.priceUnit) { part, done ->
+            writeTariffChange({ it.bodyWith(at, part) }, done)
         }
     }
 

@@ -12,6 +12,8 @@ import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
 import se.sensnology.spotnav.ha.client.GridTariffUpdate
 import se.sensnology.spotnav.ha.client.OwnModeFix
+import se.sensnology.spotnav.ha.client.PowerMonthRead
+import se.sensnology.spotnav.ha.client.ReleaseImportTarget
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.PlanPreview
 import se.sensnology.spotnav.ha.client.SetupDismiss
@@ -73,8 +75,14 @@ internal interface HaTransport {
     /** `fix_own_mode`: the charger's own setting set back; never throws. */
     fun fixOwnMode(entityId: String, value: String): OwnModeFix.Outcome = OwnModeFix.Outcome.Failed(null)
 
+    /** `release_import_target`: the import target set aside for this charge; never throws. */
+    fun releaseImportTarget(): ReleaseImportTarget.Outcome = ReleaseImportTarget.Outcome.Failed(null)
+
     /** `update_grid_tariff`: the grid tariff written with [body]; never throws. */
     fun updateGridTariff(expectedRevision: Int, body: JSONObject): GridTariffUpdate.Outcome = GridTariffUpdate.Outcome.Failed(null)
+
+    /** One month of the site's power (`null`: the running month); never throws. */
+    fun powerMonth(month: YearMonth?): PowerMonthRead.Outcome = PowerMonthRead.Outcome.Failed(null)
 
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
@@ -124,8 +132,12 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun fixOwnMode(entityId: String, value: String) = HomeAssistantClient.fixOwnMode(connection, entityId, value)
 
+    override fun releaseImportTarget() = HomeAssistantClient.releaseImportTarget(connection)
+
     override fun updateGridTariff(expectedRevision: Int, body: JSONObject) =
         HomeAssistantClient.updateGridTariff(connection, expectedRevision, body)
+
+    override fun powerMonth(month: YearMonth?) = HomeAssistantClient.powerMonth(connection, month)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -316,10 +328,26 @@ internal class HaSession(
         }
     }
 
+    /** `release_import_target` (never throws). */
+    fun releaseImportTarget(done: (ReleaseImportTarget.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.releaseImportTarget()
+            mainThread { done(outcome) }
+        }
+    }
+
     /** `update_grid_tariff` (never throws). */
     fun updateGridTariff(expectedRevision: Int, body: JSONObject, done: (GridTariffUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updateGridTariff(expectedRevision, body)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_power_month` (never throws). */
+    fun powerMonth(month: YearMonth?, done: (PowerMonthRead.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.powerMonth(month)
             mainThread { done(outcome) }
         }
     }

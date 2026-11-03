@@ -675,6 +675,10 @@
   </plurals>
   <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
   <string name="setup_dismiss_failed">Could not save that. Try again.</string>
+  <string name="if_not_ready_title">If the car cannot be ready in time</string>
+  <string name="if_not_ready_ask">Ask</string>
+  <string name="if_not_ready_release">Release the import target</string>
+  <string name="if_not_ready_hold">Keep the import target</string>
   <string name="card_grid_fee_percent" formatted="false">Grid fee, % of spot</string>
   <string name="card_grid_fee_percent_help" formatted="false">Some grid companies charge part of the grid fee as a share of the spot price. It is added on top of the grid fee.</string>
   <string name="card_grid_fee_high" formatted="false">Grid fee in high-load hours</string>
@@ -702,13 +706,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Days</string>
   <string name="card_grid_fee_window_from_month" formatted="false">First month</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Last month</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">From and To cannot be the same hour.</string>
+  <string name="card_demand_title" formatted="false">Demand charge</string>
+  <string name="card_demand_part" formatted="false">Demand charge {n}</string>
+  <string name="card_demand_add_part" formatted="false">Another part of the demand charge</string>
+  <string name="card_demand_add" formatted="false">Add</string>
+  <string name="card_demand_top_1" formatted="false">Highest hour</string>
+  <string name="card_demand_top_3" formatted="false">Mean of the 3 highest days</string>
+  <string name="card_demand_top_5" formatted="false">Mean of the 5 highest days</string>
+  <string name="card_demand_all_hours" formatted="false">All hours</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (winter / summer)</string>
+  <string name="card_demand_month" formatted="false">This month: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">No peak yet this month</string>
+  <string name="card_demand_reason_no_site" formatted="false">Measured once the charger is in a site with a grid meter.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Measured once the site has its total grid power.</string>
+  <string name="card_demand_reason_unknown" formatted="false">This site cannot measure it.</string>
+  <string name="card_demand_help" formatted="false">Your grid company charges per kW of your highest hourly mean import in the month. SpotNav measures it on the site\'s meter and shows it here; it does not change the charging.</string>
+  <string name="card_demand_counted" formatted="false">Hours that count</string>
+  <string name="card_demand_counted_all" formatted="false">All hours</string>
+  <string name="card_demand_counted_window" formatted="false">Only certain hours</string>
+  <string name="card_demand_top_n" formatted="false">Peaks per month</string>
+  <string name="card_demand_price_winter" formatted="false">Price per kW, Nov–Mar</string>
+  <string name="card_demand_price_summer" formatted="false">Price per kW, Apr–Oct</string>
+  <string name="card_demand_remove" formatted="false">Remove</string>
+  <string name="card_demand_error_price" formatted="false">A price is a number, not below 0, or empty.</string>
+  <string name="card_site_import_target" formatted="false">Import target</string>
+  <string name="card_site_import_target_help" formatted="false">The hourly mean of import you want to stay under. Load balancing holds the chargers so the hour stays under it, and pauses a charge until the next hour once even its minimum current no longer fits. Below the car\'s minimum level it charges at once; the Plan says what happens if the car cannot be ready in time.</string>
+  <string name="card_site_import_target_hour" formatted="false">This hour: {kw} of {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">This hour: not measured yet</string>
+  <string name="card_settings_value_none" formatted="false">None</string>
+  <string name="card_settings_value_off" formatted="false">Off</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">The electricity price was changed elsewhere and has been read again. Nothing was saved: save again to apply your change.</string>
+  <string name="card_history_view_label" formatted="false">View</string>
+  <string name="card_history_view_charges" formatted="false">Charges</string>
+  <string name="card_history_view_power" formatted="false">Power</string>
+  <string name="card_power_intro" formatted="false">Each day\'s highest hourly mean of import from the grid, as the site\'s meter measured it, split into the house and the car.</string>
+  <string name="card_power_loading" formatted="false">Reading the power…</string>
+  <string name="card_power_failed" formatted="false">The power could not be read.</string>
+  <string name="card_power_empty" formatted="false">No hours were measured this month.</string>
+  <string name="card_power_chart_label" formatted="false">Highest hourly mean per day</string>
+  <string name="card_power_day_chart_label" formatted="false">Hourly means, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tap a day for its hours; hover or focus a bar for its figures.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Hover, focus or tap a bar for the day\'s figures. Only the days are kept for this month.</string>
+  <string name="card_power_hint_day" formatted="false">Hover, focus or tap an hour for its figures.</string>
+  <string name="card_power_back" formatted="false">Whole month</string>
+  <string name="card_power_day" formatted="false">{date}: highest {kw} at {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">house {house}, car {car}</string>
+  <string name="card_power_counted" formatted="false">counts for the demand charge</string>
+  <string name="card_power_counted_part" formatted="false">counts for {part}</string>
+  <string name="card_power_held" formatted="false">the import target held the charging back</string>
+  <string name="card_power_paused" formatted="false">the import target paused the charging</string>
+  <string name="card_power_incomplete" formatted="false">gaps in the reading</string>
+  <string name="card_power_no_data" formatted="false">{date}: nothing measured</string>
+  <string name="card_power_no_peak" formatted="false">no peak yet</string>
+  <string name="card_power_part_day" formatted="false">Day {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">day {hours}</string>
+  <string name="card_power_part_night" formatted="false">Night {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">night {hours}</string>
+  <string name="card_power_part_all" formatted="false">All hours</string>
+  <string name="card_power_part_all_inline" formatted="false">all hours</string>
+  <string name="card_power_legend" formatted="false">Legend</string>
+  <string name="card_power_legend_house" formatted="false">House</string>
+  <string name="card_power_legend_car" formatted="false">Car</string>
+  <string name="card_power_legend_unsplit" formatted="false">House and car, not split</string>
+  <string name="card_power_legend_target" formatted="false">Import target {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Counted peak, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">The import target held back (dot) or paused (ring) the charging</string>
+  <string name="setup_demand_grid_power_text">The demand charge or the import target needs the site\'s total grid power to be measured.</string>
+  <string name="setup_demand_grid_power_action">Set total grid power</string>
   <string name="card_grid_fee_window_help" formatted="false">The hours your grid company charges its higher fee in. An end before the start runs over midnight, and the night counts as the day it starts on.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">A common choice. Check it against your grid company\'s tariff.</string>
   <string name="card_grid_fee_window_first" formatted="false">The high-load fee applies only in its hours. Confirm the hours first, then the fee.</string>
   <string name="card_grid_fee_window_next" formatted="false">Next</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">From and To cannot be the same hour.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">The electricity price was changed elsewhere and has been read again. Nothing was saved: save again to apply your change.</string>
   <string name="card_market_included" formatted="false">Included in the price</string>
-  <string name="card_settings_value_off" formatted="false">Off</string>
   <string name="card_settings_value_unset" formatted="false">Not set</string>
+  <string name="card_settings_error_range" formatted="false">Between {min} and {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">The hourly mean of import you want to stay under. Load balancing holds the chargers so the hour stays under it, and pauses a charge until the next hour once even its minimum current no longer fits. Below the car\'s minimum level it charges at once; Departure says what happens if the car cannot be ready in time.</string>
 </resources>

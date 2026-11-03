@@ -63,6 +63,7 @@ internal fun ChargingScreen.showRecordInControls(record: HaPlanningSettings) {
         if (hour != null && minute != null) planCard.setDeparture(hour, minute)
         planCard.setDepartureDate(record.departureDate)
         planCard.setDepartureWeekdays(record.departureWeekdays)
+        planCard.setIfNotReady(record.ifNotReady, pairedNow()?.gridTariff?.demand?.importTargetKw != null)
         syncDepartureDays()
         planCard.refreshDepartureLabel()
         // The exact readings last, and handed back: the labels above were written from the
@@ -155,6 +156,7 @@ internal fun ChargingScreen.setPlanningControlsEnabled(enabled: Boolean) {
     planCard.departurePicker.isEnabled = enabled && planCard.useDeparture.isChecked
     planCard.dailyRadio.isEnabled = enabled
     planCard.onDateRadio.isEnabled = enabled
+    planCard.ifNotReadyRadios.forEach { it.isEnabled = enabled }
     planCard.refreshDepartureLabel()
     planCard.chargeBy.show(ValueCue.of(editable = true, available = enabled))
     targetSoc.slider.isEnabled = enabled

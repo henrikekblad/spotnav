@@ -671,6 +671,10 @@
   </plurals>
   <string name="own_mode_fix_failed">Impossible de modifier le réglage de la borne. Modifiez-le dans Home Assistant.</string>
   <string name="setup_dismiss_failed">Enregistrement impossible. Réessayez.</string>
+  <string name="if_not_ready_title">Si la voiture ne peut pas être prête à temps</string>
+  <string name="if_not_ready_ask">Demander</string>
+  <string name="if_not_ready_release">Lever l\'objectif de soutirage</string>
+  <string name="if_not_ready_hold">Garder l\'objectif de soutirage</string>
   <string name="card_grid_fee_percent" formatted="false">Frais de réseau, % du prix spot</string>
   <string name="card_grid_fee_percent_help" formatted="false">Certains gestionnaires de réseau facturent une partie des frais de réseau en pourcentage du prix spot. Elle s\'ajoute aux frais de réseau.</string>
   <string name="card_grid_fee_high" formatted="false">Frais de réseau en heures de pointe</string>
@@ -698,13 +702,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Jours</string>
   <string name="card_grid_fee_window_from_month" formatted="false">Premier mois</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Dernier mois</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">« De » et « À » ne peuvent pas être la même heure.</string>
+  <string name="card_demand_title" formatted="false">Tarif de puissance</string>
+  <string name="card_demand_part" formatted="false">Tarif de puissance {n}</string>
+  <string name="card_demand_add_part" formatted="false">Une autre part du tarif de puissance</string>
+  <string name="card_demand_add" formatted="false">Ajouter</string>
+  <string name="card_demand_top_1" formatted="false">Heure la plus haute</string>
+  <string name="card_demand_top_3" formatted="false">Moyenne des 3 jours les plus hauts</string>
+  <string name="card_demand_top_5" formatted="false">Moyenne des 5 jours les plus hauts</string>
+  <string name="card_demand_all_hours" formatted="false">Toutes les heures</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (hiver / été)</string>
+  <string name="card_demand_month" formatted="false">Ce mois-ci : {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Pas encore de pic ce mois-ci</string>
+  <string name="card_demand_reason_no_site" formatted="false">Mesuré dès que la borne fait partie d\'un site avec compteur électrique.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Mesuré dès que le site a sa puissance réseau totale.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Ce site ne peut pas le mesurer.</string>
+  <string name="card_demand_help" formatted="false">Votre gestionnaire de réseau facture par kW votre plus haute moyenne horaire de soutirage du mois. SpotNav la mesure sur le compteur du site et l\'affiche ici ; la recharge ne change pas.</string>
+  <string name="card_demand_counted" formatted="false">Heures comptées</string>
+  <string name="card_demand_counted_all" formatted="false">Toutes les heures</string>
+  <string name="card_demand_counted_window" formatted="false">Seulement certaines heures</string>
+  <string name="card_demand_top_n" formatted="false">Pics par mois</string>
+  <string name="card_demand_price_winter" formatted="false">Prix par kW, nov–mars</string>
+  <string name="card_demand_price_summer" formatted="false">Prix par kW, avr–oct</string>
+  <string name="card_demand_remove" formatted="false">Supprimer</string>
+  <string name="card_demand_error_price" formatted="false">Un prix est un nombre, pas en dessous de 0, ou vide.</string>
+  <string name="card_site_import_target" formatted="false">Objectif de soutirage</string>
+  <string name="card_site_import_target_help" formatted="false">La moyenne horaire de soutirage sous laquelle vous voulez rester. L\'équilibrage de charge retient les bornes pour que l\'heure reste en dessous, et met une recharge en pause jusqu\'à l\'heure suivante quand même son courant minimum ne tient plus. Sous le niveau minimum de la voiture, elle charge tout de suite ; le Plan dit ce qui se passe si la voiture ne peut pas être prête à temps.</string>
+  <string name="card_site_import_target_hour" formatted="false">Cette heure : {kw} sur {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Cette heure : pas encore mesurée</string>
+  <string name="card_settings_value_none" formatted="false">Aucun</string>
+  <string name="card_settings_value_off" formatted="false">Désactivé</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Le prix de l\'électricité a été modifié ailleurs et a été relu. Rien n\'a été enregistré : enregistrez à nouveau pour appliquer votre modification.</string>
+  <string name="card_history_view_label" formatted="false">Affichage</string>
+  <string name="card_history_view_charges" formatted="false">Recharges</string>
+  <string name="card_history_view_power" formatted="false">Puissance</string>
+  <string name="card_power_intro" formatted="false">Pour chaque jour, la plus forte moyenne horaire soutirée au réseau, mesurée par le compteur du site, répartie entre la maison et la voiture.</string>
+  <string name="card_power_loading" formatted="false">Chargement de la puissance…</string>
+  <string name="card_power_failed" formatted="false">La puissance n\'a pas pu être lue.</string>
+  <string name="card_power_empty" formatted="false">Aucune heure mesurée ce mois-ci.</string>
+  <string name="card_power_chart_label" formatted="false">Plus forte moyenne horaire par jour</string>
+  <string name="card_power_day_chart_label" formatted="false">Moyennes horaires, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Touchez un jour pour voir ses heures ; survolez une barre pour ses chiffres.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Touchez ou survolez une barre pour voir les chiffres du jour. Pour ce mois, seuls les jours sont conservés.</string>
+  <string name="card_power_hint_day" formatted="false">Touchez ou survolez une heure pour voir ses chiffres.</string>
+  <string name="card_power_back" formatted="false">Tout le mois</string>
+  <string name="card_power_day" formatted="false">{date} : au plus {kw} à {time}</string>
+  <string name="card_power_hour" formatted="false">{time} : {kw}</string>
+  <string name="card_power_split" formatted="false">maison {house}, voiture {car}</string>
+  <string name="card_power_counted" formatted="false">compte pour le tarif de puissance</string>
+  <string name="card_power_counted_part" formatted="false">compte pour le tarif de puissance ({part})</string>
+  <string name="card_power_held" formatted="false">l\'objectif de soutirage a freiné la recharge</string>
+  <string name="card_power_paused" formatted="false">l\'objectif de soutirage a mis la recharge en pause</string>
+  <string name="card_power_incomplete" formatted="false">mesure incomplète</string>
+  <string name="card_power_no_data" formatted="false">{date} : rien de mesuré</string>
+  <string name="card_power_no_peak" formatted="false">pas encore de pic</string>
+  <string name="card_power_part_day" formatted="false">Jour {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">jour {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nuit {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">nuit {hours}</string>
+  <string name="card_power_part_all" formatted="false">Toutes les heures</string>
+  <string name="card_power_part_all_inline" formatted="false">toutes les heures</string>
+  <string name="card_power_legend" formatted="false">Légende</string>
+  <string name="card_power_legend_house" formatted="false">Maison</string>
+  <string name="card_power_legend_car" formatted="false">Voiture</string>
+  <string name="card_power_legend_unsplit" formatted="false">Maison et voiture, non réparties</string>
+  <string name="card_power_legend_target" formatted="false">Objectif de soutirage {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Pic retenu, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">L\'objectif de soutirage a freiné (point) ou mis en pause (anneau) la recharge</string>
+  <string name="setup_demand_grid_power_text">Le tarif de puissance ou l\'objectif de soutirage a besoin de la puissance réseau totale du site pour être mesuré.</string>
+  <string name="setup_demand_grid_power_action">Définir la puissance réseau totale</string>
   <string name="card_grid_fee_window_help" formatted="false">Les heures où votre gestionnaire de réseau facture ses frais plus élevés. Une fin avant le début passe minuit, et la nuit compte pour le jour où elle commence.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Un choix courant. Vérifiez-le dans le tarif de votre gestionnaire de réseau.</string>
   <string name="card_grid_fee_window_first" formatted="false">Les frais de pointe ne s\'appliquent que pendant leurs heures. Confirmez d\'abord les heures, puis les frais.</string>
   <string name="card_grid_fee_window_next" formatted="false">Suivant</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">« De » et « À » ne peuvent pas être la même heure.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">Le prix de l\'électricité a été modifié ailleurs et a été relu. Rien n\'a été enregistré : enregistrez à nouveau pour appliquer votre modification.</string>
   <string name="card_market_included" formatted="false">Inclus dans le prix</string>
-  <string name="card_settings_value_off" formatted="false">Désactivé</string>
   <string name="card_settings_value_unset" formatted="false">Non défini</string>
+  <string name="card_settings_error_range" formatted="false">Entre {min} et {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">La moyenne horaire de soutirage sous laquelle vous voulez rester. L\'équilibrage de charge retient les bornes pour que l\'heure reste en dessous, et met une recharge en pause jusqu\'à l\'heure suivante quand même son courant minimum ne tient plus. Sous le niveau minimum de la voiture, elle charge tout de suite ; Départ dit ce qui se passe si la voiture ne peut pas être prête à temps.</string>
 </resources>

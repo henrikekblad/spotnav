@@ -41,6 +41,7 @@ import se.sensnology.spotnav.ha.settings.IdentifyMode
 import se.sensnology.spotnav.ui.common.ValueCue
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
+import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.chooseMany
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.NumberSpec
@@ -761,6 +762,19 @@ internal class PairedSettingsCards(
         }
         summary.setup?.let { setup ->
             setup.mainFuseA?.let { readRow(card.body, t(R.string.site_main_fuse_label), t(R.string.site_main_fuse_value, ampsText(it))) }
+        }
+        // Beside the fuse, as the card has it: the import target and the hour running now against it (Home Assistant
+        // 2.4). Set here where the webhook's site write takes it (`capabilities.site_import_target`).
+        val held = dashboard
+        held?.gridTariff?.demand?.let { demand ->
+            val words = demandText(held)
+            val label = cardWords().say("site.importTarget")
+            val settable = held.capabilities.siteImportTarget && site.writable
+            valueRow(card.body, label, words.targetText(demand), words.hourLine(demand), onTap = if (settable) ({
+                editImportTarget(label, demand.importTargetKw)
+            }) else null)
+        }
+        summary.setup?.let { setup ->
             setup.measurementMode?.let { mode ->
                 readRow(card.body, t(R.string.site_measurement_label), t(
                     when (mode) {
@@ -901,6 +915,29 @@ internal class PairedSettingsCards(
         solarNotice?.let { card.body.addView(muted(it, top = 4)) }
     }
 
+    /**
+     * The site's import target, as the card's editor has it: kW to one decimal from 0.1, or Av. Written alone with
+     * `update_site_settings` against the value shown; a conflict keeps the dialog open with the reason while the screen
+     * reads the stored value again.
+     */
+    private fun editImportTarget(label: String, current: Double?) {
+        val words = cardWords()
+        val spec = NumberSpec(IMPORT_TARGET_MIN, IMPORT_TARGET_MAX, 1, minDecimals = 1)
+        val locale = AppLanguageSettings.numberLocale(activity)
+        editNumber(
+            label, spec, "kW", current,
+            words.say("settings.error.range", "min" to spec.fieldText(IMPORT_TARGET_MIN, locale), "max" to "1000"),
+            help = t(R.string.import_target_help), noneLabel = words.say("settings.value.off")
+        ) { value, done ->
+            if (value == current) return@editNumber done(null)
+            writeSite(SiteUpdate.importTargetRequest(current, value)) { outcome ->
+                val feedback = PairedVehicles.feedback(outcome)
+                feedback.adopted?.let { adoptedSite = it }
+                done(feedback.notice?.let { siteNoticeText(it) })
+            }
+        }
+    }
+
     /** One solar value written alone (`update_site_settings` with that field, against the value shown). */
     private fun writeSolar(request: SiteUpdate.Request, done: (String?) -> Unit) {
         writeSite(request) { outcome ->
@@ -919,6 +956,10 @@ internal class PairedSettingsCards(
 
     private companion object {
         const val ERROR_COLOUR = 0xFFD65C5C.toInt()
+
+        /** The import target's bounds Home Assistant takes, in kW. */
+        const val IMPORT_TARGET_MIN = 0.1
+        const val IMPORT_TARGET_MAX = 1000.0
 
         /** The divider between a card's sections: the muted colour, faint. */
         const val DIVIDER_ALPHA = 0x33000000

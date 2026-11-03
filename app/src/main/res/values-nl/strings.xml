@@ -663,6 +663,10 @@
   </plurals>
   <string name="own_mode_fix_failed">De instelling van de lader kon niet worden gewijzigd. Wijzig haar in Home Assistant.</string>
   <string name="setup_dismiss_failed">Opslaan is mislukt. Probeer het opnieuw.</string>
+  <string name="if_not_ready_title">Als de auto niet op tijd klaar kan zijn</string>
+  <string name="if_not_ready_ask">Vragen</string>
+  <string name="if_not_ready_release">Afnamedoel loslaten</string>
+  <string name="if_not_ready_hold">Afnamedoel aanhouden</string>
   <string name="card_grid_fee_percent" formatted="false">Nettarief, % van de spotprijs</string>
   <string name="card_grid_fee_percent_help" formatted="false">Sommige netbeheerders rekenen een deel van het nettarief als aandeel van de spotprijs. Het komt bovenop het nettarief.</string>
   <string name="card_grid_fee_high" formatted="false">Nettarief in piekuren</string>
@@ -690,13 +694,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Dagen</string>
   <string name="card_grid_fee_window_from_month" formatted="false">Eerste maand</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Laatste maand</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Van en Tot kunnen niet hetzelfde uur zijn.</string>
+  <string name="card_demand_title" formatted="false">Capaciteitstarief</string>
+  <string name="card_demand_part" formatted="false">Capaciteitstarief {n}</string>
+  <string name="card_demand_add_part" formatted="false">Nog een deel van het capaciteitstarief</string>
+  <string name="card_demand_add" formatted="false">Toevoegen</string>
+  <string name="card_demand_top_1" formatted="false">Hoogste uur</string>
+  <string name="card_demand_top_3" formatted="false">Gemiddelde van de 3 hoogste dagen</string>
+  <string name="card_demand_top_5" formatted="false">Gemiddelde van de 5 hoogste dagen</string>
+  <string name="card_demand_all_hours" formatted="false">Alle uren</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (winter / zomer)</string>
+  <string name="card_demand_month" formatted="false">Deze maand: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Nog geen piek deze maand</string>
+  <string name="card_demand_reason_no_site" formatted="false">Wordt gemeten zodra de laadpaal bij een locatie met elektriciteitsmeter hoort.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Wordt gemeten zodra de locatie het totale netvermogen heeft.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Deze locatie kan het niet meten.</string>
+  <string name="card_demand_help" formatted="false">Je netbeheerder rekent per kW van je hoogste uurgemiddelde afname in de maand. SpotNav meet het op de meter van de locatie en toont het hier; het laden verandert niet.</string>
+  <string name="card_demand_counted" formatted="false">Uren die tellen</string>
+  <string name="card_demand_counted_all" formatted="false">Alle uren</string>
+  <string name="card_demand_counted_window" formatted="false">Alleen bepaalde uren</string>
+  <string name="card_demand_top_n" formatted="false">Pieken per maand</string>
+  <string name="card_demand_price_winter" formatted="false">Prijs per kW, nov–mrt</string>
+  <string name="card_demand_price_summer" formatted="false">Prijs per kW, apr–okt</string>
+  <string name="card_demand_remove" formatted="false">Verwijderen</string>
+  <string name="card_demand_error_price" formatted="false">Een prijs is een getal, niet onder 0, of leeg.</string>
+  <string name="card_site_import_target" formatted="false">Afnamedoel</string>
+  <string name="card_site_import_target_help" formatted="false">Het uurgemiddelde van de afname waar je onder wilt blijven. De load balancing houdt de laders zo dat het uur eronder blijft, en pauzeert een laadbeurt tot het volgende uur zodra zelfs de minimumstroom niet meer past. Onder het minimumniveau van de auto laadt hij meteen; het Plan zegt wat er gebeurt als de auto niet op tijd klaar kan zijn.</string>
+  <string name="card_site_import_target_hour" formatted="false">Dit uur: {kw} van {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Dit uur: nog niet gemeten</string>
+  <string name="card_settings_value_none" formatted="false">Geen</string>
+  <string name="card_settings_value_off" formatted="false">Uit</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">De stroomprijs is elders gewijzigd en opnieuw gelezen. Er is niets opgeslagen: sla opnieuw op om je wijziging door te voeren.</string>
+  <string name="card_history_view_label" formatted="false">Weergave</string>
+  <string name="card_history_view_charges" formatted="false">Laadsessies</string>
+  <string name="card_history_view_power" formatted="false">Vermogen</string>
+  <string name="card_power_intro" formatted="false">Per dag het hoogste uurgemiddelde van de afname van het net, zoals de meter van de locatie het mat, verdeeld over huis en auto.</string>
+  <string name="card_power_loading" formatted="false">Vermogen wordt geladen…</string>
+  <string name="card_power_failed" formatted="false">Het vermogen kon niet worden gelezen.</string>
+  <string name="card_power_empty" formatted="false">Deze maand zijn geen uren gemeten.</string>
+  <string name="card_power_chart_label" formatted="false">Hoogste uurgemiddelde per dag</string>
+  <string name="card_power_day_chart_label" formatted="false">Uurgemiddelden, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tik op een dag voor de uren; beweeg over een staaf voor de cijfers.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Tik op een staaf of beweeg erover voor de cijfers van die dag. Van deze maand zijn alleen de dagen bewaard.</string>
+  <string name="card_power_hint_day" formatted="false">Tik op een uur of beweeg erover voor de cijfers.</string>
+  <string name="card_power_back" formatted="false">Hele maand</string>
+  <string name="card_power_day" formatted="false">{date}: hoogste {kw} om {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">huis {house}, auto {car}</string>
+  <string name="card_power_counted" formatted="false">telt voor het capaciteitstarief</string>
+  <string name="card_power_counted_part" formatted="false">telt voor {part}</string>
+  <string name="card_power_held" formatted="false">het afnamedoel hield het laden in</string>
+  <string name="card_power_paused" formatted="false">het afnamedoel pauzeerde het laden</string>
+  <string name="card_power_incomplete" formatted="false">gaten in de meting</string>
+  <string name="card_power_no_data" formatted="false">{date}: niets gemeten</string>
+  <string name="card_power_no_peak" formatted="false">nog geen piek</string>
+  <string name="card_power_part_day" formatted="false">Dag {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">dag {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">nacht {hours}</string>
+  <string name="card_power_part_all" formatted="false">Alle uren</string>
+  <string name="card_power_part_all_inline" formatted="false">alle uren</string>
+  <string name="card_power_legend" formatted="false">Legenda</string>
+  <string name="card_power_legend_house" formatted="false">Huis</string>
+  <string name="card_power_legend_car" formatted="false">Auto</string>
+  <string name="card_power_legend_unsplit" formatted="false">Huis en auto, niet verdeeld</string>
+  <string name="card_power_legend_target" formatted="false">Afnamedoel {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Piek die telt, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
+  <string name="setup_demand_grid_power_text">Het capaciteitstarief of het afnamedoel heeft het totale netvermogen van de locatie nodig om gemeten te worden.</string>
+  <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
   <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
   <string name="card_grid_fee_window_first" formatted="false">Het piektarief geldt alleen in zijn uren. Bevestig eerst de uren, dan het tarief.</string>
   <string name="card_grid_fee_window_next" formatted="false">Volgende</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">Van en Tot kunnen niet hetzelfde uur zijn.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">De stroomprijs is elders gewijzigd en opnieuw gelezen. Er is niets opgeslagen: sla opnieuw op om je wijziging door te voeren.</string>
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>
-  <string name="card_settings_value_off" formatted="false">Uit</string>
   <string name="card_settings_value_unset" formatted="false">Niet ingesteld</string>
+  <string name="card_settings_error_range" formatted="false">Tussen {min} en {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Het uurgemiddelde van de afname waar je onder wilt blijven. De load balancing houdt de laders zo dat het uur eronder blijft, en pauzeert een laadbeurt tot het volgende uur zodra zelfs de minimumstroom niet meer past. Onder het minimumniveau van de auto laadt hij meteen; Vertrek zegt wat er gebeurt als de auto niet op tijd klaar kan zijn.</string>
 </resources>

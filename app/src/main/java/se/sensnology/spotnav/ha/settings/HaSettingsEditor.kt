@@ -79,6 +79,12 @@ internal sealed interface HaSettingsEdit {
      * whole. Only for a record that states them.
      */
     data class Identification(val mode: IdentifyMode, val vehicleIds: List<String>?) : HaSettingsEdit
+
+    /**
+     * What the site's import target does when the plan cannot be ready by its departure under it (`if_not_ready`:
+     * `ask`, `release` or `hold`). Only for a record that states it.
+     */
+    data class IfNotReady(val choice: String) : HaSettingsEdit
 }
 
 /** What one edit produced: a full replacement, or the contract's own stable refusal. */
@@ -100,6 +106,9 @@ internal object HaSettingsEditor {
         // refuse a body that names them.
         if (edit is HaSettingsEdit.Identification && confirmed.identification == null) {
             return HaSettingsEditResult.Refused("invalid_vehicles")
+        }
+        if (edit is HaSettingsEdit.IfNotReady && confirmed.ifNotReady == null) {
+            return HaSettingsEditResult.Refused("invalid_departure")
         }
         val candidate = apply(confirmed, edit)
         return try {
@@ -137,6 +146,7 @@ internal object HaSettingsEditor {
                 events = HaSettingsCodec.canonicalEvents(edit.events.distinct())
             )
         )
+        is HaSettingsEdit.IfNotReady -> confirmed.copy(ifNotReady = edit.choice)
         is HaSettingsEdit.Identification -> confirmed.copy(
             identification = HaIdentificationSettings(edit.mode, edit.vehicleIds)
         )

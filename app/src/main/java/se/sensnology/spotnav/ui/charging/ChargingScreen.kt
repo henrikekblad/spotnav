@@ -617,6 +617,8 @@ internal class ChargingScreen(
             "vehicle" -> homeAssistant("/config/integrations/dashboard")
             "site" -> homeAssistant("/config/integrations/dashboard/add?domain=spotnav")
             "solar_forecast" -> homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
+            // The site's total grid power is chosen among its entities in Home Assistant (the card opens that dialog).
+            "demand_grid_power" -> homeAssistant("/config/integrations/integration/spotnav")
             "car_level" -> {
                 shell.settingsCar = dashboard.soc?.vehicleId
                 shell.navigate(Screen.SETTINGS)
@@ -752,6 +754,15 @@ internal class ChargingScreen(
                 datePicker.minDate = days.today.atStartOfDay(zone).toInstant().toEpochMilli()
                 datePicker.maxDate = days.max.atStartOfDay(zone).toInstant().toEpochMilli()
             }.show()
+        }
+        planCard.ifNotReadyRadios.forEach { radio ->
+            radio.setOnClickListener {
+                if (authorityApplying) return@setOnClickListener
+                val choice = radio.tag as String
+                // One choice at a time, as a radio group; the record's answer paints it again.
+                planCard.setIfNotReady(choice, true)
+                commitEdit(HaSettingsEdit.IfNotReady(choice))
+            }
         }
         planCard.weekdayBoxes.forEach { box ->
             box.setOnCheckedChangeListener { _, checked ->

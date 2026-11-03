@@ -715,7 +715,10 @@ internal data class Dashboard(
             priceDays = json.strictBoolean("price_days") == true,
             planPreview = json.strictBoolean("plan_preview") == true,
             dismissSetupItem = json.strictBoolean("dismiss_setup_item") == true,
-            fixOwnMode = json.strictBoolean("fix_own_mode") == true
+            fixOwnMode = json.strictBoolean("fix_own_mode") == true,
+            releaseImportTarget = json.strictBoolean("release_import_target") == true,
+            getPowerMonth = json.strictBoolean("get_power_month") == true,
+            siteImportTarget = json.strictBoolean("site_import_target") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(

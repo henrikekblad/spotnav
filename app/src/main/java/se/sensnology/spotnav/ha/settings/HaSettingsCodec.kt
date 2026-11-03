@@ -38,7 +38,7 @@ internal object HaSettingsCodec {
      * both ways: a body that leaves it out keeps the stored choice, and so is `fill_to_limit`.
      */
     private val OPTIONAL_KEYS = setOf(
-        "departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT, IDENTIFY_MODE, VEHICLE_IDS, IDENTIFY_CAMERA
+        "departure_date", "departure_weekdays", FISCAL_INCLUDED, NOTIFICATIONS, FILL_TO_LIMIT, IDENTIFY_MODE, VEHICLE_IDS, IDENTIFY_CAMERA, IF_NOT_READY_KEY
     )
 
     private const val FISCAL_INCLUDED = "fiscal_included"
@@ -47,6 +47,7 @@ internal object HaSettingsCodec {
     private const val IDENTIFY_MODE = "identify_mode"
     private const val VEHICLE_IDS = "vehicle_ids"
     private const val IDENTIFY_CAMERA = "identify_camera"
+    private const val IF_NOT_READY_KEY = "if_not_ready"
     private val CAMERA_KEYS = setOf("camera_entity_id", "ai_task_entity_id", "frame")
     private val FRAME_KEYS = setOf("x", "y", "w", "h")
     private const val INVALID_VEHICLES = "invalid_vehicles"
@@ -132,7 +133,8 @@ internal object HaSettingsCodec {
             notifications = notifications(raw.opt(NOTIFICATIONS), strict = !withRevision),
             fillToLimit = nullable(raw.opt(FILL_TO_LIMIT)) { boolean(it, FILL_TO_LIMIT, "invalid_energy") },
             identification = identification(raw, strict = !withRevision),
-            camera = camera(raw, strict = !withRevision)
+            camera = camera(raw, strict = !withRevision),
+            ifNotReady = nullable(raw.opt(IF_NOT_READY_KEY)) { enum(it, IF_NOT_READY, "invalid_departure") }
         )
     }
 
@@ -425,6 +427,8 @@ internal object HaSettingsCodec {
             if (withRevision && settings.fiscalIncluded.isNotEmpty()) {
                 put(FISCAL_INCLUDED, JSONArray(HaAreaOverrideComponent.entries.filter { it in settings.fiscalIncluded }.map { it.wire }))
             }
+            // Stated only when Home Assistant stated it, and then always sent back as it stands (or as chosen).
+            settings.ifNotReady?.let { put(IF_NOT_READY_KEY, it) }
             // Stated only when Home Assistant stated them, and then always sent back as they stand.
             settings.identification?.let { identification ->
                 put(IDENTIFY_MODE, identification.mode.wire)

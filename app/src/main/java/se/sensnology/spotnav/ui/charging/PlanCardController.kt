@@ -208,6 +208,31 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         })
         dayGroup.addView(weekdayGroup)
         departureControl.addView(dayGroup)
+        // "If the car cannot be ready in time" (the card's Plan dialog): ask, release the import target, or hold it.
+        // Shown only while the charger's site has an import target and the record states the choice.
+        val ifNotReadyGroup = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = View.GONE
+            setPadding(0, dp(10), 0, 0)
+        }
+        ifNotReadyGroup.addView(TextView(context).apply {
+            text = t(R.string.if_not_ready_title)
+            textSize = 14f
+            setTextColor(dark)
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        val ifNotReadyRadios = listOf(
+            "ask" to R.string.if_not_ready_ask,
+            "release" to R.string.if_not_ready_release,
+            "hold" to R.string.if_not_ready_hold
+        ).map { (choice, label) ->
+            RadioButton(context).apply {
+                text = t(label)
+                tag = choice
+                ifNotReadyGroup.addView(this)
+            }
+        }
+        departureControl.addView(ifNotReadyGroup)
         val departureValue = valueLabel()
         val departurePopoverValue = valueLabel()
         var departureDialog: AlertDialog? = null
@@ -414,6 +439,11 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             setDepartureWeekdays = { days ->
                 weekdayBoxes.forEachIndexed { index, box -> box.isChecked = (index + 1) in days }
                 weekdayError.visibility = View.GONE
+            },
+            ifNotReadyRadios = ifNotReadyRadios,
+            setIfNotReady = { choice, shown ->
+                ifNotReadyGroup.visibility = if (shown && choice != null) View.VISIBLE else View.GONE
+                ifNotReadyRadios.forEach { it.isChecked = it.tag == choice }
             },
             departureDays = { departureDays },
             setDepartureDays = { days, shown ->
@@ -664,6 +694,12 @@ internal class PlanCard(
     val weekdayError: TextView,
     val departureWeekdays: () -> List<Int>,
     val setDepartureWeekdays: (List<Int>) -> Unit,
+    /**
+     * "If the car cannot be ready in time": the three choices (each tagged with its `if_not_ready` value), and the one
+     * chosen with whether the group is shown at all (the site has an import target and the record states the choice).
+     */
+    val ifNotReadyRadios: List<RadioButton>,
+    val setIfNotReady: (String?, Boolean) -> Unit,
     /** The days the area's zone offers now (or `null`), and whether the day block is shown at all. */
     val departureDays: () -> DepartureDays?,
     val setDepartureDays: (DepartureDays?, Boolean) -> Unit,

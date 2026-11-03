@@ -671,6 +671,10 @@
   </plurals>
   <string name="own_mode_fix_failed">No se pudo cambiar el ajuste del cargador. Cámbialo en Home Assistant.</string>
   <string name="setup_dismiss_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+  <string name="if_not_ready_title">Si el coche no puede estar listo a tiempo</string>
+  <string name="if_not_ready_ask">Preguntar</string>
+  <string name="if_not_ready_release">Dejar el objetivo de consumo</string>
+  <string name="if_not_ready_hold">Mantener el objetivo de consumo</string>
   <string name="card_grid_fee_percent" formatted="false">Peaje de acceso, % del precio spot</string>
   <string name="card_grid_fee_percent_help" formatted="false">Algunas distribuidoras cobran parte del peaje de acceso como un porcentaje del precio spot. Se suma al peaje de acceso.</string>
   <string name="card_grid_fee_high" formatted="false">Peaje de acceso en horas punta</string>
@@ -698,13 +702,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Días</string>
   <string name="card_grid_fee_window_from_month" formatted="false">Primer mes</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Último mes</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">«Desde» y «Hasta» no pueden ser la misma hora.</string>
+  <string name="card_demand_title" formatted="false">Término de potencia</string>
+  <string name="card_demand_part" formatted="false">Término de potencia {n}</string>
+  <string name="card_demand_add_part" formatted="false">Otra parte del término de potencia</string>
+  <string name="card_demand_add" formatted="false">Añadir</string>
+  <string name="card_demand_top_1" formatted="false">Hora más alta</string>
+  <string name="card_demand_top_3" formatted="false">Media de los 3 días más altos</string>
+  <string name="card_demand_top_5" formatted="false">Media de los 5 días más altos</string>
+  <string name="card_demand_all_hours" formatted="false">Todas las horas</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (invierno / verano)</string>
+  <string name="card_demand_month" formatted="false">Este mes: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Aún no hay pico este mes</string>
+  <string name="card_demand_reason_no_site" formatted="false">Se mide cuando el cargador forma parte de una instalación con contador eléctrico.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Se mide cuando la instalación tiene su potencia total de red.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Esta instalación no puede medirlo.</string>
+  <string name="card_demand_help" formatted="false">Tu distribuidora cobra por kW de tu media horaria más alta de consumo de la red en el mes. SpotNav la mide en el contador de la instalación y la muestra aquí; la carga no cambia.</string>
+  <string name="card_demand_counted" formatted="false">Horas que cuentan</string>
+  <string name="card_demand_counted_all" formatted="false">Todas las horas</string>
+  <string name="card_demand_counted_window" formatted="false">Solo ciertas horas</string>
+  <string name="card_demand_top_n" formatted="false">Picos por mes</string>
+  <string name="card_demand_price_winter" formatted="false">Precio por kW, nov–mar</string>
+  <string name="card_demand_price_summer" formatted="false">Precio por kW, abr–oct</string>
+  <string name="card_demand_remove" formatted="false">Quitar</string>
+  <string name="card_demand_error_price" formatted="false">Un precio es un número, no menor que 0, o vacío.</string>
+  <string name="card_site_import_target" formatted="false">Objetivo de consumo</string>
+  <string name="card_site_import_target_help" formatted="false">La media horaria de consumo de la red por debajo de la que quieres quedarte. El equilibrado de carga limita los cargadores para que la hora quede por debajo y pausa una carga hasta la próxima hora cuando ni siquiera su corriente mínima cabe. Por debajo del nivel mínimo del coche carga enseguida; el Plan dice qué ocurre si el coche no puede estar listo a tiempo.</string>
+  <string name="card_site_import_target_hour" formatted="false">Esta hora: {kw} de {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Esta hora: aún sin medir</string>
+  <string name="card_settings_value_none" formatted="false">Ninguno</string>
+  <string name="card_settings_value_off" formatted="false">Desactivado</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">El precio de la electricidad se cambió en otro lugar y se ha vuelto a leer. No se guardó nada: guarda de nuevo para aplicar tu cambio.</string>
+  <string name="card_history_view_label" formatted="false">Vista</string>
+  <string name="card_history_view_charges" formatted="false">Cargas</string>
+  <string name="card_history_view_power" formatted="false">Potencia</string>
+  <string name="card_power_intro" formatted="false">La mayor media horaria de consumo de la red de cada día, según el contador del sitio, repartida entre la casa y el coche.</string>
+  <string name="card_power_loading" formatted="false">Cargando la potencia…</string>
+  <string name="card_power_failed" formatted="false">No se ha podido leer la potencia.</string>
+  <string name="card_power_empty" formatted="false">Este mes no se ha medido ninguna hora.</string>
+  <string name="card_power_chart_label" formatted="false">Mayor media horaria por día</string>
+  <string name="card_power_day_chart_label" formatted="false">Medias horarias, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Toca un día para ver sus horas; pasa el cursor sobre una barra para ver sus cifras.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Toca o pasa el cursor sobre una barra para ver las cifras del día. De este mes solo se guardan los días.</string>
+  <string name="card_power_hint_day" formatted="false">Toca o pasa el cursor sobre una hora para ver sus cifras.</string>
+  <string name="card_power_back" formatted="false">Todo el mes</string>
+  <string name="card_power_day" formatted="false">{date}: máximo {kw} a las {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">casa {house}, coche {car}</string>
+  <string name="card_power_counted" formatted="false">cuenta para el término de potencia</string>
+  <string name="card_power_counted_part" formatted="false">cuenta para el término de potencia ({part})</string>
+  <string name="card_power_held" formatted="false">el objetivo de consumo frenó la carga</string>
+  <string name="card_power_paused" formatted="false">el objetivo de consumo pausó la carga</string>
+  <string name="card_power_incomplete" formatted="false">huecos en la medida</string>
+  <string name="card_power_no_data" formatted="false">{date}: nada medido</string>
+  <string name="card_power_no_peak" formatted="false">aún sin pico</string>
+  <string name="card_power_part_day" formatted="false">Día {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">día {hours}</string>
+  <string name="card_power_part_night" formatted="false">Noche {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">noche {hours}</string>
+  <string name="card_power_part_all" formatted="false">Todas las horas</string>
+  <string name="card_power_part_all_inline" formatted="false">todas las horas</string>
+  <string name="card_power_legend" formatted="false">Leyenda</string>
+  <string name="card_power_legend_house" formatted="false">Casa</string>
+  <string name="card_power_legend_car" formatted="false">Coche</string>
+  <string name="card_power_legend_unsplit" formatted="false">Casa y coche, sin repartir</string>
+  <string name="card_power_legend_target" formatted="false">Objetivo de consumo {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Pico que cuenta, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">El objetivo de consumo frenó (punto) o pausó (anillo) la carga</string>
+  <string name="setup_demand_grid_power_text">El término de potencia o el objetivo de consumo necesita la potencia total de red de la instalación para poder medirse.</string>
+  <string name="setup_demand_grid_power_action">Indicar la potencia total de red</string>
   <string name="card_grid_fee_window_help" formatted="false">Las horas en que tu distribuidora cobra su peaje más alto. Un fin anterior al inicio pasa la medianoche, y la noche cuenta para el día en que empieza.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Una elección habitual. Compruébala con la tarifa de tu distribuidora.</string>
   <string name="card_grid_fee_window_first" formatted="false">El peaje de horas punta solo se aplica en sus horas. Confirma primero las horas y después el peaje.</string>
   <string name="card_grid_fee_window_next" formatted="false">Siguiente</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">«Desde» y «Hasta» no pueden ser la misma hora.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">El precio de la electricidad se cambió en otro lugar y se ha vuelto a leer. No se guardó nada: guarda de nuevo para aplicar tu cambio.</string>
   <string name="card_market_included" formatted="false">Incluido en el precio</string>
-  <string name="card_settings_value_off" formatted="false">Desactivado</string>
   <string name="card_settings_value_unset" formatted="false">Sin definir</string>
+  <string name="card_settings_error_range" formatted="false">Entre {min} y {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">La media horaria de consumo de la red por debajo de la que quieres quedarte. El equilibrado de carga limita los cargadores para que la hora quede por debajo y pausa una carga hasta la próxima hora cuando ni siquiera su corriente mínima cabe. Por debajo del nivel mínimo del coche carga enseguida; Salida dice qué ocurre si el coche no puede estar listo a tiempo.</string>
 </resources>

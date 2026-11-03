@@ -59,6 +59,16 @@ still serves it and the notice asks for Nord Pool to be added.
 The `gridfee` scenario is Home Assistant 2.3's grid tariff: its `grid_tariff` block (sent only to a request whose
 `reads` names it) starts with a percentage of spot on and the high-load fee off with no hours, and
 `update_grid_tariff` writes it on its write revision, refusing a high-load fee that is on without hours.
+
+The `demand` scenario is Home Assistant 2.4's demand charge and import target:
+its `grid_tariff` block (sent only to a request whose `reads` names it) is the
+pilot's two-part tariff, written with `update_grid_tariff`; `get_power_month`
+answers the pilot's months; the status line is the import target's, chosen with
+`GET /spotnav-mock/import-target?line=held|peak|paused|house|house_over|released|auto|at_risk|hold|none`,
+and `release_import_target` turns an at-risk line into a released one; `update_site_settings` sets or clears the
+import target (`import_target_kw`, compare-and-set on the value last seen). A request
+that does not read `import_target_status` gets the load-balancing lines an older
+app knows in their place, as Home Assistant sends them.
 """
 
 from __future__ import annotations
@@ -94,6 +104,7 @@ DASHBOARD_BY_SCENARIO = {
     "ownmode": "cheapest_direct_site_admin.json",
     "started": "start_idle.json",
     "oldwebhook": "cheapest_no_site.json",
+    "demand": "cheapest_direct_site_admin.json",
     "gridfee": "cheapest_direct_site_admin.json",
 }
 
@@ -163,9 +174,120 @@ SETUP_ROWS = [("vehicle", True), ("car_level", False), ("site", True), ("phase_s
 DISMISSED: set[str] = set()
 OWN_MODE = {"fixed": False}
 
-#: A Home Assistant from before the 2.3 webhook actions: the dashboard states none of them.
+#: A Home Assistant from before the 2.3 webhook actions: the dashboard states none of them (nor 2.4's).
 NO_2_3_ACTIONS = {"oldwebhook", "oldprices"}
-NEW_ACTIONS = ("plan_preview", "dismiss_setup_item", "fix_own_mode")
+NEW_ACTIONS = ("plan_preview", "dismiss_setup_item", "fix_own_mode", "release_import_target", "get_power_month")
+
+#: The `demand` scenario (HA 2.4): the pilot's grid tariff with its demand charge, as `update_grid_tariff` last wrote
+#: it, the import target's status line, and whether a person released the target for this charge.
+GRID_TARIFF_FIXTURE = DASHBOARD_FIXTURES.parent / "grid_tariff/pilot_demand.json"
+POWER_MONTH_FIXTURES = DASHBOARD_FIXTURES.parent / "power_month"
+DEMAND = {"tariff": None, "line": "held", "released": False}
+
+
+def _demand_tariff() -> dict:
+    if DEMAND["tariff"] is None:
+        DEMAND["tariff"] = json.loads(GRID_TARIFF_FIXTURE.read_text(encoding="utf-8"))
+    tariff = DEMAND["tariff"]
+    # The running hour, now, on the area's clock.
+    hour = datetime.now(ZoneInfo("Europe/Stockholm")).replace(minute=0, second=0, microsecond=0)
+    tariff["demand"]["hour"] = {"start": hour.astimezone(ZoneInfo("UTC")).isoformat(), "kw_so_far": 2.8, "kwh_so_far": 1.4}
+    return tariff
+
+
+def _demand_status() -> dict:
+    """The import target's status line the scenario is set to, before the plan's facts."""
+    zone = ZoneInfo("Europe/Stockholm")
+    next_hour = (datetime.now(zone).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)).isoformat()
+    # The next 07:00 on the area's clock: the coming morning's departure.
+    seven = datetime.now(zone).replace(hour=7, minute=0, second=0, microsecond=0)
+    departure = (seven if seven > datetime.now(zone) else seven + timedelta(days=1)).isoformat()
+    line = DEMAND["line"]
+    if DEMAND["released"] and line in ("at_risk", "hold"):
+        line = "released"
+    lines = {
+        "held": ("normal", {"code": "import_target_held", "params": {"limit_a": 9, "target_kw": 6.0, "hour_kw": 4.2, "set_kw": 6.0}}),
+        "peak": ("normal", {"code": "import_target_held", "params": {"limit_a": 9, "target_kw": 6.975, "hour_kw": 4.2, "set_kw": 6.0}}),
+        "paused": ("normal", {"code": "import_target_paused", "params": {"until": next_hour, "target_kw": 6.0, "set_kw": 6.0, "house_over": False}}),
+        "house": ("normal", {"code": "import_target_paused", "params": {"until": next_hour, "target_kw": 6.0, "set_kw": 6.0, "house_over": True}}),
+        "house_over": ("normal", {"code": "import_target_house_over", "params": {"target_kw": 6.0, "set_kw": 6.0}}),
+        "released": ("normal", {"code": "import_target_released", "params": {"target_kw": 6.0, "departure": departure, "automatic": False}}),
+        "auto": ("normal", {"code": "import_target_released", "params": {"target_kw": 6.0, "departure": departure, "automatic": True}}),
+        "at_risk": ("notice", {"code": "import_target_at_risk", "params": {"departure": departure, "missing_kwh": 4.2, "target_kw": 6.0, "set_kw": 6.0, "releasable": True}}),
+        "hold": ("notice", {"code": "import_target_at_risk", "params": {"departure": departure, "missing_kwh": 4.2, "target_kw": 6.0, "set_kw": 6.0, "releasable": False}}),
+    }
+    facts = [{"code": "plan_energy", "params": {"kwh": 20.0}}, {"code": "plan_cost", "params": {"amount_minor": 2874, "currency": "SEK"}}]
+    if line not in lines:
+        return {"tone": "normal", "lines": facts}
+    tone, chosen = lines[line]
+    # The held and paused lines say what the charge does now; the rest come after the plan's facts.
+    return {"tone": tone, "lines": [chosen] + facts if chosen["code"] in ("import_target_held", "import_target_paused") else facts + [chosen]}
+
+
+def _for_older_app(status: dict) -> dict:
+    """The import target's lines as an app that does not read `import_target_status` gets them (`docs/api.md`)."""
+    lines = []
+    for line in status["lines"]:
+        params = line["params"]
+        if line["code"] == "import_target_held":
+            lines.append({"code": "load_balancing_limited", "params": {"limit_a": params["limit_a"], "phase": None, "cause": "import_target"}})
+        elif line["code"] == "import_target_paused":
+            lines.append({"code": "balancing_paused", "params": {"retry_at": params["until"], "cause": "import_target"}})
+        elif not line["code"].startswith("import_target_"):
+            lines.append(line)
+    return dict(status, lines=lines)
+
+
+def power_month_body(month: str | None) -> tuple[int, dict]:
+    """The pilot's running month (2026-09) and the month before it (2026-08, its days only); any other month in range
+    has nothing measured, and one past them is refused as Home Assistant refuses it."""
+    running = json.loads((POWER_MONTH_FIXTURES / "pilot_month.json").read_text(encoding="utf-8"))
+    if month is None or month == running["month"]:
+        return 200, {"ok": True, "action": "get_power_month", **running}
+    if month == "2026-08":
+        return 200, {"ok": True, "action": "get_power_month", **json.loads((POWER_MONTH_FIXTURES / "pilot_older_month.json").read_text(encoding="utf-8"))}
+    if not re.match(r"^\d{4}-(0[1-9]|1[0-2])$", str(month)) or month > running["month"]:
+        return 400, {"ok": False, "error": "spotnav_invalid_range", "action": "get_power_month"}
+    return 200, {"ok": True, "action": "get_power_month", **dict(running, month=month, days=[], hours=[], bars=[None] * len(running["bars"]))}
+
+
+def update_site_import_target(body: dict, payload: dict) -> tuple[int, dict]:
+    """`update_site_settings` with `import_target_kw` (HA 2.4): a number 0.1-1000 or `null`, against the value shown."""
+    tariff = _demand_tariff()
+    stored = tariff["demand"]["import_target_kw"]
+    answer = {"api_version": 1, "site": body["site"], "restore": None, "action": "update_site_settings"}
+    expected = payload.get("expected") or {}
+    if "import_target_kw" in expected and expected["import_target_kw"] != stored:
+        return 409, {**answer, "ok": False, "error": "spotnav_conflict", "import_target_kw": stored}
+    value = (payload.get("changes") or {}).get("import_target_kw")
+    if value is not None and (isinstance(value, bool) or not isinstance(value, (int, float)) or not 0.1 <= value <= 1000):
+        return 400, {**answer, "ok": False, "error": "spotnav_invalid_value", "import_target_kw": stored}
+    tariff["demand"]["import_target_kw"] = value
+    return 200, {**answer, "ok": True, "error": None, "import_target_kw": value}
+
+
+def update_grid_tariff(payload: dict) -> tuple[int, dict]:
+    """`update_grid_tariff`: compare-and-set on the write revision, the demand charge's parts as written."""
+    tariff = _demand_tariff()
+    answer = {"action": "update_grid_tariff", "field_errors": []}
+    if payload.get("expected_write_revision") != tariff["write_revision"]:
+        return 409, {**answer, "ok": False, "error": "revision_conflict", "grid_tariff": tariff}
+    parts = (payload.get("grid_tariff") or {}).get("demand_components")
+    if parts is not None:
+        if not isinstance(parts, list) or len(parts) > 3:
+            return 400, {**answer, "ok": False, "error": "invalid_fiscal", "grid_tariff": tariff,
+                         "field_errors": [{"field": "demand_components", "code": "invalid_value"}]}
+        tariff["demand"]["components"] = parts
+        # What the site measured, per part: the pilot's day part keeps its peak, any other starts with none.
+        measured = {json.dumps(c["window"], sort_keys=True): m for c, m in zip(json.loads(GRID_TARIFF_FIXTURE.read_text(encoding="utf-8"))["demand"]["components"],
+                                                                                 json.loads(GRID_TARIFF_FIXTURE.read_text(encoding="utf-8"))["demand"]["per_component"])}
+        tariff["demand"]["per_component"] = [
+            measured.get(json.dumps(part["window"], sort_keys=True),
+                         {"bar_kw": None, "free_kw": None, "price_per_kw": (part["price_per_kw"] or {}).get("winter"), "days_counted": 0, "peaks": []})
+            for part in parts
+        ]
+    tariff["write_revision"] += 1
+    return 200, {**answer, "ok": True, "error": None, "grid_tariff": tariff}
 
 
 def _own_mode_status() -> dict:
@@ -274,10 +396,22 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["phase_switching"] = {"value": False, "writable": True}
     if scenario == "ownmode":
         body["status"] = _own_mode_status()
-    # The grid tariff (HA 2.3), only to an app that reads it.
+    # The grid tariff, only to an app that reads it: HA 2.3's fees, or 2.4's with the demand charge and import target.
     body.pop("grid_tariff", None)
     if scenario == "gridfee" and "grid_tariff" in (reads or []):
         body["grid_tariff"] = GRID_FEE
+    if scenario == "demand":
+        if "grid_tariff" in (reads or []):
+            body["grid_tariff"] = _demand_tariff()
+        body["status"] = _demand_status()
+        body["settings"]["departure_enabled"] = True
+        body["settings"]["departure_time"] = "07:00"
+        body["site"]["active_control"] = {"available": True, "enabled": True, "reason": None, "writable": True}
+    if "import_target_status" not in (reads or []):
+        body["status"] = _for_older_app(body["status"])
+    # The plan's choice under the import target is withheld from an app that does not read it.
+    if "if_not_ready" not in (reads or []) and isinstance(body.get("settings"), dict):
+        body["settings"].pop("if_not_ready", None)
     return body
 
 
@@ -382,6 +516,10 @@ SCENARIOS: dict[str, Charger] = {
     "gridfee": Charger(
         "Nätavgift",
         why="the grid tariff (HA 2.3): the grid fee as a percentage of spot, the high-load fee and its hours",
+    ),
+    "demand": Charger(
+        "Effektmål",
+        why="the demand charge and the import target (HA 2.4): its parts in the price, the target on the site, its status lines, Release tonight and the Power view",
     ),
 }
 
@@ -609,6 +747,15 @@ class Handler(BaseHTTPRequestHandler):
                 state = dict(MANUAL)
             self._json(200, state)
             return
+        if path == "/spotnav-mock/import-target":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                DEMAND["line"] = query.get("line", DEMAND["line"])
+                DEMAND["released"] = False
+                state = {"line": DEMAND["line"]}
+            self._json(200, state)
+            return
         if path == "/spotnav-mock/rotate-webhooks":
             # Every charger gets a new webhook id, as when the integration is set up again: the
             # old ones answer empty from now on, and the next pairing hands over the new ones
@@ -724,10 +871,30 @@ class Handler(BaseHTTPRequestHandler):
                     self._json(200, plan_preview_body(payload))
                     return
                 if action == "update_grid_tariff":
-                    if key != "gridfee":
-                        self._json(400, {"ok": False, "error": "spotnav_no_price_entry", "action": action})
-                    else:
+                    if key == "gridfee":
                         self._json(*update_grid_fee(payload))
+                    elif key == "demand":
+                        self._json(*update_grid_tariff(payload))
+                    else:
+                        self._json(400, {"ok": False, "error": "spotnav_no_price_entry", "action": action})
+                    return
+                if action == "update_site_settings" and key == "demand" and "import_target_kw" in (payload.get("changes") or {}):
+                    self._json(*update_site_import_target(dashboard_body(key, ["grid_tariff"]), payload))
+                    return
+                if action == "release_import_target":
+                    if key != "demand":
+                        self._json(400, {"api_version": 1, "ok": False, "error": "spotnav_no_import_target", "action": action})
+                    elif DEMAND["line"] != "at_risk" or DEMAND["released"]:
+                        self._json(400, {"api_version": 1, "ok": False, "error": "spotnav_no_departure", "action": action})
+                    else:
+                        DEMAND["released"] = True
+                        self._json(200, {"api_version": 1, "ok": True, "error": None, "action": action})
+                    return
+                if action == "get_power_month":
+                    if key != "demand":
+                        self._json(400, {"ok": False, "error": "spotnav_no_site", "action": action})
+                    else:
+                        self._json(*power_month_body(payload.get("month")))
                     return
                 if action == "dismiss_setup_item":
                     item = payload.get("item")

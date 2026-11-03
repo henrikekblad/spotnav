@@ -663,6 +663,10 @@
   </plurals>
   <string name="own_mode_fix_failed">Die Einstellung der Ladestation konnte nicht geändert werden. Ändere sie in Home Assistant.</string>
   <string name="setup_dismiss_failed">Das konnte nicht gespeichert werden. Versuche es erneut.</string>
+  <string name="if_not_ready_title">Wenn das Auto nicht rechtzeitig fertig wird</string>
+  <string name="if_not_ready_ask">Fragen</string>
+  <string name="if_not_ready_release">Bezugsziel aussetzen</string>
+  <string name="if_not_ready_hold">Bezugsziel halten</string>
   <string name="card_grid_fee_percent" formatted="false">Netzentgelt, % vom Spotpreis</string>
   <string name="card_grid_fee_percent_help" formatted="false">Manche Netzbetreiber berechnen einen Teil des Netzentgelts als Anteil am Spotpreis. Er kommt zum Netzentgelt hinzu.</string>
   <string name="card_grid_fee_high" formatted="false">Netzentgelt in Hochlastzeiten</string>
@@ -690,13 +694,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Tage</string>
   <string name="card_grid_fee_window_from_month" formatted="false">Erster Monat</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Letzter Monat</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Von und Bis dürfen nicht dieselbe Stunde sein.</string>
+  <string name="card_demand_title" formatted="false">Leistungspreis</string>
+  <string name="card_demand_part" formatted="false">Leistungspreis {n}</string>
+  <string name="card_demand_add_part" formatted="false">Ein weiterer Teil des Leistungspreises</string>
+  <string name="card_demand_add" formatted="false">Hinzufügen</string>
+  <string name="card_demand_top_1" formatted="false">Höchste Stunde</string>
+  <string name="card_demand_top_3" formatted="false">Mittel der 3 höchsten Tage</string>
+  <string name="card_demand_top_5" formatted="false">Mittel der 5 höchsten Tage</string>
+  <string name="card_demand_all_hours" formatted="false">Alle Stunden</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (Winter / Sommer)</string>
+  <string name="card_demand_month" formatted="false">Diesen Monat: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Noch keine Spitze in diesem Monat</string>
+  <string name="card_demand_reason_no_site" formatted="false">Wird gemessen, sobald die Ladestation zu einem Standort mit Stromzähler gehört.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Wird gemessen, sobald der Standort die gesamte Netzleistung hat.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Dieser Standort kann ihn nicht messen.</string>
+  <string name="card_demand_help" formatted="false">Dein Netzbetreiber berechnet je kW deines höchsten Stundenmittels des Netzbezugs im Monat. SpotNav misst es am Zähler des Standorts und zeigt es hier; das Laden ändert sich nicht.</string>
+  <string name="card_demand_counted" formatted="false">Gezählte Stunden</string>
+  <string name="card_demand_counted_all" formatted="false">Alle Stunden</string>
+  <string name="card_demand_counted_window" formatted="false">Nur bestimmte Stunden</string>
+  <string name="card_demand_top_n" formatted="false">Spitzen pro Monat</string>
+  <string name="card_demand_price_winter" formatted="false">Preis je kW, Nov–Mär</string>
+  <string name="card_demand_price_summer" formatted="false">Preis je kW, Apr–Okt</string>
+  <string name="card_demand_remove" formatted="false">Entfernen</string>
+  <string name="card_demand_error_price" formatted="false">Ein Preis ist eine Zahl, nicht unter 0, oder leer.</string>
+  <string name="card_site_import_target" formatted="false">Bezugsziel</string>
+  <string name="card_site_import_target_help" formatted="false">Das Stundenmittel des Netzbezugs, unter dem du bleiben willst. Das Lastmanagement hält die Ladegeräte so, dass die Stunde darunter bleibt, und pausiert eine Ladung bis zur nächsten vollen Stunde, sobald nicht einmal ihr Mindeststrom Platz hat. Unter dem Mindeststand des Autos lädt es sofort; der Plan sagt, was geschieht, wenn das Auto nicht rechtzeitig fertig wird.</string>
+  <string name="card_site_import_target_hour" formatted="false">Diese Stunde: {kw} von {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Diese Stunde: noch nicht gemessen</string>
+  <string name="card_settings_value_none" formatted="false">Keine</string>
+  <string name="card_settings_value_off" formatted="false">Aus</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Der Strompreis wurde an anderer Stelle geändert und neu gelesen. Nichts wurde gespeichert: Speichern Sie erneut, um Ihre Änderung zu übernehmen.</string>
+  <string name="card_history_view_label" formatted="false">Ansicht</string>
+  <string name="card_history_view_charges" formatted="false">Ladevorgänge</string>
+  <string name="card_history_view_power" formatted="false">Leistung</string>
+  <string name="card_power_intro" formatted="false">Der höchste Stundenmittelwert des Netzbezugs je Tag, wie der Zähler des Standorts ihn gemessen hat, aufgeteilt auf Haus und Auto.</string>
+  <string name="card_power_loading" formatted="false">Leistung wird geladen…</string>
+  <string name="card_power_failed" formatted="false">Die Leistung konnte nicht gelesen werden.</string>
+  <string name="card_power_empty" formatted="false">In diesem Monat wurden keine Stunden gemessen.</string>
+  <string name="card_power_chart_label" formatted="false">Höchster Stundenmittelwert je Tag</string>
+  <string name="card_power_day_chart_label" formatted="false">Stundenmittelwerte, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Tippe auf einen Tag für seine Stunden; fahre über einen Balken für seine Werte.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Tippe auf einen Balken oder fahre darüber für die Werte des Tages. Für diesen Monat sind nur die Tage gespeichert.</string>
+  <string name="card_power_hint_day" formatted="false">Tippe auf eine Stunde oder fahre darüber für ihre Werte.</string>
+  <string name="card_power_back" formatted="false">Ganzer Monat</string>
+  <string name="card_power_day" formatted="false">{date}: höchstens {kw} um {time}</string>
+  <string name="card_power_hour" formatted="false">{time}: {kw}</string>
+  <string name="card_power_split" formatted="false">Haus {house}, Auto {car}</string>
+  <string name="card_power_counted" formatted="false">zählt für den Leistungspreis</string>
+  <string name="card_power_counted_part" formatted="false">zählt für {part}</string>
+  <string name="card_power_held" formatted="false">das Bezugsziel hat das Laden gedrosselt</string>
+  <string name="card_power_paused" formatted="false">das Bezugsziel hat das Laden pausiert</string>
+  <string name="card_power_incomplete" formatted="false">Lücken in der Messung</string>
+  <string name="card_power_no_data" formatted="false">{date}: nichts gemessen</string>
+  <string name="card_power_no_peak" formatted="false">noch keine Spitze</string>
+  <string name="card_power_part_day" formatted="false">Tag {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">Tag {hours}</string>
+  <string name="card_power_part_night" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">Nacht {hours}</string>
+  <string name="card_power_part_all" formatted="false">Alle Stunden</string>
+  <string name="card_power_part_all_inline" formatted="false">alle Stunden</string>
+  <string name="card_power_legend" formatted="false">Legende</string>
+  <string name="card_power_legend_house" formatted="false">Haus</string>
+  <string name="card_power_legend_car" formatted="false">Auto</string>
+  <string name="card_power_legend_unsplit" formatted="false">Haus und Auto, nicht aufgeteilt</string>
+  <string name="card_power_legend_target" formatted="false">Bezugsziel {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Zählende Spitze, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Das Bezugsziel hat das Laden gedrosselt (Punkt) oder pausiert (Ring)</string>
+  <string name="setup_demand_grid_power_text">Der Leistungspreis oder das Bezugsziel braucht die gesamte Netzleistung des Standorts, um gemessen zu werden.</string>
+  <string name="setup_demand_grid_power_action">Gesamte Netzleistung festlegen</string>
   <string name="card_grid_fee_window_help" formatted="false">Die Stunden, in denen Ihr Netzbetreiber sein höheres Entgelt berechnet. Ein Ende vor dem Beginn reicht über Mitternacht, und die Nacht zählt zu dem Tag, an dem sie beginnt.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Eine übliche Wahl. Prüfen Sie sie anhand des Tarifs Ihres Netzbetreibers.</string>
   <string name="card_grid_fee_window_first" formatted="false">Das Hochlastentgelt gilt nur in seinen Stunden. Bestätigen Sie zuerst die Stunden, dann das Entgelt.</string>
   <string name="card_grid_fee_window_next" formatted="false">Weiter</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">Von und Bis dürfen nicht dieselbe Stunde sein.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">Der Strompreis wurde an anderer Stelle geändert und neu gelesen. Nichts wurde gespeichert: Speichern Sie erneut, um Ihre Änderung zu übernehmen.</string>
   <string name="card_market_included" formatted="false">Im Preis enthalten</string>
-  <string name="card_settings_value_off" formatted="false">Aus</string>
   <string name="card_settings_value_unset" formatted="false">Nicht festgelegt</string>
+  <string name="card_settings_error_range" formatted="false">Zwischen {min} und {max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Das Stundenmittel des Netzbezugs, unter dem du bleiben willst. Das Lastmanagement hält die Ladegeräte so, dass die Stunde darunter bleibt, und pausiert eine Ladung bis zur nächsten vollen Stunde, sobald nicht einmal ihr Mindeststrom Platz hat. Unter dem Mindeststand des Autos lädt es sofort; Abfahrt sagt, was geschieht, wenn das Auto nicht rechtzeitig fertig wird.</string>
 </resources>

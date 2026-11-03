@@ -663,6 +663,10 @@
   </plurals>
   <string name="own_mode_fix_failed">Laturin asetusta ei voitu muuttaa. Muuta se Home Assistantissa.</string>
   <string name="setup_dismiss_failed">Tallennus epäonnistui. Yritä uudelleen.</string>
+  <string name="if_not_ready_title">Jos auto ei ehdi valmiiksi</string>
+  <string name="if_not_ready_ask">Kysy</string>
+  <string name="if_not_ready_release">Ohita tehotavoite</string>
+  <string name="if_not_ready_hold">Pidä tehotavoite</string>
   <string name="card_grid_fee_percent" formatted="false">Siirtomaksu, % spot-hinnasta</string>
   <string name="card_grid_fee_percent_help" formatted="false">Jotkin verkkoyhtiöt perivät osan siirtomaksusta osuutena spot-hinnasta. Se lisätään siirtomaksun päälle.</string>
   <string name="card_grid_fee_high" formatted="false">Siirtomaksu huippukuormitustunteina</string>
@@ -690,13 +694,83 @@
   <string name="card_grid_fee_window_days" formatted="false">Päivät</string>
   <string name="card_grid_fee_window_from_month" formatted="false">Ensimmäinen kuukausi</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Viimeinen kuukausi</string>
+  <string name="card_grid_fee_window_same_hours" formatted="false">Alku ja päättyminen eivät voi olla sama tunti.</string>
+  <string name="card_demand_title" formatted="false">Tehomaksu</string>
+  <string name="card_demand_part" formatted="false">Tehomaksu {n}</string>
+  <string name="card_demand_add_part" formatted="false">Tehomaksun toinen osa</string>
+  <string name="card_demand_add" formatted="false">Lisää</string>
+  <string name="card_demand_top_1" formatted="false">Suurin tunti</string>
+  <string name="card_demand_top_3" formatted="false">3 suurimman päivän keskiarvo</string>
+  <string name="card_demand_top_5" formatted="false">5 suurimman päivän keskiarvo</string>
+  <string name="card_demand_all_hours" formatted="false">Kaikki tunnit</string>
+  <string name="card_demand_value" formatted="false">{shape}, {hours}</string>
+  <string name="card_demand_prices" formatted="false">{winter} / {summer} {unit} (talvi / kesä)</string>
+  <string name="card_demand_month" formatted="false">Tässä kuussa: {kw} – {peaks}</string>
+  <string name="card_demand_month_none" formatted="false">Ei vielä huippua tässä kuussa</string>
+  <string name="card_demand_reason_no_site" formatted="false">Mitataan, kun laturi kuuluu kohteeseen, jossa on sähkömittari.</string>
+  <string name="card_demand_reason_needs_total_grid_power" formatted="false">Mitataan, kun kohteella on verkon kokonaisteho.</string>
+  <string name="card_demand_reason_unknown" formatted="false">Tämä kohde ei voi mitata sitä.</string>
+  <string name="card_demand_help" formatted="false">Verkkoyhtiösi laskuttaa kuukauden suurimman tuntikeskitehon kilowateista. SpotNav mittaa sen kohteen sähkömittarista ja näyttää sen tässä; lataus ei muutu.</string>
+  <string name="card_demand_counted" formatted="false">Laskettavat tunnit</string>
+  <string name="card_demand_counted_all" formatted="false">Kaikki tunnit</string>
+  <string name="card_demand_counted_window" formatted="false">Vain tietyt tunnit</string>
+  <string name="card_demand_top_n" formatted="false">Huippuja kuukaudessa</string>
+  <string name="card_demand_price_winter" formatted="false">Hinta per kW, marras–maalis</string>
+  <string name="card_demand_price_summer" formatted="false">Hinta per kW, huhti–loka</string>
+  <string name="card_demand_remove" formatted="false">Poista</string>
+  <string name="card_demand_error_price" formatted="false">Hinta on luku, vähintään 0, tai tyhjä.</string>
+  <string name="card_site_import_target" formatted="false">Tehotavoite</string>
+  <string name="card_site_import_target_help" formatted="false">Tuntikeskiteho verkosta, jonka alle haluat pysyä. Kuormanhallinta rajoittaa latureita niin, että tunti pysyy sen alla, ja keskeyttää latauksen seuraavaan tasatuntiin, kun edes sen vähimmäisvirta ei mahdu. Auton vähimmäistason alapuolella se latautuu heti; Suunnitelma kertoo, mitä tapahtuu, jos auto ei ehdi valmiiksi.</string>
+  <string name="card_site_import_target_hour" formatted="false">Tämä tunti: {kw} / {target}</string>
+  <string name="card_site_import_target_no_hour" formatted="false">Tämä tunti: ei vielä mitattu</string>
+  <string name="card_settings_value_none" formatted="false">Ei mitään</string>
+  <string name="card_settings_value_off" formatted="false">Pois</string>
+  <string name="card_grid_fee_error_conflict" formatted="false">Sähkön hintaa muutettiin muualla, ja se on luettu uudelleen. Mitään ei tallennettu: tallenna uudelleen tehdäksesi muutoksen.</string>
+  <string name="card_history_view_label" formatted="false">Näkymä</string>
+  <string name="card_history_view_charges" formatted="false">Lataukset</string>
+  <string name="card_history_view_power" formatted="false">Teho</string>
+  <string name="card_power_intro" formatted="false">Kunkin päivän suurin tuntikeskiteho verkosta kohteen sähkömittarin mittaamana, jaettuna taloon ja autoon.</string>
+  <string name="card_power_loading" formatted="false">Haetaan tehoa…</string>
+  <string name="card_power_failed" formatted="false">Tehoa ei voitu lukea.</string>
+  <string name="card_power_empty" formatted="false">Tässä kuussa ei mitattu yhtään tuntia.</string>
+  <string name="card_power_chart_label" formatted="false">Suurin tuntikeskiteho päivittäin</string>
+  <string name="card_power_day_chart_label" formatted="false">Tuntikeskiteho, {date}</string>
+  <string name="card_power_hint_month" formatted="false">Napauta päivää nähdäksesi sen tunnit; osoita palkkia nähdäksesi sen luvut.</string>
+  <string name="card_power_hint_month_days_only" formatted="false">Napauta tai osoita palkkia nähdäksesi päivän luvut. Tästä kuusta säilytetään vain päivät.</string>
+  <string name="card_power_hint_day" formatted="false">Napauta tai osoita tuntia nähdäksesi sen luvut.</string>
+  <string name="card_power_back" formatted="false">Koko kuukausi</string>
+  <string name="card_power_day" formatted="false">{date}: suurin {kw} klo {time}</string>
+  <string name="card_power_hour" formatted="false">klo {time}: {kw}</string>
+  <string name="card_power_split" formatted="false">talo {house}, auto {car}</string>
+  <string name="card_power_counted" formatted="false">lasketaan tehomaksuun</string>
+  <string name="card_power_counted_part" formatted="false">lasketaan tehomaksuun ({part})</string>
+  <string name="card_power_held" formatted="false">tehotavoite rajoitti latausta</string>
+  <string name="card_power_paused" formatted="false">tehotavoite keskeytti latauksen</string>
+  <string name="card_power_incomplete" formatted="false">mittauksessa aukkoja</string>
+  <string name="card_power_no_data" formatted="false">{date}: ei mitattu</string>
+  <string name="card_power_no_peak" formatted="false">ei huippua vielä</string>
+  <string name="card_power_part_day" formatted="false">Päivä {hours}</string>
+  <string name="card_power_part_day_inline" formatted="false">päivä {hours}</string>
+  <string name="card_power_part_night" formatted="false">Yö {hours}</string>
+  <string name="card_power_part_night_inline" formatted="false">yö {hours}</string>
+  <string name="card_power_part_all" formatted="false">Kaikki tunnit</string>
+  <string name="card_power_part_all_inline" formatted="false">kaikki tunnit</string>
+  <string name="card_power_legend" formatted="false">Selite</string>
+  <string name="card_power_legend_house" formatted="false">Talo</string>
+  <string name="card_power_legend_car" formatted="false">Auto</string>
+  <string name="card_power_legend_unsplit" formatted="false">Talo ja auto, ei jaettu</string>
+  <string name="card_power_legend_target" formatted="false">Tehotavoite {kw}</string>
+  <string name="card_power_legend_counted_part" formatted="false">Laskettava huippu, {part}</string>
+  <string name="card_power_legend_marks" formatted="false">Tehotavoite rajoitti (piste) tai keskeytti (rengas) latauksen</string>
+  <string name="setup_demand_grid_power_text">Tehomaksu tai tehotavoite tarvitsee kohteen verkon kokonaistehon, jotta sen voi mitata.</string>
+  <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
   <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
   <string name="card_grid_fee_window_first" formatted="false">Huippukuormitusmaksu koskee vain sen tunteja. Vahvista ensin tunnit, sitten maksu.</string>
   <string name="card_grid_fee_window_next" formatted="false">Seuraava</string>
-  <string name="card_grid_fee_window_same_hours" formatted="false">Alku ja päättyminen eivät voi olla sama tunti.</string>
-  <string name="card_grid_fee_error_conflict" formatted="false">Sähkön hintaa muutettiin muualla, ja se on luettu uudelleen. Mitään ei tallennettu: tallenna uudelleen tehdäksesi muutoksen.</string>
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>
-  <string name="card_settings_value_off" formatted="false">Pois</string>
   <string name="card_settings_value_unset" formatted="false">Ei asetettu</string>
+  <string name="card_settings_error_range" formatted="false">Väliltä {min}–{max}.</string>
+  <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
+  <string name="import_target_help">Tuntikeskiteho verkosta, jonka alle haluat pysyä. Kuormanhallinta rajoittaa latureita niin, että tunti pysyy sen alla, ja keskeyttää latauksen seuraavaan tasatuntiin, kun edes sen vähimmäisvirta ei mahdu. Auton vähimmäistason alapuolella se latautuu heti; Lähtö kertoo, mitä tapahtuu, jos auto ei ehdi valmiiksi.</string>
 </resources>

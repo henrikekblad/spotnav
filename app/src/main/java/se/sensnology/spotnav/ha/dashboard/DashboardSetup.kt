@@ -10,7 +10,7 @@ import org.json.JSONObject
 internal data class SetupRow(val id: String, val dismissible: Boolean) {
     companion object {
         /** The rows this app words, in the order the card lists them; a row it does not know is skipped. */
-        val IDS: List<String> = listOf("vehicle", "car_level", "site", "solar_forecast", "phase_switching", "phone", "app")
+        val IDS: List<String> = listOf("vehicle", "car_level", "site", "solar_forecast", "demand_grid_power", "phase_switching", "phone", "app")
 
         /** The rows of the block in the card's order, or none when the block is absent or unreadable. */
         fun parse(raw: Any?): List<SetupRow> {

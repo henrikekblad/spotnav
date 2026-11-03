@@ -350,6 +350,12 @@ internal object SiteUpdate {
     const val BATTERY_FIRST = "battery_first"
 
     /**
+     * The site's import target set ([value] in kW, `null` clears it) against the value the screen showed
+     * ([expected], `null` for none): Home Assistant 2.4, where the dashboard states `capabilities.site_import_target`.
+     */
+    data class ImportTarget(val expected: Double?, val value: Double?)
+
+    /**
      * One write: what the site was shown to be, and what it should become. At least one field is
      * set.
      */
@@ -357,10 +363,11 @@ internal object SiteUpdate {
         val expectedPriority: String? = null,
         val priority: String? = null,
         val expectedForecast: List<String>? = null,
-        val forecast: List<String>? = null
+        val forecast: List<String>? = null,
+        val importTarget: ImportTarget? = null
     ) {
         init {
-            require(priority != null || forecast != null) { "a site write names at least one field" }
+            require(priority != null || forecast != null || importTarget != null) { "a site write names at least one field" }
         }
 
         fun payload(): JSONObject = JSONObject().apply {
@@ -377,6 +384,10 @@ internal object SiteUpdate {
             if (forecast != null) {
                 expectedForecast?.let { expected.put("solar_forecast", JSONArray(it)) }
                 changes.put("solar_forecast", JSONArray(forecast))
+            }
+            if (importTarget != null) {
+                expected.put("import_target_kw", importTarget.expected ?: JSONObject.NULL)
+                changes.put("import_target_kw", importTarget.value ?: JSONObject.NULL)
             }
             put("expected", expected)
             put("changes", changes)
@@ -404,6 +415,9 @@ internal object SiteUpdate {
             forecast = ordered.takeIf { forecastChanged }
         )
     }
+
+    /** The site's import target alone: [chosen] kW (`null` clears it), against the value [shown]. */
+    fun importTargetRequest(shown: Double?, chosen: Double?) = Request(importTarget = ImportTarget(shown, chosen))
 
     /** The forecast selection alone, under the identical rule. */
     fun forecastRequest(shown: List<String>, chosen: List<String>) = Request(expectedForecast = shown, forecast = chosen)
