@@ -91,7 +91,13 @@ internal data class DemandBlock(
     /** Aligned with [components] while the site measures, else empty. */
     val perComponent: List<DemandMonth>,
     val hour: DemandHour?,
-    val importTargetKw: Double?
+    val importTargetKw: Double?,
+    /**
+     * The level the running hour is held under (`effective_target_kw`, asked for with the `reads` value
+     * `effective_target`): the import target lifted to the month's peak where a part counts the hour, else the target;
+     * `null` without a target, where the site cannot measure, or from a Home Assistant that does not send it.
+     */
+    val effectiveTargetKw: Double? = null
 )
 
 /** One fee of the grid tariff: `off`, `manual` or `included` (the area's price already holds the grid fee). */
@@ -210,7 +216,9 @@ internal data class DashboardGridTariff(
 
         private fun demand(raw: Any?): DemandBlock {
             val json = raw as? JSONObject ?: bad()
-            exactKeys(json, "components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
+            val keys = arrayOf("components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
+            // `effective_target_kw` is additive: sent only to an app that reads it.
+            if (json.has("effective_target_kw")) exactKeys(json, *keys, "effective_target_kw") else exactKeys(json, *keys)
             val components = list(json.opt("components")).map(DemandComponent::parse)
             if (components.size > DemandComponent.MAX) bad()
             val months = list(json.opt("per_component")).map(::month)
@@ -229,7 +237,8 @@ internal data class DashboardGridTariff(
                 priceUnit = textOrNull(json.opt("price_unit")),
                 perComponent = months,
                 hour = hour,
-                importTargetKw = nonNegativeOrNull(json.opt("import_target_kw"))
+                importTargetKw = nonNegativeOrNull(json.opt("import_target_kw")),
+                effectiveTargetKw = if (json.has("effective_target_kw")) nonNegativeOrNull(json.opt("effective_target_kw")) else null
             )
         }
 

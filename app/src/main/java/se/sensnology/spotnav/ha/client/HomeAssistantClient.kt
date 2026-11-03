@@ -69,7 +69,8 @@ internal class WebhookHttpStatusException(
  * `own_mode_status`, the status line while the charger's own mode works against SpotNav, `sun_past_target`, the status line while the sun tops a car up past its target, `setup`, the dashboard's "Get started" rows, and
  * `import_target_status`, the import target's own status lines in place of the load-balancing ones an older app reads,
  * `grid_tariff`, the dashboard's block with the demand charge and the site's import target, and `if_not_ready`, the plan's
- * choice when the import target would make it miss its departure. Every request the app sends names them.
+ * choice when the import target would make it miss its departure, and `effective_target`, the demand block's level the running hour
+ * is held under. Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -77,7 +78,7 @@ internal object WebhookReads {
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
-        "import_target_status", "grid_tariff", "if_not_ready"
+        "import_target_status", "grid_tariff", "if_not_ready", "effective_target"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))

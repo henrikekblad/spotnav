@@ -128,13 +128,19 @@ internal class DemandText(
         demand?.importTargetKw?.let(::kw) ?: words.say("settings.value.off")
 
     /**
-     * The running hour against the import target: "Den här timmen: 2,8 av 6,0 kW". `null` without a target; without a
+     * The running hour against the import target: "Den här timmen: 2,8 av 6,0 kW", or against the month's peak where
+     * it lifts the target: "Den här timmen: 2,8 av 7,0 kW – månadens topp (effektmål 6,0 kW)". `null` without a target; without a
      * reading yet, or where the site cannot measure, it says so.
      */
     fun hourLine(demand: DemandBlock?): String? {
         val target = demand?.importTargetKw ?: return null
         if (!demand.available) return reasonText(demand.reason)
         val hour = demand.hour ?: return words.say("site.importTarget.noHour")
+        // Where the month's peak lifts the target this hour, against that level, the target as set beside it.
+        val effective = demand.effectiveTargetKw
+        if (effective != null && effective > target) {
+            return words.say("site.importTarget.hourPeak", "kw" to fixed(hour.kwSoFar, 1), "target" to kw(effective), "set" to kw(target))
+        }
         return words.say("site.importTarget.hour", "kw" to fixed(hour.kwSoFar, 1), "target" to kw(target))
     }
 
