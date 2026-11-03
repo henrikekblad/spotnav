@@ -76,10 +76,10 @@ The APK is written to `app/build/outputs/apk/debug/`. See [PRIVACY.md](PRIVACY.m
   integration's [debug file](https://github.com/henrikekblad/spotnav-home-assistant#support-spotnav) helps most.
 - **Contribute.** Pull requests are welcome, for code as well as translations (`app/src/main/res/values-*/strings.xml`);
   see [Build locally](#build-locally).
-- **Star the repository.** Stars help others find SpotNav on GitHub.
+- ⭐ **Star the repository.** Stars help others find SpotNav on GitHub.
 - **Rate the app** on [Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav). A review helps
   others decide.
-- **Sponsor.** If SpotNav saves you money, [GitHub Sponsors](https://github.com/sponsors/henrikekblad) takes a
+- 💖 **Sponsor.** If SpotNav saves you money, [GitHub Sponsors](https://github.com/sponsors/henrikekblad) takes a
   one-time or monthly contribution and keeps the project going.
 
 ## Disclaimer
