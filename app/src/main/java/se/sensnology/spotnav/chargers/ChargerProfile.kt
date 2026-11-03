@@ -29,7 +29,9 @@ data class ChargerCapabilities(
     /** Whether the webhook answers `get_power_month`: one month of the site's measured import. */
     val getPowerMonth: Boolean = false,
     /** Whether the webhook's `update_site_settings` sets the site's import target (`import_target_kw`). */
-    val siteImportTarget: Boolean = false
+    val siteImportTarget: Boolean = false,
+    /** Whether the webhook answers `suggest_import_target`: a suggested import target from Home Assistant's statistics. */
+    val suggestImportTarget: Boolean = false
 )
 
 /**

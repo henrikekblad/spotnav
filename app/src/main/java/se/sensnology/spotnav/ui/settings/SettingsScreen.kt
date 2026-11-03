@@ -317,6 +317,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             )
             shell.onNotificationPermission = { notificationsCard?.permissionAnswered() }
             showNotifications()
+            pairedCards.attachSuggestion { done ->
+                session.suggestImportTarget { suggestion ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@suggestImportTarget
+                    done(suggestion)
+                }
+            }
             pairedCards.attachWrites(
                 vehicle = { vehicleId, changes, done ->
                     session.updateVehicle(vehicleId, changes) { outcome ->

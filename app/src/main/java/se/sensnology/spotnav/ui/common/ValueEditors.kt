@@ -46,6 +46,9 @@ internal data class NumberSpec(val min: Double, val max: Double, val decimals: I
     }.format(value)
 }
 
+/** Advice an editor reads once it is open: the words while it is read, the button's word, and how it is read. */
+internal class Advice(val loading: String, val use: String, val load: (done: (Pair<String, Double?>?) -> Unit) -> Unit)
+
 internal sealed interface NumberCheck {
     data class Valid(val value: Double) : NumberCheck
     data object NotANumber : NumberCheck
@@ -69,6 +72,12 @@ internal fun ViewScope.editNumber(
     noneChecked: Boolean = current == null,
     /** A figure to offer ("Suggestion: 36 öre/kWh"): tapping it fills the field. */
     suggestion: Double? = null,
+    /**
+     * Advice read after the editor opens (the import target's suggestion from Home Assistant's statistics): [Advice.loading]
+     * shows until [Advice.load] answers, then its sentence and, with a figure, [Advice.use], which fills the field (nothing
+     * is saved until Save). An answer of `null` leaves nothing behind.
+     */
+    advice: Advice? = null,
     save: (Double?, (String?) -> Unit) -> Unit
 ) {
     val body = editorBody()
@@ -98,6 +107,39 @@ internal fun ViewScope.editNumber(
                 field.requestFocus()
             }
         })
+    }
+    advice?.let { offer ->
+        val box = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val sentence = TextView(context).apply { text = offer.loading; textSize = 13f; setTextColor(muted); setPadding(0, dp(4), 0, dp(4)) }
+        box.addView(sentence)
+        body.addView(box)
+        offer.load { answer ->
+            if (isDestroyed) return@load
+            if (answer == null) {
+                box.visibility = View.GONE
+                return@load
+            }
+            sentence.text = answer.first
+            answer.second?.let { figure ->
+                box.addView(TextView(context).apply {
+                    text = offer.use
+                    textSize = 15f
+                    setTextColor(accent)
+                    typeface = android.graphics.Typeface.DEFAULT_BOLD
+                    setPadding(0, dp(6), 0, dp(6))
+                    minHeight = dp(48)
+                    gravity = Gravity.CENTER_VERTICAL
+                    isClickable = true
+                    isFocusable = true
+                    setOnClickListener {
+                        none?.isChecked = false
+                        field.isEnabled = true
+                        field.setText(spec.fieldText(figure, locale))
+                        field.requestFocus()
+                    }
+                })
+            }
+        }
     }
     body.addView(LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL

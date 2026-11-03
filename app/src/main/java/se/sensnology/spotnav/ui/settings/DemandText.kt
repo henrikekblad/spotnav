@@ -5,6 +5,7 @@ import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.DemandMonth
 import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.client.SuggestImportTarget
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.common.ViewScope
@@ -173,3 +174,30 @@ internal fun ViewScope.demandText(dashboard: Dashboard?): DemandText = DemandTex
     DemandText.dateLocale(AppLanguageSettings.locale(activity)),
     dashboard?.market?.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
 )
+
+/** The suggested import target's sentence and the figure "Använd" fills in (`null`: nothing to fill). */
+internal data class TargetAdvice(val text: String, val value: Double?)
+
+/**
+ * The sentence under the target's field, as the card's `suggestionAdvice`: "Huset ensamt: oftast högst 2,4 kW … Förslag:
+ * 7,0 kW – …" with the figure, or why there is none; `null` for a reason this app has no words for.
+ */
+internal fun DemandText.advice(words: CardWords, suggestion: SuggestImportTarget.Suggestion): TargetAdvice? {
+    if (!suggestion.available) {
+        val key = when (suggestion.reason) {
+            "no_recorder", "no_grid_statistics", "too_few_days", "no_chargers" -> "target.suggest.none.${suggestion.reason}"
+            else -> return null
+        }
+        return TargetAdvice(words.say(key, "days" to suggestion.days.toString()), null)
+    }
+    val value = suggestion.suggestionKw ?: return null
+    val text = words.say(
+        "target.suggest.text",
+        "typical" to kw(suggestion.typicalKw ?: return null),
+        "highest" to kw(suggestion.highestKw ?: return null),
+        "date" to dateText(suggestion.highestDate ?: return null),
+        "suggestion" to kw(value),
+        "car" to kw(suggestion.carKw ?: return null)
+    )
+    return TargetAdvice(if (suggestion.chargerMissing) "$text ${words.say("target.suggest.chargerMissing")}" else text, value)
+}

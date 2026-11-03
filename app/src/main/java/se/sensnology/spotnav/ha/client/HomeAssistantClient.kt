@@ -320,6 +320,12 @@ object HomeAssistantClient {
         return PowerMonthRead.answer(status, body)
     }
 
+    /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */
+    internal fun suggestImportTarget(settings: HomeAssistantSettings): SuggestImportTarget.Suggestion? {
+        val (status, body) = write(settings, SuggestImportTarget.payload())
+        return SuggestImportTarget.answer(status, body)
+    }
+
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
     internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
         val (status, body) = write(settings, PushRegister.payload(pushRef, events))

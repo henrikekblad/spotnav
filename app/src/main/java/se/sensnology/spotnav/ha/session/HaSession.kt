@@ -17,6 +17,7 @@ import se.sensnology.spotnav.ha.client.ReleaseImportTarget
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.PlanPreview
 import se.sensnology.spotnav.ha.client.SetupDismiss
+import se.sensnology.spotnav.ha.client.SuggestImportTarget
 import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
@@ -84,6 +85,9 @@ internal interface HaTransport {
     /** One month of the site's power (`null`: the running month); never throws. */
     fun powerMonth(month: YearMonth?): PowerMonthRead.Outcome = PowerMonthRead.Outcome.Failed(null)
 
+    /** `suggest_import_target`: a suggested import target, `null` for none; never throws. */
+    fun suggestImportTarget(): SuggestImportTarget.Suggestion? = null
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -138,6 +142,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
         HomeAssistantClient.updateGridTariff(connection, expectedRevision, body)
 
     override fun powerMonth(month: YearMonth?) = HomeAssistantClient.powerMonth(connection, month)
+
+    override fun suggestImportTarget() = HomeAssistantClient.suggestImportTarget(connection)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -349,6 +355,14 @@ internal class HaSession(
         background.execute {
             val outcome = transport.powerMonth(month)
             mainThread { done(outcome) }
+        }
+    }
+
+    /** `suggest_import_target` (never throws). */
+    fun suggestImportTarget(done: (SuggestImportTarget.Suggestion?) -> Unit) {
+        background.execute {
+            val suggestion = transport.suggestImportTarget()
+            mainThread { done(suggestion) }
         }
     }
 
