@@ -773,4 +773,21 @@
   <string name="card_settings_error_range" formatted="false">Zwischen {min} und {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">Das Stundenmittel des Netzbezugs, unter dem du bleiben willst. Das Lastmanagement hält die Ladegeräte so, dass die Stunde darunter bleibt, und pausiert eine Ladung bis zur nächsten vollen Stunde, sobald nicht einmal ihr Mindeststrom Platz hat. Unter dem Mindeststand des Autos lädt es sofort; Abfahrt sagt, was geschieht, wenn das Auto nicht rechtzeitig fertig wird.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Diese Stunde: {kw} von {target} – die Spitze des Monats (Bezugsziel {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Home Assistants Statistik wird gelesen …</string>
+  <string name="card_target_suggest_text" formatted="false">Das Haus allein: meist höchstens {typical} in einer Stunde pro Tag, höchstens {highest} ({date}). Vorschlag: {suggestion} – das Auto bekommt dann in den meisten Stunden etwa {car}. An den wenigen Abenden, an denen das Haus allein darüber liegt, wird das Auto pausiert, und das Ziel wird für den Rest des Monats auf diese Spitze angehoben.</string>
+  <string name="card_target_suggest_use" formatted="false">Übernehmen</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">Die eigene Leistung der Wallbox ist nicht in der Statistik, daher enthalten die Zahlen des Hauses das Laden.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Kein Vorschlag: Home Assistants Statistik (Recorder) läuft nicht.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Kein Vorschlag: Die Netzleistung hat keine Langzeitstatistik in Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Noch kein Vorschlag: Home Assistants Statistik reicht nur {days} Tage zurück.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Kein Vorschlag: Die Anlage hat keine Wallbox.</string>
+  <string name="card_power_legend_peak" formatted="false">Spitze des Monats {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Aus Home Assistants Statistik</string>
+  <string name="card_power_imported_note" formatted="false">Die Stunden aus Home Assistants Statistik sind Näherungen: Sie zählen in den Spitzen des Monats, heben das Bezugsziel aber nie an.</string>
+  <string name="card_power_peak" formatted="false">Spitze des Monats {kw}</string>
+  <string name="card_power_imported" formatted="false">aus Home Assistants Statistik</string>
+  <string name="card_release_confirm_title" formatted="false">Bezugsziel aussetzen\?</string>
+  <string name="card_release_confirm_release" formatted="false">Aussetzen</string>
+  <string name="card_settings_cancel" formatted="false">Abbrechen</string>
 </resources>

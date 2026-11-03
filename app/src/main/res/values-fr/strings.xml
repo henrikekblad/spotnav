@@ -781,4 +781,21 @@
   <string name="card_settings_error_range" formatted="false">Entre {min} et {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">La moyenne horaire de soutirage sous laquelle vous voulez rester. L\'équilibrage de charge retient les bornes pour que l\'heure reste en dessous, et met une recharge en pause jusqu\'à l\'heure suivante quand même son courant minimum ne tient plus. Sous le niveau minimum de la voiture, elle charge tout de suite ; Départ dit ce qui se passe si la voiture ne peut pas être prête à temps.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Cette heure : {kw} sur {target} – le pic du mois (objectif de soutirage {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Lecture des statistiques de Home Assistant …</string>
+  <string name="card_target_suggest_text" formatted="false">La maison seule : le plus souvent au plus {typical} sur une heure par jour, au maximum {highest} ({date}). Suggestion : {suggestion} – la voiture reçoit alors environ {car} la plupart des heures. Les rares soirs où la maison seule dépasse, la voiture est mise en pause et l\'objectif est relevé à ce pic jusqu\'à la fin du mois.</string>
+  <string name="card_target_suggest_use" formatted="false">Utiliser</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">La puissance de la borne n\'est pas dans les statistiques : les chiffres de la maison incluent la recharge.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Pas de suggestion : les statistiques de Home Assistant (recorder) ne tournent pas.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Pas de suggestion : la puissance réseau n\'a pas de statistiques à long terme dans Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Pas encore de suggestion : les statistiques de Home Assistant ne remontent qu\'à {days} jours.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Pas de suggestion : le site n\'a pas de borne.</string>
+  <string name="card_power_legend_peak" formatted="false">Pic du mois {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Des statistiques de Home Assistant</string>
+  <string name="card_power_imported_note" formatted="false">Les heures issues des statistiques de Home Assistant sont approximatives : elles comptent dans les pics du mois mais ne relèvent jamais l\'objectif de soutirage.</string>
+  <string name="card_power_peak" formatted="false">pic du mois {kw}</string>
+  <string name="card_power_imported" formatted="false">des statistiques de Home Assistant</string>
+  <string name="card_release_confirm_title" formatted="false">Lever l\'objectif de soutirage \?</string>
+  <string name="card_release_confirm_release" formatted="false">Lever</string>
+  <string name="card_settings_cancel" formatted="false">Annuler</string>
 </resources>

@@ -781,4 +781,21 @@
   <string name="card_settings_error_range" formatted="false">Entre {min} y {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">La media horaria de consumo de la red por debajo de la que quieres quedarte. El equilibrado de carga limita los cargadores para que la hora quede por debajo y pausa una carga hasta la próxima hora cuando ni siquiera su corriente mínima cabe. Por debajo del nivel mínimo del coche carga enseguida; Salida dice qué ocurre si el coche no puede estar listo a tiempo.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Esta hora: {kw} de {target} – el pico del mes (objetivo de consumo {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Leyendo las estadísticas de Home Assistant …</string>
+  <string name="card_target_suggest_text" formatted="false">La casa sola: casi siempre como mucho {typical} en una hora al día, como máximo {highest} ({date}). Sugerencia: {suggestion} – el coche recibe entonces unos {car} la mayoría de las horas. Las pocas noches en que la casa sola lo supera, el coche se pausa y el objetivo sube a ese pico el resto del mes.</string>
+  <string name="card_target_suggest_use" formatted="false">Usar</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">La potencia propia del cargador no está en las estadísticas, así que las cifras de la casa incluyen la carga.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Sin sugerencia: las estadísticas de Home Assistant (recorder) no están en marcha.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Sin sugerencia: la potencia de red no tiene estadísticas a largo plazo en Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Aún sin sugerencia: las estadísticas de Home Assistant solo llegan {days} días atrás.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Sin sugerencia: la instalación no tiene cargador.</string>
+  <string name="card_power_legend_peak" formatted="false">Pico del mes {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">De las estadísticas de Home Assistant</string>
+  <string name="card_power_imported_note" formatted="false">Las horas de las estadísticas de Home Assistant son aproximadas: cuentan en los picos del mes pero nunca suben el objetivo de consumo.</string>
+  <string name="card_power_peak" formatted="false">pico del mes {kw}</string>
+  <string name="card_power_imported" formatted="false">de las estadísticas de Home Assistant</string>
+  <string name="card_release_confirm_title" formatted="false">¿Dejar el objetivo de consumo\?</string>
+  <string name="card_release_confirm_release" formatted="false">Dejar</string>
+  <string name="card_settings_cancel" formatted="false">Cancelar</string>
 </resources>

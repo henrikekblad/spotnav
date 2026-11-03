@@ -773,4 +773,21 @@
   <string name="card_settings_error_range" formatted="false">Mellom {min} og {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">Timesgjennomsnittet fra nettet du vil holde deg under. Lastbalanseringen holder laderne så timen holder seg under det, og pauser en lading til neste hele time når ikke engang den laveste strømmen får plass. Under bilens laveste nivå lader den med en gang; Avreise sier hva som skjer hvis bilen ikke rekker å bli ferdig.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Denne timen: {kw} av {target} – månedens topp (effektmål {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Leser Home Assistants statistikk …</string>
+  <string name="card_target_suggest_text" formatted="false">Huset alene: oftest høyst {typical} i en time per døgn, som mest {highest} ({date}). Forslag: {suggestion} – bilen får da rundt {car} de fleste timer. De få kveldene huset alene går over, settes bilen på pause, og målet løftes til den toppen resten av måneden.</string>
+  <string name="card_target_suggest_use" formatted="false">Bruk</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">Laderens egen effekt finnes ikke i statistikken, så husets tall regner med ladingen.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Ikke noe forslag: Home Assistants statistikk (recorder) kjører ikke.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Ikke noe forslag: nettets effekt har ingen langtidsstatistikk i Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Ikke noe forslag ennå: Home Assistants statistikk går bare {days} dager tilbake.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Ikke noe forslag: anlegget har ingen lader.</string>
+  <string name="card_power_legend_peak" formatted="false">Månedens topp {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Fra Home Assistants statistikk</string>
+  <string name="card_power_imported_note" formatted="false">Timene fra Home Assistants statistikk er omtrentlige: de teller i månedens topper, men løfter aldri effektmålet.</string>
+  <string name="card_power_peak" formatted="false">månedens topp {kw}</string>
+  <string name="card_power_imported" formatted="false">fra Home Assistants statistikk</string>
+  <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
+  <string name="card_release_confirm_release" formatted="false">Slipp</string>
+  <string name="card_settings_cancel" formatted="false">Avbryt</string>
 </resources>

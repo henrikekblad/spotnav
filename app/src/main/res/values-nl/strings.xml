@@ -773,4 +773,21 @@
   <string name="card_settings_error_range" formatted="false">Tussen {min} en {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">Het uurgemiddelde van de afname waar je onder wilt blijven. De load balancing houdt de laders zo dat het uur eronder blijft, en pauzeert een laadbeurt tot het volgende uur zodra zelfs de minimumstroom niet meer past. Onder het minimumniveau van de auto laadt hij meteen; Vertrek zegt wat er gebeurt als de auto niet op tijd klaar kan zijn.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">Dit uur: {kw} van {target} – de piek van de maand (afnamedoel {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Statistieken van Home Assistant lezen …</string>
+  <string name="card_target_suggest_text" formatted="false">Het huis alleen: meestal hoogstens {typical} in een uur per dag, hoogstens {highest} ({date}). Voorstel: {suggestion} – de auto krijgt dan de meeste uren ongeveer {car}. Op de paar avonden dat het huis alleen erboven komt, wordt de auto gepauzeerd en gaat het doel voor de rest van de maand naar die piek.</string>
+  <string name="card_target_suggest_use" formatted="false">Gebruiken</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">Het eigen vermogen van de laadpaal staat niet in de statistieken, dus de cijfers van het huis tellen het laden mee.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">Geen voorstel: de statistieken van Home Assistant (recorder) draaien niet.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">Geen voorstel: het netvermogen heeft geen langetermijnstatistieken in Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">Nog geen voorstel: de statistieken van Home Assistant gaan maar {days} dagen terug.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">Geen voorstel: de installatie heeft geen laadpaal.</string>
+  <string name="card_power_legend_peak" formatted="false">Piek van de maand {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">Uit de statistieken van Home Assistant</string>
+  <string name="card_power_imported_note" formatted="false">De uren uit de statistieken van Home Assistant zijn benaderingen: ze tellen mee in de pieken van de maand, maar verhogen het afnamedoel nooit.</string>
+  <string name="card_power_peak" formatted="false">piek van de maand {kw}</string>
+  <string name="card_power_imported" formatted="false">uit de statistieken van Home Assistant</string>
+  <string name="card_release_confirm_title" formatted="false">Afnamedoel loslaten\?</string>
+  <string name="card_release_confirm_release" formatted="false">Loslaten</string>
+  <string name="card_settings_cancel" formatted="false">Annuleren</string>
 </resources>

@@ -785,4 +785,21 @@
   <string name="card_settings_error_range" formatted="false">Between {min} and {max}.</string>
   <!-- The card's site.importTarget.help, pointing at the app's departure dialog, where the choice lives. -->
   <string name="import_target_help">The hourly mean of import you want to stay under. Load balancing holds the chargers so the hour stays under it, and pauses a charge until the next hour once even its minimum current no longer fits. Below the car\'s minimum level it charges at once; Departure says what happens if the car cannot be ready in time.</string>
+  <string name="card_site_import_target_hour_peak" formatted="false">This hour: {kw} of {target} – the month\'s peak (import target {set})</string>
+  <string name="card_target_suggest_loading" formatted="false">Reading Home Assistant\'s statistics …</string>
+  <string name="card_target_suggest_text" formatted="false">The house alone: usually at most {typical} in an hour each day, at most {highest} ({date}). Suggestion: {suggestion} – the car then gets about {car} in most hours. On the few evenings the house alone goes above it the car is paused, and the target is lifted to that peak for the rest of the month.</string>
+  <string name="card_target_suggest_use" formatted="false">Use</string>
+  <string name="card_target_suggest_charger_missing" formatted="false">The charger\'s own power is not in the statistics, so the house\'s figures include the charging.</string>
+  <string name="card_target_suggest_none_no_recorder" formatted="false">No suggestion: Home Assistant\'s statistics (recorder) are not running.</string>
+  <string name="card_target_suggest_none_no_grid_statistics" formatted="false">No suggestion: the grid power has no long-term statistics in Home Assistant.</string>
+  <string name="card_target_suggest_none_too_few_days" formatted="false">No suggestion yet: Home Assistant\'s statistics only go back {days} days.</string>
+  <string name="card_target_suggest_none_no_chargers" formatted="false">No suggestion: the site has no charger.</string>
+  <string name="card_power_legend_peak" formatted="false">The month\'s peak {kw}</string>
+  <string name="card_power_legend_imported" formatted="false">From Home Assistant\'s statistics</string>
+  <string name="card_power_imported_note" formatted="false">The hours from Home Assistant\'s statistics are approximate: they count in the month\'s peaks but never lift the import target.</string>
+  <string name="card_power_peak" formatted="false">the month\'s peak {kw}</string>
+  <string name="card_power_imported" formatted="false">from Home Assistant\'s statistics</string>
+  <string name="card_release_confirm_title" formatted="false">Release the import target\?</string>
+  <string name="card_release_confirm_release" formatted="false">Release</string>
+  <string name="card_settings_cancel" formatted="false">Cancel</string>
 </resources>
