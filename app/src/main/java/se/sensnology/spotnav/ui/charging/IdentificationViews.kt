@@ -121,11 +121,13 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
 
     private fun paint() {
         val held = dashboard
-        val question = held?.let { VehicleIdentification.banner(it) }
+        val question = held?.let { VehicleIdentification.banner(it, t(R.string.identify_guest)) }
         // The question in view: the background check does not post it as a notification too.
         InAppQuestion.banner = if (question != null) held.identification?.let(IdentifyNotice::key) else null
         paintBanner(question)
-        val face = held?.let { ChargerCarFace.of(it, ::percent, template(R.string.car_line_of_target)) }
+        val face = held?.let {
+            ChargerCarFace.of(it, ::percent, template(R.string.car_line_of_target), t(R.string.identify_guest), ::kwhText)
+        }
         paintRow(face?.takeIf { it.place == ChargerCarFace.Place.ROW })
         paintButton(face?.takeIf { it.place == ChargerCarFace.Place.BUTTON })
     }
@@ -194,14 +196,19 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
                 text = t(R.string.identify_question); textSize = 16f; setTextColor(dark); typeface = Typeface.DEFAULT_BOLD
             }, weight())
         })
-        val note = listOfNotNull(
-            t(R.string.identify_undecided).takeIf { question.carsCouldNotTell },
-            question.keptName?.let { t(R.string.identify_keeps, it) }
-        ).joinToString(" ")
+        // At a charger with one car: that car does not seem to be plugged in, and is kept when nobody answers.
+        val note = if (question.singleCar && question.keptName != null) {
+            t(R.string.identify_keeps_single, question.keptName)
+        } else {
+            listOfNotNull(
+                t(R.string.identify_undecided).takeIf { question.carsCouldNotTell },
+                question.keptName?.let { t(R.string.identify_keeps, it) }
+            ).joinToString(" ")
+        }
         if (note.isNotEmpty()) {
             banner.addView(TextView(context).apply { text = note; textSize = 13f; setTextColor(muted); setPadding(0, dp(4), 0, dp(4)) })
         }
-        // One button per car, two to a row, in the order Home Assistant gives them.
+        // One button per car, two to a row, in the order Home Assistant gives them, and "Guest car" first or last.
         question.choices.chunked(2).forEach { pair ->
             val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
             pair.forEachIndexed { index, choice ->
@@ -246,11 +253,14 @@ internal class IdentificationViews(scope: ViewScope, parent: LinearLayout) : Vie
         VehicleIdentification.Hint.ELSEWHERE -> R.string.identify_hint_elsewhere
     }
 
-    /** The chooser: a radio per car with what its own report says, the current car chosen; Välj sends it. */
+    /**
+     * The chooser: a radio per car with what its own report says, and "Guest car" last while a car is plugged in; the
+     * current car chosen; Välj sends it.
+     */
     private fun openSwitch() {
         val held = dashboard ?: return
         if (busy) return
-        val switch = VehicleIdentification.switchChoices(held)
+        val switch = VehicleIdentification.switchChoices(held, t(R.string.identify_guest))
         if (switch.choices.isEmpty()) return
         val body = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL

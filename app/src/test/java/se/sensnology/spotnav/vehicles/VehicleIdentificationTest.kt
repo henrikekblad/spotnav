@@ -54,7 +54,8 @@ class VehicleIdentificationTest {
     @Test fun anOpenQuestionIsABannerWithACarButtonEachInTheGivenOrderAndTheCarKept() {
         val dash = dashboard(block("asking"))
         val banner = VehicleIdentification.banner(dash)!!
-        assertEquals(listOf("vehicle_niro", "vehicle_ev6"), banner.choices.map { it.vehicleId })
+        // Home Assistant 2.4 knows a guest car: it is the last answer.
+        assertEquals(listOf("vehicle_niro", "vehicle_ev6", "guest"), banner.choices.map { it.vehicleId })
         assertEquals("EV6", banner.keptName)
         assertTrue(banner.carsCouldNotTell)
         assertTrue(VehicleIdentification.waitingForAnswer(dash))

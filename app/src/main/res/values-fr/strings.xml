@@ -482,6 +482,10 @@
   <string name="identify_question">Quelle voiture est branchée ?</string>
   <string name="identify_undecided">SpotNav n\'a pas pu le déterminer à partir des voitures.</string>
   <string name="identify_keeps">Sans réponse, %1$s est conservée.</string>
+  <string name="identify_keeps_single">%1$s ne semble pas être branchée. Sans réponse, %1$s est conservée.</string>
+  <string name="identify_guest">Voiture invitée</string>
+  <string name="guest_amount">Quantité pour voiture invitée</string>
+  <string name="guest_amount_help">Ce qui est chargé pour une voiture invitée. Une modification dans son plan est gardée pour la prochaine invitée.</string>
   <string name="identify_answer_where">Répondez dans l\'application ou dans la notification</string>
   <string name="identify_waiting">en attente de réponse</string>
   <string name="identify_answer_failed">La réponse n\'a pas pu être enregistrée.</string>

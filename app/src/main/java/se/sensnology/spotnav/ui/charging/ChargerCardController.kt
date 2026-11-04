@@ -407,7 +407,10 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
     private fun chargerCarLine(entry: ChargerCardSelector.Entry?): String? {
         val profile = entry?.profile?.takeIf { entry.kind == ChargerCardSelector.Kind.PROFILE && it.configured } ?: return null
         val stored = WidgetDashboardStore.forContext(applicationContext).dashboardFor(profile.localId) ?: return null
-        return PairedCarLine.summary(stored.dashboard, { value -> t(R.string.vehicle_card_soc_value, value) }, template(R.string.car_line_of_target))
+        return PairedCarLine.summary(
+            stored.dashboard, { value -> t(R.string.vehicle_card_soc_value, value) }, template(R.string.car_line_of_target),
+            t(R.string.identify_guest), ::kwhText
+        )
     }
 
     /** One row's label in the charger card's selector. */

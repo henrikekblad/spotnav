@@ -226,6 +226,13 @@ internal object HaStatusText {
                 if (format.ownModeButton) sentence else sentence + " " + say("issue.ownMode.where")
             }
             "sun_past_target" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
+            "guest_planned" -> {
+                // A guest car's amount, by the departure when it has one: "Guest car · 10 kWh by 07:00".
+                val kwh = number(format.locale, num(p["kwh"]) ?: 0.0, 1)
+                val departure = instant(p["departure"])
+                if (departure == null || zone == null) say("status.guestPlannedNoTime", mapOf("kwh" to kwh))
+                else say(key, mapOf("kwh" to kwh, "time" to clock(departure)))
+            }
             "solar_forecast" -> {
                 // The sun the forecast promises for the rest of today, else tomorrow, with its hours.
                 val start = instant(p["start"])

@@ -106,4 +106,16 @@ class PlanCardFaceTest {
     @Test fun noCarAtAllIsEnergyOnly() {
         assertEquals(setOf(PlanDriver.KWH), PlanCardFace.availableDrivers(null, PlanDriver.KWH, null, null))
     }
+
+    @Test fun aGuestPlanIsTitledGuestCarAndPlannedByKwhAlone() {
+        val guest = DashboardFixtures.dashboard("target_soc_two_vehicles.json") {
+            put("guest", JSONObject().put("active", true).put("amount_kwh", 10.0).put("first", false))
+            put("target_vehicle_id", JSONObject.NULL)
+            getJSONObject("settings").put("driver", "manual_kwh")
+                .put("target", JSONObject().put("vehicle_id", "guest").put("target_percent", JSONObject.NULL))
+        }
+        assertEquals("Planering för Gästbil", PlanCardFace.title("Planering", "Planering för %s", guest, "Gästbil"))
+        assertEquals(setOf(PlanDriver.KWH), PlanCardFace.availableDrivers(guest, PlanDriver.TARGET_SOC, null, null))
+        assertFalse(PlanCardFace.chargeByShown(PlanCardFace.availableDrivers(guest, PlanDriver.KWH, null, null)))
+    }
 }

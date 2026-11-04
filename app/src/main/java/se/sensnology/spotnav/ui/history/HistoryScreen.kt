@@ -18,6 +18,7 @@ import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chart.ChartTheme
 import se.sensnology.spotnav.ha.client.PowerMonthRead
 import se.sensnology.spotnav.ha.client.SessionsOutcome
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ha.sessions.ChargeSessionRow
 import se.sensnology.spotnav.ha.sessions.SessionDay
@@ -438,7 +439,8 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
             totals.cost(row.cost),
             totals.price(row.averagePriceMinorPerKwh),
             totals.share(row.solarShare)?.let { t(R.string.history_day_solar, it) },
-            row.vehicle
+            // A guest car's session is named in the reader's language, whatever Home Assistant's is.
+            DashboardGuest.sessionVehicle(row.vehicle, t(R.string.identify_guest))
         ).joinToString(" · ").ifEmpty { figures.energy(row.energyKwh) }
     }
 

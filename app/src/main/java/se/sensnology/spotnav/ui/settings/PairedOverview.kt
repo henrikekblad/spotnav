@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ui.settings
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
@@ -22,10 +23,12 @@ import se.sensnology.spotnav.vehicles.SocDisplay
 internal object PairedOverview {
     /**
      * The car tab chosen in Settings' one car card: [current] while that car is still there, else the
-     * car planned for, else the first; `null` for one car or none (no tabs).
+     * car planned for, else the first; `null` for one car or none (no tabs). With [guestTab] (Home Assistant knows a
+     * guest car) the Guest tab follows the cars, so one car has tabs too, and [current] may be that tab.
      */
-    fun selectedTab(cars: List<VehicleCard>, current: String?): String? {
-        if (cars.size < 2) return null
+    fun selectedTab(cars: List<VehicleCard>, current: String?, guestTab: Boolean = false): String? {
+        if (cars.isEmpty() || cars.size + (if (guestTab) 1 else 0) < 2) return null
+        if (guestTab && current == DashboardGuest.VEHICLE_ID) return current
         return cars.firstOrNull { it.id == current }?.id ?: cars.firstOrNull { it.planned }?.id ?: cars.first().id
     }
 

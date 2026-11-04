@@ -18,6 +18,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
+import se.sensnology.spotnav.ha.client.GuestUpdate
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
 import se.sensnology.spotnav.ha.client.SiteUpdate
@@ -28,6 +29,7 @@ import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicle
@@ -108,6 +110,16 @@ internal class PairedSettingsCards(
         { _, _, done -> done(PhaseSwitchingUpdate.Outcome.Failed(null)) }
     private var adoptedPhaseSwitching: PhaseSwitching? = null
     private var phaseSwitchingNotice: String? = null
+
+    // The guest amount a guest car's plan starts from (`update_guest`); what a write answered is shown until the next
+    // dashboard.
+    private var writeGuest: (Double, (GuestUpdate.Outcome) -> Unit) -> Unit = { _, done -> done(GuestUpdate.Outcome.Failed(null)) }
+    private var adoptedGuest: DashboardGuest? = null
+
+    /** Where the guest amount is written (the screen owns the connection). */
+    fun attachGuest(write: (Double, (GuestUpdate.Outcome) -> Unit) -> Unit) {
+        writeGuest = write
+    }
 
     // A car's charge limit, written to the car through the integration (`set_charge_limit`).
     private var writeLimit: (String, Int, (ChargeLimit.Answer) -> Unit) -> Unit = { _, _, done -> done(ChargeLimit.Answer.Failed) }
@@ -224,6 +236,7 @@ internal class PairedSettingsCards(
             adoptedSite = null
             adoptedPriority = null
             adoptedPhaseSwitching = null
+            adoptedGuest = null
             adoptedIdentification = null
             adoptedPeriods = null
             adoptedCamera = null
@@ -275,8 +288,10 @@ internal class PairedSettingsCards(
             card.body.addView(muted(t(R.string.settings_vehicle_none), top = 8))
             return
         }
-        // One car is "Bil · EV6"; several are one "Bil" card with a tab per car, the chosen car's rows below.
-        val selected = PairedOverview.selectedTab(vehicles, selectedCar)
+        // One car is "Bil · EV6"; several are one "Bil" card with a tab per car, the chosen car's rows below. Where Home
+        // Assistant knows a guest car, its tab follows the cars (one car has tabs then too): the guest amount alone.
+        val guest = adoptedGuest ?: dash.guest
+        val selected = PairedOverview.selectedTab(vehicles, selectedCar, guestTab = guest != null)
         selectedCar = selected
         if (selected == null) {
             val vehicle = vehicles.first()
@@ -285,15 +300,43 @@ internal class PairedSettingsCards(
             return
         }
         val card = card(container, t(R.string.vehicle_title), R.drawable.ic_ev)
-        val tabs = textTabs(vehicles.map { it.name ?: t(R.string.vehicle_title) }, vehicles.indexOfFirst { it.id == selected }, card.body) { index ->
-            val chosen = vehicles[index].id
+        val tabIds = vehicles.map { it.id } + listOfNotNull(DashboardGuest.VEHICLE_ID.takeIf { guest != null })
+        val tabNames = vehicles.map { it.name ?: t(R.string.vehicle_title) } + listOfNotNull(t(R.string.identify_guest).takeIf { guest != null })
+        val tabs = textTabs(tabNames, tabIds.indexOf(selected), card.body) { index ->
+            val chosen = tabIds[index]
             if (selectedCar != chosen) {
                 selectedCar = chosen
                 repaint()
             }
         }
         card.header.addView(tabs.row, textTabsLayoutParams())
-        addVehicleRows(card.body, dash, vehicles.first { it.id == selected })
+        if (selected == DashboardGuest.VEHICLE_ID && guest != null) addGuestRows(card.body, guest)
+        else addVehicleRows(card.body, dash, vehicles.first { it.id == selected })
+    }
+
+    /**
+     * The Guest tab's one row: the guest amount a guest car's plan starts from (`update_guest`, 1 to 150 kWh, one for
+     * the installation). No picture, sensor, capacity or target: a guest car has none here.
+     */
+    private fun addGuestRows(body: LinearLayout, guest: DashboardGuest) {
+        val label = t(R.string.guest_amount)
+        valueRow(body, label, kwhText(guest.amountKwh), help = t(R.string.guest_amount_help)) {
+            val range = cardWords().say("settings.error.range", "min" to "1", "max" to "150")
+            editNumber(label, NumberSpec(DashboardGuest.KWH_MIN, DashboardGuest.KWH_MAX, 1), "kWh", guest.amountKwh, range) { value, done ->
+                if (value == null || value == guest.amountKwh) return@editNumber done(null)
+                writeGuest(value) { outcome ->
+                    when (outcome) {
+                        is GuestUpdate.Outcome.Updated -> {
+                            adoptedGuest = outcome.guest
+                            done(null)
+                            repaint()
+                        }
+                        GuestUpdate.Outcome.OutOfRange -> done(range)
+                        is GuestUpdate.Outcome.Failed -> done(t(R.string.paired_error_generic))
+                    }
+                }
+            }
+        }
     }
 
     /** One car's rows: its level, its own figures, its target, its sources and its reference pictures. */

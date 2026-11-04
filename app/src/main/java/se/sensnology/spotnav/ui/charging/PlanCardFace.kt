@@ -15,17 +15,22 @@ internal object PlanCardFace {
     /** The chooser's choices, in the Home Assistant card's order: energy, then the target. */
     val CHARGE_BY_CHOICES = listOf(PlanDriver.KWH, PlanDriver.TARGET_SOC)
 
-    /** The car Home Assistant plans for, by name; `null` for the phone's own plan or no known car. */
-    fun plannedCarName(paired: Dashboard?): String? = paired?.let { VehicleIdentification.plannedName(it) }
+    /**
+     * The car Home Assistant plans for, by name ([guestName] for a guest car); `null` for the phone's own plan or no
+     * known car.
+     */
+    fun plannedCarName(paired: Dashboard?, guestName: String = VehicleIdentification.GUEST_NAME): String? =
+        paired?.let { VehicleIdentification.plannedName(it, guestName) }
 
     /** "Planning for EV6" from [forCarTemplate] while a planned car is known, else [plain]. */
-    fun title(plain: String, forCarTemplate: String, paired: Dashboard?): String =
-        plannedCarName(paired)?.let { String.format(forCarTemplate, it) } ?: plain
+    fun title(plain: String, forCarTemplate: String, paired: Dashboard?, guestName: String = VehicleIdentification.GUEST_NAME): String =
+        plannedCarName(paired, guestName)?.let { String.format(forCarTemplate, it) } ?: plain
 
     /**
      * What the plan can be driven by. A paired charger follows the Home Assistant card's own rule: the
      * target when a charge-level source resolves, or when the record already stands on it (then it is
-     * shown as it is, and can still be undone). The phone's own plan needs a car with a capacity.
+     * shown as it is, and can still be undone). A guest car is planned by kWh alone. The phone's own plan needs a car
+     * with a capacity.
      */
     fun availableDrivers(
         paired: Dashboard?,
@@ -34,6 +39,7 @@ internal object PlanCardFace {
         rememberedCapacityKwh: Double?
     ): Set<PlanDriver> = when {
         paired == null -> PlanMode.availableDrivers(vehicle, rememberedCapacityKwh)
+        VehicleIdentification.guestActive(paired) -> setOf(PlanDriver.KWH)
         PairedTarget.available(paired) || stored == PlanDriver.TARGET_SOC -> setOf(PlanDriver.KWH, PlanDriver.TARGET_SOC)
         else -> setOf(PlanDriver.KWH)
     }

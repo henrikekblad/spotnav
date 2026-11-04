@@ -482,6 +482,10 @@
   <string name="identify_question">¿Qué coche está enchufado?</string>
   <string name="identify_undecided">SpotNav no pudo deducirlo a partir de los coches.</string>
   <string name="identify_keeps">Si nadie responde, se mantiene %1$s.</string>
+  <string name="identify_keeps_single">%1$s no parece estar enchufado. Si nadie responde, se mantiene %1$s.</string>
+  <string name="identify_guest">Coche de invitado</string>
+  <string name="guest_amount">Cantidad para coche de invitado</string>
+  <string name="guest_amount_help">Lo que se carga a un coche de invitado. Un cambio en el plan de un coche de invitado se guarda para el siguiente.</string>
   <string name="identify_answer_where">Responde en la app o en la notificación</string>
   <string name="identify_waiting">esperando respuesta</string>
   <string name="identify_answer_failed">No se ha podido guardar la respuesta.</string>

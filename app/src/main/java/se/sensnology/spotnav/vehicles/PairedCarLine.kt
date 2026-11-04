@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.settings.HaSettingsDriver
 import java.util.Locale
 
@@ -44,12 +45,27 @@ internal object PairedCarLine {
         return ofTarget.format(Locale.ROOT, now ?: "–", percent(target))
     }
 
-    /** The charger's car and its levels, "EV6 · 89 % of 93 % target"; `null` when no car is planned for. */
-    fun summary(dashboard: Dashboard, percent: (Int) -> String, ofTarget: String): String? {
-        val line = VehicleIdentification.carLine(dashboard) ?: return null
+    /**
+     * The charger's car and its levels, "EV6 · 89 % of 93 % target", or a guest car's name and amount, "Guest car · 10
+     * kWh"; `null` when no car is planned for.
+     */
+    fun summary(
+        dashboard: Dashboard,
+        percent: (Int) -> String,
+        ofTarget: String,
+        guestName: String = VehicleIdentification.GUEST_NAME,
+        amount: (Double) -> String = { "$it kWh" }
+    ): String? {
+        val line = VehicleIdentification.carLine(dashboard, guestName) ?: return null
         val id = line.vehicleId ?: return null
-        return listOfNotNull(line.name ?: id, levelsText(levels(dashboard, id), percent, ofTarget)).joinToString(" · ")
+        val levels = if (id == DashboardGuest.VEHICLE_ID) guestAmount(dashboard)?.let(amount)
+        else levelsText(levels(dashboard, id), percent, ofTarget)
+        return listOfNotNull(line.name ?: id, levels).joinToString(" · ")
     }
+
+    /** The amount a guest car's plan charges (the settings' `requested_kwh`), during a guest plan; else `null`. */
+    fun guestAmount(dashboard: Dashboard): Double? =
+        dashboard.settings?.requestedKwh?.takeIf { VehicleIdentification.guestActive(dashboard) && it.isFinite() }
 
     /**
      * The car the charger card's re-read also re-reads (`refresh_vehicle`): the planned car, where the
@@ -58,7 +74,8 @@ internal object PairedCarLine {
     fun carToReRead(dashboard: Dashboard?): String? {
         val held = dashboard ?: return null
         if (!VehicleRefresh.offered(held.capabilities)) return null
-        return VehicleIdentification.carLine(held)?.vehicleId
+        // A guest car has nothing to re-read.
+        return VehicleIdentification.carLine(held)?.vehicleId?.takeIf { it != DashboardGuest.VEHICLE_ID }
     }
 
     /** Whether the car's part of that re-read is said: only a real failure, never Home Assistant's own pace. */

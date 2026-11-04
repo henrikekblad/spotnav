@@ -419,7 +419,9 @@ internal data class Dashboard(
      * The electricity price's grid tariff with, since 2.4, the demand charge and the site's import target
      * (`grid_tariff`, see [DashboardGridTariff]); `null` where it is not sent or cannot be read.
      */
-    val gridTariff: DashboardGridTariff? = null
+    val gridTariff: DashboardGridTariff? = null,
+    /** The guest car (`guest`, see [DashboardGuest]); `null` where it is not sent or cannot be read. */
+    val guest: DashboardGuest? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -521,7 +523,8 @@ internal data class Dashboard(
                 priceSource = DashboardPriceSource.parse(json.opt("price_source")),
                 phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching")),
                 setup = SetupRow.parse(json.opt("setup")),
-                gridTariff = DashboardGridTariff.parse(json.opt("grid_tariff"))
+                gridTariff = DashboardGridTariff.parse(json.opt("grid_tariff")),
+                guest = DashboardGuest.parse(json.opt("guest"))
             )
         }
 

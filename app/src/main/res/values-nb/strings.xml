@@ -474,6 +474,10 @@
   <string name="identify_question">Hvilken bil er tilkoblet?</string>
   <string name="identify_undecided">SpotNav kunne ikke avgjøre det ut fra bilene.</string>
   <string name="identify_keeps">Svarer ingen, beholdes %1$s.</string>
+  <string name="identify_keeps_single">%1$s ser ikke ut til å være koblet til. Svarer ingen, beholdes %1$s.</string>
+  <string name="identify_guest">Gjestebil</string>
+  <string name="guest_amount">Mengde for gjestebil</string>
+  <string name="guest_amount_help">Det en gjestebil lades med. En endring i en gjestebils plan lagres til neste gjest.</string>
   <string name="identify_answer_where">Svar i appen eller i varselet</string>
   <string name="identify_waiting">venter på svar</string>
   <string name="identify_answer_failed">Svaret kunne ikke lagres.</string>

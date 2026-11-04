@@ -36,6 +36,7 @@ import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.authority.AuthorityController
 import se.sensnology.spotnav.ha.client.GridTariffUpdate
+import se.sensnology.spotnav.ha.client.GuestUpdate
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.authority.WriteOutcome
 import se.sensnology.spotnav.ha.settings.ConfirmedSettingsStore
@@ -349,6 +350,13 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                     }
                 }
             )
+            pairedCards.attachGuest { amountKwh, done ->
+                session.updateGuest(amountKwh) { outcome ->
+                    if (isDestroyed || viewGeneration != settingsGeneration) return@updateGuest
+                    done(outcome)
+                    if (outcome is GuestUpdate.Outcome.Updated) loadPaired()
+                }
+            }
             // The electricity price the charger uses: chosen, or the same-area question answered, the card's way.
             // The grid tariff, written whole with the part changed.
             pairedPrice?.attachTariffWrite { revision, body, done ->

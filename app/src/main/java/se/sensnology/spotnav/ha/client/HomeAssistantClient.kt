@@ -70,7 +70,8 @@ internal class WebhookHttpStatusException(
  * `import_target_status`, the import target's own status lines in place of the load-balancing ones an older app reads,
  * `grid_tariff`, the dashboard's block with the demand charge and the site's import target, and `if_not_ready`, the plan's
  * choice when the import target would make it miss its departure, and `effective_target`, the demand block's level the running hour
- * is held under. Every request the app sends names them.
+ * is held under, and `guest`, the guest car: the dashboard's `guest` block, its status lines, the question at a one-car
+ * charger and `"guest"` as the car planned for. Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -78,7 +79,7 @@ internal object WebhookReads {
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
-        "import_target_status", "grid_tariff", "if_not_ready", "effective_target"
+        "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
@@ -300,6 +301,12 @@ object HomeAssistantClient {
     internal fun fixOwnMode(settings: HomeAssistantSettings, entityId: String, value: String): OwnModeFix.Outcome {
         val (status, body) = write(settings, OwnModeFix.payload(entityId, value))
         return OwnModeFix.answer(status, body)
+    }
+
+    /** The guest amount a guest car's plan starts from (webhook `update_guest`). Never throws. */
+    internal fun updateGuest(settings: HomeAssistantSettings, amountKwh: Double): GuestUpdate.Outcome {
+        val (status, body) = write(settings, GuestUpdate.payload(amountKwh))
+        return GuestUpdate.answer(status, body)
     }
 
     /** The site's import target set aside for this charge until its departure (webhook `release_import_target`). Never throws. */

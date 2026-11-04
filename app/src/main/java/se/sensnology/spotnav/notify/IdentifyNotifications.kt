@@ -57,7 +57,8 @@ internal object IdentifyNotifications {
 
     /** One check's read of one charger: post, keep or take off its question. */
     fun follow(context: Context, store: LocalNotificationStore, localId: String, chargerName: String, dashboard: Dashboard, chosen: Boolean) {
-        when (val step = IdentifyNotice.step(dashboard, chosen, store.identifyPosted(localId), InAppQuestion.visible)) {
+        val guestName = AppLanguageSettings.text(context, R.string.identify_guest)
+        when (val step = IdentifyNotice.step(dashboard, chosen, store.identifyPosted(localId), InAppQuestion.visible, guestName)) {
             is IdentifyNotice.Step.Post -> {
                 // Not allowed now: not remembered either, so a later check posts it once it is.
                 if (!LocalNotifications.allowed(context)) return

@@ -4,6 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.DashboardStatus
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -212,6 +213,37 @@ internal object ReleaseImportTarget {
         if (head.ok) return Outcome.Released
         val code = head.error ?: return Outcome.Failed(null)
         return if (code in NOTHING) Outcome.NothingToRelease(code) else Outcome.Failed(code)
+    }
+}
+
+/**
+ * `update_guest`: the guest amount a guest car's plan starts from (the Guest tab), 1 to 150 kWh, one for the whole
+ * installation; the last change wins. The answer carries the dashboard's `guest` block after the write.
+ */
+internal object GuestUpdate {
+    fun payload(amountKwh: Double): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_guest")
+        WebhookReads.put(this)
+        put("api_version", 1)
+        put("amount_kwh", amountKwh)
+    }
+
+    sealed interface Outcome {
+        /** Taken: [guest] is the block after it (`null` when the answer's block cannot be read). */
+        data class Updated(val guest: DashboardGuest?) : Outcome
+
+        /** An amount out of range (`spotnav_invalid_value`). */
+        data object OutOfRange : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (head.ok) return Outcome.Updated(DashboardGuest.parse(head.json.opt("guest")))
+        return if (head.error == WriteEnvelope.INVALID_VALUE) Outcome.OutOfRange else Outcome.Failed(head.error)
     }
 }
 

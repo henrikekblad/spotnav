@@ -474,6 +474,10 @@
   <string name="identify_question">Vilken bil är inkopplad?</string>
   <string name="identify_undecided">SpotNav kunde inte avgöra det från bilarna.</string>
   <string name="identify_keeps">Svarar ingen behålls %1$s.</string>
+  <string name="identify_keeps_single">%1$s verkar inte vara inkopplad. Svarar ingen behålls %1$s.</string>
+  <string name="identify_guest">Gästbil</string>
+  <string name="guest_amount">Mängd för gästbil</string>
+  <string name="guest_amount_help">Det en gästbil laddas med. En ändring i en gästbils plan sparas till nästa gäst.</string>
   <string name="identify_answer_where">Svara i appen eller i notisen</string>
   <string name="identify_waiting">väntar på svar</string>
   <string name="identify_answer_failed">Svaret kunde inte sparas.</string>
