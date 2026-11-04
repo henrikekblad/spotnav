@@ -72,6 +72,13 @@ import target (`import_target_kw`, compare-and-set on the value last seen). Its 
 has days and hours from Home Assistant's statistics. `line=unplug` is a release without a departure. A request
 that does not read `import_target_status` gets the load-balancing lines an older
 app knows in their place, as Home Assistant sends them.
+
+The `guest` scenario is Home Assistant 2.4's guest car at a charger EV6 and Niro can charge at, its state chosen with
+`GET /spotnav-mock/guest?state=ask2|ask1|plugged|planned|done|idle`: the question with two cars, the question of a
+one-car charger (only EV6, ruled out), a car plugged in and decided, a guest plan for 10 kWh by 07:00, the amount
+delivered, or nothing plugged in (`&first=1` puts Guest car first in the question). `identify_vehicle` with `"guest"`
+starts a guest plan and a household car ends it; `update_guest` writes the guest amount (1 to 150 kWh). A request
+that does not read `guest` gets none of it, as Home Assistant withholds it.
 """
 
 from __future__ import annotations
@@ -109,6 +116,7 @@ DASHBOARD_BY_SCENARIO = {
     "oldwebhook": "cheapest_no_site.json",
     "demand": "cheapest_direct_site_admin.json",
     "gridfee": "cheapest_direct_site_admin.json",
+    "guest": "target_soc_two_vehicles.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -255,6 +263,101 @@ def _for_older_app(status: dict) -> dict:
         elif not line["code"].startswith("import_target_"):
             lines.append(line)
     return dict(status, lines=lines)
+
+
+#: The `guest` scenario (HA 2.4): what is plugged in and decided, the guest amount, and whether Guest car goes first.
+GUEST = {"state": "ask2", "amount_kwh": 10.0, "first": False}
+
+
+def _next_seven() -> str:
+    """The next 07:00 on the area's clock: the guest's departure."""
+    zone = ZoneInfo("Europe/Stockholm")
+    seven = datetime.now(zone).replace(hour=7, minute=0, second=0, microsecond=0)
+    return (seven if seven > datetime.now(zone) else seven + timedelta(days=1)).isoformat()
+
+
+def _guest_body(body: dict) -> None:
+    """The guest car's states on the two-car fixture: the question, a decided car, a guest plan and its end."""
+    state = GUEST["state"]
+    since = (datetime.now(ZoneInfo("UTC")) - timedelta(minutes=3)).replace(microsecond=0).isoformat()
+    cars = [{"vehicle_id": "vehicle_ev6", "name": "EV6", "likely": False}, {"vehicle_id": "vehicle_niro", "name": "Niro", "likely": False}]
+    body["guest"] = {"active": state in ("planned", "done"), "amount_kwh": GUEST["amount_kwh"], "first": GUEST["first"]}
+    body["connection"] = {"state": "disconnected" if state == "idle" else "connected", "source": None}
+    body["settings"]["departure_enabled"] = True
+    body["settings"]["departure_time"] = "07:00"
+    if state == "ask1":
+        # A charger only EV6 can charge at, asked because EV6 itself says it is not plugged in.
+        body["vehicles"] = [row for row in body["vehicles"] if row["id"] == "vehicle_ev6"]
+        body["vehicle_choices"] = [{"id": "vehicle_ev6", "name": "EV6"}]
+        body["settings"]["vehicle_ids"] = ["vehicle_ev6"]
+        cars = cars[:1]
+    if state in ("ask1", "ask2"):
+        evidence = [{"vehicle_id": car["vehicle_id"], "verdict": "not_plugged_in" if state == "ask1" else None} for car in cars]
+        body["identification"] = {"state": "asking", "method": "assumed", "vehicle_id": "vehicle_ev6", "since": since,
+                                  "candidates": cars, "evidence": evidence}
+    elif state == "plugged":
+        body["identification"] = {"state": "decided", "method": "plug_sensor", "vehicle_id": "vehicle_ev6", "since": since,
+                                  "candidates": cars, "evidence": []}
+    elif state in ("planned", "done"):
+        body["identification"] = {"state": "decided", "method": "answered", "vehicle_id": "guest", "since": since,
+                                  "candidates": cars, "evidence": []}
+        # A guest plan: by kWh with no vehicle, so nothing of a car is stated.
+        body["target_vehicle_id"] = None
+        body["soc"] = None
+        body["settings"].update(driver="manual_kwh", requested_kwh=GUEST["amount_kwh"], fill_to_limit=False,
+                                target={"vehicle_id": "guest", "target_percent": None})
+        cost = {"code": "plan_cost", "params": {"amount_minor": 1187, "currency": "SEK"}}
+        if state == "planned":
+            body["status"] = {"tone": "normal", "lines": [
+                {"code": "guest_planned", "params": {"kwh": GUEST["amount_kwh"], "departure": _next_seven()}},
+                {"code": "plan_energy", "params": {"kwh": GUEST["amount_kwh"]}}, cost,
+            ]}
+        else:
+            body["status"] = {"tone": "normal", "lines": [{"code": "guest_done", "params": {}}]}
+
+
+def _without_guest(body: dict) -> None:
+    """What Home Assistant leaves out for an app that does not read `guest`."""
+    body.pop("guest", None)
+    body["status"] = dict(body["status"], lines=[line for line in body["status"]["lines"]
+                                                 if line["code"] not in ("guest_planned", "guest_done")])
+    block = body.get("identification")
+    if isinstance(block, dict):
+        if len(block.get("candidates") or []) < 2:
+            body["identification"] = None
+        elif block.get("vehicle_id") == "guest":
+            body["identification"] = dict(block, vehicle_id=None)
+    target = (body.get("settings") or {}).get("target")
+    if isinstance(target, dict) and target.get("vehicle_id") == "guest":
+        body["settings"]["target"] = dict(target, vehicle_id=None)
+
+
+def identify_guest(payload: dict) -> tuple[int, dict]:
+    """`identify_vehicle` in the `guest` scenario: Guest car starts a guest plan, one of the cars ends it."""
+    answer = {"api_version": 1, "action": "identify_vehicle"}
+    if GUEST["state"] == "idle":
+        return 400, {**answer, "ok": False, "error": "spotnav_not_identifying", "identification": None}
+    vehicle = payload.get("vehicle_id")
+    allowed = ["vehicle_ev6"] if GUEST["state"] == "ask1" else ["vehicle_ev6", "vehicle_niro"]
+    if vehicle == "guest":
+        GUEST["state"] = "planned"
+    elif vehicle in allowed:
+        GUEST["state"] = "plugged"
+    else:
+        return 400, {**answer, "ok": False, "error": "spotnav_invalid_value", "identification": None}
+    body = dashboard_body("guest", ["guest"])
+    return 200, {**answer, "ok": True, "error": None, "identification": body["identification"]}
+
+
+def update_guest(payload: dict) -> tuple[int, dict]:
+    """`update_guest`: the guest amount, 1 to 150 kWh."""
+    answer = {"api_version": 1, "action": "update_guest"}
+    value = payload.get("amount_kwh")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not 1 <= value <= 150:
+        return 400, {**answer, "ok": False, "error": "spotnav_invalid_value"}
+    GUEST["amount_kwh"] = float(value)
+    guest = {"active": GUEST["state"] in ("planned", "done"), "amount_kwh": GUEST["amount_kwh"], "first": GUEST["first"]}
+    return 200, {**answer, "ok": True, "error": None, "guest": guest}
 
 
 def power_month_body(month: str | None) -> tuple[int, dict]:
@@ -427,6 +530,10 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["settings"]["departure_enabled"] = True
         body["settings"]["departure_time"] = "07:00"
         body["site"]["active_control"] = {"available": True, "enabled": True, "reason": None, "writable": True}
+    if scenario == "guest":
+        _guest_body(body)
+    if "guest" not in (reads or []):
+        _without_guest(body)
     if "import_target_status" not in (reads or []):
         body["status"] = _for_older_app(body["status"])
     # The plan's choice under the import target is withheld from an app that does not read it.
@@ -536,6 +643,10 @@ SCENARIOS: dict[str, Charger] = {
     "gridfee": Charger(
         "Nätavgift",
         why="the grid tariff (HA 2.3): the grid fee as a percentage of spot, the high-load fee and its hours",
+    ),
+    "guest": Charger(
+        "Gästbil",
+        why="the guest car (HA 2.4): the question with Guest car, at one car too, Byt bil, a guest plan and the Guest tab; set at /spotnav-mock/guest",
     ),
     "demand": Charger(
         "Effektmål",
@@ -776,6 +887,15 @@ class Handler(BaseHTTPRequestHandler):
                 state = {"line": DEMAND["line"]}
             self._json(200, state)
             return
+        if path == "/spotnav-mock/guest":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                GUEST["state"] = query.get("state", GUEST["state"])
+                GUEST["first"] = query.get("first") == "1"
+                state = dict(GUEST)
+            self._json(200, state)
+            return
         if path == "/spotnav-mock/rotate-webhooks":
             # Every charger gets a new webhook id, as when the integration is set up again: the
             # old ones answer empty from now on, and the next pairing hands over the new ones
@@ -921,6 +1041,15 @@ class Handler(BaseHTTPRequestHandler):
                         self._json(400, {"ok": False, "error": "spotnav_no_site", "action": action})
                     else:
                         self._json(*power_month_body(payload.get("month")))
+                    return
+                if action == "identify_vehicle" and key == "guest":
+                    self._json(*identify_guest(payload))
+                    return
+                if action == "update_guest":
+                    if key == "guest":
+                        self._json(*update_guest(payload))
+                    else:
+                        self._json(400, {"ok": False, "error": "Unsupported action"})
                     return
                 if action == "dismiss_setup_item":
                     item = payload.get("item")
