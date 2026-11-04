@@ -12,6 +12,18 @@ internal data class DashboardGuest(val active: Boolean, val amountKwh: Double, v
         /** The answer a guest car is chosen by (`identify_vehicle`), and the target vehicle of a guest plan. */
         const val VEHICLE_ID = "guest"
 
+        /**
+         * A guest car's name in Home Assistant's nine languages, as its charge history names a guest's session (the
+         * history carries the car's name, never its id).
+         */
+        private val NAMES = setOf(
+            "Guest car", "Gästbil", "Gæstebil", "Gjestebil", "Vierasauto", "Gastauto", "Coche de invitado", "Voiture invitée"
+        )
+
+        /** A session's car as the reader's language names it: a guest car is [guestName], any other car as it is. */
+        fun sessionVehicle(name: String?, guestName: String): String? =
+            if (name == VEHICLE_ID || name in NAMES) guestName else name
+
         /** The guest amount's range (kWh), as Home Assistant takes it. */
         const val KWH_MIN = 1.0
         const val KWH_MAX = 150.0

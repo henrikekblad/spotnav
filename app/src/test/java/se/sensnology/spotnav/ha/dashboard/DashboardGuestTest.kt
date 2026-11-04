@@ -35,4 +35,12 @@ class DashboardGuestTest {
         json.put("guest", JSONObject("""{"active": 1, "amount_kwh": 10, "first": false}"""))
         assertNull("the rest of the dashboard still reads", Dashboard.parse(json).guest)
     }
+
+    @Test fun aGuestCarsSessionIsNamedInTheReadersLanguageWhateverHomeAssistantsIs() {
+        for (name in listOf("guest", "Guest car", "Gästbil", "Gæstebil", "Gjestebil", "Vierasauto", "Gastauto", "Coche de invitado", "Voiture invitée")) {
+            assertEquals(name, "Gästbil", DashboardGuest.sessionVehicle(name, "Gästbil"))
+        }
+        assertEquals("EV6", DashboardGuest.sessionVehicle("EV6", "Gästbil"))
+        assertNull(DashboardGuest.sessionVehicle(null, "Gästbil"))
+    }
 }
