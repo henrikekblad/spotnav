@@ -474,6 +474,10 @@
   <string name="identify_question">Welke auto is aangesloten?</string>
   <string name="identify_undecided">SpotNav kon het niet afleiden uit de auto\'s.</string>
   <string name="identify_keeps">Als niemand antwoordt, blijft %1$s gekozen.</string>
+  <string name="identify_keeps_single">%1$s lijkt niet aangesloten te zijn. Als niemand antwoordt, blijft %1$s gekozen.</string>
+  <string name="identify_guest">Gastauto</string>
+  <string name="guest_amount">Hoeveelheid voor gastauto</string>
+  <string name="guest_amount_help">Zoveel wordt een gastauto geladen. Een wijziging in het plan van een gastauto blijft voor de volgende gast.</string>
   <string name="identify_answer_where">Antwoord in de app of in de melding</string>
   <string name="identify_waiting">wacht op antwoord</string>
   <string name="identify_answer_failed">Het antwoord kon niet worden opgeslagen.</string>

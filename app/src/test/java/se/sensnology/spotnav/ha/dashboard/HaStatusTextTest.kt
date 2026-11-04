@@ -804,6 +804,18 @@ class ImportTargetStatusTextTest {
         )
     }
 
+    @Test fun aGuestCarSaysItsAmountByTheDepartureAndThatItWaitsToBeUnplugged() {
+        val planned = mapOf("kwh" to 10.0, "departure" to "2026-09-23T05:00:00+00:00")
+        assertEquals("Gästbil · 10 kWh före 07:00", say("guest_planned", planned))
+        assertEquals("Gästbil · 10 kWh", say("guest_planned", planned + ("departure" to null)))
+        assertEquals(
+            "Guest car · 12.5 kWh by 07:00",
+            HaStatusText.line(StatusLine("guest_planned", planned + ("kwh" to 12.5)), format("en"), now)
+        )
+        assertEquals("Gästbil · klar, väntar på urkoppling", say("guest_done", emptyMap()))
+        assertEquals("Guest car · done, waiting to be unplugged", HaStatusText.line(StatusLine("guest_done", emptyMap()), format("en"), now))
+    }
+
     private fun day() = java.time.format.DateTimeFormatter.ofPattern("EEE d MMM", java.util.Locale.forLanguageTag("sv"))
         .format(java.time.ZonedDateTime.parse("2026-09-23T07:00:00+02:00[Europe/Stockholm]"))
 }

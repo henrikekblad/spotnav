@@ -474,6 +474,10 @@
   <string name="identify_question">Hvilken bil er tilsluttet?</string>
   <string name="identify_undecided">SpotNav kunne ikke afgøre det ud fra bilerne.</string>
   <string name="identify_keeps">Svarer ingen, beholdes %1$s.</string>
+  <string name="identify_keeps_single">%1$s ser ikke ud til at være tilsluttet. Svarer ingen, beholdes %1$s.</string>
+  <string name="identify_guest">Gæstebil</string>
+  <string name="guest_amount">Mængde til gæstebil</string>
+  <string name="guest_amount_help">Det en gæstebil lades med. En ændring i en gæstebils plan gemmes til næste gæst.</string>
   <string name="identify_answer_where">Svar i appen eller i notifikationen</string>
   <string name="identify_waiting">venter på svar</string>
   <string name="identify_answer_failed">Svaret kunne ikke gemmes.</string>

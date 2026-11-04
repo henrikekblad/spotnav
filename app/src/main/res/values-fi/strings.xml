@@ -474,6 +474,10 @@
   <string name="identify_question">Mikä auto on kytketty?</string>
   <string name="identify_undecided">SpotNav ei voinut päätellä sitä autoista.</string>
   <string name="identify_keeps">Jos kukaan ei vastaa, %1$s pidetään.</string>
+  <string name="identify_keeps_single">%1$s ei näytä olevan kytkettynä. Jos kukaan ei vastaa, %1$s pidetään.</string>
+  <string name="identify_guest">Vierasauto</string>
+  <string name="guest_amount">Vierasauton määrä</string>
+  <string name="guest_amount_help">Määrä, jolla vierasauto ladataan. Vierasauton suunnitelmaan tehty muutos säilyy seuraavalle vieraalle.</string>
   <string name="identify_answer_where">Vastaa sovelluksessa tai ilmoituksessa</string>
   <string name="identify_waiting">odottaa vastausta</string>
   <string name="identify_answer_failed">Vastausta ei voitu tallentaa.</string>

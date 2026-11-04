@@ -486,6 +486,10 @@
   <string name="identify_question">Which car is plugged in?</string>
   <string name="identify_undecided">SpotNav could not tell from the cars.</string>
   <string name="identify_keeps">If nobody answers, %1$s is kept.</string>
+  <string name="identify_keeps_single">%1$s does not seem to be plugged in. If nobody answers, %1$s is kept.</string>
+  <string name="identify_guest">Guest car</string>
+  <string name="guest_amount">Guest amount</string>
+  <string name="guest_amount_help">What a guest car is charged with. A change in a guest car\'s plan is kept for the next guest.</string>
   <string name="identify_answer_where">Answer in the app or in the notification</string>
   <string name="identify_waiting">waiting for an answer</string>
   <string name="identify_answer_failed">The answer could not be saved.</string>
