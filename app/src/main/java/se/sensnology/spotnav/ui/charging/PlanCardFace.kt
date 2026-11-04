@@ -29,7 +29,8 @@ internal object PlanCardFace {
     /**
      * What the plan can be driven by. A paired charger follows the Home Assistant card's own rule: the
      * target when a charge-level source resolves, or when the record already stands on it (then it is
-     * shown as it is, and can still be undone). The phone's own plan needs a car with a capacity.
+     * shown as it is, and can still be undone). A guest car is planned by kWh alone. The phone's own plan needs a car
+     * with a capacity.
      */
     fun availableDrivers(
         paired: Dashboard?,
@@ -38,6 +39,7 @@ internal object PlanCardFace {
         rememberedCapacityKwh: Double?
     ): Set<PlanDriver> = when {
         paired == null -> PlanMode.availableDrivers(vehicle, rememberedCapacityKwh)
+        VehicleIdentification.guestActive(paired) -> setOf(PlanDriver.KWH)
         PairedTarget.available(paired) || stored == PlanDriver.TARGET_SOC -> setOf(PlanDriver.KWH, PlanDriver.TARGET_SOC)
         else -> setOf(PlanDriver.KWH)
     }

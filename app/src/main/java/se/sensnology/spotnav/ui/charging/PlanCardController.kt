@@ -52,6 +52,7 @@ import se.sensnology.spotnav.ui.common.valueRow
 import se.sensnology.spotnav.ui.common.ValueRow
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
+import se.sensnology.spotnav.vehicles.VehicleIdentification
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import se.sensnology.spotnav.widget.WidgetSettings
 import java.time.DayOfWeek
@@ -126,6 +127,9 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         var departureDate: LocalDate? = null
         var departureDays: DepartureDays? = null
         var dayShown = false
+        // A guest car's plan (Home Assistant 2.4): planned by kWh to the next time the departure comes round, so
+        // nothing of a car and no weekdays or date.
+        var guestPlan = false
         val dayLocale = { AppLanguageSettings.locale(context).let { if (it.language == "en") Locale.UK else it } }
         val dayGroup = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -248,9 +252,10 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         val refreshDepartureLabel = {
             val reading = PlanReadout.departureReading(useDeparture.isChecked, departureHour, departureMinute)
             // The plan summary names a dated departure's day, as the card's Plan cell does:
+            val daysShown = dayShown && !guestPlan
             val text = reading.time()?.let { time ->
                 DepartureText.text(
-                    if (dayShown) departureDate else null, time, departureDays?.today, dayLocale(),
+                    if (daysShown) departureDate else null, time, departureDays?.today, dayLocale(),
                     t(R.string.departure_today), t(R.string.departure_tomorrow)
                 )
             } ?: t(R.string.plan_card_departure_none)
@@ -259,7 +264,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             // The day block exists only while the deadline is on, and only for a paired record:
             val date = departureDate
             val past = date != null && departureDays?.isPast(date) == true
-            dayGroup.visibility = if (dayShown && useDeparture.isChecked) View.VISIBLE else View.GONE
+            dayGroup.visibility = if (daysShown && useDeparture.isChecked) View.VISIBLE else View.GONE
             dailyRadio.isChecked = date == null
             onDateRadio.isChecked = date != null
             dateButton.visibility = if (date != null) View.VISIBLE else View.GONE
@@ -396,16 +401,19 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             applyPaired = { dashboard, picked ->
                 paired = dashboard
                 pairedPicked = picked
+                guestPlan = dashboard?.let { VehicleIdentification.guestActive(it) } == true
                 // Home Assistant's plan names the car it is for; the phone's own plan does not.
                 card.title.text = PlanCardFace.title(
                     t(R.string.card_planning_title), template(R.string.card_planning_title_for), dashboard, t(R.string.identify_guest)
                 )
-                val soc = dashboard?.soc
+                // A guest car has no level, room or limit of its own: none is shown for it.
+                val soc = dashboard?.soc?.takeUnless { guestPlan }
                 targetSoc.applyPaired(soc, dashboard?.vehicles.orEmpty(), picked)
                 // The kWh slider reaches past the battery's room to Fill; an older Home Assistant states none.
                 energy.applyRoom(soc)
                 if (dashboard != null && soc == null) targetSoc.applyVehicle(vehicle)
                 if (dashboard == null) targetSoc.applyVehicle(vehicle)
+                refreshDepartureLabel()
                 refreshDriver()
             },
             refreshDriver = { refreshDriver() },
