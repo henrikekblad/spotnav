@@ -15,6 +15,7 @@ import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.ha.dashboard.AutoControl
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.HaStatusText
 import se.sensnology.spotnav.ha.dashboard.ImportTargetRelease
 import se.sensnology.spotnav.ui.common.cardWords
@@ -153,11 +154,13 @@ internal class ChargerDashboardController(
     /**
      * Send the car a person chose (`identify_vehicle`: the answer, or a correction after a decision),
      * then show the dashboard it left. With no car plugged in there is nothing to identify, and the
-     * choice is the planned car instead (the screen's settings write, as the picker made it).
+     * choice is the planned car instead (the screen's settings write, as the picker made it). A guest car is
+     * only ever an answer about the car plugged in: never the planned car of a settings write.
      */
     private fun identifyVehicle(vehicleId: String) {
+        val guest = vehicleId == DashboardGuest.VEHICLE_ID
         // A Home Assistant that does not identify: the choice is the planned car, as the picker made it.
-        if (dashboard?.let { VehicleIdentification.identifies(it) } != true) {
+        if (!guest && dashboard?.let { VehicleIdentification.identifies(it) } != true) {
             listener.onVehiclePicked(vehicleId)
             return
         }
@@ -170,7 +173,9 @@ internal class ChargerDashboardController(
                     // The same read is the authority's newest record: Home Assistant wrote the settings.
                     if (it.result.isSuccess) listener.onResult(it.admission, it.result)
                 }
-                IdentifyVehicle.Outcome.NotPluggedIn -> listener.onVehiclePicked(vehicleId)
+                IdentifyVehicle.Outcome.NotPluggedIn ->
+                    if (guest) Toast.makeText(context, t(R.string.identify_answer_failed), Toast.LENGTH_LONG).show()
+                    else listener.onVehiclePicked(vehicleId)
                 IdentifyVehicle.Outcome.NotACandidate ->
                     Toast.makeText(context, t(R.string.identify_not_here), Toast.LENGTH_LONG).show()
                 else -> Toast.makeText(context, t(R.string.identify_answer_failed), Toast.LENGTH_LONG).show()

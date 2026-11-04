@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.vehicles
 
+import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
 import se.sensnology.spotnav.ha.dashboard.DashboardVehicleRef
 import se.sensnology.spotnav.ha.dashboard.IdentificationSource
@@ -12,8 +14,15 @@ import se.sensnology.spotnav.ha.settings.IdentifyMode
  * decided from one dashboard: the question's banner, the car line and how the car was decided, Byt
  * bil's choices, the vehicle card's "assumed" mark, the Settings section, and a car's sources. A Home
  * Assistant that does not state the identification settings shows none of it (today's behaviour).
+ *
+ * A guest car (Home Assistant 2.4's `guest` block) is one more answer, by its own id [DashboardGuest.VEHICLE_ID]: in
+ * the question, in Byt bil while a car is plugged in, and as the car planned for during a guest plan. It has no name of
+ * its own; [guestName] is the reader's words for it ("Gästbil"), passed in by the views.
  */
 internal object VehicleIdentification {
+    /** "Guest car" in English, for callers that do not show it to a reader. */
+    const val GUEST_NAME = "Guest car"
+
     /** Whether Home Assistant states the identification settings, which is how it advertises the feature. */
     fun advertised(dashboard: Dashboard): Boolean = dashboard.settings?.identification != null
 
@@ -25,19 +34,54 @@ internal object VehicleIdentification {
         val choices: List<Choice>,
         val keptName: String?,
         /** Whether the cars were looked at first ("Automatic"), so the banner says they could not tell. */
-        val carsCouldNotTell: Boolean
+        val carsCouldNotTell: Boolean,
+        /**
+         * The question of a charger with one car, asked because that car seems not to be the one plugged in: the
+         * banner says so ("EV6 does not seem to be plugged in") rather than that the cars could not tell.
+         */
+        val singleCar: Boolean = false
     )
 
-    fun banner(dashboard: Dashboard): Banner? {
+    /**
+     * The open question: the cars in Home Assistant's order and, where it knows a guest car, "Guest car" first when
+     * every car is ruled out (`guest.first`), else last.
+     */
+    fun banner(dashboard: Dashboard, guestName: String = GUEST_NAME): Banner? {
         if (!advertised(dashboard)) return null
         val block = dashboard.identification?.takeIf { it.state == DashboardIdentification.State.ASKING } ?: return null
         if (block.candidates.isEmpty()) return null
+        val cars = block.candidates.map { Choice(it.vehicleId, it.name, Hint.of(block.verdictFor(it.vehicleId))) }
+        val guest = dashboard.guest
+        val guestChoice = Choice(DashboardGuest.VEHICLE_ID, guestName, null)
+        val single = block.candidates.size == 1
         return Banner(
-            choices = block.candidates.map { Choice(it.vehicleId, it.name, Hint.of(block.verdictFor(it.vehicleId))) },
-            keptName = block.vehicleId?.let { id -> nameOf(dashboard, id) },
-            carsCouldNotTell = dashboard.settings?.identification?.mode != IdentifyMode.ASK
+            choices = when {
+                guest == null -> cars
+                guest.first -> listOf(guestChoice) + cars
+                else -> cars + guestChoice
+            },
+            // At a one-car charger the car kept is that car, whatever the block names.
+            keptName = block.vehicleId?.takeIf { it != DashboardGuest.VEHICLE_ID }?.let { id -> nameOf(dashboard, id) }
+                ?: block.candidates.singleOrNull()?.name,
+            carsCouldNotTell = dashboard.settings?.identification?.mode != IdentifyMode.ASK,
+            singleCar = single
         )
     }
+
+    /** Whether the charger plans for a guest car now (a person said so). */
+    fun guestActive(dashboard: Dashboard): Boolean = dashboard.guest?.active == true
+
+    /**
+     * Whether "Guest car" can be chosen now, as the card offers it: Home Assistant knows the guest car, and the
+     * charger says a car is plugged in (a guest is an answer about that car, never the plan's car for a next
+     * plug-in), or a guest is planned for already.
+     */
+    fun guestOffered(dashboard: Dashboard): Boolean {
+        val guest = dashboard.guest ?: return false
+        return guest.active || dashboard.connection in PLUGGED_IN
+    }
+
+    private val PLUGGED_IN = setOf(ConnectionState.CONNECTED, ConnectionState.CHARGING, ConnectionState.PAUSED, ConnectionState.FINISHED)
 
     /** Whether the question is open, so the connection line says it waits for an answer. */
     fun waitingForAnswer(dashboard: Dashboard): Boolean =
@@ -54,9 +98,12 @@ internal object VehicleIdentification {
      */
     data class CarLine(val vehicleId: String?, val name: String?, val basis: Basis?, val canSwitch: Boolean)
 
-    /** The car line of a paired charger, also while the question is open (the banner follows it). */
-    fun carLine(dashboard: Dashboard): CarLine? {
-        val canSwitch = switchChoices(dashboard).choices.size >= 2
+    /**
+     * The car line of a paired charger, also while the question is open (the banner follows it). Byt bil is offered
+     * with two cars or more to choose from, and, where a guest car can be chosen, at a charger with one car too.
+     */
+    fun carLine(dashboard: Dashboard, guestName: String = GUEST_NAME): CarLine? {
+        val canSwitch = switchChoices(dashboard, guestName).choices.size >= 2
         val id = currentId(dashboard) ?: return if (canSwitch) CarLine(null, null, null, canSwitch = true) else null
         val block = dashboard.identification?.takeIf { advertised(dashboard) && canSwitch }
         val basis = when {
@@ -72,7 +119,7 @@ internal object VehicleIdentification {
                 null -> null
             }
         }
-        return CarLine(id, nameOf(dashboard, id) ?: id, basis, canSwitch)
+        return CarLine(id, nameOf(dashboard, id, guestName) ?: id, basis, canSwitch)
     }
 
     /** Whether the car the vehicle card shows was only assumed (nobody answered, nothing decided it). */
@@ -103,28 +150,37 @@ internal object VehicleIdentification {
     /** Byt bil's dialog: a radio per car, the [current] one chosen. */
     data class Switch(val choices: List<Choice>, val current: String?)
 
-    /** The question's cars while one is being identified, else the cars at this charger. */
-    fun switchChoices(dashboard: Dashboard): Switch {
+    /**
+     * The question's cars while one is being identified, else the cars at this charger; "Guest car" at the end while
+     * it can be chosen ([guestOffered]).
+     */
+    fun switchChoices(dashboard: Dashboard, guestName: String = GUEST_NAME): Switch {
         val block = dashboard.identification
-        val choices = block?.candidates?.takeIf { it.isNotEmpty() }
+        val cars = block?.candidates?.takeIf { it.isNotEmpty() }
             ?.map { Choice(it.vehicleId, it.name, Hint.of(block.verdictFor(it.vehicleId))) }
             ?: dashboard.vehicles.map { Choice(it.id, it.name, Hint.of(block?.verdictFor(it.id))) }
+        val choices = if (guestOffered(dashboard)) cars + Choice(DashboardGuest.VEHICLE_ID, guestName, null) else cars
         return Switch(choices, currentId(dashboard))
     }
 
     /** The name of the car the charger plans for now, or `null` when no car is known (never its id). */
-    fun plannedName(dashboard: Dashboard): String? =
-        currentId(dashboard)?.let { nameOf(dashboard, it) }?.takeIf { it.isNotBlank() }
+    fun plannedName(dashboard: Dashboard, guestName: String = GUEST_NAME): String? =
+        currentId(dashboard)?.let { nameOf(dashboard, it, guestName) }?.takeIf { it.isNotBlank() }
 
-    /** The car the charger plans for now: the block's, else the dashboard's target, else the `soc` block's. */
+    /**
+     * The car the charger plans for now: the guest car during a guest plan, else the block's, else the dashboard's
+     * target, else the `soc` block's.
+     */
     private fun currentId(dashboard: Dashboard): String? =
-        dashboard.identification?.vehicleId
-            ?: dashboard.targetVehicleId?.takeIf { it.isNotEmpty() }
+        DashboardGuest.VEHICLE_ID.takeIf { guestActive(dashboard) }
+            ?: dashboard.identification?.vehicleId?.takeIf { it != DashboardGuest.VEHICLE_ID }
+            ?: dashboard.targetVehicleId?.takeIf { it.isNotEmpty() && it != DashboardGuest.VEHICLE_ID }
             ?: dashboard.soc?.vehicleId?.takeIf { it.isNotEmpty() }
             ?: dashboard.vehicles.singleOrNull()?.id
 
-    private fun nameOf(dashboard: Dashboard, id: String): String? =
-        dashboard.identification?.candidates?.firstOrNull { it.vehicleId == id }?.name
+    private fun nameOf(dashboard: Dashboard, id: String, guestName: String = GUEST_NAME): String? =
+        if (id == DashboardGuest.VEHICLE_ID) guestName
+        else dashboard.identification?.candidates?.firstOrNull { it.vehicleId == id }?.name
             ?: PairedVehicles.name(dashboard, id)
 
     // Settings

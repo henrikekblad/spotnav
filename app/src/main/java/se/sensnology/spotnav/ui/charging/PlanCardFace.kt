@@ -15,12 +15,16 @@ internal object PlanCardFace {
     /** The chooser's choices, in the Home Assistant card's order: energy, then the target. */
     val CHARGE_BY_CHOICES = listOf(PlanDriver.KWH, PlanDriver.TARGET_SOC)
 
-    /** The car Home Assistant plans for, by name; `null` for the phone's own plan or no known car. */
-    fun plannedCarName(paired: Dashboard?): String? = paired?.let { VehicleIdentification.plannedName(it) }
+    /**
+     * The car Home Assistant plans for, by name ([guestName] for a guest car); `null` for the phone's own plan or no
+     * known car.
+     */
+    fun plannedCarName(paired: Dashboard?, guestName: String = VehicleIdentification.GUEST_NAME): String? =
+        paired?.let { VehicleIdentification.plannedName(it, guestName) }
 
     /** "Planning for EV6" from [forCarTemplate] while a planned car is known, else [plain]. */
-    fun title(plain: String, forCarTemplate: String, paired: Dashboard?): String =
-        plannedCarName(paired)?.let { String.format(forCarTemplate, it) } ?: plain
+    fun title(plain: String, forCarTemplate: String, paired: Dashboard?, guestName: String = VehicleIdentification.GUEST_NAME): String =
+        plannedCarName(paired, guestName)?.let { String.format(forCarTemplate, it) } ?: plain
 
     /**
      * What the plan can be driven by. A paired charger follows the Home Assistant card's own rule: the

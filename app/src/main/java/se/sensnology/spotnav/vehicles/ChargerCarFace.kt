@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.vehicles
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import java.util.Locale
 
 /**
@@ -31,11 +32,24 @@ internal object ChargerCarFace {
     /** The translated words: [carWith] is the `car_with` template ("Car · %1$s"). */
     class Words(val car: String, val carWith: String, val choose: String, val basis: (VehicleIdentification.Basis) -> String)
 
-    /** The car's control from [dashboard]; `null` when no car is known and none can be chosen. */
-    fun of(dashboard: Dashboard, percent: (Int) -> String, ofTarget: String): Face? {
-        val line = VehicleIdentification.carLine(dashboard) ?: return null
+    /**
+     * The car's control from [dashboard]; `null` when no car is known and none can be chosen. A guest car is
+     * [guestName] with the amount its plan charges ("Guest car · 10 kWh", written by [amount]): it has no level.
+     */
+    fun of(
+        dashboard: Dashboard,
+        percent: (Int) -> String,
+        ofTarget: String,
+        guestName: String = VehicleIdentification.GUEST_NAME,
+        amount: (Double) -> String = { "$it kWh" }
+    ): Face? {
+        val line = VehicleIdentification.carLine(dashboard, guestName) ?: return null
         val id = line.vehicleId
-        val levels = id?.let { PairedCarLine.levelsText(PairedCarLine.levels(dashboard, it), percent, ofTarget) }
+        val levels = if (id == DashboardGuest.VEHICLE_ID) {
+            PairedCarLine.guestAmount(dashboard)?.let(amount)
+        } else {
+            id?.let { PairedCarLine.levelsText(PairedCarLine.levels(dashboard, it), percent, ofTarget) }
+        }
         val name = id?.let { line.name ?: it }
         return if (line.canSwitch) {
             Face(Place.BUTTON, id, name, line.basis, levels, VehicleIdentification.banner(dashboard) != null, Tap.CHOOSER)

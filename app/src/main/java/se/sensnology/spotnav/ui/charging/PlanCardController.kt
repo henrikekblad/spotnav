@@ -398,7 +398,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 pairedPicked = picked
                 // Home Assistant's plan names the car it is for; the phone's own plan does not.
                 card.title.text = PlanCardFace.title(
-                    t(R.string.card_planning_title), template(R.string.card_planning_title_for), dashboard
+                    t(R.string.card_planning_title), template(R.string.card_planning_title_for), dashboard, t(R.string.identify_guest)
                 )
                 val soc = dashboard?.soc
                 targetSoc.applyPaired(soc, dashboard?.vehicles.orEmpty(), picked)
