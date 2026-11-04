@@ -224,6 +224,19 @@ class PairedOverviewTest {
         assertNull(PairedOverview.selectedTab(emptyList(), null))
     }
 
+    @Test fun theGuestTabFollowsTheCarsSoOneCarHasTabsToo() {
+        val cards = PairedOverview.vehicles(twoVehicles)
+        val one = cards.take(1)
+        assertEquals(one[0].id, PairedOverview.selectedTab(one, null, guestTab = true))
+        assertEquals("guest", PairedOverview.selectedTab(one, "guest", guestTab = true))
+        assertEquals("guest", PairedOverview.selectedTab(cards, "guest", guestTab = true))
+        // Without a guest car Home Assistant knows of, the tab is not there to keep.
+        assertEquals(cards.firstOrNull { it.planned }?.id ?: cards[0].id, PairedOverview.selectedTab(cards, "guest"))
+        assertNull(PairedOverview.selectedTab(one, "guest"))
+        // No car at all is no card of tabs.
+        assertNull(PairedOverview.selectedTab(emptyList(), "guest", guestTab = true))
+    }
+
     @Test fun aSiteOrSolarCardSaysWhichChargersItAppliesToOnlyWhenThereAreSeveral() {
         assertFalse(PairedOverview.saysChargers(1))
         assertTrue(PairedOverview.saysChargers(2))
