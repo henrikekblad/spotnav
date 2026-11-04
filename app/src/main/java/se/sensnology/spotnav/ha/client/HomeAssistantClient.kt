@@ -302,6 +302,12 @@ object HomeAssistantClient {
         return OwnModeFix.answer(status, body)
     }
 
+    /** The guest amount a guest car's plan starts from (webhook `update_guest`). Never throws. */
+    internal fun updateGuest(settings: HomeAssistantSettings, amountKwh: Double): GuestUpdate.Outcome {
+        val (status, body) = write(settings, GuestUpdate.payload(amountKwh))
+        return GuestUpdate.answer(status, body)
+    }
+
     /** The site's import target set aside for this charge until its departure (webhook `release_import_target`). Never throws. */
     internal fun releaseImportTarget(settings: HomeAssistantSettings): ReleaseImportTarget.Outcome {
         val (status, body) = write(settings, ReleaseImportTarget.payload())

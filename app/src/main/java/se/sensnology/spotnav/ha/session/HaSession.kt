@@ -11,6 +11,7 @@ import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
 import se.sensnology.spotnav.ha.client.GridTariffUpdate
+import se.sensnology.spotnav.ha.client.GuestUpdate
 import se.sensnology.spotnav.ha.client.OwnModeFix
 import se.sensnology.spotnav.ha.client.PowerMonthRead
 import se.sensnology.spotnav.ha.client.ReleaseImportTarget
@@ -59,6 +60,9 @@ internal interface HaTransport {
     /** `update_phase_switching`: phase switching for solar on or off; never throws. */
     fun updatePhaseSwitching(expected: Boolean, enabled: Boolean): PhaseSwitchingUpdate.Outcome =
         PhaseSwitchingUpdate.Outcome.Failed(null)
+
+    /** `update_guest`: the guest amount a guest car's plan starts from; never throws. */
+    fun updateGuest(amountKwh: Double): GuestUpdate.Outcome = GuestUpdate.Outcome.Failed(null)
 
     /** `choose_price_source`: the electricity price entry this charger (or its site) uses; never throws. */
     fun choosePriceSource(priceEntryId: String): PriceSourceUpdate.Outcome = PriceSourceUpdate.Outcome.Failed(null)
@@ -124,6 +128,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun updatePhaseSwitching(expected: Boolean, enabled: Boolean) =
         HomeAssistantClient.updatePhaseSwitching(connection, expected, enabled)
+
+    override fun updateGuest(amountKwh: Double) = HomeAssistantClient.updateGuest(connection, amountKwh)
 
     override fun choosePriceSource(priceEntryId: String) = HomeAssistantClient.choosePriceSource(connection, priceEntryId)
 
@@ -314,6 +320,14 @@ internal class HaSession(
     fun updatePhaseSwitching(expected: Boolean, enabled: Boolean, done: (PhaseSwitchingUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updatePhaseSwitching(expected, enabled)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_guest` (never throws). */
+    fun updateGuest(amountKwh: Double, done: (GuestUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateGuest(amountKwh)
             mainThread { done(outcome) }
         }
     }
