@@ -1,0 +1,5 @@
+- Guest car: choose Guest car in the question or in Change car, and a visitor's car is charged with an amount of kWh
+- The charger waits until the guest is unplugged, then your car is back
+- Set the guest amount in Settings → Car
+- The question also at a charger with one car, when the car does not seem plugged in
+- Needs SpotNav for Home Assistant 2.4

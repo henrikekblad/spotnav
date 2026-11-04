@@ -1,0 +1,5 @@
+- Gastauto: kies Gastauto in de vraag of bij Andere auto, dan wordt de auto van een bezoeker geladen met een hoeveelheid kWh
+- De lader wacht tot de gast is losgekoppeld, daarna is je eigen auto terug
+- De hoeveelheid voor een gastauto stel je in bij Instellingen → Auto
+- De vraag ook bij een lader met één auto, als de auto niet aangesloten lijkt
+- Vereist SpotNav voor Home Assistant 2.4

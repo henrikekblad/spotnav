@@ -1,0 +1,5 @@
+- Gastauto: Wähle Gastauto in der Frage oder unter Auto wechseln, dann wird das Auto eines Besuchers mit einer Menge kWh geladen
+- Die Wallbox wartet, bis der Gast abgesteckt ist, dann ist dein Auto zurück
+- Die Menge für Gastautos unter Einstellungen → Auto
+- Die Frage auch an einer Wallbox mit einem Auto, wenn das Auto nicht angesteckt scheint
+- Benötigt SpotNav für Home Assistant 2.4

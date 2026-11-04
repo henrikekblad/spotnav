@@ -1,0 +1,5 @@
+- Gästbil: välj Gästbil i frågan eller i Byt bil, så laddas en besökares bil med en mängd kWh
+- Laddaren väntar tills gästen kopplas ur, sedan är din bil tillbaka
+- Gästbilens mängd ställs i Inställningar → Bil
+- Frågan även vid en laddare med en bil, när bilen inte verkar vara inkopplad
+- Kräver SpotNav för Home Assistant 2.4

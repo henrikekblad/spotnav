@@ -1,0 +1,5 @@
+- Vierasauto: valitse Vierasauto kysymyksessä tai kohdassa Vaihda auto, niin vierailijan autoa ladataan kWh-määrällä
+- Laturi odottaa, kunnes vieras irrotetaan, ja sitten oma autosi palaa
+- Vierasauton määrä asetetaan kohdassa Asetukset → Auto
+- Kysymys myös laturilla, jolla on yksi auto, kun auto ei näytä olevan kytkettynä
+- Vaatii SpotNavin Home Assistantille 2.4

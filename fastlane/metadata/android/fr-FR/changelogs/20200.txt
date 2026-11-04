@@ -1,0 +1,5 @@
+- Voiture invitée : choisissez Voiture invitée dans la question ou dans Changer de voiture, et la voiture d'un visiteur est chargée d'une quantité de kWh
+- La borne attend que l'invité soit débranché, puis votre voiture revient
+- La quantité pour une voiture invitée se règle dans Réglages → Voiture
+- La question aussi sur une borne avec une seule voiture, quand la voiture ne semble pas branchée
+- Nécessite SpotNav pour Home Assistant 2.4

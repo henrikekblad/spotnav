@@ -1,0 +1,5 @@
+- Coche de invitado: elige Coche de invitado en la pregunta o en Cambiar coche y el coche de un visitante se carga con una cantidad de kWh
+- El cargador espera hasta que se desconecte el invitado y luego vuelve tu coche
+- La cantidad para un coche de invitado se ajusta en Ajustes → Coche
+- La pregunta también en un cargador con un solo coche, cuando el coche no parece enchufado
+- Requiere SpotNav para Home Assistant 2.4
