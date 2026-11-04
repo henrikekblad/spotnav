@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.notify
 
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardGuest
 import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 
@@ -13,7 +14,9 @@ import se.sensnology.spotnav.vehicles.VehicleIdentification
  * question is posted once however often it is read, and a button answers only the question it was posted
  * for. The buttons follow Home Assistant's `candidates`, which it orders by the cars' own reports and the
  * camera, as its Companion question does: every car up to three, else the first two and one that opens
- * the app.
+ * the app. Where Home Assistant knows a guest car (2.4) the buttons are its own: each car and "Guest car" with one or
+ * two cars, else the likeliest car, "Guest car" and one that opens the app; "Guest car" first when every car is ruled
+ * out (`guest.first`), else after the cars.
  */
 internal object IdentifyNotice {
     /** Android shows at most this many buttons. */
@@ -54,7 +57,13 @@ internal object IdentifyNotice {
      * Only an open question (`asking`) is posted: while Home Assistant still looks at the cars' own reports
      * (`waiting`) one may settle it, and Home Assistant asks the phones only once it asks.
      */
-    fun step(dashboard: Dashboard, chosen: Boolean, posted: String?, inApp: String?): Step {
+    fun step(
+        dashboard: Dashboard,
+        chosen: Boolean,
+        posted: String?,
+        inApp: String?,
+        guestName: String = VehicleIdentification.GUEST_NAME
+    ): Step {
         val block = open(dashboard)?.takeIf { chosen }
             ?: return if (posted != null) Step.Retire else Step.Keep
         val key = key(block)
@@ -63,8 +72,15 @@ internal object IdentifyNotice {
             inApp -> Step.Suppress
             else -> {
                 val cars = block.candidates.map { Car(it.vehicleId, it.name) }
-                val fits = cars.size <= MAX_BUTTONS
-                Step.Post(Question(key, if (fits) cars else cars.take(MAX_BUTTONS - 1), openButton = !fits))
+                val guest = dashboard.guest ?: run {
+                    val fits = cars.size <= MAX_BUTTONS
+                    return Step.Post(Question(key, if (fits) cars else cars.take(MAX_BUTTONS - 1), openButton = !fits))
+                }
+                // One button is "Guest car": the cars that fit beside it, else the likeliest and one that opens the app.
+                val fits = cars.size < MAX_BUTTONS
+                val shown = if (fits) cars else cars.take(MAX_BUTTONS - 2)
+                val guestCar = Car(DashboardGuest.VEHICLE_ID, guestName)
+                Step.Post(Question(key, if (guest.first) listOf(guestCar) + shown else shown + guestCar, openButton = !fits))
             }
         }
     }

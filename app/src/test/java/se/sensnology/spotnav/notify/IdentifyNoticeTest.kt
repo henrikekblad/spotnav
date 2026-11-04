@@ -35,16 +35,16 @@ class IdentifyNoticeTest {
         getJSONObject("settings").remove("vehicle_ids")
     }
 
-    private fun step(dash: Dashboard, chosen: Boolean = true, posted: String? = null, inApp: String? = null) =
-        IdentifyNotice.step(dash, chosen, posted, inApp)
+    private fun step(dash: Dashboard, chosen: Boolean = true, posted: String? = null, inApp: String? = null, guestName: String = "Guest car") =
+        IdentifyNotice.step(dash, chosen, posted, inApp, guestName)
 
     // When to post
 
     @Test fun anOpenQuestionIsPostedOnceWithTheCarsInTheGivenOrder() {
         val post = step(dashboard(block("asking"))) as IdentifyNotice.Step.Post
         assertEquals(since, post.question.key)
-        assertEquals(listOf("vehicle_niro", "vehicle_ev6"), post.question.cars.map { it.vehicleId })
-        assertEquals(listOf("Niro", "EV6"), post.question.cars.map { it.name })
+        assertEquals(listOf("vehicle_niro", "vehicle_ev6", "guest"), post.question.cars.map { it.vehicleId })
+        assertEquals(listOf("Niro", "EV6", "Guest car"), post.question.cars.map { it.name })
         assertFalse(post.question.openButton)
         // The same question again (a later check, another wake-up) is not posted again, even when swiped.
         assertEquals(IdentifyNotice.Step.Keep, step(dashboard(block("asking")), posted = since))
@@ -78,18 +78,47 @@ class IdentifyNoticeTest {
 
     // Which buttons
 
+    /** A Home Assistant from before the guest car (2.4). */
+    private fun withoutGuest(identification: JSONObject): Dashboard = dashboard(identification) { remove("guest") }
+
     @Test fun upToThreeCarsEachGetAButton() {
         val three = listOf("a" to "A", "b" to "B", "c" to "C")
-        val post = step(dashboard(block("asking", cars = three))) as IdentifyNotice.Step.Post
+        val post = step(withoutGuest(block("asking", cars = three))) as IdentifyNotice.Step.Post
         assertEquals(listOf("a", "b", "c"), post.question.cars.map { it.vehicleId })
         assertFalse(post.question.openButton)
     }
 
     @Test fun withMoreThanThreeCarsTheFirstTwoGetAButtonAndTheThirdOpensTheApp() {
         val four = listOf("a" to "A", "b" to "B", "c" to "C", "d" to "D")
-        val post = step(dashboard(block("asking", cars = four))) as IdentifyNotice.Step.Post
+        val post = step(withoutGuest(block("asking", cars = four))) as IdentifyNotice.Step.Post
         assertEquals(listOf("a", "b"), post.question.cars.map { it.vehicleId })
         assertTrue(post.question.openButton)
+    }
+
+    @Test fun withAGuestCarOneOrTwoCarsGetAButtonEachAndGuestCarAfterThem() {
+        val one = step(dashboard(block("asking", cars = listOf("a" to "A"))), guestName = "Gästbil") as IdentifyNotice.Step.Post
+        assertEquals(listOf("a" to "A", "guest" to "Gästbil"), one.question.cars.map { it.vehicleId to it.name })
+        assertFalse(one.question.openButton)
+        val two = step(dashboard(block("asking", cars = listOf("a" to "A", "b" to "B")))) as IdentifyNotice.Step.Post
+        assertEquals(listOf("a", "b", "guest"), two.question.cars.map { it.vehicleId })
+        assertFalse(two.question.openButton)
+    }
+
+    @Test fun withAGuestCarAndThreeCarsOrMoreTheLikeliestGuestCarAndOneThatOpensTheApp() {
+        for (cars in listOf(listOf("a" to "A", "b" to "B", "c" to "C"), listOf("a" to "A", "b" to "B", "c" to "C", "d" to "D"))) {
+            val post = step(dashboard(block("asking", cars = cars))) as IdentifyNotice.Step.Post
+            assertEquals(listOf("a", "guest"), post.question.cars.map { it.vehicleId })
+            assertTrue(post.question.openButton)
+        }
+    }
+
+    @Test fun guestCarIsTheFirstButtonWhenEveryCarIsRuledOut() {
+        val first: JSONObject.() -> Unit = { put("guest", JSONObject().put("active", false).put("amount_kwh", 10).put("first", true)) }
+        val two = step(dashboard(block("asking"), first)) as IdentifyNotice.Step.Post
+        assertEquals(listOf("guest", "vehicle_niro", "vehicle_ev6"), two.question.cars.map { it.vehicleId })
+        val three = step(dashboard(block("asking", cars = listOf("a" to "A", "b" to "B", "c" to "C")), first)) as IdentifyNotice.Step.Post
+        assertEquals(listOf("guest", "a"), three.question.cars.map { it.vehicleId })
+        assertTrue(three.question.openButton)
     }
 
     // When to retire
