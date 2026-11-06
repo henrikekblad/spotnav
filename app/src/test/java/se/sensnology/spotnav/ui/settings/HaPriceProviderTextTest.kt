@@ -31,7 +31,7 @@ class HaPriceProviderTextTest {
 
     @Test fun eachNoticeHasItsSentenceWithTheArea() {
         val codes = listOf(
-            "add_nordpool", "nordpool_not_loaded", "add_entsoe_key", "entsoe_key_rejected", "add_pvpc", "pvpc_not_loaded",
+            "add_nordpool", "nordpool_not_loaded", "nordpool_custom", "add_entsoe_key", "entsoe_key_rejected", "add_pvpc", "pvpc_not_loaded",
             "add_octopus", "octopus_not_loaded", "octopus_no_agile", "octopus_region_mismatch", "add_zonneplan",
             "zonneplan_not_loaded", "zonneplan_no_tariff", "zonneplan_area", "source_missing"
         )
@@ -67,6 +67,7 @@ class HaPriceProviderTextTest {
     private val names = listOf(
         "ha_price_provider_nordpool", "ha_price_provider_entsoe", "ha_price_provider_pvpc", "ha_price_provider_octopus",
         "ha_price_provider_relay", "ha_price_notice_add_nordpool", "ha_price_notice_nordpool_not_loaded",
+        "ha_price_notice_nordpool_custom",
         "ha_price_notice_add_entsoe_key", "ha_price_notice_entsoe_key_rejected", "ha_price_notice_add_pvpc",
         "ha_price_notice_pvpc_not_loaded", "ha_price_notice_add_octopus", "ha_price_notice_octopus_not_loaded",
         "ha_price_notice_octopus_no_agile", "ha_price_notice_octopus_region_mismatch", "ha_price_notice_source_missing",
@@ -103,6 +104,10 @@ class HaPriceProviderTextTest {
             "ha_price_notice_add_nordpool" to "Hämta priserna för %1\$s via Home Assistants inbyggda Nord Pool-integration. " +
                 "Vilket område du väljer när du lägger till den spelar ingen roll – SpotNav hämtar själv det område som behövs.",
             "ha_price_notice_nordpool_not_loaded" to "Nord Pool är tillagd i Home Assistant men startade inte.",
+            // The card's, with the key entered in Home Assistant rather than in a field below.
+            "ha_price_notice_nordpool_custom" to "Nord Pool från HACS är installerad och ersätter Home Assistants inbyggda " +
+                "Nord Pool, som SpotNav hämtar priser från. Behåll den och lägg in en gratis ENTSO-E-nyckel i Home Assistant, " +
+                "eller byt till den inbyggda Nord Pool.",
             "ha_price_notice_source_missing" to "Det finns ingen källa för priser i %1\$s. Välj ett annat område.",
             "ha_price_notice_add_entsoe_key" to
                 "Priserna för %1\$s kommer från ENTSO-E med din egen kostnadsfria nyckel. Lägg till den i Home Assistant.",

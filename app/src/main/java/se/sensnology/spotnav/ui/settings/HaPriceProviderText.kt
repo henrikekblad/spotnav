@@ -35,6 +35,7 @@ internal object HaPriceProviderText {
         return when (notice.code) {
             "add_nordpool" -> Sentence(R.string.ha_price_notice_add_nordpool, listOf(area))
             "nordpool_not_loaded" -> Sentence(R.string.ha_price_notice_nordpool_not_loaded)
+            "nordpool_custom" -> Sentence(R.string.ha_price_notice_nordpool_custom)
             "add_entsoe_key" -> Sentence(R.string.ha_price_notice_add_entsoe_key, listOf(area))
             "entsoe_key_rejected" -> Sentence(R.string.ha_price_notice_entsoe_key_rejected)
             "add_pvpc" -> Sentence(R.string.ha_price_notice_add_pvpc)

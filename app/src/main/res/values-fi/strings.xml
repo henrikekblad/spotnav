@@ -630,6 +630,7 @@
   <string name="ha_price_provider_relay">Hinnat SpotNav-välityspalvelimelta</string>
   <string name="ha_price_notice_add_nordpool">Hae alueen %1$s hinnat Home Assistantin sisäänrakennetun Nord Pool -integraation kautta. Sillä ei ole väliä, minkä alueen valitset integraatiota lisätessäsi – SpotNav hakee itse tarvitsemansa alueen.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
+  <string name="ha_price_notice_nordpool_custom">HACS:n Nord Pool on asennettu ja korvaa Home Assistantin sisäänrakennetun Nord Poolin, josta SpotNav hakee hinnat. Pidä se ja anna maksuton ENTSO-E-avain Home Assistantissa tai vaihda sisäänrakennettuun Nord Pooliin.</string>
   <string name="ha_price_notice_add_pvpc">Hae Espanjan PVPC-hinnat Home Assistantin omasta PVPC-integraatiosta.</string>
   <string name="ha_price_notice_pvpc_not_loaded">PVPC-integraatio on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
   <string name="ha_price_notice_add_octopus">Alueen %1$s Agile-hintasi tulevat Octopus Energy -integraatiosta, joka asennetaan HACSin kautta.</string>

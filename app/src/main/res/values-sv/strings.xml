@@ -630,6 +630,7 @@
   <string name="ha_price_provider_relay">Priser från SpotNav-reläet</string>
   <string name="ha_price_notice_add_nordpool">Hämta priserna för %1$s via Home Assistants inbyggda Nord Pool-integration. Vilket område du väljer när du lägger till den spelar ingen roll – SpotNav hämtar själv det område som behövs.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool är tillagd i Home Assistant men startade inte.</string>
+  <string name="ha_price_notice_nordpool_custom">Nord Pool från HACS är installerad och ersätter Home Assistants inbyggda Nord Pool, som SpotNav hämtar priser från. Behåll den och lägg in en gratis ENTSO-E-nyckel i Home Assistant, eller byt till den inbyggda Nord Pool.</string>
   <string name="ha_price_notice_add_pvpc">Hämta Spaniens PVPC-priser från Home Assistants egen PVPC-integration.</string>
   <string name="ha_price_notice_pvpc_not_loaded">PVPC-integrationen är tillagd i Home Assistant men startade inte.</string>
   <string name="ha_price_notice_add_octopus">Dina Agile-priser för %1$s kommer från integrationen Octopus Energy, som installeras via HACS.</string>
