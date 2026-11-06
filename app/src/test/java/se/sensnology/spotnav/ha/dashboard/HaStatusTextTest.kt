@@ -733,6 +733,25 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun aStopNothingCanSeeEndNamesTheAppsOwnButtons() {
+        val line = StatusLine("stop_unplug_unseen", emptyMap())
+        assertEquals("Stopped by hand. Press Start or Resume to charge again.", HaStatusText.line(line, format("en"), now))
+        assertEquals("Stoppad för hand. Tryck Starta eller Återuppta för att ladda igen.", HaStatusText.line(line, format("sv"), now))
+        // The card's German says "Starten"; the app's button says "Start".
+        assertEquals(
+            "Von Hand gestoppt. Tippe auf Start oder Fortsetzen, um wieder zu laden.",
+            HaStatusText.line(line, format("de"), now)
+        )
+        for (language in HaStatusWording.LANGUAGES) {
+            val folder = if (language == "en") "values" else "values-$language"
+            val xml = listOf("src/main/res", "app/src/main/res").map { java.io.File(it, "$folder/strings.xml") }.first { it.exists() }.readText()
+            fun button(name: String) = Regex("<string name=\"$name\">(.*?)</string>").find(xml)!!.groupValues[1]
+            val worded = HaStatusText.line(line, format(language), now)
+            assertTrue("$language names Start", worded.contains(button("bar_start")))
+            assertTrue("$language names Resume", worded.contains(button("bar_resume")))
+        }
+    }
+
     @Test fun theSunPastATargetNamesTheCarsLimit() {
         assertEquals(
             "Målet nått – solen fyller på till bilens gräns 80 %",

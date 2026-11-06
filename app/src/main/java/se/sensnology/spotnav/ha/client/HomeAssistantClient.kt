@@ -71,7 +71,8 @@ internal class WebhookHttpStatusException(
  * `grid_tariff`, the dashboard's block with the demand charge and the site's import target, and `if_not_ready`, the plan's
  * choice when the import target would make it miss its departure, and `effective_target`, the demand block's level the running hour
  * is held under, and `guest`, the guest car: the dashboard's `guest` block, its status lines, the question at a one-car
- * charger and `"guest"` as the car planned for. Every request the app sends names them.
+ * charger and `"guest"` as the car planned for, and `stop_unplug_unseen`, the status line under a person's Stop that only
+ * Start or Resume ends (nothing can see the car unplugged). Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -79,7 +80,7 @@ internal object WebhookReads {
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
-        "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest"
+        "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
