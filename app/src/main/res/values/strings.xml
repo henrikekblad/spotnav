@@ -165,6 +165,7 @@
   <string name="widget_not_linked">Not linked — tap to choose a charger</string>
   <string name="version_label">Version %1$s</string>
   <string name="report_issue">Report an issue</string>
+  <string name="terms_of_service">Terms of service</string>
   <string name="forget_widget">Forget</string>
   <string name="forget_widget_title">Forget this widget?</string>
   <string name="forget_widget_message">SpotNav will remove this instance from the chooser. Android may keep the widget ID until the launcher cleans it up.</string>
@@ -642,6 +643,7 @@
   <string name="ha_price_provider_relay">Prices from the SpotNav relay</string>
   <string name="ha_price_notice_add_nordpool">Get the prices for %1$s through Home Assistant\'s built-in Nord Pool integration. The area you pick when adding it doesn\'t matter – SpotNav fetches the one it needs.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool is added in Home Assistant but did not start.</string>
+  <string name="ha_price_notice_nordpool_custom">Nord Pool from HACS is installed and replaces Home Assistant\'s built-in Nord Pool, which SpotNav reads its prices from. Keep it and enter a free ENTSO-E key in Home Assistant, or switch to the built-in Nord Pool.</string>
   <string name="ha_price_notice_add_pvpc">Get Spain\'s PVPC prices from Home Assistant\'s own PVPC integration.</string>
   <string name="ha_price_notice_pvpc_not_loaded">The PVPC integration is added in Home Assistant but did not start.</string>
   <string name="ha_price_notice_add_octopus">Your Agile rates for %1$s come from the Octopus Energy integration, installed through HACS.</string>
@@ -780,6 +782,11 @@
   <string name="card_power_legend_marks" formatted="false">The import target held back (dot) or paused (ring) the charging</string>
   <string name="setup_demand_grid_power_text">The demand charge or the import target needs the site\'s total grid power to be measured.</string>
   <string name="setup_demand_grid_power_action">Set total grid power</string>
+  <string name="setup_grid_power_sign_text">The grid meter\'s sign looks reversed: when the charger\'s draw changed, the grid moved the other way. Solar and load balancing read export as import.</string>
+  <string name="setup_grid_power_sign_turn_off">Turn off “The sensor shows export as positive”</string>
+  <string name="setup_grid_power_sign_turn_on">Turn on “The sensor shows export as positive”</string>
+  <string name="setup_grid_current_sign_text">The grid current\'s sign looks reversed: when the charger\'s draw changed, the phase currents moved the other way. Load balancing reads export as import.</string>
+  <string name="setup_grid_current_sign_turn_off">Turn off “Grid current is signed”</string>
   <string name="card_grid_fee_window_help" formatted="false">The hours your grid company charges its higher fee in. An end before the start runs over midnight, and the night counts as the day it starts on.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">A common choice. Check it against your grid company\'s tariff.</string>
   <string name="card_market_included" formatted="false">Included in the price</string>

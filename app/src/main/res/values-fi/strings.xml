@@ -157,6 +157,7 @@
   <string name="widget_not_linked">Ei yhdistetty — napauta valitaksesi laturin</string>
   <string name="version_label">Versio %1$s</string>
   <string name="report_issue">Ilmoita ongelmasta</string>
+  <string name="terms_of_service">Käyttöehdot</string>
   <string name="forget_widget">Unohda</string>
   <string name="forget_widget_title">Unohdetaanko tämä widget?</string>
   <string name="forget_widget_message">SpotNav poistaa tämän ilmentymän valitsimesta. Android voi säilyttää widget-tunnuksen, kunnes käynnistysohjelma siivoaa sen.</string>
@@ -630,6 +631,7 @@
   <string name="ha_price_provider_relay">Hinnat SpotNav-välityspalvelimelta</string>
   <string name="ha_price_notice_add_nordpool">Hae alueen %1$s hinnat Home Assistantin sisäänrakennetun Nord Pool -integraation kautta. Sillä ei ole väliä, minkä alueen valitset integraatiota lisätessäsi – SpotNav hakee itse tarvitsemansa alueen.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
+  <string name="ha_price_notice_nordpool_custom">HACS:n Nord Pool on asennettu ja korvaa Home Assistantin sisäänrakennetun Nord Poolin, josta SpotNav hakee hinnat. Pidä se ja anna maksuton ENTSO-E-avain Home Assistantissa tai vaihda sisäänrakennettuun Nord Pooliin.</string>
   <string name="ha_price_notice_add_pvpc">Hae Espanjan PVPC-hinnat Home Assistantin omasta PVPC-integraatiosta.</string>
   <string name="ha_price_notice_pvpc_not_loaded">PVPC-integraatio on lisätty Home Assistantiin, mutta se ei käynnistynyt.</string>
   <string name="ha_price_notice_add_octopus">Alueen %1$s Agile-hintasi tulevat Octopus Energy -integraatiosta, joka asennetaan HACSin kautta.</string>
@@ -768,6 +770,11 @@
   <string name="card_power_legend_marks" formatted="false">Tehotavoite rajoitti (piste) tai keskeytti (rengas) latauksen</string>
   <string name="setup_demand_grid_power_text">Tehomaksu tai tehotavoite tarvitsee kohteen verkon kokonaistehon, jotta sen voi mitata.</string>
   <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
+  <string name="setup_grid_power_sign_text">Verkkomittarin etumerkki näyttää olevan väärin päin: kun laturin teho muuttui, verkko liikkui toiseen suuntaan. Aurinkolataus ja kuormanhallinta lukevat viennin otoksi.</string>
+  <string name="setup_grid_power_sign_turn_off">Poista käytöstä ”Anturi näyttää viennin positiivisena”</string>
+  <string name="setup_grid_power_sign_turn_on">Ota käyttöön ”Anturi näyttää viennin positiivisena”</string>
+  <string name="setup_grid_current_sign_text">Verkkovirran etumerkki näyttää olevan väärin päin: kun laturin teho muuttui, vaihevirrat liikkuivat toiseen suuntaan. Kuormanhallinta lukee viennin otoksi.</string>
+  <string name="setup_grid_current_sign_turn_off">Poista käytöstä ”Verkkovirralla on etumerkki”</string>
   <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>

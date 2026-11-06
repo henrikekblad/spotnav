@@ -67,7 +67,7 @@ Requires JDK 17 and Android SDK 36.
 ./gradlew assembleDebug
 ```
 
-The APK is written to `app/build/outputs/apk/debug/`. See [PRIVACY.md](PRIVACY.md) for what the app stores and sends.
+The APK is written to `app/build/outputs/apk/debug/`. See [PRIVACY.md](PRIVACY.md) for what the app stores and sends, and the [terms of service](https://spotnav.sensnology.se/terms) for using it.
 
 ## Support SpotNav
 

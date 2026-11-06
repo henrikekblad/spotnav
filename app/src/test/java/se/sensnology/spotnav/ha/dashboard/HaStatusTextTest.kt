@@ -510,18 +510,19 @@ class HaStatusTextTest {
             mapOf("entities" to listOf("sensor.solax_grid_current_l1"), "cause" to "inverter_standby")
         )
         assertEquals(
-            "The charger's own current is not set — choose it under Site wiring; " +
-                "until then solar starts only at the minimum current.",
-            HaStatusText.line(notSet, format("en"), now)
+            "The charger's own current is not set — choose it in the site's settings " +
+                "(Configure → Wiring for Garage → Measured current source); until then solar starts only at the minimum current.",
+            HaStatusText.line(notSet, format("en").copy(charger = "Garage"), now)
         )
         val own = StatusLine(
             "solar_charger_current_missing",
             mapOf("entity" to null, "integration" to "Peblar", "sensors" to "Current phase 1–3")
         )
         assertEquals(
-            "Laddarens egen ström är inte vald — välj Current phase 1–3 från Peblar under Anläggningens koppling, " +
-                "eller tryck på Använd där; till dess startar sol bara på minsta ström.",
-            HaStatusText.line(own, format("sv"), now)
+            "Laddarens egen ström är inte vald — välj Current phase 1–3 från Peblar i anläggningens inställningar " +
+                "(Konfigurera → Inkoppling för Garage → Källa för uppmätt ström), eller tryck på Använd där; " +
+                "till dess startar sol bara på minsta ström.",
+            HaStatusText.line(own, format("sv").copy(charger = "Garage"), now)
         )
         assertEquals(
             "Laddarens egen ström (sensor.easee_current) har ingen mätning; till dess startar sol bara på minsta ström.",
@@ -731,6 +732,25 @@ class HaStatusTextTest {
             "Laddboxens egen smart charging är på (Pure solar). Den motverkar SpotNav.",
             HaStatusText.line(own, format("sv").copy(ownModeButton = true), now)
         )
+    }
+
+    @Test fun aStopNothingCanSeeEndNamesTheAppsOwnButtons() {
+        val line = StatusLine("stop_unplug_unseen", emptyMap())
+        assertEquals("Stopped by hand. Press Start or Resume to charge again.", HaStatusText.line(line, format("en"), now))
+        assertEquals("Stoppad för hand. Tryck Starta eller Återuppta för att ladda igen.", HaStatusText.line(line, format("sv"), now))
+        // The card's German says "Starten"; the app's button says "Start".
+        assertEquals(
+            "Von Hand gestoppt. Tippe auf Start oder Fortsetzen, um wieder zu laden.",
+            HaStatusText.line(line, format("de"), now)
+        )
+        for (language in HaStatusWording.LANGUAGES) {
+            val folder = if (language == "en") "values" else "values-$language"
+            val xml = listOf("src/main/res", "app/src/main/res").map { java.io.File(it, "$folder/strings.xml") }.first { it.exists() }.readText()
+            fun button(name: String) = Regex("<string name=\"$name\">(.*?)</string>").find(xml)!!.groupValues[1]
+            val worded = HaStatusText.line(line, format(language), now)
+            assertTrue("$language names Start", worded.contains(button("bar_start")))
+            assertTrue("$language names Resume", worded.contains(button("bar_resume")))
+        }
     }
 
     @Test fun theSunPastATargetNamesTheCarsLimit() {

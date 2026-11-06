@@ -157,6 +157,7 @@
   <string name="widget_not_linked">Ikke koblet — trykk for å velge lader</string>
   <string name="version_label">Versjon %1$s</string>
   <string name="report_issue">Rapporter en feil</string>
+  <string name="terms_of_service">Brukervilkår</string>
   <string name="forget_widget">Glem</string>
   <string name="forget_widget_title">Glem denne widgeten?</string>
   <string name="forget_widget_message">SpotNav fjerner instansen fra velgeren. Android kan beholde widget-ID-en til launcheren rydder den opp.</string>
@@ -630,6 +631,7 @@
   <string name="ha_price_provider_relay">Priser fra SpotNav-reléet</string>
   <string name="ha_price_notice_add_nordpool">Hent prisene for %1$s via Home Assistants innebygde Nord Pool-integrasjon. Hvilket område du velger når du legger den til, spiller ingen rolle – SpotNav henter selv området som trengs.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool er lagt til i Home Assistant, men startet ikke.</string>
+  <string name="ha_price_notice_nordpool_custom">Nord Pool fra HACS er installert og erstatter Home Assistants innebygde Nord Pool, som SpotNav henter priser fra. Behold den og skriv inn en gratis ENTSO-E-nøkkel i Home Assistant, eller bytt til den innebygde Nord Pool.</string>
   <string name="ha_price_notice_add_pvpc">Hent Spanias PVPC-priser fra Home Assistants egen PVPC-integrasjon.</string>
   <string name="ha_price_notice_pvpc_not_loaded">PVPC-integrasjonen er lagt til i Home Assistant, men startet ikke.</string>
   <string name="ha_price_notice_add_octopus">Agile-prisene dine for %1$s kommer fra integrasjonen Octopus Energy, som installeres via HACS.</string>
@@ -768,6 +770,11 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prikk) eller pauset (ring) ladingen</string>
   <string name="setup_demand_grid_power_text">Effektleddet eller effektmålet trenger anleggets samlede netteffekt for å kunne måles.</string>
   <string name="setup_demand_grid_power_action">Angi nettets samlede effekt</string>
+  <string name="setup_grid_power_sign_text">Strømmålerens fortegn ser ut til å være snudd: da laderens effekt endret seg, beveget nettet seg den andre veien. Sol og lastbalansering leser eksport som import.</string>
+  <string name="setup_grid_power_sign_turn_off">Slå av «Sensoren viser eksport som positiv»</string>
+  <string name="setup_grid_power_sign_turn_on">Slå på «Sensoren viser eksport som positiv»</string>
+  <string name="setup_grid_current_sign_text">Nettstrømmens fortegn ser ut til å være snudd: da laderens effekt endret seg, beveget fasestrømmene seg den andre veien. Lastbalanseringen leser eksport som import.</string>
+  <string name="setup_grid_current_sign_turn_off">Slå av «Nettstrømmen har fortegn»</string>
   <string name="card_grid_fee_window_help" formatted="false">Timene nettselskapet ditt tar sin høyere avgift. En slutt før starten går over midnatt, og natten regnes til dagen den begynner.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Et vanlig valg. Sjekk det mot nettselskapets tariff.</string>
   <string name="card_market_included" formatted="false">Inkludert i prisen</string>

@@ -161,6 +161,7 @@
   <string name="widget_not_linked">Niet gekoppeld — tik om een laadpaal te kiezen</string>
   <string name="version_label">Versie %1$s</string>
   <string name="report_issue">Probleem melden</string>
+  <string name="terms_of_service">Gebruiksvoorwaarden</string>
   <string name="forget_widget">Vergeten</string>
   <string name="forget_widget_title">Deze widget vergeten?</string>
   <string name="forget_widget_message">SpotNav verwijdert deze instantie uit de keuzelijst. Android kan de widget-ID bewaren tot de launcher die opruimt.</string>
@@ -630,6 +631,7 @@
   <string name="ha_price_provider_relay">Prijzen van de SpotNav-relay</string>
   <string name="ha_price_notice_add_nordpool">Haal de prijzen voor %1$s op via de ingebouwde Nord Pool-integratie van Home Assistant. Welk gebied je kiest bij het toevoegen maakt niet uit – SpotNav haalt zelf het gebied op dat nodig is.</string>
   <string name="ha_price_notice_nordpool_not_loaded">Nord Pool is toegevoegd in Home Assistant, maar is niet gestart.</string>
+  <string name="ha_price_notice_nordpool_custom">Nord Pool uit HACS is geïnstalleerd en vervangt de ingebouwde Nord Pool van Home Assistant, waaruit SpotNav zijn prijzen leest. Houd hem en vul in Home Assistant een gratis ENTSO-E-sleutel in, of schakel over naar de ingebouwde Nord Pool.</string>
   <string name="ha_price_notice_add_pvpc">Haal de Spaanse PVPC-prijzen uit de eigen PVPC-integratie van Home Assistant.</string>
   <string name="ha_price_notice_pvpc_not_loaded">De PVPC-integratie is toegevoegd in Home Assistant, maar is niet gestart.</string>
   <string name="ha_price_notice_add_octopus">Je Agile-tarieven voor %1$s komen uit de integratie Octopus Energy, die via HACS wordt geïnstalleerd.</string>
@@ -768,6 +770,11 @@
   <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
   <string name="setup_demand_grid_power_text">Het capaciteitstarief of het afnamedoel heeft het totale netvermogen van de locatie nodig om gemeten te worden.</string>
   <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
+  <string name="setup_grid_power_sign_text">Het teken van de netmeter lijkt omgekeerd: toen het vermogen van de laadpaal veranderde, bewoog het net de andere kant op. Zon en load balancing lezen teruglevering als afname.</string>
+  <string name="setup_grid_power_sign_turn_off">Zet “De sensor toont teruglevering als positief” uit</string>
+  <string name="setup_grid_power_sign_turn_on">Zet “De sensor toont teruglevering als positief” aan</string>
+  <string name="setup_grid_current_sign_text">Het teken van de netstroom lijkt omgekeerd: toen het vermogen van de laadpaal veranderde, bewogen de fasestromen de andere kant op. Load balancing leest teruglevering als afname.</string>
+  <string name="setup_grid_current_sign_turn_off">Zet “Netstroom heeft een teken” uit</string>
   <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>

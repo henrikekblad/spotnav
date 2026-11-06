@@ -17,10 +17,12 @@ internal data class StoredStatus(
     val timezone: String?,
     val currency: String?,
     val majorUnit: String?,
-    val capturedAt: Long
+    val capturedAt: Long,
+    /** The charger's name, for the line that names the site's page for it. */
+    val charger: String = ""
 ) {
     val format: (String, java.util.Locale?) -> StatusFormat = { language, locale ->
-        StatusFormat.of(language, DashboardMarket(null, timezone, currency, majorUnit, null), locale)
+        StatusFormat.of(language, DashboardMarket(null, timezone, currency, majorUnit, null), locale, charger)
     }
 
     companion object {
@@ -29,7 +31,8 @@ internal data class StoredStatus(
             timezone = dashboard.market.timezone,
             currency = dashboard.market.currency,
             majorUnit = dashboard.market.majorUnit,
-            capturedAt = capturedAt
+            capturedAt = capturedAt,
+            charger = dashboard.chargerName ?: dashboard.chargerId
         )
     }
 }

@@ -19,12 +19,16 @@ internal class SetupDialog(scope: ViewScope) : ViewScope(scope) {
     private var dialog: AlertDialog? = null
 
     /** The row's sentence and its button's words, or `null` for a row this app has no words for. */
-    private fun words(id: String, forecastChoosable: Boolean): Pair<Int, Int>? = when (id) {
+    private fun words(row: SetupRow, forecastChoosable: Boolean): Pair<Int, Int>? = when (row.id) {
         "vehicle" -> R.string.setup_vehicle_text to R.string.setup_vehicle_action
         "car_level" -> R.string.setup_car_level_text to R.string.setup_car_level_open
         "site" -> R.string.setup_site_text to R.string.setup_site_action
         "solar_forecast" -> R.string.setup_solar_forecast_text to
             if (forecastChoosable) R.string.setup_solar_forecast_action else R.string.setup_solar_forecast_add
+        // A grid sign row's button says what to change in the site's settings, as the card's button does.
+        "grid_power_sign" -> R.string.setup_grid_power_sign_text to
+            if (row.value == true) R.string.setup_grid_power_sign_turn_on else R.string.setup_grid_power_sign_turn_off
+        "grid_current_sign" -> R.string.setup_grid_current_sign_text to R.string.setup_grid_current_sign_turn_off
         "demand_grid_power" -> R.string.setup_demand_grid_power_text to R.string.setup_demand_grid_power_action
         "phase_switching" -> R.string.setup_phase_switching_text to R.string.setup_phase_switching_action
         "phone" -> R.string.setup_phone_text to R.string.setup_phone_action
@@ -44,7 +48,7 @@ internal class SetupDialog(scope: ViewScope) : ViewScope(scope) {
             setPadding(dp(20), dp(8), dp(20), dp(8))
         }
         for (row in rows) {
-            val (text, action) = words(row.id, forecastChoosable) ?: continue
+            val (text, action) = words(row, forecastChoosable) ?: continue
             val box = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 setPadding(dp(12), dp(10), dp(12), dp(8))

@@ -1,0 +1,6 @@
+- Pour commencer avertit quand le signe du compteur réseau semble inversé, et ouvre les réglages du site dans Home Assistant
+- Un arrêt que seuls Démarrer ou Reprendre peuvent terminer le dit
+- Le prix de l'électricité explique quand Nord Pool de HACS bloque les prix
+- L'indication sur le courant propre de la borne nomme l'endroit exact dans les réglages du site
+- Conditions d'utilisation en bas des Réglages
+- Pour SpotNav pour Home Assistant 2.5

@@ -1,0 +1,6 @@
+- Kom i gang advarer, når elmålerens fortegn ser ud til at være vendt, og åbner anlæggets indstillinger i Home Assistant
+- Et stop, som kun Start eller Genoptag kan afslutte, siger det
+- Elprisen forklarer, når Nord Pool fra HACS står i vejen for priserne
+- Tippet om laderens egen strøm angiver præcis hvor i anlæggets indstillinger
+- Brugsvilkår nederst i Indstillinger
+- Til SpotNav til Home Assistant 2.5
