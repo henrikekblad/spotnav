@@ -276,8 +276,10 @@ internal class ChargerDashboardController(
             val colour = if (held.status.tone == StatusTone.BLOCKING) ERROR_COLOUR else muted
             val parts = HaStatusText.parts(
                 held.status,
-                StatusFormat.of(AppLanguageSettings.language(context), held.market, AppLanguageSettings.numberLocale(context))
-                    .copy(ownModeButton = OwnModeAction.of(held) != null),
+                StatusFormat.of(
+                    AppLanguageSettings.language(context), held.market, AppLanguageSettings.numberLocale(context),
+                    charger = held.chargerName ?: held.chargerId
+                ).copy(ownModeButton = OwnModeAction.of(held) != null),
                 java.time.Instant.now()
             )
             showStatusLine(text = statusText(parts, colour), colour = colour)

@@ -24,11 +24,17 @@ internal data class StatusFormat(
     /** Whether a distance is written in miles: the market is in Great Britain. */
     val miles: Boolean = false,
     /** Whether the own-mode button is shown under the line: it then stands in for the hint where to change the setting. */
-    val ownModeButton: Boolean = false
+    val ownModeButton: Boolean = false,
+    /**
+     * The charger's name, as the card puts it in every line's params: the hint on the charger's own current names the
+     * site's page for it ("Wiring for {charger}").
+     */
+    val charger: String = ""
 ) {
     companion object {
-        fun of(language: String, market: DashboardMarket, locale: Locale? = null) = StatusFormat(
+        fun of(language: String, market: DashboardMarket, locale: Locale? = null, charger: String = "") = StatusFormat(
             language = language,
+            charger = charger,
             zone = market.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() },
             currency = market.currency,
             majorUnit = market.majorUnit,
@@ -474,10 +480,11 @@ internal object HaStatusText {
             "solar_no_grid_power" -> entity(p)?.let { say("strategy.status.solar.noGridPowerEntity", mapOf("entity" to it)) }
                 ?: say(key)
             "solar_battery_unreadable" -> say(key, mapOf("entity" to (entity(p) ?: "")))
+            // Not set: the hint names the site's page for this charger, "Wiring for {charger}", as the card's does.
             "solar_charger_current_missing" ->
                 entity(p)?.let { say("strategy.status.solar.chargerCurrentUnreadable", mapOf("entity" to it)) }
-                    ?: ownCurrentSensors(p)?.let { say("strategy.status.solar.chargerCurrentNotSetOwn", it) }
-                    ?: say(key)
+                    ?: ownCurrentSensors(p)?.let { say("strategy.status.solar.chargerCurrentNotSetOwn", it + ("charger" to format.charger)) }
+                    ?: say(key, mapOf("charger" to format.charger))
             "solar_site_incomplete" -> say(key, mapOf("phases" to strings(p["phases"]).joinToString(", ")))
             // A charger that cannot say when a car is plugged in: only a Start or a plan window ends the Stop.
             "site_meter_unavailable" -> say(

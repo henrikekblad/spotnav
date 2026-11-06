@@ -61,7 +61,10 @@ internal class PlanPreviewController(
         val held = dashboard() ?: return
         when (outcome) {
             is PlanPreview.Outcome.Previewed -> {
-                val format = StatusFormat.of(AppLanguageSettings.language(context), held.market, AppLanguageSettings.numberLocale(context))
+                val format = StatusFormat.of(
+                    AppLanguageSettings.language(context), held.market, AppLanguageSettings.numberLocale(context),
+                    charger = held.chargerName ?: held.chargerId
+                )
                 val lines = PlanPreviewText.lines(outcome.preview, format, Instant.now())
                 val strip = outcome.preview.strip?.let { PlanPreviewText.strip(it, format.zone) }
                 shown = lines to strip
