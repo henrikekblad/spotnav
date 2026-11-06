@@ -33,4 +33,24 @@ class SetupChecklistTest {
         assertEquals(listOf("solar_forecast", "demand_grid_power", "phone"), SetupChecklist.rows(d).map { it.id })
         assertFalse(SetupChecklist.canDismiss(d, SetupRow("demand_grid_power", false)))
     }
+
+    @Test fun theGridSignRowsSitAfterTheSiteWithTheOptionThatFixesThem() {
+        val d = dashboard(
+            """[{"id": "solar_forecast", "dismissible": true},
+                {"id": "grid_current_sign", "dismissible": false, "field": "site_current_signed", "value": false},
+                {"id": "grid_power_sign", "dismissible": false, "field": "grid_power_inverted", "value": true},
+                {"id": "site", "dismissible": true}]"""
+        )
+        val rows = SetupChecklist.rows(d)
+        assertEquals(listOf("site", "grid_power_sign", "grid_current_sign", "solar_forecast"), rows.map { it.id })
+        assertEquals(SetupRow("grid_power_sign", false, "grid_power_inverted", true), rows[1])
+        assertEquals(SetupRow("grid_current_sign", false, "site_current_signed", false), rows[2])
+        assertEquals(SetupRow("site", true), rows[0])
+        assertFalse(SetupChecklist.canDismiss(d, rows[1]))
+    }
+
+    @Test fun aGridSignRowNamingItsOptionWronglyIsStillShown() {
+        val d = dashboard("""[{"id": "grid_power_sign", "dismissible": false, "field": 3, "value": "no"}]""")
+        assertEquals(listOf(SetupRow("grid_power_sign", false)), SetupChecklist.rows(d))
+    }
 }

@@ -768,6 +768,11 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet höll nere (prick) eller pausade (ring) laddningen</string>
   <string name="setup_demand_grid_power_text">Effektavgiften eller effektmålet kan bara mätas när anläggningen har nätets totala effekt.</string>
   <string name="setup_demand_grid_power_action">Ange nätets totala effekt</string>
+  <string name="setup_grid_power_sign_text">Elmätarens tecken verkar vara omvänt: när laddarens effekt ändrades rörde sig nätet åt andra hållet. Sol och lastbalansering läser export som import.</string>
+  <string name="setup_grid_power_sign_turn_off">Slå av ”Sensorn visar export som positiv”</string>
+  <string name="setup_grid_power_sign_turn_on">Slå på ”Sensorn visar export som positiv”</string>
+  <string name="setup_grid_current_sign_text">Nätströmmens tecken verkar vara omvänt: när laddarens effekt ändrades rörde sig fasströmmarna åt andra hållet. Lastbalanseringen läser export som import.</string>
+  <string name="setup_grid_current_sign_turn_off">Slå av ”Nätströmmen är teckenmärkt”</string>
   <string name="card_grid_fee_window_help" formatted="false">Timmarna då ditt nätbolag tar ut sin högre avgift. Ett slut före starten går över midnatt, och natten räknas till dagen den börjar.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Ett vanligt val. Kontrollera mot ditt nätbolags tariff.</string>
   <string name="card_market_included" formatted="false">Ingår i priset</string>

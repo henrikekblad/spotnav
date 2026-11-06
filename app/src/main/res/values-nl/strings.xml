@@ -768,6 +768,11 @@
   <string name="card_power_legend_marks" formatted="false">Het afnamedoel hield het laden in (stip) of pauzeerde het (ring)</string>
   <string name="setup_demand_grid_power_text">Het capaciteitstarief of het afnamedoel heeft het totale netvermogen van de locatie nodig om gemeten te worden.</string>
   <string name="setup_demand_grid_power_action">Totaal netvermogen instellen</string>
+  <string name="setup_grid_power_sign_text">Het teken van de netmeter lijkt omgekeerd: toen het vermogen van de laadpaal veranderde, bewoog het net de andere kant op. Zon en load balancing lezen teruglevering als afname.</string>
+  <string name="setup_grid_power_sign_turn_off">Zet “De sensor toont teruglevering als positief” uit</string>
+  <string name="setup_grid_power_sign_turn_on">Zet “De sensor toont teruglevering als positief” aan</string>
+  <string name="setup_grid_current_sign_text">Het teken van de netstroom lijkt omgekeerd: toen het vermogen van de laadpaal veranderde, bewogen de fasestromen de andere kant op. Load balancing leest teruglevering als afname.</string>
+  <string name="setup_grid_current_sign_turn_off">Zet “Netstroom heeft een teken” uit</string>
   <string name="card_grid_fee_window_help" formatted="false">De uren waarin je netbeheerder zijn hogere tarief rekent. Een einde vóór het begin loopt over middernacht, en de nacht telt bij de dag waarop hij begint.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Een gangbare keuze. Controleer het met het tarief van je netbeheerder.</string>
   <string name="card_market_included" formatted="false">Inbegrepen in de prijs</string>

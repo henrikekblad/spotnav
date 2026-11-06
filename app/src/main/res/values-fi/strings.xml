@@ -768,6 +768,11 @@
   <string name="card_power_legend_marks" formatted="false">Tehotavoite rajoitti (piste) tai keskeytti (rengas) latauksen</string>
   <string name="setup_demand_grid_power_text">Tehomaksu tai tehotavoite tarvitsee kohteen verkon kokonaistehon, jotta sen voi mitata.</string>
   <string name="setup_demand_grid_power_action">Aseta verkon kokonaisteho</string>
+  <string name="setup_grid_power_sign_text">Verkkomittarin etumerkki näyttää olevan väärin päin: kun laturin teho muuttui, verkko liikkui toiseen suuntaan. Aurinkolataus ja kuormanhallinta lukevat viennin otoksi.</string>
+  <string name="setup_grid_power_sign_turn_off">Poista käytöstä ”Anturi näyttää viennin positiivisena”</string>
+  <string name="setup_grid_power_sign_turn_on">Ota käyttöön ”Anturi näyttää viennin positiivisena”</string>
+  <string name="setup_grid_current_sign_text">Verkkovirran etumerkki näyttää olevan väärin päin: kun laturin teho muuttui, vaihevirrat liikkuivat toiseen suuntaan. Kuormanhallinta lukee viennin otoksi.</string>
+  <string name="setup_grid_current_sign_turn_off">Poista käytöstä ”Verkkovirralla on etumerkki”</string>
   <string name="card_grid_fee_window_help" formatted="false">Tunnit, joina verkkoyhtiösi perii korkeamman maksunsa. Alkua aiempi päättyminen jatkuu yli keskiyön, ja yö lasketaan sille päivälle, jona se alkaa.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Tavallinen valinta. Tarkista se verkkoyhtiösi hinnastosta.</string>
   <string name="card_market_included" formatted="false">Sisältyy hintaan</string>

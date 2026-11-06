@@ -776,6 +776,11 @@
   <string name="card_power_legend_marks" formatted="false">El objetivo de consumo frenó (punto) o pausó (anillo) la carga</string>
   <string name="setup_demand_grid_power_text">El término de potencia o el objetivo de consumo necesita la potencia total de red de la instalación para poder medirse.</string>
   <string name="setup_demand_grid_power_action">Indicar la potencia total de red</string>
+  <string name="setup_grid_power_sign_text">El signo del contador de red parece invertido: cuando cambió la potencia del cargador, la red se movió en sentido contrario. La solar y el equilibrado de carga leen la exportación como importación.</string>
+  <string name="setup_grid_power_sign_turn_off">Desactivar «El sensor muestra la exportación como positiva»</string>
+  <string name="setup_grid_power_sign_turn_on">Activar «El sensor muestra la exportación como positiva»</string>
+  <string name="setup_grid_current_sign_text">El signo de la corriente de red parece invertido: cuando cambió la potencia del cargador, las corrientes de fase se movieron en sentido contrario. El equilibrado de carga lee la exportación como importación.</string>
+  <string name="setup_grid_current_sign_turn_off">Desactivar «La corriente de red tiene signo»</string>
   <string name="card_grid_fee_window_help" formatted="false">Las horas en que tu distribuidora cobra su peaje más alto. Un fin anterior al inicio pasa la medianoche, y la noche cuenta para el día en que empieza.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Una elección habitual. Compruébala con la tarifa de tu distribuidora.</string>
   <string name="card_market_included" formatted="false">Incluido en el precio</string>

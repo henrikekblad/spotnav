@@ -768,6 +768,11 @@
   <string name="card_power_legend_marks" formatted="false">Das Bezugsziel hat das Laden gedrosselt (Punkt) oder pausiert (Ring)</string>
   <string name="setup_demand_grid_power_text">Der Leistungspreis oder das Bezugsziel braucht die gesamte Netzleistung des Standorts, um gemessen zu werden.</string>
   <string name="setup_demand_grid_power_action">Gesamte Netzleistung festlegen</string>
+  <string name="setup_grid_power_sign_text">Das Vorzeichen des Netzzählers scheint vertauscht: Als sich die Leistung der Ladestation änderte, bewegte sich das Netz in die andere Richtung. Solar und Lastmanagement lesen Einspeisung als Bezug.</string>
+  <string name="setup_grid_power_sign_turn_off">„Der Sensor zeigt Einspeisung positiv“ ausschalten</string>
+  <string name="setup_grid_power_sign_turn_on">„Der Sensor zeigt Einspeisung positiv“ einschalten</string>
+  <string name="setup_grid_current_sign_text">Das Vorzeichen des Netzstroms scheint vertauscht: Als sich die Leistung der Ladestation änderte, bewegten sich die Phasenströme in die andere Richtung. Das Lastmanagement liest Einspeisung als Bezug.</string>
+  <string name="setup_grid_current_sign_turn_off">„Netzstrom hat ein Vorzeichen“ ausschalten</string>
   <string name="card_grid_fee_window_help" formatted="false">Die Stunden, in denen Ihr Netzbetreiber sein höheres Entgelt berechnet. Ein Ende vor dem Beginn reicht über Mitternacht, und die Nacht zählt zu dem Tag, an dem sie beginnt.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Eine übliche Wahl. Prüfen Sie sie anhand des Tarifs Ihres Netzbetreibers.</string>
   <string name="card_market_included" formatted="false">Im Preis enthalten</string>

@@ -768,6 +768,11 @@
   <string name="card_power_legend_marks" formatted="false">Effektmålet holdt nede (prik) eller satte på pause (ring)</string>
   <string name="setup_demand_grid_power_text">Effektbetalingen eller effektmålet kræver anlæggets samlede netteffekt for at kunne måles.</string>
   <string name="setup_demand_grid_power_action">Angiv nettets samlede effekt</string>
+  <string name="setup_grid_power_sign_text">Elmålerens fortegn ser ud til at være vendt: da laderens effekt ændrede sig, bevægede nettet sig den anden vej. Sol og lastbalancering læser eksport som import.</string>
+  <string name="setup_grid_power_sign_turn_off">Slå »Sensoren viser eksport som positiv« fra</string>
+  <string name="setup_grid_power_sign_turn_on">Slå »Sensoren viser eksport som positiv« til</string>
+  <string name="setup_grid_current_sign_text">Netstrømmens fortegn ser ud til at være vendt: da laderens effekt ændrede sig, bevægede fasestrømmene sig den anden vej. Lastbalanceringen læser eksport som import.</string>
+  <string name="setup_grid_current_sign_turn_off">Slå »Netstrømmen har fortegn« fra</string>
   <string name="card_grid_fee_window_help" formatted="false">De timer, dit netselskab opkræver sin højere tarif i. En slutning før starten går over midnat, og natten regnes til den dag, den begynder.</string>
   <string name="card_grid_fee_window_suggestion" formatted="false">Et almindeligt valg. Tjek det mod dit netselskabs tarif.</string>
   <string name="card_market_included" formatted="false">Indgår i prisen</string>

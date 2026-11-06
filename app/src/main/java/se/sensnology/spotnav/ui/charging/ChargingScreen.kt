@@ -617,8 +617,9 @@ internal class ChargingScreen(
             "vehicle" -> homeAssistant("/config/integrations/dashboard")
             "site" -> homeAssistant("/config/integrations/dashboard/add?domain=spotnav")
             "solar_forecast" -> homeAssistant("/config/integrations/dashboard/add?domain=forecast_solar")
-            // The site's total grid power is chosen among its entities in Home Assistant (the card opens that dialog).
-            "demand_grid_power" -> homeAssistant("/config/integrations/integration/spotnav")
+            // The site's total grid power is chosen among its entities in Home Assistant (the card opens that dialog),
+            // and the grid's sign is a site option the webhook does not write (the card's button writes it).
+            "demand_grid_power", "grid_power_sign", "grid_current_sign" -> homeAssistant("/config/integrations/integration/spotnav")
             "car_level" -> {
                 shell.settingsCar = dashboard.soc?.vehicleId
                 shell.navigate(Screen.SETTINGS)
