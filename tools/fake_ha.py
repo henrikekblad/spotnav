@@ -54,7 +54,10 @@ dashboard does not state the capability and the action is refused.
 The prices block's `provider` (sent, as by Home Assistant, only to a request
 whose `reads` names `price_provider`) says Nord Pool prices the area, except
 in the `addnordpool` scenario, an area with no source of its own: the relay
-still serves it and the notice asks for Nord Pool to be added.
+still serves it and the notice asks for Nord Pool to be added, and in the `nordpoolhacs`
+scenario, where Nord Pool from HACS stands in for the built-in one (`nordpool_custom`).
+
+The `started` scenario's Get started rows include HA 2.5's grid sign rows, each with the site option that fixes it.
 
 The `gridfee` scenario is Home Assistant 2.3's grid tariff: its `grid_tariff` block (sent only to a request whose
 `reads` names it) starts with a percentage of spot on and the high-load fee off with no hours, and
@@ -137,15 +140,17 @@ PROVIDER_BY_SCENARIO = {
         "key": "relay", "name": "SpotNav relay", "url": "https://spotnav.sensnology.se",
         "notice": {"code": "add_nordpool", "params": {}},
     },
+    "nordpoolhacs": {"key": None, "name": None, "url": None, "notice": {"code": "nordpool_custom", "params": {}}},
 }
 
 #: The `manual` scenario's status, set with `GET /spotnav-mock/manual?action=start|stop&ends=unplug|
 #: next_plug_in|resume`, `?code=charger_ignores_stop`, or `?no_car=1` (a Start is then refused with
-#: `vehicle_not_connected`, as Home Assistant 1.11 refuses it).
-MANUAL = {"action": "stop", "ends": "resume", "code": "paused", "no_car": False}
+#: `vehicle_not_connected`, as Home Assistant 1.11 refuses it). `?unseen=1` is HA 2.5's Stop nothing can see end
+#: (a charger and a car that cannot tell the unplug): `stop_unplug_unseen` after the headline, to an app that reads it.
+MANUAL = {"action": "stop", "ends": "resume", "code": "paused", "no_car": False, "unseen": False}
 
 
-def _manual_status(body: dict) -> dict:
+def _manual_status(body: dict, reads: list | None = None) -> dict:
     """Home Assistant's status block for a person's Start or Stop (`paused`, choice `manual`)."""
     if MANUAL["code"] == "charger_ignores_stop":
         body["control"]["immediate_action"] = "stop"
@@ -154,11 +159,15 @@ def _manual_status(body: dict) -> dict:
             {"code": "charging_now", "params": {"until": None}},
         ]}
     lines = [{"code": "paused", "params": {
-        "until": None, "choice": "manual", "action": MANUAL["action"], "ends": MANUAL["ends"],
+        "until": None, "choice": "manual", "action": MANUAL["action"],
+        # Home Assistant says a Stop it cannot see end lasts until the unplug, and adds the line that only Start or Resume ends it.
+        "ends": "unplug" if MANUAL["unseen"] and MANUAL["action"] == "stop" else MANUAL["ends"],
     }}]
     if MANUAL["action"] == "start":
         body["control"]["immediate_action"] = "stop"
         lines.append({"code": "charging_now", "params": {"until": None}})
+    elif MANUAL["unseen"] and "stop_unplug_unseen" in (reads or []):
+        lines.append({"code": "stop_unplug_unseen", "params": {}})
     return {"tone": "normal", "lines": lines}
 
 
@@ -181,7 +190,13 @@ def _in_zonneplan(body: dict) -> None:
 
 #: What the 2.3 webhook actions have done in this run: the Get started rows answered "Not needed", and whether the
 #: charger's own mode was set back (the `ownmode` scenario's status line is then gone).
-SETUP_ROWS = [("vehicle", True), ("car_level", False), ("site", True), ("phase_switching", True), ("phone", True), ("app", True)]
+#: A grid sign row (HA 2.5) names the site option that fixes it and the value its button writes.
+SETUP_ROWS = [
+    {"id": "vehicle", "dismissible": True}, {"id": "car_level", "dismissible": False}, {"id": "site", "dismissible": True},
+    {"id": "grid_power_sign", "dismissible": False, "field": "grid_power_inverted", "value": False},
+    {"id": "grid_current_sign", "dismissible": False, "field": "site_current_signed", "value": False},
+    {"id": "phase_switching", "dismissible": True}, {"id": "phone", "dismissible": True}, {"id": "app", "dismissible": True},
+]
 DISMISSED: set[str] = set()
 OWN_MODE = {"fixed": False}
 
@@ -503,7 +518,7 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     if scenario == "zonneplan":
         _in_zonneplan(body)
     if scenario == "manual":
-        body["status"] = _manual_status(body)
+        body["status"] = _manual_status(body, reads)
     if scenario in NO_PRICE_DAYS:
         body["charger"]["capabilities"].pop("price_days", None)
     if scenario in NO_2_3_ACTIONS:
@@ -512,8 +527,7 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     # Home Assistant sends the Get started rows only to an app that reads `setup`.
     body.pop("setup", None)
     if scenario == "started" and "setup" in (reads or []):
-        body["setup"] = {"items": [{"id": row, "dismissible": dismissible} for row, dismissible in SETUP_ROWS
-                                   if row not in DISMISSED]}
+        body["setup"] = {"items": [dict(row) for row in SETUP_ROWS if row["id"] not in DISMISSED]}
     # Phase switching for solar is offered on the `started` charger (the row its Get started line opens in Settings).
     if scenario == "started" and "phase_switching" in (reads or []):
         body["phase_switching"] = {"value": False, "writable": True}
@@ -639,6 +653,10 @@ SCENARIOS: dict[str, Charger] = {
     "addnordpool": Charger(
         "Utan priskälla",
         why="an area with no price source of its own in Home Assistant: the notice asking for Nord Pool",
+    ),
+    "nordpoolhacs": Charger(
+        "Nord Pool HACS",
+        why="Nord Pool from HACS stands in for the built-in one (HA 2.5): the notice to add an ENTSO-E key or switch back",
     ),
     "gridfee": Charger(
         "Nätavgift",
@@ -875,6 +893,7 @@ class Handler(BaseHTTPRequestHandler):
                 MANUAL["action"] = query.get("action", MANUAL["action"])
                 MANUAL["ends"] = query.get("ends", MANUAL["ends"])
                 MANUAL["no_car"] = query.get("no_car") == "1"
+                MANUAL["unseen"] = query.get("unseen") == "1"
                 state = dict(MANUAL)
             self._json(200, state)
             return
@@ -1053,7 +1072,7 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if action == "dismiss_setup_item":
                     item = payload.get("item")
-                    if item == "car_level" or item not in dict(SETUP_ROWS):
+                    if not any(row["id"] == item and row["dismissible"] for row in SETUP_ROWS):
                         self._json(400, {"ok": False, "error": "spotnav_setup_item_not_dismissible", "action": action})
                     else:
                         DISMISSED.add(item)
