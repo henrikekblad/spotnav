@@ -157,6 +157,7 @@
   <string name="widget_not_linked">Ikke forbundet — tryk for at vælge lader</string>
   <string name="version_label">Version %1$s</string>
   <string name="report_issue">Rapportér en fejl</string>
+  <string name="terms_of_service">Brugsvilkår</string>
   <string name="forget_widget">Glem</string>
   <string name="forget_widget_title">Glem denne widget?</string>
   <string name="forget_widget_message">SpotNav fjerner instansen fra vælgeren. Android kan beholde widget-id\'et, indtil launcheren rydder det op.</string>

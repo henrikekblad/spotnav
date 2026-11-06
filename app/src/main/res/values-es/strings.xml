@@ -165,6 +165,7 @@
   <string name="widget_not_linked">Sin vincular: toca para elegir un cargador</string>
   <string name="version_label">Versión %1$s</string>
   <string name="report_issue">Informar de un problema</string>
+  <string name="terms_of_service">Condiciones de uso</string>
   <string name="forget_widget">Olvidar</string>
   <string name="forget_widget_title">¿Olvidar este widget?</string>
   <string name="forget_widget_message">SpotNav quitará esta instancia del selector. Android puede conservar el ID del widget hasta que el launcher lo limpie.</string>

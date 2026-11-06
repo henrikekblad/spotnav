@@ -157,6 +157,7 @@
   <string name="widget_not_linked">Inte länkad — tryck för att välja laddare</string>
   <string name="version_label">Version %1$s</string>
   <string name="report_issue">Rapportera ett fel</string>
+  <string name="terms_of_service">Användarvillkor</string>
   <string name="forget_widget">Glöm</string>
   <string name="forget_widget_title">Glöm den här widgeten?</string>
   <string name="forget_widget_message">SpotNav tar bort instansen från väljaren. Android kan behålla widget-ID:t tills launchern städar bort det.</string>

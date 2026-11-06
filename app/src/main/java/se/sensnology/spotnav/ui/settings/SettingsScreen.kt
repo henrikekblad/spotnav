@@ -725,19 +725,25 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         return WidgetDisplayControls(offered = true, showPlan = { on }, planOn = { on = true; paint() })
     }
 
+    /** The version, and the links to report an issue and to the terms of service. */
     private fun addAppFooter() {
-        val issueText = t(R.string.report_issue)
-        val footer = SpannableString("${t(R.string.version_label, BuildConfig.VERSION_NAME)} · $issueText").apply {
-            val start = toString().indexOf(issueText)
-            setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SPOTNAV_ISSUES)))
-                }
-                override fun updateDrawState(ds: TextPaint) {
-                    ds.color = accent
-                    ds.isUnderlineText = true
-                }
-            }, start, start + issueText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val links = listOf(t(R.string.report_issue) to SPOTNAV_ISSUES, t(R.string.terms_of_service) to SPOTNAV_TERMS)
+        val words = (listOf(t(R.string.version_label, BuildConfig.VERSION_NAME)) + links.map { it.first }).joinToString(" · ")
+        val footer = SpannableString(words).apply {
+            var from = 0
+            for ((label, address) in links) {
+                val start = toString().indexOf(label, from)
+                from = start + label.length
+                setSpan(object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(address)))
+                    }
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = accent
+                        ds.isUnderlineText = true
+                    }
+                }, start, from, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
         }
         content.addView(TextView(context).apply {
             text = footer
@@ -756,6 +762,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         const val SEEK_MARGIN_DP = 24
         const val SEEK_MARK_MS = 2500L
         const val SPOTNAV_ISSUES = "https://github.com/henrikekblad/spotnav/issues"
+        const val SPOTNAV_TERMS = "https://spotnav.sensnology.se/terms"
     }
 }
 

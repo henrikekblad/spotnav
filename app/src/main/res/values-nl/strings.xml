@@ -161,6 +161,7 @@
   <string name="widget_not_linked">Niet gekoppeld — tik om een laadpaal te kiezen</string>
   <string name="version_label">Versie %1$s</string>
   <string name="report_issue">Probleem melden</string>
+  <string name="terms_of_service">Gebruiksvoorwaarden</string>
   <string name="forget_widget">Vergeten</string>
   <string name="forget_widget_title">Deze widget vergeten?</string>
   <string name="forget_widget_message">SpotNav verwijdert deze instantie uit de keuzelijst. Android kan de widget-ID bewaren tot de launcher die opruimt.</string>
