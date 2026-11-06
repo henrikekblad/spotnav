@@ -1,0 +1,6 @@
+- Kom i gang varsler når strømmålerens fortegn ser ut til å være snudd, og åpner anleggets innstillinger i Home Assistant
+- En stopp som bare Start eller Gjenoppta kan avslutte, sier det
+- Strømprisen forklarer når Nord Pool fra HACS står i veien for prisene
+- Tipset om laderens egen strøm sier nøyaktig hvor i anleggets innstillinger
+- Brukervilkår nederst i Innstillinger
+- For SpotNav for Home Assistant 2.5

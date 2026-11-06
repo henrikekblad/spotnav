@@ -1,0 +1,6 @@
+- Aan de slag waarschuwt als het teken van de netmeter omgekeerd lijkt, en opent de locatie-instellingen in Home Assistant
+- Een stop die alleen Starten of Hervatten kan beëindigen, zegt dat
+- De stroomprijs legt uit wanneer Nord Pool uit HACS de prijzen in de weg zit
+- De tip over de eigen stroom van de laadpaal noemt de precieze plek in de locatie-instellingen
+- Gebruiksvoorwaarden onderaan in Instellingen
+- Voor SpotNav voor Home Assistant 2.5

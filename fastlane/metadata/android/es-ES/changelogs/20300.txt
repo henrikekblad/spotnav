@@ -1,0 +1,6 @@
+- Primeros pasos avisa cuando el signo del contador de red parece invertido y abre los ajustes de la instalación en Home Assistant
+- Una parada que solo Iniciar o Reanudar puede terminar lo dice
+- El precio de la electricidad explica cuándo Nord Pool de HACS impide los precios
+- La pista sobre la corriente propia del cargador indica el lugar exacto en los ajustes de la instalación
+- Condiciones de uso al final de Ajustes
+- Para SpotNav para Home Assistant 2.5

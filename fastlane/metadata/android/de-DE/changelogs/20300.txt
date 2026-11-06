@@ -1,0 +1,6 @@
+- Erste Schritte warnt, wenn das Vorzeichen des Netzzählers vertauscht scheint, und öffnet die Standort-Einstellungen in Home Assistant
+- Ein Stopp, den nur Start oder Fortsetzen beendet, sagt das
+- Der Strompreis erklärt, wenn Nord Pool aus HACS den Preisen im Weg steht
+- Der Hinweis zum eigenen Strom der Ladestation nennt die genaue Stelle in den Standort-Einstellungen
+- Nutzungsbedingungen unten in den Einstellungen
+- Für SpotNav für Home Assistant 2.5

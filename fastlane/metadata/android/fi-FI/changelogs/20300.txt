@@ -1,0 +1,6 @@
+- Aloitus varoittaa, kun verkkomittarin etumerkki näyttää olevan väärin päin, ja avaa kohteen asetukset Home Assistantissa
+- Pysäytys, jonka vain Aloita tai Jatka voi lopettaa, kertoo sen
+- Sähkön hinta kertoo, kun HACS:n Nord Pool estää hinnat
+- Vihje laturin omasta virrasta kertoo tarkan paikan kohteen asetuksissa
+- Käyttöehdot Asetusten alareunassa
+- SpotNaville Home Assistantille 2.5

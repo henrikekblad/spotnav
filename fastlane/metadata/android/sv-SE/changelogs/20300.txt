@@ -1,0 +1,6 @@
+- Kom igång varnar när elmätarens tecken verkar vara omvänt, och öppnar anläggningens inställningar i Home Assistant
+- Ett stopp som bara Starta eller Återuppta kan avsluta säger det
+- Elpriset förklarar när Nord Pool från HACS står i vägen för priserna
+- Tipset om laddarens egen ström anger exakt var i anläggningens inställningar den väljs
+- Användarvillkor längst ned i Inställningar
+- För SpotNav för Home Assistant 2.5
