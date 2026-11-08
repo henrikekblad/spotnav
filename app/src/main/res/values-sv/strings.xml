@@ -295,9 +295,10 @@
     <item quantity="other">Gäller alla %1$d laddare på den här anläggningen.</item>
   </plurals>
   <string name="site_read_only">Bara administratörer kan ändra anläggningens inställningar. Du kan läsa dem här.</string>
-  <string name="site_solar_priority">Solprioritet</string>
-  <string name="site_car_first">Bilen först</string>
-  <string name="site_battery_first">Batteriet först</string>
+  <string name="site_solar_priority">Bil eller husbatteri först</string>
+  <string name="site_car_first">Bil först</string>
+  <string name="site_battery_first">Batteri först</string>
+  <string name="site_solar_priority_help">Vem som får gå först när bilen och husbatteriet vill ha samma el.\n\n• Bil först: Bilen får solöverskottet före batteriet. När batteriet laddar från nätet ger det plats åt bilen vid huvudsäkringen (med ”Bilen får ta hembatteriets andel” på). Effektmålet räknar bara el från nätet.\n• Batteri först: Batteriet får solöverskottet först, och bilen laddar på det som blir över. Vid huvudsäkringen backar bilen för batteriet. Effektmålet räknar även batteriets urladdning som import, så att bilen inte betalas av batteriet.</string>
   <string name="site_forecast_title">Källor för solprognos</string>
   <string name="site_active_title">Lastbalansering</string>
   <string name="site_on">På</string>

@@ -305,9 +305,10 @@
     <item quantity="other">Applies to all %1$d chargers on this site.</item>
   </plurals>
   <string name="site_read_only">Only administrators can change the site\'s settings. You can read them here.</string>
-  <string name="site_solar_priority">Solar priority</string>
+  <string name="site_solar_priority">Car or home battery first</string>
   <string name="site_car_first">Car first</string>
   <string name="site_battery_first">Battery first</string>
+  <string name="site_solar_priority_help">Who goes first when the car and the home battery want the same power.\n\n• Car first: The car gets the sun\'s surplus before the battery. When the battery charges from the grid it gives way to the car at the main fuse (with “Car may take the home battery\'s share” on). The import target counts only grid power.\n• Battery first: The battery gets the sun\'s surplus first, and the car charges on what is left. At the main fuse the car backs off for the battery. The import target also counts the battery\'s discharge as import, so the battery does not pay for the car.</string>
   <string name="site_forecast_title">Solar forecast sources</string>
   <string name="site_active_title">Load balancing</string>
   <string name="site_on">On</string>

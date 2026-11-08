@@ -837,6 +837,15 @@ internal class PairedSettingsCards(
             }
             readRow(card.body, t(R.string.site_battery_label), t(if (setup.batteryName != null) R.string.setup_present else R.string.value_none))
         }
+        // Car or home battery first sits beside the home battery, as in the card: it also decides who goes first at
+        // the main fuse and what the import target counts, not only the sun's surplus.
+        val solar = PairedOverview.solar(site)
+        valueRow(card.body, t(R.string.site_solar_priority), priorityText(solar.priority), onTap = if (solar.editable) ({
+            chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
+                SiteFacts.PRIORITIES.indexOf(site.solarPriority), intro = t(R.string.site_solar_priority_help)) { index, done ->
+                writeSolar(SiteUpdate.priorityRequest(site.solarPriority, SiteFacts.PRIORITIES[index]), done)
+            }
+        }) else null)
         readRow(card.body, t(R.string.site_active_title), t(if (summary.activeControlOn) R.string.site_on else R.string.site_off))
         val reason = when (summary.reason) {
             SiteFacts.Reason.NONE -> null
@@ -945,12 +954,6 @@ internal class PairedSettingsCards(
         val chargers = PairedOverview.site(site).chargers
         val card = card(container, t(R.string.section_solar), R.drawable.ic_solar)
         if (PairedOverview.saysChargers(chargers)) card.body.addView(muted(tq(R.plurals.site_applies, chargers, chargers), top = 8, bottom = 4))
-        valueRow(card.body, t(R.string.site_solar_priority), priorityText(summary.priority), onTap = if (summary.editable) ({
-            chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
-                SiteFacts.PRIORITIES.indexOf(site.solarPriority)) { index, done ->
-                writeSolar(SiteUpdate.priorityRequest(site.solarPriority, SiteFacts.PRIORITIES[index]), done)
-            }
-        }) else null)
         val forecastOffered = summary.editable && site.solarForecastChoices.isNotEmpty()
         valueRow(card.body, t(R.string.site_forecast_title),
             if (summary.forecastTitles.isEmpty()) t(R.string.value_none) else summary.forecastTitles.joinToString(", "),

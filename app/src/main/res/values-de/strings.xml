@@ -295,9 +295,10 @@
     <item quantity="other">Gilt für alle %1$d Ladestationen an diesem Standort.</item>
   </plurals>
   <string name="site_read_only">Nur Administratoren können die Einstellungen des Standorts ändern. Du kannst sie hier lesen.</string>
-  <string name="site_solar_priority">Solarpriorität</string>
+  <string name="site_solar_priority">Auto oder Hausbatterie zuerst</string>
   <string name="site_car_first">Zuerst das Auto</string>
   <string name="site_battery_first">Zuerst die Batterie</string>
+  <string name="site_solar_priority_help">Wer zuerst darf, wenn Auto und Hausbatterie denselben Strom wollen.\n\n• Zuerst das Auto: Das Auto bekommt den Solarüberschuss vor der Batterie. Lädt die Batterie aus dem Netz, weicht sie an der Hauptsicherung dem Auto (bei eingeschaltetem „Auto darf den Anteil der Hausbatterie nehmen“). Das Leistungsziel zählt nur Strom aus dem Netz.\n• Zuerst die Batterie: Die Batterie bekommt den Solarüberschuss zuerst, das Auto lädt mit dem, was übrig bleibt. An der Hauptsicherung weicht das Auto der Batterie. Das Leistungsziel zählt auch die Entladung der Batterie als Bezug, damit die Batterie das Auto nicht bezahlt.</string>
   <string name="site_forecast_title">Quellen für die Solarprognose</string>
   <string name="site_active_title">Lastmanagement</string>
   <string name="site_on">An</string>
