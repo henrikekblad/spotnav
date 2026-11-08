@@ -295,9 +295,10 @@
     <item quantity="other">Geldt voor alle %1$d laadpalen op deze locatie.</item>
   </plurals>
   <string name="site_read_only">Alleen beheerders kunnen de instellingen van de locatie wijzigen. Je kunt ze hier bekijken.</string>
-  <string name="site_solar_priority">Zonneprioriteit</string>
+  <string name="site_solar_priority">Auto of thuisbatterij eerst</string>
   <string name="site_car_first">Auto eerst</string>
   <string name="site_battery_first">Batterij eerst</string>
+  <string name="site_solar_priority_help">Wie voorgaat als de auto en de thuisbatterij dezelfde stroom willen.\n\n• Auto eerst: De auto krijgt het zonneoverschot vóór de batterij. Als de batterij van het net laadt, maakt ze bij de hoofdzekering plaats voor de auto (met “Auto mag het deel van de thuisbatterij nemen” aan). Het vermogensdoel telt alleen stroom van het net.\n• Batterij eerst: De batterij krijgt het zonneoverschot eerst, en de auto laadt met wat overblijft. Bij de hoofdzekering gaat de auto terug voor de batterij. Het vermogensdoel telt ook de ontlading van de batterij als import, zodat de batterij de auto niet betaalt.</string>
   <string name="site_forecast_title">Bronnen voor zonneprognose</string>
   <string name="site_active_title">Load balancing</string>
   <string name="site_on">Aan</string>

@@ -300,9 +300,10 @@
     <item quantity="other">S\'applique aux %1$d bornes de ce site.</item>
   </plurals>
   <string name="site_read_only">Seuls les administrateurs peuvent modifier les paramètres du site. Vous pouvez les consulter ici.</string>
-  <string name="site_solar_priority">Priorité solaire</string>
+  <string name="site_solar_priority">Voiture ou batterie domestique d\'abord</string>
   <string name="site_car_first">Voiture d\'abord</string>
   <string name="site_battery_first">Batterie d\'abord</string>
+  <string name="site_solar_priority_help">Qui passe en premier quand la voiture et la batterie domestique veulent la même énergie.\n\n• Voiture d\'abord: La voiture reçoit le surplus solaire avant la batterie. Quand la batterie charge depuis le réseau, elle cède la place à la voiture au disjoncteur principal (avec « La voiture peut prendre la part de la batterie domestique » activé). L\'objectif de puissance ne compte que l\'énergie du réseau.\n• Batterie d\'abord: La batterie reçoit le surplus solaire en premier, et la voiture charge avec le reste. Au disjoncteur principal, la voiture recule devant la batterie. L\'objectif de puissance compte aussi la décharge de la batterie comme importation, pour que la batterie ne paie pas la voiture.</string>
   <string name="site_forecast_title">Sources de prévision solaire</string>
   <string name="site_active_title">Équilibrage de charge</string>
   <string name="site_on">Activé</string>

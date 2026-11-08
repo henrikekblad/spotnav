@@ -3,4 +3,5 @@
 - Sähkön hinta kertoo, kun HACS:n Nord Pool estää hinnat
 - Vihje laturin omasta virrasta kertoo tarkan paikan kohteen asetuksissa
 - Käyttöehdot Asetusten alareunassa
+- Aurinkoenergian etusija on nyt Auto vai kotiakku ensin
 - SpotNaville Home Assistantille 2.5

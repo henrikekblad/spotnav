@@ -295,9 +295,10 @@
     <item quantity="other">Koskee kaikkia %1$d laturia tässä kohteessa.</item>
   </plurals>
   <string name="site_read_only">Vain ylläpitäjät voivat muuttaa kohteen asetuksia. Voit lukea ne täällä.</string>
-  <string name="site_solar_priority">Aurinkoenergian etusija</string>
+  <string name="site_solar_priority">Auto vai kotiakku ensin</string>
   <string name="site_car_first">Auto ensin</string>
   <string name="site_battery_first">Akku ensin</string>
+  <string name="site_solar_priority_help">Kumpi saa mennä ensin, kun auto ja kotiakku haluavat saman sähkön.\n\n• Auto ensin: Auto saa aurinkoylijäämän ennen akkua. Kun akku lataa verkosta, se väistää autoa pääsulakkeella (kun ”Auto saa ottaa kotiakun osuuden” on päällä). Tehotavoite laskee vain verkosta otetun sähkön.\n• Akku ensin: Akku saa aurinkoylijäämän ensin, ja auto lataa sillä, mikä jää yli. Pääsulakkeella auto väistää akkua. Tehotavoite laskee myös akun purkamisen tuonniksi, jotta akku ei maksa auton latausta.</string>
   <string name="site_forecast_title">Aurinkoennusteen lähteet</string>
   <string name="site_active_title">Kuormanhallinta</string>
   <string name="site_on">Päällä</string>

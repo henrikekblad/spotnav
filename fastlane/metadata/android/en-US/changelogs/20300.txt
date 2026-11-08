@@ -3,4 +3,5 @@
 - The electricity price explains when Nord Pool from HACS is in the way of the prices
 - The hint about the charger's own current names the exact place in the site's settings
 - Terms of service at the bottom of Settings
+- Solar priority is now Car or home battery first
 - For SpotNav for Home Assistant 2.5

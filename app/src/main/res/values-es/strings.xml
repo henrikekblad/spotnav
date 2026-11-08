@@ -300,9 +300,10 @@
     <item quantity="other">Se aplica a los %1$d cargadores de esta instalación.</item>
   </plurals>
   <string name="site_read_only">Solo los administradores pueden cambiar los ajustes de la instalación. Aquí puedes consultarlos.</string>
-  <string name="site_solar_priority">Prioridad solar</string>
+  <string name="site_solar_priority">Coche o batería doméstica primero</string>
   <string name="site_car_first">Primero el coche</string>
   <string name="site_battery_first">Primero la batería</string>
+  <string name="site_solar_priority_help">Quién va primero cuando el coche y la batería doméstica quieren la misma energía.\n\n• Primero el coche: El coche recibe el excedente solar antes que la batería. Cuando la batería carga desde la red, cede el paso al coche en el fusible principal (con «El coche puede tomar la parte de la batería doméstica» activado). El objetivo de potencia solo cuenta la energía de la red.\n• Primero la batería: La batería recibe primero el excedente solar y el coche carga con lo que sobra. En el fusible principal el coche cede ante la batería. El objetivo de potencia cuenta también la descarga de la batería como importación, para que la batería no pague el coche.</string>
   <string name="site_forecast_title">Fuentes de previsión solar</string>
   <string name="site_active_title">Equilibrado de carga</string>
   <string name="site_on">Activado</string>

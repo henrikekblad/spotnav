@@ -3,4 +3,5 @@
 - Strømprisen forklarer når Nord Pool fra HACS står i veien for prisene
 - Tipset om laderens egen strøm sier nøyaktig hvor i anleggets innstillinger
 - Brukervilkår nederst i Innstillinger
+- Solprioritet heter nå Bil eller hjemmebatteri først
 - For SpotNav for Home Assistant 2.5
