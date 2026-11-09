@@ -615,7 +615,7 @@
   <string name="entsoe_howto_title">Obtenir une clé auprès d\'ENTSO-E</string>
   <string name="entsoe_howto_1">Créez un compte sur transparency.entsoe.eu.</string>
   <string name="entsoe_howto_2">Écrivez à transparency@entsoe.eu avec l\'objet \"Restful API access\" et indiquez l\'adresse e-mail de votre compte dans le message.</string>
-  <string name="entsoe_howto_3">Quand ENTSO-E a répondu : connectez-vous, ouvrez My Account Settings et créez une clé (Generate a new token).</string>
+  <string name="entsoe_howto_3">Quand ENTSO-E a répondu : connectez-vous, ouvrez My Account → Web API Access et créez une clé (Generate Token).</string>
   <string name="entsoe_howto_4">Collez la clé ici.</string>
   <string name="entsoe_key_saved">Clé enregistrée : %1$s</string>
   <string name="entsoe_key_checking">Vérification…</string>

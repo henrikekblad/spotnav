@@ -57,7 +57,7 @@ class SetupWordingTest {
             val mail = text(strings, "entsoe_howto_2")!!
             assertTrue("$directory step 2 names the address", mail.contains(EntsoeKeyDialog.MAIL_ADDRESS))
             assertTrue("$directory step 2 names the subject", mail.contains(EntsoeKeyDialog.MAIL_SUBJECT))
-            assertTrue("$directory step 3 names ENTSO-E's page", text(strings, "entsoe_howto_3")!!.contains("My Account Settings"))
+            assertTrue("$directory step 3 names ENTSO-E's page", text(strings, "entsoe_howto_3")!!.contains("Web API Access"))
             assertTrue("$directory masks the saved key", text(strings, "entsoe_key_saved")!!.contains("%1\$s"))
         }
     }
@@ -78,7 +78,7 @@ class SetupWordingTest {
             text(sv, "entsoe_howto_2")
         )
         assertEquals(
-            "När ENTSO-E har svarat: logga in, öppna My Account Settings och skapa en nyckel (Generate a new token).",
+            "När ENTSO-E har svarat: logga in, öppna My Account → Web API Access och skapa en nyckel (Generate Token).",
             text(sv, "entsoe_howto_3")
         )
         assertEquals("Klistra in nyckeln här.", text(sv, "entsoe_howto_4"))

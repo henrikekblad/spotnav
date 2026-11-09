@@ -607,7 +607,7 @@
   <string name="entsoe_howto_title">Hanki avain ENTSO-E:ltä</string>
   <string name="entsoe_howto_1">Luo tili osoitteessa transparency.entsoe.eu.</string>
   <string name="entsoe_howto_2">Lähetä sähköpostia osoitteeseen transparency@entsoe.eu aiheella \"Restful API access\" ja kirjoita viestiin tilisi sähköpostiosoite.</string>
-  <string name="entsoe_howto_3">Kun ENTSO-E on vastannut: kirjaudu sisään, avaa My Account Settings ja luo avain (Generate a new token).</string>
+  <string name="entsoe_howto_3">Kun ENTSO-E on vastannut: kirjaudu sisään, avaa My Account → Web API Access ja luo avain (Generate Token).</string>
   <string name="entsoe_howto_4">Liitä avain tähän.</string>
   <string name="entsoe_key_saved">Tallennettu avain: %1$s</string>
   <string name="entsoe_key_checking">Tarkistetaan…</string>

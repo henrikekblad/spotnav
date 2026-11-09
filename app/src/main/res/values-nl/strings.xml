@@ -607,7 +607,7 @@
   <string name="entsoe_howto_title">Vraag een sleutel aan bij ENTSO-E</string>
   <string name="entsoe_howto_1">Maak een account aan op transparency.entsoe.eu.</string>
   <string name="entsoe_howto_2">Mail transparency@entsoe.eu met het onderwerp \"Restful API access\" en zet het e-mailadres van je account in het bericht.</string>
-  <string name="entsoe_howto_3">Als ENTSO-E heeft geantwoord: log in, open My Account Settings en maak een sleutel aan (Generate a new token).</string>
+  <string name="entsoe_howto_3">Als ENTSO-E heeft geantwoord: log in, open My Account → Web API Access en maak een sleutel aan (Generate Token).</string>
   <string name="entsoe_howto_4">Plak de sleutel hier.</string>
   <string name="entsoe_key_saved">Opgeslagen sleutel: %1$s</string>
   <string name="entsoe_key_checking">Controleren…</string>
