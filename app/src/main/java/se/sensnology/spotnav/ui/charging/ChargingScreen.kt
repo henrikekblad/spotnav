@@ -469,7 +469,8 @@ internal class ChargingScreen(
             runOnUiThread {
                 if (isDestroyed || generation != viewGeneration) return@runOnUiThread
                 if (resolution is AuthorityResolution.State) applyState(resolution.authority)
-                if (priceDaysChanged) loadPrices()
+                // Also when the answer names another area than the prices on screen were loaded for.
+                if (priceDaysChanged || authority.priceAreaMoved()) loadPrices()
             }
         }
     }

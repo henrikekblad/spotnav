@@ -271,6 +271,20 @@ class AuthorityControllerTest {
     }
 
     @Test
+    fun anAnswerNamingAnotherAreaThanTheLoadedPricesAsksForANewLoad() {
+        val controller = controller()
+        publish(controller, Result.failure(IllegalStateException("no route")))
+        controller.beginPriceLoad()
+        assertFalse("the widget's own area is what was loaded", controller.priceAreaMoved())
+
+        // Home Assistant's first answer names its own area.
+        resolved(controller, supported(written))
+        assertTrue(controller.priceAreaMoved())
+        assertEquals(PriceRequestKey(profileId, "SE4", 1), controller.beginPriceLoad())
+        assertFalse("loaded for the answer's area", controller.priceAreaMoved())
+    }
+
+    @Test
     fun aPlanMemoIsOnlyHandedOverForExactlyItsOwnSubject() {
         val controller = controller()
         val state = resolved(controller, supported(written.copy(requestedKwh = 4.0))) as VisibleAuthority.AutoRemote
