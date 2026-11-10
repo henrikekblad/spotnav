@@ -330,6 +330,12 @@ internal class AuthorityController(
     /** The effective area the authority names, or `null` when there is nothing to price. */
     fun priceArea(): String? = AuthorityRefresh.priceArea(localAreaNow, authority)
 
+    /**
+     * Whether the area the authority names now is not the one the last price load asked for: the
+     * first load runs on the widget's own area before Home Assistant has answered.
+     */
+    fun priceAreaMoved(): Boolean = AuthorityRefresh.areaChangeRequiresLoad(currentSubject?.areaId, priceArea())
+
     /** Remember the plan this pass computed, for the table's handover, under its subject. */
     fun rememberPlan(inputs: PlanningInputs?, prices: PriceResult?, plan: ChargingPlan?, revision: Int?) {
         val subject = synchronized(lock) { pricesSubject }
