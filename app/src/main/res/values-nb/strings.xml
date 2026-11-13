@@ -387,6 +387,7 @@
   <string name="connection_paused">Pauset</string>
   <string name="connection_finished">Ferdig</string>
   <string name="connection_error">Feil</string>
+  <string name="connection_waiting">Venter</string>
   <string name="fiscal_included">%1$s – inkludert i prisen</string>
   <string name="price_value_included">Inkludert i prisen</string>
   <string name="market_info_included">Den publiserte prisen inkluderer allerede mva., avgifter og nettleie, så ingenting legges til.</string>

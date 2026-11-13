@@ -387,6 +387,7 @@
   <string name="connection_paused">Tauolla</string>
   <string name="connection_finished">Valmis</string>
   <string name="connection_error">Virhe</string>
+  <string name="connection_waiting">Odottaa</string>
   <string name="fiscal_included">%1$s – sisältyy hintaan</string>
   <string name="price_value_included">Sisältyy hintaan</string>
   <string name="market_info_included">Julkaistu hinta sisältää jo arvonlisäveron, verot ja maksut, joten mitään ei lisätä.</string>

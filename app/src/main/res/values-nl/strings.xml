@@ -387,6 +387,7 @@
   <string name="connection_paused">Gepauzeerd</string>
   <string name="connection_finished">Klaar</string>
   <string name="connection_error">Fout</string>
+  <string name="connection_waiting">Wacht</string>
   <string name="fiscal_included">%1$s – inbegrepen in de prijs</string>
   <string name="price_value_included">Inbegrepen in de prijs</string>
   <string name="market_info_included">De gepubliceerde prijs bevat al btw, belastingen en kosten, dus er wordt niets bij opgeteld.</string>

@@ -387,6 +387,7 @@
   <string name="connection_paused">Pausiert</string>
   <string name="connection_finished">Fertig</string>
   <string name="connection_error">Fehler</string>
+  <string name="connection_waiting">Wartet</string>
   <string name="fiscal_included">%1$s – im Preis enthalten</string>
   <string name="price_value_included">Im Preis enthalten</string>
   <string name="market_info_included">Der veröffentlichte Preis enthält bereits MwSt., Steuern und Entgelte, daher wird nichts hinzugefügt.</string>

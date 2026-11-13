@@ -387,6 +387,7 @@
   <string name="connection_paused">Pausad</string>
   <string name="connection_finished">Klar</string>
   <string name="connection_error">Fel</string>
+  <string name="connection_waiting">Väntar</string>
   <string name="fiscal_included">%1$s – ingår i priset</string>
   <string name="price_value_included">Ingår i priset</string>
   <string name="market_info_included">Det publicerade priset innehåller redan moms, skatter och avgifter, så inget läggs till.</string>
