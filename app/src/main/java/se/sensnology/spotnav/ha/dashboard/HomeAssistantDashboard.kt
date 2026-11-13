@@ -369,6 +369,8 @@ internal data class Dashboard(
     val sessionsSummary: SessionsSummary? = null,
     /** The charger's connection state (Home Assistant 1.6); `null` when absent or `unknown`. */
     val connection: ConnectionState? = null,
+    /** The state the card shows as the status word (`connection.shown`); behaviour reads [connection]. */
+    val connectionShown: ConnectionState? = null,
     /** This charger's priority on its site (Home Assistant 1.9); `null` when absent, or on no site. */
     val chargerPriority: ChargerPriority? = null,
     /**
@@ -509,6 +511,7 @@ internal data class Dashboard(
                 chargingPhases = chargingPhases(json.opt("charging_phases")),
                 sessionsSummary = SessionsCodec.parseSummary(json.opt("sessions_summary")),
                 connection = ChargerConnectionContract.of(json.optJSONObject("connection")),
+                connectionShown = ChargerConnectionContract.shown(json.optJSONObject("connection")),
                 chargerPriority = ChargerPriority.parse(json.opt("charger_priority")),
                 planningReason = json.optJSONObject("planning")?.opt("reason") as? String,
                 startingUpUntil = json.optJSONObject("starting_up")

@@ -372,7 +372,7 @@ internal class ChargerDashboardController(
     }
 
     /** The charger's connection state in words ("Ansluten"); `null` when the dashboard states none. */
-    private fun vehicleLineText(held: Dashboard?): String? = held?.connection?.let { state ->
+    private fun vehicleLineText(held: Dashboard?): String? = held?.connectionShown?.let { state ->
         val connection = t(connectionString(state))
         // While the question is open the line says the charger waits for the answer.
         if (VehicleIdentification.waitingForAnswer(held)) "$connection · ${t(R.string.identify_waiting)}" else connection

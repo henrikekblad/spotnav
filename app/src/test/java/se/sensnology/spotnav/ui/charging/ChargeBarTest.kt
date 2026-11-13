@@ -375,6 +375,16 @@ class ChargeBarTest {
         assertFalse(bar.moving)
     }
 
+    @Test fun theShownStateDoesNotBringTheBarBack() {
+        // A finished session shown as waiting or connected still has no bar: the rule reads the charger's own state.
+        for (shown in listOf("waiting", "connected")) {
+            assertNull(shown, ChargeBarRule.of(kwh {
+                charging("finished")
+                getJSONObject("connection").put("shown", shown)
+            }, kwhNow))
+        }
+    }
+
     @Test fun withNoConnectionStatedTheChargeMoves() {
         assertTrue(ChargeBarRule.of(kwh { charging(null) }, kwhNow)!!.moving)
     }
