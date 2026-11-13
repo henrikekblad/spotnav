@@ -387,6 +387,7 @@
   <string name="connection_paused">På pause</string>
   <string name="connection_finished">Færdig</string>
   <string name="connection_error">Fejl</string>
+  <string name="connection_waiting">Venter</string>
   <string name="fiscal_included">%1$s – indgår i prisen</string>
   <string name="price_value_included">Indgår i prisen</string>
   <string name="market_info_included">Den offentliggjorte pris indeholder allerede moms, afgifter og tariffer, så intet lægges til.</string>

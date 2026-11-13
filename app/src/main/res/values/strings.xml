@@ -398,6 +398,7 @@
   <string name="connection_paused">Paused</string>
   <string name="connection_finished">Finished</string>
   <string name="connection_error">Error</string>
+  <string name="connection_waiting">Waiting</string>
   <string name="fiscal_included">%1$s – included in the price</string>
   <string name="price_value_included">Included in the price</string>
   <string name="market_info_included">The published price already includes VAT, taxes and fees, so nothing is added.</string>

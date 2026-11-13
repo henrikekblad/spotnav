@@ -393,6 +393,7 @@
   <string name="connection_paused">En pausa</string>
   <string name="connection_finished">Terminado</string>
   <string name="connection_error">Error</string>
+  <string name="connection_waiting">En espera</string>
   <string name="fiscal_included">%1$s: incluido en el precio</string>
   <string name="price_value_included">Incluido en el precio</string>
   <string name="market_info_included">El precio publicado ya incluye IVA, impuestos y cargos, así que no se añade nada.</string>
