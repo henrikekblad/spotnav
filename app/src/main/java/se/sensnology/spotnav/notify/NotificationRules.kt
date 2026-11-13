@@ -180,7 +180,7 @@ internal object NotificationRules {
         val connection = dashboard.connection
         val connected = when (connection) {
             ConnectionState.DISCONNECTED -> false
-            ConnectionState.CONNECTED, ConnectionState.CHARGING, ConnectionState.PAUSED, ConnectionState.FINISHED -> true
+            ConnectionState.CONNECTED, ConnectionState.CHARGING, ConnectionState.PAUSED, ConnectionState.FINISHED, ConnectionState.WAITING -> true
             ConnectionState.ERROR, null -> null
         }
         val charging = dashboard.live.charging || connection == ConnectionState.CHARGING

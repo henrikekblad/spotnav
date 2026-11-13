@@ -81,7 +81,7 @@ internal object VehicleIdentification {
         return guest.active || dashboard.connection in PLUGGED_IN
     }
 
-    private val PLUGGED_IN = setOf(ConnectionState.CONNECTED, ConnectionState.CHARGING, ConnectionState.PAUSED, ConnectionState.FINISHED)
+    private val PLUGGED_IN = setOf(ConnectionState.CONNECTED, ConnectionState.CHARGING, ConnectionState.PAUSED, ConnectionState.FINISHED, ConnectionState.WAITING)
 
     /** Whether the question is open, so the connection line says it waits for an answer. */
     fun waitingForAnswer(dashboard: Dashboard): Boolean =

@@ -12,16 +12,23 @@ internal enum class ConnectionState(val wire: String) {
     CHARGING("charging"),
     PAUSED("paused"),
     FINISHED("finished"),
-    ERROR("error")
+    ERROR("error"),
+
+    /** Only ever the shown state: a finished session SpotNav holds for the plan while the car is not done. */
+    WAITING("waiting")
 }
 
-/** The dashboard's optional `connection: {state, source}` block. */
+/** The dashboard's optional `connection: {state, source, shown}` block. */
 internal object ChargerConnectionContract {
     /**
      * The state to show, or `null` for an absent block (older Home Assistant), `unknown`, or a
      * value this app does not know: then nothing is shown.
      */
     fun of(json: JSONObject?): ConnectionState? {
+        // `shown` is what the card shows (waiting, or connected for a finished that is not the car's);
+        // an older Home Assistant sends only `state`, and an unknown `shown` falls back to it.
+        val shown = json?.strictText("shown")?.let { wire -> ConnectionState.entries.firstOrNull { it.wire == wire } }
+        if (shown != null) return shown
         val state = json?.strictText("state") ?: return null
         return ConnectionState.entries.firstOrNull { it.wire == state }
     }

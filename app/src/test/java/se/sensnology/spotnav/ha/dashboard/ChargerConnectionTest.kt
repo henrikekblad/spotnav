@@ -27,6 +27,20 @@ class ChargerConnectionTest {
         assertNull(DashboardFixtures.dashboard("target_soc_estimated.json") { remove("connection") }.connection)
     }
 
+    private fun shown(state: String, shown: String?) = DashboardFixtures.dashboard("target_soc_estimated.json") {
+        put("connection", JSONObject().put("state", state).put("source", JSONObject.NULL).apply { shown?.let { put("shown", it) } })
+    }.connection
+
+    @Test
+    fun `the shown state wins and the charger's state is the fallback`() {
+        assertEquals(ConnectionState.WAITING, shown("finished", "waiting"))
+        assertEquals(ConnectionState.CONNECTED, shown("finished", "connected"))
+        assertEquals(ConnectionState.FINISHED, shown("finished", "finished"))
+        assertEquals(ConnectionState.FINISHED, shown("finished", null))
+        assertEquals(ConnectionState.FINISHED, shown("finished", "from-the-future"))
+        assertEquals(ConnectionState.FINISHED, shown("finished", "unknown"))
+    }
+
     private fun advisory(edit: JSONObject.() -> Unit = {}) = FullCarRule.advisory(
         DashboardFixtures.dashboard("target_soc_estimated.json") {
             put(

@@ -385,6 +385,7 @@ internal class ChargerDashboardController(
         ConnectionState.PAUSED -> R.string.connection_paused
         ConnectionState.FINISHED -> R.string.connection_finished
         ConnectionState.ERROR -> R.string.connection_error
+        ConnectionState.WAITING -> R.string.connection_waiting
     }
 
     /** Read the dashboard, store it, and show it. */
