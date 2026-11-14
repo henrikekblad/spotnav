@@ -24,7 +24,7 @@ thirty-five minutes, most of it the nine language passes.
    from nothing in `.work/ha-config` (the demo OCPP charger, Sigenergy plant, two Kia cars, a camera and an
    AI Task entity, and the integration linked in). Its Python environment is reused, or made here from its pinned requirements.
 2. `ha_setup.mjs setup` onboards the instance (reusing that tool's `driver/ha.mjs` and `driver/demo.mjs`), adds a
-   SpotNav charger ("Garage charger Connector 1") and a site ("Home"), and sets the instance's internal URL to
+   SpotNav charger ("Garage", the connector of the demo's "Garage charge point") and a site ("Home"), and sets the instance's internal URL to
    `http://localhost:8123`, the address the app is given. Two cars ("Family car", "City car") can charge at the
    charger, identification is **Automatic**, the camera is chosen with its parking bay cropped and a day reference
    picture of each car (the camera's picture is drawn by the demo: no photograph, no number plate), and "Family

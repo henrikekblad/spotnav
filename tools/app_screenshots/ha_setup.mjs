@@ -73,7 +73,7 @@ async function setup() {
   await flow(api, "spotnav", (s) => ({
     user: { entry_type: "charger" },
     charger: { mode: "detected" },
-  }[s.step_id] ?? (s.data_schema?.some((f) => f.name === "device") ? { device: deviceId("Garage charger Connector 1") }
+  }[s.step_id] ?? (s.data_schema?.some((f) => f.name === "device") ? { device: deviceId("Garage") }
     : s.data_schema?.some((f) => f.name === "charger_phases") ? { charger_phases: "3" } : {})));
   log("camera and the first car");
   const garage = await chargerId(api);
@@ -92,7 +92,7 @@ async function setup() {
 }
 
 async function chargerId(api) {
-  const entry = (await api.entries("spotnav")).find((e) => e.title.startsWith("Garage charger"));
+  const entry = (await api.entries("spotnav")).find((e) => e.title === "Garage");
   if (!entry) throw new Error("no SpotNav charger");
   return entry.entry_id;
 }
