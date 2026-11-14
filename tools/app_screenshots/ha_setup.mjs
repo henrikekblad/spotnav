@@ -89,6 +89,15 @@ async function setup() {
     return {};
   });
   for (const e of await api.entries("spotnav")) console.log(`   ${e.title}`);
+
+  // A fully set-up installation: every "Get started" row left is answered "Not needed", as a person would in
+  // the card's dialog, so the app shows no "Get started: N things left" line.
+  log("Get started rows answered");
+  for (const item of (await demo.dashboard(api, garage)).setup?.items ?? []) {
+    if (!item.dismissible) throw new Error(`setup row ${item.id} cannot be answered "Not needed"`);
+    await api.ws({ type: "spotnav/dismiss_setup_item", item: item.id });
+    console.log(`   ${item.id}`);
+  }
 }
 
 async function chargerId(api) {

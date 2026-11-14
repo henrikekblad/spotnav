@@ -32,7 +32,8 @@ thirty-five minutes, most of it the nine language passes.
    `http://localhost:8123`, the address the app is given. Two cars ("Family car", "City car") can charge at the
    charger, identification is **Automatic**, the camera is chosen with its parking bay cropped and a day reference
    picture of each car (the camera's picture is drawn by the demo: no photograph, no number plate), and "Family
-   car" is identified by its charging cable.
+   car" is identified by its charging cable. Every "Get started" row left is answered "Not needed", so the app
+   shows a fully set-up installation.
 3. Creates the `SpotNavDocs` emulator once (`make_avd.sh`; the other AVDs are never touched): 1080x2160
    at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. Every run
    boots it wiped, headless, in Europe/Stockholm time.
