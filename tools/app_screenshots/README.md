@@ -3,7 +3,7 @@
 Takes the app's documentation pictures (`docs/images/app-*.png`) and the Google Play store pictures
 (`fastlane/metadata/android/<locale>/images/phoneScreenshots/`) on a headless emulator, against a
 throwaway Home Assistant that runs only on this machine. No phone, real Home Assistant, relay or account
-is involved.
+is involved, and nothing is fetched from the network (after the first run's Python install).
 
     tools/app_screenshots/run.sh                    # everything: docs in English, store set in nine languages
     tools/app_screenshots/run.sh --sv               # also Swedish docs pictures, in docs/images/sv/
@@ -11,7 +11,8 @@ is involved.
     tools/app_screenshots/run.sh app-main store-widget   # only the named pictures
     tools/app_screenshots/run.sh --keep             # leave Home Assistant and the emulator up afterwards
 
-Needs the Home Assistant repository next to this one (`../elpris-home-assistant`, or `HA_REPO=...`),
+Needs the Home Assistant repository next to this one (`../elpris-home-assistant`, or `HA_REPO=...`, which a
+run from a git worktree elsewhere needs),
 `node` 22 or newer, `python3`, and the Android SDK in `~/Android/Sdk` (or `ANDROID_SDK_ROOT`) with the
 emulator and the `android-36` `google_apis_playstore` `x86_64` system image. A run takes about
 thirty-five minutes, most of it the nine language passes.
@@ -19,26 +20,30 @@ thirty-five minutes, most of it the nine language passes.
 ## What it does
 
 1. Starts the Home Assistant repository's own demo pieces from `tools/docs_screenshots` without changing
-   that repository: `relay_stub.py` on 127.0.0.1:8130 and `ha_launch.py` (Home Assistant with the relay
-   redirected to the stub and synthetic charge history) on 127.0.0.1:8129, with a configuration built
-   from nothing in `.work/ha-config` (the demo OCPP charger, Sigenergy plant, two Kia cars, a camera and an
-   AI Task entity, and the integration linked in). Its Python environment is reused, or made here from its pinned requirements.
+   that repository: `rates_stub.py` (the ECB's exchange rates, from a recorded file) on 127.0.0.1:8130 and
+   `ha_launch.py` (Home Assistant with the ECB's address redirected to the stub and synthetic charge history)
+   on 127.0.0.1:8129, with a configuration built from nothing in `.work/ha-config` (the demo OCPP charger,
+   Sigenergy plant, two Kia cars, a camera, an AI Task entity and a Nord Pool integration that serves the
+   recorded SE4 day `tests/fixtures/relay/day_SE4_2026-09-22_96.json` of that repository as today and
+   tomorrow, and the integration linked in). Its Python environment is reused, or made here from its pinned requirements.
 2. `ha_setup.mjs setup` onboards the instance (reusing that tool's `driver/ha.mjs` and `driver/demo.mjs`), adds a
-   SpotNav charger ("Garage", the connector of the demo's "Garage charge point") and a site ("Home"), and sets the instance's internal URL to
+   SpotNav charger ("Garage", the connector of the demo's "Garage charge point"; adding it also adds the
+   "Electricity price SE4" price device on the demo Nord Pool integration) and a site ("Home"), and sets the instance's internal URL to
    `http://localhost:8123`, the address the app is given. Two cars ("Family car", "City car") can charge at the
    charger, identification is **Automatic**, the camera is chosen with its parking bay cropped and a day reference
    picture of each car (the camera's picture is drawn by the demo: no photograph, no number plate), and "Family
-   car" is identified by its charging cable.
+   car" is identified by its charging cable. Every "Get started" row left is answered "Not needed", so the app
+   shows a fully set-up installation.
 3. Creates the `SpotNavDocs` emulator once (`make_avd.sh`; the other AVDs are never touched): 1080x2160
    at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. Every run
    boots it wiped, headless, in Europe/Stockholm time.
 4. Builds the debug app as the Play variant without Firebase:
    `./gradlew -Pstore=play -Ppush=false assembleDebug`. The app asks the relay for nothing here: its prices
-   are the paired Home Assistant's, and push is off. (`-PrelayBaseUrl=http://10.0.2.2:8130` still points a
-   debug build's push registration at a stub; it is for debug builds only: the build refuses it for any
-   other task, a release build compiles in the official address whatever is given, and `RelayAddress`
-   ignores a configured address outside a debug build, `RelayAddressTest` and `RelayAddressReleaseTest`
-   under `testReleaseUnitTest`.)
+   are the paired Home Assistant's, and push is off. (`-PrelayBaseUrl=...` can point a debug build's push
+   registration at a stub of one's own; it is for debug builds only: the build refuses it for any other
+   task, a release build compiles in the official address whatever is given, and `RelayAddress` ignores a
+   configured address outside a debug build, `RelayAddressTest` and `RelayAddressReleaseTest` under
+   `testReleaseUnitTest`.) Without a `local.properties` (a fresh worktree), give the SDK as `ANDROID_HOME`.
 5. `drive.py` drives the app with `adb` (always `-s emulator-5584`) and `uiautomator dump`, finding
    things by the app's own strings in each language: dark theme, demo status bar (12:00, full battery
    and signal, no notifications);
@@ -93,8 +98,8 @@ en-US is uploaded as en-GB and nb-NO as no-NO. The release workflow itself never
 
 - Pairing types `http://localhost:8123`; the app accepts plain HTTP for loopback, and the approval hands
   back the same address because the setup sets it as Home Assistant's internal URL.
-- Prices are the Home Assistant repository's recorded relay fixture moved to today and tomorrow (Home
-  Assistant's, sent to the app by `price_days` and the dashboard), so the
+- Prices are the Home Assistant repository's recorded SE4 day moved to today and tomorrow by its demo Nord
+  Pool integration (Home Assistant's, sent to the app by `price_days` and the dashboard), so the
   curves are the same every day; the "now" line, the price table's first rows and the plan's times move
   with the clock. The pairing code is random.
 - The launcher steps (long press, "Widgets", "Add") follow the Pixel launcher of the android-36 image

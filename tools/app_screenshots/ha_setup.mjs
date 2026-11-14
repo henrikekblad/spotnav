@@ -55,7 +55,7 @@ async function setup() {
   await ha.setLocation(api);
   // The address the app pairs with: the approval hands it back, so it must be the one the emulator uses.
   await api.ws({ type: "config/core/update", internal_url: APP_HA_URL });
-  for (const integration of ["ocpp", "sigen", "kia_uvo", "demo_vision"]) {
+  for (const integration of ["ocpp", "sigen", "kia_uvo", "demo_vision", "nordpool"]) {
     if ((await api.entries(integration)).length === 0) await api.flow(integration);
   }
   for (const entry of await api.entries("spotnav")) {
@@ -89,6 +89,15 @@ async function setup() {
     return {};
   });
   for (const e of await api.entries("spotnav")) console.log(`   ${e.title}`);
+
+  // A fully set-up installation: every "Get started" row left is answered "Not needed", as a person would in
+  // the card's dialog, so the app shows no "Get started: N things left" line.
+  log("Get started rows answered");
+  for (const item of (await demo.dashboard(api, garage)).setup?.items ?? []) {
+    if (!item.dismissible) throw new Error(`setup row ${item.id} cannot be answered "Not needed"`);
+    await api.ws({ type: "spotnav/dismiss_setup_item", item: item.id });
+    console.log(`   ${item.id}`);
+  }
 }
 
 async function chargerId(api) {
