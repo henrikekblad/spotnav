@@ -55,7 +55,7 @@ async function setup() {
   await ha.setLocation(api);
   // The address the app pairs with: the approval hands it back, so it must be the one the emulator uses.
   await api.ws({ type: "config/core/update", internal_url: APP_HA_URL });
-  for (const integration of ["ocpp", "sigen", "kia_uvo", "demo_vision"]) {
+  for (const integration of ["ocpp", "sigen", "kia_uvo", "demo_vision", "nordpool"]) {
     if ((await api.entries(integration)).length === 0) await api.flow(integration);
   }
   for (const entry of await api.entries("spotnav")) {

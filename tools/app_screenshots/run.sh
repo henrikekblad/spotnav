@@ -3,9 +3,9 @@
 #
 #   tools/app_screenshots/run.sh [--keep] [--sv] [--langs "en sv"] [shot-name ...]
 #
-# Starts the Home Assistant repository's demo instance and relay stub on 127.0.0.1 (its
+# Starts the Home Assistant repository's demo instance and ECB rates stub on 127.0.0.1 (its
 # tools/docs_screenshots pieces, run from a configuration directory of our own), boots the dedicated
-# SpotNavDocs emulator from a wiped state, installs a debug build pointed at the relay stub, pairs it,
+# SpotNavDocs emulator from a wiped state, installs a debug build, pairs it,
 # drives it and writes docs/images/app-*.png and the Play store set under fastlane/metadata/android.
 # --keep leaves Home Assistant and the emulator running (Ctrl-C ends them); --sv also writes Swedish
 # documentation pictures (docs/images/sv/); --langs limits the store languages (default: all nine).
@@ -107,10 +107,13 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# 4. The relay stub and Home Assistant, from the Home Assistant tool, on 127.0.0.1 only.
-"$VENV/bin/python" "$HA_TOOL/relay_stub.py" "$STUB_PORT" >"$LOGS/relay_stub.log" 2>&1 &
+# 4. The ECB rates stub and Home Assistant, from the Home Assistant tool, on 127.0.0.1 only. Prices come from
+#    the demo Nord Pool integration (the recorded SE4 day, moved to today and tomorrow); the stub serves the
+#    exchange rate that converts them to SEK.
+"$VENV/bin/python" "$HA_TOOL/rates_stub.py" "$STUB_PORT" >"$LOGS/rates_stub.log" 2>&1 &
 PIDS+=($!)
-DOCS_SEED_SESSIONS=1 RELAY_STUB_URL="http://127.0.0.1:$STUB_PORT" \
+DOCS_SEED_SESSIONS=1 DOCS_PRICE_FIXTURE="$HA_REPO/tests/fixtures/relay/day_SE4_2026-09-22_96.json" \
+  RATES_STUB_URL="http://127.0.0.1:$STUB_PORT" \
   "$VENV/bin/python" "$HA_TOOL/ha_launch.py" -c "$CONFIG" >"$LOGS/home-assistant.log" 2>&1 &
 PIDS+=($!)
 
