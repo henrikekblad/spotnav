@@ -64,7 +64,11 @@ internal data class NotificationSnapshot(
      */
     val carEndedEstimate: Double? = null,
     /** A person stopped or paused the charge (the status line `paused`): the plan's charge ending then is theirs, not done. */
-    val personPaused: Boolean = false
+    val personPaused: Boolean = false,
+    /** The dashboard shows the charger not ready (`charger_unavailable`, or its connection in error): no baseline for the target. */
+    val notReady: Boolean = false,
+    /** A completion was told for this charge and the car has not been unplugged nor a new charge started since. */
+    val completeTold: Boolean = false
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -87,6 +91,8 @@ internal data class NotificationSnapshot(
         put("planned_kwh", plannedKwh ?: JSONObject.NULL)
         put("plan_notice", planNotice ?: JSONObject.NULL)
         put("person_paused", personPaused)
+        put("not_ready", notReady)
+        put("complete_told", completeTold)
     }
 
     companion object {
@@ -115,7 +121,9 @@ internal data class NotificationSnapshot(
                 remainingKwh = number("remaining_kwh"),
                 plannedKwh = number("planned_kwh"),
                 planNotice = (json.opt("plan_notice") as? Number)?.toLong(),
-                personPaused = json.opt("person_paused") as? Boolean ?: false
+                personPaused = json.opt("person_paused") as? Boolean ?: false,
+                notReady = json.opt("not_ready") as? Boolean ?: false,
+                completeTold = json.opt("complete_told") as? Boolean ?: false
             )
         }.getOrNull()
     }
@@ -136,7 +144,7 @@ internal data class LocalEvent(
 )
 
 /** What one check decided: the events to post, and when each kind was last posted. */
-internal data class Derivation(val events: List<LocalEvent>, val lastSent: Map<NotificationEvent, Instant>)
+internal data class Derivation(val events: List<LocalEvent>, val lastSent: Map<NotificationEvent, Instant>, val snapshot: NotificationSnapshot? = null)
 
 /**
  * The phone's own background check, as rules: a dashboard becomes a [NotificationSnapshot], and two
@@ -226,7 +234,8 @@ internal object NotificationRules {
             remainingKwh = remaining,
             plannedKwh = dashboard.plan.proposal?.plannedKwh,
             planNotice = dashboard.planNotice,
-            personPaused = "paused" in codes
+            personPaused = "paused" in codes,
+            notReady = "charger_unavailable" in codes || connection == ConnectionState.ERROR
         )
     }
 
@@ -241,16 +250,22 @@ internal object NotificationRules {
         lastSent: Map<NotificationEvent, Instant>
     ): Derivation {
         if (previous == null || Duration.between(previous.at, current.at) > STALE || current.at.isBefore(previous.at)) {
-            return Derivation(emptyList(), lastSent)
+            return Derivation(emptyList(), lastSent, current.copy(completeTold = previous?.completeTold ?: false))
         }
         val found = changes(previous, current)
         val sent = lastSent.toMutableMap()
+        // A completion is told once per charge: again only after the car was unplugged or a new charge started.
+        var told = previous.completeTold && current.connected != false && !(current.charging && !previous.charging)
         val events = found.filter { event ->
+            if (event.event == NotificationEvent.CHARGE_COMPLETE && told) return@filter false
             val last = sent[event.event]
             val quiet = last != null && Duration.between(last, current.at) < QUIET
-            (event.event in chosen && !quiet).also { if (it) sent[event.event] = current.at }
+            (event.event in chosen && !quiet).also {
+                if (it) sent[event.event] = current.at
+                if (it && event.event == NotificationEvent.CHARGE_COMPLETE) told = true
+            }
         }
-        return Derivation(events, sent)
+        return Derivation(events, sent, current.copy(completeTold = told))
     }
 
     /** Every event the change from [before] to [now] is, chosen or not, in the contract's order. */
@@ -281,12 +296,14 @@ internal object NotificationRules {
         val event = NotificationEvent.CHARGE_COMPLETE
         val was = before.remainingKwh
         val left = now.remainingKwh
+        // A read while the charger was not ready lacks the status lines: no baseline for the target.
+        val baseline = !before.notReady
         return when {
-            now.targetReached && !before.targetReached -> LocalEvent(
+            baseline && now.targetReached && !before.targetReached -> LocalEvent(
                 event, reason = "target", percent = now.targetPercent, level = now.targetLevel, basis = now.targetBasis
             )
             // The car ended the plan's charge short of the target on an estimate: told once, as Home Assistant does.
-            now.carEndedEstimate != null && before.carEndedEstimate == null -> LocalEvent(
+            baseline && now.carEndedEstimate != null && before.carEndedEstimate == null -> LocalEvent(
                 event, reason = "target", percent = now.targetPercent, level = now.carEndedEstimate, basis = "estimate"
             )
             was != null && was > NEED_MET_KWH && left != null && left <= NEED_MET_KWH -> LocalEvent(event, reason = "energy")

@@ -263,6 +263,45 @@ class NotificationRulesTest {
         assertNull(snapshot.stopReason)
     }
 
+    private fun complete(d: Derivation) = d.events.filter { it.event == CHARGE_COMPLETE }
+
+    @Test fun aRestartFlickerOfTheTargetLineTellsTheCompletionOnce() {
+        val m = Duration.ofMinutes(20)
+        val done = snap(charging = true).copy(targetPercent = 80.0)
+        val reached = snap(at = t0, targetReached = true, targetPercent = 80.0)
+        val first = NotificationRules.derive(done, reached, all, emptyMap())
+        assertEquals(1, complete(first).size)
+        val gone = snap(at = t0.plus(m), targetPercent = 80.0)
+        val second = NotificationRules.derive(first.snapshot, gone, all, first.lastSent)
+        val back = reached.copy(at = t0.plus(m).plus(m))
+        // Through the store, as a killed process would.
+        val store = LocalNotificationStore(FakeKeyValueStore())
+        store.remember("p", second.snapshot!!, second.lastSent)
+        val third = NotificationRules.derive(store.snapshot("p"), back, all, store.lastSent("p"))
+        assertEquals(emptyList<LocalEvent>(), complete(third))
+    }
+
+    @Test fun aCompletionIsToldAgainAfterAnUnplugOrANewCharge() {
+        val m = Duration.ofMinutes(20)
+        fun told(at: Instant) = snap(at = at, targetReached = true).copy(completeTold = true)
+        val unplugged = NotificationRules.derive(told(t0), snap(at = t0.plus(m), connected = false), all, emptyMap())
+        assertFalse(unplugged.snapshot!!.completeTold)
+        val again = NotificationRules.derive(unplugged.snapshot, snap(at = t0.plus(m).plus(m), targetReached = true), all, emptyMap())
+        assertEquals(1, complete(again).size)
+        val started = NotificationRules.derive(told(t0), snap(at = t0.plus(m), charging = true), all, emptyMap())
+        assertFalse(started.snapshot!!.completeTold)
+    }
+
+    @Test fun aReadWhileTheChargerWasNotReadyIsNoBaselineForTheTarget() {
+        val m = Duration.ofMinutes(20)
+        val unready = snap(at = t0).copy(notReady = true)
+        assertEquals(emptyList<LocalEvent>(), complete(NotificationRules.derive(unready, snap(at = t0.plus(m), targetReached = true), all, emptyMap())))
+        val estimate = snap(at = t0.plus(m)).copy(carEndedEstimate = 80.0)
+        assertEquals(emptyList<LocalEvent>(), complete(NotificationRules.derive(unready, estimate, all, emptyMap())))
+        val dashboard = idleWith("charger_unavailable")
+        assertTrue(NotificationRules.snapshot(dashboard, t0, ZoneId.of("UTC")).notReady)
+    }
+
     @Test fun aTargetStopIsToldWithTheLevelAndHowItIsKnown() {
         val stopped = Dashboard.parse(HaFixtures.json("dashboard/target_soc_stopped_on_estimate.json"))
         val snapshot = NotificationRules.snapshot(stopped, Instant.parse("2026-09-22T06:45:00Z"), ZoneId.of("UTC"))
