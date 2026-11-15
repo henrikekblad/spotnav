@@ -1,0 +1,4 @@
+- Diagrammet viser prisområdet til den sammenkoblede laderen
+- Laderens status sier Venter mens SpotNav holder ladingen for planen, og Ferdig først når bilen er ferdig
+- Hjelpen for ENTSO-E-nøkkelen navngir siden slik den heter i dag
+- Nye bilder i butikken

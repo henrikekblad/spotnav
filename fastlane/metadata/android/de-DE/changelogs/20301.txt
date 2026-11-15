@@ -1,0 +1,4 @@
+- Das Diagramm zeigt das Preisgebiet der gekoppelten Ladestation
+- Der Status der Ladestation sagt Wartet, solange SpotNav das Laden für den Plan zurückhält, und Fertig erst, wenn das Auto fertig ist
+- Die Hilfe zum ENTSO-E-Schlüssel nennt die Seite so, wie sie heute heißt
+- Neue Bilder im Store

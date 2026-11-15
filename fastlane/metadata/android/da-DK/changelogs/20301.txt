@@ -1,0 +1,4 @@
+- Diagrammet viser den parrede laders prisområde
+- Laderens status siger Venter, mens SpotNav holder opladningen til planen, og Færdig først når bilen er færdig
+- Hjælpen til ENTSO-E-nøglen nævner siden, som den hedder i dag
+- Nye billeder i butikken

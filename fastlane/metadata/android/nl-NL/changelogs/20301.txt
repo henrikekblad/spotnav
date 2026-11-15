@@ -1,0 +1,4 @@
+- De grafiek toont het prijsgebied van de gekoppelde laadpaal
+- De status van de laadpaal zegt Wacht zolang SpotNav het laden voor het plan vasthoudt, en Klaar pas als de auto klaar is
+- De hulp bij de ENTSO-E-sleutel noemt de pagina zoals die nu heet
+- Nieuwe afbeeldingen in de store

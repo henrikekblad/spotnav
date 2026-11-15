@@ -1,0 +1,4 @@
+- Le graphique affiche la zone de prix de la borne appairée
+- L'état de la borne indique En attente tant que SpotNav retient la charge pour le plan, et Terminé seulement quand la voiture a fini
+- L'aide pour la clé ENTSO-E nomme la page comme elle s'appelle aujourd'hui
+- Nouvelles images dans la boutique

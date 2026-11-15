@@ -1,0 +1,4 @@
+- El gráfico muestra la zona de precios del cargador vinculado
+- El estado del cargador dice Esperando mientras SpotNav retiene la carga para el plan, y Terminado solo cuando el coche ha terminado
+- La ayuda de la clave de ENTSO-E nombra la página como se llama hoy
+- Nuevas imágenes en la tienda

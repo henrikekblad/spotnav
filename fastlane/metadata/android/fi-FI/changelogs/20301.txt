@@ -1,0 +1,4 @@
+- Kaavio näyttää paritetun laturin hinta-alueen
+- Laturin tila on Odottaa, kun SpotNav pitää latausta suunnitelmaa varten, ja Valmis vasta kun auto on valmis
+- ENTSO-E-avaimen ohje nimeää sivun sen nykyisellä nimellä
+- Uudet kaupan kuvat

@@ -1,0 +1,4 @@
+- Diagrammet visar den parkopplade laddboxens prisområde
+- Laddboxens status säger Väntar medan SpotNav håller laddningen för planen, och Klar först när bilen är klar
+- Hjälpen för ENTSO-E-nyckeln namnger sidan som den heter i dag
+- Nya bilder i butiken

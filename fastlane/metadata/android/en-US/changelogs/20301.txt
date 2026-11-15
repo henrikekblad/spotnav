@@ -1,0 +1,4 @@
+- The chart shows the paired charger's price area
+- The charger's status says Waiting while SpotNav holds the charge for the plan, and Finished only when the car is done
+- The help for the ENTSO-E key names the page as it reads today
+- New store pictures
