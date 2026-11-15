@@ -174,7 +174,7 @@ internal object LocalNotifications {
             if (store.observeIdentifies(profile.localId, VehicleIdentification.advertised(dashboard))) identifyingChanged = true
             val current = NotificationRules.snapshot(dashboard, now)
             val derivation = NotificationRules.derive(store.snapshot(profile.localId), current, chosen, store.lastSent(profile.localId))
-            store.remember(profile.localId, current, derivation.lastSent)
+            store.remember(profile.localId, derivation.snapshot ?: current, derivation.lastSent)
             val name = dashboard.chargerName?.trim()?.takeIf { it.isNotEmpty() }
                 ?: profile.label(AppLanguageSettings.text(app, R.string.section_charger))
             IdentifyNotifications.follow(app, store, profile.localId, name, dashboard, NotificationEvent.VEHICLE_IDENTIFY in chosen)
