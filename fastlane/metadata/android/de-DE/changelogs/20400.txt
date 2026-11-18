@@ -1,5 +1,4 @@
 - Der Status der Ladestation steht jetzt hinter ihrem Namen oben auf der Karte: Garage · Wartet
 - Ein Auto ohne angegebene Batteriegröße zeigt die aus Ladevorgängen gelernte Größe und schlägt sie vor
 - Lastmanagement, das Bezug und Einspeisung nicht unterscheiden kann, sagt, was dein Zähler dafür tun kann
-- Bereit für SpotNav für Home Assistant 3.0: die Sonne im Preisdiagramm, der Aufschlag des Stromanbieters und die Abfahrt aus dem Kalender
 - Für SpotNav für Home Assistant 2.5

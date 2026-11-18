@@ -1,5 +1,4 @@
 - De status van de laadpaal staat nu achter de naam bovenaan de kaart: Garage · Wacht
 - Een auto zonder opgegeven batterijgrootte toont de grootte die uit laadbeurten is geleerd, en stelt die voor
 - Load balancing dat afname en teruglevering niet kan onderscheiden, zegt wat je meter eraan kan doen
-- Klaar voor SpotNav voor Home Assistant 3.0: de zon in de prijsgrafiek, de opslag van de leverancier en vertrek uit de agenda
 - Voor SpotNav voor Home Assistant 2.5

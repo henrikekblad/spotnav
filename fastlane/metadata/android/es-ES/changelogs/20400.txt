@@ -1,5 +1,4 @@
 - El estado del cargador aparece ahora tras su nombre en la parte superior de la tarjeta: Garaje · En espera
 - Un coche sin tamaño de batería indicado muestra el tamaño aprendido de las cargas y lo propone
 - El equilibrado de carga que no distingue consumo de vertido dice qué puede hacer tu contador
-- Listo para SpotNav para Home Assistant 3.0: el sol en el gráfico de precios, el margen de la comercializadora y la salida desde el calendario
 - Para SpotNav para Home Assistant 2.5
