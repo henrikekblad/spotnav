@@ -2,7 +2,12 @@ package se.sensnology.spotnav.ui.site
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.PixelFormat
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.TypedValue
 import android.view.Gravity
@@ -131,9 +136,9 @@ internal class TabRowView(
             cell.addView(face, FrameLayout.LayoutParams(size, size, Gravity.CENTER).apply {
                 marginStart = pad; marginEnd = pad; topMargin = scope.dp(6); bottomMargin = scope.dp(8)
             })
-            // The rule under the row, and over it the chosen tab's line in the accent colour.
-            cell.addView(View(context).apply { setBackgroundColor(if (chosen) scope.accent else rule) },
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, scope.dp(if (chosen) 2 else 1), Gravity.BOTTOM))
+            // The rule under the row, and over it the chosen tab's line in the accent colour: the cell's own
+            // background, so it is as wide as the cell without having a say in how wide that is.
+            cell.background = BottomLine(if (chosen) scope.accent else rule, scope.dp(if (chosen) 2 else 1))
             cell.isSelected = chosen
             // Read as one of several options, the chosen one checked.
             cell.accessibilityDelegate = object : AccessibilityDelegate() {
@@ -154,4 +159,25 @@ internal class TabRowView(
         const val PAD_DP = 7
         val MEDIUM: Typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
     }
+}
+
+/** A line of [thickness] px along the bottom edge of whatever it is the background of. */
+private class BottomLine(colour: Int, private val thickness: Int) : Drawable() {
+    private val paint = Paint().apply { color = colour }
+
+    override fun draw(canvas: Canvas) {
+        val box = bounds
+        canvas.drawRect(box.left.toFloat(), (box.bottom - thickness).toFloat(), box.right.toFloat(), box.bottom.toFloat(), paint)
+    }
+
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+    }
+
+    override fun setColorFilter(filter: ColorFilter?) {
+        paint.colorFilter = filter
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 }
