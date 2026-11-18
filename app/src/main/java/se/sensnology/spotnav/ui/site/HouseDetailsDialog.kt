@@ -166,7 +166,7 @@ internal class HouseDetailsDialog(
             textSize = 14f
             setTextColor(scope.dark)
             text = block.inForce?.let { "${block.name} · $it" } ?: block.name
-        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.4f))
+        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f))
         val filled = (block.percent ?: 0.0).coerceIn(0.0, 100.0).toFloat()
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -192,22 +192,24 @@ internal class HouseDetailsDialog(
     /** A table of cells in equal columns (the first wider); a cell of the table's [DetailBlock.Table.mutedCells] muted. */
     private fun table(block: DetailBlock.Table) = LinearLayout(scope.context).apply {
         orientation = LinearLayout.VERTICAL
-        addView(cells(block.head, head = true))
+        // The day's name and a last column that may say why there is no share get more room than the figures.
+        val weights = block.head.mapIndexed { i, _ -> if (i == 0) 1.5f else if (i == block.head.lastIndex && block.head.size > 4) 1.7f else 1f }
+        addView(cells(block.head, head = true, weights = weights))
         block.rows.forEachIndexed { r, row ->
-            addView(cells(row, muted = block.mutedCells.filter { it.first == r }.map { it.second }.toSet()), wide().apply { topMargin = scope.dp(4) })
+            addView(cells(row, muted = block.mutedCells.filter { it.first == r }.map { it.second }.toSet(), weights = weights), wide().apply { topMargin = scope.dp(4) })
         }
     }
 
-    private fun cells(values: List<String>, head: Boolean = false, muted: Set<Int> = emptySet()) = LinearLayout(scope.context).apply {
+    private fun cells(values: List<String>, head: Boolean = false, muted: Set<Int> = emptySet(), weights: List<Float>? = null) = LinearLayout(scope.context).apply {
         orientation = LinearLayout.HORIZONTAL
         values.forEachIndexed { i, value ->
             addView(TextView(context).apply {
-                textSize = if (head) 12f else 13.5f
+                textSize = if (head) 11.5f else 13.5f
                 setTextColor(if (head || i in muted) scope.muted else scope.dark)
                 if (head) typeface = MEDIUM
                 gravity = if (i == 0) Gravity.START else Gravity.END
                 this.text = value
-            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, if (i == 0) 1.6f else 1f))
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, weights?.get(i) ?: 1f))
         }
     }
 

@@ -9,8 +9,8 @@ import java.time.ZoneId
 /**
  * The house (webhook `get_house`, the twin of `spotnav/get_house`, `api_version` 1), as far as the house page reads
  * it: the hours with the battery plan, the battery, the day's money and energy flow, and what is being learned. The
- * blocks behind the details (`house`, `days`, `calendar`, `day_review`, `sources`, `flow`, the battery's `modes` and
- * `review`) are not read here yet. Shape: the integration's `site/house_view.py`; the card's reader is
+ * blocks behind the details (`days`, `calendar`, `day_review`, `flow`, the battery's `modes` and `review`) are not read
+ * here yet; where the figures come from (`sources`, `house`, the heat meter, the battery's estimates) is [HouseSources]. Shape: the integration's `site/house_view.py`; the card's reader is
  * `frontend/src/house-model.ts`.
  */
 internal data class House(

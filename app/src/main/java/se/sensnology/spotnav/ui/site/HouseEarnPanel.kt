@@ -87,6 +87,7 @@ internal class HouseEarnPanel(
     override fun render(): Boolean {
         val now = house() ?: return false
         listOf(heading, status, bars, notes).forEach { it.visibility = View.GONE }
+        title.visibility = View.VISIBLE
         val shown = when (val loaded = store.history(store.choice)) {
             null, Load.Loading -> say("hist.loading")
             is Load.Failed -> say(if (loaded.unsupported) "hist.unsupported" else "hist.failed")
@@ -110,6 +111,8 @@ internal class HouseEarnPanel(
         val total = HouseEarn.total(history, hidden)
         heading.text = if (total == null) words.say("house.earn.noneShown") else words.say("house.earn.total", "amount" to text.amount(total, money))
         heading.visibility = View.VISIBLE
+        // The headline says "Intäkt X kr": the box's name over it only where it does not (no part drawn).
+        title.visibility = if (total == null) View.VISIBLE else View.GONE
         val drawn = HouseEarn.bars(text, locale, history, hidden, money)
         val spec = HouseEarn.series(history, colours, text, money)
         // With nothing to draw the legend stays, so a part can be turned on again; the bars do not.
