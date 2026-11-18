@@ -77,7 +77,7 @@ class HeatDetailsModelTest {
     @Test fun comfortNamesTheColdestRoomWithoutItsTemperatureWord() {
         val comfort = sections("zones_day.json").getValue("comfort").figures()
         assertEquals("Övervåning", comfort["coldest"])
-        assertTrue(comfort.getValue("below").contains("/"))
+        assertTrue(comfort.getValue("below"), comfort.getValue("below").contains("7") && comfort.getValue("below").contains("24"))
     }
 
     @Test fun everyWordIsInEveryLanguage() {
