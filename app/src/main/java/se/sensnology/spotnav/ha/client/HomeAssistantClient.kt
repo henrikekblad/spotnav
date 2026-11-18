@@ -4,6 +4,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ha.house.HouseHistoryRead
+import se.sensnology.spotnav.ha.house.HouseLoads
+import se.sensnology.spotnav.ha.house.HouseLoadsRead
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.HouseNowRead
 import se.sensnology.spotnav.ha.house.HouseRead
@@ -352,6 +356,18 @@ object HomeAssistantClient {
     internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
         val (status, body) = write(settings, HouseRead.payload(date))
         return HouseRead.answer(status, body)
+    }
+
+    /** One [period] (`day`, `month`, `year`) of the house around [date] (`null`: the running one) (webhook `get_house_history`). Never throws. */
+    internal fun houseHistory(settings: HomeAssistantSettings, period: String, date: java.time.LocalDate?): SiteRead<HouseHistory> {
+        val (status, body) = write(settings, HouseHistoryRead.payload(period, date))
+        return HouseHistoryRead.answer(status, body)
+    }
+
+    /** What the house or the heat ([kind]) used over a period, by device (webhook `get_house_loads`). Never throws. */
+    internal fun houseLoads(settings: HomeAssistantSettings, kind: String, period: String, date: java.time.LocalDate?): SiteRead<HouseLoads> {
+        val (status, body) = write(settings, HouseLoadsRead.payload(kind, period, date))
+        return HouseLoadsRead.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */

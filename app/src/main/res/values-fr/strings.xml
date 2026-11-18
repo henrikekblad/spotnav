@@ -926,4 +926,49 @@
   <string name="card_hist_pick_day" formatted="false">Choisir un jour</string>
   <string name="card_hist_pick_month" formatted="false">Choisir un mois</string>
   <string name="card_hist_pick_year" formatted="false">Choisir une année</string>
+  <string name="card_house_flow_solar" formatted="false">Soleil</string>
+  <string name="card_house_flow_battery" formatted="false">Batterie</string>
+  <string name="card_house_flow_grid" formatted="false">Réseau</string>
+  <string name="card_house_flow_house" formatted="false">Maison</string>
+  <string name="card_house_flow_car" formatted="false">Voiture</string>
+  <string name="card_house_flow_heat" formatted="false">Chauffage</string>
+  <string name="card_house_flow_soc_now" formatted="false">maintenant {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">fin {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Le flux d’énergie du jour apparaît dès que les cinq premières minutes sont là.</string>
+  <string name="card_house_loads_title" formatted="false">Ce que la maison a consommé</string>
+  <string name="card_house_loads_title_heat" formatted="false">Ce que le chauffage a consommé</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Voir ce que la maison a consommé</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Voir ce que le chauffage a consommé</string>
+  <string name="card_house_loads_tap" formatted="false">Touchez Maison pour voir ce qui a consommé son énergie.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Touchez Maison ou Chauffage pour voir ce qui a consommé l\'énergie.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Autres mesurés</string>
+  <string name="card_house_loads_unknown" formatted="false">Inconnu</string>
+  <string name="card_house_loads_today" formatted="false">Aujourd\'hui jusqu\'ici</string>
+  <string name="card_house_loads_reading" formatted="false">Lecture des compteurs…</string>
+  <string name="card_house_loads_failed" formatted="false">Les compteurs n\'ont pas pu être lus pour l\'instant.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Cela demande une intégration SpotNav plus récente.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Il n\'y a pas de chiffre pour la maison sur cette période.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Autres mesurés: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Les compteurs totalisent {kwh} de plus que la maison, donc Inconnu est affiché à 0.</string>
+  <string name="card_house_loads_none" formatted="false">Aucun compteur sur des appareils individuels pour l\'instant. Ajoutez-les dans le tableau de bord Énergie de Home Assistant, sous Appareils individuels, pour les voir ici.</string>
+  <string name="card_house_loads_car_heat" formatted="false">La voiture et le chauffage sont montrés à part dans le flux et ne sont pas compris ici.</string>
+  <string name="card_house_loads_car" formatted="false">La voiture est montrée à part dans le flux et n\'est pas comprise ici.</string>
+  <string name="card_house_loads_heat" formatted="false">Le chauffage est montré à part dans le flux et n\'est pas compris ici.</string>
+  <string name="card_house_loads_chart" formatted="false">L\'énergie de la maison : {list}</string>
+  <string name="card_house_loads_changed" formatted="false">modifié par vous</string>
+  <string name="card_house_loads_implausible" formatted="false">{name} : {hours} heures aux valeurs impossibles ne sont pas comptées (le compteur saute). Corrigez ses statistiques dans Home Assistant sous Outils de développement → Statistiques.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name} : aucune heure n\'avait de valeur possible, il est donc laissé de côté (le compteur saute). Corrigez ses statistiques dans Home Assistant sous Outils de développement → Statistiques.</string>
+  <string name="card_hist_loading" formatted="false">Lecture de l\'historique…</string>
+  <string name="card_hist_failed" formatted="false">L\'historique n\'a pas pu être lu. Réessayez dans un instant.</string>
+  <string name="card_hist_unsupported" formatted="false">L\'intégration ne propose pas encore cet historique : mettez SpotNav à jour.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Le tableau Énergie n\'a pas de compteur réseau, l\'énergie ne peut donc pas être montrée : ajoutez l\'import du réseau dans Paramètres → Tableaux de bord → Énergie.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Aucune énergie mesurée sur cette période.</string>
+  <string name="card_house_tile_sun" formatted="false">Soleil</string>
+  <string name="card_house_tile_house" formatted="false">Maison</string>
+  <string name="card_house_tile_discharged" formatted="false">Déchargé</string>
+  <string name="card_house_tile_charged" formatted="false">Chargé</string>
+  <string name="card_house_tile_bought" formatted="false">Acheté</string>
+  <string name="card_house_tile_sold" formatted="false">Vendu</string>
+  <string name="card_house_tile_heat" formatted="false">Chauffage</string>
+  <string name="card_house_tile_car" formatted="false">Voiture</string>
 </resources>

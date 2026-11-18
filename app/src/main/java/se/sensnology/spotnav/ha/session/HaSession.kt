@@ -24,6 +24,8 @@ import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ha.house.HouseLoads
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -102,6 +104,12 @@ internal interface HaTransport {
     /** `get_house`: the site's house for today or a past day. */
     fun house(date: LocalDate?): SiteRead<House> = SiteRead.Failed(null)
 
+    /** `get_house_history`: a day, month or year of the house. */
+    fun houseHistory(period: String, date: LocalDate?): SiteRead<HouseHistory> = SiteRead.Failed(null)
+
+    /** `get_house_loads`: what the house or the heat used, by device. */
+    fun houseLoads(kind: String, period: String, date: LocalDate?): SiteRead<HouseLoads> = SiteRead.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -164,6 +172,10 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
     override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
+
+    override fun houseHistory(period: String, date: LocalDate?) = HomeAssistantClient.houseHistory(connection, period, date)
+
+    override fun houseLoads(kind: String, period: String, date: LocalDate?) = HomeAssistantClient.houseLoads(connection, kind, period, date)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -398,6 +410,22 @@ internal class HaSession(
     fun house(date: LocalDate?, done: (SiteRead<House>) -> Unit) {
         background.execute {
             val outcome = transport.house(date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_history` (never throws). */
+    fun houseHistory(period: String, date: LocalDate?, done: (SiteRead<HouseHistory>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseHistory(period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_loads` (never throws). */
+    fun houseLoads(kind: String, period: String, date: LocalDate?, done: (SiteRead<HouseLoads>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseLoads(kind, period, date)
             mainThread { done(outcome) }
         }
     }

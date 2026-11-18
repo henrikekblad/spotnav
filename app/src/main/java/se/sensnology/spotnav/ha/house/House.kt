@@ -267,7 +267,7 @@ internal object HouseRead {
         )
     }
 
-    private fun energyFlow(json: JSONObject): House.EnergyFlow = with(StrictJson) {
+    internal fun energyFlow(json: JSONObject): House.EnergyFlow = with(StrictJson) {
         fun kwh(raw: Any?, what: String): Double = number(raw, what).also { if (it < 0) bad(what) }
         val nodes = list(json.opt("nodes"), "energy_flow.nodes").map { entry ->
             val node = obj(entry, "energy_flow.node")

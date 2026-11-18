@@ -926,4 +926,49 @@
   <string name="card_hist_pick_day" formatted="false">Elegir un día</string>
   <string name="card_hist_pick_month" formatted="false">Elegir un mes</string>
   <string name="card_hist_pick_year" formatted="false">Elegir un año</string>
+  <string name="card_house_flow_solar" formatted="false">Sol</string>
+  <string name="card_house_flow_battery" formatted="false">Batería</string>
+  <string name="card_house_flow_grid" formatted="false">Red</string>
+  <string name="card_house_flow_house" formatted="false">Casa</string>
+  <string name="card_house_flow_car" formatted="false">Coche</string>
+  <string name="card_house_flow_heat" formatted="false">Calefacción</string>
+  <string name="card_house_flow_soc_now" formatted="false">ahora {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">final {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">El flujo de energía de hoy aparece cuando estén los primeros cinco minutos.</string>
+  <string name="card_house_loads_title" formatted="false">Lo que usó la casa</string>
+  <string name="card_house_loads_title_heat" formatted="false">Qué usó la calefacción</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Ver lo que usó la casa</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Ver qué usó la calefacción</string>
+  <string name="card_house_loads_tap" formatted="false">Toca Casa para ver qué usó su energía.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Toca Casa o Calefacción para ver qué usó la energía.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Otros medidos</string>
+  <string name="card_house_loads_unknown" formatted="false">Desconocido</string>
+  <string name="card_house_loads_today" formatted="false">Hoy hasta ahora</string>
+  <string name="card_house_loads_reading" formatted="false">Leyendo los medidores…</string>
+  <string name="card_house_loads_failed" formatted="false">Los medidores no se pudieron leer ahora.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Esto necesita una integración de SpotNav más reciente.</string>
+  <string name="card_house_loads_no_flow" formatted="false">No hay cifra de la casa para este período.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Otros medidos: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Los medidores suman {kwh} más que la casa, así que Desconocido se muestra como 0.</string>
+  <string name="card_house_loads_none" formatted="false">Aún no hay medidores en dispositivos individuales. Añádelos en el panel de Energía de Home Assistant, en Dispositivos individuales, para verlos aquí.</string>
+  <string name="card_house_loads_car_heat" formatted="false">El coche y la calefacción se muestran aparte en el flujo y no están incluidos aquí.</string>
+  <string name="card_house_loads_car" formatted="false">El coche se muestra aparte en el flujo y no está incluido aquí.</string>
+  <string name="card_house_loads_heat" formatted="false">La calefacción se muestra aparte en el flujo y no está incluida aquí.</string>
+  <string name="card_house_loads_chart" formatted="false">La energía de la casa: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">cambiado por ti</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} horas con valores imposibles no se cuentan (el contador salta). Corrige sus estadísticas en Home Assistant en Herramientas para desarrolladores → Estadísticas.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: ninguna hora tuvo un valor posible, así que se deja fuera (el contador salta). Corrige sus estadísticas en Home Assistant en Herramientas para desarrolladores → Estadísticas.</string>
+  <string name="card_hist_loading" formatted="false">Leyendo el historial…</string>
+  <string name="card_hist_failed" formatted="false">No se pudo leer el historial. Inténtalo de nuevo en un momento.</string>
+  <string name="card_hist_unsupported" formatted="false">La integración aún no ofrece este historial: actualiza SpotNav.</string>
+  <string name="card_hist_house_no_meters" formatted="false">El panel de Energía no tiene contador de red, así que no se puede mostrar la energía: añade la importación de red en Ajustes → Paneles → Energía.</string>
+  <string name="card_hist_house_no_energy" formatted="false">No se midió energía en este periodo.</string>
+  <string name="card_house_tile_sun" formatted="false">Sol</string>
+  <string name="card_house_tile_house" formatted="false">Casa</string>
+  <string name="card_house_tile_discharged" formatted="false">Descargado</string>
+  <string name="card_house_tile_charged" formatted="false">Cargado</string>
+  <string name="card_house_tile_bought" formatted="false">Comprado</string>
+  <string name="card_house_tile_sold" formatted="false">Vendido</string>
+  <string name="card_house_tile_heat" formatted="false">Calor</string>
+  <string name="card_house_tile_car" formatted="false">Coche</string>
 </resources>

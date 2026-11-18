@@ -97,7 +97,11 @@ given a power (`power_charger`: `current_range.kw_per_a`), shown in kW.
 The `house` scenario is Home Assistant 3.0's house over the charger's webhook: its dashboard states
 `capabilities.get_house`, so the app shows the row of page icons and the house page, and the webhook answers
 `get_house_now` (the live flows, moving a little from read to read so the 10 s polling shows) and `get_house` (the
-villa's day moved to now), both from the vendored fixtures (`ha-fixtures/house_now/`, `ha-fixtures/house/`).
+villa's day moved to now), both from the vendored fixtures (`ha-fixtures/house_now/`, `ha-fixtures/house/`). The Energy flow
+tab reads `get_house_history` (a day, month or year: the villa's, or for `flows=alone` a house with the grid alone)
+and, for the pie behind House and Heat, `get_house_loads` (`ha-fixtures/house_history/`, `ha-fixtures/house_loads/`);
+the answers are the fixtures with their period moved to the one asked for, a date after today is refused as
+`spotnav_invalid_date`.
 `GET /spotnav-mock/house?flows=now|export|car|alone|none&control=own|test|on` chooses the moment: buying a little,
 selling the sun, the car charging, a house with the grid alone, or no live answer at all (`none`: the reads are
 refused, as when the site is not loaded); and who runs the battery: its own optimiser, nobody yet (Test), or SpotNav.
@@ -730,6 +734,71 @@ def house_body(payload: dict) -> tuple[int, dict]:
     return 200, {"ok": True, "action": action, **body}
 
 
+def _asked_period(payload: dict, action: str):
+    """The period a history or loads request asks for as (period, first day, first day after, today), or the refusal."""
+    period = payload.get("period", "day")
+    zone = ZoneInfo("Europe/Stockholm")
+    today = datetime.now(zone).date()
+    try:
+        day = date.fromisoformat(payload["date"]) if payload.get("date") else today
+    except ValueError:
+        day = None
+    if period not in ("day", "month", "year") or day is None or day > today:
+        return None, (400, {"ok": False, "error": "spotnav_invalid_date", "action": action})
+    if period == "day":
+        first, end = day, day + timedelta(days=1)
+    elif period == "month":
+        first = day.replace(day=1)
+        end = (first + timedelta(days=32)).replace(day=1)
+    else:
+        first, end = day.replace(month=1, day=1), day.replace(year=day.year + 1, month=1, day=1)
+    return (period, first, end, today), None
+
+
+def house_history_body(payload: dict) -> tuple[int, dict]:
+    """`get_house_history` in the `house` scenario: the villa's period (a house with the grid alone for `flows=alone`)
+    drawn as the one asked for."""
+    action = "get_house_history"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    asked, refusal = _asked_period(payload, action)
+    if refusal:
+        return refusal
+    period, first, end, today = asked
+    alone = HOUSE["flows"] == "alone"
+    name = {"day": "villa_day.json", "month": "villa_month.json", "year": "house_alone_year.json" if alone else "villa_year.json"}[period]
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_history" / name).read_text(encoding="utf-8"))
+    if alone and period != "year":
+        # A house with no Energy dashboard meter: the flow is null.
+        body["energy_flow"] = None
+    body.update({"period": period, "date": first.isoformat(), "end": end.isoformat(), "today": today.isoformat(), "complete": end <= today})
+    if body["energy_flow"] is not None:
+        body["energy_flow"]["date"] = first.isoformat()
+    return 200, {"ok": True, "action": action, **body}
+
+
+def house_loads_body(payload: dict) -> tuple[int, dict]:
+    """`get_house_loads` in the `house` scenario: what the house (or the heat) used by device, over the period asked for."""
+    action = "get_house_loads"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    kind = payload.get("kind", "house")
+    if kind not in ("house", "heat"):
+        return 400, {"ok": False, "error": "spotnav_invalid_kind", "action": action}
+    asked, refusal = _asked_period(payload, action)
+    if refusal:
+        return refusal
+    period, first, end, today = asked
+    name = "heat_villa_day.json" if kind == "heat" else {"day": "villa_day.json", "month": "moved_and_implausible_month.json", "year": "no_devices.json"}[period]
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_loads" / name).read_text(encoding="utf-8"))
+    body.update({"period": period, "date": first.isoformat(), "end": end.isoformat()})
+    return 200, {"ok": True, "action": action, **body}
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -910,7 +979,7 @@ SCENARIOS: dict[str, Charger] = {
     ),
     "house": Charger(
         "Villan",
-        why="the house over the webhook (HA 3.0): the row of page icons and the house page's Now tab, its live flows moving; set at /spotnav-mock/house",
+        why="the house over the webhook (HA 3.0): the row of page icons and the house page's Now and Energy flow tabs, its live flows moving; set at /spotnav-mock/house",
     ),
     "demand": Charger(
         "Effektmål",
@@ -1299,8 +1368,14 @@ class Handler(BaseHTTPRequestHandler):
                 if action == "plan_preview":
                     self._json(200, plan_preview_body(payload))
                     return
-                if action in ("get_house_now", "get_house") and key == "house":
-                    self._json(*(house_now_body() if action == "get_house_now" else house_body(payload)))
+                if action in ("get_house_now", "get_house", "get_house_history", "get_house_loads") and key == "house":
+                    handlers = {
+                        "get_house_now": lambda: house_now_body(),
+                        "get_house": lambda: house_body(payload),
+                        "get_house_history": lambda: house_history_body(payload),
+                        "get_house_loads": lambda: house_loads_body(payload),
+                    }
+                    self._json(*handlers[action]())
                     return
                 if action == "update_grid_tariff":
                     if key == "gridfee":
