@@ -23,6 +23,25 @@ class VendoredHaFixturesTest {
     private fun sourceRoot(): File? =
         repoRoot()?.let { File(it.parentFile, "elpris-home-assistant/tests/fixtures") }?.takeIf { it.isDirectory }
 
+    /** The integration commit the vendored copy was taken from (`ha-fixtures/REF`, written by the sync script). */
+    private fun vendoredRef(): String? = File(HaFixtures.root, "REF").takeIf { it.isFile }?.readText()?.trim()?.takeIf { it.isNotEmpty() }
+
+    /** The commit the integration's checkout next to this repository is at, or `null` when git cannot say. */
+    private fun checkedOut(repository: File): String? = runCatching {
+        val process = ProcessBuilder("git", "-C", repository.path, "rev-parse", "HEAD").redirectErrorStream(true).start()
+        val said = process.inputStream.bufferedReader().readText().trim()
+        said.takeIf { process.waitFor() == 0 && it.isNotEmpty() }
+    }.getOrNull()
+
+    /**
+     * Whether the checkout next to this repository is the one the copy was taken from: the copy may follow another
+     * branch of the integration (3.0's) than the one checked out, and is then not compared.
+     */
+    private fun sameCommit(source: File): Boolean {
+        val ref = vendoredRef() ?: return true
+        return checkedOut(source) == ref
+    }
+
     @Test fun theVendoredCopyIsNotEmpty() {
         assertTrue(HaFixtures.files("dashboard").size >= 10)
         assertTrue(HaFixtures.files("webhook").any { it.name == "dashboard.json" })
@@ -36,6 +55,7 @@ class VendoredHaFixturesTest {
     @Test fun theVendoredCopyEqualsTheHomeAssistantFixturesWhenTheyArePresent() {
         val source = sourceRoot()
         assumeTrue("the Home Assistant repository is not next to this one", source != null)
+        assumeTrue("the Home Assistant checkout is not at the commit the copy was taken from", sameCommit(source!!))
         for (part in vendored) {
             val theirs = File(source, part).walkTopDown().filter { it.isFile }
                 .associate { it.relativeTo(File(source, part)).path to it.readBytes() }
@@ -58,6 +78,7 @@ class VendoredHaFixturesTest {
         val theirs = File(root!!.parentFile, "elpris-home-assistant/custom_components/spotnav/pricing/areas.json")
         // The integration's checkout may be on a branch from before its own catalogue.
         assumeTrue("the integration's area catalogue is not next to this repository", theirs.isFile)
+        assumeTrue("the Home Assistant checkout is not at the commit the copy was taken from", sameCommit(theirs.parentFile))
         assertTrue(
             "app/src/main/assets/areas.json differs from the integration's (run scripts/sync_ha_fixtures.sh)",
             theirs.readBytes().contentEquals(ours.readBytes())
