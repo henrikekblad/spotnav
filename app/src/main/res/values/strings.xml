@@ -1467,4 +1467,6 @@
   <string name="card_hist_heat_bar_hot_water" formatted="false">hot water {kwh}</string>
   <string name="card_hist_heat_bar_outdoor" formatted="false">outdoors {temp}</string>
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} degree-days</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Chosen</string>
 </resources>

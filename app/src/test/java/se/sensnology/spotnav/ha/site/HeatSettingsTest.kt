@@ -117,4 +117,17 @@ class HeatSettingsTest {
             HeatWrite.answer(400, """{"ok":false,"error":"spotnav_no_site","action":"update_heat"}""")
         )
     }
+
+    @Test fun everyChosenEntityHasItsFriendlyNameAndOneWithoutIsNeverTheId() {
+        val villa = villa
+        // The answer's choices and outdoor sensor carry names too: the control, hot water and outdoor rows use them.
+        for (id in listOfNotNull(villa.controlEntity, villa.hotWaterEntity, villa.outdoorSensor, villa.meterEntity)) {
+            val name = villa.nameOf(id)
+            assertTrue("$id has a name", name != null && !name.contains('.'))
+        }
+        assertEquals("Larm utgång 2", villa.nameOf("switch.larm_utgang_2"))
+        assertEquals("Utomhus garage temperatur", villa.nameOf("sensor.utomhus_garage_temperatur"))
+        // No name: none, so the screen shows its generic word instead of the id.
+        assertEquals(null, villa.nameOf("sensor.not_in_the_answer"))
+    }
 }

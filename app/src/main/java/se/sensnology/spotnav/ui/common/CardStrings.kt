@@ -761,7 +761,9 @@ internal object CardStrings {
         "hist.heat.barZones" to R.string.card_hist_heat_bar_zones,
         "hist.heat.barHotWater" to R.string.card_hist_heat_bar_hot_water,
         "hist.heat.barOutdoor" to R.string.card_hist_heat_bar_outdoor,
-        "hist.heat.barDegreeDays" to R.string.card_hist_heat_bar_degree_days
+        "hist.heat.barDegreeDays" to R.string.card_hist_heat_bar_degree_days,
+        // Chosen without a name (step A4)
+        "settings.status.chosen" to R.string.card_settings_status_chosen
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

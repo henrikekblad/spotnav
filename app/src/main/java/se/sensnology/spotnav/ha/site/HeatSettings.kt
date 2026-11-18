@@ -38,7 +38,8 @@ internal data class HeatSettings(
     /** The zone's kind (`floor`, `air`, ...) by entity id. */
     val zoneKinds: Map<String, String>
 ) {
-    fun nameOf(entityId: String): String = names[entityId] ?: entityId
+    /** The friendly name the answer carries for [entityId]; `null` where it carries none (the id is never shown instead). */
+    fun nameOf(entityId: String): String? = names[entityId]
 
     fun indoorOffsetOf(entityId: String): Double = indoorOffsets.firstOrNull { it.entityId == entityId }?.offsetC ?: 0.0
 }
@@ -85,6 +86,24 @@ internal object HeatSettingsRead {
             val id = textOrNull(meter.opt("entity_id"), "entity_id")
             val name = textOrNull(meter.opt("name"), "name")
             if (id != null && name != null) names[id] = name
+        }
+        // The names of the entities to choose from (hot water, indoor, meter, control) and the outdoor sensor in use.
+        json.optJSONObject("choices")?.let { choices ->
+            for (key in choices.keys()) {
+                (choices.opt(key) as? org.json.JSONArray)?.let { array ->
+                    for (i in 0 until array.length()) {
+                        val choice = array.optJSONObject(i) ?: continue
+                        val id = choice.optString("entity_id").takeIf { it.isNotEmpty() }
+                        val name = choice.optString("name").takeIf { it.isNotEmpty() }
+                        if (id != null && name != null) names.putIfAbsent(id, name)
+                    }
+                }
+            }
+        }
+        json.optJSONObject("outdoor")?.let { outdoor ->
+            val id = outdoor.optString("entity_id").takeIf { it.isNotEmpty() }
+            val name = outdoor.optString("name").takeIf { it.isNotEmpty() }
+            if (id != null && name != null) names.putIfAbsent(id, name)
         }
         HeatSettings(
             controlEnabled = flag(config.opt("control_enabled"), "control_enabled"),

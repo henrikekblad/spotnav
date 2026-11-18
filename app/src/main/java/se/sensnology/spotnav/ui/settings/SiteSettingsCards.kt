@@ -5,6 +5,8 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.widget.CheckBox
+import android.widget.FrameLayout
+import android.widget.SeekBar
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -176,13 +178,13 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             body, words.say("heat.settings.indoor"),
             when {
                 sensors.isEmpty() -> none
-                sensors.size <= 2 -> sensors.joinToString(", ") { settings.nameOf(it) }
+                sensors.size <= 2 -> sensors.joinToString(", ") { named(settings, it) }
                 else -> words.say("heat.settings.indoorCount", "count" to sensors.size.toString())
             }
         )
         // Each chosen sensor's room aim against the house: a cooler upstairs, a sensor that reads warm.
         for (sensor in sensors) {
-            val label = text.roomName(settings.nameOf(sensor))
+            val label = text.roomName(named(settings, sensor))
             val current = settings.indoorOffsetOf(sensor)
             settingRow(body, label, text.signedDegrees(current), onTap = {
                 editOffset(label, current, words.say("heat.settings.sensorOffsetHelp")) { offset ->
@@ -190,22 +192,22 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
                 }
             })
         }
-        settingRow(body, words.say("heat.settings.outdoor"), settings.outdoorSensor?.let { settings.nameOf(it) } ?: words.say("heat.settings.outdoorAuto"))
+        settingRow(body, words.say("heat.settings.outdoor"), settings.outdoorSensor?.let { named(settings, it) } ?: words.say("heat.settings.outdoorAuto"))
         settingRow(
             body, words.say("heat.settings.meter"),
-            settings.meterEntity?.let { settings.nameOf(it) } ?: words.say("heat.settings.meterNone"),
+            settings.meterEntity?.let { named(settings, it) } ?: words.say("heat.settings.meterNone"),
             if (settings.meterEntity == null) words.say("heat.settings.meterHelp") else null
         )
         settingRow(body, words.say("heat.settings.path"), text.pathName(settings.controlPath))
-        if (settings.controlPath != "none") settingRow(body, words.say("heat.settings.control"), settings.controlEntity?.let { settings.nameOf(it) } ?: none)
-        if (settings.controlPath == "sg_ready") settingRow(body, words.say("heat.settings.controlB"), settings.controlEntityB?.let { settings.nameOf(it) } ?: none)
-        settingRow(body, words.say("heat.settings.hotWater"), settings.hotWaterEntity?.let { settings.nameOf(it) } ?: none)
+        if (settings.controlPath != "none") settingRow(body, words.say("heat.settings.control"), settings.controlEntity?.let { named(settings, it) } ?: none)
+        if (settings.controlPath == "sg_ready") settingRow(body, words.say("heat.settings.controlB"), settings.controlEntityB?.let { named(settings, it) } ?: none)
+        settingRow(body, words.say("heat.settings.hotWater"), settings.hotWaterEntity?.let { named(settings, it) } ?: none)
         settingRow(
             body, words.say("heat.settings.zones"),
             if (settings.zones.isEmpty()) words.say("heat.settings.zonesNone") else settings.zones.size.toString()
         )
         for (zone in settings.zones) {
-            val label = settings.nameOf(zone.entityId)
+            val label = named(settings, zone.entityId)
             val air = settings.zoneKinds[zone.entityId] == "air"
             val help = if (air) words.say("heat.settings.offsetHelp") + " " + words.say("heat.settings.airHelp") else words.say("heat.settings.offsetHelp")
             settingRow(body, label, text.signedDegrees(zone.offsetC), if (air) words.say("heat.settings.airHelp") else null, onTap = {
@@ -217,14 +219,57 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         notice?.let { body.addView(muted(it, top = 4)) }
     }
 
-    /** An offset, −3 to +3 °C in half degrees. */
+    /** The name Home Assistant gave an entity; never its id: without a name, the generic word "Vald". */
+    private fun named(settings: HeatSettings, entityId: String): String = settings.nameOf(entityId) ?: cardWords().say("settings.status.chosen")
+
+    /**
+     * An offset on a slider, −3 to +3 °C in half degrees, the value shown signed ("+1,0 °C") and a tick at 0. Saving
+     * sends the same compare-and-set write as before and the settings are read again after it.
+     */
     private fun editOffset(title: String, current: Double, help: String, request: (Double) -> HeatWrite.Request) {
         val words = cardWords()
-        val spec = NumberSpec(HeatWrite.OFFSET_MIN, HeatWrite.OFFSET_MAX, 1, minDecimals = 1)
-        editNumber(title, spec, "°C", current, words.say("heat.error.range"), help = help, signed = true) { value, done ->
-            val offset = value ?: 0.0
-            if (!HeatWrite.isHalfStep(offset)) return@editNumber done(words.say("heat.error.step"))
-            send(request(offset), done)
+        val steps = OffsetSlider.steps()
+        val body = editorBody()
+        body.addView(muted(help, bottom = 6))
+        val value = TextView(context).apply {
+            textSize = 22f
+            gravity = Gravity.CENTER
+            setTextColor(accent)
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+        }
+        body.addView(value, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        val bar = SeekBar(context).apply {
+            max = steps
+            progress = OffsetSlider.progress(current)
+            contentDescription = title
+        }
+        val tick = View(context).apply { setBackgroundColor(muted) }
+        val track = FrameLayout(context).apply {
+            addView(bar, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT))
+            // The tick at 0: the middle of the track, above the bar.
+            addView(tick, FrameLayout.LayoutParams(dp(2), dp(14), Gravity.CENTER_HORIZONTAL or Gravity.TOP))
+        }
+        body.addView(track, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        body.addView(LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            listOf(OffsetSlider.value(0), OffsetSlider.value(steps / 2), OffsetSlider.value(steps)).forEachIndexed { i, v ->
+                addView(TextView(context).apply {
+                    this.text = this@SiteSettingsCards.text.signedDegrees(v); textSize = 12f; setTextColor(muted)
+                    gravity = if (i == 0) Gravity.START else if (i == 1) Gravity.CENTER else Gravity.END
+                }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            }
+        })
+        fun show() { value.text = text.signedDegrees(OffsetSlider.value(bar.progress)) }
+        bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = show()
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+        })
+        show()
+        val error = errorLine().also { body.addView(it) }
+        openEditor(title, body, error) { done ->
+            val offset = OffsetSlider.value(bar.progress)
+            if (offset == current) done(null) else send(request(offset), done)
         }
     }
 

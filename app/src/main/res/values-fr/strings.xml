@@ -1462,4 +1462,6 @@
   <string name="card_hist_heat_bar_hot_water" formatted="false">eau chaude {kwh}</string>
   <string name="card_hist_heat_bar_outdoor" formatted="false">dehors {temp}</string>
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} degrés-jours</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Choisi</string>
 </resources>

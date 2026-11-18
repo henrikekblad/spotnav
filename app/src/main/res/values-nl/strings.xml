@@ -1454,4 +1454,6 @@
   <string name="card_hist_heat_bar_hot_water" formatted="false">warm water {kwh}</string>
   <string name="card_hist_heat_bar_outdoor" formatted="false">buiten {temp}</string>
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graaddagen</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Gekozen</string>
 </resources>
