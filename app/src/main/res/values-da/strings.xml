@@ -588,6 +588,11 @@
   <string name="chart_axis_day_help">00–24, med i morgen tegnet oven på i dag.</string>
   <string name="chart_axis_from_now">Fra nu</string>
   <string name="chart_axis_from_now_help">Fra denne time til slutningen af det sidste offentliggjorte døgn. Indtil morgendagens priser er ude, det samme som Døgn.</string>
+  <string name="chart_sun">Sol</string>
+  <string name="chart_sun_peak">Sol, top %1$s kW</string>
+  <string name="chart_readout_sun">Sol %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Sol, prognose %1$s kW</string>
+  <string name="chart_sun_help">Tegner solens effekt i prisgrafen: målt før nu, prognose efter, hvor anlægget har en prognose.</string>
   <string name="price_unit">Prisenhed</string>
   <string name="price_unit_example">For eksempel %1$s</string>
   <string name="price_source_title">Elpris %1$s</string>

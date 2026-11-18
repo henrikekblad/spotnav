@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
@@ -163,7 +164,9 @@ internal object ChartRenderer {
         /** A ready-made footer line (a paired widget's status) drawn in place of the plan footer; the caller decides its words. */
         statusFooter: WidgetStatusLine.Line? = null,
         axis: ChartTimeAxis = ChartTimeAxis.WallClock,
-        priceUnit: PriceUnit = PriceUnit.DEFAULT
+        priceUnit: PriceUnit = PriceUnit.DEFAULT,
+        /** The sun behind the price marks on its own kW scale, already placed on [axis]; `null` draws none. */
+        sun: ChartSun? = null
     ): ChartFrame {
         // The chart's surface is dark in both system themes, so the palette is not resolved from night mode.
         val colors = theme ?: ChartTheme.Dark
@@ -219,6 +222,34 @@ internal object ChartRenderer {
         paint.color = colors.cheap
         val minX = metrics.pad + paint.measureText(maxText) + metrics.pad * 1.4f
         canvas.drawText(minText, minX, metrics.pad + headerSize, paint)
+        // The sun's key beside the price extremes, as in the card's summary row: a swatch and what the sun is scaled
+        // against ("Sol, topp 10 kW"), or the short word where that has no room; left out where neither fits.
+        sun?.let { drawn ->
+            val keyStart = minX + paint.measureText(minText) + metrics.pad * 1.4f
+            val keyEnd = w - metrics.pad - paint.measureText(currentText) - metrics.pad
+            val short = AppLanguageSettings.text(context, R.string.chart_sun)
+            val full = drawn.peakKw?.let { peak ->
+                val figure = java.text.DecimalFormat("0.#", java.text.DecimalFormatSymbols.getInstance(numbers)).format(peak)
+                AppLanguageSettings.text(context, R.string.chart_sun_peak, figure)
+            } ?: short
+            val keySize = metrics.axisTextSize
+            val swatch = keySize * .8f
+            paint.typeface = android.graphics.Typeface.DEFAULT
+            paint.textSize = keySize
+            val label = listOf(full, short).firstOrNull { keyStart + swatch * 1.4f + paint.measureText(it) <= keyEnd }
+            if (label != null) {
+                val base = metrics.pad + headerSize
+                paint.style = Paint.Style.FILL
+                paint.color = colors.sun
+                paint.alpha = SUN_SWATCH_ALPHA
+                canvas.drawRect(keyStart, base - swatch * .75f, keyStart + swatch, base, paint)
+                paint.alpha = 255
+                paint.strokeWidth = max(1.5f, 1.6f * metrics.scale)
+                canvas.drawLine(keyStart, base - swatch * .75f, keyStart + swatch, base - swatch * .75f, paint)
+                paint.color = colors.muted
+                canvas.drawText(label, keyStart + swatch * 1.4f, base, paint)
+            }
+        }
 
         paint.textAlign = Paint.Align.RIGHT
         paint.typeface = android.graphics.Typeface.DEFAULT_BOLD
@@ -256,6 +287,9 @@ internal object ChartRenderer {
             canvas.drawText(prices.axisLabel(maxValue - i * range / 2, range), left - axisText * .45f, gy + axisText * .35f, paint)
         }
         paint.textAlign = Paint.Align.LEFT
+
+        // The sun, behind the price marks and the focus line.
+        sun?.let { drawSun(canvas, paint, it, metrics, colors) }
 
         // Paint order is the contract: bands and grid under the focus line, marks over it. Exactly one
         // line is drawn: a selection hides the now line (see `ChartNow.line`).
@@ -334,6 +368,53 @@ internal object ChartRenderer {
      * hatched in the band colour with nothing between the lines (see [ChartBandStyle]), drawn after the
      * solid ones so an overlaid today never hides them.
      */
+    /**
+     * The sun, as the card's `sunLayer` draws it: per run of consecutive spans a light area from the baseline to the
+     * line through the spans' middles, the line solid where measured and dashed from the last measured span on (the
+     * forecast), so the two meet. Its own kW scale: [ChartSun.maxKw] reaches [ChartSuns.HEIGHT_SHARE] of the plot.
+     */
+    private fun drawSun(canvas: Canvas, paint: Paint, sun: ChartSun, metrics: ChartMetrics, colors: ChartTheme) {
+        val height = (metrics.bottom - metrics.top) * ChartSuns.HEIGHT_SHARE
+        fun x(point: SunPoint) = metrics.xAt(point.minute)
+        fun y(point: SunPoint) = metrics.bottom - (point.kw / sun.maxKw).toFloat() * height
+        fun line(points: List<SunPoint>) = Path().apply {
+            points.forEachIndexed { index, point -> if (index == 0) moveTo(x(point), y(point)) else lineTo(x(point), y(point)) }
+        }
+        canvas.save()
+        canvas.clipRect(metrics.left, metrics.top, metrics.right, metrics.bottom)
+        for (run in ChartSuns.runs(sun.points)) {
+            val area = line(run).apply {
+                lineTo(x(run.last()), metrics.bottom)
+                lineTo(x(run.first()), metrics.bottom)
+                close()
+            }
+            paint.style = Paint.Style.FILL
+            paint.color = colors.sun
+            paint.alpha = SUN_AREA_ALPHA
+            canvas.drawPath(area, paint)
+            paint.alpha = 255
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = max(1.5f, 1.6f * metrics.scale)
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
+            val lastMeasured = run.indexOfLast { it.measured }
+            if (lastMeasured >= 0) canvas.drawPath(line(run.subList(0, lastMeasured + 1)), paint)
+            if (lastMeasured < run.size - 1) {
+                paint.pathEffect = DashPathEffect(floatArrayOf(4f * metrics.scale, 3f * metrics.scale), 0f)
+                canvas.drawPath(line(run.subList(maxOf(0, lastMeasured), run.size)), paint)
+                paint.pathEffect = null
+            }
+        }
+        canvas.restore()
+        paint.style = Paint.Style.FILL
+        paint.strokeCap = Paint.Cap.BUTT
+        paint.strokeJoin = Paint.Join.MITER
+    }
+
+    /** The sun's area under its line (the card's 0.2), and its key's swatch (the card's 35 %). */
+    private const val SUN_AREA_ALPHA = 51
+    private const val SUN_SWATCH_ALPHA = 89
+
     private fun drawBands(
         canvas: Canvas,
         paint: Paint,

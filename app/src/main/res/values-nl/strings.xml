@@ -588,6 +588,11 @@
   <string name="chart_axis_day_help">00–24, met morgen over vandaag getekend.</string>
   <string name="chart_axis_from_now">Vanaf nu</string>
   <string name="chart_axis_from_now_help">Van dit uur tot het einde van de laatst gepubliceerde dag. Tot de prijzen van morgen er zijn, hetzelfde als Dag.</string>
+  <string name="chart_sun">Zon</string>
+  <string name="chart_sun_peak">Zon, piek %1$s kW</string>
+  <string name="chart_readout_sun">Zon %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Zon, prognose %1$s kW</string>
+  <string name="chart_sun_help">Tekent het zonnevermogen in de prijsgrafiek: gemeten vóór nu, daarna prognose waar de locatie er een heeft.</string>
   <string name="price_unit">Prijseenheid</string>
   <string name="price_unit_example">Bijvoorbeeld %1$s</string>
   <string name="price_source_title">Stroomprijs %1$s</string>

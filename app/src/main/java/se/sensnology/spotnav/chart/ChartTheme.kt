@@ -16,11 +16,16 @@ internal data class ChartTheme(
     /** The high-contrast ink of [surface], drawn solid: the now line. */
     val nowLine: Int,
     /** The same ink, drawn dashed: the selection line. */
-    val selectionLine: Int
+    val selectionLine: Int,
+    /** The sun behind the price marks: the house card's amber, as a light area and a line. */
+    val sun: Int = SUN
 ) {
     companion object {
         /** Near-white ink that reads against the chart's dark surface. */
         const val INK_ON_DARK: Int = 0xFFFFFFFF.toInt()
+
+        /** The card's `--spotnav-sun`. */
+        const val SUN: Int = 0xFFE8A200.toInt()
 
         /** The dark data panel palette. */
         val Dark = ChartTheme(

@@ -588,6 +588,11 @@
   <string name="chart_axis_day_help">00–24, huominen piirrettynä tämän päivän päälle.</string>
   <string name="chart_axis_from_now">Nyt alkaen</string>
   <string name="chart_axis_from_now_help">Tästä tunnista viimeisen julkaistun vuorokauden loppuun. Kunnes huomisen hinnat on julkaistu, sama kuin Vuorokausi.</string>
+  <string name="chart_sun">Aurinko</string>
+  <string name="chart_sun_peak">Aurinko, huippu %1$s kW</string>
+  <string name="chart_readout_sun">Aurinko %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Aurinko, ennuste %1$s kW</string>
+  <string name="chart_sun_help">Piirtää auringon tehon hintakaavioon: mitattu ennen nyt-hetkeä, ennuste sen jälkeen, jos kohteella on ennuste.</string>
   <string name="price_unit">Hinnan yksikkö</string>
   <string name="price_unit_example">Esimerkiksi %1$s</string>
   <string name="price_source_title">Sähkön hinta %1$s</string>

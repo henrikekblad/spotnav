@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.ImageView
+import se.sensnology.spotnav.ha.dashboard.DashboardSun
 import se.sensnology.spotnav.planning.PlanningInputs
 import se.sensnology.spotnav.prices.PriceResult
 import se.sensnology.spotnav.prices.PriceUnit
@@ -46,7 +47,9 @@ internal data class ChartRequest(
     /** The time mapping [bands], [selectionMinute] and [nowMinute] were placed on (see [ChartTimeAxis]). */
     val axis: ChartTimeAxis = ChartTimeAxis.WallClock,
     /** The unit the prices on the graph read in (see `PriceFormat`). */
-    val priceUnit: PriceUnit = PriceUnit.DEFAULT
+    val priceUnit: PriceUnit = PriceUnit.DEFAULT,
+    /** The sun drawn behind the prices, already placed on [axis] (see [ChartSun]); `null` draws none. */
+    val sun: ChartSun? = null
 )
 
 /**
@@ -91,13 +94,14 @@ internal object ChartRequests {
         selectionMinute: Float? = null,
         nowMinute: Float? = null,
         axis: ChartTimeAxis = ChartTimeAxis.WallClock,
-        priceUnit: PriceUnit = PriceUnit.DEFAULT
+        priceUnit: PriceUnit = PriceUnit.DEFAULT,
+        sun: ChartSun? = null
     ): ChartRequest? {
         val height = heightFor(widthPx, profile)
         return if (height <= 0) null
         else ChartRequest(
             profile, market, prices ?: NOTHING_FETCHED, bands, footer, widthPx, height, selectionMinute, nowMinute, axis,
-            priceUnit
+            priceUnit, sun
         )
     }
 
@@ -141,7 +145,9 @@ internal data class ShownChart(
     val footer: ChartFooterPlan?,
     val prices: PriceResult?,
     val overlays: List<ChartOverlay> = emptyList(),
-    val zone: ZoneId? = null
+    val zone: ZoneId? = null,
+    /** Home Assistant's sun for this chart, placed on the axis at every draw; `null` when there is none. */
+    val sun: DashboardSun? = null
 )
 
 /**
@@ -170,6 +176,9 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
 
     /** This phone's chart time axis, read at every draw so a changed setting shows on the next one. */
     var axisMode: () -> ChartAxisMode = { ChartAxisPreference.of(context).mode() }
+
+    /** This phone's choice to draw the sun (see [ChartSunPreference]), read at every draw like [axisMode]. */
+    var sunShown: () -> Boolean = { ChartSunPreference.of(context).shown() }
 
     /** This phone's price unit, read at every draw like [axisMode]. */
     var priceUnit: () -> PriceUnit = { PriceUnitPreference.of(context).unit() }
@@ -215,13 +224,14 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         footer: ChartFooterPlan?,
         prices: PriceResult?,
         overlays: List<ChartOverlay> = emptyList(),
-        zone: ZoneId? = null
+        zone: ZoneId? = null,
+        sun: DashboardSun? = null
     ) {
         if (market == null) {
             showUnavailable()
             return
         }
-        chart = ShownChart(market, bands, footer, prices, overlays, zone)
+        chart = ShownChart(market, bands, footer, prices, overlays, zone, sun)
         draw()
     }
 
@@ -275,8 +285,13 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         val at = now()
         val (axis, bands) = ChartRequests.placed(shown, axisMode(), at.toInstant())
         val unit = priceUnit()
+        // The sun on this axis, for the day the clock is in; none without a zone to place it in or when turned off.
+        val zone = shown.zone
+        val sun = if (zone != null && shown.sun != null && sunShown()) {
+            ChartSuns.series(shown.sun, axis, zone, at.atZoneSameInstant(zone).toLocalDate())
+        } else null
         // The frame a selection is made on and validated against: without the selection line, so a fresh selection cannot invalidate itself.
-        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer, axis = axis, priceUnit = unit) ?: return
+        val drawnOn = ChartRequests.of(market, bands, prices, width, PROFILE, footer, axis = axis, priceUnit = unit, sun = sun) ?: return
         // A selection belongs to the frame it was made on; changed data, size or profile drop it.
         if (!ChartSelection.stillValid(selection, selectionMadeOn, drawnOn)) {
             val hadSelection = selection != null
@@ -289,7 +304,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         // like the selection, since an interval passing is not the data moving. `null` prices mean no line.
         val nowMinute = prices?.let { ChartNow.currentMarkMinute(it, at, axis) }
         val request = ChartRequests.of(
-            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute, axis, unit
+            market, bands, prices, width, PROFILE, footer, selection?.markMinute, nowMinute, axis, unit, sun
         ) ?: return
         // Unchanged request: the frame on screen is this one.
         if (request == lastRequest) return
@@ -298,7 +313,7 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
         val drawn = ChartRenderer.renderFrame(
             context, request.widthPx, request.heightPx, oneSp(), request.market, request.result,
             request.bands, request.footer, request.profile, request.selectionMinute, request.nowMinute,
-            axis = request.axis, priceUnit = request.priceUnit
+            axis = request.axis, priceUnit = request.priceUnit, sun = request.sun
         )
         plot = drawn.metrics
         val previous = frame
@@ -327,6 +342,16 @@ internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : Im
     fun clearSelection() {
         if (selection == null) return
         chart?.let { shown -> if (shown.prices != null) apply(null, shown.market, shown.prices) }
+    }
+
+    /**
+     * The sun the chart draws under the selection, or `null` without one. On the day axis only today's sun is drawn,
+     * so a position where today has no price (the readout then lists tomorrow alone) has no sun to name.
+     */
+    fun sunAtSelection(): SunPoint? {
+        val readout = selection ?: return null
+        val sun = (lastRequest ?: frameRequest)?.sun?.at(readout.markMinute) ?: return null
+        return sun.takeIf { !drawnAxis().overlay || readout.today.isNotEmpty() }
     }
 
     /** Whether this graph is showing a selection (see `ChartDismissal`). */

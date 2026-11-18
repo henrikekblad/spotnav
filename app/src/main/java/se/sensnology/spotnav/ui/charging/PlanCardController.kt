@@ -552,7 +552,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
             val prices = PriceFormat.of(
                 PriceUnitPreference.of(context).unit(), PriceMarkets.find(market.areaId), AppLanguageSettings.numberLocale(context)
             )
-            val lines = selection?.let { readoutLines(it, prices) } ?: emptyList()
+            val lines = selection?.let { readoutLines(it, prices, chart.sunAtSelection()) } ?: emptyList()
             callout.text = lines.joinToString("\n")
             callout.visibility = if (lines.isEmpty()) View.GONE else View.VISIBLE
             // The chart carries the same words, so a screen reader can obtain the selection without

@@ -596,6 +596,11 @@
   <string name="chart_axis_day_help">00–24, demain dessiné par-dessus aujourd\'hui.</string>
   <string name="chart_axis_from_now">À partir de maintenant</string>
   <string name="chart_axis_from_now_help">De l\'heure en cours à la fin du dernier jour publié. Tant que les prix de demain ne sont pas publiés, identique à Journée.</string>
+  <string name="chart_sun">Soleil</string>
+  <string name="chart_sun_peak">Soleil, pic %1$s kW</string>
+  <string name="chart_readout_sun">Soleil %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Soleil, prévision %1$s kW</string>
+  <string name="chart_sun_help">Trace la puissance du soleil dans le graphique des prix : mesurée avant maintenant, prévue après là où le site a une prévision.</string>
   <string name="price_unit">Unité de prix</string>
   <string name="price_unit_example">Par exemple %1$s</string>
   <string name="price_source_title">Prix de l\'électricité %1$s</string>

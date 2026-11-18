@@ -601,6 +601,11 @@
   <string name="chart_axis_day_help">00–24, with tomorrow drawn over today.</string>
   <string name="chart_axis_from_now">From now</string>
   <string name="chart_axis_from_now_help">From this hour to the end of the last published day. Until tomorrow\'s prices are out, the same as Day.</string>
+  <string name="chart_sun">Sun</string>
+  <string name="chart_sun_peak">Sun, peak %1$s kW</string>
+  <string name="chart_readout_sun">Sun %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Sun, forecast %1$s kW</string>
+  <string name="chart_sun_help">Draws the sun\'s power in the price chart: measured before now, forecast after where the site has a forecast.</string>
   <string name="price_unit">Price unit</string>
   <string name="price_unit_example">For example %1$s</string>
   <string name="price_source_title">Electricity price %1$s</string>

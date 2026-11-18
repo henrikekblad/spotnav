@@ -45,7 +45,9 @@ internal data class PairedChart(
     val footer: ChartFooterPlan?,
     val figures: PairedPlanFigures?,
     /** The installed and proposal periods [bands] were drawn from, for placing them on the From now axis. */
-    val overlays: List<ChartOverlay> = emptyList()
+    val overlays: List<ChartOverlay> = emptyList(),
+    /** The dashboard's `sun` block, drawn behind the prices on its own scale (see [ChartSun]); `null` where none is sent. */
+    val sun: se.sensnology.spotnav.ha.dashboard.DashboardSun? = null
 )
 
 /**
@@ -139,7 +141,7 @@ internal object DashboardChart {
             ChartOverlay.planned(proposal, ChartBandKind.PROPOSAL)
         )
         val bands = overlays.flatMap { it.bands(prices, zone) }
-        return PairedChart(market, prices, bands, footer(figures), figures, overlays)
+        return PairedChart(market, prices, bands, footer(figures), figures, overlays, dashboard.sun)
     }
 
     /**
