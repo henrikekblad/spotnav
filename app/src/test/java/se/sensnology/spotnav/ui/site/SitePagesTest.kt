@@ -23,6 +23,19 @@ class SitePagesTest {
         assertEquals(PageKind.CHARGER, PageOffer.opening(PageKind.HOUSE, PageOffer.kinds(house = false, heat = false)))
     }
 
+    @Test fun pageIconsShowOnlyWithTwoOrMorePages() {
+        assertFalse(PageOffer.iconsShown(PageOffer.kinds(house = false, heat = false)))
+        assertTrue(PageOffer.iconsShown(PageOffer.kinds(house = true, heat = false)))
+        // A heat site with nothing to show is not offered the page, so it has no icon.
+        assertFalse(PageOffer.iconsShown(PageOffer.kinds(house = false, heat = false)))
+        assertTrue(PageOffer.iconsShown(PageOffer.kinds(house = false, heat = true)))
+    }
+
+    @Test fun aPagesTabRowShowsOnlyWithTwoOrMoreTabs() {
+        assertFalse(HeatNowModel.tabRowShown(HeatTab.BUILT.size))
+        assertTrue(HeatNowModel.tabRowShown(2))
+    }
+
     @Test fun aSwipeBeginsOnlyOnAHeaderOrEmptySpace() {
         assertTrue(PagerSwipe.allowedOn(listOf(Touched.PLAIN, Touched.PLAIN, Touched.PLAIN)))
         assertTrue(PagerSwipe.allowedOn(emptyList()))
