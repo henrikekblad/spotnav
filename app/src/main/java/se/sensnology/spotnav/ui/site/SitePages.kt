@@ -264,7 +264,9 @@ internal class SitePages(
                 }, FrameLayout.LayoutParams(scope.dp(24), scope.dp(24), Gravity.CENTER))
                 // A short line in the accent colour under the page in view.
                 addView(View(context).apply { setBackgroundColor(if (chosen) scope.accent else 0) },
-                    FrameLayout.LayoutParams(scope.dp(24), scope.dp(2), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL))
+                    // Lifted off the box's bottom edge, so it does not touch the panel under the row.
+                    FrameLayout.LayoutParams(scope.dp(24), scope.dp(2), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL)
+                        .apply { bottomMargin = scope.dp(6) })
                 // Read as one of several options, the chosen one checked.
                 accessibilityDelegate = object : View.AccessibilityDelegate() {
                     override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
