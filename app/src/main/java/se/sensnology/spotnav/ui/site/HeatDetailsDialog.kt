@@ -35,7 +35,6 @@ internal class HeatDetailsDialog(
     private val main = Handler(Looper.getMainLooper())
     private var store: HeatHistoryStore? = null
     private var choice = PeriodChoice(HistoryPeriod.MONTH)
-    private var body: LinearLayout? = null
     private var content: LinearLayout? = null
     private var picker: PeriodPickerView? = null
     private val minute = object : Runnable {
@@ -64,7 +63,6 @@ internal class HeatDetailsDialog(
         val results = LinearLayout(scope.context).apply { orientation = LinearLayout.VERTICAL }
         column.addView(bar, wide())
         column.addView(results, wide().apply { topMargin = scope.dp(8) })
-        body = column
         content = results
         dialog = AlertDialog.Builder(scope.context)
             .setTitle(words.say("hist.title.heat"))
