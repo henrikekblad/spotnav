@@ -31,7 +31,14 @@ data class ChargerCapabilities(
     /** Whether the webhook's `update_site_settings` sets the site's import target (`import_target_kw`). */
     val siteImportTarget: Boolean = false,
     /** Whether the webhook answers `suggest_import_target`: a suggested import target from Home Assistant's statistics. */
-    val suggestImportTarget: Boolean = false
+    val suggestImportTarget: Boolean = false,
+    /**
+     * Whether the webhook answers for the charger's site's house (`get_house`, and with it `get_house_now`,
+     * `get_house_history` and `get_house_loads`): the house page exists. Home Assistant 3.0; absent before it.
+     */
+    val getHouse: Boolean = false,
+    /** Whether the webhook answers for the site's heating (`get_heat`, with `get_heat_history` and `update_heat`). */
+    val getHeat: Boolean = false
 )
 
 /**

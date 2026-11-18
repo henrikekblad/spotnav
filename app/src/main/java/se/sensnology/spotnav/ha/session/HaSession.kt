@@ -23,6 +23,9 @@ import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseNow
+import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -30,6 +33,7 @@ import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.ha.client.SessionsOutcome
 import se.sensnology.spotnav.ha.sessions.SessionsCsv
 import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import java.time.LocalDate
 import java.time.YearMonth
 import java.util.concurrent.Executor
 
@@ -92,6 +96,12 @@ internal interface HaTransport {
     /** `suggest_import_target`: a suggested import target, `null` for none; never throws. */
     fun suggestImportTarget(): SuggestImportTarget.Suggestion? = null
 
+    /** `get_house_now`: the site's live flows. */
+    fun houseNow(): SiteRead<HouseNow> = SiteRead.Failed(null)
+
+    /** `get_house`: the site's house for today or a past day. */
+    fun house(date: LocalDate?): SiteRead<House> = SiteRead.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -150,6 +160,10 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun powerMonth(month: YearMonth?) = HomeAssistantClient.powerMonth(connection, month)
 
     override fun suggestImportTarget() = HomeAssistantClient.suggestImportTarget(connection)
+
+    override fun houseNow() = HomeAssistantClient.houseNow(connection)
+
+    override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -368,6 +382,22 @@ internal class HaSession(
     fun powerMonth(month: YearMonth?, done: (PowerMonthRead.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.powerMonth(month)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_now` (never throws). */
+    fun houseNow(done: (SiteRead<HouseNow>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseNow()
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house` (never throws). */
+    fun house(date: LocalDate?, done: (SiteRead<House>) -> Unit) {
+        background.execute {
+            val outcome = transport.house(date)
             mainThread { done(outcome) }
         }
     }

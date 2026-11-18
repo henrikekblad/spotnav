@@ -3,6 +3,11 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseNow
+import se.sensnology.spotnav.ha.house.HouseNowRead
+import se.sensnology.spotnav.ha.house.HouseRead
+import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -332,6 +337,21 @@ object HomeAssistantClient {
     internal fun powerMonth(settings: HomeAssistantSettings, month: YearMonth?): PowerMonthRead.Outcome {
         val (status, body) = write(settings, PowerMonthRead.payload(month))
         return PowerMonthRead.answer(status, body)
+    }
+
+    /**
+     * The site's live flows (webhook `get_house_now`), small and made to be polled. Asked only where the dashboard
+     * states `capabilities.get_house`. Never throws.
+     */
+    internal fun houseNow(settings: HomeAssistantSettings): SiteRead<HouseNow> {
+        val (status, body) = write(settings, HouseNowRead.payload())
+        return HouseNowRead.answer(status, body)
+    }
+
+    /** The site's house for today or [date] (webhook `get_house`), under the same capability. Never throws. */
+    internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
+        val (status, body) = write(settings, HouseRead.payload(date))
+        return HouseRead.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */
