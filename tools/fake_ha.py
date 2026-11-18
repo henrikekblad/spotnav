@@ -93,6 +93,16 @@ site's peak; `&sun=none` leaves it out), the grid tariff's supplier markup and e
 (`supplier_fees`), and the departure calendar (`departure_calendar`: tomorrow 07:30 with a target of 80 % from the
 event's text; `&calendar=daily|date|unavailable|no_event|none` for the other states). `&power=1` makes it a charger
 given a power (`power_charger`: `current_range.kw_per_a`), shown in kW.
+
+The `house` scenario is Home Assistant 3.0's house over the charger's webhook: its dashboard states
+`capabilities.get_house`, so the app shows the row of page icons and the house page, and the webhook answers
+`get_house_now` (the live flows, moving a little from read to read so the 10 s polling shows) and `get_house` (the
+villa's day moved to now), both from the vendored fixtures (`ha-fixtures/house_now/`, `ha-fixtures/house/`).
+`GET /spotnav-mock/house?flows=now|export|car|alone|none&control=own|test|on` chooses the moment: buying a little,
+selling the sun, the car charging, a house with the grid alone, or no live answer at all (`none`: the reads are
+refused, as when the site is not loaded); and who runs the battery: its own optimiser, nobody yet (Test), or SpotNav.
+Every other scenario is a Home Assistant before 3.0 in this respect: its dashboard states none of the site
+capabilities, so the app has the charger's page alone and no icon row.
 """
 
 from __future__ import annotations
@@ -130,6 +140,7 @@ DASHBOARD_BY_SCENARIO = {
     "oldwebhook": "cheapest_no_site.json",
     "demand": "cheapest_direct_site_admin.json",
     "gridfee": "cheapest_direct_site_admin.json",
+    "house": "hybrid_derived_site_with_forecast.json",
     "guest": "target_soc_two_vehicles.json",
     "newer": "target_soc_two_vehicles.json",
 }
@@ -646,6 +657,79 @@ def update_grid_fee(payload: dict) -> tuple[int, dict]:
     return 200, {**answer, "ok": True, "error": None, "grid_tariff": GRID_FEE}
 
 
+#: The `house` scenario's choices, set with `GET /spotnav-mock/house?flows=..&control=..`.
+HOUSE = {"flows": "now", "control": "own"}
+HOUSE_FLOWS = {"now": "villa_now.json", "export": "villa_export.json", "car": "villa_car.json", "alone": "house_alone_now.json"}
+HOUSE_CONTROLS = ("own", "test", "on")
+
+#: What Home Assistant 3.0's dashboard states of the charger's site over the webhook (`docs/api.md`, "The site over
+#: the webhook"); only the `house` scenario states any.
+SITE_CAPABILITIES = ("get_house", "get_heat", "battery_control", "get_site_settings_view")
+
+
+def _moved_to_now(value, hours: int, days: int):
+    """[value] with every instant in it moved [hours] hours on and every date [days] days: a fixture's moment
+    drawn as this one, its hours still starting on the hour."""
+    if isinstance(value, dict):
+        return {key: _moved_to_now(item, hours, days) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_moved_to_now(item, hours, days) for item in value]
+    if isinstance(value, str):
+        if _ISO_INSTANT.match(value):
+            try:
+                return (datetime.fromisoformat(value) + timedelta(hours=hours)).isoformat()
+            except ValueError:
+                return value
+        if _ISO_DATE.match(value):
+            return (date.fromisoformat(value) + timedelta(days=days)).isoformat()
+    return value
+
+
+def house_now_body() -> tuple[int, dict]:
+    """`get_house_now` in the `house` scenario: the chosen moment's live flows, a little different at each read."""
+    import math
+    action = "get_house_now"
+    name = HOUSE_FLOWS.get(HOUSE["flows"])
+    if name is None:
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_now" / name).read_text(encoding="utf-8"))
+    now = datetime.now(ZoneInfo("UTC"))
+    body["at"] = now.replace(microsecond=0).isoformat()
+    # The house's own use swings a few hundred watts over a minute and a half, and the grid carries the difference.
+    swing = round(0.3 * math.sin(now.timestamp() / 15.0), 1)
+    if body["house_kw"] is not None and body["grid_kw"] is not None:
+        body["house_kw"] = round(body["house_kw"] + swing, 1)
+        body["grid_kw"] = round(body["grid_kw"] + swing, 1)
+    return 200, {"ok": True, "action": action, **body}
+
+
+def house_body(payload: dict) -> tuple[int, dict]:
+    """`get_house` in the `house` scenario: the villa's day (a house alone for `flows=alone`) moved to now, with
+    the battery run by whoever the scenario is set to."""
+    action = "get_house"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    name = "house_learning.json" if HOUSE["flows"] == "alone" else "villa_battery_sun.json"
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house" / name).read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["time_zone"])
+    now = datetime.now(zone)
+    made = datetime.fromisoformat(body["generated_at"])
+    hours = round((now - made).total_seconds() / 3600.0)
+    body = _moved_to_now(body, hours, (now.date() - made.astimezone(zone).date()).days)
+    battery = body.get("battery")
+    if battery is not None:
+        control = HOUSE["control"]
+        battery["management"] = "self_managed" if control == "own" else "free"
+        battery["control"] = "on" if control == "on" else "off"
+        if control == "on":
+            # SpotNav's own plan runs: the battery's saving is SpotNav's, and its control says what it does now.
+            battery["now"] = {"action": None, "power_kw": -1.5}
+            body["saving"].update({"battery": 1089.9, "battery_share": 1.0, "total": 2810.4})
+    return 200, {"ok": True, "action": action, **body}
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -688,6 +772,18 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         _guest_body(body)
     if scenario == "newer":
         body = _newer_body(body, reads)
+    # The site over the webhook is Home Assistant 3.0's: only the `house` scenario states it, and of it the house.
+    for name in SITE_CAPABILITIES:
+        body["charger"]["capabilities"].pop(name, None)
+    if scenario == "house":
+        today = datetime.now(ZoneInfo("Europe/Stockholm")).date()
+        body = _moved_to_today(body, (today - date.fromisoformat(body["prices"]["today"])).days)
+        # The fixture names its charger after itself; here it is the scenario's.
+        body["charger"]["charger_name"] = SCENARIOS["house"].name
+        for row in body.get("chargers") or []:
+            if row.get("id") == body["charger"]["charger_id"]:
+                row["name"] = SCENARIOS["house"].name
+        body["charger"]["capabilities"].update({"get_house": True, "get_heat": False})
     if "guest" not in (reads or []):
         _without_guest(body)
     if "import_target_status" not in (reads or []):
@@ -811,6 +907,10 @@ SCENARIOS: dict[str, Charger] = {
     "newer": Charger(
         "Garage",
         why="what app 2.4 reads of HA 2.5.3, 2.5.4 and 3.0: the status after the name, the direction hint, a learned battery size, the sun in the chart, the supplier's figures and the departure calendar; set at /spotnav-mock/newer",
+    ),
+    "house": Charger(
+        "Villan",
+        why="the house over the webhook (HA 3.0): the row of page icons and the house page's Now tab, its live flows moving; set at /spotnav-mock/house",
     ),
     "demand": Charger(
         "Effektmål",
@@ -1063,6 +1163,19 @@ class Handler(BaseHTTPRequestHandler):
                 state = dict(NEWER)
             self._json(200, state)
             return
+        if path == "/spotnav-mock/house":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                flows = query.get("flows", HOUSE["flows"])
+                control = query.get("control", HOUSE["control"])
+                if flows in HOUSE_FLOWS or flows == "none":
+                    HOUSE["flows"] = flows
+                if control in HOUSE_CONTROLS:
+                    HOUSE["control"] = control
+                state = dict(HOUSE)
+            self._json(200, state)
+            return
         if path == "/spotnav-mock/guest":
             from urllib.parse import parse_qs, urlsplit
             query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
@@ -1185,6 +1298,9 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if action == "plan_preview":
                     self._json(200, plan_preview_body(payload))
+                    return
+                if action in ("get_house_now", "get_house") and key == "house":
+                    self._json(*(house_now_body() if action == "get_house_now" else house_body(payload)))
                     return
                 if action == "update_grid_tariff":
                     if key == "gridfee":
