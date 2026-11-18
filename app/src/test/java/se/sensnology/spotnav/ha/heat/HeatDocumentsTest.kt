@@ -117,6 +117,7 @@ class HeatDocumentsTest {
     @Test fun everyUpdateHeatAnswerIsListedAndRead() {
         val expected = mapOf(
             "update_heat_success.json" to HeatWrite.Outcome.Written,
+            "update_heat_away_delta.json" to HeatWrite.Outcome.Written,
             "update_heat_away.json" to HeatWrite.Outcome.Written,
             "update_heat_night.json" to HeatWrite.Outcome.Written,
             "update_heat_zone_offsets.json" to HeatWrite.Outcome.Written,

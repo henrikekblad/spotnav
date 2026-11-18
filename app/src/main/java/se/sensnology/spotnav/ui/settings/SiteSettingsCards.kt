@@ -215,6 +215,18 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             })
         }
         settingRow(body, words.say("heat.settings.night"), text.nightValue(settings.night), onTap = { editNight(settings) })
+        // Only from a Home Assistant that has the setting.
+        settings.awayDeltaC?.let { away ->
+            settingRow(
+                body, words.say("heat.settings.away"), words.say("heat.settings.awayValue", "delta" to text.degrees(away)),
+                onTap = {
+                    editOffset(
+                        words.say("heat.settings.away"), away, words.say("heat.settings.awayHelp"),
+                        slider = AwaySlider, show = text::degrees
+                    ) { next -> HeatWrite.awayDelta(settings, next) }
+                }
+            )
+        }
         body.addView(muted(t(R.string.site_settings_in_home_assistant), top = 2))
         notice?.let { body.addView(muted(it, top = 4)) }
     }
@@ -226,9 +238,12 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
      * An offset on a slider, −3 to +3 °C in half degrees, the value shown signed ("+1,0 °C") and a tick at 0. Saving
      * sends the same compare-and-set write as before and the settings are read again after it.
      */
-    private fun editOffset(title: String, current: Double, help: String, request: (Double) -> HeatWrite.Request) {
-        val words = cardWords()
-        val steps = OffsetSlider.steps()
+    private fun editOffset(
+        title: String, current: Double, help: String,
+        slider: StepSlider = OffsetSlider, show: (Double) -> String = text::signedDegrees,
+        request: (Double) -> HeatWrite.Request
+    ) {
+        val steps = slider.steps()
         val body = editorBody()
         body.addView(muted(help, bottom = 6))
         val value = TextView(context).apply {
@@ -240,35 +255,35 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         body.addView(value, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         val bar = SeekBar(context).apply {
             max = steps
-            progress = OffsetSlider.progress(current)
+            progress = slider.progress(current)
             contentDescription = title
         }
         val tick = View(context).apply { setBackgroundColor(muted) }
         val track = FrameLayout(context).apply {
             addView(bar, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT))
-            // The tick at 0: the middle of the track, above the bar.
-            addView(tick, FrameLayout.LayoutParams(dp(2), dp(14), Gravity.CENTER_HORIZONTAL or Gravity.TOP))
+            // The tick at 0: the middle of the track, above the bar (an offset only; a setback has no zero).
+            if (slider === OffsetSlider) addView(tick, FrameLayout.LayoutParams(dp(2), dp(14), Gravity.CENTER_HORIZONTAL or Gravity.TOP))
         }
         body.addView(track, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         body.addView(LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
-            listOf(OffsetSlider.value(0), OffsetSlider.value(steps / 2), OffsetSlider.value(steps)).forEachIndexed { i, v ->
+            listOf(slider.value(0), slider.value(steps / 2), slider.value(steps)).forEachIndexed { i, v ->
                 addView(TextView(context).apply {
-                    this.text = this@SiteSettingsCards.text.signedDegrees(v); textSize = 12f; setTextColor(muted)
+                    this.text = show(v); textSize = 12f; setTextColor(muted)
                     gravity = if (i == 0) Gravity.START else if (i == 1) Gravity.CENTER else Gravity.END
                 }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             }
         })
-        fun show() { value.text = text.signedDegrees(OffsetSlider.value(bar.progress)) }
+        fun refresh() { value.text = show(slider.value(bar.progress)) }
         bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = show()
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = refresh()
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-        show()
+        refresh()
         val error = errorLine().also { body.addView(it) }
         openEditor(title, body, error) { done ->
-            val offset = OffsetSlider.value(bar.progress)
+            val offset = slider.value(bar.progress)
             if (offset == current) done(null) else send(request(offset), done)
         }
     }

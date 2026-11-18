@@ -101,9 +101,20 @@ class HeatSettingsTest {
         assertFalse(HeatWrite.isHalfStep(1.3))
     }
 
+    @Test fun theAwaySetbackIsReadWhereTheKeyIsThereAndWrittenWithCompareAndSet() {
+        assertEquals(3.0, read("webhook/get_heat_success.json").awayDeltaC!!, 0.0)
+        val old = HaFixtures.json("webhook/get_heat_success.json").apply { getJSONObject("config").remove("away_delta_c") }
+        assertEquals(null, (HeatSettingsRead.decode(old) as SiteRead.Read).value.awayDeltaC)
+        val request = HeatWrite.awayDelta(read("webhook/get_heat_success.json"), 4.5).payload()
+        assertEquals(4.5, request.getJSONObject("changes").getDouble("away_delta_c"), 0.0)
+        assertEquals(3.0, request.getJSONObject("expected").getDouble("away_delta_c"), 0.0)
+        assertEquals(11, se.sensnology.spotnav.ui.settings.AwaySlider.steps() + 1)
+        assertEquals(6.0, se.sensnology.spotnav.ui.settings.AwaySlider.value(10), 0.0)
+    }
+
     @Test fun everyWriteAnswerHasItsOutcome() {
         fun answer(name: String, status: Int = 200) = HeatWrite.answer(status, HaFixtures.json("webhook/$name.json").toString())
-        for (name in listOf("update_heat_success", "update_heat_night", "update_heat_zone_offsets", "update_heat_indoor_offsets", "update_heat_away")) {
+        for (name in listOf("update_heat_success", "update_heat_night", "update_heat_zone_offsets", "update_heat_indoor_offsets", "update_heat_away", "update_heat_away_delta")) {
             assertEquals(name, HeatWrite.Outcome.Written, answer(name))
         }
         assertEquals(HeatWrite.Outcome.Conflict, answer("update_heat_conflict", 409))

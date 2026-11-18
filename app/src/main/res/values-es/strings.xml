@@ -1300,6 +1300,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Grados menos</string>
   <string name="card_heat_settings_night_start" formatted="false">Desde</string>
   <string name="card_heat_settings_night_end" formatted="false">Hasta</string>
+  <string name="card_heat_settings_away" formatted="false">Descenso al ausentarse</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Cuántos grados más fresca se mantiene la casa mientras estás fuera. Nunca por debajo de 16 °C. El plan la calienta antes de tu regreso.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Grados menos</string>
   <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
   <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
   <!-- House details and Intäkt (step A4) -->

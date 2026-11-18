@@ -249,6 +249,8 @@ internal object HeatRead {
 internal object HeatWrite {
     const val NIGHT_MIN = 0.5
     const val NIGHT_MAX = 3.0
+    const val AWAY_DELTA_MIN = 1.0
+    const val AWAY_DELTA_MAX = 6.0
     const val OFFSET_MIN = -3.0
     const val OFFSET_MAX = 3.0
 
@@ -303,6 +305,12 @@ internal object HeatWrite {
     fun night(stored: HeatSettings, next: HeatNight): Request = Request(
         changes = JSONObject().put("night", nightJson(next)),
         expected = JSONObject().put("night", nightJson(stored.night))
+    )
+
+    /** The setback while away; [stored] must carry one (the row is only shown then). */
+    fun awayDelta(stored: HeatSettings, next: Double): Request = Request(
+        changes = JSONObject().put("away_delta_c", next),
+        expected = JSONObject().put("away_delta_c", stored.awayDeltaC ?: JSONObject.NULL)
     )
 
     /** One stored zone's offset; the list names exactly the stored zones in their stored order, as the webhook takes it. */

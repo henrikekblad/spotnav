@@ -1292,6 +1292,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Astetta viileämpää</string>
   <string name="card_heat_settings_night_start" formatted="false">Alkaen</string>
   <string name="card_heat_settings_night_end" formatted="false">Asti</string>
+  <string name="card_heat_settings_away" formatted="false">Laskenta poissa ollessa</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Kuinka monta astetta viileämpänä talo pidetään, kun olet poissa. Ei koskaan alle 16 °C. Suunnitelma lämmittää talon silti ennen paluutasi.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Astetta viileämpää</string>
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
   <!-- House details and Intäkt (step A4) -->

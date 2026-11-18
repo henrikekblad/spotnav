@@ -1300,6 +1300,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Degrés en moins</string>
   <string name="card_heat_settings_night_start" formatted="false">De</string>
   <string name="card_heat_settings_night_end" formatted="false">À</string>
+  <string name="card_heat_settings_away" formatted="false">Baisse en cas d\'absence</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">De combien de degrés la maison est maintenue plus fraîche pendant votre absence. Jamais en dessous de 16 °C. Le plan la réchauffe quand même avant votre retour.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Degrés en moins</string>
   <string name="site_settings_in_home_assistant">L\'activation du pilotage et le choix des capteurs, du compteur et du mode de pilotage se modifient dans Home Assistant.</string>
   <string name="site_settings_heat_failed">Les réglages du chauffage n\'ont pas pu être lus.</string>
   <!-- House details and Intäkt (step A4) -->

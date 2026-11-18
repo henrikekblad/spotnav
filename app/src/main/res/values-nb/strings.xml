@@ -1292,6 +1292,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Grader kjøligere</string>
   <string name="card_heat_settings_night_start" formatted="false">Fra</string>
   <string name="card_heat_settings_night_end" formatted="false">Til</string>
+  <string name="card_heat_settings_away" formatted="false">Senking når borte</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Hvor mange grader kjøligere huset holdes mens dere er borte. Aldri under 16 °C. Planen varmer likevel opp huset før hjemkomsten.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Grader kjøligere</string>
   <string name="site_settings_in_home_assistant">Av og på for styringen og valget av sensorer, måler og styringsvei endres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeinnstillingene kunne ikke leses.</string>
   <!-- House details and Intäkt (step A4) -->

@@ -1305,6 +1305,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Degrees cooler</string>
   <string name="card_heat_settings_night_start" formatted="false">From</string>
   <string name="card_heat_settings_night_end" formatted="false">To</string>
+  <string name="card_heat_settings_away" formatted="false">Setback when away</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Optional: how many degrees colder the house is held while you are away. Never below 16 °C. The plan still warms it up before you return.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Degrees colder</string>
   <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
   <string name="site_settings_heat_failed">The heat settings could not be read.</string>
   <!-- House details and Intäkt (step A4) -->

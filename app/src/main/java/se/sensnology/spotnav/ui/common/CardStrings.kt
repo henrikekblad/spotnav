@@ -602,6 +602,10 @@ internal object CardStrings {
         "heat.settings.nightDelta" to R.string.card_heat_settings_night_delta,
         "heat.settings.nightStart" to R.string.card_heat_settings_night_start,
         "heat.settings.nightEnd" to R.string.card_heat_settings_night_end,
+        "heat.settings.away" to R.string.card_heat_settings_away,
+        "heat.settings.awayValue" to R.string.card_heat_settings_away_value,
+        "heat.settings.awayHelp" to R.string.card_heat_settings_away_help,
+        "heat.settings.awayDelta" to R.string.card_heat_settings_away_delta,
         // House details and Intäkt (step A4)
         "house.earn.total" to R.string.card_house_earn_total,
         "house.earn.none" to R.string.card_house_earn_none,

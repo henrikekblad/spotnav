@@ -1292,6 +1292,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Grader svalare</string>
   <string name="card_heat_settings_night_start" formatted="false">Från</string>
   <string name="card_heat_settings_night_end" formatted="false">Till</string>
+  <string name="card_heat_settings_away" formatted="false">Sänkning när borta</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Hur många grader svalare huset hålls när ni är borta. Aldrig under 16 °C. Planen värmer ändå upp huset före hemkomsten.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Grader svalare</string>
   <string name="site_settings_in_home_assistant">Styrningens av och på och valet av sensorer, mätare och styrväg ändras i Home Assistant.</string>
   <string name="site_settings_heat_failed">Värmeinställningarna kunde inte läsas.</string>
   <!-- House details and Intäkt (step A4) -->

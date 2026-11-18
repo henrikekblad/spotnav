@@ -1292,6 +1292,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Grad kühler</string>
   <string name="card_heat_settings_night_start" formatted="false">Von</string>
   <string name="card_heat_settings_night_end" formatted="false">Bis</string>
+  <string name="card_heat_settings_away" formatted="false">Absenkung bei Abwesenheit</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Wie viele Grad kühler das Haus gehalten wird, solange Sie weg sind. Nie unter 16 °C. Der Plan heizt vor der Rückkehr trotzdem wieder auf.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Grad kühler</string>
   <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
   <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
   <!-- House details and Intäkt (step A4) -->

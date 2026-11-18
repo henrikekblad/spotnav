@@ -1292,6 +1292,10 @@
   <string name="card_heat_settings_night_delta" formatted="false">Graden koeler</string>
   <string name="card_heat_settings_night_start" formatted="false">Van</string>
   <string name="card_heat_settings_night_end" formatted="false">Tot</string>
+  <string name="card_heat_settings_away" formatted="false">Verlaging bij afwezigheid</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Hoeveel graden koeler het huis wordt gehouden terwijl u weg bent. Nooit onder 16 °C. Het plan verwarmt het huis toch weer voor uw terugkomst.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Graden koeler</string>
   <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
   <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
   <!-- House details and Intäkt (step A4) -->

@@ -36,7 +36,9 @@ internal data class HeatSettings(
     /** Entity id to the name Home Assistant shows for it. */
     val names: Map<String, String>,
     /** The zone's kind (`floor`, `air`, ...) by entity id. */
-    val zoneKinds: Map<String, String>
+    val zoneKinds: Map<String, String>,
+    /** The setback while away, in degrees (1 to 6); `null` from a Home Assistant that does not have the setting (no row). */
+    val awayDeltaC: Double? = null
 ) {
     /** The friendly name the answer carries for [entityId]; `null` where it carries none (the id is never shown instead). */
     fun nameOf(entityId: String): String? = names[entityId]
@@ -123,7 +125,8 @@ internal object HeatSettingsRead {
             ),
             zones = offsets(config.opt("zones"), "zones"),
             names = names,
-            zoneKinds = kinds
+            zoneKinds = kinds,
+            awayDeltaC = if (config.has("away_delta_c")) number(config.opt("away_delta_c"), "away_delta_c") else null
         )
     }
 
