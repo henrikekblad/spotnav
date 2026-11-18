@@ -121,10 +121,10 @@ internal class HouseDayChartView(
             invalidate()
         }
 
-    private val density = resources.displayMetrics.density
+    private val density = scope.resources.displayMetrics.density
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeJoin = Paint.Join.ROUND }
-    private val text = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 10.5f * density }
+    private val text = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 10f * this@HouseDayChartView.density }
     private val rect = RectF()
     private val touch = ScrubTouch(this, ::hourAt, show, choose, chosen)
     private val select = choose
@@ -161,9 +161,9 @@ internal class HouseDayChartView(
         setMeasuredDimension(MeasureSpec.getSize(widthSpec), chartHeight() + stripHeight())
     }
 
-    private fun left() = 36f * density
+    private fun left() = 40f * density
     private fun right() = width - (if (spec?.view == ChartView.PRICE) 32f else 6f) * density
-    private fun top() = 8f * density
+    private fun top() = 15f * density
     private fun bottom() = chartHeight() - 18f * density
 
     private fun hourAt(x: Float): Int? {

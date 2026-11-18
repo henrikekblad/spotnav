@@ -98,7 +98,7 @@ internal class HouseHistoryStore(private val session: HaSession, private val cha
  */
 internal class HouseHistoryPanel(
     private val scope: ViewScope,
-    private val tab: HouseTab,
+    private val boxKind: HouseBox,
     private val store: HouseHistoryStore,
     private val preferences: SitePreferences,
     private val colours: SiteColours,
@@ -109,15 +109,15 @@ internal class HouseHistoryPanel(
     private val house: () -> House?
 ) {
     private val words get() = text.words
-    private val view = if (tab == HouseTab.PRICE) ChartView.PRICE else ChartView.ENERGY
-    private val priceTab = tab == HouseTab.PRICE
+    private val view = if (boxKind == HouseBox.PRICE) ChartView.PRICE else ChartView.ENERGY
+    private val priceTab = boxKind == HouseBox.PRICE
 
-    private val picker = PeriodPickerView(scope, words, locale) { next ->
-        store.choice = next
-        selectedHour = null
-        selectedBar = null
-        open()
-        render()
+    /** The box's own name above its picture: the card's name of the tab ("Energigraf", "Pris och batteri"). */
+    private val title = TextView(scope.context).apply {
+        textSize = 17f
+        setTextColor(scope.dark)
+        typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
+        text = words.say("house.tab.${boxKind.tabKey}")
     }
     private val heading = TextView(scope.context).apply {
         textSize = 17f
@@ -137,10 +137,17 @@ internal class HouseHistoryPanel(
     private var selectedHour: Int? = null
     private var selectedBar: String? = null
 
+    /** The box: a card like the Now box, with its heading, its figures and its picture. */
     val panel: LinearLayout = LinearLayout(scope.context).apply {
         orientation = LinearLayout.VERTICAL
-        addView(picker, wide())
-        addView(heading, wide().apply { topMargin = scope.dp(8) })
+        setPadding(scope.dp(14), scope.dp(12), scope.dp(14), scope.dp(12))
+        background = android.graphics.drawable.GradientDrawable().apply {
+            setColor(scope.cardBackground)
+            cornerRadius = scope.dp(10).toFloat()
+        }
+        visibility = View.GONE
+        addView(title, wide())
+        addView(heading, wide().apply { topMargin = scope.dp(6) })
         addView(sub, wide().apply { topMargin = scope.dp(2) })
         addView(status, wide().apply { topMargin = scope.dp(10) })
         addView(dayChart, wide().apply { topMargin = scope.dp(8) })
@@ -160,6 +167,12 @@ internal class HouseHistoryPanel(
         }
     }
 
+    /** The period changed (the page's shared picker): forget what was chosen on the old one. */
+    fun periodChanged() {
+        selectedHour = null
+        selectedBar = null
+    }
+
     private fun hidden(): Set<String> = preferences.hiddenOr(site(), view.key, Series.hiddenByDefault(view))
 
     /** The tab came into view or its period changed: ask for what it draws. */
@@ -174,26 +187,30 @@ internal class HouseHistoryPanel(
     private fun needsHistory(choice: PeriodChoice): Boolean =
         priceTab || choice.period != HistoryPeriod.DAY || choice.date != null
 
-    private fun today(zone: java.time.ZoneId): LocalDate = LocalDate.now(zone)
-
-    fun render() {
-        val now = house() ?: return
+    /** Draw the box; it is left out (and this says `false`) where there is nothing to show for the period. */
+    fun render(): Boolean {
+        val now = house() ?: return false
         val choice = store.choice
-        val today = today(now.zone)
-        picker.show(choice, today, null)
+        nothing = false
         val history = (store.history(choice) as? Load.Ready)?.value
         val money = history?.money ?: now.money
         listOf(heading, sub, status, dayChart, bars).forEach { it.visibility = View.GONE }
         if (priceTab) priceHeading(now, choice, history, money)
+        drawContent(now, choice, history, money)
+        val shown = !nothing
+        panel.visibility = if (shown) View.VISIBLE else View.GONE
+        return shown
+    }
+
+    private var nothing = false
+
+    private fun drawContent(now: House, choice: PeriodChoice, history: HouseHistory?, money: House.Money?) {
 
         if (choice.period == HistoryPeriod.DAY) {
             val shown = dayHours(now, choice)
             when (shown) {
                 is Load.Loading -> return say("hist.loading")
-                is Load.Ready -> {
-                    drawDay(shown.value, choice, history, money)
-                    return
-                }
+                is Load.Ready -> return drawDay(shown.value, choice, history, money)
                 is Load.Failed, null -> Unit // the history's own bars below
             }
         }
@@ -299,7 +316,7 @@ internal class HouseHistoryPanel(
     private fun drawBars(now: House, history: HouseHistory, money: House.Money?) {
         val hiddenSet = hidden()
         if (!priceTab) {
-            if (!HouseGraph.hasEnergy(history)) return say("hist.house.noEnergy")
+            if (!HouseGraph.hasEnergy(history)) { nothing = true; return }
             val energy = HouseGraph.energyBars(text, locale, history)
             val series = buildList {
                 add(BarSeries(Series.HOUSE, words.say("house.legend.house"), colours.of(Tone.HOUSE)))
@@ -318,7 +335,7 @@ internal class HouseHistoryPanel(
             return
         }
         val earned = if (now.battery == null) null else HouseGraph.earnedBars(text, locale, history, money)
-        if (earned == null) return say("house.value.none")
+        if (earned == null) { nothing = true; return }
         bars.show(
             BarsSpec(
                 label = words.say("house.value.label"), bars = earned,

@@ -30,8 +30,8 @@ internal enum class HouseTab(val key: String, val icon: Int) {
     PRICE("price", R.drawable.ic_tab_price);
 
     companion object {
-        /** The tabs the page has so far: Now, Energy chart and Price. Energy flow and Earnings come with their steps. */
-        val BUILT: List<HouseTab> = listOf(NOW, GRAPH, PRICE)
+        /** The tabs the page has so far: Now. Energy flow, Energy chart, Earnings and Price come with their steps. */
+        val BUILT: List<HouseTab> = listOf(NOW)
     }
 }
 
@@ -57,8 +57,7 @@ internal class HousePage(
     private val words = cardWords()
     private val text = SiteText(words, AppLanguageSettings.locale(context), AppLanguageSettings.numberLocale(context))
     private val colours = SiteColours(palette)
-    /** The tabs the house has something to show on ([HouseTabs]); only Now before it has answered. */
-    private var tabs = HouseTabs.shown(null)
+    private val tabs = HouseTab.BUILT
     private var tab = HouseTab.NOW
     private var failed = false
     private var testOpen = false
@@ -85,18 +84,25 @@ internal class HousePage(
     private val notes = note()
     private val learning = note()
     private var tabRow: TabRowView? = null
-    private var restored = false
+
+    // The period boxes under the Now box (the card's tabs, stacked as boxes in the app): one shared picker drives them.
     private val history = HouseHistoryStore(session) { render() }
     private val locale = AppLanguageSettings.locale(context)
-    private val panels = HashMap<HouseTab, HouseHistoryPanel>()
-    private val panelHost = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-
-    private fun panelOf(tab: HouseTab): HouseHistoryPanel? = when (tab) {
-        HouseTab.GRAPH, HouseTab.PRICE -> panels.getOrPut(tab) {
-            HouseHistoryPanel(this, tab, history, preferences, colours, text, locale, ::siteKey) { memory.house }
-                .also { panelHost.addView(it.panel, wide()) }
-        }
-        else -> null
+    private val boxes = HouseBox.entries.associateWith { box ->
+        HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+    }
+    private var boxesOpen = false
+    private val picker = PeriodPickerView(this, words, locale) { next ->
+        history.choice = next
+        boxes.values.forEach { it.periodChanged() }
+        openBoxes()
+        render()
+    }
+    private val periodRow = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(14), 0, dp(14), 0)
+        visibility = View.GONE
+        addView(picker, wide())
     }
 
     private val body = LinearLayout(context).apply {
@@ -115,6 +121,9 @@ internal class HousePage(
             addView(title, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
+            // One picker above the period boxes, under the Now box; it drives every box below it.
+            addView(periodRow, wide().apply { bottomMargin = dp(6) })
+            boxes.values.forEach { addView(it.panel, wide().apply { bottomMargin = dp(14) }) }
         })
     }
 
@@ -127,14 +136,30 @@ internal class HousePage(
     )
 
     init {
+        tab = preferences.tab(siteKey(), PAGE, tabs.map { it.key })?.let { key -> tabs.first { it.key == key } } ?: tabs.first()
+        // A row of one tab says nothing: it is drawn from the second tab on.
+        if (tabs.size > 1) {
+            tabRow = TabRowView(
+                this,
+                tabs.map { TabSpec(it.key, words.say("house.tab.${it.key}"), words.say("house.tab.short.${it.key}"), it.icon) },
+                tab.key,
+                colours.wire
+            ) { key -> choose(tabs.first { it.key == key }) }.apply { contentDescription = words.say("house.tabs") }
+            body.addView(tabRow, wide().apply { bottomMargin = dp(10) })
+        }
         body.addView(state, wide())
         body.addView(schematic, wide())
         body.addView(plan, wide().apply { topMargin = dp(10) })
         body.addView(money, wide().apply { topMargin = dp(6) })
         body.addView(notes, wide().apply { topMargin = dp(6) })
         body.addView(learning, wide().apply { topMargin = dp(4) })
-        body.addView(panelHost, wide())
         render()
+    }
+
+    /** Ask for what the visible period boxes draw (the house has answered, or the period changed). */
+    private fun openBoxes(force: Boolean = false) {
+        val shown = HouseBoxes.shown(memory.house)
+        boxes.forEach { (box, panel) -> if (box in shown) panel.open(force) }
     }
 
     override fun setInView(inView: Boolean) {
@@ -144,44 +169,16 @@ internal class HousePage(
 
     private fun siteKey(): String = memory.house?.siteId ?: profileId
 
-    /**
-     * The tabs the house has something to show on, as the page's row: drawn from the second tab on, rebuilt when the
-     * tabs change (the house answered, or lost its battery and prices), and the tab last shown while it still exists.
-     */
-    private fun syncTabs(house: House?) {
-        val next = HouseTabs.shown(house)
-        if (next == tabs && (tabRow != null) == (next.size > 1)) return
-        tabs = next
-        val remembered = preferences.tab(siteKey(), PAGE, next.map { it.key })?.let { key -> next.first { it.key == key } }
-        // The tab last shown comes back once the house has said which tabs there are; later the one in view stays while it exists.
-        tab = if (!restored && next.size > 1) remembered ?: tab else tab.takeIf { it in next } ?: remembered ?: next.first()
-        if (next.size > 1) restored = true
-        if (tab != HouseTab.NOW) panelOf(tab)?.open()
-        tabRow?.let { body.removeView(it) }
-        tabRow = null
-        if (next.size > 1) {
-            tabRow = TabRowView(
-                this,
-                next.map { TabSpec(it.key, words.say("house.tab.${it.key}"), words.say("house.tab.short.${it.key}"), it.icon) },
-                tab.key,
-                colours.wire
-            ) { key -> choose(tabs.first { it.key == key }) }.apply { contentDescription = words.say("house.tabs") }
-            body.addView(tabRow, 0, wide().apply { bottomMargin = dp(10) })
-        }
-    }
-
     private fun choose(next: HouseTab) {
         tab = next
         preferences.setTab(siteKey(), PAGE, next.key)
         tabRow?.select(next.key)
-        panelOf(next)?.open()
-        polling.forget()
         render()
     }
 
     private fun readHouse() {
-        // The running period of the tab in view is read again with the house, every minute.
-        panelOf(tab)?.refresh()
+        // The running period is read again with the house, every minute.
+        if (boxesOpen) boxes.values.forEach { it.refresh() }
         if (houseInFlight) return
         houseInFlight = true
         session.house(null) { outcome ->
@@ -215,7 +212,6 @@ internal class HousePage(
 
     private fun render() {
         val house = memory.house
-        syncTabs(house)
         val status = house?.let { HouseNowModel.status(words, it) }
         val test = status is HouseStatus.Test
         title.text = headerTitle(
@@ -238,18 +234,13 @@ internal class HousePage(
         if (house == null) {
             state.text = words.say(if (failed) "house.failed" else "house.loading")
             state.visibility = View.VISIBLE
-            listOf(schematic, plan, money, notes, learning, panelHost).forEach { it.visibility = View.GONE }
+            listOf(schematic, plan, money, notes, learning).forEach { it.visibility = View.GONE }
+            periodRow.visibility = View.GONE
+            boxes.values.forEach { it.panel.visibility = View.GONE }
             return
         }
         state.visibility = View.GONE
-        if (tab != HouseTab.NOW) {
-            listOf(schematic, plan, money, notes, learning).forEach { it.visibility = View.GONE }
-            panelHost.visibility = View.VISIBLE
-            panels.forEach { (which, panel) -> panel.panel.visibility = if (which == tab) View.VISIBLE else View.GONE }
-            panelOf(tab)?.render()
-            return
-        }
-        panelHost.visibility = View.GONE
+        renderBoxes(house)
         val live = memory.live
         schematic.visibility = View.VISIBLE
         schematic.show { wide -> HouseNowModel.schematic(text, house, live, wide) }
@@ -257,6 +248,18 @@ internal class HousePage(
         say(money, HouseNowModel.moneyLine(text, house))
         say(notes, HouseNowModel.notesLine(text, house, live))
         say(learning, HouseNowModel.learningLines(text, house).joinToString("\n").ifEmpty { null })
+    }
+
+    private fun renderBoxes(house: House) {
+        if (!boxesOpen) {
+            boxesOpen = true
+            openBoxes()
+        }
+        val shown = HouseBoxes.shown(house)
+        var any = false
+        boxes.forEach { (box, panel) -> if (box in shown) any = panel.render() || any else panel.panel.visibility = View.GONE }
+        periodRow.visibility = if (any) View.VISIBLE else View.GONE
+        if (any) picker.show(history.choice, java.time.LocalDate.now(house.zone), null)
     }
 
     private fun say(view: TextView, words: String?) {

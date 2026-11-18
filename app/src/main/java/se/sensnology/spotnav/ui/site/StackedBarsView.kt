@@ -336,7 +336,7 @@ internal class StackedBarsView(
     private var spec: BarsSpec? = null
     private var chosen: Int? = null
     private var shownIndex: Int? = null
-    private val density = resources.displayMetrics.density
+    private val density = scope.resources.displayMetrics.density
     private val legend = WrapRow(context, scope.dp(14), scope.dp(2))
     private val readout = TextView(context).apply {
         textSize = 13.5f
@@ -388,7 +388,7 @@ internal class StackedBarsView(
     private inner class Plot : View(scope.context) {
         private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
         private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 1f * density }
-        private val label = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 11f * density }
+        private val label = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 11f * this@StackedBarsView.density }
         private val rect = RectF()
         private val touch = ScrubTouch(this, ::barAt, { say(it) }, { choose(it) }, { chosen })
 
@@ -402,7 +402,7 @@ internal class StackedBarsView(
                     info.className = "android.widget.ListView"
                     info.addAction(AccessibilityNodeInfo.AccessibilityAction(ACTION_NEXT, "›"))
                     info.addAction(AccessibilityNodeInfo.AccessibilityAction(ACTION_PREVIOUS, "‹"))
-                    info.stateDescription = chosen?.let { spec?.bars?.getOrNull(it)?.words }
+                    info.text = chosen?.let { spec?.bars?.getOrNull(it)?.words }
                 }
 
                 override fun performAccessibilityAction(host: View, action: Int, args: android.os.Bundle?): Boolean {
@@ -484,13 +484,13 @@ internal class StackedBarsView(
             canvas.drawLine(0f, h, w, h, stroke)
             // The scale: the tallest figure at the top left, the deepest where bars go below zero.
             drawScale(canvas, current.scale(extent.top), 0f, 0f)
-            if (extent.bottom > 0) drawScale(canvas, current.scale(-extent.bottom), 0f, h - 14f * density)
+            if (extent.bottom > 0) drawScale(canvas, current.scale(-extent.bottom), 0f, h - 17f * density)
             // The axis under the bars.
             label.color = colours.muted
             label.textAlign = Paint.Align.CENTER
             val slot = w / current.bars.size
             current.bars.forEachIndexed { i, bar ->
-                if (bar.axis.isNotEmpty()) canvas.drawText(bar.axis, (i + 0.5f) * slot, h + 13f * density, label)
+                if (bar.axis.isNotEmpty()) canvas.drawText(bar.axis, (i + 0.5f) * slot, h + 15f * density, label)
             }
         }
 
@@ -500,14 +500,14 @@ internal class StackedBarsView(
             val tw = label.measureText(text)
             fill.color = colours.card
             fill.alpha = 220
-            canvas.drawRoundRect(x, y, x + tw + 6f * density, y + 14f * density, 3f * density, 3f * density, fill)
+            canvas.drawRoundRect(x, y, x + tw + 6f * density, y + 17f * density, 3f * density, 3f * density, fill)
             fill.alpha = 255
-            canvas.drawText(text, x + 3f * density, y + 11f * density, label)
+            canvas.drawText(text, x + 3f * density, y + 13.5f * density, label)
         }
     }
 
     private companion object {
-        const val AXIS_DP = 18
+        const val AXIS_DP = 20
         const val ACTION_NEXT = 0x7E000001
         const val ACTION_PREVIOUS = 0x7E000002
     }
