@@ -325,11 +325,27 @@ internal class HeatPage(
         view.visibility = if (words == null) View.GONE else View.VISIBLE
     }
 
+    /** A round outlined button as the Away button is, the accent on press; 48 dp to touch. */
     private fun stepButton(label: String, description: String, delta: Double) = Button(context).apply {
         text = label
         textSize = 22f
+        isAllCaps = false
+        stateListAnimator = null
+        minWidth = dp(48)
+        minHeight = dp(48)
         setPadding(0, 0, 0, 0)
+        setTextColor(dark)
         contentDescription = words.say(description)
+        fun ring(fill: Int, stroke: Int) = GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(fill)
+            setStroke(dp(1), stroke)
+        }
+        background = android.graphics.drawable.StateListDrawable().apply {
+            addState(intArrayOf(android.R.attr.state_pressed), ring(SiteColours.mix(accent, cardBackground, 0.35f), accent))
+            addState(intArrayOf(-android.R.attr.state_enabled), ring(0, SiteColours.mix(colours.wire, cardBackground, 0.5f)))
+            addState(intArrayOf(), ring(0, colours.wire))
+        }
         setOnClickListener { step(delta) }
     }
 
