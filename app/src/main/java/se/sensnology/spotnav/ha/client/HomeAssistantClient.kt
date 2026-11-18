@@ -3,6 +3,9 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatRead
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.HouseNowRead
@@ -352,6 +355,18 @@ object HomeAssistantClient {
     internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
         val (status, body) = write(settings, HouseRead.payload(date))
         return HouseRead.answer(status, body)
+    }
+
+    /** The site's heating (webhook `get_heat`), asked only where the dashboard states `capabilities.get_heat`. Never throws. */
+    internal fun heat(settings: HomeAssistantSettings): SiteRead<Heat> {
+        val (status, body) = write(settings, HeatRead.payload())
+        return HeatRead.answer(status, body)
+    }
+
+    /** The dial or Home/Away written (webhook `update_heat`). Never throws. */
+    internal fun updateHeat(settings: HomeAssistantSettings, change: HeatWrite.Change): HeatWrite.Outcome {
+        val (status, body) = write(settings, HeatWrite.payload(change))
+        return HeatWrite.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */
