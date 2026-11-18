@@ -29,9 +29,6 @@ internal object HeatNowModel {
     )
     private val OTHER_CONTROLLERS = mapOf("effektguard" to "EffektGuard")
 
-    /** Whether the dial's pages count as one more or fewer: the page and its tab row rules (owner 2026-11-18). */
-    fun tabRowShown(tabs: Int): Boolean = tabs >= 2
-
     /** The dial's figure one step on from [base], kept in range and on half degrees. */
     fun stepped(base: Double, delta: Double): Double =
         (Math.round((base + delta) * 2) / 2.0).coerceIn(TARGET_MIN, TARGET_MAX)

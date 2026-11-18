@@ -29,15 +29,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZonedDateTime
 
-/** The heat page's tabs in the card's order; only Now is built (Plan and Use come with their step). */
-internal enum class HeatTab(val key: String) {
-    NOW("now"), PLAN("plan"), USE("use");
-
-    companion object {
-        val BUILT: List<HeatTab> = listOf(NOW)
-    }
-}
-
 /**
  * The heat page: the header ("Värme · Test · Värmer 1,1 kW") and the Now tab as the Home Assistant card has it: the
  * thermostat dial with its buttons (the target in half degrees, 16 to 25), Home or Away until a date, what the heat
@@ -143,8 +134,6 @@ internal class HeatPage(
     )
 
     init {
-        // The tab row is drawn from the second tab on; Now alone has none.
-        check(!HeatNowModel.tabRowShown(HeatTab.BUILT.size))
         body.addView(state, wide())
         body.addView(dialRow, wide())
         body.addView(errorLine, wide())

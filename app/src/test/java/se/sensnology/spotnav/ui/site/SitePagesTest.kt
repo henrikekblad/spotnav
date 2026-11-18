@@ -31,11 +31,6 @@ class SitePagesTest {
         assertTrue(PageOffer.iconsShown(PageOffer.kinds(house = false, heat = true)))
     }
 
-    @Test fun aPagesTabRowShowsOnlyWithTwoOrMoreTabs() {
-        assertFalse(HeatNowModel.tabRowShown(HeatTab.BUILT.size))
-        assertTrue(HeatNowModel.tabRowShown(2))
-    }
-
     @Test fun aSwipeBeginsOnlyOnAHeaderOrEmptySpace() {
         assertTrue(PagerSwipe.allowedOn(listOf(Touched.PLAIN, Touched.PLAIN, Touched.PLAIN)))
         assertTrue(PagerSwipe.allowedOn(emptyList()))

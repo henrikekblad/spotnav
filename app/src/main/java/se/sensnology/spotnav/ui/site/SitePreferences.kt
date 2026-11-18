@@ -6,18 +6,12 @@ import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
 
 /**
  * What the main screen's pages remember on this phone: per charger the page last in view and the pages its Home
- * Assistant offered, and per site the tab last shown on a page, the parts of a chart
+ * Assistant offered, and per site the parts of a chart
  * hidden through its legend, and a page's switches (kWh or money). Display choices only, never a setting of Home
- * Assistant's. A store that throws or holds something unusable means nothing is remembered: the first tab, every
+ * Assistant's. A store that throws or holds something unusable means nothing is remembered: every
  * part shown, the switch's own default.
  */
 internal class SitePreferences(private val store: KeyValueStore) {
-    /** The tab last shown on [page] (`house`, `heat`) of [site], when it is one of [offered]. */
-    fun tab(site: String, page: String, offered: Collection<String>): String? =
-        read("tab.$page.$site")?.takeIf { it in offered }
-
-    fun setTab(site: String, page: String, tab: String) = write("tab.$page.$site", tab)
-
     /** The parts of [chart] (`house.graph`, `house.earn`, `heat.use`) hidden through its legend. */
     fun hidden(site: String, chart: String): Set<String> =
         read("hidden.$chart.$site")?.split(',')?.filter { it.isNotEmpty() }?.toSet().orEmpty()
