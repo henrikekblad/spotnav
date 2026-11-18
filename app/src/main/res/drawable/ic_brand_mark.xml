@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Home Assistant card's coloured product mark (frontend/src/card-header.ts, brandMark): a dark rounded square with
+     the red-yellow-green bolt and its halo. The top row's logo; not a control. The halo is two soft strokes, as a
+     vector drawable has no blur. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="306"
+    android:viewportHeight="306">
+    <path android:pathData="M78,8 H228 A70,70 0 0 1 298,78 V228 A70,70 0 0 1 228,298 H78 A70,70 0 0 1 8,228 V78 A70,70 0 0 1 78,8 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="106.158"
+                android:centerY="79.888"
+                android:gradientRadius="261">
+                <item android:color="#FF454D55" android:offset="0" />
+                <item android:color="#FF1B1E22" android:offset="0.42" />
+                <item android:color="#FF101216" android:offset="0.76" />
+                <item android:color="#FF080A0D" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M214,42 L208,104 L190,94 L167,143 L214,146 L127.99846,222.23385 L142,232 L92,264 L98,202 L111.99846,211.52923 L139,163 L92,160 L173.29385,84.472308 L156.70308,75.412 Z"
+        android:strokeColor="#FFFFE36B"
+        android:strokeAlpha="0.12"
+        android:strokeWidth="16"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M214,42 L208,104 L190,94 L167,143 L214,146 L127.99846,222.23385 L142,232 L92,264 L98,202 L111.99846,211.52923 L139,163 L92,160 L173.29385,84.472308 L156.70308,75.412 Z"
+        android:strokeColor="#FFFFE36B"
+        android:strokeAlpha="0.28"
+        android:strokeWidth="8"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M214,42 L208,104 L190,94 L167,143 L214,146 L127.99846,222.23385 L142,232 L92,264 L98,202 L111.99846,211.52923 L139,163 L92,160 L173.29385,84.472308 L156.70308,75.412 Z"
+        android:strokeColor="#FFFFE36B"
+        android:strokeAlpha="0.52"
+        android:strokeWidth="1.2"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="155.35"
+                android:startY="4.69"
+                android:endX="129.22"
+                android:endY="303.87">
+                <item android:color="#FFFF0000" android:offset="0" />
+                <item android:color="#FFFF0000" android:offset="0.102" />
+                <item android:color="#FFFFD22E" android:offset="0.43" />
+                <item android:color="#FFFFE56A" android:offset="0.57" />
+                <item android:color="#FF00FF06" android:offset="0.904" />
+                <item android:color="#FF00FF00" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

@@ -117,10 +117,12 @@ internal class SitePages(
         // The mark and the gear in boxes of one width, so the icons between them are in the screen's middle.
         addView(FrameLayout(context).apply {
             addView(ImageView(context).apply {
-                setImageResource(R.drawable.ic_spotnav_mark)
-                imageTintList = ColorStateList.valueOf(scope.dark)
+                // The Home Assistant card's coloured product mark: a picture, not a control (no click, ripple or focus).
+                setImageResource(R.drawable.ic_brand_mark)
                 contentDescription = scope.getString(R.string.app_name)
-            }, FrameLayout.LayoutParams(scope.dp(28), scope.dp(36), Gravity.START or Gravity.CENTER_VERTICAL))
+                isClickable = false
+                isFocusable = false
+            }, FrameLayout.LayoutParams(scope.dp(28), scope.dp(28), Gravity.START or Gravity.CENTER_VERTICAL))
         }, LinearLayout.LayoutParams(scope.dp(48), scope.dp(48)))
         addView(icons, LinearLayout.LayoutParams(0, scope.dp(48), 1f))
         addView(gear, LinearLayout.LayoutParams(scope.dp(48), scope.dp(48)))
