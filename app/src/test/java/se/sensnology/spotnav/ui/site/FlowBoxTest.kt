@@ -10,7 +10,6 @@ import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistoryRead
 import se.sensnology.spotnav.ha.house.HouseLoads
 import se.sensnology.spotnav.ha.house.HouseLoadsRead
-import se.sensnology.spotnav.ha.house.HouseNowRead
 import se.sensnology.spotnav.ha.house.HouseRead
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.testing.CardStringsXml
@@ -19,9 +18,9 @@ import java.util.Locale
 
 /**
  * The Energy flow tab apart from the views: the card's own cases for the Sankey layout, the tiles and the pie, and
- * which tabs a house page has.
+ * which boxes a house page has.
  */
-class FlowTabTest {
+class FlowBoxTest {
     private fun text(language: String = "sv") = SiteText(CardStringsXml.words(language), Locale.forLanguageTag(language))
 
     private fun house(name: String = "villa_battery_sun.json") = (HouseRead.decode(HaFixtures.json("house/$name")) as SiteRead.Read).value
@@ -278,33 +277,23 @@ class FlowTabTest {
         }
     }
 
-    // --- which tabs a house page has ---
+    // --- which boxes the house page has ---
 
-    private val built = listOf(HouseTab.NOW, HouseTab.FLOW, HouseTab.GRAPH, HouseTab.EARN, HouseTab.PRICE)
-    private fun live() = (HouseNowRead.decode(HaFixtures.json("house_now/villa_now.json")) as SiteRead.Read).value
-
-    @Test fun aTabWithNothingToShowIsLeftOut() {
-        // No energy-flow data: no Flöde tab. No battery: no Pris och batteri tab.
+    @Test fun aBoxWithNothingToShowIsLeftOut() {
+        // No energy-flow data: no Energiflöde box.
         val alone = house("house_learning.json")
         assertNull(alone.energyFlow)
-        assertNull(alone.battery)
-        val offered = HouseTabs.offered(built, alone, null)
-        assertFalse(HouseTab.FLOW in offered)
-        assertFalse(HouseTab.PRICE in offered)
-        assertTrue(HouseTab.NOW in offered)
-        // The same site with a flow but no battery: Flöde yes, Pris no; with a battery both.
-        val withFlow = alone.copy(energyFlow = house().energyFlow)
-        assertTrue(HouseTab.FLOW in HouseTabs.offered(built, withFlow, null))
-        assertFalse(HouseTab.PRICE in HouseTabs.offered(built, withFlow, null))
-        assertEquals(built, HouseTabs.offered(built, house(), live()))
-        // Before the first answer there is Now alone; tabs not built yet are never offered.
-        assertEquals(listOf(HouseTab.NOW), HouseTabs.offered(built, null, null))
-        assertEquals(listOf(HouseTab.NOW, HouseTab.FLOW), HouseTabs.offered(HouseTab.BUILT, house(), null))
+        assertFalse(HouseBoxes.flow(alone))
+        assertTrue(HouseBoxes.flow(house()))
+        // Before the first answer there is Now alone.
+        assertFalse(HouseBoxes.flow(null))
+        assertFalse(HouseBoxes.flow(alone.copy(energyFlow = null)))
+        assertTrue(HouseBoxes.flow(alone.copy(energyFlow = house().energyFlow)))
     }
 
-    @Test fun theRowIsDrawnOnlyWithTwoTabsOrMore() {
-        assertFalse(HouseTabs.showRow(HouseTabs.offered(HouseTab.BUILT, house("house_learning.json"), null)))
-        assertFalse(HouseTabs.showRow(HouseTabs.offered(HouseTab.BUILT, null, null)))
-        assertTrue(HouseTabs.showRow(HouseTabs.offered(HouseTab.BUILT, house(), null)))
+    @Test fun thePickerIsDrawnOnlyWhileABoxNeedsIt() {
+        assertFalse(HouseBoxes.picker(house("house_learning.json")))
+        assertFalse(HouseBoxes.picker(null))
+        assertTrue(HouseBoxes.picker(house()))
     }
 }

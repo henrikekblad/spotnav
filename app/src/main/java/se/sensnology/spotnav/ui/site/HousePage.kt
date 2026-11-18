@@ -21,28 +21,18 @@ import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
 import java.time.Instant
 
-/** The house page's tabs, in the Home Assistant card's fixed order. [key] is what is remembered. */
-internal enum class HouseTab(val key: String, val icon: Int) {
-    NOW("now", R.drawable.ic_tab_now),
-    FLOW("flow", R.drawable.ic_tab_flow),
-    GRAPH("graph", R.drawable.ic_tab_graph),
-    EARN("earn", R.drawable.ic_tab_earn),
-    PRICE("price", R.drawable.ic_tab_price);
-
-    companion object {
-        /** The tabs the page has so far: Now and Energy flow. Energy chart, Earnings and Price come with their steps. */
-        val BUILT: List<HouseTab> = listOf(NOW, FLOW)
-    }
-}
-
 /**
- * The house page: the header ("Huset · Laddar från nätet"), and under it the Now tab as the Home Assistant card has
+ * The house page: the header ("Huset · Laddar från nätet"), and under it the Now box as the Home Assistant card's Now tab has
  * it: the live schematic, one sentence of what the battery does and does next, today's money, and the small notes.
  *
  * It reads only while it is in view with the app in the foreground ([setInView]): the live flows every 10 s, the
  * house when it comes into view and then every minute ([SitePolling]). The live figures are dropped after three
  * reads in a row without an answer, so an old power is never shown as now; the house's own figures stay until the
  * next answer.
+ *
+ * Under the Now box the page stacks boxes, scrolled like the charger page's: one shared period picker and then a box
+ * per period view (so far the Energy flow). A box with nothing to show is left out, and with no period box the
+ * picker is too ([HouseBoxes]).
  */
 internal class HousePage(
     scope: ViewScope,
@@ -57,15 +47,13 @@ internal class HousePage(
     private val words = cardWords()
     private val text = SiteText(words, AppLanguageSettings.locale(context), AppLanguageSettings.numberLocale(context))
     private val colours = SiteColours(palette)
-    private var tabs: List<HouseTab> = HouseTabs.offered(HouseTab.BUILT, null, null)
-    private var tab = HouseTab.NOW
     private var failed = false
     private var testOpen = false
     private var houseInFlight = false
     private var liveInFlight = false
     private var liveMisses = 0
 
-    // The Energy flow tab: the period shown, and what was read for it when it is not today's day.
+    // The period the boxes show, and the Energy flow's history, and what was read for it when it is not today's day.
     private var choice = PeriodChoice(HistoryPeriod.DAY)
     private var history: HouseHistory? = null
     private var historyFailure: FlowModel.FlowFailure? = null
@@ -82,8 +70,19 @@ internal class HousePage(
     private val sankey = SankeyView(context, text).apply { onOpen = ::openLoads }
     private val tiles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val flowHint = note()
-    private val flowGroup = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-    private val nowGroup = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+    private val flowTitle = TextView(context).apply {
+        textSize = 17f
+        typeface = Typeface.DEFAULT_BOLD
+        setTextColor(dark)
+    }
+    private val flowGroup = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(14), dp(12), dp(14), dp(12))
+        background = GradientDrawable().apply {
+            setColor(cardBackground)
+            cornerRadius = dp(10).toFloat()
+        }
+    }
 
     private val title = TextView(context).apply {
         textSize = 21f
@@ -103,11 +102,6 @@ internal class HousePage(
     private val money = line()
     private val notes = note()
     private val learning = note()
-    private var tabRow: TabRowView? = null
-
-    /** The tab row's place: empty while the page has fewer than two tabs. */
-    private val rowHolder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-
     private val body = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(14), dp(12), dp(14), dp(12))
@@ -124,55 +118,32 @@ internal class HousePage(
             addView(title, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
+            addView(picker, wide().apply { bottomMargin = dp(6) })
+            addView(flowGroup, wide().apply { bottomMargin = dp(14) })
         })
     }
 
     private val polling = SitePolling(
         timer = MainTimer(),
         now = { android.os.SystemClock.elapsedRealtime() },
-        live = { shownTab() == HouseTab.NOW },
+        live = { true },
         readLive = ::readLive,
         readSlow = ::readHouse
     )
 
     init {
-        tab = preferences.tab(siteKey(), PAGE, HouseTab.BUILT.map { it.key })?.let { key -> HouseTab.BUILT.first { it.key == key } } ?: HouseTab.NOW
-        body.addView(rowHolder, wide().apply { bottomMargin = dp(10) })
-        nowGroup.addView(state, wide())
-        nowGroup.addView(schematic, wide())
-        nowGroup.addView(plan, wide().apply { topMargin = dp(10) })
-        nowGroup.addView(money, wide().apply { topMargin = dp(6) })
-        nowGroup.addView(notes, wide().apply { topMargin = dp(6) })
-        nowGroup.addView(learning, wide().apply { topMargin = dp(4) })
-        flowGroup.addView(picker, wide())
+        body.addView(state, wide())
+        body.addView(schematic, wide())
+        body.addView(plan, wide().apply { topMargin = dp(10) })
+        body.addView(money, wide().apply { topMargin = dp(6) })
+        body.addView(notes, wide().apply { topMargin = dp(6) })
+        body.addView(learning, wide().apply { topMargin = dp(4) })
+        flowGroup.addView(flowTitle, wide())
         flowGroup.addView(flowStatus, wide().apply { topMargin = dp(8) })
         flowGroup.addView(sankey, wide().apply { topMargin = dp(8) })
         flowGroup.addView(tiles, wide().apply { topMargin = dp(8) })
         flowGroup.addView(flowHint, wide().apply { topMargin = dp(8) })
-        body.addView(nowGroup, wide())
-        body.addView(flowGroup, wide())
         render()
-    }
-
-    /** The tab shown: the one chosen where the page offers it, else the first (Now). */
-    private fun shownTab(): HouseTab = tab.takeIf { it in tabs } ?: tabs.first()
-
-    /** The tabs with something to show, and the row only with two or more; the row is drawn again when they change. */
-    private fun syncTabs() {
-        val offered = HouseTabs.offered(HouseTab.BUILT, memory.house, memory.live)
-        if (offered == tabs && (tabRow != null) == HouseTabs.showRow(offered)) return
-        tabs = offered
-        rowHolder.removeAllViews()
-        tabRow = null
-        if (HouseTabs.showRow(offered)) {
-            tabRow = TabRowView(
-                this,
-                offered.map { TabSpec(it.key, words.say("house.tab.${it.key}"), words.say("house.tab.short.${it.key}"), it.icon) },
-                shownTab().key,
-                colours.wire
-            ) { key -> choose(offered.first { it.key == key }) }.apply { contentDescription = words.say("house.tabs") }
-            rowHolder.addView(tabRow, wide())
-        }
     }
 
     override fun setInView(inView: Boolean) {
@@ -180,21 +151,9 @@ internal class HousePage(
         if (inView) polling.start() else polling.stop()
     }
 
-    private fun siteKey(): String = memory.house?.siteId ?: profileId
-
-    private fun choose(next: HouseTab) {
-        tab = next
-        preferences.setTab(siteKey(), PAGE, next.key)
-        tabRow?.select(next.key)
-        if (next == HouseTab.FLOW) readHistory()
-        // Another tab's cadence: the live flows only on Now.
-        polling.forget()
-        render()
-    }
-
     /** The history of the period shown, when it is not today's day (which is the house's own answer). */
     private fun readHistory() {
-        if (shownTab() != HouseTab.FLOW || (choice.period == HistoryPeriod.DAY && choice.date == null)) return
+        if (!HouseBoxes.flow(memory.house) || (choice.period == HistoryPeriod.DAY && choice.date == null)) return
         if (historyInFlight) return
         val asked = choice
         historyInFlight = true
@@ -278,10 +237,10 @@ internal class HousePage(
                 setSpan(StyleSpan(Typeface.BOLD), 0, lead.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
-        syncTabs()
-        val flowShown = shownTab() == HouseTab.FLOW
-        nowGroup.visibility = if (flowShown) View.GONE else View.VISIBLE
+        // The boxes under Now: left out when there is nothing to show; the picker only with a box to drive.
+        val flowShown = HouseBoxes.flow(house)
         flowGroup.visibility = if (flowShown) View.VISIBLE else View.GONE
+        picker.visibility = if (HouseBoxes.picker(house)) View.VISIBLE else View.GONE
         if (flowShown) renderFlow()
         if (house == null) {
             state.text = words.say(if (failed) "house.failed" else "house.loading")
@@ -299,9 +258,10 @@ internal class HousePage(
         say(learning, HouseNowModel.learningLines(text, house).joinToString("\n").ifEmpty { null })
     }
 
-    /** The Energy flow tab: the picker, then the diagram, or the line saying why there is none, or the tiles. */
+    /** The Energy flow box: its heading, then the diagram, or the line saying why there is none, or the tiles. */
     private fun renderFlow() {
         val house = memory.house
+        flowTitle.text = words.say("house.tab.flow")
         val today = todayDate()
         val running = choice.period == HistoryPeriod.DAY && choice.date == null
         val through = if (running) house?.energyFlow?.through?.let { text.clock(it, house.zone) } else null
