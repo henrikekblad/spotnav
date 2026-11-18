@@ -924,6 +924,121 @@
   <string name="card_heat_ahead_away" formatted="false">away {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">hot water {time}</string>
   <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 12 hours</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Car charging</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav lowered</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav lowered {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav raised</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav raised {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Relay lowered</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relay expected to lower</string>
+  <string name="card_heat_band_relay_hour" formatted="false">relay lowered {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">relay expected to lower {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">away</string>
+  <string name="card_heat_chart_car" formatted="false">car charging</string>
+  <string name="card_heat_chart_coldest" formatted="false">coldest {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Tap or point at the chart for a time\'s figures.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">hot water</string>
+  <string name="card_heat_chart_label" formatted="false">The day: indoor temperature, setpoint, SpotNav\'s lowering, hot water and the car</string>
+  <string name="card_heat_chart_mean" formatted="false">rooms {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">night</string>
+  <string name="card_heat_chart_planned" formatted="false">Planned lowering</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">planned lowering</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Planned raise</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">planned raise</string>
+  <string name="card_heat_chart_preheat" formatted="false">pre-heat</string>
+  <string name="card_heat_chart_room_warm" formatted="false">too warm indoors</string>
+  <string name="card_heat_chart_setpoint" formatted="false">setpoint {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Would raise</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">would raise</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Coldest room</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Comfort band {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Rooms, mean</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Setpoint</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Setpoint (SpotNav lowers)</string>
+  <string name="card_heat_plan_none" formatted="false">Nothing to show for this day.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min below {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">coldest {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} the same as the relay</string>
+  <string name="card_heat_review_plan" formatted="false">SpotNav\'s plan {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">SpotNav\'s plan did not lower</string>
+  <string name="card_heat_review_relay" formatted="false">Yesterday the relay lowered {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Yesterday the relay did not lower</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Use</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: nothing to show</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav saved {amount}</string>
+  <string name="card_heat_use_label" formatted="false">What the heating used, per part</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_use_part_other" formatted="false">Other heating</string>
+  <string name="card_heat_use_part_pump" formatted="false">Heat pump</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav saved {amount} on heating</string>
+  <string name="card_heat_use_total" formatted="false">Heating {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Unit</string>
+  <string name="card_heat_use_unit_money" formatted="false">Cost in {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} d</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: no meter reading</string>
+  <string name="card_hist_heat_below" formatted="false">Hours below {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} of {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">after a draw</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">standby loss</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">cause unknown</string>
+  <string name="card_hist_heat_coldest" formatted="false">Coldest room</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">mean {mean} · lowest {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Comfort</string>
+  <string name="card_hist_heat_cost" formatted="false">What it cost</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Per degree-day</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} degree-days below {base} °C over {days} days. The meter\'s whole energy (hot water included) per degree-day: the same house in other weather gives the same figure, so a new heat pump, insulation or windows show as a step.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Costs are at the held prices with today\'s fees.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">The outdoor temperature is the weather\'s, from the hours the house forecast kept (eight weeks): choose an outdoor sensor in the heat settings for the whole history.</string>
+  <string name="card_hist_heat_hint" formatted="false">Tap or point at a bar for its figures.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Of which hot water</string>
+  <string name="card_hist_heat_immersion" formatted="false">Immersion heater</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">House model</string>
+  <string name="card_hist_heat_model_error" formatted="false">Heat forecast error</string>
+  <string name="card_hist_heat_model_none" formatted="false">Shown once the house model has reviewed a day with the heat meter.</string>
+  <string name="card_hist_heat_model_note" formatted="false">How far the house model\'s forecast of the heating was from the meter, on average per hour over the reviewed days. Smaller is better.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">The heat pump\'s meter has no reading in this period.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">No heat pump meter is found or set: choose one in the heat settings.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">No outdoor temperature with a history: choose an outdoor sensor in the heat settings for degree-days.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">The indoor sensors have no history in this period.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">No indoor sensor is chosen in the heat settings.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">No hot-water run found this day.</string>
+  <string name="card_hist_heat_no_split" formatted="false">Hot water is split out only for days Home Assistant\'s history still holds in 5-minute detail (about ten days).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">The heat pump per degree-day</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/degree-day</string>
+  <string name="card_hist_heat_review" formatted="false">The relay and SpotNav\'s plan</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">coldest {min}, {minutes} min below the band</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">no room sensors</string>
+  <string name="card_hist_heat_review_note" formatted="false">Money: the heat a lowering takes away, less what is bought back after it. Coldest: the coldest room during the lowering and three hours after, the band\'s low edge {low}. SpotNav\'s hours show their own effect only where the relay lowered too ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav would have lowered {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">The relay lowered {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Hot-water runs</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Told from the energy alone (no tank sensor): a run well above the usual small one is a draw, about its size the tank cooling while nobody drew.</string>
+  <string name="card_hist_heat_shadow" formatted="false">What SpotNav would have done</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Learned from {blocks} measured lowerings of the relay.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Would have moved {kwh} out of {hours} dear hours over {days} days.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Shown once there is at least one whole day with prices and meter readings.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">SpotNav\'s plan as it was made hour by hour ({kept} of {days} days), else run again on the day\'s prices with today\'s settings. A lowering is counted to take {share} of the heat away, and {rebound} of that is bought back after it; the house holding the band is assumed.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">A cautious assumption until the relay\'s lowerings have been measured with the heat meter.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Would have saved</string>
+  <string name="card_hist_heat_split_days" formatted="false">Hot water is split out for {days} of {total} days: the days Home Assistant\'s history still holds in 5-minute detail.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Degree-days show once there are a few cold days to count on.</string>
+  <string name="card_hist_heat_total" formatted="false">Heat pump, heat and hot water</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh per degree-day, month by month</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh per degree-day ({dd} degree-days)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Tap a month for its figure; a step down is the house using less for the same weather.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: no figure (too few degree-days or no data)</string>
+  <string name="card_hist_heat_use" formatted="false">Use</string>
+  <string name="card_hist_heat_zones" formatted="false">Of which zones (floor heating, air-to-air)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Heat counts the heat zones\' own meters from {date}: the use steps up there. The degree-day figure is the heat pump\'s alone.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Prices are held for {share} of the period; the rest is not in the cost.</string>
+  <string name="card_hist_house_no_prices" formatted="false">No prices are held for this period, so there is no cost.</string>
+  <string name="card_hist_title_heat" formatted="false">Heating history</string>
+  <string name="card_house_earn_none_shown" formatted="false">No part chosen.</string>
   <string name="card_house_test_explain" formatted="false">SpotNav shows what it would do, but nothing is sent from here yet. A home battery is only controlled once you turn on battery control in the settings.</string>
   <string name="card_house_now_hold" formatted="false">Holding</string>
   <string name="card_house_now_discharge" formatted="false">Discharging</string>

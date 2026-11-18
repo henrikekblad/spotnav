@@ -911,6 +911,121 @@
   <string name="card_heat_ahead_away" formatted="false">poissa {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">käyttövesi {time}</string>
   <string name="card_heat_ahead_none" formatted="false">Ei suunniteltua laskua seuraavien 12 tunnin aikana</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Auto latautuu</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav laski</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav laski {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Käyttövesi</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav nosti</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav nosti {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Rele laski</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Rele laskee arviolta</string>
+  <string name="card_heat_band_relay_hour" formatted="false">rele laski {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">rele laskee arviolta {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">poissa</string>
+  <string name="card_heat_chart_car" formatted="false">auto latautuu</string>
+  <string name="card_heat_chart_coldest" formatted="false">kylmin {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Napauta tai osoita kaaviota nähdäksesi ajankohdan luvut.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">käyttövesi</string>
+  <string name="card_heat_chart_label" formatted="false">Päivä: sisälämpötila, asetusarvo, SpotNavin lasku, käyttövesi ja auto</string>
+  <string name="card_heat_chart_mean" formatted="false">huoneet {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">yö</string>
+  <string name="card_heat_chart_planned" formatted="false">Suunniteltu lasku</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">suunniteltu lasku</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Suunniteltu nosto</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">suunniteltu nosto</string>
+  <string name="card_heat_chart_preheat" formatted="false">esilämmitys</string>
+  <string name="card_heat_chart_room_warm" formatted="false">sisällä liian lämmin</string>
+  <string name="card_heat_chart_setpoint" formatted="false">asetusarvo {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Nostaisi</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">nostaisi</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Kylmin huone</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Mukavuusalue {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Huoneet, keskiarvo</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Asetusarvo</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Asetusarvo (SpotNav laskee)</string>
+  <string name="card_heat_plan_none" formatted="false">Tältä päivältä ei ole näytettävää.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min alle {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">kylmin {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} samat kuin releellä</string>
+  <string name="card_heat_review_plan" formatted="false">SpotNavin suunnitelma {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">SpotNavin suunnitelma ei laskenut</string>
+  <string name="card_heat_review_relay" formatted="false">Eilen rele laski {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Eilen rele ei laskenut</string>
+  <string name="card_heat_tab_plan" formatted="false">Suunnitelma</string>
+  <string name="card_heat_tab_use" formatted="false">Kulutus</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: ei näytettävää</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav säästi {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Lämmityksen kulutus osittain</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Käyttövesi</string>
+  <string name="card_heat_use_part_other" formatted="false">Muu lämmitys</string>
+  <string name="card_heat_use_part_pump" formatted="false">Lämpöpumppu</string>
+  <string name="card_heat_use_part_zone" formatted="false">Vyöhyke</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav säästi lämmityksessä {amount}</string>
+  <string name="card_heat_use_total" formatted="false">Lämmitys {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Yksikkö</string>
+  <string name="card_heat_use_unit_money" formatted="false">Kustannus, {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} pv</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: ei mittarilukemaa</string>
+  <string name="card_hist_heat_below" formatted="false">Tunnit alle {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours}/{total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">käytön jälkeen</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">seisontahäviö</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">syy tuntematon</string>
+  <string name="card_hist_heat_coldest" formatted="false">Kylmin huone</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">keskimäärin {mean} · alin {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Mukavuus</string>
+  <string name="card_hist_heat_cost" formatted="false">Hinta</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Astepäivää kohden</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} astepäivää alle {base} °C:n {days} vuorokauden aikana. Mittarin koko energia (lämmin vesi mukaan lukien) astepäivää kohden: sama talo eri säässä antaa saman luvun, joten uusi lämpöpumppu, eristys tai ikkunat näkyvät porrastuksena.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Kustannukset on laskettu tallennetuilla hinnoilla ja nykyisillä maksuilla.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">Ulkolämpötila on sään, talon ennusteen tallentamilta tunneilta (kahdeksan viikkoa): valitse ulkoanturi lämmitysasetuksista koko historiaa varten.</string>
+  <string name="card_hist_heat_hint" formatted="false">Napauta tai osoita pylvästä nähdäksesi sen luvut.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Josta lämmintä vettä</string>
+  <string name="card_hist_heat_immersion" formatted="false">Sähkövastus</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Talomalli</string>
+  <string name="card_hist_heat_model_error" formatted="false">Lämmitysennusteen virhe</string>
+  <string name="card_hist_heat_model_none" formatted="false">Näytetään, kun talomalli on tarkistanut vuorokauden lämpömittarin kanssa.</string>
+  <string name="card_hist_heat_model_note" formatted="false">Kuinka kaukana talomallin lämmitysennuste oli mittarista, keskimäärin tunnissa tarkistettuina vuorokausina. Pienempi on parempi.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">Lämpöpumpun mittarilla ei ole lukemia tällä jaksolla.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Lämpöpumpun mittaria ei löytynyt eikä sitä ole valittu: valitse se lämmitysasetuksista.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Ei ulkolämpötilaa historialla: valitse ulkoanturi lämmitysasetuksista astepäiviä varten.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Sisäantureilla ei ole historiaa tällä jaksolla.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">Lämmitysasetuksissa ei ole valittu sisäanturia.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">Tältä päivältä ei löytynyt lämpimän veden ajoja.</string>
+  <string name="card_hist_heat_no_split" formatted="false">Lämmin vesi erotellaan vain vuorokausille, joilta Home Assistantin historiassa on vielä 5 minuutin tiedot (noin kymmenen vuorokautta).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Lämpöpumppu astepäivää kohden</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/astepäivä</string>
+  <string name="card_hist_heat_review" formatted="false">Rele ja SpotNavin suunnitelma</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">kylmin {min}, {minutes} min alueen alla</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">ei huoneantureita</string>
+  <string name="card_hist_heat_review_note" formatted="false">Raha: lasku vähentää lämpöä, miinus jälkikäteen takaisin ostettu. Kylmin: kylmin huone laskun aikana ja kolme tuntia sen jälkeen, alueen alaraja {low}. SpotNavin tunnit näyttävät oman vaikutuksensa vain siellä, missä rele myös laski ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav olisi laskenut {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Rele laski {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Lämpimän veden ajot</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Päätelty pelkästä energiasta (ei säiliöanturia): tavallista pientä selvästi suurempi ajo on käyttö, suunnilleen samankokoinen on säiliön jäähtyminen ilman käyttöä.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Mitä SpotNav olisi tehnyt</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Opittu {blocks} mitatusta releen laskusta.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Olisi siirtänyt {kwh} pois {hours} kalliilta tunnilta {days} vuorokauden aikana.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Näytetään, kun on vähintään yksi kokonainen vuorokausi hintoineen ja mittauksineen.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">SpotNavin suunnitelma sellaisena kuin se tehtiin tunti tunnilta ({kept}/{days} vrk), muuten ajettu uudelleen vuorokauden hinnoilla ja nykyisillä asetuksilla. Laskun lasketaan vievän {share} lämmöstä, ja siitä {rebound} ostetaan takaisin jälkikäteen; talon oletetaan pysyvän alueella.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Varovainen oletus, kunnes releen laskut on mitattu lämpömittarilla.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Olisi säästänyt</string>
+  <string name="card_hist_heat_split_days" formatted="false">Lämmin vesi on eroteltu {days}/{total} vuorokaudelta: niiltä, joilta Home Assistantin historiassa on vielä 5 minuutin tiedot.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Astepäivät näytetään, kun laskettavana on muutama kylmä vuorokausi.</string>
+  <string name="card_hist_heat_total" formatted="false">Lämpöpumppu, lämpö ja lämmin vesi</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh astepäivää kohden kuukausittain</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh astepäivää kohden ({dd} astepäivää)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Napauta kuukautta nähdäksesi sen luvun; porras alaspäin on talo, joka kuluttaa vähemmän samassa säässä.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: ei lukua (liian vähän astepäiviä tai ei tietoja)</string>
+  <string name="card_hist_heat_use" formatted="false">Kulutus</string>
+  <string name="card_hist_heat_zones" formatted="false">Josta vyöhykkeet (lattialämmitys, ilmalämpöpumppu)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Lämpö laskee vyöhykkeiden omat mittarit mukaan {date} alkaen: kulutus nousee siinä portaittain. Astepäiväluku on lämpöpumpun oma.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Hinnat ovat tallessa {share} jaksosta; loput eivät ole mukana hinnassa.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Jaksolle ei ole hintoja, joten hintaa ei näytetä.</string>
+  <string name="card_hist_title_heat" formatted="false">Lämmityksen historia</string>
+  <string name="card_house_earn_none_shown" formatted="false">Yhtään osaa ei ole valittu.</string>
   <string name="card_house_test_explain" formatted="false">SpotNav näyttää, mitä se tekisi, mutta täältä ei vielä lähetetä mitään. Kotiakkua ohjataan vasta, kun kytket akun ohjauksen päälle asetuksista.</string>
   <string name="card_house_now_hold" formatted="false">Pitää varauksen</string>
   <string name="card_house_now_discharge" formatted="false">Purkaa</string>

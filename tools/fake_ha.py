@@ -113,7 +113,9 @@ The `heat` scenario adds the heating to that: its dashboard also states `capabil
 heat icon and the heat page's Now tab. The webhook answers `get_heat` (a fixture of `ha-fixtures/heat_card/` moved to
 now) and `update_heat` (`target_c`, `mode` and `away_until`, with the compare-and-set: a stale `expected` is
 `spotnav_conflict`, a target off the half degrees or outside 16 to 25 is `spotnav_invalid_value`, anything else
-`spotnav_not_permitted_over_webhook`), and the house as the `house` scenario does.
+`spotnav_not_permitted_over_webhook`), `get_heat_history` (the vendored `ha-fixtures/heat_history/` zones documents moved
+to the day, month or year asked for; with no heat meter, in `network_pump` and `empty`, none of the use), so the heat
+page's Plan and Förbrukning boxes and its details sheet have something to show, and the house as the `house` scenario does.
 `GET /spotnav-mock/heat?fixture=villa|controlled|network_pump|empty&reset=1` chooses what the site has: a villa with
 three rooms and a meter (Test), the same with SpotNav lowering, a heat pump seen over the network with the house away,
 or a heating with nothing to show (no heat page); `reset=1` sets the dial and Home/Away back to the fixture's.
@@ -894,6 +896,36 @@ def heat_body(payload: dict) -> tuple[int, dict]:
     return 200, {"ok": True, "action": action, **body}
 
 
+def heat_history_body(payload: dict) -> tuple[int, dict]:
+    """`get_heat_history` in the `heat` scenario: the villa's day, month or year (with its zones) moved to the period asked
+    for; for `network_pump` and `empty`, which have no heat meter, a history with no use to show."""
+    action = "get_heat_history"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    asked, refusal = _asked_period(payload, action)
+    if refusal:
+        return refusal
+    period, first, end, today = asked
+    body = json.loads((DASHBOARD_FIXTURES.parent / "heat_history" / f"zones_{period}.json").read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["time_zone"])
+    fixture_first = date.fromisoformat(body["date"])
+    if period == "year":
+        # A year's buckets are months ("2026-07"): the fixture's year renamed.
+        body = json.loads(json.dumps(body).replace(f'"{fixture_first.year}-', f'"{first.year}-'))
+    else:
+        days = (first - fixture_first).days
+        body = _moved_to_now(body, days * 24, days)
+    body.update({"date": first.isoformat(), "end": end.isoformat(), "today": today.isoformat(),
+                 "generated_at": datetime.now(zone).replace(microsecond=0).isoformat(), "complete": end <= today})
+    if HEAT["fixture"] in ("network_pump", "empty"):
+        # No heat meter: the rooms (if any) are all there is.
+        body.update({"meter": None, "energy": None, "buckets": [], "parts": [], "saving": None, "model": None, "degree_days": None,
+                     "shadow": None, "immersion": None, "runs": [], "review": None})
+        if HEAT["fixture"] == "empty":
+            body.update({"comfort": None, "indoor_day": None})
+    return 200, {"ok": True, "action": action, **body}
+
+
 def update_heat_body(payload: dict) -> tuple[int, dict]:
     """`update_heat` in the `heat` scenario, judged as the integration judges the dial and Home/Away."""
     action = "update_heat"
@@ -1242,7 +1274,7 @@ SCENARIOS: dict[str, Charger] = {
     ),
     "heat": Charger(
         "Värmen",
-        why="the house and the heating over the webhook (HA 3.0): three page icons, the heat page's Now tab with its dial writing update_heat; set at /spotnav-mock/heat",
+        why="the house and the heating over the webhook (HA 3.0): three page icons, the heat page's Now tab with its dial writing update_heat, its Plan and Förbrukning boxes and its details; set at /spotnav-mock/heat",
     ),
     "sitesettings": Charger(
         "Hus och värme",
@@ -1664,8 +1696,8 @@ class Handler(BaseHTTPRequestHandler):
                     handler = {"battery_control": battery_control_body, "get_heat": site_heat_body, "update_heat": site_update_heat_body}[action]
                     self._json(*handler(payload))
                     return
-                if action in ("get_heat", "update_heat") and key == "heat":
-                    self._json(*(heat_body(payload) if action == "get_heat" else update_heat_body(payload)))
+                if action in ("get_heat", "update_heat", "get_heat_history") and key == "heat":
+                    self._json(*{"get_heat": heat_body, "update_heat": update_heat_body, "get_heat_history": heat_history_body}[action](payload))
                     return
                 if action in ("get_house_now", "get_house", "get_house_history", "get_house_loads") and key in ("house", "heat"):
                     handlers = {
