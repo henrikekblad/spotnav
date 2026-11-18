@@ -919,6 +919,121 @@
   <string name="card_heat_ahead_away" formatted="false">fuera {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">agua caliente {time}</string>
   <string name="card_heat_ahead_none" formatted="false">Ninguna reducción prevista en las próximas 12 horas</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Coche cargando</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav bajó</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav bajó {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Agua caliente</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav subió</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav subió {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">El relé bajó</string>
+  <string name="card_heat_band_relay_expected" formatted="false">El relé debería bajar</string>
+  <string name="card_heat_band_relay_hour" formatted="false">el relé bajó {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">el relé debería bajar {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">fuera</string>
+  <string name="card_heat_chart_car" formatted="false">coche cargando</string>
+  <string name="card_heat_chart_coldest" formatted="false">la más fría {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Toque o señale el gráfico para ver las cifras de un momento.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">agua caliente</string>
+  <string name="card_heat_chart_label" formatted="false">El día: temperatura interior, consigna, bajada de SpotNav, agua caliente y el coche</string>
+  <string name="card_heat_chart_mean" formatted="false">habitaciones {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">noche</string>
+  <string name="card_heat_chart_planned" formatted="false">Bajada prevista</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">bajada prevista</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Subida prevista</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">subida prevista</string>
+  <string name="card_heat_chart_preheat" formatted="false">precalentamiento</string>
+  <string name="card_heat_chart_room_warm" formatted="false">demasiado calor dentro</string>
+  <string name="card_heat_chart_setpoint" formatted="false">consigna {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Subiría</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">subiría</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Habitación más fría</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Banda de confort {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Habitaciones, media</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Consigna</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Consigna (SpotNav baja)</string>
+  <string name="card_heat_plan_none" formatted="false">Nada que mostrar para este día.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min por debajo de {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">mínima {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} las mismas que el relé</string>
+  <string name="card_heat_review_plan" formatted="false">Plan de SpotNav {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">El plan de SpotNav no bajó</string>
+  <string name="card_heat_review_relay" formatted="false">Ayer el relé bajó {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Ayer el relé no bajó</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Consumo</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: nada que mostrar</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav ahorró {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Consumo de la calefacción por parte</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Agua caliente</string>
+  <string name="card_heat_use_part_other" formatted="false">Otra calefacción</string>
+  <string name="card_heat_use_part_pump" formatted="false">Bomba de calor</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zona</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav ahorró {amount} en calefacción</string>
+  <string name="card_heat_use_total" formatted="false">Calefacción {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Unidad</string>
+  <string name="card_heat_use_unit_money" formatted="false">Coste en {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} d</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: sin lectura del contador</string>
+  <string name="card_hist_heat_below" formatted="false">Horas por debajo de {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} de {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">tras un consumo</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">pérdida en reposo</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">causa desconocida</string>
+  <string name="card_hist_heat_coldest" formatted="false">Habitación más fría</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">media {mean} · mínima {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Confort</string>
+  <string name="card_hist_heat_cost" formatted="false">Lo que costó</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Por grado-día</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} grados-día por debajo de {base} °C en {days} días. Toda la energía del contador (agua caliente incluida) por grado-día: la misma casa con otro tiempo da la misma cifra, así que una bomba nueva, aislamiento o ventanas se ven como un escalón.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Costes calculados con los precios guardados y las tarifas actuales.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">La temperatura exterior es la del tiempo, de las horas que guardó la previsión de la casa (ocho semanas): elige un sensor exterior en los ajustes de calefacción para todo el historial.</string>
+  <string name="card_hist_heat_hint" formatted="false">Toca o señala una barra para ver sus cifras.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">De ello agua caliente</string>
+  <string name="card_hist_heat_immersion" formatted="false">Resistencia eléctrica</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Modelo de la casa</string>
+  <string name="card_hist_heat_model_error" formatted="false">Error de la previsión de calefacción</string>
+  <string name="card_hist_heat_model_none" formatted="false">Se muestra cuando el modelo de la casa ha revisado un día con el contador de calefacción.</string>
+  <string name="card_hist_heat_model_note" formatted="false">Cuánto se apartó la previsión de calefacción del modelo de la casa del contador, de media por hora en los días revisados. Cuanto menor, mejor.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">El contador de la bomba de calor no tiene lecturas en este periodo.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">No se ha encontrado ni elegido un contador de la bomba de calor: elige uno en los ajustes de calefacción.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">No hay temperatura exterior con historial: elige un sensor exterior en los ajustes de calefacción para los grados-día.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Los sensores interiores no tienen historial en este periodo.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">No hay sensor interior elegido en los ajustes de calefacción.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">No se encontró ningún ciclo de agua caliente este día.</string>
+  <string name="card_hist_heat_no_split" formatted="false">El agua caliente solo se desglosa en los días que el historial de Home Assistant aún guarda con detalle de 5 minutos (unos diez días).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Bomba de calor por grado-día</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/grado-día</string>
+  <string name="card_hist_heat_review" formatted="false">El relé y el plan de SpotNav</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">mínima {min}, {minutes} min por debajo de la franja</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">sin sensores de habitación</string>
+  <string name="card_hist_heat_review_note" formatted="false">Dinero: el calor que quita una bajada, menos lo que se vuelve a comprar después. Mínima: la habitación más fría durante la bajada y tres horas después, borde inferior de la franja {low}. Las horas de SpotNav muestran su propio efecto solo donde el relé también bajó ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav habría bajado {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">El relé bajó {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Ciclos de agua caliente</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Deducido solo de la energía (sin sensor del depósito): un ciclo claramente mayor que el pequeño habitual es un consumo; de tamaño parecido, el depósito enfriándose sin consumo.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Lo que SpotNav habría hecho</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Aprendido de {blocks} bajadas medidas del relé.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Habría movido {kwh} fuera de {hours} horas caras en {days} días.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Se muestra cuando hay al menos un día completo con precios y lecturas.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">El plan de SpotNav tal como se hizo hora a hora ({kept} de {days} días), si no recalculado con los precios del día y los ajustes actuales. Se cuenta que una bajada quita {share} del calor y que {rebound} de eso se vuelve a comprar después; se supone que la casa se mantiene en la franja.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Una suposición prudente hasta que las bajadas del relé se hayan medido con el contador de calor.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Habría ahorrado</string>
+  <string name="card_hist_heat_split_days" formatted="false">El agua caliente se desglosa en {days} de {total} días: los que el historial de Home Assistant aún guarda con detalle de 5 minutos.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Los grados-día aparecen cuando hay unos cuantos días fríos con los que calcular.</string>
+  <string name="card_hist_heat_total" formatted="false">Bomba de calor, calefacción y agua caliente</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh por grado-día, mes a mes</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh por grado-día ({dd} grados-día)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Toca un mes para ver su cifra; un escalón hacia abajo es la casa gastando menos con el mismo tiempo.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: sin cifra (muy pocos grados-día o sin datos)</string>
+  <string name="card_hist_heat_use" formatted="false">Consumo</string>
+  <string name="card_hist_heat_zones" formatted="false">De ello zonas (suelo radiante, aire-aire)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">La calefacción cuenta los contadores propios de las zonas desde el {date}: el consumo sube un escalón ahí. Los grados-día son solo de la bomba de calor.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Hay precios para el {share} del periodo; el resto no entra en el coste.</string>
+  <string name="card_hist_house_no_prices" formatted="false">No hay precios para este periodo, así que no hay coste.</string>
+  <string name="card_hist_title_heat" formatted="false">Historial de la calefacción</string>
+  <string name="card_house_earn_none_shown" formatted="false">Ninguna parte elegida.</string>
   <string name="card_house_test_explain" formatted="false">SpotNav muestra lo que haría, pero todavía no se envía nada desde aquí. Una batería doméstica solo se controla cuando activas el control de la batería en los ajustes.</string>
   <string name="card_house_now_hold" formatted="false">Mantiene</string>
   <string name="card_house_now_discharge" formatted="false">Descarga</string>

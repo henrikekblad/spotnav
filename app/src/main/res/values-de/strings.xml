@@ -911,6 +911,121 @@
   <string name="card_heat_ahead_away" formatted="false">abwesend {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">Warmwasser {time}</string>
   <string name="card_heat_ahead_none" formatted="false">Keine Absenkung in den nächsten 12 Stunden geplant</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Auto lädt</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav hat abgesenkt</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav hat {minutes} min abgesenkt</string>
+  <string name="card_heat_band_hot_water" formatted="false">Warmwasser</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav hat angehoben</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav hat {minutes} min angehoben</string>
+  <string name="card_heat_band_relay" formatted="false">Relais senkte</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relais senkt voraussichtlich</string>
+  <string name="card_heat_band_relay_hour" formatted="false">Relais senkte {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">Relais senkt voraussichtlich {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">abwesend</string>
+  <string name="card_heat_chart_car" formatted="false">Auto lädt</string>
+  <string name="card_heat_chart_coldest" formatted="false">am kältesten {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Tippen oder zeigen Sie in das Diagramm für die Werte eines Zeitpunkts.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">Warmwasser</string>
+  <string name="card_heat_chart_label" formatted="false">Der Tag: Innentemperatur, Sollwert, Absenkung durch SpotNav, Warmwasser und das Auto</string>
+  <string name="card_heat_chart_mean" formatted="false">Räume {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">Nacht</string>
+  <string name="card_heat_chart_planned" formatted="false">Geplante Absenkung</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">geplante Absenkung</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Geplante Anhebung</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">geplante Anhebung</string>
+  <string name="card_heat_chart_preheat" formatted="false">Vorheizen</string>
+  <string name="card_heat_chart_room_warm" formatted="false">drinnen zu warm</string>
+  <string name="card_heat_chart_setpoint" formatted="false">Sollwert {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Würde anheben</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">würde anheben</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Kältester Raum</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Komfortband {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Räume, Mittel</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Sollwert</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Sollwert (SpotNav senkt)</string>
+  <string name="card_heat_plan_none" formatted="false">Für diesen Tag gibt es nichts anzuzeigen.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min unter {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">am kältesten {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} dieselben wie das Relais</string>
+  <string name="card_heat_review_plan" formatted="false">SpotNavs Plan {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">SpotNavs Plan senkte nicht</string>
+  <string name="card_heat_review_relay" formatted="false">Gestern senkte das Relais {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Gestern senkte das Relais nicht</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Verbrauch</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: nichts anzuzeigen</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav sparte {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Verbrauch der Heizung je Teil</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Warmwasser</string>
+  <string name="card_heat_use_part_other" formatted="false">Sonstige Heizung</string>
+  <string name="card_heat_use_part_pump" formatted="false">Wärmepumpe</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav sparte {amount} bei der Heizung</string>
+  <string name="card_heat_use_total" formatted="false">Heizung {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Einheit</string>
+  <string name="card_heat_use_unit_money" formatted="false">Kosten in {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} T.</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: kein Zählerwert</string>
+  <string name="card_hist_heat_below" formatted="false">Stunden unter {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} von {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">nach Zapfung</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">Bereitschaftsverlust</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">Ursache unbekannt</string>
+  <string name="card_hist_heat_coldest" formatted="false">Kältester Raum</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">Mittel {mean} · Minimum {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Komfort</string>
+  <string name="card_hist_heat_cost" formatted="false">Was es kostete</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Je Gradtag</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} Gradtage unter {base} °C über {days} Tage. Die ganze Energie des Zählers (Warmwasser eingeschlossen) je Gradtag: dasselbe Haus bei anderem Wetter ergibt denselben Wert, so zeigt sich eine neue Wärmepumpe, Dämmung oder neue Fenster als Stufe.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Kosten zu den gespeicherten Preisen mit den heutigen Gebühren.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">Die Außentemperatur ist die des Wetters, aus den Stunden, die die Hausprognose behalten hat (acht Wochen): wähle einen Außenfühler in den Heizungseinstellungen für den ganzen Verlauf.</string>
+  <string name="card_hist_heat_hint" formatted="false">Tippe oder zeige auf einen Balken für seine Werte.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Davon Warmwasser</string>
+  <string name="card_hist_heat_immersion" formatted="false">Heizstab</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Hausmodell</string>
+  <string name="card_hist_heat_model_error" formatted="false">Fehler der Heizprognose</string>
+  <string name="card_hist_heat_model_none" formatted="false">Wird angezeigt, sobald das Hausmodell einen Tag mit dem Wärmezähler ausgewertet hat.</string>
+  <string name="card_hist_heat_model_note" formatted="false">Wie weit die Heizprognose des Hausmodells vom Zähler abwich, im Mittel je Stunde über die ausgewerteten Tage. Kleiner ist besser.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">Der Zähler der Wärmepumpe hat in diesem Zeitraum keine Werte.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Kein Wärmepumpenzähler gefunden oder gewählt: wähle einen in den Heizungseinstellungen.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Keine Außentemperatur mit Verlauf: wähle einen Außenfühler in den Heizungseinstellungen für Gradtage.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Die Innenfühler haben in diesem Zeitraum keinen Verlauf.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">In den Heizungseinstellungen ist kein Innenfühler gewählt.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">An diesem Tag wurde kein Warmwasserlauf gefunden.</string>
+  <string name="card_hist_heat_no_split" formatted="false">Warmwasser wird nur für Tage getrennt ausgewiesen, die der Verlauf von Home Assistant noch in 5-Minuten-Auflösung hat (etwa zehn Tage).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Wärmepumpe je Gradtag</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/Gradtag</string>
+  <string name="card_hist_heat_review" formatted="false">Das Relais und SpotNavs Plan</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">am kältesten {min}, {minutes} min unter dem Band</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">keine Raumfühler</string>
+  <string name="card_hist_heat_review_note" formatted="false">Geld: die Wärme, die eine Absenkung wegnimmt, abzüglich dessen, was danach zurückgekauft wird. Am kältesten: der kälteste Raum während der Absenkung und drei Stunden danach, untere Bandgrenze {low}. SpotNavs Stunden zeigen ihre eigene Wirkung nur dort, wo auch das Relais absenkte ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav hätte {hours} abgesenkt</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Das Relais senkte {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Warmwasserläufe</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Allein aus der Energie geschätzt (kein Speicherfühler): ein Lauf deutlich über dem üblichen kleinen ist eine Zapfung, etwa so groß ist der ohne Zapfung abgekühlte Speicher.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Was SpotNav getan hätte</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Gelernt aus {blocks} gemessenen Absenkungen des Relais.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Hätte {kwh} aus {hours} teuren Stunden über {days} Tage verschoben.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Erscheint, sobald es mindestens einen ganzen Tag mit Preisen und Messwerten gibt.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">SpotNavs Plan, wie er Stunde für Stunde gemacht wurde ({kept} von {days} Tagen), sonst mit den Preisen des Tages und den heutigen Einstellungen neu gerechnet. Eine Absenkung nimmt gerechnet {share} der Wärme weg, und {rebound} davon wird danach zurückgekauft; dass das Haus im Band bleibt, wird angenommen.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Eine vorsichtige Annahme, bis die Absenkungen des Relais mit dem Wärmezähler gemessen sind.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Hätte gespart</string>
+  <string name="card_hist_heat_split_days" formatted="false">Warmwasser wird für {days} von {total} Tagen getrennt ausgewiesen: die Tage, die der Verlauf von Home Assistant noch in 5-Minuten-Auflösung hat.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Gradtage erscheinen, sobald es ein paar kalte Tage zum Rechnen gibt.</string>
+  <string name="card_hist_heat_total" formatted="false">Wärmepumpe, Heizung und Warmwasser</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh je Gradtag, Monat für Monat</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh je Gradtag ({dd} Gradtage)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Tippe auf einen Monat für seinen Wert; eine Stufe nach unten ist das Haus, das bei gleichem Wetter weniger braucht.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: kein Wert (zu wenige Gradtage oder keine Daten)</string>
+  <string name="card_hist_heat_use" formatted="false">Verbrauch</string>
+  <string name="card_hist_heat_zones" formatted="false">Davon Zonen (Fußbodenheizung, Luft-Luft)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Die Wärme zählt die eigenen Zähler der Zonen ab {date} mit: der Verbrauch steigt dort in einer Stufe. Die Gradtagzahl ist die der Wärmepumpe allein.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Preise liegen für {share} des Zeitraums vor; der Rest ist nicht in den Kosten.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Für diesen Zeitraum liegen keine Preise vor, daher keine Kosten.</string>
+  <string name="card_hist_title_heat" formatted="false">Verlauf der Heizung</string>
+  <string name="card_house_earn_none_shown" formatted="false">Kein Teil gewählt.</string>
   <string name="card_house_test_explain" formatted="false">SpotNav zeigt, was es tun würde, sendet von hier aber noch nichts. Ein Heimspeicher wird erst gesteuert, wenn du die Speichersteuerung in den Einstellungen einschaltest.</string>
   <string name="card_house_now_hold" formatted="false">Hält</string>
   <string name="card_house_now_discharge" formatted="false">Entlädt</string>

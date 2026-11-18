@@ -919,6 +919,121 @@
   <string name="card_heat_ahead_away" formatted="false">absent {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">eau chaude {time}</string>
   <string name="card_heat_ahead_none" formatted="false">Aucun abaissement prévu dans les 12 prochaines heures</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Voiture en charge</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav a abaissé</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav a abaissé {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav a augmenté</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav a augmenté {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Relais a baissé</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relais devrait baisser</string>
+  <string name="card_heat_band_relay_hour" formatted="false">relais a baissé {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">relais devrait baisser {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">absent</string>
+  <string name="card_heat_chart_car" formatted="false">voiture en charge</string>
+  <string name="card_heat_chart_coldest" formatted="false">la plus froide {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Touchez ou pointez le graphique pour les valeurs d\'un moment.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">eau chaude</string>
+  <string name="card_heat_chart_label" formatted="false">La journée : température intérieure, consigne, abaissement par SpotNav, eau chaude et voiture</string>
+  <string name="card_heat_chart_mean" formatted="false">pièces {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">nuit</string>
+  <string name="card_heat_chart_planned" formatted="false">Abaissement prévu</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">abaissement prévu</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Hausse prévue</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">hausse prévue</string>
+  <string name="card_heat_chart_preheat" formatted="false">préchauffage</string>
+  <string name="card_heat_chart_room_warm" formatted="false">trop chaud à l\'intérieur</string>
+  <string name="card_heat_chart_setpoint" formatted="false">consigne {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Augmenterait</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">augmenterait</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Pièce la plus froide</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Plage de confort {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Pièces, moyenne</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Consigne</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Consigne (SpotNav abaisse)</string>
+  <string name="card_heat_plan_none" formatted="false">Rien à afficher pour ce jour.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min sous {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">minimum {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} les mêmes que le relais</string>
+  <string name="card_heat_review_plan" formatted="false">Plan de SpotNav {hours} : {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">Le plan de SpotNav n\'a pas baissé</string>
+  <string name="card_heat_review_relay" formatted="false">Hier, le relais a baissé {hours} : {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Hier, le relais n\'a pas baissé</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Consommation</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when} : rien à afficher</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav a économisé {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Consommation du chauffage par part</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_use_part_other" formatted="false">Autre chauffage</string>
+  <string name="card_heat_use_part_pump" formatted="false">Pompe à chaleur</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav a économisé {amount} sur le chauffage</string>
+  <string name="card_heat_use_total" formatted="false">Chauffage {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Unité</string>
+  <string name="card_heat_use_unit_money" formatted="false">Coût en {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} j</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when} : pas de relevé</string>
+  <string name="card_hist_heat_below" formatted="false">Heures sous {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} sur {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">après un puisage</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">perte à l\'arrêt</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">cause inconnue</string>
+  <string name="card_hist_heat_coldest" formatted="false">Pièce la plus froide</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">moyenne {mean} · minimum {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Confort</string>
+  <string name="card_hist_heat_cost" formatted="false">Ce que cela a coûté</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Par degré-jour</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} degrés-jours sous {base} °C sur {days} jours. Toute l\'énergie du compteur (eau chaude comprise) par degré-jour : la même maison par un autre temps donne le même chiffre, une nouvelle pompe, une isolation ou des fenêtres se voient donc comme une marche.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Coûts calculés avec les prix enregistrés et les frais actuels.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">La température extérieure est celle de la météo, des heures gardées par la prévision de la maison (huit semaines) : choisissez une sonde extérieure dans les réglages du chauffage pour tout l\'historique.</string>
+  <string name="card_hist_heat_hint" formatted="false">Touchez ou pointez une barre pour ses chiffres.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Dont eau chaude</string>
+  <string name="card_hist_heat_immersion" formatted="false">Résistance d\'appoint</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Modèle de la maison</string>
+  <string name="card_hist_heat_model_error" formatted="false">Erreur de la prévision de chauffage</string>
+  <string name="card_hist_heat_model_none" formatted="false">Affiché dès que le modèle de la maison a évalué un jour avec le compteur de chauffage.</string>
+  <string name="card_hist_heat_model_note" formatted="false">L\'écart entre la prévision de chauffage du modèle de la maison et le compteur, en moyenne par heure sur les jours évalués. Plus c\'est petit, mieux c\'est.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">Le compteur de la pompe à chaleur n\'a aucun relevé sur cette période.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Aucun compteur de pompe à chaleur trouvé ni choisi : choisissez-en un dans les réglages du chauffage.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Aucune température extérieure avec historique : choisissez une sonde extérieure dans les réglages du chauffage pour les degrés-jours.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Les sondes intérieures n\'ont pas d\'historique sur cette période.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">Aucune sonde intérieure n\'est choisie dans les réglages du chauffage.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">Aucun cycle d\'eau chaude trouvé ce jour-là.</string>
+  <string name="card_hist_heat_no_split" formatted="false">L’eau chaude n’est comptée à part que pour les jours que l’historique de Home Assistant garde encore à 5 minutes près (une dizaine de jours).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Pompe à chaleur par degré-jour</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/degré-jour</string>
+  <string name="card_hist_heat_review" formatted="false">Le relais et le plan de SpotNav</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">minimum {min}, {minutes} min sous la plage</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">aucune sonde de pièce</string>
+  <string name="card_hist_heat_review_note" formatted="false">Argent : la chaleur qu\'une baisse retire, moins ce qui est racheté après. Minimum : la pièce la plus froide pendant la baisse et trois heures après, bas de la plage {low}. Les heures de SpotNav ne montrent leur propre effet que là où le relais a aussi baissé ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav aurait baissé {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Le relais a baissé {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Cycles d\'eau chaude</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Déduit de la seule énergie (pas de sonde de ballon) : un cycle nettement au-dessus du petit habituel est un puisage, de même taille environ c\'est le ballon refroidi sans puisage.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Ce que SpotNav aurait fait</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Appris de {blocks} baisses mesurées du relais.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Aurait déplacé {kwh} hors de {hours} heures chères sur {days} jours.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">S’affiche dès qu’il y a au moins une journée entière avec prix et relevés.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">Le plan de SpotNav tel qu\'il a été fait heure par heure ({kept} sur {days} jours), sinon recalculé avec les prix du jour et les réglages actuels. Une baisse est comptée comme retirant {share} de la chaleur, dont {rebound} est racheté après ; on suppose que la maison reste dans la plage.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Une hypothèse prudente, jusqu\'à ce que les baisses du relais soient mesurées par le compteur de chaleur.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Aurait économisé</string>
+  <string name="card_hist_heat_split_days" formatted="false">L’eau chaude est comptée à part pour {days} jours sur {total} : ceux que l’historique de Home Assistant garde encore à 5 minutes près.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Les degrés-jours s’affichent dès qu’il y a quelques jours froids pour le calcul.</string>
+  <string name="card_hist_heat_total" formatted="false">Pompe à chaleur, chauffage et eau chaude</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh par degré-jour, mois par mois</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month} : {value} kWh par degré-jour ({dd} degrés-jours)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Touchez un mois pour son chiffre ; une marche vers le bas, c\'est la maison qui consomme moins par le même temps.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month} : pas de chiffre (trop peu de degrés-jours ou pas de données)</string>
+  <string name="card_hist_heat_use" formatted="false">Consommation</string>
+  <string name="card_hist_heat_zones" formatted="false">Dont zones (plancher chauffant, air-air)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Le chauffage compte les compteurs propres des zones à partir du {date} : la consommation y monte d\'une marche. Les degrés-jours ne concernent que la pompe à chaleur.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Les prix sont connus pour {share} de la période ; le reste n\'est pas compté.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Aucun prix n\'est connu pour cette période, donc pas de coût.</string>
+  <string name="card_hist_title_heat" formatted="false">Historique du chauffage</string>
+  <string name="card_house_earn_none_shown" formatted="false">Aucune part choisie.</string>
   <string name="card_house_test_explain" formatted="false">SpotNav montre ce qu\'il ferait, mais rien n\'est encore envoyé d\'ici. Une batterie domestique n\'est pilotée qu\'une fois le pilotage de la batterie activé dans les paramètres.</string>
   <string name="card_house_now_hold" formatted="false">Garde sa charge</string>
   <string name="card_house_now_discharge" formatted="false">Se décharge</string>

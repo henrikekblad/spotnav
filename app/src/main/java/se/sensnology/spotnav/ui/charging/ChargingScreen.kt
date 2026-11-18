@@ -357,7 +357,7 @@ internal class ChargingScreen(
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
                 PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
-                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id))
+                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
                 else -> error("no page for $kind")
             }
         }

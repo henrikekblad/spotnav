@@ -16,6 +16,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatWrite
@@ -24,6 +25,7 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
+import se.sensnology.spotnav.ui.common.iconAction
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -43,7 +45,10 @@ import java.time.ZonedDateTime
 internal class HeatPage(
     scope: ViewScope,
     private val session: HaSession,
-    private val memory: SiteMemory
+    private val memory: SiteMemory,
+    private val preferences: SitePreferences,
+    /** What the remembered choices are kept under until the heating has said its site. */
+    private val profileId: String
 ) : ViewScope(scope), SitePage {
     override val kind = PageKind.HEAT
 
@@ -59,6 +64,30 @@ internal class HeatPage(
     private var pendingTarget: Double? = null
     private var error: String? = null
     private var settle: Runnable? = null
+
+    // The boxes under the Now box (the card's tabs, stacked): one shared period choice and one picker, then Plan and Förbrukning.
+    private val locale = AppLanguageSettings.locale(context)
+    private val store = HeatHistoryStore(session) { render() }
+    private val planBox = HeatPlanPanel(this, store, text)
+    private val useBox = HeatUsePanel(this, store, preferences, text, locale, ::siteKey)
+    private val details = HeatDetailsDialog(this, session, text, colours, locale, ::todayDate)
+    private var boxesOpen = false
+    private fun changePeriod(next: PeriodChoice) {
+        store.choice = next
+        planBox.periodChanged()
+        useBox.periodChanged()
+        readHistory(force = false)
+        render()
+    }
+    private val picker = PeriodPickerView(this, words, locale, onChange = ::changePeriod)
+    private val dayPicker = PeriodPickerView(this, words, locale, kinds = listOf(HistoryPeriod.DAY), onChange = ::changePeriod)
+    private val periodRow = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(14), 0, dp(14), 0)
+        visibility = View.GONE
+        addView(picker, wide())
+        addView(dayPicker, wide())
+    }
 
     private val title = TextView(context).apply {
         textSize = 21f
@@ -115,12 +144,24 @@ internal class HeatPage(
         }
     }
 
+    /** The "i" beside the name: the details sheet. Left out where the history has nothing to say. */
+    private val info = iconAction(R.drawable.ic_info, words.say("hist.title.heat")) { details.open() }.apply { visibility = View.GONE }
+
     override val view: View = ScrollView(context).apply {
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            addView(title, wide().apply { bottomMargin = dp(8) })
+            addView(LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                addView(title, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+                addView(info)
+            }, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
+            // One picker above the period boxes, under the Now box; it drives every box below it.
+            addView(periodRow, wide().apply { bottomMargin = dp(6) })
+            addView(planBox.panel, wide().apply { bottomMargin = dp(14) })
+            addView(useBox.panel, wide().apply { bottomMargin = dp(14) })
         })
     }
 
@@ -170,6 +211,8 @@ internal class HeatPage(
                     memory.heatShown = outcome.value.hasSomething
                     failed = false
                     unsupported = false
+                    // The running period is read again with the heating, every minute.
+                    readHistory(force = store.choice.date == null)
                 }
                 is SiteRead.Unsupported -> { unsupported = memory.heat == null; failed = false }
                 else -> failed = memory.heat == null
@@ -177,6 +220,15 @@ internal class HeatPage(
             render()
         }
     }
+
+    /** Ask for what the boxes under the Now box draw: Förbrukning's period, and a past day's plan. */
+    private fun readHistory(force: Boolean) {
+        if (HeatBoxes.needsHistory(memory.heat, store.choice, System.currentTimeMillis())) store.request(store.choice, force)
+    }
+
+    private fun siteKey(): String = memory.heat?.siteId ?: profileId
+
+    private fun todayDate(): LocalDate = memory.heat?.zone?.let { LocalDate.now(it) } ?: LocalDate.now()
 
     private fun step(delta: Double) {
         val heat = memory.heat ?: return
@@ -255,6 +307,10 @@ internal class HeatPage(
             state.text = words.say(if (unsupported) "heat.unsupported" else if (failed) "heat.failed" else "heat.loading")
             state.visibility = View.VISIBLE
             listOf(dialRow, errorLine, measured, modes, awayLine, change, shadow, statusBlock, ahead, aheadLine, today, notes).forEach { it.visibility = View.GONE }
+            periodRow.visibility = View.GONE
+            info.visibility = View.GONE
+            planBox.panel.visibility = View.GONE
+            useBox.panel.visibility = View.GONE
             return
         }
         state.visibility = View.GONE
@@ -288,6 +344,27 @@ internal class HeatPage(
         say(aheadLine, line)
         say(today, HeatNowModel.todayLine(text, heat))
         say(notes, HeatNowModel.noteLines(text, heat).joinToString("\n") { it.second }.ifEmpty { null })
+        renderBoxes(heat)
+    }
+
+    /** Plan and Förbrukning under the shared picker; a box with nothing to show is left out, and the picker with them. */
+    private fun renderBoxes(heat: Heat) {
+        val now = System.currentTimeMillis()
+        if (!boxesOpen) {
+            boxesOpen = true
+            readHistory(force = false)
+        }
+        info.visibility = if (HeatBoxes.details(heat)) View.VISIBLE else View.GONE
+        val plan = planBox.render(heat, store.choice, now)
+        val use = useBox.render(heat)
+        val kinds = HeatBoxes.pickerKinds(heat, now)
+        // With Förbrukning absent the picker offers days alone, and one of Månad or År left from before falls back to a day.
+        periodRow.visibility = if (kinds.isEmpty() || !(plan || use || store.choice != PeriodChoice(HistoryPeriod.DAY))) View.GONE else View.VISIBLE
+        val full = kinds.size > 1
+        picker.visibility = if (full) View.VISIBLE else View.GONE
+        dayPicker.visibility = if (full) View.GONE else View.VISIBLE
+        val shownPicker = if (full) picker else dayPicker
+        shownPicker.show(store.choice, todayDate())
     }
 
     /** The relay's hours are read against the clock, not the answer's moment: a page left open moves on. */
