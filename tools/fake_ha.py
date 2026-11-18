@@ -82,6 +82,17 @@ one-car charger (only EV6, ruled out), a car plugged in and decided, a guest pla
 delivered, or nothing plugged in (`&first=1` puts Guest car first in the question). `identify_vehicle` with `"guest"`
 starts a guest plan and a household car ends it; `update_guest` writes the guest amount (1 to 150 kWh). A request
 that does not read `guest` gets none of it, as Home Assistant withholds it.
+
+The `newer` scenario is what app 2.4 reads of Home Assistant 2.5.3, 2.5.4 and 3.0, on the two-car fixture moved to
+today: the charger waits for the plan (the status after its name in the header), EV6 has no battery size set and one
+learned from charging (`learned_capacity_kwh`), and the site cannot tell import from export with a meter that has no
+direction to sign (`direction_hint` `magnitude`; `GET /spotnav-mock/newer?hint=use_power|magnitude|none` changes it).
+Home Assistant 3.0's parts go only to a request whose `reads` names them, as Home Assistant sends them: the `sun`
+block (measured this morning, the forecast from the running hour on and for tomorrow, today's quarter hours and the
+site's peak; `&sun=none` leaves it out), the grid tariff's supplier markup and extra for sold power
+(`supplier_fees`), and the departure calendar (`departure_calendar`: tomorrow 07:30 with a target of 80 % from the
+event's text; `&calendar=daily|date|unavailable|no_event|none` for the other states). `&power=1` makes it a charger
+given a power (`power_charger`: `current_range.kw_per_a`), shown in kW.
 """
 
 from __future__ import annotations
@@ -120,6 +131,7 @@ DASHBOARD_BY_SCENARIO = {
     "demand": "cheapest_direct_site_admin.json",
     "gridfee": "cheapest_direct_site_admin.json",
     "guest": "target_soc_two_vehicles.json",
+    "newer": "target_soc_two_vehicles.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -282,6 +294,134 @@ def _for_older_app(status: dict) -> dict:
 
 #: The `guest` scenario (HA 2.4): what is plugged in and decided, the guest amount, and whether Guest car goes first.
 GUEST = {"state": "ask2", "amount_kwh": 10.0, "first": False}
+
+
+#: The `newer` scenario's choices, set with `GET /spotnav-mock/newer?hint=..&sun=..&calendar=..&power=..`.
+NEWER = {"hint": "magnitude", "sun": "on", "calendar": "used", "power": False}
+
+_ISO_INSTANT = re.compile(r"^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}")
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _moved_to_today(value, days: int):
+    """[value] with every date and instant in it moved [days] days on: a fixture's day drawn as today."""
+    if isinstance(value, dict):
+        return {key: _moved_to_today(item, days) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_moved_to_today(item, days) for item in value]
+    if isinstance(value, str):
+        if _ISO_INSTANT.match(value):
+            try:
+                return (datetime.fromisoformat(value) + timedelta(days=days)).isoformat()
+            except ValueError:
+                return value
+        if _ISO_DATE.match(value):
+            return (date.fromisoformat(value) + timedelta(days=days)).isoformat()
+    return value
+
+
+def _sun_block(now: datetime) -> dict:
+    """Home Assistant 3.0's `sun` block for a clear day: measured hours before the running one, the forecast from it
+    on and for tomorrow's first hours of light, today's measured quarter hours, and the site's peak."""
+    import math
+    zone = ZoneInfo("Europe/Stockholm")
+    local = now.astimezone(zone)
+    midnight = local.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    def kw(at: datetime, top: float) -> float:
+        hours = (at - at.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds() / 3600.0
+        return round(max(0.0, top * math.sin(math.pi * (hours - 7.0) / 10.0)), 2) if 7.0 <= hours <= 17.0 else 0.0
+
+    hours = []
+    for day, top in ((midnight, 6.2), (midnight + timedelta(days=1), 4.1)):
+        for hour in range(24):
+            start = day + timedelta(hours=hour)
+            value = kw(start + timedelta(minutes=30), top)
+            if value <= 0.0:
+                continue
+            hours.append({"start": start.isoformat(), "kw": value, "measured": start + timedelta(hours=1) <= local})
+    quarters = []
+    start = midnight
+    while start + timedelta(minutes=15) <= local:
+        value = kw(start + timedelta(minutes=7), 6.2)
+        if value > 0.0:
+            # A passing cloud, so the quarters are visibly finer than the hours.
+            quarters.append({"start": start.isoformat(), "kw": round(value * (0.55 if start.minute == 30 else 1.0), 2)})
+        start += timedelta(minutes=15)
+    return {"hours": hours, "quarters": quarters[-96:], "peak_kw": 8.4}
+
+
+def _calendar_block(now: datetime) -> dict | None:
+    """Home Assistant 3.0's `departure_calendar` block in the state the scenario is set to, or `None` for no calendar."""
+    state = NEWER["calendar"]
+    if state == "none":
+        return None
+    zone = ZoneInfo("Europe/Stockholm")
+    departure = (now.astimezone(zone) + timedelta(days=1)).replace(hour=7, minute=30, second=0, microsecond=0)
+    used = state == "used"
+    return {
+        "calendars": [{"entity_id": "calendar.family", "name": "Familjen"}],
+        "entity_id": "calendar.family",
+        "state": state,
+        "departure": departure.isoformat() if used else None,
+        "summary": "Jobbet mål: 80 %" if used else None,
+        "all_day": False,
+        "target_percent": 80 if used else None,
+        "target_kwh": None,
+        "target_used": "percent" if used else None,
+    }
+
+
+def _newer_body(body: dict, reads: list | None) -> dict:
+    """The `newer` scenario: what app 2.4 reads of Home Assistant 2.5.3, 2.5.4 and 3.0 (see the module's text)."""
+    now = datetime.now(ZoneInfo("UTC"))
+    today = now.astimezone(ZoneInfo("Europe/Stockholm")).date()
+    body = _moved_to_today(body, (today - date.fromisoformat(body["prices"]["today"])).days)
+    asked = reads or []
+    # The charger holds a finished session for the plan: "Waiting" after its name.
+    body["connection"] = {"state": "finished", "source": "charger", "shown": "waiting"}
+    # A site that cannot tell import from export (2.5.3's hint), taken from the fixture of such a site.
+    site = json.loads((DASHBOARD_FIXTURES / "solar_direct_site_with_total.json").read_text(encoding="utf-8"))["site"]
+    hint = NEWER["hint"]
+    site["active_control"] = {
+        "available": True, "enabled": True, "reason": "site_direction_unknown",
+        "direction_hint": None if hint == "none" else hint, "writable": True,
+    }
+    body["site"] = site
+    body["strategy_options"] = ["cheapest", "solar", "hybrid"]
+    # Nobody states EV6's battery size: the one learned from charging is planned with (2.5.4).
+    for row in body["vehicles"]:
+        if row["id"] == "vehicle_ev6":
+            row["capacity_kwh"] = None
+            row["capacity_source"] = "unknown"
+            row["learned_capacity_kwh"] = 74.6
+        else:
+            row["learned_capacity_kwh"] = None
+    body["status"]["lines"].append({"code": "battery_size_learned", "params": {"kwh": 75}})
+    # Home Assistant 3.0's parts, each only to an app that asks for it.
+    if "sun" in asked and NEWER["sun"] != "none":
+        body["sun"] = _sun_block(now)
+    else:
+        body.pop("sun", None)
+    body.pop("departure_calendar", None)
+    body["settings"].pop("departure_calendar", None)
+    body["settings"].pop("departure_calendar_only", None)
+    calendar = _calendar_block(now)
+    if "departure_calendar" in asked and calendar is not None:
+        body["departure_calendar"] = calendar
+        body["settings"]["departure_calendar"] = calendar["entity_id"]
+        body["settings"]["departure_enabled"] = True
+    if "grid_tariff" in asked:
+        tariff = dict(GRID_FEE)
+        if "supplier_fees" in asked:
+            tariff["supplier_markup"] = {"policy": "manual", "explicit_value": 6.5, "effective_value": 6.5, "unit": "öre/kWh"}
+            tariff["sell_adjustment"] = {"policy": "manual", "explicit_value": -4.0, "effective_value": -4.0, "unit": "öre/kWh"}
+            tariff["sells"] = True
+        body["grid_tariff"] = tariff
+    body["current_range"].pop("kw_per_a", None)
+    if NEWER["power"] and "power_charger" in asked:
+        body["current_range"]["kw_per_a"] = 0.6928
+    return body
 
 
 def _next_seven() -> str:
@@ -546,6 +686,8 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         body["site"]["active_control"] = {"available": True, "enabled": True, "reason": None, "writable": True}
     if scenario == "guest":
         _guest_body(body)
+    if scenario == "newer":
+        body = _newer_body(body, reads)
     if "guest" not in (reads or []):
         _without_guest(body)
     if "import_target_status" not in (reads or []):
@@ -665,6 +807,10 @@ SCENARIOS: dict[str, Charger] = {
     "guest": Charger(
         "Gästbil",
         why="the guest car (HA 2.4): the question with Guest car, at one car too, Byt bil, a guest plan and the Guest tab; set at /spotnav-mock/guest",
+    ),
+    "newer": Charger(
+        "Garage",
+        why="what app 2.4 reads of HA 2.5.3, 2.5.4 and 3.0: the status after the name, the direction hint, a learned battery size, the sun in the chart, the supplier's figures and the departure calendar; set at /spotnav-mock/newer",
     ),
     "demand": Charger(
         "Effektmål",
@@ -904,6 +1050,17 @@ class Handler(BaseHTTPRequestHandler):
                 DEMAND["line"] = query.get("line", DEMAND["line"])
                 DEMAND["released"] = False
                 state = {"line": DEMAND["line"]}
+            self._json(200, state)
+            return
+        if path == "/spotnav-mock/newer":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                NEWER["hint"] = query.get("hint", NEWER["hint"])
+                NEWER["sun"] = query.get("sun", NEWER["sun"])
+                NEWER["calendar"] = query.get("calendar", NEWER["calendar"])
+                NEWER["power"] = query.get("power", "1" if NEWER["power"] else "0") == "1"
+                state = dict(NEWER)
             self._json(200, state)
             return
         if path == "/spotnav-mock/guest":
