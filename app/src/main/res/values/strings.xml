@@ -931,4 +931,49 @@
   <string name="card_hist_pick_day" formatted="false">Choose a day</string>
   <string name="card_hist_pick_month" formatted="false">Choose a month</string>
   <string name="card_hist_pick_year" formatted="false">Choose a year</string>
+  <string name="card_house_flow_solar" formatted="false">Sun</string>
+  <string name="card_house_flow_battery" formatted="false">Battery</string>
+  <string name="card_house_flow_grid" formatted="false">Grid</string>
+  <string name="card_house_flow_house" formatted="false">House</string>
+  <string name="card_house_flow_car" formatted="false">Car</string>
+  <string name="card_house_flow_heat" formatted="false">Heat</string>
+  <string name="card_house_flow_soc_now" formatted="false">now {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">end {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Today\'s energy flow appears once the first five minutes are in.</string>
+  <string name="card_house_loads_title" formatted="false">What the house used</string>
+  <string name="card_house_loads_title_heat" formatted="false">What the heat used</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Show what the house used</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Show what the heat used</string>
+  <string name="card_house_loads_tap" formatted="false">Tap House to see what used its energy.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Tap House or Heat to see what used the energy.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Other metered</string>
+  <string name="card_house_loads_unknown" formatted="false">Unknown</string>
+  <string name="card_house_loads_today" formatted="false">Today so far</string>
+  <string name="card_house_loads_reading" formatted="false">Reading the meters…</string>
+  <string name="card_house_loads_failed" formatted="false">The meters could not be read just now.</string>
+  <string name="card_house_loads_unsupported" formatted="false">This needs a newer SpotNav integration.</string>
+  <string name="card_house_loads_no_flow" formatted="false">There is no house figure for this period.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Other metered: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">The meters add up to {kwh} more than the house, so Unknown is shown as 0.</string>
+  <string name="card_house_loads_none" formatted="false">No meters on single devices yet. Add them in Home Assistant\'s Energy dashboard under Individual devices to see them here.</string>
+  <string name="card_house_loads_car_heat" formatted="false">The car and the heat are shown on their own in the flow and are not part of this.</string>
+  <string name="card_house_loads_car" formatted="false">The car is shown on its own in the flow and is not part of this.</string>
+  <string name="card_house_loads_heat" formatted="false">The heat is shown on its own in the flow and is not part of this.</string>
+  <string name="card_house_loads_chart" formatted="false">The house\'s energy: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">changed by you</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} hours with impossible values are not counted (the meter jumps). Fix its statistics in Home Assistant under Developer tools → Statistics.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: no hour had a possible value, so it is left out (the meter jumps). Fix its statistics in Home Assistant under Developer tools → Statistics.</string>
+  <string name="card_hist_loading" formatted="false">Reading the history…</string>
+  <string name="card_hist_failed" formatted="false">The history could not be read. Try again in a moment.</string>
+  <string name="card_hist_unsupported" formatted="false">The integration does not offer this history yet: update SpotNav.</string>
+  <string name="card_hist_house_no_meters" formatted="false">The Energy dashboard has no grid meter, so the energy cannot be shown: add the grid\'s import in Settings → Dashboards → Energy.</string>
+  <string name="card_hist_house_no_energy" formatted="false">No energy was measured in this period.</string>
+  <string name="card_house_tile_sun" formatted="false">Sun</string>
+  <string name="card_house_tile_house" formatted="false">House</string>
+  <string name="card_house_tile_discharged" formatted="false">Discharged</string>
+  <string name="card_house_tile_charged" formatted="false">Charged</string>
+  <string name="card_house_tile_bought" formatted="false">Bought</string>
+  <string name="card_house_tile_sold" formatted="false">Sold</string>
+  <string name="card_house_tile_heat" formatted="false">Heat</string>
+  <string name="card_house_tile_car" formatted="false">Car</string>
 </resources>

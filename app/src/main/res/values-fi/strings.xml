@@ -918,4 +918,49 @@
   <string name="card_hist_pick_day" formatted="false">Valitse päivä</string>
   <string name="card_hist_pick_month" formatted="false">Valitse kuukausi</string>
   <string name="card_hist_pick_year" formatted="false">Valitse vuosi</string>
+  <string name="card_house_flow_solar" formatted="false">Aurinko</string>
+  <string name="card_house_flow_battery" formatted="false">Akku</string>
+  <string name="card_house_flow_grid" formatted="false">Verkko</string>
+  <string name="card_house_flow_house" formatted="false">Talo</string>
+  <string name="card_house_flow_car" formatted="false">Auto</string>
+  <string name="card_house_flow_heat" formatted="false">Lämpö</string>
+  <string name="card_house_flow_soc_now" formatted="false">nyt {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">lopussa {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Päivän energiavirta näkyy, kun ensimmäiset viisi minuuttia on mitattu.</string>
+  <string name="card_house_loads_title" formatted="false">Mitä talo käytti</string>
+  <string name="card_house_loads_title_heat" formatted="false">Mitä lämmitys käytti</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Näytä, mitä talo käytti</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Näytä, mitä lämmitys käytti</string>
+  <string name="card_house_loads_tap" formatted="false">Napauta Talo nähdäksesi, mikä käytti energian.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Napauta Talo tai Lämpö nähdäksesi, mikä käytti energian.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Muut mitatut</string>
+  <string name="card_house_loads_unknown" formatted="false">Tuntematon</string>
+  <string name="card_house_loads_today" formatted="false">Tänään tähän mennessä</string>
+  <string name="card_house_loads_reading" formatted="false">Luetaan mittareita…</string>
+  <string name="card_house_loads_failed" formatted="false">Mittareita ei voitu lukea juuri nyt.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Tämä vaatii uudemman SpotNav-integraation.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Talolle ei ole lukua tältä jaksolta.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Muut mitatut: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Mittarit ovat yhteensä {kwh} enemmän kuin talo, joten Tuntematon näytetään nollana.</string>
+  <string name="card_house_loads_none" formatted="false">Yksittäisten laitteiden mittareita ei vielä ole. Lisää ne Home Assistantin Energia-näkymään kohtaan Yksittäiset laitteet, niin ne näkyvät tässä.</string>
+  <string name="card_house_loads_car_heat" formatted="false">Auto ja lämpö näkyvät virrassa omina lohkoinaan eivätkä kuulu tähän.</string>
+  <string name="card_house_loads_car" formatted="false">Auto näkyy virrassa omana lohkonaan eikä kuulu tähän.</string>
+  <string name="card_house_loads_heat" formatted="false">Lämpö näkyy virrassa omana lohkonaan eikä kuulu tähän.</string>
+  <string name="card_house_loads_chart" formatted="false">Talon energia: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">sinun muuttamasi</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} tuntia mahdottomilla arvoilla jätetään laskematta (mittari hyppii). Korjaa tilastot Home Assistantissa kohdassa Kehittäjätyökalut → Tilastot.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: yhdelläkään tunnilla ei ollut mahdollista arvoa, joten mittari jätetään pois (se hyppii). Korjaa tilastot Home Assistantissa kohdassa Kehittäjätyökalut → Tilastot.</string>
+  <string name="card_hist_loading" formatted="false">Luetaan historiaa…</string>
+  <string name="card_hist_failed" formatted="false">Historiaa ei voitu lukea. Yritä hetken kuluttua uudelleen.</string>
+  <string name="card_hist_unsupported" formatted="false">Integraatiossa ei ole vielä tätä historiaa: päivitä SpotNav.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Energiapaneelissa ei ole verkkomittaria, joten energiaa ei voi näyttää: lisää verkon tuonti kohdassa Asetukset → Kojelaudat → Energia.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Jaksolla ei mitattu energiaa.</string>
+  <string name="card_house_tile_sun" formatted="false">Aurinko</string>
+  <string name="card_house_tile_house" formatted="false">Talo</string>
+  <string name="card_house_tile_discharged" formatted="false">Purettu</string>
+  <string name="card_house_tile_charged" formatted="false">Ladattu</string>
+  <string name="card_house_tile_bought" formatted="false">Ostettu</string>
+  <string name="card_house_tile_sold" formatted="false">Myyty</string>
+  <string name="card_house_tile_heat" formatted="false">Lämpö</string>
+  <string name="card_house_tile_car" formatted="false">Auto</string>
 </resources>

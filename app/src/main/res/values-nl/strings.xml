@@ -918,4 +918,49 @@
   <string name="card_hist_pick_day" formatted="false">Kies een dag</string>
   <string name="card_hist_pick_month" formatted="false">Kies een maand</string>
   <string name="card_hist_pick_year" formatted="false">Kies een jaar</string>
+  <string name="card_house_flow_solar" formatted="false">Zon</string>
+  <string name="card_house_flow_battery" formatted="false">Batterij</string>
+  <string name="card_house_flow_grid" formatted="false">Net</string>
+  <string name="card_house_flow_house" formatted="false">Huis</string>
+  <string name="card_house_flow_car" formatted="false">Auto</string>
+  <string name="card_house_flow_heat" formatted="false">Warmte</string>
+  <string name="card_house_flow_soc_now" formatted="false">nu {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">eind {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">De energiestroom van vandaag verschijnt zodra de eerste vijf minuten binnen zijn.</string>
+  <string name="card_house_loads_title" formatted="false">Wat het huis gebruikte</string>
+  <string name="card_house_loads_title_heat" formatted="false">Wat de warmte gebruikte</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Toon wat het huis gebruikte</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Toon wat de warmte gebruikte</string>
+  <string name="card_house_loads_tap" formatted="false">Tik op Huis om te zien wat de energie gebruikte.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Tik op Huis of Warmte om te zien wat de energie gebruikte.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Overig gemeten</string>
+  <string name="card_house_loads_unknown" formatted="false">Onbekend</string>
+  <string name="card_house_loads_today" formatted="false">Vandaag tot nu</string>
+  <string name="card_house_loads_reading" formatted="false">De meters worden gelezen…</string>
+  <string name="card_house_loads_failed" formatted="false">De meters konden nu niet gelezen worden.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Hiervoor is een nieuwere SpotNav-integratie nodig.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Er is geen cijfer voor het huis in deze periode.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Overig gemeten: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">De meters tellen op tot {kwh} meer dan het huis, dus Onbekend wordt als 0 getoond.</string>
+  <string name="card_house_loads_none" formatted="false">Nog geen meters op afzonderlijke apparaten. Voeg ze toe in het Energie-dashboard van Home Assistant onder Afzonderlijke apparaten om ze hier te zien.</string>
+  <string name="card_house_loads_car_heat" formatted="false">De auto en de warmte staan apart in de stroom en horen hier niet bij.</string>
+  <string name="card_house_loads_car" formatted="false">De auto staat apart in de stroom en hoort hier niet bij.</string>
+  <string name="card_house_loads_heat" formatted="false">De warmte staat apart in de stroom en hoort hier niet bij.</string>
+  <string name="card_house_loads_chart" formatted="false">De energie van het huis: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">door jou gewijzigd</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} uur met onmogelijke waarden telt niet mee (de meter springt). Herstel de statistieken in Home Assistant onder Ontwikkelhulpmiddelen → Statistieken.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: geen enkel uur had een mogelijke waarde, dus de meter is weggelaten (hij springt). Herstel de statistieken in Home Assistant onder Ontwikkelhulpmiddelen → Statistieken.</string>
+  <string name="card_hist_loading" formatted="false">Geschiedenis wordt gelezen…</string>
+  <string name="card_hist_failed" formatted="false">De geschiedenis kon niet worden gelezen. Probeer het zo opnieuw.</string>
+  <string name="card_hist_unsupported" formatted="false">De integratie biedt deze geschiedenis nog niet: werk SpotNav bij.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Het energiedashboard heeft geen netmeter, dus de energie kan niet worden getoond: voeg de netafname toe onder Instellingen → Dashboards → Energie.</string>
+  <string name="card_hist_house_no_energy" formatted="false">In deze periode is geen energie gemeten.</string>
+  <string name="card_house_tile_sun" formatted="false">Zon</string>
+  <string name="card_house_tile_house" formatted="false">Huis</string>
+  <string name="card_house_tile_discharged" formatted="false">Ontladen</string>
+  <string name="card_house_tile_charged" formatted="false">Geladen</string>
+  <string name="card_house_tile_bought" formatted="false">Gekocht</string>
+  <string name="card_house_tile_sold" formatted="false">Verkocht</string>
+  <string name="card_house_tile_heat" formatted="false">Warmte</string>
+  <string name="card_house_tile_car" formatted="false">Auto</string>
 </resources>

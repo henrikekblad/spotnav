@@ -918,4 +918,49 @@
   <string name="card_hist_pick_day" formatted="false">Velg dag</string>
   <string name="card_hist_pick_month" formatted="false">Velg måned</string>
   <string name="card_hist_pick_year" formatted="false">Velg år</string>
+  <string name="card_house_flow_solar" formatted="false">Sol</string>
+  <string name="card_house_flow_battery" formatted="false">Batteri</string>
+  <string name="card_house_flow_grid" formatted="false">Nett</string>
+  <string name="card_house_flow_house" formatted="false">Hus</string>
+  <string name="card_house_flow_car" formatted="false">Bil</string>
+  <string name="card_house_flow_heat" formatted="false">Varme</string>
+  <string name="card_house_flow_soc_now" formatted="false">nå {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">slutt {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Dagens energiflyt vises når de første fem minuttene er inne.</string>
+  <string name="card_house_loads_title" formatted="false">Hva huset brukte</string>
+  <string name="card_house_loads_title_heat" formatted="false">Hva varmen brukte</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Vis hva huset brukte</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Vis hva varmen brukte</string>
+  <string name="card_house_loads_tap" formatted="false">Trykk på Hus for å se hva som brukte energien.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Trykk på Hus eller Varme for å se hva som brukte energien.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Øvrig målt</string>
+  <string name="card_house_loads_unknown" formatted="false">Ukjent</string>
+  <string name="card_house_loads_today" formatted="false">I dag så langt</string>
+  <string name="card_house_loads_reading" formatted="false">Leser målerne …</string>
+  <string name="card_house_loads_failed" formatted="false">Målerne kunne ikke leses akkurat nå.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Dette krever en nyere SpotNav-integrasjon.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Det finnes ikke noe tall for huset i denne perioden.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Øvrig målt: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Målerne summerer til {kwh} mer enn huset, så Ukjent vises som 0.</string>
+  <string name="card_house_loads_none" formatted="false">Ingen målere på enkeltapparater ennå. Legg dem til i Home Assistants Energi-dashbord under Enkeltenheter, så vises de her.</string>
+  <string name="card_house_loads_car_heat" formatted="false">Bilen og varmen vises for seg i flyten og er ikke med her.</string>
+  <string name="card_house_loads_car" formatted="false">Bilen vises for seg i flyten og er ikke med her.</string>
+  <string name="card_house_loads_heat" formatted="false">Varmen vises for seg i flyten og er ikke med her.</string>
+  <string name="card_house_loads_chart" formatted="false">Husets energi: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">endret av deg</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} timer med umulige verdier telles ikke (måleren hopper). Rett statistikken i Home Assistant under Utviklerverktøy → Statistikk.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: ingen time hadde en mulig verdi, så måleren er utelatt (den hopper). Rett statistikken i Home Assistant under Utviklerverktøy → Statistikk.</string>
+  <string name="card_hist_loading" formatted="false">Leser historikken…</string>
+  <string name="card_hist_failed" formatted="false">Historikken kunne ikke leses. Prøv igjen om litt.</string>
+  <string name="card_hist_unsupported" formatted="false">Integrasjonen har ikke denne historikken ennå: oppdater SpotNav.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Energipanelet har ingen nettmåler, så energien kan ikke vises: legg til nettimporten under Innstillinger → Dashbord → Energi.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Ingen energi ble målt i perioden.</string>
+  <string name="card_house_tile_sun" formatted="false">Sol</string>
+  <string name="card_house_tile_house" formatted="false">Hus</string>
+  <string name="card_house_tile_discharged" formatted="false">Utladet</string>
+  <string name="card_house_tile_charged" formatted="false">Ladet</string>
+  <string name="card_house_tile_bought" formatted="false">Kjøpt</string>
+  <string name="card_house_tile_sold" formatted="false">Solgt</string>
+  <string name="card_house_tile_heat" formatted="false">Varme</string>
+  <string name="card_house_tile_car" formatted="false">Bil</string>
 </resources>
