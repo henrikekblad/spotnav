@@ -1213,15 +1213,10 @@
   <string name="card_house_today_own" formatted="false">La batería ha ganado {amount} hoy (control propio)</string>
   <string name="card_house_day_no_data" formatted="false">Este día no se midió nada.</string>
   <string name="card_house_graph_label" formatted="false">Energía usada y sol, por periodo</string>
-  <string name="card_house_value_label" formatted="false">Lo que ganó la batería</string>
-  <string name="card_house_value_bar" formatted="false">{when}: la batería ganó {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: la batería perdió {amount}</string>
-  <string name="card_house_earned" formatted="false">La batería ganó {amount}</string>
   <string name="card_house_value_hour" formatted="false">la batería ganó {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">la batería perdió {amount}</string>
   <string name="card_house_flow_out" formatted="false">descargado {kwh}, valor {worth}, menos {cost} que costó cargar la energía = {net}</string>
   <string name="card_house_flow_in" formatted="false">cargado {kwh} por {cost} (se cuenta cuando se usa la energía)</string>
-  <string name="card_house_value_none" formatted="false">No hay batería en esta instalación.</string>
   <string name="card_hist_house_chart" formatted="false">Coste de la casa</string>
   <string name="card_hist_house_hint" formatted="false">Toca una barra para ver sus cifras.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: nada medido</string>

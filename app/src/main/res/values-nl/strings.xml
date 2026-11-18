@@ -1205,15 +1205,10 @@
   <string name="card_house_today_own" formatted="false">De batterij heeft vandaag {amount} verdiend (eigen sturing)</string>
   <string name="card_house_day_no_data" formatted="false">Op deze dag is niets gemeten.</string>
   <string name="card_house_graph_label" formatted="false">Gebruikte energie en de zon, per periode</string>
-  <string name="card_house_value_label" formatted="false">Wat de batterij verdiende</string>
-  <string name="card_house_value_bar" formatted="false">{when}: de batterij verdiende {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: de batterij verloor {amount}</string>
-  <string name="card_house_earned" formatted="false">De batterij verdiende {amount}</string>
   <string name="card_house_value_hour" formatted="false">de batterij verdiende {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">de batterij verloor {amount}</string>
   <string name="card_house_flow_out" formatted="false">ontladen {kwh}, waard {worth}, min {cost} die de energie kostte om te laden = {net}</string>
   <string name="card_house_flow_in" formatted="false">geladen {kwh} voor {cost} (geteld wanneer de energie wordt gebruikt)</string>
-  <string name="card_house_value_none" formatted="false">Geen batterij op deze locatie.</string>
   <string name="card_hist_house_chart" formatted="false">Kosten van het huis</string>
   <string name="card_hist_house_hint" formatted="false">Tik op een staaf voor de cijfers.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: niets gemeten</string>

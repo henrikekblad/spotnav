@@ -1205,15 +1205,10 @@
   <string name="card_house_today_own" formatted="false">Batteriet har tjent {amount} i dag (egen styring)</string>
   <string name="card_house_day_no_data" formatted="false">Ingenting ble målt denne dagen.</string>
   <string name="card_house_graph_label" formatted="false">Brukt energi og solen, per periode</string>
-  <string name="card_house_value_label" formatted="false">Hva batteriet tjente</string>
-  <string name="card_house_value_bar" formatted="false">{when}: batteriet tjente {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: batteriet tapte {amount}</string>
-  <string name="card_house_earned" formatted="false">Batteriet tjente {amount}</string>
   <string name="card_house_value_hour" formatted="false">batteriet tjente {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">batteriet tapte {amount}</string>
   <string name="card_house_flow_out" formatted="false">utladet {kwh}, verdt {worth}, minus {cost} som energien kostet å lade = {net}</string>
   <string name="card_house_flow_in" formatted="false">ladet {kwh} for {cost} (regnes når energien brukes)</string>
-  <string name="card_house_value_none" formatted="false">Intet batteri på dette anlegget.</string>
   <string name="card_hist_house_chart" formatted="false">Husets kostnad</string>
   <string name="card_hist_house_hint" formatted="false">Trykk på en søyle for tall.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: ingenting målt</string>

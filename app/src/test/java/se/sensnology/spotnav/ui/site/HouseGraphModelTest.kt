@@ -109,23 +109,6 @@ class HouseGraphModelTest {
         assertFalse(HouseGraph.hasEnergy(history("villa_year.json").copy(buckets = emptyList())))
     }
 
-    @Test fun theBatterysEarningsAreBarsUpAndDownFromTheLine() {
-        val month = history("villa_month.json")
-        val bars = HouseGraph.earnedBars(text(), Locale("sv"), month, month.money)!!
-        val bar = bars.first { it.key == "2026-11-16" }
-        assertEquals(listOf(listOf(Series.EARNED)), bar.lanes.map { lane -> lane.map { it.series } })
-        assertEquals(375.0, bar.lanes.single().single().value, 0.0)
-        assertTrue(bar.words, bar.words.contains("urladdat"))
-        // A loss is a bar below the line, named as a loss.
-        val lost = month.copy(buckets = month.buckets.map { if (it.key == "2026-11-16") it.copy(arbitrage = -80.0, batteryFlow = null) else it })
-        val loss = HouseGraph.earnedBars(text(), Locale("sv"), lost, lost.money)!!.first { it.key == "2026-11-16" }
-        assertEquals(Series.COST, loss.lanes.single().single().series)
-        assertTrue(loss.words, loss.words.contains("förlorade"))
-        assertEquals(month.buckets.mapNotNull { it.arbitrage }.sum() - 375.0 - 80.0, HouseGraph.earnedTotal(lost)!!, 1e-6)
-        // A site without a battery has no kr bars at all.
-        assertNull(HouseGraph.earnedBars(text(), Locale("sv"), history("house_alone_year.json"), null))
-    }
-
     @Test fun aPastDaysHoursGetThePricesAndEarningsOfTheHistoryByStart() {
         val day = history("villa_day.json")
         val hours = day.buckets.map { house().hours[0].copy(start = java.time.OffsetDateTime.parse(it.key).toInstant(), buy = null, sell = null) }
@@ -148,7 +131,7 @@ class HouseGraphModelTest {
             assertNotNull(language, HouseGraph.flowWords(t, month.buckets.first { it.batteryFlow != null }.batteryFlow!!, month.money))
             val hour = house().hours.first { it.houseKw != null }
             assertTrue(language, HouseGraph.hourWords(t, hour, house().zone, Instant.parse("2026-11-14T00:00:00Z").toEpochMilli(), ChartView.PRICE, emptySet()).isNotEmpty())
-            for (key in listOf("house.hint", "house.hint.energy", "hist.loading", "hist.failed", "hist.unsupported", "hist.house.noEnergy", "house.value.none", "house.earned", "house.todayHint", "house.chart.label", "house.chart.priceLabel")) {
+            for (key in listOf("house.hint", "house.hint.energy", "hist.loading", "hist.failed", "hist.unsupported", "hist.house.noEnergy", "house.value.hour", "house.todayHint", "house.chart.label", "house.chart.priceLabel")) {
                 assertTrue("$language $key", t.words.say(key, "amount" to "1").isNotEmpty())
             }
         }

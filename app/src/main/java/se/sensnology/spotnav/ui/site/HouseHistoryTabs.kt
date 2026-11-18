@@ -94,8 +94,9 @@ internal class HouseHistoryStore(private val session: HaSession, private val cha
  *
  * - Graf: a day by the hour (today with the forecast ahead and dashed), a month by the day, a year by the month; the car
  *   hidden until the legend shows it. Where a past day has no hours of its own the history's bars stand in.
- * - Pris och batteri: the day's buy and sell price with the battery's charge and, under it on the same hours, what the
- *   battery earned in kr; a month and a year as kr bars; with the heading "Batteriet har tjänat X kr".
+ * - Pris och batteri: the day's buy and sell price with the battery's level and plan, under a line with the cost. A day
+ *   only: the box is left out for a month and a year. What the battery earned is Intäkt's (no kr bars, no heading here),
+ *   but a tapped hour still says it.
  *
  * Which parts the legend hid is remembered per site and view through [preferences].
  */
@@ -117,11 +118,6 @@ internal class HouseHistoryPanel(
 
     /** The box's own name above its picture: the card's name of the tab ("Energigraf", "Pris och batteri"). */
     private val title = scope.cardTitle(words.say("house.tab.${boxKind.tabKey}"))
-    private val heading = TextView(scope.context).apply {
-        textSize = 17f
-        setTextColor(scope.dark)
-        typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-    }
     private val sub = TextView(scope.context).apply {
         textSize = 13f
         setTextColor(scope.muted)
@@ -145,8 +141,7 @@ internal class HouseHistoryPanel(
         }
         visibility = View.GONE
         addView(scope.cardHeading(if (priceTab) R.drawable.ic_tab_price else R.drawable.ic_tab_graph, title), wide())
-        addView(heading, wide().apply { topMargin = scope.dp(6) })
-        addView(sub, wide().apply { topMargin = scope.dp(2) })
+        addView(sub, wide().apply { topMargin = scope.dp(6) })
         addView(status, wide().apply { topMargin = scope.dp(10) })
         addView(dayChart, wide().apply { topMargin = scope.dp(8) })
         addView(bars, wide().apply { topMargin = scope.dp(8) })
@@ -183,7 +178,7 @@ internal class HouseHistoryPanel(
     override fun refresh() = open(force = store.choice.date == null)
 
     private fun needsHistory(choice: PeriodChoice): Boolean =
-        priceTab || choice.period != HistoryPeriod.DAY || choice.date != null
+        if (priceTab) choice.period == HistoryPeriod.DAY else choice.period != HistoryPeriod.DAY || choice.date != null
 
     /** Draw the box; it is left out (and this says `false`) where there is nothing to show for the period. */
     override fun render(): Boolean {
@@ -192,9 +187,14 @@ internal class HouseHistoryPanel(
         nothing = false
         val history = (store.history(choice) as? Load.Ready)?.value
         val money = history?.money ?: now.money
-        listOf(heading, sub, status, dayChart, bars).forEach { it.visibility = View.GONE }
-        if (priceTab) priceHeading(now, choice, history, money)
-        drawContent(now, choice, history, money)
+        listOf(sub, status, dayChart, bars).forEach { it.visibility = View.GONE }
+        // Prices are hourly: a month or a year has none to show, and the battery's earnings are Intäkt's.
+        if (priceTab && choice.period != HistoryPeriod.DAY) {
+            nothing = true
+        } else {
+            if (priceTab) priceHeading(now, choice, history, money)
+            drawContent(now, choice, history, money)
+        }
         val shown = !nothing
         panel.visibility = if (shown) View.VISIBLE else View.GONE
         return shown
@@ -216,7 +216,7 @@ internal class HouseHistoryPanel(
         when (loaded) {
             null, Load.Loading -> say("hist.loading")
             is Load.Failed -> say(if (loaded.unsupported) "hist.unsupported" else "hist.failed")
-            is Load.Ready -> drawBars(now, loaded.value, money)
+            is Load.Ready -> drawBars(loaded.value)
         }
     }
 
@@ -244,16 +244,15 @@ internal class HouseHistoryPanel(
         val nowMs = if (past) choice.date!!.plusDays(2).atStartOfDay(shown.zone).toInstant().toEpochMilli() else System.currentTimeMillis()
         val hours = if (priceTab) HouseGraph.withPrices(shown.hours, history) else shown.hours
         if (priceTab && hours.none { it.buy != null }) {
-            // No prices to draw: the kr bars alone where the history is in.
+            // No prices to draw, and the kr bars are Intäkt's: nothing here until the history is in, then the box is left out.
             val loaded = store.history(choice)
-            if (loaded is Load.Ready) drawBars(shown, loaded.value, money) else say(if (loaded is Load.Failed) "hist.failed" else "hist.loading")
+            if (loaded is Load.Ready) nothing = true else say(if (loaded is Load.Failed) "hist.failed" else "hist.loading")
             return
         }
         val hiddenSet = hidden()
         val battery = house()?.battery != null
         val earned = if (priceTab && battery) HouseGraph.earnedOnHours(hours, history) else null
         val flows = HouseGraph.flowOnHours(hours, history)
-        val showStrip = earned != null && (earned.any { it != null } || flows.any { it != null })
         val unit = money?.minorUnit.orEmpty()
         val tz = shown.zone
         val series = if (priceTab) priceSeries(hours, battery) else energySeries(shown, hours)
@@ -265,7 +264,6 @@ internal class HouseHistoryPanel(
                 view = view,
                 hidden = hiddenSet,
                 series = series,
-                earned = if (showStrip) earned else null,
                 label = words.say(if (priceTab) "house.chart.priceLabel" else "house.chart.label"),
                 nowWord = words.say("house.now"),
                 kw = { text.fixed(it, 1) },
@@ -311,9 +309,9 @@ internal class HouseHistoryPanel(
 
     // ---------------------------------------------------------------------------------------------- bars
 
-    private fun drawBars(now: House, history: HouseHistory, money: House.Money?) {
+    private fun drawBars(history: HouseHistory) {
         val hiddenSet = hidden()
-        if (!priceTab) {
+        run {
             if (!HouseGraph.hasEnergy(history)) { nothing = true; return }
             val energy = HouseGraph.energyBars(text, locale, history)
             val series = buildList {
@@ -330,32 +328,13 @@ internal class HouseHistoryPanel(
                 )
             )
             bars.visibility = View.VISIBLE
-            return
         }
-        val earned = if (now.battery == null) null else HouseGraph.earnedBars(text, locale, history, money)
-        if (earned == null) { nothing = true; return }
-        bars.show(
-            BarsSpec(
-                label = words.say("house.value.label"), bars = earned,
-                series = listOf(BarSeries(Series.EARNED, "", colours.of(Tone.BATTERY)), BarSeries(Series.COST, "", SELL)),
-                scale = { text.amount(it, money) }, hint = words.say("hist.house.hint"), selected = selectedBar, toggles = false
-            )
-        )
-        bars.visibility = View.VISIBLE
     }
 
     // ---------------------------------------------------------------------------------------------- heading
 
     private fun priceHeading(now: House, choice: PeriodChoice, history: HouseHistory?, money: House.Money?) {
         val running = choice.period == HistoryPeriod.DAY && choice.date == null
-        if (now.battery != null && history != null) {
-            // Today's is the figure Now says; another period's is its bars' sum.
-            val total = if (running && now.today != null) now.today.arbitrage else HouseGraph.earnedTotal(history)
-            if (total != null) {
-                heading.text = words.say("house.earned", "amount" to text.amount(total, money))
-                heading.visibility = View.VISIBLE
-            }
-        }
         val parts = mutableListOf<String>()
         // What it counts; no maker's app is named, as some count the battery's cash flow hour by hour.
         if (now.battery != null) parts += words.say("house.todayHint")

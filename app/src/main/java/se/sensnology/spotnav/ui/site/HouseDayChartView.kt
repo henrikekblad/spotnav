@@ -29,8 +29,6 @@ internal class DaySpec(
     val hidden: Set<String>,
     /** The legend's series, in order; the ones this day has. */
     val series: List<BarSeries>,
-    /** What the battery earned in each hour (minor unit, `null` unknown), drawn as kr bars under the chart; none: no strip. */
-    val earned: List<Double?>? = null,
     val label: String,
     val nowWord: String,
     val kw: (Double) -> String,
@@ -39,7 +37,7 @@ internal class DaySpec(
     val money: (Double) -> String,
     val hourLabel: (Int) -> String,
     val dayCue: (Int) -> String,
-    /** The readout of the hour at an index (its figures and, under the strip, what the battery earned). */
+    /** The readout of the hour at an index (its figures and, where kept, what the battery earned). */
     val words: (Int) -> String,
     val hint: String,
     val selected: Int? = null
@@ -155,10 +153,8 @@ internal class HouseDayChartView(
 
     private fun chartHeight(): Int = scope.dp(if (spec?.view == ChartView.PRICE) 170 else 190)
 
-    private fun stripHeight(): Int = if (spec?.earned != null) scope.dp(STRIP_DP) else 0
-
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-        setMeasuredDimension(MeasureSpec.getSize(widthSpec), chartHeight() + stripHeight())
+        setMeasuredDimension(MeasureSpec.getSize(widthSpec), chartHeight())
     }
 
     private fun left() = 40f * density
@@ -395,36 +391,9 @@ internal class HouseDayChartView(
             line.color = colours.text
             line.strokeWidth = 1f * density
             line.pathEffect = DashPathEffect(floatArrayOf(3f * density, 3f * density), 0f)
-            canvas.drawLine(sx, t, sx, if (s.earned != null) height.toFloat() else b, line)
+            canvas.drawLine(sx, t, sx, b, line)
             line.pathEffect = null
         }
-        s.earned?.let { drawStrip(canvas, s, it, l, r, slot) }
-    }
-
-    /** The battery's kr per hour on the chart's hours: up from the line where it earned, down where it lost. */
-    private fun drawStrip(canvas: Canvas, s: DaySpec, values: List<Double?>, l: Float, r: Float, slot: Float) {
-        val top0 = chartHeight() + 4f * density
-        val h = stripHeight() - 8f * density
-        val known = values.filterNotNull()
-        val most = max(0.0, known.maxOrNull() ?: 0.0)
-        val least = min(0.0, known.minOrNull() ?: 0.0)
-        val span = if (most - least > 0) most - least else 1.0
-        val zero = top0 + (most / span * h).toFloat()
-        values.forEachIndexed { i, v ->
-            if (v == null || v == 0.0) return@forEachIndexed
-            val size = (Math.abs(v) / span * h).toFloat()
-            fill.color = if (v < 0) sell else colours.of(Tone.BATTERY)
-            val inset = min(1f * density, slot * 0.15f)
-            rect.set(l + i * slot + inset, if (v > 0) zero - size else zero, l + (i + 1) * slot - inset, if (v > 0) zero else zero + max(size, 1f))
-            canvas.drawRoundRect(rect, 1.5f * density, 1.5f * density, fill)
-        }
-        line.color = colours.muted
-        line.strokeWidth = 1f * density
-        canvas.drawLine(l, zero, r, zero, line)
-        text.color = colours.muted
-        text.textAlign = Paint.Align.RIGHT
-        if (most > 0) canvas.drawText(s.money(most), l - 4f * density, top0 + 9f * density, text)
-        if (least < 0) canvas.drawText(s.money(least), l - 4f * density, top0 + h, text)
     }
 
     private fun pathOf(points: List<Pair<Float, Float>?>): Path {
@@ -458,7 +427,6 @@ internal class HouseDayChartView(
     private data class Quad(val key: String, val series: String, val colour: Int, val width: Float)
 
     private companion object {
-        const val STRIP_DP = 76
         const val ACTION_NEXT = 0x7E000011
         const val ACTION_PREVIOUS = 0x7E000012
     }

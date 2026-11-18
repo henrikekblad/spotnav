@@ -1205,15 +1205,10 @@
   <string name="card_house_today_own" formatted="false">Die Batterie hat heute {amount} verdient (eigene Steuerung)</string>
   <string name="card_house_day_no_data" formatted="false">An diesem Tag wurde nichts gemessen.</string>
   <string name="card_house_graph_label" formatted="false">Verbrauchte Energie und die Sonne je Zeitraum</string>
-  <string name="card_house_value_label" formatted="false">Was die Batterie brachte</string>
-  <string name="card_house_value_bar" formatted="false">{when}: die Batterie brachte {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: die Batterie verlor {amount}</string>
-  <string name="card_house_earned" formatted="false">Die Batterie brachte {amount}</string>
   <string name="card_house_value_hour" formatted="false">die Batterie brachte {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">die Batterie verlor {amount}</string>
   <string name="card_house_flow_out" formatted="false">entladen {kwh}, wert {worth}, minus {cost}, die die Energie beim Laden gekostet hat = {net}</string>
   <string name="card_house_flow_in" formatted="false">geladen {kwh} für {cost} (wird gezählt, wenn die Energie verbraucht wird)</string>
-  <string name="card_house_value_none" formatted="false">Kein Batteriespeicher an diesem Standort.</string>
   <string name="card_hist_house_chart" formatted="false">Kosten des Hauses</string>
   <string name="card_hist_house_hint" formatted="false">Tippe auf einen Balken für die Zahlen.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: nichts gemessen</string>

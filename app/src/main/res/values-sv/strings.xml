@@ -1205,15 +1205,10 @@
   <string name="card_house_today_own" formatted="false">Batteriet har tjänat {amount} i dag (egen styrning)</string>
   <string name="card_house_day_no_data" formatted="false">Inget mättes den här dagen.</string>
   <string name="card_house_graph_label" formatted="false">Använd energi och solen, per period</string>
-  <string name="card_house_value_label" formatted="false">Vad batteriet tjänade</string>
-  <string name="card_house_value_bar" formatted="false">{when}: batteriet tjänade {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: batteriet förlorade {amount}</string>
-  <string name="card_house_earned" formatted="false">Batteriet tjänade {amount}</string>
   <string name="card_house_value_hour" formatted="false">batteriet tjänade {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">batteriet förlorade {amount}</string>
   <string name="card_house_flow_out" formatted="false">urladdat {kwh}, värt {worth}, minus {cost} som energin kostade att ladda = {net}</string>
   <string name="card_house_flow_in" formatted="false">laddade {kwh} för {cost} (räknas när energin används)</string>
-  <string name="card_house_value_none" formatted="false">Inget batteri på den här anläggningen.</string>
   <string name="card_hist_house_chart" formatted="false">Husets kostnad</string>
   <string name="card_hist_house_hint" formatted="false">Tryck på en stapel för siffror.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: inget mätt</string>

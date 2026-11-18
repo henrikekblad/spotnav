@@ -1205,15 +1205,10 @@
   <string name="card_house_today_own" formatted="false">Akku on ansainnut tänään {amount} (oma ohjaus)</string>
   <string name="card_house_day_no_data" formatted="false">Tänä päivänä ei mitattu mitään.</string>
   <string name="card_house_graph_label" formatted="false">Käytetty energia ja aurinko jaksoittain</string>
-  <string name="card_house_value_label" formatted="false">Mitä akku tienasi</string>
-  <string name="card_house_value_bar" formatted="false">{when}: akku tienasi {amount}</string>
-  <string name="card_house_value_bar_cost" formatted="false">{when}: akku menetti {amount}</string>
-  <string name="card_house_earned" formatted="false">Akku tienasi {amount}</string>
   <string name="card_house_value_hour" formatted="false">akku tienasi {amount}</string>
   <string name="card_house_value_hour_cost" formatted="false">akku menetti {amount}</string>
   <string name="card_house_flow_out" formatted="false">purettu {kwh}, arvo {worth}, miinus {cost}, jonka energia maksoi latauksessa = {net}</string>
   <string name="card_house_flow_in" formatted="false">ladattu {kwh}, hinta {cost} (lasketaan, kun energia käytetään)</string>
-  <string name="card_house_value_none" formatted="false">Tässä kohteessa ei ole akkua.</string>
   <string name="card_hist_house_chart" formatted="false">Talon kustannus</string>
   <string name="card_hist_house_hint" formatted="false">Napauta pylvästä nähdäksesi luvut.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: ei mittauksia</string>

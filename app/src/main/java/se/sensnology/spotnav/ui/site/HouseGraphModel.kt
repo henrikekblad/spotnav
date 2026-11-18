@@ -31,8 +31,6 @@ internal object Series {
     const val SELL_PRICE = "sellPrice"
     const val CHARGE = "charge"
     const val SELL = "sell"
-    const val EARNED = "earned"
-    const val COST = "cost"
 
     /** What a view starts with hidden: the car, which would otherwise crowd the house's bars. */
     fun hiddenByDefault(view: ChartView): Set<String> = if (view == ChartView.ENERGY) setOf(CAR) else emptySet()
@@ -148,10 +146,6 @@ internal object HouseGraph {
     }
 
     private fun bucketStart(key: String): Instant? = runCatching { java.time.OffsetDateTime.parse(key).toInstant() }.getOrNull()
-
-    /** What the battery earned over the period (minor unit): the buckets' arbitrage summed; `null` with none. */
-    fun earnedTotal(history: HouseHistory): Double? =
-        history.buckets.mapNotNull { it.arbitrage }.takeIf { it.isNotEmpty() }?.sum()
 
     // ------------------------------------------------------------------------------------------ words
 
@@ -309,28 +303,4 @@ internal object HouseGraph {
     }
 
     class EnergyBars(val series: EnergySeries, val bars: List<Bar>, val sun: List<Double?>)
-
-    /** The kr bars of a month or a year, a bar a day or a month; `null` without a figure. */
-    fun earnedBars(text: SiteText, locale: Locale, history: HouseHistory, money: House.Money?): List<Bar>? {
-        if (earnedTotal(history) == null) return null
-        val n = history.buckets.size
-        return history.buckets.mapIndexed { index, b ->
-            val (`when`, axis) = bucketWords(locale, history.period, b.key, index, n)
-            val value = b.arbitrage
-            val flow = b.batteryFlow?.let { flowWords(text, it, money) }
-            val words = when {
-                flow != null -> "${`when`}: $flow"
-                value == null -> text.words.say("hist.house.barNone", "when" to `when`)
-                else -> text.words.say(
-                    if (value < 0) "house.value.barCost" else "house.value.bar",
-                    "when" to `when`, "amount" to text.amount(abs(value), money)
-                )
-            }
-            Bar(
-                b.key,
-                if (value == null || value == 0.0) emptyList() else listOf(listOf(BarPart(if (value < 0) Series.COST else Series.EARNED, value))),
-                words, axis
-            )
-        }
-    }
 }
