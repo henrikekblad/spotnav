@@ -918,4 +918,64 @@
   <string name="card_hist_pick_day" formatted="false">Vælg dag</string>
   <string name="card_hist_pick_month" formatted="false">Vælg måned</string>
   <string name="card_hist_pick_year" formatted="false">Vælg år</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Diagrammets forklaring</string>
+  <string name="card_house_legend_house" formatted="false">Huset</string>
+  <string name="card_house_legend_heat" formatted="false">Varme</string>
+  <string name="card_house_legend_forecast" formatted="false">Prognose</string>
+  <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_battery" formatted="false">Batteriniveau · stiplet = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Købspris</string>
+  <string name="card_house_legend_sell_price" formatted="false">Salgspris</string>
+  <string name="card_house_legend_car" formatted="false">Bil</string>
+  <string name="card_house_chart_label" formatted="false">Huset, solen og batteriet: 12 timer tilbage, 24 frem</string>
+  <string name="card_house_chart_description" formatted="false">Søjler: husets forbrug pr. time, målt før nu og prognose efter (lysere). Flade: solen. Kort streg over en tidligere søjle: hvad prognosen var for timen.</string>
+  <string name="card_house_chart_price_label" formatted="false">Priser og batteriet: 12 timer tilbage, 24 frem</string>
+  <string name="card_house_chart_price_description" formatted="false">Linjer: købsprisen med alle afgifter og salgsprisen pr. time. Lilla linje: batteriets ladeniveau på højre akse, stiplet hvor det er planlagt. Toner: planen lader fra nettet eller sælger til det.</string>
+  <string name="card_house_hint" formatted="false">Tryk i diagrammet for en times tal.</string>
+  <string name="card_house_hint_energy" formatted="false">Tryk på en time for tallene. Lyse søjler er prognose.</string>
+  <string name="card_house_readout_house" formatted="false">huset {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">huset {kw} ventet</string>
+  <string name="card_house_readout_heat" formatted="false">varme {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">varme {kw} forventet</string>
+  <string name="card_house_readout_house_both" formatted="false">huset {kw} (prognose {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">sol {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">sol {kwh} ventet</string>
+  <string name="card_house_readout_soc" formatted="false">batteri {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batteri {pct} planlagt</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">lader fra nettet</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">sælger til nettet</string>
+  <string name="card_house_readout_action_hold" formatted="false">holder ladningen</string>
+  <string name="card_house_readout_price" formatted="false">køb {buy} · salg {sell}</string>
+  <string name="card_house_readout_car" formatted="false">bil {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">køb {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">salg {sell}</string>
+  <string name="card_house_now" formatted="false">Nu</string>
+  <string name="card_house_today_hint" formatted="false">Det batteriet gav tilbage, til elprisen dengang, minus hvad opladningen kostede.</string>
+  <string name="card_house_today_hint_app" formatted="false">Samme mål som {brand}-appen.</string>
+  <string name="card_house_today_cost" formatted="false">Udgift til el {amount}</string>
+  <string name="card_house_today_sold" formatted="false">solgt solstrøm {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: batteriet tjente {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: batteriet tjente {amount} (egen styring)</string>
+  <string name="card_house_today" formatted="false">Batteriet har tjent {amount} i dag</string>
+  <string name="card_house_today_own" formatted="false">Batteriet har tjent {amount} i dag (egen styring)</string>
+  <string name="card_house_day_no_data" formatted="false">Intet blev målt denne dag.</string>
+  <string name="card_house_graph_label" formatted="false">Brugt energi og solen, per periode</string>
+  <string name="card_house_value_label" formatted="false">Hvad batteriet tjente</string>
+  <string name="card_house_value_bar" formatted="false">{when}: batteriet tjente {amount}</string>
+  <string name="card_house_value_bar_cost" formatted="false">{when}: batteriet tabte {amount}</string>
+  <string name="card_house_earned" formatted="false">Batteriet tjente {amount}</string>
+  <string name="card_house_value_hour" formatted="false">batteriet tjente {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">batteriet tabte {amount}</string>
+  <string name="card_house_flow_out" formatted="false">afladet {kwh}, værd {worth}, minus {cost}, som energien kostede at lade = {net}</string>
+  <string name="card_house_flow_in" formatted="false">ladede {kwh} for {cost} (tælles, når energien bruges)</string>
+  <string name="card_house_value_none" formatted="false">Intet batteri på dette anlæg.</string>
+  <string name="card_hist_loading" formatted="false">Læser historikken…</string>
+  <string name="card_hist_failed" formatted="false">Historikken kunne ikke læses. Prøv igen om lidt.</string>
+  <string name="card_hist_unsupported" formatted="false">Integrationen har ikke denne historik endnu: opdater SpotNav.</string>
+  <string name="card_hist_house_chart" formatted="false">Husets omkostning</string>
+  <string name="card_hist_house_hint" formatted="false">Tryk på en søjle for tal.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Ingen energi blev målt i perioden.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Energipanelet har ingen netmåler, så energien kan ikke vises: tilføj nettets import under Indstillinger → Dashboards → Energi.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: intet målt</string>
 </resources>

@@ -918,4 +918,64 @@
   <string name="card_hist_pick_day" formatted="false">Valitse päivä</string>
   <string name="card_hist_pick_month" formatted="false">Valitse kuukausi</string>
   <string name="card_hist_pick_year" formatted="false">Valitse vuosi</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Kaavion selite</string>
+  <string name="card_house_legend_house" formatted="false">Talo</string>
+  <string name="card_house_legend_heat" formatted="false">Lämpö</string>
+  <string name="card_house_legend_forecast" formatted="false">Ennuste</string>
+  <string name="card_house_legend_sun" formatted="false">Aurinko</string>
+  <string name="card_house_legend_battery" formatted="false">Akun taso · katkoviiva = suunnitelma</string>
+  <string name="card_house_legend_buy" formatted="false">Ostohinta</string>
+  <string name="card_house_legend_sell_price" formatted="false">Myyntihinta</string>
+  <string name="card_house_legend_car" formatted="false">Auto</string>
+  <string name="card_house_chart_label" formatted="false">Talo, aurinko ja akku: 12 tuntia taakse, 24 eteen</string>
+  <string name="card_house_chart_description" formatted="false">Pylväät: talon kulutus tunneittain, mitattu ennen tätä hetkeä ja ennuste sen jälkeen (vaaleampi). Alue: aurinko. Lyhyt viiva menneen pylvään päällä: tunnin ennuste.</string>
+  <string name="card_house_chart_price_label" formatted="false">Hinnat ja akku: 12 tuntia taakse, 24 eteen</string>
+  <string name="card_house_chart_price_description" formatted="false">Viivat: ostohinta kaikkine maksuineen ja myyntihinta tunneittain. Violetti viiva: akun varaus oikealla akselilla, katkoviivalla suunniteltu. Sävyt: suunnitelma lataa verkosta tai myy verkkoon.</string>
+  <string name="card_house_hint" formatted="false">Napauta kaaviota nähdäksesi tunnin luvut.</string>
+  <string name="card_house_hint_energy" formatted="false">Napauta tuntia nähdäksesi luvut. Vaaleat pylväät ovat ennustetta.</string>
+  <string name="card_house_readout_house" formatted="false">talo {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">talo {kw} odotettu</string>
+  <string name="card_house_readout_heat" formatted="false">lämpö {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">lämpö {kw} odotettu</string>
+  <string name="card_house_readout_house_both" formatted="false">talo {kw} (ennuste {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">aurinko {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">aurinko {kwh} odotettu</string>
+  <string name="card_house_readout_soc" formatted="false">akku {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">akku {pct} suunniteltu</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">lataa verkosta</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">myy verkkoon</string>
+  <string name="card_house_readout_action_hold" formatted="false">pitää varauksen</string>
+  <string name="card_house_readout_price" formatted="false">osto {buy} · myynti {sell}</string>
+  <string name="card_house_readout_car" formatted="false">auto {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">osto {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">myynti {sell}</string>
+  <string name="card_house_now" formatted="false">Nyt</string>
+  <string name="card_house_today_hint" formatted="false">Mitä akku antoi takaisin silloisella sähkön hinnalla, miinus latauksen hinta.</string>
+  <string name="card_house_today_hint_app" formatted="false">Sama mittari kuin {brand}-sovelluksessa.</string>
+  <string name="card_house_today_cost" formatted="false">Sähkö {amount}</string>
+  <string name="card_house_today_sold" formatted="false">myyty aurinkosähkö {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: akku tuotti {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: akku ansaitsi {amount} (oma ohjaus)</string>
+  <string name="card_house_today" formatted="false">Akku on tuottanut tänään {amount}</string>
+  <string name="card_house_today_own" formatted="false">Akku on ansainnut tänään {amount} (oma ohjaus)</string>
+  <string name="card_house_day_no_data" formatted="false">Tänä päivänä ei mitattu mitään.</string>
+  <string name="card_house_graph_label" formatted="false">Käytetty energia ja aurinko jaksoittain</string>
+  <string name="card_house_value_label" formatted="false">Mitä akku tienasi</string>
+  <string name="card_house_value_bar" formatted="false">{when}: akku tienasi {amount}</string>
+  <string name="card_house_value_bar_cost" formatted="false">{when}: akku menetti {amount}</string>
+  <string name="card_house_earned" formatted="false">Akku tienasi {amount}</string>
+  <string name="card_house_value_hour" formatted="false">akku tienasi {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">akku menetti {amount}</string>
+  <string name="card_house_flow_out" formatted="false">purettu {kwh}, arvo {worth}, miinus {cost}, jonka energia maksoi latauksessa = {net}</string>
+  <string name="card_house_flow_in" formatted="false">ladattu {kwh}, hinta {cost} (lasketaan, kun energia käytetään)</string>
+  <string name="card_house_value_none" formatted="false">Tässä kohteessa ei ole akkua.</string>
+  <string name="card_hist_loading" formatted="false">Luetaan historiaa…</string>
+  <string name="card_hist_failed" formatted="false">Historiaa ei voitu lukea. Yritä hetken kuluttua uudelleen.</string>
+  <string name="card_hist_unsupported" formatted="false">Integraatiossa ei ole vielä tätä historiaa: päivitä SpotNav.</string>
+  <string name="card_hist_house_chart" formatted="false">Talon kustannus</string>
+  <string name="card_hist_house_hint" formatted="false">Napauta pylvästä nähdäksesi luvut.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Jaksolla ei mitattu energiaa.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Energiapaneelissa ei ole verkkomittaria, joten energiaa ei voi näyttää: lisää verkon tuonti kohdassa Asetukset → Kojelaudat → Energia.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: ei mittauksia</string>
 </resources>

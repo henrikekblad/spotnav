@@ -926,4 +926,64 @@
   <string name="card_hist_pick_day" formatted="false">Choisir un jour</string>
   <string name="card_hist_pick_month" formatted="false">Choisir un mois</string>
   <string name="card_hist_pick_year" formatted="false">Choisir une année</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Légende</string>
+  <string name="card_house_legend_house" formatted="false">Maison</string>
+  <string name="card_house_legend_heat" formatted="false">Chauffage</string>
+  <string name="card_house_legend_forecast" formatted="false">Prévision</string>
+  <string name="card_house_legend_sun" formatted="false">Soleil</string>
+  <string name="card_house_legend_battery" formatted="false">Niveau de batterie · pointillé = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Prix d\'achat</string>
+  <string name="card_house_legend_sell_price" formatted="false">Prix de vente</string>
+  <string name="card_house_legend_car" formatted="false">Voiture</string>
+  <string name="card_house_chart_label" formatted="false">Maison, soleil et batterie : 12 heures en arrière, 24 en avant</string>
+  <string name="card_house_chart_description" formatted="false">Barres : la consommation de la maison par heure, mesurée jusqu’à maintenant puis prévue (plus claire). Aire : le soleil. Petit trait au-dessus d’une barre passée : la prévision pour cette heure.</string>
+  <string name="card_house_chart_price_label" formatted="false">Prix et batterie : 12 heures en arrière, 24 en avant</string>
+  <string name="card_house_chart_price_description" formatted="false">Lignes : le prix d\'achat avec toutes les taxes et le prix de vente par heure. Ligne violette : le niveau de la batterie sur l\'axe de droite, en pointillé là où il est planifié. Teintes : le plan charge sur le réseau ou y vend.</string>
+  <string name="card_house_hint" formatted="false">Touchez le graphique pour les chiffres d\'une heure.</string>
+  <string name="card_house_hint_energy" formatted="false">Touchez une heure pour voir ses chiffres. Les barres claires sont des prévisions.</string>
+  <string name="card_house_readout_house" formatted="false">maison {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">maison {kw} prévu</string>
+  <string name="card_house_readout_heat" formatted="false">chauffage {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">chauffage {kw} prévu</string>
+  <string name="card_house_readout_house_both" formatted="false">maison {kw} (prévision {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">soleil {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">soleil {kwh} prévu</string>
+  <string name="card_house_readout_soc" formatted="false">batterie {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batterie {pct} prévue</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">charge sur le réseau</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">vend au réseau</string>
+  <string name="card_house_readout_action_hold" formatted="false">garde sa charge</string>
+  <string name="card_house_readout_price" formatted="false">achat {buy} · vente {sell}</string>
+  <string name="card_house_readout_car" formatted="false">voiture {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">achat {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">vente {sell}</string>
+  <string name="card_house_now" formatted="false">Maint.</string>
+  <string name="card_house_today_hint" formatted="false">Ce que la batterie a restitué, au prix du moment, moins ce qu\'a coûté sa charge.</string>
+  <string name="card_house_today_hint_app" formatted="false">La même mesure que l\'appli {brand}.</string>
+  <string name="card_house_today_cost" formatted="false">Électricité {amount}</string>
+  <string name="card_house_today_sold" formatted="false">solaire vendu {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day} : la batterie a rapporté {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day} : la batterie a gagné {amount} (pilotage propre)</string>
+  <string name="card_house_today" formatted="false">La batterie a rapporté {amount} aujourd\'hui</string>
+  <string name="card_house_today_own" formatted="false">La batterie a gagné {amount} aujourd\'hui (pilotage propre)</string>
+  <string name="card_house_day_no_data" formatted="false">Rien n’a été mesuré ce jour-là.</string>
+  <string name="card_house_graph_label" formatted="false">Énergie utilisée et soleil, par période</string>
+  <string name="card_house_value_label" formatted="false">Ce que la batterie a rapporté</string>
+  <string name="card_house_value_bar" formatted="false">{when} : la batterie a rapporté {amount}</string>
+  <string name="card_house_value_bar_cost" formatted="false">{when} : la batterie a perdu {amount}</string>
+  <string name="card_house_earned" formatted="false">La batterie a rapporté {amount}</string>
+  <string name="card_house_value_hour" formatted="false">la batterie a rapporté {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">la batterie a perdu {amount}</string>
+  <string name="card_house_flow_out" formatted="false">déchargé {kwh}, valant {worth}, moins {cost} que l\'énergie a coûté à charger = {net}</string>
+  <string name="card_house_flow_in" formatted="false">chargé {kwh} pour {cost} (compté lorsque l\'énergie est utilisée)</string>
+  <string name="card_house_value_none" formatted="false">Pas de batterie sur ce site.</string>
+  <string name="card_hist_loading" formatted="false">Lecture de l\'historique…</string>
+  <string name="card_hist_failed" formatted="false">L\'historique n\'a pas pu être lu. Réessayez dans un instant.</string>
+  <string name="card_hist_unsupported" formatted="false">L\'intégration ne propose pas encore cet historique : mettez SpotNav à jour.</string>
+  <string name="card_hist_house_chart" formatted="false">Coût de la maison</string>
+  <string name="card_hist_house_hint" formatted="false">Touchez une barre pour ses chiffres.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Aucune énergie mesurée sur cette période.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Le tableau Énergie n\'a pas de compteur réseau, l\'énergie ne peut donc pas être montrée : ajoutez l\'import du réseau dans Paramètres → Tableaux de bord → Énergie.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when} : rien de mesuré</string>
 </resources>
