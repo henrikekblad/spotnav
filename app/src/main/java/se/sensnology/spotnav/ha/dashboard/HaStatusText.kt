@@ -495,6 +495,8 @@ internal object HaStatusText {
             "site_current_negative" -> say(key, mapOf("phases" to joinPhases(format.language, strings(p["phases"]))))
             "need_limited_by_room", "filling_to_limit", "fill_room_unknown" ->
                 say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 1)))
+            // The battery size learned from charging, while nobody states one: whole kWh, as the card writes it.
+            "battery_size_learned" -> say(key, mapOf("kwh" to number(format.locale, num(p["kwh"]) ?: 0.0, 0)))
             "charging_to_vehicle_limit" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 100.0, 0)))
             "min_soc_charging" -> say(key, mapOf("percent" to number(format.locale, num(p["percent"]) ?: 0.0, 0)))
             "remaining_need_estimated" -> say(

@@ -267,8 +267,12 @@ internal class ChargerDashboardController(
         }
         // Which car is plugged in, from the same dashboard: the question, or the car and how it was decided.
         chargerCard.identification.show(dashboard)
-        // The bar and the status already say it charges: the connection line stands down meanwhile.
-        chargerCard.showVehicleLine(vehicleLineText(dashboard).takeIf { ChargeBarLayout.connectionLineShown(bar) }, if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted)
+        // The charger's status after its name in the header, as the card's. The bar and the status line already say
+        // it charges: the header's word stands down meanwhile.
+        chargerCard.showHeaderStatus(
+            vehicleLineText(dashboard).takeIf { ChargeBarLayout.connectionLineShown(bar) },
+            if (dashboard?.connection == ConnectionState.ERROR) ERROR_COLOUR else muted
+        )
         // Home Assistant's own status block words the line (see HaStatusText):
         val held = dashboard
         if (held != null) {

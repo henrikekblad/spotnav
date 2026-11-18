@@ -54,6 +54,23 @@ class GridTariffTextTest {
         assertTrue(rows.all { it.included && it.value == "Ingår i priset" })
     }
 
+    @Test fun theSuppliersFiguresAreRowsOnlyWhereHomeAssistantSendsThem() {
+        assertTrue(text().supplierRows(block(off, highOff, null)).isEmpty())
+        val json = JSONObject("""
+            {"entry_id": "price_a", "write_revision": 3, "transfer_percent": $off, "transfer_high": $highOff,
+             "high_load_window": null, "writable": true, "sells": false,
+             "supplier_markup": {"policy": "manual", "explicit_value": 6.5, "effective_value": 6.5, "unit": "öre/kWh"},
+             "sell_adjustment": {"policy": "off", "explicit_value": null, "effective_value": null, "unit": "öre/kWh"}}
+        """)
+        // Nothing is sold and no figure is stored: only the markup.
+        assertEquals(listOf("Påslag från elhandlaren" to "6,5 öre/kWh"), text().supplierRows(DashboardGridTariff.parse(json)))
+        json.put("sells", true)
+        assertEquals(
+            listOf("Supplier markup" to "6.5 öre/kWh", "Extra for sold power" to "Off"),
+            text("en").supplierRows(DashboardGridTariff.parse(json))
+        )
+    }
+
     @Test fun windowsAreWordedAsTheCardDoes() {
         assertEquals("Mon–Sat 22–06, all year", text("en").windowText(HighLoadWindow("mon_sat", 1, 12, 22, 6)))
         assertEquals("Alla dagar 06–22, jan", text().windowText(HighLoadWindow("all", 1, 1, 6, 22)))

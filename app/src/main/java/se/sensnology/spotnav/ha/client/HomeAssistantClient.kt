@@ -72,7 +72,12 @@ internal class WebhookHttpStatusException(
  * choice when the import target would make it miss its departure, and `effective_target`, the demand block's level the running hour
  * is held under, and `guest`, the guest car: the dashboard's `guest` block, its status lines, the question at a one-car
  * charger and `"guest"` as the car planned for, and `stop_unplug_unseen`, the status line under a person's Stop that only
- * Start or Resume ends (nothing can see the car unplugged). Every request the app sends names them.
+ * Start or Resume ends (nothing can see the car unplugged). Four more are Home Assistant 3.0's, and a 2.x one ignores
+ * a name it does not know: `sun`, the dashboard's block with the sun for the price chart, `power_charger`, the
+ * `current_range.kw_per_a` of a charger given a power, `supplier_fees`, the grid tariff's supplier markup and what sold
+ * power earns, and `departure_calendar`, the dashboard's block for the calendar whose events are departures (with the
+ * settings field of the same name, which the app never sends back, so Home Assistant keeps it). Every request the app
+ * sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -80,7 +85,8 @@ internal object WebhookReads {
         "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused",
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
-        "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen"
+        "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
+        "sun", "power_charger", "supplier_fees", "departure_calendar"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))

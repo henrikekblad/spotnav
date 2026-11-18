@@ -216,6 +216,14 @@
   <string name="departure_day_daily">Hver dag</string>
   <string name="departure_day_on_date">En bestemt dato</string>
   <string name="departure_date_help">Planen kan vente på timer som pleier å være billigere. Avreisen holdes alltid.</string>
+  <string name="departure_calendar_label">Kalender</string>
+  <string name="departure_calendar_used">Neste avreise fra kalenderen: %1$s.</string>
+  <string name="departure_calendar_used_target">Neste avreise fra kalenderen: %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">Hendelsens mål er av den andre typen (nivå eller energi) og brukes ikke.</string>
+  <string name="departure_calendar_daily">Ingen hendelse de neste 7 dagene flytter avreisen: den daglige avreisen brukes.</string>
+  <string name="departure_calendar_date">Datoen du valgte brukes før kalenderen.</string>
+  <string name="departure_calendar_unavailable">Kalenderen kan ikke leses: den daglige avreisen brukes til den kan.</string>
+  <string name="departure_calendar_no_event">Ingen hendelse de neste 7 dagene: det er ingen avreise, så planen bruker de billigste kjente timene.</string>
   <string name="departure_date_past">Datoen er passert, så planen kjører hver dag til du velger en ny dato. Lagring fjerner den.</string>
   <string name="departure_weekdays_title">Ukedager</string>
   <string name="departure_weekdays_help">På en dag du utelater er det ingen avreise: planen går til neste dag du har valgt.</string>
@@ -279,6 +287,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Trykk for å velge.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">rapportert av bilen</string>
+  <string name="vehicle_capacity_learned">lært fra ladinger: ca. %1$s kWh</string>
   <string name="vehicle_error_capacity">Batterikapasiteten må være mellom 1 og 500 kWh.</string>
   <string name="vehicle_error_consumption">Forbruket må være mellom 0,1 og 50 kWh/10 km.</string>
   <string name="vehicle_error_unknown">Kjøretøyet finnes ikke lenger.</string>
@@ -307,6 +316,8 @@
   <string name="site_active_reason_no_charger">Ikke tilgjengelig: ingen lader på anlegget tar imot en strømkommando.</string>
   <string name="site_active_reason_measurement">Ikke tilgjengelig: anleggets egen effektmåling er ikke i orden.</string>
   <string name="site_active_reason_direction_unknown">Lastbalanseringen kan ikke se om strømmen tas fra nettet eller går ut på det, så den beskytter bare sikringen og utnytter ikke all plassen. Endre målerens innstillinger i Home Assistant.</string>
+  <string name="site_active_reason_direction_use_power">Lastbalanseringen kan ikke se om strømmen tas fra nettet eller går ut på det, så den beskytter bare sikringen og utnytter ikke all plassen. Måleren din oppgir også effekten per fase, som gir retningen: åpne innstillingene til SpotNav-kortet i Home Assistant og trykk Bruk ved måleren din under Funnet i Home Assistant.</string>
+  <string name="site_active_reason_direction_magnitude">Måleren din oppgir strømmen uten retning, så lastbalanseringen kan ikke se om den tas fra nettet eller går ut på det. Den beskytter bare sikringen og utnytter ikke all plassen.</string>
   <string name="site_active_reason_unknown">Ikke tilgjengelig av en årsak appen ikke kjenner ennå.</string>
   <string name="site_active_note">Best effort, ingen verneinnretning. Når den slås av, får laderen tilbake strømmen som var senket.</string>
   <string name="site_error_conflict">Endret et annet sted. De gjeldende verdiene vises.</string>
@@ -577,6 +588,11 @@
   <string name="chart_axis_day_help">00–24, med i morgen tegnet over i dag.</string>
   <string name="chart_axis_from_now">Fra nå</string>
   <string name="chart_axis_from_now_help">Fra denne timen til slutten av det siste publiserte døgnet. Til morgendagens priser er ute, det samme som Døgn.</string>
+  <string name="chart_sun">Sol</string>
+  <string name="chart_sun_peak">Sol, topp %1$s kW</string>
+  <string name="chart_readout_sun">Sol %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Sol, prognose %1$s kW</string>
+  <string name="chart_sun_help">Tegner solens effekt i prisdiagrammet: målt før nå, prognose etter der anlegget har en prognose.</string>
   <string name="price_unit">Prisenhet</string>
   <string name="price_unit_example">For eksempel %1$s</string>
   <string name="price_source_title">Strømpris %1$s</string>
@@ -703,6 +719,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">Første måned</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Siste måned</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">Fra og Til kan ikke være samme time.</string>
+  <string name="card_supplier_markup" formatted="false">Påslag fra strømleverandøren</string>
+  <string name="card_supplier_sell" formatted="false">Påslag for solgt strøm</string>
   <string name="card_demand_title" formatted="false">Effektledd</string>
   <string name="card_demand_part" formatted="false">Effektledd {n}</string>
   <string name="card_demand_add_part" formatted="false">Enda en del av effektleddet</string>

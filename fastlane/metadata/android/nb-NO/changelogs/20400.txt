@@ -1,0 +1,4 @@
+- Laderens status står nå etter navnet øverst på kortet: Garasje · Venter
+- En bil uten angitt batteristørrelse viser størrelsen som er lært fra ladinger, og foreslår den
+- Lastbalansering som ikke kan skille import fra eksport, sier hva måleren din kan gjøre med det
+- For SpotNav for Home Assistant 2.5

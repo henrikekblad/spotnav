@@ -31,6 +31,7 @@ import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.chart.ChartAxisMode
 import se.sensnology.spotnav.chart.ChartAxisPreference
+import se.sensnology.spotnav.chart.ChartSunPreference
 import se.sensnology.spotnav.app.StoreAction
 import se.sensnology.spotnav.app.StoreActions
 import se.sensnology.spotnav.chargers.ChargerProfileStore
@@ -106,6 +107,10 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         addGeneralSettings(generalCard.body)
         val displayCard = card(content, t(R.string.section_display), R.drawable.ic_plan_clock)
         addDisplaySettings(displayCard.body)
+        // A holder of this build of the screen: `show` builds the screen anew each time it is called.
+        val sunHolder = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        sunSetting = sunHolder
+        displayCard.body.addView(sunHolder)
         // The market and its money: controls while unpaired, an overview while paired.
         val priceCard = card(content, t(R.string.section_electricity_price), R.drawable.ic_price_table)
         // The charger these settings are for: the one the main screen shows, or with several paired
@@ -238,6 +243,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
                 // The grid tariff beside the grid fee: a percentage of spot, the high-load fee and its hours, and the demand charge.
                 dashboard?.let { pairedPrice?.showTariff(it) }
+                showSunSetting(dashboard?.sun != null)
                 // Where the area's prices come from, and Home Assistant's notice when it has none of its own.
                 dashboard?.let {
                     val areaId = it.market.areaId
@@ -622,6 +628,28 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 done(null)
                 AppThemeSettings.save(context, themeModes[index])
                 activity.recreate()
+            }
+        }
+    }
+
+    /** The Display card's "Sun" row: there only while the paired charger's site has a sun to draw (see [showSunSetting]). */
+    private var sunSetting: LinearLayout? = null
+
+    /**
+     * The choice to draw the sun in the price chart (the card's Display choice), kept on the phone (see
+     * [ChartSunPreference]) and read by the chart at its next draw. Offered only where Home Assistant sends a sun.
+     */
+    private fun showSunSetting(offered: Boolean) {
+        val holder = sunSetting ?: return
+        holder.removeAllViews()
+        if (!offered) return
+        val preference = ChartSunPreference.of(context)
+        val names = listOf(t(R.string.site_on), t(R.string.site_off))
+        settingRow(holder, t(R.string.chart_sun), names[if (preference.shown()) 0 else 1]) {
+            chooseOne(t(R.string.chart_sun), names, if (preference.shown()) 0 else 1, intro = t(R.string.chart_sun_help)) { index, done ->
+                done(null)
+                preference.save(index == 0)
+                showSunSetting(true)
             }
         }
     }

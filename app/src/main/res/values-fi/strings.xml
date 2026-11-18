@@ -216,6 +216,14 @@
   <string name="departure_day_daily">Joka päivä</string>
   <string name="departure_day_on_date">Tietty päivämäärä</string>
   <string name="departure_date_help">Suunnitelma voi odottaa tunteja, jotka ovat yleensä halvempia. Lähtö pidetään aina.</string>
+  <string name="departure_calendar_label">Kalenteri</string>
+  <string name="departure_calendar_used">Seuraava lähtö kalenterin mukaan: %1$s.</string>
+  <string name="departure_calendar_used_target">Seuraava lähtö kalenterin mukaan: %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">Tapahtuman tavoite on toista lajia (taso tai energia), eikä sitä käytetä.</string>
+  <string name="departure_calendar_daily">Mikään tapahtuma seuraavien 7 päivän aikana ei siirrä lähtöä: käytetään päivittäistä lähtöä.</string>
+  <string name="departure_calendar_date">Valitsemasi päivä menee kalenterin edelle.</string>
+  <string name="departure_calendar_unavailable">Kalenteria ei voi lukea: käytetään päivittäistä lähtöä, kunnes se onnistuu.</string>
+  <string name="departure_calendar_no_event">Ei tapahtumia seuraavan 7 päivän aikana: lähtöä ei ole, joten suunnitelma käyttää halvimpia tunnettuja tunteja.</string>
   <string name="departure_date_past">Päivämäärä on mennyt ohi, joten suunnitelma toimii joka päivä, kunnes valitset uuden päivämäärän. Tallennus tyhjentää sen.</string>
   <string name="departure_weekdays_title">Viikonpäivät</string>
   <string name="departure_weekdays_help">Pois jätettynä päivänä ei ole lähtöä: suunnitelma ulottuu seuraavaan valitsemaasi päivään.</string>
@@ -279,6 +287,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Valitse napauttamalla.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">auton ilmoittama</string>
+  <string name="vehicle_capacity_learned">opittu latauksista: noin %1$s kWh</string>
   <string name="vehicle_error_capacity">Akun kapasiteetin on oltava 1–500 kWh.</string>
   <string name="vehicle_error_consumption">Kulutuksen on oltava 0,1–50 kWh/10 km.</string>
   <string name="vehicle_error_unknown">Ajoneuvoa ei enää ole.</string>
@@ -307,6 +316,8 @@
   <string name="site_active_reason_no_charger">Ei käytettävissä: yksikään kohteen laturi ei ota vastaan virtakomentoa.</string>
   <string name="site_active_reason_measurement">Ei käytettävissä: kohteen oma tehomittaus ei ole kunnossa.</string>
   <string name="site_active_reason_direction_unknown">Kuormanhallinta ei näe, otetaanko virta verkosta vai syötetäänkö se verkkoon, joten se vain suojaa sulaketta eikä käytä kaikkea tilaa. Muuta mittarin asetuksia Home Assistantissa.</string>
+  <string name="site_active_reason_direction_use_power">Kuormanhallinta ei näe, otetaanko virta verkosta vai syötetäänkö se verkkoon, joten se vain suojaa sulaketta eikä käytä kaikkea tilaa. Mittarisi ilmoittaa myös vaihekohtaisen tehon, joka kertoo suunnan: avaa SpotNav-kortin asetukset Home Assistantissa ja paina Käytä mittarisi kohdalla kohdassa Löytyi Home Assistantista.</string>
+  <string name="site_active_reason_direction_magnitude">Mittarisi ilmoittaa virran ilman suuntaa, joten kuormanhallinta ei näe, otetaanko se verkosta vai syötetäänkö se verkkoon. Se vain suojaa sulaketta eikä käytä kaikkea tilaa.</string>
   <string name="site_active_reason_unknown">Ei käytettävissä syystä, jota sovellus ei vielä tunne.</string>
   <string name="site_active_note">Toimii parhaan kyvyn mukaan, ei ole suojalaite. Kun kytket pois, laturi saa takaisin sen virran, jota oli laskettu.</string>
   <string name="site_error_conflict">Muutettu muualla. Nykyiset arvot näytetään.</string>
@@ -577,6 +588,11 @@
   <string name="chart_axis_day_help">00–24, huominen piirrettynä tämän päivän päälle.</string>
   <string name="chart_axis_from_now">Nyt alkaen</string>
   <string name="chart_axis_from_now_help">Tästä tunnista viimeisen julkaistun vuorokauden loppuun. Kunnes huomisen hinnat on julkaistu, sama kuin Vuorokausi.</string>
+  <string name="chart_sun">Aurinko</string>
+  <string name="chart_sun_peak">Aurinko, huippu %1$s kW</string>
+  <string name="chart_readout_sun">Aurinko %1$s kW</string>
+  <string name="chart_readout_sun_forecast">Aurinko, ennuste %1$s kW</string>
+  <string name="chart_sun_help">Piirtää auringon tehon hintakaavioon: mitattu ennen nyt-hetkeä, ennuste sen jälkeen, jos kohteella on ennuste.</string>
   <string name="price_unit">Hinnan yksikkö</string>
   <string name="price_unit_example">Esimerkiksi %1$s</string>
   <string name="price_source_title">Sähkön hinta %1$s</string>
@@ -703,6 +719,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">Ensimmäinen kuukausi</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Viimeinen kuukausi</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">Alku ja päättyminen eivät voi olla sama tunti.</string>
+  <string name="card_supplier_markup" formatted="false">Sähkönmyyjän marginaali</string>
+  <string name="card_supplier_sell" formatted="false">Lisä myydystä sähköstä</string>
   <string name="card_demand_title" formatted="false">Tehomaksu</string>
   <string name="card_demand_part" formatted="false">Tehomaksu {n}</string>
   <string name="card_demand_add_part" formatted="false">Tehomaksun toinen osa</string>

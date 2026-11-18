@@ -151,7 +151,8 @@ internal fun ChargingScreen.render() {
             footer = pairedChart.footer,
             drawnPrices = pairedChart.prices,
             figures = pairedChart.figures,
-            overlays = pairedChart.overlays
+            overlays = pairedChart.overlays,
+            sun = pairedChart.sun
         )
         source is PlanSource.RemoteOwned -> null
         else -> ChartPass.chart(inputs, prices, plan)
@@ -275,7 +276,7 @@ internal fun ChargingScreen.render() {
     // text:
     planCard.result.chart.show(
         chart?.market, chart?.bands ?: emptyList(), chart?.footer, chart?.drawnPrices ?: retained?.prices ?: prices,
-        chart?.overlays.orEmpty(), marketZone
+        chart?.overlays.orEmpty(), marketZone, chart?.sun
     )
     planCard.result.authorityNote.text = authorityNote.orEmpty()
 }

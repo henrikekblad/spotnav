@@ -23,7 +23,9 @@ internal data class LocalChart(
     val drawnPrices: PriceResult? = null,
     val figures: PairedPlanFigures? = null,
     /** The plan's periods [bands] were drawn from, for placing them on the From now axis (see [ChartTimeAxis]). */
-    val overlays: List<ChartOverlay> = emptyList()
+    val overlays: List<ChartOverlay> = emptyList(),
+    /** Home Assistant's sun for the chart (see [ChartSun]); `null` for the phone's own chart and where none is sent. */
+    val sun: se.sensnology.spotnav.ha.dashboard.DashboardSun? = null
 )
 
 internal object LocalCharts {

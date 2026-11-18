@@ -95,6 +95,45 @@ class PairedOverviewTest {
         assertEquals(SiteFacts.Reason.UNKNOWN, site.reason)
     }
 
+    @Test fun aDirectionHintRefinesTheUnknownDirectionAndNothingElse() {
+        fun reason(reason: String?, hint: Any?) = PairedOverview.site(DashboardFixtures.dashboard("solar_direct_site_with_total.json") {
+            getJSONObject("site").getJSONObject("active_control").put("reason", reason ?: org.json.JSONObject.NULL).put("direction_hint", hint ?: org.json.JSONObject.NULL)
+        }.site!!).reason
+        assertEquals(SiteFacts.Reason.DIRECTION_UNKNOWN, reason("site_direction_unknown", null))
+        assertEquals(SiteFacts.Reason.DIRECTION_USE_POWER, reason("site_direction_unknown", "use_power"))
+        assertEquals(SiteFacts.Reason.DIRECTION_MAGNITUDE, reason("site_direction_unknown", "magnitude"))
+        // A hint this app does not know, or one beside another reason, says nothing more.
+        assertEquals(SiteFacts.Reason.DIRECTION_UNKNOWN, reason("site_direction_unknown", "something_new"))
+        assertEquals(SiteFacts.Reason.NO_COMMANDABLE_CHARGER, reason("no_commandable_charger", "use_power"))
+        // Home Assistant before 2.5.3 sends no hint at all.
+        val older = PairedOverview.site(DashboardFixtures.dashboard("solar_direct_site_with_total.json") {
+            getJSONObject("site").getJSONObject("active_control").remove("direction_hint")
+        }.site!!)
+        assertEquals(SiteFacts.Reason.DIRECTION_UNKNOWN, older.reason)
+    }
+
+    @Test fun aLearnedBatterySizeIsSaidBesideNotSetAndNeverShownAsTheValue() {
+        fun card(capacity: Any?, learned: Any?) = PairedOverview.vehicles(DashboardFixtures.dashboard("target_soc_two_vehicles.json") {
+            val row = getJSONArray("vehicles").getJSONObject(0)
+            row.put("capacity_kwh", capacity ?: org.json.JSONObject.NULL)
+            row.put("learned_capacity_kwh", learned ?: org.json.JSONObject.NULL)
+            // The `soc` block plans with the learned size when nobody states one.
+            optJSONObject("soc")?.put("vehicle_id", row.getString("id"))?.put("capacity_kwh", 63.8)
+        }).first()
+        val learned = card(null, 63.8)
+        assertNull(learned.capacityKwh)
+        assertEquals(63.8, learned.learnedCapacityKwh!!, 0.0)
+        // A stated size wins, and nothing learned is said.
+        val stated = card(77.4, 63.8)
+        assertEquals(77.4, stated.capacityKwh!!, 0.0)
+        assertNull(stated.learnedCapacityKwh)
+        // Home Assistant before 2.5.4 sends no learned size.
+        val older = PairedOverview.vehicles(DashboardFixtures.dashboard("target_soc_two_vehicles.json") {
+            getJSONArray("vehicles").getJSONObject(0).remove("learned_capacity_kwh")
+        }).first()
+        assertNull(older.learnedCapacityKwh)
+    }
+
     @Test fun aChargerWithNoSiteHasNoSiteOrSolarCard() {
         assertNull(DashboardFixtures.dashboard("cheapest_no_site.json").site)
     }

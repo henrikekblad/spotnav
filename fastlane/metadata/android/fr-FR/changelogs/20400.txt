@@ -1,0 +1,4 @@
+- L'état de la borne suit maintenant son nom en haut de la carte : Garage · En attente
+- Une voiture sans taille de batterie indiquée affiche la taille apprise des recharges et la propose
+- L'équilibrage de charge qui ne distingue pas soutirage et injection dit ce que votre compteur peut y faire
+- Pour SpotNav pour Home Assistant 2.5

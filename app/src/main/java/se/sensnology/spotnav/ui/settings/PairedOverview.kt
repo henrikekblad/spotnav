@@ -66,6 +66,11 @@ internal object PairedOverview {
         /** The friendly name of the charge-level sensor, when Home Assistant states it. */
         val sensorName: String?,
         val capacityKwh: Double?,
+        /**
+         * The battery size learned from charging while nobody states one: said beside "Not set" and offered in the
+         * editor, never shown as the value. `null` when a size is stated or nothing is learned.
+         */
+        val learnedCapacityKwh: Double? = null,
         /** The car reports the capacity itself, so it cannot be typed. */
         val capacityReported: Boolean,
         val consumptionKwhPer10km: Double?,
@@ -99,6 +104,9 @@ internal object PairedOverview {
             val sensorName = dashboard.summary?.vehicleSensorNames?.get(row.id)
             // The `soc` block marks a value it carried forward; a row's own reading is a measurement.
             val estimated = dashboard.soc?.let { it.vehicleId == row.id && it.value != null && it.estimated } == true
+            // Nobody states a size and one is learned: the `soc` block then plans with the learned one, which is not
+            // the car's stated size.
+            val learned = row.learnedCapacityKwh?.takeIf { row.capacityKwh == null }
             VehicleCard(
                 id = row.id,
                 name = row.name,
@@ -109,7 +117,8 @@ internal object PairedOverview {
                     else -> ChargeLevel.NoReading
                 },
                 sensorName = sensorName,
-                capacityKwh = PairedVehicles.capacityKwh(dashboard, row, null, null, row.id),
+                capacityKwh = if (learned != null) null else PairedVehicles.capacityKwh(dashboard, row, null, null, row.id),
+                learnedCapacityKwh = learned,
                 capacityReported = !VehicleUpdate.capacityEditable(row),
                 consumptionKwhPer10km = row.consumptionKwhPer10km,
                 onboardPhases = row.onboardPhases,
@@ -189,7 +198,7 @@ internal object PairedOverview {
         name = site.name?.trim()?.takeIf { it.isNotEmpty() },
         chargers = (site.chargerCount ?: 1).coerceAtLeast(1),
         activeControlOn = site.activeControlEnabled,
-        reason = SiteFacts.reason(site.activeControlReason),
+        reason = SiteFacts.reason(site.activeControlReason, site.activeControlDirectionHint),
         writable = SiteFacts.solarEditable(site),
         setup = setup
     )

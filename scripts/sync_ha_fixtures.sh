@@ -9,7 +9,8 @@
 # working tree, so a branch can be vendored without checking it out. Only the
 # parts the app reads are copied (dashboard/, settings/v1/, site_settings/v1/, vehicle/v1/, sessions/, webhook/,
 # grid_tariff/, power_month/, codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
-# so run this after the HA side changes a fixture. The integration's area catalogue
+# so run this after the HA side changes a fixture. The commit the copy was taken from is written to ha-fixtures/REF,
+# and the test compares only against a checkout at that commit. The integration's area catalogue
 # (custom_components/spotnav/pricing/areas.json) is copied to the app's assets as its bundled area list.
 set -euo pipefail
 
@@ -21,9 +22,12 @@ if [ "${1:-}" = "--ref" ]; then
     trap 'rm -rf -- "$work"' EXIT
     git -C "$repo" archive "$ref" tests/fixtures custom_components/spotnav/pricing/areas.json | tar -x -C "$work"
     src="$work/tests/fixtures"
+    commit="$(git -C "$repo" rev-parse "$ref^{commit}")"
     echo "Taking the fixtures from $ref"
 else
     src="${1:-$root/../elpris-home-assistant/tests/fixtures}"
+    # The commit the working tree is at; empty when the source is no git checkout.
+    commit="$(git -C "$src" rev-parse HEAD 2>/dev/null || true)"
 fi
 dst="$root/app/src/test/resources/ha-fixtures"
 
@@ -51,7 +55,14 @@ if [ -d "$src/power_month" ]; then
     mkdir -p "$dst/power_month"
     cp "$src"/power_month/*.json "$dst/power_month/"
 fi
-echo "Vendored $(find "$dst" -type f | wc -l) fixtures into $dst"
+# The integration commit the copy was taken from: VendoredHaFixturesTest compares the copy with the integration's
+# checkout next to this repository only while that checkout is at this commit.
+if [ -n "$commit" ]; then
+    echo "$commit" > "$dst/REF"
+else
+    rm -f "$dst/REF"
+fi
+echo "Vendored $(find "$dst" -type f -name "*.json" | wc -l) fixtures into $dst"
 
 areas="$src/../../custom_components/spotnav/pricing/areas.json"
 if [ -f "$areas" ]; then

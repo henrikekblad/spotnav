@@ -40,7 +40,8 @@ Assistant itself answers; no contact at all is shown as before.
 
 With Home Assistant paired, the main screen is the charger as Home Assistant runs it:
 
-- **Charger**: what is happening and why, the connection, charging current and phases, this month's
+- **Charger**: its name with its connection after it (*Garage · Waiting*, as the card in Home Assistant
+  writes it), what is happening and why, charging current and phases, this month's
   charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule. The status line
   words what Home Assistant reports, for example *Charging to the minimum level (30 %)* while a car below its
   minimum charge level charges, or, on Solar with no car plugged in, *Solar · surplus available (4.2 kW)* while

@@ -341,8 +341,10 @@ internal class ChargingScreen(
         if (held != null) {
             val range = PairedTarget.ampsRange(held)
             connection.setAmps(connection.amps(), range.first, range.last)
-            connection.refreshValueLabel()
         }
+        // A charger given a power shows its current in kW; without a dashboard the question is not asked.
+        connection.setKwPerA(held?.currentRange?.kwPerA)
+        if (held != null) connection.refreshValueLabel()
         val picked = pendingVehiclePick ?: recordVehicle
         // The vehicle card reads Home Assistant's dashboard whenever one has arrived for a paired
         // charger (also before the authority has resolved): its car is the one Home Assistant plans

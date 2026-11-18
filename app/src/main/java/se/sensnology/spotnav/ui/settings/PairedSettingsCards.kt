@@ -348,9 +348,12 @@ internal class PairedSettingsCards(
             readRow(body, t(R.string.vehicle_card_capacity_label), t(R.string.vehicle_card_capacity_value, vehicle.capacityKwh),
                 help = t(R.string.vehicle_capacity_reported))
         } else {
-            valueRow(body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle)) {
+            // Nobody states a size: the one learned from charging is said beside "Not set" and offered, as in the card.
+            val learned = vehicle.learnedCapacityKwh
+            valueRow(body, t(R.string.vehicle_card_capacity_label), capacityText(vehicle),
+                help = learned?.let { t(R.string.vehicle_capacity_learned, wholeNumber(it)) }) {
                 editNumber(t(R.string.vehicle_card_capacity_label), spec(VehicleField.CAPACITY, 1), "kWh", vehicle.capacityKwh,
-                    t(R.string.vehicle_error_capacity), help = t(R.string.vehicle_card_capacity_note)) { value, done ->
+                    t(R.string.vehicle_error_capacity), help = t(R.string.vehicle_card_capacity_note), suggestion = learned) { value, done ->
                     writeOne(vehicle.id, VehicleField.CAPACITY, value, done)
                 }
             }
@@ -497,6 +500,10 @@ internal class PairedSettingsCards(
                 .let { if (level.estimated) "~$it" else it }
             PairedOverview.ChargeLevel.NoSensor, PairedOverview.ChargeLevel.NoReading -> t(R.string.vehicle_charge_level_none)
         }
+
+    /** A whole number in the app's number locale ("64"). */
+    private fun wholeNumber(value: Double): String =
+        String.format(se.sensnology.spotnav.app.AppLanguageSettings.numberLocale(context), "%.0f", value)
 
     private fun capacityText(vehicle: PairedOverview.VehicleCard): String {
         val kwh = vehicle.capacityKwh ?: return t(R.string.paired_value_unset)
@@ -853,6 +860,8 @@ internal class PairedSettingsCards(
             SiteFacts.Reason.NO_COMMANDABLE_CHARGER -> t(R.string.site_active_reason_no_charger)
             SiteFacts.Reason.MEASUREMENT -> t(R.string.site_active_reason_measurement)
             SiteFacts.Reason.DIRECTION_UNKNOWN -> t(R.string.site_active_reason_direction_unknown)
+            SiteFacts.Reason.DIRECTION_USE_POWER -> t(R.string.site_active_reason_direction_use_power)
+            SiteFacts.Reason.DIRECTION_MAGNITUDE -> t(R.string.site_active_reason_direction_magnitude)
             SiteFacts.Reason.UNKNOWN -> t(R.string.site_active_reason_unknown)
         }
         // State and reason only: the row speaks for itself about where it is changed.

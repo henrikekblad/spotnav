@@ -73,6 +73,16 @@ internal class GridTariffText(private val words: CardWords, private val numbers:
         return rows
     }
 
+    /**
+     * The electricity supplier's two figures (Home Assistant 3.0), read-only here: the markup on each bought kWh, and
+     * what a sold kWh earns beyond spot where something is sold or the figure is in use (see
+     * [DashboardGridTariff.sellAdjustmentShown]). No rows from an older Home Assistant.
+     */
+    fun supplierRows(block: DashboardGridTariff?): List<Pair<String, String>> = listOfNotNull(
+        block?.supplierMarkup?.let { words.say("supplier.markup") to feeText(it) },
+        block?.sellAdjustment?.takeIf { block.sellAdjustmentShown }?.let { words.say("supplier.sell") to feeText(it) }
+    )
+
     companion object {
         val DAY_KEYS: Map<String, String> = mapOf(
             "all" to "gridFee.window.everyDay",
