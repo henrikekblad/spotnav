@@ -49,8 +49,14 @@ internal data class HouseHistory(
      */
     data class BatteryFlow(val discharged: Double, val worth: Double, val cost: Double, val charged: Double, val chargeCost: Double)
 
-    /** What the electricity of the period cost (minor unit): bought, and sold (a sale is negative cost) and how many periods were priced. */
-    data class Cost(val bought: Double, val sold: Double, val priced: Int)
+    /**
+     * What the electricity of the period cost (minor unit): [bought], [sold] (what a sale brought) and the [net] of both,
+     * the energy each way (kWh), and how many of the period's [periods] were [priced].
+     */
+    data class Cost(
+        val bought: Double, val sold: Double, val priced: Int,
+        val net: Double = bought - sold, val kwhIn: Double = 0.0, val kwhOut: Double = 0.0, val periods: Int = priced
+    )
 
     /** A bucket; [key] is the local hour (`2026-11-15T12:00:00+01:00`), the day (`2026-11-16`) or the month (`2026-07`). */
     data class Bucket(
@@ -179,7 +185,11 @@ internal object HouseHistoryRead {
                 )
             },
             cost = objOrNull(json.opt("cost"), "cost")?.let {
-                HouseHistory.Cost(number(it.opt("bought"), "cost.bought"), number(it.opt("sold"), "cost.sold"), count(it.opt("priced"), "cost.priced"))
+                HouseHistory.Cost(
+                    bought = number(it.opt("bought"), "cost.bought"), sold = number(it.opt("sold"), "cost.sold"), priced = count(it.opt("priced"), "cost.priced"),
+                    net = number(it.opt("net"), "cost.net"), kwhIn = number(it.opt("kwh_in"), "cost.kwh_in"),
+                    kwhOut = number(it.opt("kwh_out"), "cost.kwh_out"), periods = count(it.opt("periods"), "cost.periods")
+                )
             },
             buckets = list(json.opt("buckets"), "buckets").map(::bucket),
             energyFlow = objOrNull(json.opt("energy_flow"), "energy_flow")?.let(HouseRead::energyFlow),
