@@ -58,8 +58,9 @@ internal class HousePage(
     private val history = HouseHistoryStore(session) { render() }
     private val locale = AppLanguageSettings.locale(context)
     private val choice: PeriodChoice get() = history.choice
-    private val boxes = HouseBox.entries.associateWith { box ->
-        HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+    private val boxes: Map<HouseBox, HousePeriodBox> = HouseBox.entries.associateWith { box ->
+        if (box == HouseBox.EARN) HouseEarnPanel(this, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+        else HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
     }
     private var boxesOpen = false
     private val picker = PeriodPickerView(this, words, locale) { next ->

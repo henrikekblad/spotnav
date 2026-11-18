@@ -27,7 +27,9 @@ internal data class House(
     val energyFlow: EnergyFlow?,
     val day: ShownDay?,
     val heat: Heat?,
-    val saving: SavingDay?
+    val saving: SavingDay?,
+    /** Where the figures come from, for the details sheet; `null` where the answer does not say. */
+    val sources: HouseSources? = null
 ) {
     /** The price area's money: amounts come in the minor unit. */
     data class Money(val currency: String?, val majorUnit: String?, val minorUnit: String?)
@@ -194,7 +196,8 @@ internal object HouseRead {
             heat = objOrNull(json.opt("heat"), "heat")?.let {
                 House.Heat(status = text(it.opt("status"), "heat.status"), name = textOrNull(it.opt("name"), "heat.name"))
             },
-            saving = objOrNull(json.opt("saving"), "saving")?.let(::saving)
+            saving = objOrNull(json.opt("saving"), "saving")?.let(::saving),
+            sources = HouseSources.decode(json)
         )
     }
 
