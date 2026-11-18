@@ -24,6 +24,7 @@ import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
@@ -124,6 +125,9 @@ internal interface HaTransport {
     /** `get_heat`: the site's heating. */
     fun heat(): SiteRead<Heat> = SiteRead.Failed(null)
 
+    /** `get_heat_history`: a day, month or year of the heating. */
+    fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?): SiteRead<HeatHistory> = SiteRead.Failed(null)
+
     /** `update_heat`: the dial or Home/Away, with its compare-and-set; never throws. */
     fun updateHeat(request: HeatWrite.Request): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
 
@@ -199,6 +203,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun houseLoads(kind: String, period: String, date: LocalDate?) = HomeAssistantClient.houseLoads(connection, kind, period, date)
 
     override fun heat() = HomeAssistantClient.heat(connection)
+
+    override fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.heatHistory(connection, period, date)
 
     override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
 
@@ -475,6 +481,14 @@ internal class HaSession(
     fun houseLoads(kind: String, period: String, date: LocalDate?, done: (SiteRead<HouseLoads>) -> Unit) {
         background.execute {
             val outcome = transport.houseLoads(kind, period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_heat_history` (never throws). */
+    fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?, done: (SiteRead<HeatHistory>) -> Unit) {
+        background.execute {
+            val outcome = transport.heatHistory(period, date)
             mainThread { done(outcome) }
         }
     }

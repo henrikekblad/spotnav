@@ -15,9 +15,10 @@ import java.time.temporal.ChronoUnit
 
 /**
  * The site's heating (webhook `get_heat`, the twin of `spotnav/get_heat`, `api_version` 1), as far as the heat page's
- * Now tab reads it: the dial's target and mode, the comfort band, the measured rooms, today's figures, what the heat
- * pump does and what SpotNav would do, the plan's next hours and the notes. The blocks behind the other tabs and the
- * settings (`band`'s prices, `indoor_day`, `review`, `choices`, the sensors' own rows) are not read here. Shape: the
+ * Now box and the Plan box read it: the dial's target and mode, the comfort band, the measured rooms, today's figures,
+ * what the heat pump does and what SpotNav would do, the plan's next hours and the notes, the day's plan by the hour
+ * (`band`, `indoor_day`) and yesterday's `review`. The settings' blocks (`choices`, the sensors' own rows) are not
+ * read here. Shape: the
  * integration's `heat/view.py`; the card's reader is `frontend/src/heat-model.ts`. Over the webhook `writable` is
  * `false` and `choices` `null`: the configuration stays in Home Assistant.
  */
@@ -43,7 +44,13 @@ internal data class Heat(
     val relay: Relay?,
     val control: Control?,
     val ahead: List<AheadHour>,
-    val notes: List<Note>
+    val notes: List<Note>,
+    /** Today's plan hour by hour, for the Plan box's chart. */
+    val band: List<HeatBandHour> = emptyList(),
+    /** The day's measured rooms up to now; `null` without indoor sensors. */
+    val indoorDay: HeatIndoorDay? = null,
+    /** Yesterday's review under today's chart; `null` without one. */
+    val review: HeatReview? = null
 ) {
     /** What the dial and Home/Away are written against. The raw text of `away_until` is what the compare-and-set sends back. */
     data class Config(
@@ -201,7 +208,10 @@ internal object HeatRead {
             notes = list(json.opt("notes"), "notes").map { raw ->
                 val note = obj(raw, "note")
                 Heat.Note(text(note.opt("code"), "note.code"), params(obj(note.opt("params"), "note.params")))
-            }
+            },
+            band = list(obj(json.opt("band"), "band").opt("hours"), "band.hours").map(HeatDayRead::bandHour),
+            indoorDay = additive(json, "indoor_day", null) { objOrNull(it, "indoor_day")?.let(HeatDayRead::indoorDay) },
+            review = additive(json, "review", null) { objOrNull(it, "review")?.let(HeatDayRead::review) }
         )
     }
 

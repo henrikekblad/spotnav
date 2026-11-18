@@ -4,6 +4,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatHistory
+import se.sensnology.spotnav.ha.heat.HeatHistoryRead
 import se.sensnology.spotnav.ha.heat.HeatRead
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
@@ -380,6 +382,12 @@ object HomeAssistantClient {
     internal fun heat(settings: HomeAssistantSettings): SiteRead<Heat> {
         val (status, body) = write(settings, HeatRead.payload())
         return HeatRead.answer(status, body)
+    }
+
+    /** One day, month or year of the heating (webhook `get_heat_history`), under the same capability. Never throws. */
+    internal fun heatHistory(settings: HomeAssistantSettings, period: HouseHistory.HistoryKind, date: java.time.LocalDate? = null): SiteRead<HeatHistory> {
+        val (status, body) = write(settings, HeatHistoryRead.payload(period, date))
+        return HeatHistoryRead.answer(status, body)
     }
 
     /** The dial, Home/Away, the night or an offset written (webhook `update_heat`). Never throws. */
