@@ -3,7 +3,7 @@ package se.sensnology.spotnav.ui.settings
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
-import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.CardWords
 import java.util.Locale
 
@@ -114,18 +114,18 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
     /** What went wrong with a write, for the screen to word. */
     enum class Issue { CONFLICT, NOT_PERMITTED, RANGE, STEP, NO_SITE, VERSION, GENERIC }
 
-    fun heatIssue(outcome: HeatSettingsUpdate.Outcome): Issue? = when (outcome) {
-        HeatSettingsUpdate.Outcome.Updated -> null
-        HeatSettingsUpdate.Outcome.Conflict -> Issue.CONFLICT
-        HeatSettingsUpdate.Outcome.NotPermitted -> Issue.NOT_PERMITTED
-        is HeatSettingsUpdate.Outcome.Refused -> when {
+    fun heatIssue(outcome: HeatWrite.Outcome): Issue? = when (outcome) {
+        HeatWrite.Outcome.Written -> null
+        HeatWrite.Outcome.Conflict -> Issue.CONFLICT
+        HeatWrite.Outcome.NotPermitted -> Issue.NOT_PERMITTED
+        is HeatWrite.Outcome.Refused -> when {
             "not_a_step" in outcome.codes -> Issue.STEP
             "out_of_range" in outcome.codes -> Issue.RANGE
             else -> Issue.GENERIC
         }
-        HeatSettingsUpdate.Outcome.NoSite -> Issue.NO_SITE
-        HeatSettingsUpdate.Outcome.NotSupported -> Issue.VERSION
-        is HeatSettingsUpdate.Outcome.Failed -> Issue.GENERIC
+        HeatWrite.Outcome.NoSite -> Issue.NO_SITE
+        HeatWrite.Outcome.Unsupported -> Issue.VERSION
+        is HeatWrite.Outcome.Failed -> Issue.GENERIC
     }
 
     fun batteryIssue(outcome: BatteryControlRead.Outcome): Issue? = when (outcome) {

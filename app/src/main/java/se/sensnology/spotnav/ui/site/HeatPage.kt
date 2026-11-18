@@ -240,7 +240,7 @@ internal class HeatPage(
     }
 
     private fun write(change: HeatWrite.Change) {
-        session.updateHeat(change) { outcome ->
+        session.updateHeat(HeatWrite.request(change)) { outcome ->
             pendingTarget = null
             error = if (outcome is HeatWrite.Outcome.Written) null else HeatNowModel.errorWords(text, outcome)
             // Whatever came of it, what Home Assistant holds is read at once.

@@ -8,7 +8,7 @@ import org.junit.Test
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
-import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.testing.CardStringsXml
 import se.sensnology.spotnav.testing.HaFixtures
 import java.util.Locale
@@ -90,12 +90,12 @@ class SiteSettingsTextTest {
 
     @Test fun aRefusedWriteIsWordedByItsKind() {
         val en = text()
-        assertEquals(SiteSettingsText.Issue.CONFLICT, en.heatIssue(HeatSettingsUpdate.Outcome.Conflict))
-        assertEquals(SiteSettingsText.Issue.NOT_PERMITTED, en.heatIssue(HeatSettingsUpdate.Outcome.NotPermitted))
-        assertEquals(SiteSettingsText.Issue.RANGE, en.heatIssue(HeatSettingsUpdate.Outcome.Refused(listOf("out_of_range"))))
-        assertEquals(SiteSettingsText.Issue.STEP, en.heatIssue(HeatSettingsUpdate.Outcome.Refused(listOf("not_a_step"))))
-        assertEquals(SiteSettingsText.Issue.GENERIC, en.heatIssue(HeatSettingsUpdate.Outcome.Refused(listOf("unknown_field"))))
-        assertNull(en.heatIssue(HeatSettingsUpdate.Outcome.Updated))
+        assertEquals(SiteSettingsText.Issue.CONFLICT, en.heatIssue(HeatWrite.Outcome.Conflict))
+        assertEquals(SiteSettingsText.Issue.NOT_PERMITTED, en.heatIssue(HeatWrite.Outcome.NotPermitted))
+        assertEquals(SiteSettingsText.Issue.RANGE, en.heatIssue(HeatWrite.Outcome.Refused(listOf("out_of_range"))))
+        assertEquals(SiteSettingsText.Issue.STEP, en.heatIssue(HeatWrite.Outcome.Refused(listOf("not_a_step"))))
+        assertEquals(SiteSettingsText.Issue.GENERIC, en.heatIssue(HeatWrite.Outcome.Refused(listOf("unknown_field"))))
+        assertNull(en.heatIssue(HeatWrite.Outcome.Written))
         assertEquals(SiteSettingsText.Issue.NOT_PERMITTED, en.batteryIssue(BatteryControlRead.Outcome.NotPermitted))
         assertEquals(SiteSettingsText.Issue.GENERIC, en.batteryIssue(BatteryControlRead.Outcome.Invalid))
         assertEquals("Someone else changed it meanwhile; showing the latest.", en.cardSentence(SiteSettingsText.Issue.CONFLICT, battery = false))

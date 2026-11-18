@@ -362,7 +362,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             siteCards?.attach(
                 battery = { mode, done -> session.batteryControl(mode, done) },
                 heatRead = { done -> session.heatSettings(done) },
-                heatWrite = { request, done -> session.updateHeatSettings(request, done) }
+                heatWrite = { request, done -> session.updateHeat(request, done) }
             )
             pairedCards.attachGuest { amountKwh, done ->
                 session.updateGuest(amountKwh) { outcome ->

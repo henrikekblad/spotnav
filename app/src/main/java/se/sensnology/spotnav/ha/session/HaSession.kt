@@ -32,7 +32,6 @@ import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
-import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -109,8 +108,6 @@ internal interface HaTransport {
     /** `get_heat`: the site's heat settings; never throws. */
     fun heatSettings(): SiteRead<HeatSettings> = SiteRead.Failed(null)
 
-    /** `update_heat` for the night and the offsets; never throws. */
-    fun updateHeatSettings(request: HeatSettingsUpdate.Request): HeatSettingsUpdate.Outcome = HeatSettingsUpdate.Outcome.Failed(null)
 
     /** `get_house_now`: the site's live flows. */
     fun houseNow(): SiteRead<HouseNow> = SiteRead.Failed(null)
@@ -128,7 +125,7 @@ internal interface HaTransport {
     fun heat(): SiteRead<Heat> = SiteRead.Failed(null)
 
     /** `update_heat`: the dial or Home/Away, with its compare-and-set; never throws. */
-    fun updateHeat(change: HeatWrite.Change): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
+    fun updateHeat(request: HeatWrite.Request): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
 
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
@@ -193,8 +190,6 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun heatSettings() = HomeAssistantClient.heatSettings(connection)
 
-    override fun updateHeatSettings(request: HeatSettingsUpdate.Request) = HomeAssistantClient.updateHeatSettings(connection, request)
-
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
     override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
@@ -205,7 +200,7 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun heat() = HomeAssistantClient.heat(connection)
 
-    override fun updateHeat(change: HeatWrite.Change) = HomeAssistantClient.updateHeat(connection, change)
+    override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -485,17 +480,9 @@ internal class HaSession(
     }
 
     /** `update_heat` (never throws). */
-    fun updateHeat(change: HeatWrite.Change, done: (HeatWrite.Outcome) -> Unit) {
+    fun updateHeat(request: HeatWrite.Request, done: (HeatWrite.Outcome) -> Unit) {
         background.execute {
-            val outcome = transport.updateHeat(change)
-            mainThread { done(outcome) }
-        }
-    }
-
-    /** `update_heat` for the night and the offsets (never throws). */
-    fun updateHeatSettings(request: HeatSettingsUpdate.Request, done: (HeatSettingsUpdate.Outcome) -> Unit) {
-        background.execute {
-            val outcome = transport.updateHeatSettings(request)
+            val outcome = transport.updateHeat(request)
             mainThread { done(outcome) }
         }
     }

@@ -6,6 +6,9 @@ import se.sensnology.spotnav.ha.client.WriteEnvelope
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.house.StrictJson
+import se.sensnology.spotnav.ha.site.HeatNight
+import se.sensnology.spotnav.ha.site.HeatOffset
+import se.sensnology.spotnav.ha.site.HeatSettings
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -228,9 +231,18 @@ internal object HeatRead {
     }
 }
 
-/** `update_heat`: the dial and Home/Away, through the command's own judge and its compare-and-set. */
+/**
+ * `update_heat`, the one write of the heating (webhook `update_heat`): a [Request] of `changes` and the values they were
+ * judged against (`expected`, a compare-and-set). The heat page writes the dial and Home/Away ([Change]); the Settings
+ * screen writes the night and the offsets ([night], [zoneOffset], [indoorOffset]). One [Outcome] for both.
+ */
 internal object HeatWrite {
-    /** What a write may change over the webhook, by the field names Home Assistant answers. */
+    const val NIGHT_MIN = 0.5
+    const val NIGHT_MAX = 3.0
+    const val OFFSET_MIN = -3.0
+    const val OFFSET_MAX = 3.0
+
+    /** What the heat page may change: the dial and Home/Away, by the field names Home Assistant answers. */
     sealed interface Change {
         val key: String
 
@@ -244,10 +256,18 @@ internal object HeatWrite {
         }
     }
 
-    fun payload(change: Change): JSONObject = JSONObject().apply {
-        put("version", 1)
-        put("action", "update_heat")
-        put("api_version", HeatRead.API_VERSION)
+    /** A request: what to change and the values it was judged against. */
+    class Request(val changes: JSONObject, val expected: JSONObject) {
+        fun payload(): JSONObject = JSONObject().apply {
+            put("version", 1)
+            put("action", "update_heat")
+            put("api_version", HeatRead.API_VERSION)
+            put("changes", changes)
+            put("expected", expected)
+        }
+    }
+
+    fun request(change: Change): Request {
         val changes = JSONObject()
         val expected = JSONObject()
         when (change) {
@@ -265,12 +285,38 @@ internal object HeatWrite {
                 expected.put("away_until", change.expectedUntil ?: JSONObject.NULL)
             }
         }
-        put("changes", changes)
-        put("expected", expected)
+        return Request(changes, expected)
     }
 
+    fun payload(change: Change): JSONObject = request(change).payload()
+
+    fun night(stored: HeatSettings, next: HeatNight): Request = Request(
+        changes = JSONObject().put("night", nightJson(next)),
+        expected = JSONObject().put("night", nightJson(stored.night))
+    )
+
+    /** One stored zone's offset; the list names exactly the stored zones in their stored order, as the webhook takes it. */
+    fun zoneOffset(stored: HeatSettings, entityId: String, offsetC: Double): Request = Request(
+        changes = JSONObject().put("zones", offsetsJson(stored.zones.map { if (it.entityId == entityId) it.copy(offsetC = offsetC) else it })),
+        expected = JSONObject().put("zones", offsetsJson(stored.zones))
+    )
+
+    /** One stored indoor sensor's offset; the list stays sparse (a sensor at 0 is left out) and names stored sensors only. */
+    fun indoorOffset(stored: HeatSettings, entityId: String, offsetC: Double): Request {
+        val next = stored.indoorSensors
+            .map { HeatOffset(it, if (it == entityId) offsetC else stored.indoorOffsetOf(it)) }
+            .filter { it.offsetC != 0.0 }
+        return Request(
+            changes = JSONObject().put("indoor_offsets", offsetsJson(next)),
+            expected = JSONObject().put("indoor_offsets", offsetsJson(stored.indoorOffsets))
+        )
+    }
+
+    /** Whether [value] is a whole number of half degrees. */
+    fun isHalfStep(value: Double): Boolean = Math.abs(value * 2 - Math.round(value * 2)) < 1e-9
+
     sealed interface Outcome {
-        /** Written. */
+        /** Written (the settings are to be read again). */
         data object Written : Outcome
 
         /** Somebody else changed it since it was read: nothing was written. */
@@ -282,6 +328,8 @@ internal object HeatWrite {
         /** The change is one only an administrator in Home Assistant may make. */
         data object NotPermitted : Outcome
 
+        data object NoSite : Outcome
+
         data object Unsupported : Outcome
 
         data class Failed(val code: String?) : Outcome
@@ -290,16 +338,25 @@ internal object HeatWrite {
     fun answer(status: Int?, body: String?): Outcome {
         if (status == null) return Outcome.Failed(null)
         val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
-        if (head.json.opt("api_version") != HeatRead.API_VERSION) {
+        val version = head.json.opt("api_version")
+        if (version != null && version != HeatRead.API_VERSION) {
             return if (head.error == WriteEnvelope.UNSUPPORTED_VERSION) Outcome.Unsupported else Outcome.Failed(head.error)
         }
-        if (head.ok) return Outcome.Written
+        if (head.ok) return if (head.error == null) Outcome.Written else Outcome.Failed(head.error)
         return when (head.error) {
             WriteEnvelope.CONFLICT -> Outcome.Conflict
             WriteEnvelope.INVALID_VALUE -> Outcome.Refused(head.fieldErrors.map { it.code })
             WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK, "spotnav_not_admin" -> Outcome.NotPermitted
             WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.Unsupported
+            WriteEnvelope.NO_SITE, WriteEnvelope.SITE_UNAVAILABLE -> Outcome.NoSite
             else -> Outcome.Failed(head.error)
         }
+    }
+
+    private fun nightJson(night: HeatNight) =
+        JSONObject().put("on", night.on).put("delta_c", night.deltaC).put("start", night.start).put("end", night.end)
+
+    private fun offsetsJson(offsets: List<HeatOffset>) = JSONArray().apply {
+        offsets.forEach { put(JSONObject().put("entity_id", it.entityId).put("offset_c", it.offsetC)) }
     }
 }

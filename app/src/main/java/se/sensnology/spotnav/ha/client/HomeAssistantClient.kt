@@ -18,7 +18,6 @@ import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
 import se.sensnology.spotnav.ha.site.HeatSettingsRead
-import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -383,9 +382,9 @@ object HomeAssistantClient {
         return HeatRead.answer(status, body)
     }
 
-    /** The dial or Home/Away written (webhook `update_heat`). Never throws. */
-    internal fun updateHeat(settings: HomeAssistantSettings, change: HeatWrite.Change): HeatWrite.Outcome {
-        val (status, body) = write(settings, HeatWrite.payload(change))
+    /** The dial, Home/Away, the night or an offset written (webhook `update_heat`). Never throws. */
+    internal fun updateHeat(settings: HomeAssistantSettings, request: HeatWrite.Request): HeatWrite.Outcome {
+        val (status, body) = write(settings, request.payload())
         return HeatWrite.answer(status, body)
     }
 
@@ -399,12 +398,6 @@ object HomeAssistantClient {
     internal fun heatSettings(settings: HomeAssistantSettings): SiteRead<HeatSettings> {
         val (status, body) = write(settings, HeatSettingsRead.payload())
         return HeatSettingsRead.answer(status, body)
-    }
-
-    /** The heat settings the Settings screen writes (webhook `update_heat`: the night and the offsets). Never throws. */
-    internal fun updateHeatSettings(settings: HomeAssistantSettings, request: HeatSettingsUpdate.Request): HeatSettingsUpdate.Outcome {
-        val (status, body) = write(settings, request.payload())
-        return HeatSettingsUpdate.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */

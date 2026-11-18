@@ -16,7 +16,7 @@ import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
-import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
@@ -46,8 +46,8 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
 
     private var readBattery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit = { _, done -> done(BatteryControlRead.Outcome.Failed(null)) }
     private var readHeat: ((SiteRead<HeatSettings>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
-    private var writeHeat: (HeatSettingsUpdate.Request, (HeatSettingsUpdate.Outcome) -> Unit) -> Unit =
-        { _, done -> done(HeatSettingsUpdate.Outcome.Failed(null)) }
+    private var writeHeat: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit =
+        { _, done -> done(HeatWrite.Outcome.Failed(null)) }
 
     init {
         parent.addView(container)
@@ -57,7 +57,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     fun attach(
         battery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit,
         heatRead: ((SiteRead<HeatSettings>) -> Unit) -> Unit,
-        heatWrite: (HeatSettingsUpdate.Request, (HeatSettingsUpdate.Outcome) -> Unit) -> Unit
+        heatWrite: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit
     ) {
         readBattery = battery
         readHeat = heatRead
@@ -186,7 +186,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             val current = settings.indoorOffsetOf(sensor)
             settingRow(body, label, text.signedDegrees(current), onTap = {
                 editOffset(label, current, words.say("heat.settings.sensorOffsetHelp")) { offset ->
-                    HeatSettingsUpdate.indoorOffset(settings, sensor, offset)
+                    HeatWrite.indoorOffset(settings, sensor, offset)
                 }
             })
         }
@@ -209,7 +209,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             val air = settings.zoneKinds[zone.entityId] == "air"
             val help = if (air) words.say("heat.settings.offsetHelp") + " " + words.say("heat.settings.airHelp") else words.say("heat.settings.offsetHelp")
             settingRow(body, label, text.signedDegrees(zone.offsetC), if (air) words.say("heat.settings.airHelp") else null, onTap = {
-                editOffset(label, zone.offsetC, help) { offset -> HeatSettingsUpdate.zoneOffset(settings, zone.entityId, offset) }
+                editOffset(label, zone.offsetC, help) { offset -> HeatWrite.zoneOffset(settings, zone.entityId, offset) }
             })
         }
         settingRow(body, words.say("heat.settings.night"), text.nightValue(settings.night), onTap = { editNight(settings) })
@@ -218,12 +218,12 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     }
 
     /** An offset, −3 to +3 °C in half degrees. */
-    private fun editOffset(title: String, current: Double, help: String, request: (Double) -> HeatSettingsUpdate.Request) {
+    private fun editOffset(title: String, current: Double, help: String, request: (Double) -> HeatWrite.Request) {
         val words = cardWords()
-        val spec = NumberSpec(HeatSettingsUpdate.OFFSET_MIN, HeatSettingsUpdate.OFFSET_MAX, 1, minDecimals = 1)
+        val spec = NumberSpec(HeatWrite.OFFSET_MIN, HeatWrite.OFFSET_MAX, 1, minDecimals = 1)
         editNumber(title, spec, "°C", current, words.say("heat.error.range"), help = help, signed = true) { value, done ->
             val offset = value ?: 0.0
-            if (!HeatSettingsUpdate.isHalfStep(offset)) return@editNumber done(words.say("heat.error.step"))
+            if (!HeatWrite.isHalfStep(offset)) return@editNumber done(words.say("heat.error.step"))
             send(request(offset), done)
         }
     }
@@ -251,14 +251,14 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         body.addView(fieldRow(words.say("heat.settings.nightEnd"), endView))
         val error = errorLine().also { body.addView(it) }
         openEditor(words.say("heat.settings.night"), body, error) { done ->
-            val spec = NumberSpec(HeatSettingsUpdate.NIGHT_MIN, HeatSettingsUpdate.NIGHT_MAX, 1, minDecimals = 1)
+            val spec = NumberSpec(HeatWrite.NIGHT_MIN, HeatWrite.NIGHT_MAX, 1, minDecimals = 1)
             val value = (spec.check(delta.text.toString()) as? se.sensnology.spotnav.ui.common.NumberCheck.Valid)?.value
             when {
                 value == null -> done(words.say("heat.error.range"))
-                !HeatSettingsUpdate.isHalfStep(value) -> done(words.say("heat.error.step"))
+                !HeatWrite.isHalfStep(value) -> done(words.say("heat.error.step"))
                 else -> {
                     val next = HeatNight(on.isChecked, value, start, end)
-                    if (next == night) done(null) else send(HeatSettingsUpdate.night(settings, next), done)
+                    if (next == night) done(null) else send(HeatWrite.night(settings, next), done)
                 }
             }
         }
@@ -292,7 +292,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     }
 
     /** One heat write, then a fresh read; [done] gets the refusal in words, or `null` when it took. */
-    private fun send(request: HeatSettingsUpdate.Request, done: (String?) -> Unit) {
+    private fun send(request: HeatWrite.Request, done: (String?) -> Unit) {
         writeHeat(request) { outcome ->
             if (isDestroyed) return@writeHeat
             val issue = text.heatIssue(outcome)

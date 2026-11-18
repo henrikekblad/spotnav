@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ha.site
 
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -53,7 +54,7 @@ class HeatSettingsTest {
     }
 
     @Test fun theNightIsWrittenWithTheOldNightExpected() {
-        val request = HeatSettingsUpdate.night(villa, HeatNight(true, 1.5, "22:30", "05:30")).payload()
+        val request = HeatWrite.night(villa, HeatNight(true, 1.5, "22:30", "05:30")).payload()
         assertEquals("update_heat", request.getString("action"))
         assertEquals(1, request.getInt("api_version"))
         val night = request.getJSONObject("changes").getJSONObject("night")
@@ -68,7 +69,7 @@ class HeatSettingsTest {
     }
 
     @Test fun aZoneOffsetKeepsTheStoredZonesInTheirStoredOrder() {
-        val request = HeatSettingsUpdate.zoneOffset(villa, "climate.golvvarme_tvattstuga", 0.5).payload()
+        val request = HeatWrite.zoneOffset(villa, "climate.golvvarme_tvattstuga", 0.5).payload()
         val zones = request.getJSONObject("changes").getJSONArray("zones")
         assertEquals(
             villa.zones.map { it.entityId },
@@ -82,38 +83,38 @@ class HeatSettingsTest {
     @Test fun anIndoorOffsetStaysSparseAndNamesStoredSensorsOnly() {
         val kitchen = "sensor.inomhus_kok_temperatur"
         val up = "sensor.ovanvaning_temperatur"
-        fun ids(request: HeatSettingsUpdate.Request, key: String): List<Pair<String, Double>> {
+        fun ids(request: HeatWrite.Request, key: String): List<Pair<String, Double>> {
             val array = request.changes.getJSONArray(key)
             return (0 until array.length()).map { array.getJSONObject(it).let { item -> item.getString("entity_id") to item.getDouble("offset_c") } }
         }
-        assertEquals(listOf(kitchen to 0.5, up to -1.0), ids(HeatSettingsUpdate.indoorOffset(villa, kitchen, 0.5), "indoor_offsets"))
+        assertEquals(listOf(kitchen to 0.5, up to -1.0), ids(HeatWrite.indoorOffset(villa, kitchen, 0.5), "indoor_offsets"))
         // Back to zero: the sensor is left out, as stored.
-        assertEquals(emptyList<Pair<String, Double>>(), ids(HeatSettingsUpdate.indoorOffset(villa, up, 0.0), "indoor_offsets"))
-        val expected = HeatSettingsUpdate.indoorOffset(villa, kitchen, 0.5).expected.getJSONArray("indoor_offsets")
+        assertEquals(emptyList<Pair<String, Double>>(), ids(HeatWrite.indoorOffset(villa, up, 0.0), "indoor_offsets"))
+        val expected = HeatWrite.indoorOffset(villa, kitchen, 0.5).expected.getJSONArray("indoor_offsets")
         assertEquals(1, expected.length())
         assertEquals(up, expected.getJSONObject(0).getString("entity_id"))
     }
 
     @Test fun halfDegreesAreTheOnlySteps() {
-        assertTrue(HeatSettingsUpdate.isHalfStep(1.5))
-        assertTrue(HeatSettingsUpdate.isHalfStep(-3.0))
-        assertFalse(HeatSettingsUpdate.isHalfStep(1.3))
+        assertTrue(HeatWrite.isHalfStep(1.5))
+        assertTrue(HeatWrite.isHalfStep(-3.0))
+        assertFalse(HeatWrite.isHalfStep(1.3))
     }
 
     @Test fun everyWriteAnswerHasItsOutcome() {
-        fun answer(name: String, status: Int = 200) = HeatSettingsUpdate.answer(status, HaFixtures.json("webhook/$name.json").toString())
+        fun answer(name: String, status: Int = 200) = HeatWrite.answer(status, HaFixtures.json("webhook/$name.json").toString())
         for (name in listOf("update_heat_success", "update_heat_night", "update_heat_zone_offsets", "update_heat_indoor_offsets", "update_heat_away")) {
-            assertEquals(name, HeatSettingsUpdate.Outcome.Updated, answer(name))
+            assertEquals(name, HeatWrite.Outcome.Written, answer(name))
         }
-        assertEquals(HeatSettingsUpdate.Outcome.Conflict, answer("update_heat_conflict", 409))
-        assertEquals(HeatSettingsUpdate.Outcome.Refused(listOf("out_of_range")), answer("update_heat_invalid_value", 400))
+        assertEquals(HeatWrite.Outcome.Conflict, answer("update_heat_conflict", 409))
+        assertEquals(HeatWrite.Outcome.Refused(listOf("out_of_range")), answer("update_heat_invalid_value", 400))
         for (name in listOf("update_heat_not_permitted", "update_heat_indoor_offsets_not_permitted", "update_heat_zones_not_permitted")) {
-            assertEquals(name, HeatSettingsUpdate.Outcome.NotPermitted, answer(name, 403))
+            assertEquals(name, HeatWrite.Outcome.NotPermitted, answer(name, 403))
         }
-        assertTrue(HeatSettingsUpdate.answer(null, null) is HeatSettingsUpdate.Outcome.Failed)
+        assertTrue(HeatWrite.answer(null, null) is HeatWrite.Outcome.Failed)
         assertEquals(
-            HeatSettingsUpdate.Outcome.NoSite,
-            HeatSettingsUpdate.answer(400, """{"ok":false,"error":"spotnav_no_site","action":"update_heat"}""")
+            HeatWrite.Outcome.NoSite,
+            HeatWrite.answer(400, """{"ok":false,"error":"spotnav_no_site","action":"update_heat"}""")
         )
     }
 }

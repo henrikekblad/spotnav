@@ -15,7 +15,7 @@ internal data class HeatNight(val on: Boolean, val deltaC: Double, val start: St
 /**
  * The heat settings as the Settings screen reads them (webhook `get_heat`, the twin of `spotnav/get_heat`,
  * `api_version` 1): the stored `config` and the names the answer gives the entities in it. Written back with
- * [HeatSettingsUpdate]; over the webhook that is the night, the stored zones' offsets and the stored indoor sensors'
+ * [HeatWrite]; over the webhook that is the night, the stored zones' offsets and the stored indoor sensors'
  * offsets only.
  */
 internal data class HeatSettings(
@@ -117,91 +117,5 @@ internal object HeatSettingsRead {
         val text = StrictJson.text(raw, what)
         if (!Regex("([01]\\d|2[0-3]):[0-5]\\d").matches(text)) StrictJson.bad(what)
         return text
-    }
-}
-
-/**
- * `update_heat` for the fields the Settings screen writes: the night and the offsets (`changes` and `expected`, the
- * values last read, a compare-and-set). The dial and home/away are the heat page's own writes.
- */
-internal object HeatSettingsUpdate {
-    const val API_VERSION = 1
-    const val NIGHT_MIN = 0.5
-    const val NIGHT_MAX = 3.0
-    const val OFFSET_MIN = -3.0
-    const val OFFSET_MAX = 3.0
-
-    sealed interface Outcome {
-        /** Written: the settings are to be read again. */
-        data object Updated : Outcome
-
-        /** Somebody else changed the value since it was read: nothing was written. */
-        data object Conflict : Outcome
-
-        /** Refused as invalid; the stable codes of the fields (`out_of_range`, `not_a_step`, ...). */
-        data class Refused(val codes: List<String>) : Outcome
-
-        /** Home Assistant's alone (`spotnav_not_permitted_over_webhook`). */
-        data object NotPermitted : Outcome
-        data object NoSite : Outcome
-        data object NotSupported : Outcome
-        data class Failed(val code: String?) : Outcome
-    }
-
-    /** A request: what to change and the values it was judged against. */
-    class Request(val changes: JSONObject, val expected: JSONObject) {
-        fun payload(): JSONObject = JSONObject().apply {
-            put("version", 1)
-            put("action", "update_heat")
-            put("api_version", API_VERSION)
-            put("changes", changes)
-            put("expected", expected)
-        }
-    }
-
-    fun night(stored: HeatSettings, next: HeatNight): Request = Request(
-        changes = JSONObject().put("night", nightJson(next)),
-        expected = JSONObject().put("night", nightJson(stored.night))
-    )
-
-    /** One stored zone's offset; the list names exactly the stored zones in their stored order, as the webhook takes it. */
-    fun zoneOffset(stored: HeatSettings, entityId: String, offsetC: Double): Request = Request(
-        changes = JSONObject().put("zones", offsetsJson(stored.zones.map { if (it.entityId == entityId) it.copy(offsetC = offsetC) else it })),
-        expected = JSONObject().put("zones", offsetsJson(stored.zones))
-    )
-
-    /** One stored indoor sensor's offset; the list stays sparse (a sensor at 0 is left out) and names stored sensors only. */
-    fun indoorOffset(stored: HeatSettings, entityId: String, offsetC: Double): Request {
-        val next = stored.indoorSensors
-            .map { HeatOffset(it, if (it == entityId) offsetC else stored.indoorOffsetOf(it)) }
-            .filter { it.offsetC != 0.0 }
-        return Request(
-            changes = JSONObject().put("indoor_offsets", offsetsJson(next)),
-            expected = JSONObject().put("indoor_offsets", offsetsJson(stored.indoorOffsets))
-        )
-    }
-
-    /** Whether [value] is a whole number of half degrees. */
-    fun isHalfStep(value: Double): Boolean = Math.abs(value * 2 - Math.round(value * 2)) < 1e-9
-
-    fun answer(status: Int?, body: String?): Outcome {
-        if (status == null) return Outcome.Failed(null)
-        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
-        if (head.ok) return if (head.error == null) Outcome.Updated else Outcome.Failed(head.error)
-        return when (head.error) {
-            WriteEnvelope.CONFLICT -> Outcome.Conflict
-            WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted
-            WriteEnvelope.INVALID_VALUE -> Outcome.Refused(head.fieldErrors.map { it.code })
-            WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
-            WriteEnvelope.NO_SITE, WriteEnvelope.SITE_UNAVAILABLE -> Outcome.NoSite
-            else -> Outcome.Failed(head.error)
-        }
-    }
-
-    private fun nightJson(night: HeatNight) =
-        JSONObject().put("on", night.on).put("delta_c", night.deltaC).put("start", night.start).put("end", night.end)
-
-    private fun offsetsJson(offsets: List<HeatOffset>) = JSONArray().apply {
-        offsets.forEach { put(JSONObject().put("entity_id", it.entityId).put("offset_c", it.offsetC)) }
     }
 }
