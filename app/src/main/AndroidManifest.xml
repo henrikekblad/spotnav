@@ -12,6 +12,9 @@
          granted at install with no prompt, and discovery treats it as best
          effort anyway. -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <!-- The permission above implies Wi-Fi as a required feature; discovery works without it
+         (no WifiManager means no lock, and pairing by address still works), so it is optional. -->
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
 
     <!-- Cleartext stays on, deliberately: a local Home Assistant is usually plain
          http:// on a private IP or a bare/.local hostname, and a network-security
