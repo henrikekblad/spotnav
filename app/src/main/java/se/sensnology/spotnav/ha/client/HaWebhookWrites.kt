@@ -666,7 +666,23 @@ internal object PushRegister {
 /** What the site section of a paired charger shows, decided once from the dashboard's `site`. */
 internal object SiteFacts {
     /** Why active load balancing is not available, as the card words it. */
-    enum class Reason { NONE, DUPLICATE_MEMBERSHIP, NO_COMMANDABLE_CHARGER, MEASUREMENT, DIRECTION_UNKNOWN, UNKNOWN }
+    enum class Reason {
+        NONE, DUPLICATE_MEMBERSHIP, NO_COMMANDABLE_CHARGER, MEASUREMENT, DIRECTION_UNKNOWN,
+
+        /** The direction is unknown, and the meter's per-phase power would give it (`direction_hint` `use_power`). */
+        DIRECTION_USE_POWER,
+
+        /** The direction is unknown, and the meter's current has none to sign (`direction_hint` `magnitude`). */
+        DIRECTION_MAGNITUDE,
+        UNKNOWN
+    }
+
+    /** The reason with what the meter's own candidates add to `site_direction_unknown` ([hint], the card's `DIRECTION_HINT_KEYS`). */
+    fun reason(code: String?, hint: String?): Reason = when {
+        code == "site_direction_unknown" && hint == "use_power" -> Reason.DIRECTION_USE_POWER
+        code == "site_direction_unknown" && hint == "magnitude" -> Reason.DIRECTION_MAGNITUDE
+        else -> reason(code)
+    }
 
     fun reason(code: String?): Reason = when {
         code == null -> Reason.NONE
