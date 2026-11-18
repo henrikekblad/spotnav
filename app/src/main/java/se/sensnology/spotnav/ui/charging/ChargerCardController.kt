@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ui.charging
 import android.app.AlertDialog
 import android.appwidget.AppWidgetManager
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.view.View
 import android.widget.AdapterView
 import android.widget.LinearLayout
@@ -32,6 +33,7 @@ import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.card
 import se.sensnology.spotnav.ui.common.chargerName
 import se.sensnology.spotnav.ui.common.headerSpinnerAdapter
+import se.sensnology.spotnav.ui.common.headerTitle
 import se.sensnology.spotnav.ui.common.popoverControl
 import se.sensnology.spotnav.ui.common.reReadIcon
 import se.sensnology.spotnav.ui.common.showValuePopover
@@ -119,8 +121,15 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         // mid-rebuild (the stale placeholder, or "No charger"), silently changing the user's
         // binding.
         var repopulatingChargers = true
+        // The charger's live status after its name ("Garage · Waiting"), with its colour; `null` while there is none.
+        var headerStatus: Pair<String, Int>? = null
+        card.title.typeface = Typeface.DEFAULT
+        fun paintTitle() {
+            val name = selector.bound?.let { bound -> chargerName(bound) } ?: t(R.string.widget_charger_title)
+            card.title.text = headerTitle(name, headerStatus?.first, headerStatus?.second ?: muted)
+        }
         fun paintSelector() {
-            card.title.text = selector.bound?.let { bound -> chargerName(bound) } ?: t(R.string.widget_charger_title)
+            paintTitle()
             card.title.visibility = if (selector.showsControl) View.GONE else View.VISIBLE
             chargerSpinner.visibility = if (selector.showsControl) View.VISIBLE else View.GONE
             chargerSpinner.adapter = headerSpinnerAdapter(
@@ -131,7 +140,9 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
                     selector.entries.getOrNull(position)?.kind != ChargerCardSelector.Kind.PLACEHOLDER
                 },
                 // Each paired charger's car and its levels, from its last dashboard ("EV6 · 89 % av 93 % mål").
-                subtitle = { position -> chargerCarLine(selector.entries.getOrNull(position)) }
+                subtitle = { position -> chargerCarLine(selector.entries.getOrNull(position)) },
+                // The status belongs to the charger this card shows, never to a placeholder row.
+                status = { headerStatus.takeIf { selector.bound != null } }
             )
             chargerSpinner.setSelection(selector.selectedIndex, false)
             // That is what this defers, exactly as that card does.
@@ -216,14 +227,6 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         }
         card.body.addView(advisory)
 
-        // The charger's connection state, "Ansluten" (the vehicle card carries the car and its charge).
-        val vehicleLine = TextView(context).apply {
-            textSize = 13f
-            setTextColor(muted)
-            setPadding(0, dp(2), 0, dp(6))
-            visibility = View.GONE
-        }
-        card.body.addView(vehicleLine)
 
         // The controls themselves live in the popovers, built once here rather than per tap, so
         // they stay the single source of truth that `currentSettings()`, the shared seek listener
@@ -314,7 +317,15 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             attention = attention,
             showChargeBar = { bar, now -> paintChargeBar(bar, now, chargeBarBlock, chargeBarView, chargeBarLine) },
             advisory = advisory,
-            vehicleLine = vehicleLine,
+            showHeaderStatus = { text, colour ->
+                val next = text?.takeIf { it.isNotEmpty() }?.let { it to colour }
+                if (next != headerStatus) {
+                    headerStatus = next
+                    paintTitle()
+                    // The closed selector draws the same title: it reads the status again.
+                    (chargerSpinner.adapter as? android.widget.BaseAdapter)?.notifyDataSetChanged()
+                }
+            },
             identification = identification,
             connection = connection,
             refreshPhasesRow = { renderPhasesRow(); renderPairedPhases() },
@@ -552,7 +563,11 @@ internal class ChargerCard(
      */
     val advisory: TextView,
     /** The vehicle's charge followed by the connection state; hidden when there is neither. */
-    val vehicleLine: TextView,
+    /**
+     * The charger's live status after its name in the header ("Garage · Waiting"), in the colour given; `null` or
+     * empty shows the name alone. The status is the charger's, not the car's (the vehicle card carries the car).
+     */
+    val showHeaderStatus: (String?, Int) -> Unit,
     /** The car: its value row, or the question's banner and the car's button (see [IdentificationViews]). */
     val identification: IdentificationViews,
     val connection: ConnectionControls,
@@ -574,13 +589,6 @@ internal class ChargerCard(
      */
     val setPhaseEditor: (rowVisible: Boolean, controlEnabled: Boolean) -> Unit
 ) {
-    /** Write the vehicle line, or hide it when there is nothing to say. */
-    fun showVehicleLine(text: String?, colour: Int) {
-        vehicleLine.text = text.orEmpty()
-        vehicleLine.setTextColor(colour)
-        vehicleLine.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
-    }
-
     /** Write the vehicle-side advisory, or hide the line when there is nothing to say. */
     fun showAdvisory(dashboard: Dashboard?, sentence: String) {
         val show = FullCarRule.advisory(dashboard)

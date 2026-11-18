@@ -81,6 +81,42 @@ internal fun ViewScope.card(parent: LinearLayout, title: String, marker: Int, sh
 }
 
 /**
+ * A card's name with its live status after it, muted: "Garage · Väntar", as the Home Assistant card's shared header
+ * writes it (`card-header.ts`), for the charger's card and the house's and heat's to come.
+ */
+internal object HeaderStatus {
+    private const val NO_BREAK_SPACE = '\u00A0'
+
+    /**
+     * The status as it follows a name: the separating dot and the words, held together with no-break spaces so a
+     * status that has no room beside a long name wraps under it as a whole. `null` when there is nothing to say.
+     */
+    fun suffix(status: String?): String? =
+        status?.trim()?.takeIf { it.isNotEmpty() }?.let { "·$NO_BREAK_SPACE${it.replace(' ', NO_BREAK_SPACE)}" }
+
+    /** The whole title as plain text: the name, and the status after it when there is one. */
+    fun text(name: String, status: String?): String = suffix(status)?.let { "$name $it" } ?: name
+}
+
+/**
+ * [HeaderStatus.text] styled for a header: the name bold in the title's own size and colour, the status after it
+ * smaller, regular and in [statusColour] (muted, or the error colour). The view it is set on must not be bold itself.
+ */
+internal fun ViewScope.headerTitle(name: String, status: String?, statusColour: Int = muted): CharSequence {
+    val text = android.text.SpannableString(HeaderStatus.text(name, status))
+    val flags = android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    text.setSpan(android.text.style.StyleSpan(Typeface.BOLD), 0, name.length, flags)
+    if (text.length > name.length) {
+        text.setSpan(android.text.style.RelativeSizeSpan(STATUS_TEXT_SCALE), name.length, text.length, flags)
+        text.setSpan(android.text.style.ForegroundColorSpan(statusColour), name.length, text.length, flags)
+    }
+    return text
+}
+
+/** The status's size beside the name's: the card's 0.85 rem beside its title. */
+private const val STATUS_TEXT_SCALE = 0.82f
+
+/**
  * The adapter a card's header uses when its title gives way to a selector. A row may carry a second,
  * smaller line in the drop-down ([subtitle], read when the drop-down opens); the title shows the
  * first line alone.
@@ -88,11 +124,26 @@ internal fun ViewScope.card(parent: LinearLayout, title: String, marker: Int, sh
 internal fun ViewScope.headerSpinnerAdapter(
     items: List<String>,
     isRowEnabled: (Int) -> Boolean = { true },
-    subtitle: (Int) -> String? = { null }
+    subtitle: (Int) -> String? = { null },
+    /**
+     * The live status written after the chosen row's name in the closed selector (see [headerTitle]) with its colour,
+     * read at every draw; `null` for a selector that shows the name alone.
+     */
+    status: (() -> Pair<String, Int>?)? = null
 ) =
     object : ArrayAdapter<String>(context, R.layout.card_title_spinner, items) {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
-            super.getView(position, convertView, parent).apply { (this as TextView).setTextColor(dark) }
+            super.getView(position, convertView, parent).apply {
+                val title = this as TextView
+                title.setTextColor(dark)
+                if (status != null) {
+                    // The name keeps its weight through its own span; a status may wrap under a long name.
+                    val said = status()
+                    title.typeface = Typeface.DEFAULT
+                    title.text = headerTitle(items[position], said?.first, said?.second ?: muted)
+                    title.maxLines = if (said == null) 1 else 2
+                }
+            }
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View =
             super.getDropDownView(position, convertView, parent).apply {
