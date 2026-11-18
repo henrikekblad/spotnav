@@ -80,9 +80,9 @@ internal class HeatDialView(context: Context, private val palette: Palette, priv
             canvas.drawCircle(x, y, 6 * unit, fill)
         }
         figurePaint.textSize = 44 * unit
-        canvas.drawText(figure, cx, cy + 8 * unit + 10 * unit, figurePaint)
+        canvas.drawText(figure, cx, cy + 12 * unit, figurePaint)
         bandPaint.textSize = 13 * unit
-        canvas.drawText(band, cx, cy + 32 * unit, bandPaint)
+        canvas.drawText(band, cx, cy + 40 * unit, bandPaint)
     }
 
     private companion object {

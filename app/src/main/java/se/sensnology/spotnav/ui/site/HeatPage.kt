@@ -306,11 +306,18 @@ internal class HeatPage(
 
     private fun paint(button: Button, selected: Boolean) {
         button.isSelected = selected
-        button.setTextColor(if (selected) 0xFFFFFFFF.toInt() else dark)
+        button.setTextColor(if (selected) onAccent() else dark)
         button.background = GradientDrawable().apply {
             cornerRadius = dp(22).toFloat()
             if (selected) setColor(accent) else { setColor(0); setStroke(dp(1), colours.wire) }
         }
+    }
+
+    /** Text on the accent: dark on the light accent of a dark screen, white on the dark one of a light screen. */
+    private fun onAccent(): Int {
+        val c = accent
+        val luminance = (0.299 * android.graphics.Color.red(c) + 0.587 * android.graphics.Color.green(c) + 0.114 * android.graphics.Color.blue(c)) / 255.0
+        return if (luminance > 0.55) 0xFF10151B.toInt() else 0xFFFFFFFF.toInt()
     }
 
     private fun say(view: TextView, words: String?) {
