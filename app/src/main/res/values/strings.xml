@@ -835,4 +835,100 @@
   <string name="card_grid_fee_high_fee" formatted="false">Fee</string>
   <string name="card_grid_fee_high_remove" formatted="false">Remove the high-load fee</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Enter the fee for the high-load hours.</string>
+  <string name="card_house_title" formatted="false">House</string>
+  <string name="card_heat_title" formatted="false">Heating</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav is not controlling anything yet.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav shows what it would do, but nothing is sent from here yet. A home battery is only controlled once you turn on battery control in the settings.</string>
+  <string name="card_house_now_hold" formatted="false">Holding</string>
+  <string name="card_house_now_discharge" formatted="false">Discharging</string>
+  <string name="card_house_now_sun" formatted="false">Charging from the sun</string>
+  <string name="card_house_now_idle" formatted="false">Idle</string>
+  <string name="card_house_now_own" formatted="false">Own control</string>
+  <string name="card_house_legend_charge" formatted="false">Charges from the grid</string>
+  <string name="card_house_legend_sell" formatted="false">Sells to the grid</string>
+  <string name="card_house_sub_mode" formatted="false">mode {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Self-consumption</string>
+  <string name="card_house_mode_balanced" formatted="false">Balanced</string>
+  <string name="card_house_mode_max_profit" formatted="false">Max profit</string>
+  <string name="card_house_loading" formatted="false">Reading the house…</string>
+  <string name="card_house_failed" formatted="false">The house could not be read.</string>
+  <string name="card_house_saving_waiting" formatted="false">The battery plan has not run yet.</string>
+  <string name="card_house_saving_no_plan" formatted="false">No battery plan right now; the details say what is missing.</string>
+  <string name="card_house_compare_own" formatted="false">The battery\'s own control</string>
+  <string name="card_house_plan_next" formatted="false">The battery {act} until {time}, then {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">The battery {act} for as long as the plan reaches.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav would {act} until {time}, then {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav would {act} for as long as the plan reaches.</string>
+  <string name="card_house_plan_who_own" formatted="false">The battery runs itself ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Only testing so far</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">charges from the grid</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">charge from the grid</string>
+  <string name="card_house_plan_act_hold" formatted="false">holds its charge</string>
+  <string name="card_house_plan_inf_hold" formatted="false">hold the charge</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">sells to the grid</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">sell to the grid</string>
+  <string name="card_house_plan_act_self" formatted="false">covers the house and stores the sun</string>
+  <string name="card_house_plan_inf_self" formatted="false">cover the house and store the sun</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">it charges from the grid</string>
+  <string name="card_house_plan_then_hold" formatted="false">it holds its charge</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">it sells to the grid</string>
+  <string name="card_house_plan_then_self" formatted="false">it covers the house and stores the sun</string>
+  <string name="card_house_now_tab_sun" formatted="false">Sun today</string>
+  <string name="card_house_now_tab_grid" formatted="false">Bought today</string>
+  <string name="card_house_now_tab_sold" formatted="false">sold {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Battery</string>
+  <string name="card_house_now_tab_car" formatted="false">Car</string>
+  <string name="card_house_now_tab_heat" formatted="false">Heat today</string>
+  <string name="card_house_now_tab_house" formatted="false">House today</string>
+  <string name="card_house_now_tab_house_now" formatted="false">The house now</string>
+  <string name="card_house_now_tab_no_live" formatted="false">no live figures yet</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">The sun gives {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">The sun gives {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Buying {kw} from the grid</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Selling {kw} to the grid</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">The battery gives {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">The battery charges {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">The car gives {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">The car charges {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Heat {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">The heat uses {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">Today: {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">the battery earned {amount}</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav saved {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} today</string>
+  <string name="card_house_now_tab_today" formatted="false">today</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">without the car</string>
+  <string name="card_house_learning_capped_while" formatted="false">Grid charging at most {kw} kW while the house\'s peaks are being learned ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Learning the house\'s peaks, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Does not charge from the grid until then.</string>
+  <string name="card_learning_days_left_one" formatted="false">{days} day left</string>
+  <string name="card_learning_days_left_other" formatted="false">{days} days left</string>
+  <string name="card_house_tabs" formatted="false">House views</string>
+  <string name="card_house_tab_now" formatted="false">Now</string>
+  <string name="card_house_tab_flow" formatted="false">Energy flow</string>
+  <string name="card_house_tab_graph" formatted="false">Energy chart</string>
+  <string name="card_house_tab_price" formatted="false">Price and battery</string>
+  <string name="card_house_tab_earn" formatted="false">Earnings</string>
+  <string name="card_house_tab_short_now" formatted="false">Now</string>
+  <string name="card_house_tab_short_flow" formatted="false">Flow</string>
+  <string name="card_house_tab_short_graph" formatted="false">Chart</string>
+  <string name="card_house_tab_short_earn" formatted="false">Earned</string>
+  <string name="card_house_tab_short_price" formatted="false">Price</string>
+  <string name="card_house_picker_today" formatted="false">Today</string>
+  <string name="card_house_picker_yesterday" formatted="false">Yesterday</string>
+  <string name="card_house_picker_through" formatted="false">{label} · to {time}</string>
+  <string name="card_hist_period_label" formatted="false">Period</string>
+  <string name="card_hist_period_day" formatted="false">Day</string>
+  <string name="card_hist_period_month" formatted="false">Month</string>
+  <string name="card_hist_period_year" formatted="false">Year</string>
+  <string name="card_hist_previous_day" formatted="false">Previous day</string>
+  <string name="card_hist_previous_month" formatted="false">Previous month</string>
+  <string name="card_hist_previous_year" formatted="false">Previous year</string>
+  <string name="card_hist_next_day" formatted="false">Next day</string>
+  <string name="card_hist_next_month" formatted="false">Next month</string>
+  <string name="card_hist_next_year" formatted="false">Next year</string>
+  <string name="card_hist_pick_day" formatted="false">Choose a day</string>
+  <string name="card_hist_pick_month" formatted="false">Choose a month</string>
+  <string name="card_hist_pick_year" formatted="false">Choose a year</string>
 </resources>

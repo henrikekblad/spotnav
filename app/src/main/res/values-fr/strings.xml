@@ -830,4 +830,100 @@
   <string name="card_grid_fee_high_fee" formatted="false">Frais</string>
   <string name="card_grid_fee_high_remove" formatted="false">Supprimer les frais en heures de pointe</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Saisissez les frais en heures de pointe.</string>
+  <string name="card_house_title" formatted="false">Maison</string>
+  <string name="card_heat_title" formatted="false">Chauffage</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav ne pilote encore rien.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav montre ce qu\'il ferait, mais rien n\'est encore envoyé d\'ici. Une batterie domestique n\'est pilotée qu\'une fois le pilotage de la batterie activé dans les paramètres.</string>
+  <string name="card_house_now_hold" formatted="false">Garde sa charge</string>
+  <string name="card_house_now_discharge" formatted="false">Se décharge</string>
+  <string name="card_house_now_sun" formatted="false">Charge au soleil</string>
+  <string name="card_house_now_idle" formatted="false">Au repos</string>
+  <string name="card_house_now_own" formatted="false">Pilotage intégré</string>
+  <string name="card_house_legend_charge" formatted="false">Charge sur le réseau</string>
+  <string name="card_house_legend_sell" formatted="false">Vend au réseau</string>
+  <string name="card_house_sub_mode" formatted="false">mode {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Autoconsommation</string>
+  <string name="card_house_mode_balanced" formatted="false">Équilibré</string>
+  <string name="card_house_mode_max_profit" formatted="false">Gain max.</string>
+  <string name="card_house_loading" formatted="false">Lecture de la maison…</string>
+  <string name="card_house_failed" formatted="false">La maison n\'a pas pu être lue.</string>
+  <string name="card_house_saving_waiting" formatted="false">Le plan de la batterie n\'a pas encore tourné.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Pas de plan de batterie pour l\'instant ; les détails disent ce qui manque.</string>
+  <string name="card_house_compare_own" formatted="false">Pilotage intégré de la batterie</string>
+  <string name="card_house_plan_next" formatted="false">La batterie {act} jusqu\'à {time}, puis {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">La batterie {act} aussi loin que va le plan.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav {act} jusqu\'à {time}, puis {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav {act} aussi loin que va le plan.</string>
+  <string name="card_house_plan_who_own" formatted="false">La batterie se pilote elle-même ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Seulement en test</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">se charge sur le réseau</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">chargerait sur le réseau</string>
+  <string name="card_house_plan_act_hold" formatted="false">garde sa charge</string>
+  <string name="card_house_plan_inf_hold" formatted="false">garderait la charge</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">vend au réseau</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">vendrait au réseau</string>
+  <string name="card_house_plan_act_self" formatted="false">couvre la maison et stocke le soleil</string>
+  <string name="card_house_plan_inf_self" formatted="false">couvrirait la maison et stockerait le soleil</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">elle se charge sur le réseau</string>
+  <string name="card_house_plan_then_hold" formatted="false">elle garde sa charge</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">elle vend au réseau</string>
+  <string name="card_house_plan_then_self" formatted="false">elle couvre la maison et stocke le soleil</string>
+  <string name="card_house_now_tab_sun" formatted="false">Soleil auj.</string>
+  <string name="card_house_now_tab_grid" formatted="false">Acheté auj.</string>
+  <string name="card_house_now_tab_sold" formatted="false">vendu {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batterie</string>
+  <string name="card_house_now_tab_car" formatted="false">Voiture</string>
+  <string name="card_house_now_tab_heat" formatted="false">Chauffage auj.</string>
+  <string name="card_house_now_tab_house" formatted="false">Maison auj.</string>
+  <string name="card_house_now_tab_house_now" formatted="false">La maison maintenant</string>
+  <string name="card_house_now_tab_no_live" formatted="false">pas encore de valeurs en direct</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">Le soleil donne {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">Le soleil donne {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Achète {kw} au réseau</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Vend {kw} au réseau</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">La batterie donne {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">La batterie se charge à {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">La voiture donne {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">La voiture se charge à {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Chauffage {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">Le chauffage utilise {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">Aujourd\'hui : {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">la batterie a rapporté {amount}</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav a économisé {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} auj.</string>
+  <string name="card_house_now_tab_today" formatted="false">auj.</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">hors voiture</string>
+  <string name="card_house_learning_capped_while" formatted="false">Charge sur le réseau au plus à {kw} kW pendant l\'apprentissage des pointes de la maison ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Apprend les pointes de la maison, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Ne se charge pas sur le réseau d\'ici là.</string>
+  <string name="card_learning_days_left_one" formatted="false">encore {days} jour</string>
+  <string name="card_learning_days_left_other" formatted="false">encore {days} jours</string>
+  <string name="card_house_tabs" formatted="false">Vues de la maison</string>
+  <string name="card_house_tab_now" formatted="false">Maintenant</string>
+  <string name="card_house_tab_flow" formatted="false">Flux d\'énergie</string>
+  <string name="card_house_tab_graph" formatted="false">Graphique d\'énergie</string>
+  <string name="card_house_tab_price" formatted="false">Prix et batterie</string>
+  <string name="card_house_tab_earn" formatted="false">Gains</string>
+  <string name="card_house_tab_short_now" formatted="false">Direct</string>
+  <string name="card_house_tab_short_flow" formatted="false">Flux</string>
+  <string name="card_house_tab_short_graph" formatted="false">Courbe</string>
+  <string name="card_house_tab_short_earn" formatted="false">Gains</string>
+  <string name="card_house_tab_short_price" formatted="false">Prix</string>
+  <string name="card_house_picker_today" formatted="false">Aujourd\'hui</string>
+  <string name="card_house_picker_yesterday" formatted="false">Hier</string>
+  <string name="card_house_picker_through" formatted="false">{label} · jusqu\'à {time}</string>
+  <string name="card_hist_period_label" formatted="false">Période</string>
+  <string name="card_hist_period_day" formatted="false">Jour</string>
+  <string name="card_hist_period_month" formatted="false">Mois</string>
+  <string name="card_hist_period_year" formatted="false">Année</string>
+  <string name="card_hist_previous_day" formatted="false">Jour précédent</string>
+  <string name="card_hist_previous_month" formatted="false">Mois précédent</string>
+  <string name="card_hist_previous_year" formatted="false">Année précédente</string>
+  <string name="card_hist_next_day" formatted="false">Jour suivant</string>
+  <string name="card_hist_next_month" formatted="false">Mois suivant</string>
+  <string name="card_hist_next_year" formatted="false">Année suivante</string>
+  <string name="card_hist_pick_day" formatted="false">Choisir un jour</string>
+  <string name="card_hist_pick_month" formatted="false">Choisir un mois</string>
+  <string name="card_hist_pick_year" formatted="false">Choisir une année</string>
 </resources>

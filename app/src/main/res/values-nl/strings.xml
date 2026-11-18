@@ -822,4 +822,100 @@
   <string name="card_grid_fee_high_fee" formatted="false">Tarief</string>
   <string name="card_grid_fee_high_remove" formatted="false">Piektarief verwijderen</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Vul het tarief voor de piekuren in.</string>
+  <string name="card_house_title" formatted="false">Huis</string>
+  <string name="card_heat_title" formatted="false">Verwarming</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav stuurt nog niets.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav laat zien wat het zou doen, maar vanaf hier wordt nog niets verstuurd. Een thuisbatterij wordt pas aangestuurd als je batterijsturing aanzet in de instellingen.</string>
+  <string name="card_house_now_hold" formatted="false">Houdt vast</string>
+  <string name="card_house_now_discharge" formatted="false">Ontlaadt</string>
+  <string name="card_house_now_sun" formatted="false">Laadt met zon</string>
+  <string name="card_house_now_idle" formatted="false">Rust</string>
+  <string name="card_house_now_own" formatted="false">Eigen sturing</string>
+  <string name="card_house_legend_charge" formatted="false">Laadt uit het net</string>
+  <string name="card_house_legend_sell" formatted="false">Verkoopt aan het net</string>
+  <string name="card_house_sub_mode" formatted="false">modus {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Eigen verbruik</string>
+  <string name="card_house_mode_balanced" formatted="false">Gebalanceerd</string>
+  <string name="card_house_mode_max_profit" formatted="false">Max. opbrengst</string>
+  <string name="card_house_loading" formatted="false">Huis wordt gelezen…</string>
+  <string name="card_house_failed" formatted="false">Het huis kon niet worden gelezen.</string>
+  <string name="card_house_saving_waiting" formatted="false">Het batterijplan is nog niet uitgevoerd.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Nu geen batterijplan; de details tonen wat ontbreekt.</string>
+  <string name="card_house_compare_own" formatted="false">Eigen sturing van de batterij</string>
+  <string name="card_house_plan_next" formatted="false">De batterij {act} tot {time}, daarna {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">De batterij {act} zo ver als het plan reikt.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav zou tot {time} {act}, daarna {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav zou {act} zo ver als het plan reikt.</string>
+  <string name="card_house_plan_who_own" formatted="false">De batterij stuurt zichzelf ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Nog alleen een test</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">laadt uit het net</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">uit het net laden</string>
+  <string name="card_house_plan_act_hold" formatted="false">houdt de lading vast</string>
+  <string name="card_house_plan_inf_hold" formatted="false">de lading vasthouden</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">verkoopt aan het net</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">aan het net verkopen</string>
+  <string name="card_house_plan_act_self" formatted="false">dekt het huis en slaat de zon op</string>
+  <string name="card_house_plan_inf_self" formatted="false">het huis dekken en de zon opslaan</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">laadt ze uit het net</string>
+  <string name="card_house_plan_then_hold" formatted="false">houdt ze de lading vast</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">verkoopt ze aan het net</string>
+  <string name="card_house_plan_then_self" formatted="false">dekt ze het huis en slaat de zon op</string>
+  <string name="card_house_now_tab_sun" formatted="false">Zon vandaag</string>
+  <string name="card_house_now_tab_grid" formatted="false">Gekocht vandaag</string>
+  <string name="card_house_now_tab_sold" formatted="false">verkocht {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batterij</string>
+  <string name="card_house_now_tab_car" formatted="false">Auto</string>
+  <string name="card_house_now_tab_heat" formatted="false">Warmte vandaag</string>
+  <string name="card_house_now_tab_house" formatted="false">Huis vandaag</string>
+  <string name="card_house_now_tab_house_now" formatted="false">Het huis nu</string>
+  <string name="card_house_now_tab_no_live" formatted="false">nog geen live-waarden</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">De zon levert {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">De zon levert {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Koopt {kw} uit het net</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Verkoopt {kw} aan het net</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">De batterij levert {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">De batterij laadt {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">De auto levert {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">De auto laadt {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Warmte {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">De warmte gebruikt {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">Vandaag: {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">de batterij verdiende {amount}</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav bespaarde {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} vandaag</string>
+  <string name="card_house_now_tab_today" formatted="false">vandaag</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">zonder auto</string>
+  <string name="card_house_learning_capped_while" formatted="false">Laden uit het net hoogstens {kw} kW terwijl de pieken van het huis worden geleerd ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Leert de pieken van het huis, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Laadt tot dan niet uit het net.</string>
+  <string name="card_learning_days_left_one" formatted="false">nog {days} dag</string>
+  <string name="card_learning_days_left_other" formatted="false">nog {days} dagen</string>
+  <string name="card_house_tabs" formatted="false">Weergaven van het huis</string>
+  <string name="card_house_tab_now" formatted="false">Nu</string>
+  <string name="card_house_tab_flow" formatted="false">Energiestroom</string>
+  <string name="card_house_tab_graph" formatted="false">Energiegrafiek</string>
+  <string name="card_house_tab_price" formatted="false">Prijs en batterij</string>
+  <string name="card_house_tab_earn" formatted="false">Opbrengst</string>
+  <string name="card_house_tab_short_now" formatted="false">Nu</string>
+  <string name="card_house_tab_short_flow" formatted="false">Stroom</string>
+  <string name="card_house_tab_short_graph" formatted="false">Grafiek</string>
+  <string name="card_house_tab_short_earn" formatted="false">Winst</string>
+  <string name="card_house_tab_short_price" formatted="false">Prijs</string>
+  <string name="card_house_picker_today" formatted="false">Vandaag</string>
+  <string name="card_house_picker_yesterday" formatted="false">Gisteren</string>
+  <string name="card_house_picker_through" formatted="false">{label} · tot {time}</string>
+  <string name="card_hist_period_label" formatted="false">Periode</string>
+  <string name="card_hist_period_day" formatted="false">Dag</string>
+  <string name="card_hist_period_month" formatted="false">Maand</string>
+  <string name="card_hist_period_year" formatted="false">Jaar</string>
+  <string name="card_hist_previous_day" formatted="false">Vorige dag</string>
+  <string name="card_hist_previous_month" formatted="false">Vorige maand</string>
+  <string name="card_hist_previous_year" formatted="false">Vorig jaar</string>
+  <string name="card_hist_next_day" formatted="false">Volgende dag</string>
+  <string name="card_hist_next_month" formatted="false">Volgende maand</string>
+  <string name="card_hist_next_year" formatted="false">Volgend jaar</string>
+  <string name="card_hist_pick_day" formatted="false">Kies een dag</string>
+  <string name="card_hist_pick_month" formatted="false">Kies een maand</string>
+  <string name="card_hist_pick_year" formatted="false">Kies een jaar</string>
 </resources>

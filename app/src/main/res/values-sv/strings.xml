@@ -822,4 +822,100 @@
   <string name="card_grid_fee_high_fee" formatted="false">Avgift</string>
   <string name="card_grid_fee_high_remove" formatted="false">Ta bort höglastavgift</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Ange avgiften under höglasttid.</string>
+  <string name="card_house_title" formatted="false">Huset</string>
+  <string name="card_heat_title" formatted="false">Värme</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav styr inget än.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav visar vad den skulle göra, men inget skickas härifrån än. Ett hembatteri styrs först när du slår på batteristyrningen i inställningarna.</string>
+  <string name="card_house_now_hold" formatted="false">Håller</string>
+  <string name="card_house_now_discharge" formatted="false">Laddar ur</string>
+  <string name="card_house_now_sun" formatted="false">Laddar med sol</string>
+  <string name="card_house_now_idle" formatted="false">Vilar</string>
+  <string name="card_house_now_own" formatted="false">Egen styrning</string>
+  <string name="card_house_legend_charge" formatted="false">Laddar från nätet</string>
+  <string name="card_house_legend_sell" formatted="false">Säljer till nätet</string>
+  <string name="card_house_sub_mode" formatted="false">läge {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Egenförbrukning</string>
+  <string name="card_house_mode_balanced" formatted="false">Balanserad</string>
+  <string name="card_house_mode_max_profit" formatted="false">Max vinst</string>
+  <string name="card_house_loading" formatted="false">Läser huset…</string>
+  <string name="card_house_failed" formatted="false">Huset kunde inte läsas.</string>
+  <string name="card_house_saving_waiting" formatted="false">Batteriplanen har inte körts än.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Ingen batteriplan just nu; detaljerna visar vad som saknas.</string>
+  <string name="card_house_compare_own" formatted="false">Batteriets egen styrning</string>
+  <string name="card_house_plan_next" formatted="false">Batteriet {act} till {time}, sedan {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">Batteriet {act} så långt planen räcker.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav skulle {act} till {time}, sedan {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav skulle {act} så långt planen räcker.</string>
+  <string name="card_house_plan_who_own" formatted="false">Batteriet styr sig självt ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Bara test än</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">laddar från nätet</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">ladda från nätet</string>
+  <string name="card_house_plan_act_hold" formatted="false">håller laddningen</string>
+  <string name="card_house_plan_inf_hold" formatted="false">hålla laddningen</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">säljer till nätet</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">sälja till nätet</string>
+  <string name="card_house_plan_act_self" formatted="false">täcker huset och lagrar solen</string>
+  <string name="card_house_plan_inf_self" formatted="false">täcka huset och lagra solen</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">laddar det från nätet</string>
+  <string name="card_house_plan_then_hold" formatted="false">håller det laddningen</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">säljer det till nätet</string>
+  <string name="card_house_plan_then_self" formatted="false">täcker det huset och lagrar solen</string>
+  <string name="card_house_now_tab_sun" formatted="false">Sol i dag</string>
+  <string name="card_house_now_tab_grid" formatted="false">Köpt i dag</string>
+  <string name="card_house_now_tab_sold" formatted="false">sålt {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batteri</string>
+  <string name="card_house_now_tab_car" formatted="false">Bil</string>
+  <string name="card_house_now_tab_heat" formatted="false">Värme i dag</string>
+  <string name="card_house_now_tab_house" formatted="false">Hus i dag</string>
+  <string name="card_house_now_tab_house_now" formatted="false">Huset nu</string>
+  <string name="card_house_now_tab_no_live" formatted="false">inga livevärden än</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">Solen ger {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">Solen ger {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Köper {kw} från nätet</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Säljer {kw} till nätet</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">Batteriet ger {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">Batteriet laddar {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">Bilen ger {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">Bilen laddar {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Värme {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">Värmen använder {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">I dag: {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">batteriet tjänade {amount}</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparade {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} i dag</string>
+  <string name="card_house_now_tab_today" formatted="false">i dag</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">utan bilen</string>
+  <string name="card_house_learning_capped_while" formatted="false">Nätladdning högst {kw} kW medan husets toppar lärs in ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Lär sig husets toppar, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Laddar inte från nätet förrän dess.</string>
+  <string name="card_learning_days_left_one" formatted="false">{days} dygn kvar</string>
+  <string name="card_learning_days_left_other" formatted="false">{days} dygn kvar</string>
+  <string name="card_house_tabs" formatted="false">Husets vyer</string>
+  <string name="card_house_tab_now" formatted="false">Nu</string>
+  <string name="card_house_tab_flow" formatted="false">Energiflöde</string>
+  <string name="card_house_tab_graph" formatted="false">Energigraf</string>
+  <string name="card_house_tab_price" formatted="false">Pris och batteri</string>
+  <string name="card_house_tab_earn" formatted="false">Intäkt</string>
+  <string name="card_house_tab_short_now" formatted="false">Nu</string>
+  <string name="card_house_tab_short_flow" formatted="false">Flöde</string>
+  <string name="card_house_tab_short_graph" formatted="false">Graf</string>
+  <string name="card_house_tab_short_earn" formatted="false">Intäkt</string>
+  <string name="card_house_tab_short_price" formatted="false">Pris</string>
+  <string name="card_house_picker_today" formatted="false">I dag</string>
+  <string name="card_house_picker_yesterday" formatted="false">I går</string>
+  <string name="card_house_picker_through" formatted="false">{label} · till {time}</string>
+  <string name="card_hist_period_label" formatted="false">Period</string>
+  <string name="card_hist_period_day" formatted="false">Dag</string>
+  <string name="card_hist_period_month" formatted="false">Månad</string>
+  <string name="card_hist_period_year" formatted="false">År</string>
+  <string name="card_hist_previous_day" formatted="false">Föregående dag</string>
+  <string name="card_hist_previous_month" formatted="false">Föregående månad</string>
+  <string name="card_hist_previous_year" formatted="false">Föregående år</string>
+  <string name="card_hist_next_day" formatted="false">Nästa dag</string>
+  <string name="card_hist_next_month" formatted="false">Nästa månad</string>
+  <string name="card_hist_next_year" formatted="false">Nästa år</string>
+  <string name="card_hist_pick_day" formatted="false">Välj dag</string>
+  <string name="card_hist_pick_month" formatted="false">Välj månad</string>
+  <string name="card_hist_pick_year" formatted="false">Välj år</string>
 </resources>
