@@ -42,22 +42,8 @@ internal fun ViewScope.card(parent: LinearLayout, title: String, marker: Int, sh
         // The heading is the top of the header, never the middle of it.
         gravity = Gravity.TOP
     }
-    val heading = LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
-    }
-    val titleView = TextView(context).apply {
-        text = title
-        textSize = 17f
-        setTextColor(dark)
-        typeface = Typeface.DEFAULT_BOLD
-    }
-    heading.addView(ImageView(context).apply {
-        setImageResource(marker)
-        imageTintList = ColorStateList.valueOf(dark)
-        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-    }, LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(6) })
-    heading.addView(titleView, weight())
+    val titleView = cardTitle(title)
+    val heading = cardHeading(marker, titleView)
     header.addView(heading, weight())
     val body = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
@@ -78,6 +64,29 @@ internal fun ViewScope.card(parent: LinearLayout, title: String, marker: Int, sh
         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
     ).apply { bottomMargin = dp(14) })
     return Card(header = header, heading = heading, title = titleView, body = body)
+}
+
+/** A card's title: 17 sp, bold, in the card's text colour. */
+internal fun ViewScope.cardTitle(text: String) = TextView(context).apply {
+    this.text = text
+    textSize = 17f
+    setTextColor(dark)
+    typeface = Typeface.DEFAULT_BOLD
+}
+
+/**
+ * The heading row of a card: the 18 dp marker (tinted like the title, decorative: the title carries the meaning) and
+ * the [title] after it. [card] builds its heading with this, and so do the house and heat pages' boxes.
+ */
+internal fun ViewScope.cardHeading(marker: Int, title: TextView) = LinearLayout(context).apply {
+    orientation = LinearLayout.HORIZONTAL
+    gravity = Gravity.CENTER_VERTICAL
+    addView(ImageView(context).apply {
+        setImageResource(marker)
+        imageTintList = ColorStateList.valueOf(dark)
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+    }, LinearLayout.LayoutParams(dp(18), dp(18)).apply { marginEnd = dp(6) })
+    addView(title, weight())
 }
 
 /**

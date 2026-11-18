@@ -19,6 +19,8 @@ import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.cardHeading
+import se.sensnology.spotnav.ui.common.cardTitle
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
 import java.time.Instant
@@ -86,11 +88,7 @@ internal class HousePage(
     private val sankey = SankeyView(context, text).apply { onOpen = ::openLoads }
     private val tiles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val flowHint = note()
-    private val flowTitle = TextView(context).apply {
-        textSize = 17f
-        typeface = Typeface.DEFAULT_BOLD
-        setTextColor(dark)
-    }
+    private val flowTitle = cardTitle("")
     private val flowGroup = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(14), dp(12), dp(14), dp(12))
@@ -174,7 +172,7 @@ internal class HousePage(
         body.addView(money, wide().apply { topMargin = dp(6) })
         body.addView(notes, wide().apply { topMargin = dp(6) })
         body.addView(learning, wide().apply { topMargin = dp(4) })
-        flowGroup.addView(flowTitle, wide())
+        flowGroup.addView(cardHeading(R.drawable.ic_tab_flow, flowTitle), wide())
         flowGroup.addView(flowStatus, wide().apply { topMargin = dp(8) })
         flowGroup.addView(sankey, wide().apply { topMargin = dp(8) })
         flowGroup.addView(tiles, wide().apply { topMargin = dp(8) })

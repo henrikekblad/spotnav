@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.cardHeading
+import se.sensnology.spotnav.ui.common.cardTitle
 import java.util.Locale
 
 private fun wide() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -24,12 +27,7 @@ private fun box(scope: ViewScope): LinearLayout = LinearLayout(scope.context).ap
     visibility = View.GONE
 }
 
-private fun heading(scope: ViewScope, words: String) = TextView(scope.context).apply {
-    textSize = 17f
-    setTextColor(scope.dark)
-    typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-    text = words
-}
+private fun heading(scope: ViewScope, words: String, marker: Int) = scope.cardHeading(marker, scope.cardTitle(words))
 
 /**
  * The Plan box (the card's Plan tab): the day's chart, today's from the page's own answer with the plan ahead and under
@@ -54,7 +52,7 @@ internal class HeatPlanPanel(
     private var selectedMs: Long? = null
 
     val panel: LinearLayout = box(scope).apply {
-        addView(heading(scope, words.say("heat.tab.plan")), wide())
+        addView(heading(scope, words.say("heat.tab.plan"), R.drawable.ic_plan_clock), wide())
         addView(status, wide().apply { topMargin = scope.dp(8) })
         addView(chart, wide().apply { topMargin = scope.dp(8) })
         addView(review, wide().apply { topMargin = scope.dp(8) })
@@ -175,7 +173,7 @@ internal class HeatUsePanel(
     }
 
     val panel: LinearLayout = box(scope).apply {
-        addView(heading(scope, words.say("heat.tab.use")), wide())
+        addView(heading(scope, words.say("heat.tab.use"), R.drawable.ic_tab_graph), wide())
         addView(status, wide().apply { topMargin = scope.dp(8) })
         addView(head, wide().apply { topMargin = scope.dp(6) })
         addView(bars, wide().apply { topMargin = scope.dp(8) })

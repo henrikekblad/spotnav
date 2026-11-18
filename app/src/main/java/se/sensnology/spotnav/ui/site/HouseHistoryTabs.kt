@@ -4,12 +4,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.HouseHistory.HistoryKind
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.cardHeading
+import se.sensnology.spotnav.ui.common.cardTitle
 import java.time.Instant
 import java.time.LocalDate
 import java.util.Locale
@@ -113,12 +116,7 @@ internal class HouseHistoryPanel(
     private val priceTab = boxKind == HouseBox.PRICE
 
     /** The box's own name above its picture: the card's name of the tab ("Energigraf", "Pris och batteri"). */
-    private val title = TextView(scope.context).apply {
-        textSize = 17f
-        setTextColor(scope.dark)
-        typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-        text = words.say("house.tab.${boxKind.tabKey}")
-    }
+    private val title = scope.cardTitle(words.say("house.tab.${boxKind.tabKey}"))
     private val heading = TextView(scope.context).apply {
         textSize = 17f
         setTextColor(scope.dark)
@@ -146,7 +144,7 @@ internal class HouseHistoryPanel(
             cornerRadius = scope.dp(10).toFloat()
         }
         visibility = View.GONE
-        addView(title, wide())
+        addView(scope.cardHeading(if (priceTab) R.drawable.ic_tab_price else R.drawable.ic_tab_graph, title), wide())
         addView(heading, wide().apply { topMargin = scope.dp(6) })
         addView(sub, wide().apply { topMargin = scope.dp(2) })
         addView(status, wide().apply { topMargin = scope.dp(10) })

@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ui.common.ViewScope
+import se.sensnology.spotnav.ui.common.cardHeading
+import se.sensnology.spotnav.ui.common.cardTitle
 import java.util.Locale
 
 /**
@@ -30,12 +33,8 @@ internal class HouseEarnPanel(
     private val words get() = text.words
     private var selectedBar: String? = null
 
-    private val title = TextView(scope.context).apply {
-        textSize = 17f
-        setTextColor(scope.dark)
-        typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        this.text = words.say("house.tab.earn")
-    }
+    /** The headline "Intäkt X kr" is the title's text while there is a total; otherwise the box's name. */
+    private val title = scope.cardTitle(words.say("house.tab.earn"))
     private val heading = TextView(scope.context).apply {
         textSize = 17f
         setTextColor(scope.dark)
@@ -59,7 +58,7 @@ internal class HouseEarnPanel(
             cornerRadius = scope.dp(10).toFloat()
         }
         visibility = View.GONE
-        addView(title, wide())
+        addView(scope.cardHeading(R.drawable.ic_tab_earn, title), wide())
         addView(heading, wide().apply { topMargin = scope.dp(6) })
         addView(status, wide().apply { topMargin = scope.dp(10) })
         addView(bars, wide().apply { topMargin = scope.dp(8) })
@@ -87,7 +86,7 @@ internal class HouseEarnPanel(
     override fun render(): Boolean {
         val now = house() ?: return false
         listOf(heading, status, bars, notes).forEach { it.visibility = View.GONE }
-        title.visibility = View.VISIBLE
+        title.text = words.say("house.tab.earn")
         val shown = when (val loaded = store.history(store.choice)) {
             null, Load.Loading -> say("hist.loading")
             is Load.Failed -> say(if (loaded.unsupported) "hist.unsupported" else "hist.failed")
@@ -109,10 +108,12 @@ internal class HouseEarnPanel(
         val money = history.money ?: fallback
         val hidden = hidden()
         val total = HouseEarn.total(history, hidden)
-        heading.text = if (total == null) words.say("house.earn.noneShown") else words.say("house.earn.total", "amount" to text.amount(total, money))
-        heading.visibility = View.VISIBLE
-        // The headline says "Intäkt X kr": the box's name over it only where it does not (no part drawn).
-        title.visibility = if (total == null) View.VISIBLE else View.GONE
+        // The headline says "Intäkt X kr", so it is the title; the box's name stays where it does not (no part drawn).
+        if (total != null) title.text = words.say("house.earn.total", "amount" to text.amount(total, money))
+        else {
+            heading.text = words.say("house.earn.noneShown")
+            heading.visibility = View.VISIBLE
+        }
         val drawn = HouseEarn.bars(text, locale, history, hidden, money)
         val spec = HouseEarn.series(history, colours, text, money)
         // With nothing to draw the legend stays, so a part can be turned on again; the bars do not.
