@@ -65,7 +65,17 @@ internal data class DashboardLive(
  */
 data class StatusCharger(val id: String, val name: String)
 
-internal data class DashboardCurrentRange(val minA: Int, val maxA: Int, val source: String)
+internal data class DashboardCurrentRange(
+    val minA: Int,
+    val maxA: Int,
+    val source: String,
+    /**
+     * A charger given a power (a DC charger, Home Assistant 3.0, asked for with the `reads` value `power_charger`): the
+     * kW one ampere per phase is written as, so the current is shown in kW. `null` for a charger given a current, from
+     * an older Home Assistant, or for a value outside the contract's range (above 0, at most 2).
+     */
+    val kwPerA: Double? = null
+)
 
 /** The market's own clock and money, which the status words need to write an instant or an amount. */
 internal data class DashboardMarket(
@@ -203,7 +213,13 @@ internal data class DashboardVehicle(
      * `null` when the car's integration has no wake SpotNav knows, or the row does not state it: the setting is
      * then not offered. Anything but a boolean reads as `null`.
      */
-    val wakeForReading: Boolean? = null
+    val wakeForReading: Boolean? = null,
+    /**
+     * The battery size learned from charging while nobody states one (`learned_capacity_kwh`, Home Assistant 2.5.4): a
+     * hint for the settings' battery size, never a stored value. `null` when a size is stated, nothing is learned yet,
+     * or from an older Home Assistant.
+     */
+    val learnedCapacityKwh: Double? = null
 )
 
 /**
@@ -304,7 +320,13 @@ internal data class DashboardSite(
     val activeControlEnabled: Boolean,
     val activeControlAvailable: Boolean,
     val activeControlWritable: Boolean,
-    val activeControlReason: String?
+    val activeControlReason: String?,
+    /**
+     * What more the meter's own candidates say with the reason `site_direction_unknown` (`direction_hint`, Home
+     * Assistant 2.5.3): `use_power` (its per-phase power gives the direction) or `magnitude` (its current has none, so
+     * signing it cannot help). `null` otherwise, for a hint this app does not know, and from an older Home Assistant.
+     */
+    val activeControlDirectionHint: String? = null
 )
 
 internal data class Dashboard(
@@ -423,7 +445,17 @@ internal data class Dashboard(
      */
     val gridTariff: DashboardGridTariff? = null,
     /** The guest car (`guest`, see [DashboardGuest]); `null` where it is not sent or cannot be read. */
-    val guest: DashboardGuest? = null
+    val guest: DashboardGuest? = null,
+    /**
+     * The sun for the price chart (`sun`, see [DashboardSun], Home Assistant 3.0): `null` where the site cannot run
+     * Solar or Hybrid, from an older Home Assistant, or for a block this app cannot read.
+     */
+    val sun: DashboardSun? = null,
+    /**
+     * The departure calendar (`departure_calendar`, see [DashboardDepartureCalendar], Home Assistant 3.0): `null`
+     * where Home Assistant has no calendar, from an older one, or for a block this app cannot read.
+     */
+    val departureCalendar: DashboardDepartureCalendar? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -480,7 +512,10 @@ internal data class Dashboard(
                 status = parseStatus(obj(json, "status"))
                     .copy(publicationAt = json.optJSONObject("planning")?.opt("publication_at") as? String),
                 currentRange = obj(json, "current_range").let {
-                    DashboardCurrentRange(requiredInt(it, "min_a"), requiredInt(it, "max_a"), optText(it, "source").orEmpty())
+                    DashboardCurrentRange(
+                        requiredInt(it, "min_a"), requiredInt(it, "max_a"), optText(it, "source").orEmpty(),
+                        kwPerA = nonNegative(it.opt("kw_per_a"))?.takeIf { perAmp -> perAmp > 0.0 && perAmp <= 2.0 }
+                    )
                 },
                 market = market,
                 plan = plan(obj(json, "plan")),
@@ -527,7 +562,9 @@ internal data class Dashboard(
                 phaseSwitching = PhaseSwitching.parse(json.opt("phase_switching")),
                 setup = SetupRow.parse(json.opt("setup")),
                 gridTariff = DashboardGridTariff.parse(json.opt("grid_tariff")),
-                guest = DashboardGuest.parse(json.opt("guest"))
+                guest = DashboardGuest.parse(json.opt("guest")),
+                sun = DashboardSun.parse(json.opt("sun")),
+                departureCalendar = DashboardDepartureCalendar.parse(json.opt("departure_calendar"))
             )
         }
 
@@ -829,7 +866,8 @@ internal data class Dashboard(
             minStated = json.has("min_percent"),
             identification = VehicleIdentificationSources.parse(json.opt("identification")),
             chargeLimitRange = ChargeLimitRange.parse(json.opt("charge_limit_range")),
-            wakeForReading = json.opt("wake_for_reading") as? Boolean
+            wakeForReading = json.opt("wake_for_reading") as? Boolean,
+            learnedCapacityKwh = nonNegative(json.opt("learned_capacity_kwh"))?.takeIf { it > 0.0 }
         )
 
         /** The `site` block, as the dashboard and the site write's own answers state it. */
@@ -849,9 +887,16 @@ internal data class Dashboard(
                 activeControlEnabled = control?.opt("enabled") == true,
                 activeControlAvailable = control?.opt("available") == true,
                 activeControlWritable = control?.opt("writable") == true,
-                activeControlReason = control?.let { optText(it, "reason") }
+                activeControlReason = control?.let { optText(it, "reason") },
+                // A hint only goes with the reason it refines.
+                activeControlDirectionHint = control
+                    ?.takeIf { optText(it, "reason") == "site_direction_unknown" }
+                    ?.let { it.opt("direction_hint") as? String }
+                    ?.takeIf { it in DIRECTION_HINTS }
             )
         }
+
+        private val DIRECTION_HINTS = setOf("use_power", "magnitude")
 
         /** A lenient number: a finite, non-negative one, else not there (never a refusal of the answer). */
         private fun nonNegative(raw: Any?): Double? =
