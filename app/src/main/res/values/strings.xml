@@ -839,6 +839,91 @@
   <string name="card_heat_title" formatted="false">Heating</string>
   <string name="card_header_test" formatted="false">Test</string>
   <string name="card_header_test_explain" formatted="false">SpotNav is not controlling anything yet.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav works out what it would do with the heating and shows it here. Nothing is sent to the heat pump yet.</string>
+  <string name="card_heat_loading" formatted="false">Reading the heating…</string>
+  <string name="card_heat_failed" formatted="false">The heating could not be read.</string>
+  <string name="card_heat_unsupported" formatted="false">The card needs a newer SpotNav.</string>
+  <string name="card_heat_dial_label" formatted="false">Wanted temperature</string>
+  <string name="card_heat_dial_lower" formatted="false">Lower half a degree</string>
+  <string name="card_heat_dial_raise" formatted="false">Raise half a degree</string>
+  <string name="card_heat_dial_band" formatted="false">within {low}–{high} °C</string>
+  <string name="card_heat_measured" formatted="false">Indoors {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Indoors {value} (coldest: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">No indoor sensor chosen</string>
+  <string name="card_heat_outdoor" formatted="false">Outdoors {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Home</string>
+  <string name="card_heat_mode_away" formatted="false">Away</string>
+  <string name="card_heat_mode_away_until" formatted="false">Away until {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Change</string>
+  <string name="card_heat_away_title" formatted="false">Away until</string>
+  <string name="card_heat_away_help" formatted="false">Once SpotNav controls the heating, it keeps the house 3 °C cooler, never below 16 °C, and warms it up before you are back.</string>
+  <string name="card_heat_away_date" formatted="false">Date</string>
+  <string name="card_heat_away_time" formatted="false">Time</string>
+  <string name="card_heat_pump_heating" formatted="false">Heat pump: heating · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Heat pump: hot water · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Heat pump: resting · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Heat pump: no reading</string>
+  <string name="card_heat_would_lower" formatted="false">Would lower to {temp} until {until}: dear hours</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Would lower to {temp} until {until}: makes room under the import target and the fuse</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Would lower to {temp} until {until}: too warm indoors</string>
+  <string name="card_heat_would_preheat" formatted="false">Would pre-heat to {temp} until {until}: cheap before dear hours</string>
+  <string name="card_heat_would_raise" formatted="false">Would raise the heat (SG Ready) to {temp} until {until}: cheap before dear hours</string>
+  <string name="card_heat_would_night" formatted="false">Would keep a cooler night, {temp} until {until}</string>
+  <string name="card_heat_would_away" formatted="false">Would keep {temp} until {until} while you are away</string>
+  <string name="card_heat_would_return" formatted="false">Would warm up for your return: {temp} until {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Would keep {temp} until {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">No prices yet: would lower nothing</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Too cold outdoors to lower</string>
+  <string name="card_heat_guard_room_cold" formatted="false">The coldest room is below the band: no lowering</string>
+  <string name="card_heat_relay_closed" formatted="false">The relay has lowered the heating since {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">The relay has lowered the heating since {since}, expected to open at {until}</string>
+  <string name="card_heat_relay_next" formatted="false">The relay is expected to lower the heating {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">The temperature and Home/Away you set here are what SpotNav follows once it starts controlling the heating.</string>
+  <string name="card_heat_today_label" formatted="false">Today</string>
+  <string name="card_heat_today_heat" formatted="false">heat {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">of which zones {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">hot water {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} steers by the electricity price itself. Turn it off in the heat pump ({where}) if SpotNav is to steer.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Readings SpotNav needs are turned off in the heat pump\'s integration: {names}. Turn them on on the device.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} steers the heat pump; SpotNav counts it as house load and only watches.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">The automation \'{name}\' drives the relay: turn it off when SpotNav is to control the heating.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">The automation \'{name}\' also drives {targets}: turn it off when SpotNav is to control them.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Turn off the automation \'{name}\' so SpotNav can control the heating.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">outdoor temperature</string>
+  <string name="card_heat_role_supply_temp" formatted="false">supply temperature</string>
+  <string name="card_heat_role_return_temp" formatted="false">return temperature</string>
+  <string name="card_heat_role_room_temp" formatted="false">room temperature</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">hot water temperature</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">degree minutes</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">compressor speed</string>
+  <string name="card_heat_role_compressor_state" formatted="false">compressor state</string>
+  <string name="card_heat_role_immersion_power" formatted="false">immersion heater power</string>
+  <string name="card_heat_role_immersion_state" formatted="false">immersion heater state</string>
+  <string name="card_heat_role_priority" formatted="false">priority</string>
+  <string name="card_heat_error_generic" formatted="false">Could not save.</string>
+  <string name="card_heat_error_conflict" formatted="false">Someone else changed it meanwhile; showing the latest.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Only an administrator can change that.</string>
+  <string name="card_heat_error_range" formatted="false">The value is outside what is allowed.</string>
+  <string name="card_heat_error_step" formatted="false">Choose half degrees.</string>
+  <string name="card_heat_error_past" formatted="false">Choose a time ahead.</string>
+  <string name="card_heat_error_far" formatted="false">At most 90 days ahead.</string>
+  <string name="card_heat_now_heating" formatted="false">Heating</string>
+  <string name="card_heat_now_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_now_idle" formatted="false">Resting</string>
+  <string name="card_heat_now_lowered" formatted="false">Lowered</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Lowered until {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Raised</string>
+  <string name="card_heat_now_raised_until" formatted="false">Raised until {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">lowering {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">pre-heat {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">raise {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">cooler night {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">away {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">hot water {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 12 hours</string>
   <string name="card_house_test_explain" formatted="false">SpotNav shows what it would do, but nothing is sent from here yet. A home battery is only controlled once you turn on battery control in the settings.</string>
   <string name="card_house_now_hold" formatted="false">Holding</string>
   <string name="card_house_now_discharge" formatted="false">Discharging</string>

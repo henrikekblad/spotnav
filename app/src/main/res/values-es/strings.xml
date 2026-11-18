@@ -834,6 +834,91 @@
   <string name="card_heat_title" formatted="false">Calefacción</string>
   <string name="card_header_test" formatted="false">Prueba</string>
   <string name="card_header_test_explain" formatted="false">SpotNav aún no controla nada.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav calcula lo que haría con la calefacción y lo muestra aquí. Todavía no se envía nada a la bomba de calor.</string>
+  <string name="card_heat_loading" formatted="false">Leyendo la calefacción…</string>
+  <string name="card_heat_failed" formatted="false">No se pudo leer la calefacción.</string>
+  <string name="card_heat_unsupported" formatted="false">La tarjeta necesita un SpotNav más reciente.</string>
+  <string name="card_heat_dial_label" formatted="false">Temperatura deseada</string>
+  <string name="card_heat_dial_lower" formatted="false">Bajar medio grado</string>
+  <string name="card_heat_dial_raise" formatted="false">Subir medio grado</string>
+  <string name="card_heat_dial_band" formatted="false">entre {low} y {high} °C</string>
+  <string name="card_heat_measured" formatted="false">Interior {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Interior {value} (la más fría: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">No hay sensor interior elegido</string>
+  <string name="card_heat_outdoor" formatted="false">Fuera {value}</string>
+  <string name="card_heat_mode_home" formatted="false">En casa</string>
+  <string name="card_heat_mode_away" formatted="false">Fuera</string>
+  <string name="card_heat_mode_away_until" formatted="false">Fuera hasta el {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Cambiar</string>
+  <string name="card_heat_away_title" formatted="false">Fuera hasta</string>
+  <string name="card_heat_away_help" formatted="false">Cuando SpotNav controle la calefacción, mantendrá la casa 3 °C más fresca, nunca por debajo de 16 °C, y la calentará antes de que volváis.</string>
+  <string name="card_heat_away_date" formatted="false">Fecha</string>
+  <string name="card_heat_away_time" formatted="false">Hora</string>
+  <string name="card_heat_pump_heating" formatted="false">Bomba de calor: calefacción · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Bomba de calor: agua caliente · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Bomba de calor: en reposo · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Bomba de calor: sin lectura</string>
+  <string name="card_heat_would_lower" formatted="false">Bajaría a {temp} hasta las {until}: horas caras</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Bajaría a {temp} hasta las {until}: deja sitio bajo el objetivo de consumo y el fusible</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Bajaría a {temp} hasta las {until}: demasiado calor dentro</string>
+  <string name="card_heat_would_preheat" formatted="false">Precalentaría a {temp} hasta las {until}: barato antes de horas caras</string>
+  <string name="card_heat_would_raise" formatted="false">Subiría la calefacción (SG Ready) a {temp} hasta las {until}: barato antes de las horas caras</string>
+  <string name="card_heat_would_night" formatted="false">Mantendría la casa más fresca por la noche, {temp} hasta las {until}</string>
+  <string name="card_heat_would_away" formatted="false">Mantendría {temp} hasta las {until} mientras estáis fuera</string>
+  <string name="card_heat_would_return" formatted="false">Calentaría para vuestra vuelta: {temp} hasta las {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Mantendría {temp} hasta las {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Aún no hay precios: no bajaría nada</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Demasiado frío fuera para bajar</string>
+  <string name="card_heat_guard_room_cold" formatted="false">La habitación más fría está por debajo de la banda: sin bajada</string>
+  <string name="card_heat_relay_closed" formatted="false">El relé baja la calefacción desde las {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">El relé baja la calefacción desde las {since}; se espera que abra a las {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Se espera que el relé baje la calefacción {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">SpotNav seguirá la temperatura y el modo En casa/Fuera que ajustes aquí cuando empiece a controlar la calefacción.</string>
+  <string name="card_heat_today_label" formatted="false">Hoy</string>
+  <string name="card_heat_today_heat" formatted="false">calefacción {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">de ello zonas {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">agua caliente {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} se ajusta solo al precio de la luz. Desactívalo en la bomba de calor ({where}) si SpotNav ha de controlarla.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Hay lecturas que SpotNav necesita desactivadas en la integración de la bomba de calor: {names}. Actívalas en el dispositivo.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} controla la bomba de calor; SpotNav la cuenta como consumo de la casa y solo observa.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">La automatización \'{name}\' controla el relé: desactívala cuando SpotNav deba controlar la calefacción.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">La automatización \'{name}\' también controla {targets}: desactívala cuando SpotNav deba controlar.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Desactiva la automatización \'{name}\' para que SpotNav pueda controlar la calefacción.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">temperatura exterior</string>
+  <string name="card_heat_role_supply_temp" formatted="false">temperatura de impulsión</string>
+  <string name="card_heat_role_return_temp" formatted="false">temperatura de retorno</string>
+  <string name="card_heat_role_room_temp" formatted="false">temperatura ambiente</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">temperatura del agua caliente</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">grados-minuto</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">velocidad del compresor</string>
+  <string name="card_heat_role_compressor_state" formatted="false">estado del compresor</string>
+  <string name="card_heat_role_immersion_power" formatted="false">potencia de la resistencia</string>
+  <string name="card_heat_role_immersion_state" formatted="false">estado de la resistencia</string>
+  <string name="card_heat_role_priority" formatted="false">prioridad</string>
+  <string name="card_heat_error_generic" formatted="false">No se pudo guardar.</string>
+  <string name="card_heat_error_conflict" formatted="false">Otra persona lo cambió a la vez; se muestra lo último.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Solo un administrador puede cambiarlo.</string>
+  <string name="card_heat_error_range" formatted="false">El valor está fuera de lo permitido.</string>
+  <string name="card_heat_error_step" formatted="false">Elige medios grados.</string>
+  <string name="card_heat_error_past" formatted="false">Elige una hora futura.</string>
+  <string name="card_heat_error_far" formatted="false">Como mucho 90 días por delante.</string>
+  <string name="card_heat_now_heating" formatted="false">Calienta</string>
+  <string name="card_heat_now_hot_water" formatted="false">Agua caliente</string>
+  <string name="card_heat_now_idle" formatted="false">En reposo</string>
+  <string name="card_heat_now_lowered" formatted="false">Reducida</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Reducida hasta las {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Aumentada</string>
+  <string name="card_heat_now_raised_until" formatted="false">Aumentada hasta las {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">reducción {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">precalentamiento {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">aumento {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">noche más fresca {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">fuera {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">agua caliente {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Ninguna reducción prevista en las próximas 12 horas</string>
   <string name="card_house_test_explain" formatted="false">SpotNav muestra lo que haría, pero todavía no se envía nada desde aquí. Una batería doméstica solo se controla cuando activas el control de la batería en los ajustes.</string>
   <string name="card_house_now_hold" formatted="false">Mantiene</string>
   <string name="card_house_now_discharge" formatted="false">Descarga</string>
