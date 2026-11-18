@@ -24,6 +24,7 @@ import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -102,6 +103,9 @@ internal interface HaTransport {
     /** `get_house`: the site's house for today or a past day. */
     fun house(date: LocalDate?): SiteRead<House> = SiteRead.Failed(null)
 
+    /** `get_house_history`: one day, month or year of the house (`null` date: the running one). */
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?): SiteRead<HouseHistory> = SiteRead.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -164,6 +168,9 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
     override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
+
+    override fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?) =
+        HomeAssistantClient.houseHistory(connection, period, date)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -398,6 +405,14 @@ internal class HaSession(
     fun house(date: LocalDate?, done: (SiteRead<House>) -> Unit) {
         background.execute {
             val outcome = transport.house(date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_history` (never throws). */
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?, done: (SiteRead<HouseHistory>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseHistory(period, date)
             mainThread { done(outcome) }
         }
     }

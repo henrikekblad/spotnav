@@ -5,6 +5,8 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
+import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ha.house.HouseHistoryRead
 import se.sensnology.spotnav.ha.house.HouseNowRead
 import se.sensnology.spotnav.ha.house.HouseRead
 import se.sensnology.spotnav.ha.house.SiteRead
@@ -352,6 +354,12 @@ object HomeAssistantClient {
     internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
         val (status, body) = write(settings, HouseRead.payload(date))
         return HouseRead.answer(status, body)
+    }
+
+    /** One day, month or year of the house (webhook `get_house_history`), under the same capability. Never throws. */
+    internal fun houseHistory(settings: HomeAssistantSettings, period: HouseHistory.HistoryKind, date: java.time.LocalDate? = null): SiteRead<HouseHistory> {
+        val (status, body) = write(settings, HouseHistoryRead.payload(period, date))
+        return HouseHistoryRead.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */
