@@ -9,8 +9,8 @@ import java.time.ZoneId
 /**
  * The house (webhook `get_house`, the twin of `spotnav/get_house`, `api_version` 1), as far as the house page reads
  * it: the hours with the battery plan, the battery, the day's money and energy flow, and what is being learned. The
- * blocks behind the details (`house`, `days`, `calendar`, `day_review`, `sources`, `flow`, the battery's `modes` and
- * `review`) are not read here yet. Shape: the integration's `site/house_view.py`; the card's reader is
+ * blocks behind the details (`days`, `calendar`, `day_review`, `flow`, the battery's `modes` and `review`) are not read
+ * here yet; where the figures come from (`sources`, `house`, the heat meter, the battery's estimates) is [HouseSources]. Shape: the integration's `site/house_view.py`; the card's reader is
  * `frontend/src/house-model.ts`.
  */
 internal data class House(
@@ -27,7 +27,9 @@ internal data class House(
     val energyFlow: EnergyFlow?,
     val day: ShownDay?,
     val heat: Heat?,
-    val saving: SavingDay?
+    val saving: SavingDay?,
+    /** Where the figures come from, for the details sheet; `null` where the answer does not say. */
+    val sources: HouseSources? = null
 ) {
     /** The price area's money: amounts come in the minor unit. */
     data class Money(val currency: String?, val majorUnit: String?, val minorUnit: String?)
@@ -194,7 +196,8 @@ internal object HouseRead {
             heat = objOrNull(json.opt("heat"), "heat")?.let {
                 House.Heat(status = text(it.opt("status"), "heat.status"), name = textOrNull(it.opt("name"), "heat.name"))
             },
-            saving = objOrNull(json.opt("saving"), "saving")?.let(::saving)
+            saving = objOrNull(json.opt("saving"), "saving")?.let(::saving),
+            sources = HouseSources.decode(json)
         )
     }
 

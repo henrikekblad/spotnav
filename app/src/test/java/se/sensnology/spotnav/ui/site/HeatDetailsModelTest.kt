@@ -24,11 +24,27 @@ class HeatDetailsModelTest {
     private fun DetailSection.figures() = rows.filterIsInstance<DetailRow.Figure>().associate { it.key to it.value }
 
     @Test fun aDayHasEverySection() {
-        assertEquals(listOf("use", "degree-days", "comfort", "shadow", "review", "model", "runs"), HeatDetailsModel.sections(text(), history("zones_day.json")).map { it.key })
+        assertEquals(listOf("bars", "use", "degree-days", "comfort", "shadow", "review", "model", "runs"), HeatDetailsModel.sections(text(), history("zones_day.json")).map { it.key })
+    }
+
+    @Test fun theCostBarsHaveTheShadowSavingHatchedOnTopOfTheCost() {
+        val bars = (HeatDetailsModel.costBars(text(), history("zones_month.json"))!!.rows.single() as DetailRow.Bars)
+        assertEquals(30, bars.bars.size)
+        val priced = bars.bars.first { bar -> bar.lanes.isNotEmpty() && bar.lanes.single().any { it.series == HeatDetailsModel.SAVING } }
+        assertEquals(listOf(HeatDetailsModel.COST, HeatDetailsModel.SAVING), priced.lanes.single().map { it.series })
+        assertTrue(priced.words, priced.words.contains("skulle ha sparat"))
+        assertEquals(listOf("Kostnad", bars.series[1].label), bars.series.map { it.label })
+        assertTrue(bars.series[1].hatched)
+        // Nothing the plan would have saved anywhere: no bars at all, as the card has it.
+        val h = history("zones_month.json")
+        assertNull(HeatDetailsModel.costBars(text(), h.copy(buckets = h.buckets.map { it.copy(shadowValue = null) })))
+        // Unpriced: the kWh in one colour.
+        val kwh = HeatDetailsModel.costBars(text(), h.copy(buckets = h.buckets.map { it.copy(cost = null) }))
+        assertNull(kwh)
     }
 
     @Test fun aMonthHasNoReviewAndNoRuns() {
-        assertEquals(listOf("use", "degree-days", "comfort", "shadow", "model"), HeatDetailsModel.sections(text(), history("zones_month.json")).map { it.key })
+        assertEquals(listOf("bars", "use", "degree-days", "comfort", "shadow", "model"), HeatDetailsModel.sections(text(), history("zones_month.json")).map { it.key })
     }
 
     @Test fun theUseSaysTheTotalTheZonesTheHotWaterAndTheCost() {
@@ -92,6 +108,7 @@ class HeatDetailsModelTest {
                                 is DetailRow.Figure -> listOf(r.name, r.value)
                                 is DetailRow.Note -> listOf(r.text)
                                 is DetailRow.Trend -> listOf(r.title, r.unit) + r.bars.map { it.words }
+                                is DetailRow.Bars -> listOf(r.label, r.hint) + r.series.map { it.label } + r.bars.map { it.words }
                             }
                         }
                     } + HeatDetailsModel.footnote(t)

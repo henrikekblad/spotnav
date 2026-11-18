@@ -93,8 +93,9 @@ internal class WebhookHttpStatusException(
  * a name it does not know: `sun`, the dashboard's block with the sun for the price chart, `power_charger`, the
  * `current_range.kw_per_a` of a charger given a power, `supplier_fees`, the grid tariff's supplier markup and what sold
  * power earns, and `departure_calendar`, the dashboard's block for the calendar whose events are departures (with the
- * settings field of the same name, which the app never sends back, so Home Assistant keeps it). Every request the app
- * sends names them.
+ * settings field of the same name, which the app never sends back, so Home Assistant keeps it). The last is
+ * `plug_in_saving`, the saving against charging at once on plug-in that the charge history's summaries and sessions
+ * carry (read from the `sessions` answer only). Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -103,7 +104,7 @@ internal object WebhookReads {
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
         "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
-        "sun", "power_charger", "supplier_fees", "departure_calendar"
+        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))

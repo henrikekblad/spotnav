@@ -14,6 +14,12 @@ internal sealed interface DetailRow {
 
     data class Note(override val key: String, val text: String) : DetailRow
 
+    /** The period's cost bars (or its kWh where nothing is priced), with the plan's shadow saving hatched on top. */
+    class Bars(
+        override val key: String, val label: String, val bars: List<Bar>, val series: List<BarSeries>,
+        val scale: (Double) -> String, val hint: String
+    ) : DetailRow
+
     /** The kWh per degree day of each month: a bar per month, shown with the section. */
     data class Trend(override val key: String, val title: String, val bars: List<Bar>, val unit: String) : DetailRow
 }
@@ -24,8 +30,8 @@ internal class DetailSection(val key: String, val title: String, val rows: List<
  * The heat details sheet's sections as the Home Assistant card words them (`frontend/src/heat-history.ts`, with every
  * section open): the use in figures with the immersion heater, kWh per degree day with its monthly trend, comfort,
  * what SpotNav's plan would have saved in shadow, a day's review, how well the house model forecasts the heat, and a
- * day's hot-water runs. Every figure is Home Assistant's. The cost bars with the shadow saving hatched on top, which
- * the card draws first, are not drawn in the app. Pure.
+ * day's hot-water runs. Every figure is Home Assistant's. The cost bars with the shadow saving hatched on top come first
+ * ([costBars]), drawn only where some bucket has that figure. Pure.
  */
 internal object HeatDetailsModel {
     private fun kwh(text: SiteText, value: Double) = "${text.fixed(value, if (value >= 100) 0 else 1)} kWh"
@@ -40,7 +46,46 @@ internal object HeatDetailsModel {
         runCatching { DateTimeFormatter.ofPattern("LLLL yyyy", text.locale).format(YearMonth.parse(month).atDay(15)) }.getOrDefault(month)
 
     fun sections(text: SiteText, answer: HeatHistory): List<DetailSection> =
-        listOfNotNull(use(text, answer), degree(text, answer), comfort(text, answer), shadow(text, answer), review(text, answer), model(text, answer), runs(text, answer))
+        listOfNotNull(costBars(text, answer), use(text, answer), degree(text, answer), comfort(text, answer), shadow(text, answer), review(text, answer), model(text, answer), runs(text, answer))
+
+    const val COST = HouseDetails.COST
+    const val SAVING = HouseDetails.SAVING
+
+    /**
+     * The cost bars with what SpotNav's plan would have saved hatched on top (the card's `heatBars`): none where no bucket
+     * has both a cost and that figure. A bar is a day of a month or a month of a year; where nothing is priced it is the kWh.
+     */
+    fun costBars(text: SiteText, answer: HeatHistory): DetailSection? {
+        val words = text.words
+        val buckets = answer.buckets
+        if (buckets.isEmpty() || buckets.all { it.kwh == null } || buckets.all { it.shadowValue == null || it.cost == null }) return null
+        val priced = buckets.any { it.cost != null }
+        val bars = buckets.mapIndexed { index, item ->
+            val (`when`, axis) = HouseGraph.bucketWords(text.locale, answer.period, item.key, index, buckets.size)
+            val kwh = item.kwh
+            val said = if (kwh == null) words.say("hist.heat.barNone", "when" to `when`) else buildList {
+                add("${`when`}: ${kwh(text, kwh)}")
+                item.cost?.let { add(money(text, it, answer)) }
+                if (item.shadowValue != null && item.cost != null) add(words.say("hist.heat.barSaving", "saving" to money(text, item.shadowValue, answer)))
+                if (item.zonesKwh != null && item.zonesKwh > 0) add(words.say("hist.heat.barZones", "kwh" to kwh(text, item.zonesKwh)))
+                item.hotWaterKwh?.let { add(words.say("hist.heat.barHotWater", "kwh" to kwh(text, it))) }
+                item.outdoorC?.let { add(words.say("hist.heat.barOutdoor", "temp" to celsius(text, it))) }
+                item.degreeDays?.let { add(words.say("hist.heat.barDegreeDays", "dd" to text.fixed(it, 1))) }
+            }.joinToString(" · ")
+            if (!priced) return@mapIndexed Bar(item.key, if (kwh == null || kwh <= 0) emptyList() else listOf(listOf(BarPart(COST, kwh))), said, axis)
+            val parts = HouseDetails.moneyParts(if (kwh == null) null else item.cost, if (item.cost == null) null else item.shadowValue)
+            val lane = listOf(BarPart(COST, parts.solid), BarPart(SAVING, parts.hatch)).filter { it.value > 0 }
+            Bar(item.key, if (lane.isEmpty()) emptyList() else listOf(lane), said, axis)
+        }
+        val series = if (!priced) emptyList() else buildList {
+            add(BarSeries(COST, words.say("hist.legend.cost"), 0))
+            // The saving's swatch only where some bar has one.
+            if (buckets.any { it.cost != null && (it.shadowValue ?: 0.0) > 0 }) add(BarSeries(SAVING, words.say("hist.heat.legend.saving"), 0, hatched = true))
+        }
+        val label = words.say("hist.heat.chart")
+        val scale: (Double) -> String = if (priced) { v -> money(text, v, answer) } else { v -> kwh(text, v) }
+        return DetailSection("bars", label, listOf(DetailRow.Bars("bars", label, bars, series, scale, words.say("hist.heat.hint"))))
+    }
 
     /** The closing note: what the money is. */
     fun footnote(text: SiteText): String = text.words.say("hist.heat.footnote")

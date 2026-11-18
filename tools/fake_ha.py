@@ -108,7 +108,11 @@ refused, as when the site is not loaded); and who runs the battery: its own opti
 `get_house` with a `date` answers that past day (the villa's past day moved to it), and `get_house_history` the day,
 month or year asked for (the vendored `ha-fixtures/house_history/` villa documents moved to the period; a year of a
 house alone for `flows=alone`, a day or a month of one without battery, sun, heat or prices), so the Graf and Pris och
-batteri tabs and their period picker have something to show.
+batteri tabs and their period picker have something to show. The same answers carry what the Intäkt box and the details
+sheet read (SpotNav's saving per part, the battery's own earnings with what the plan would have earned beside them,
+the review with the shares of the perfect plan, the forecasts' errors; `control=on` turns the own earnings into
+SpotNav's own saving). The charge history (`sessions`, the integration's own month) has, for a charger in a site that
+reads it (`reads: ["plug_in_saving"]`), the saving against charging at once on plug-in beside each summary and session.
 The `heat` scenario adds the heating to that: its dashboard also states `capabilities.get_heat`, so the app shows the
 heat icon and the heat page's Now tab. The webhook answers `get_heat` (a fixture of `ha-fixtures/heat_card/` moved to
 now) and `update_heat` (`target_c`, `mode` and `away_until`, with the compare-and-set: a stale `expected` is
@@ -827,6 +831,14 @@ def house_history_body(payload: dict) -> tuple[int, dict]:
     else:
         days = (first - fixture_first).days
         body = _moved_to_now(body, days * 24, days)
+    if HOUSE["control"] == "on" and body.get("own_control"):
+        # SpotNav controls the battery: what it earned is SpotNav's own saving (the Intäkt box's solid part), with no
+        # would-be figure beside it.
+        own = body["own_control"]
+        body["own_control"] = None
+        body["saving"] = {**body["saving"], "battery": own["earned"], "battery_days": own["days"], "total": body["saving"]["total"] + own["earned"]}
+        for bucket in body["buckets"]:
+            bucket["saving_battery"], bucket["own_battery"], bucket["would_battery"] = bucket["own_battery"], None, None
     body["today"] = today.isoformat()
     body["generated_at"] = datetime.now(zone).replace(microsecond=0).isoformat()
     body["complete"] = (first.replace(year=first.year + 1) if period == "year" else
@@ -835,10 +847,45 @@ def house_history_body(payload: dict) -> tuple[int, dict]:
         # A house with the grid alone: no battery, sun, heat or prices, and no Energy dashboard meter for the flow.
         body["energy_flow"] = None
         for bucket in body["buckets"]:
-            for key in ("arbitrage", "battery_flow", "heat", "solar", "buy", "sell", "battery_in", "battery_out", "cost"):
+            for key in ("arbitrage", "battery_flow", "heat", "solar", "buy", "sell", "battery_in", "battery_out", "cost",
+                        "saving", "saving_battery", "saving_car", "saving_heat", "own_battery", "would_battery", "battery_saving"):
                 bucket[key] = None
         body["cost"] = None
+        # Nothing saved, no battery to review: the Intäkt box is left out, and the details have no review.
+        body["saving"] = None
+        body["own_control"] = None
+        body["review"] = None
     return 200, {"ok": True, "action": action, **body}
+
+
+def sessions_body(key: str, payload: dict) -> tuple[int, dict]:
+    """`sessions` (the charge history): the integration's own month, and for a charger in a site that reads it
+    (`reads: ["plug_in_saving"]`) the saving against charging at once on plug-in beside each summary and session, as
+    Home Assistant 3.0 answers; a 2.x answer has no such key."""
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": "sessions"}
+    body = json.loads((DASHBOARD_FIXTURES.parent / "sessions" / "get_sessions.json").read_text(encoding="utf-8"))
+    if payload.get("format") == "csv":
+        csv_body = json.loads((DASHBOARD_FIXTURES.parent / "sessions" / "get_sessions_csv.json").read_text(encoding="utf-8"))
+        return 200, {"ok": True, "action": "sessions", **csv_body}
+    in_site = key in ("house", "heat") and "plug_in_saving" in (payload.get("reads") or [])
+    if in_site:
+        def plug_in(item: dict, factor: float) -> None:
+            # Against charging at once: a little more than the day-average comparison (null where it cannot be known).
+            saved = item.get("savings")
+            item["plug_in_saving"] = None if saved is None else round(saved * factor, 4)
+        for name in ("this_month", "last_month", "month_summary"):
+            plug_in(body[name], 1.3)
+        for name in ("months", "days", "month_days"):
+            for item in body.get(name, []):
+                plug_in(item, 1.3)
+        if "savings" in body.get("open", {}):
+            plug_in(body["open"], 1.3)
+        for name in ("month_sessions", "sessions"):
+            for index, item in enumerate(body.get(name, [])):
+                # One of them negative: a charge that cost more than charging at once.
+                plug_in(item, -0.4 if index == 2 else 1.3)
+    return 200, {"ok": True, "action": "sessions", **body}
 
 
 def house_loads_body(payload: dict) -> tuple[int, dict]:
@@ -1688,6 +1735,9 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if action in NEW_ACTIONS and key in NO_2_3_ACTIONS:
                     self._json(400, {"ok": False, "error": "Unsupported action"})
+                    return
+                if action == "sessions":
+                    self._json(*sessions_body(key, payload))
                     return
                 if action == "plan_preview":
                     self._json(200, plan_preview_body(payload))

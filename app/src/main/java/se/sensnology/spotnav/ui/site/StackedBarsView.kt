@@ -34,8 +34,43 @@ internal class Bar(
     val slotCount: Int? = null
 )
 
-/** A legend entry: the series' [key], its words and colour; [line] draws its swatch as a line (the sun's step line). */
-internal class BarSeries(val key: String, val label: String, val colour: Int, val line: Boolean = false)
+/**
+ * A legend entry: the series' [key], its words and colour; [line] draws its swatch as a line (the sun's step line);
+ * [hatched] draws its parts as a diagonal pattern with an outline instead of a solid fill: what did not happen (the
+ * Intäkt box's "SpotNav skulle ha sparat").
+ */
+internal class BarSeries(val key: String, val label: String, val colour: Int, val line: Boolean = false, val hatched: Boolean = false)
+
+/** The hatched fill: thin diagonal lines in [colour] over the rectangle, and its outline, drawn inside the rectangle. */
+internal object Hatch {
+    /** The lines' step across and their width, in dp: two thin and two empty, as the card's 135 degree gradient. */
+    const val STEP_DP = 4f
+    const val LINE_DP = 1.2f
+
+    fun draw(canvas: Canvas, rect: RectF, colour: Int, density: Float, paint: Paint) {
+        val step = STEP_DP * density
+        val saved = canvas.save()
+        canvas.clipRect(rect)
+        val old = Triple(paint.style, paint.strokeWidth, paint.color)
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = LINE_DP * density
+        paint.color = colour
+        // Lines rising to the right, a step apart, from the rectangle's lower left across to its upper right.
+        val height = rect.height()
+        var x = rect.left - height
+        while (x < rect.right) {
+            canvas.drawLine(x, rect.bottom, x + height, rect.top, paint)
+            x += step
+        }
+        paint.strokeWidth = 1f * density
+        val inset = 0.5f * density
+        canvas.drawRect(rect.left + inset, rect.top + inset, rect.right - inset, rect.bottom - inset, paint)
+        paint.style = old.first
+        paint.strokeWidth = old.second
+        paint.color = old.third
+        canvas.restoreToCount(saved)
+    }
+}
 
 /** What a [StackedBarsView] shows. [hidden] series are left out of the bars and the scale; the legend keeps them, struck through. */
 internal class BarsSpec(
@@ -294,7 +329,9 @@ internal object LegendRow {
             private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
             override fun draw(canvas: Canvas) {
                 paint.color = series.colour
-                if (series.line) {
+                if (series.hatched) {
+                    Hatch.draw(canvas, RectF(0f, 0f, w.toFloat(), h.toFloat()), series.colour, density, paint)
+                } else if (series.line) {
                     paint.strokeWidth = 2f * density
                     canvas.drawLine(0f, h / 2f, w.toFloat(), h / 2f, paint)
                 } else {
@@ -361,6 +398,8 @@ internal class StackedBarsView(
         chosen = next.selected?.let { key -> next.bars.indexOfFirst { it.key == key } }?.takeIf { it >= 0 }
         shownIndex = chosen
         plot.contentDescription = next.label
+        // Nothing to draw (every part hidden): the legend alone stays, to turn one on again.
+        plot.visibility = if (next.bars.isEmpty()) View.GONE else View.VISIBLE
         drawLegend(next)
         say(chosen)
         plot.invalidate()
@@ -369,6 +408,7 @@ internal class StackedBarsView(
     private fun say(index: Int?) {
         val current = spec ?: return
         readout.text = index?.let { current.bars.getOrNull(it)?.words } ?: current.hint
+        readout.visibility = if (current.bars.isEmpty()) View.GONE else View.VISIBLE
         shownIndex = index
         plot.invalidate()
     }
@@ -384,6 +424,8 @@ internal class StackedBarsView(
         LegendRow.fill(scope, legend, current.series, current.hidden, current.toggles, onHiddenChange)
 
     private fun colourOf(key: String): Int = spec?.series?.firstOrNull { it.key == key }?.colour ?: colours.muted
+
+    private fun hatched(key: String): Boolean = spec?.series?.firstOrNull { it.key == key }?.hatched == true
 
     private inner class Plot : View(scope.context) {
         private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -453,7 +495,7 @@ internal class StackedBarsView(
             for (r in BarsLayout.rects(current.bars, current.hidden, w, h, gap, current.line)) {
                 fill.color = colourOf(r.series)
                 rect.set(r.left, r.top, r.right, r.bottom)
-                canvas.drawRoundRect(rect, 2f * density, 2f * density, fill)
+                if (hatched(r.series)) Hatch.draw(canvas, rect, fill.color, density, stroke) else canvas.drawRoundRect(rect, 2f * density, 2f * density, fill)
             }
             val zeroY = h - (extent.zero * h).toFloat()
             stroke.color = colours.muted

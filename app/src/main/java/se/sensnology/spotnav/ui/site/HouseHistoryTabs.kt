@@ -107,7 +107,7 @@ internal class HouseHistoryPanel(
     private val site: () -> String,
     /** The page's own house (today's), and where to ask for it again. */
     private val house: () -> House?
-) {
+) : HousePeriodBox {
     private val words get() = text.words
     private val view = if (boxKind == HouseBox.PRICE) ChartView.PRICE else ChartView.ENERGY
     private val priceTab = boxKind == HouseBox.PRICE
@@ -138,7 +138,7 @@ internal class HouseHistoryPanel(
     private var selectedBar: String? = null
 
     /** The box: a card like the Now box, with its heading, its figures and its picture. */
-    val panel: LinearLayout = LinearLayout(scope.context).apply {
+    override val panel: LinearLayout = LinearLayout(scope.context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(scope.dp(14), scope.dp(12), scope.dp(14), scope.dp(12))
         background = android.graphics.drawable.GradientDrawable().apply {
@@ -168,7 +168,7 @@ internal class HouseHistoryPanel(
     }
 
     /** The period changed (the page's shared picker): forget what was chosen on the old one. */
-    fun periodChanged() {
+    override fun periodChanged() {
         selectedHour = null
         selectedBar = null
     }
@@ -176,19 +176,19 @@ internal class HouseHistoryPanel(
     private fun hidden(): Set<String> = preferences.hiddenOr(site(), view.key, Series.hiddenByDefault(view))
 
     /** The tab came into view or its period changed: ask for what it draws. */
-    fun open(force: Boolean = false) {
+    override fun open(force: Boolean) {
         val choice = store.choice
         store.request(choice, needsHistory = needsHistory(choice), force = force)
     }
 
     /** Every minute while the tab is in view: the running period is read again, a past one is not. */
-    fun refresh() = open(force = store.choice.date == null)
+    override fun refresh() = open(force = store.choice.date == null)
 
     private fun needsHistory(choice: PeriodChoice): Boolean =
         priceTab || choice.period != HistoryPeriod.DAY || choice.date != null
 
     /** Draw the box; it is left out (and this says `false`) where there is nothing to show for the period. */
-    fun render(): Boolean {
+    override fun render(): Boolean {
         val now = house() ?: return false
         val choice = store.choice
         nothing = false

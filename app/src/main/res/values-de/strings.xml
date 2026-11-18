@@ -1294,4 +1294,164 @@
   <string name="card_heat_settings_night_end" formatted="false">Bis</string>
   <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
   <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
+  <!-- House details and Intäkt (step A4) -->
+  <string name="card_house_earn_total" formatted="false">Ertrag {amount}</string>
+  <string name="card_house_earn_none" formatted="false">Für diesen Zeitraum gibt es noch keine Ersparnis.</string>
+  <string name="card_house_earn_parts" formatted="false">Angezeigte Teile</string>
+  <string name="card_house_earn_label" formatted="false">Ertrag je Teil</string>
+  <string name="card_house_earn_part_battery" formatted="false">Arbitrage (Batterie)</string>
+  <string name="card_house_earn_part_own" formatted="false">Batterie, eigene Steuerung</string>
+  <string name="card_house_earn_part_would" formatted="false">SpotNav hätte gespart</string>
+  <string name="card_house_earn_part_heat" formatted="false">Wärme</string>
+  <string name="card_house_earn_part_car" formatted="false">Auto</string>
+  <string name="card_house_earn_bar_none" formatted="false">{when}: keine Zahl</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Stundenwerte werden 40 Tage aufbewahrt; dieser Tag hat nur seine Summen.</string>
+  <string name="card_house_earn_note_would_day" formatted="false">Mit der Batterie hätte SpotNav an diesem Tag {amount} gespart.</string>
+  <string name="card_house_earn_note_would_days" formatted="false">Was SpotNav gespart hätte, ist für {reviewed} von {days} Tagen bekannt; die übrigen zählen, wie sie liefen.</string>
+  <string name="card_house_earn_note_would_tonight" formatted="false">Was SpotNav mit der Batterie gespart hätte, wird heute Nacht berechnet.</string>
+  <string name="card_house_earn_note_would_none" formatted="false">Was SpotNav mit der Batterie gespart hätte, ist für diesen Zeitraum nicht bekannt.</string>
+  <string name="card_house_earn_note_car_hour" formatted="false">Die Ersparnis des Autos steht in der Stunde, in der das Laden begann.</string>
+  <string name="card_house_earn_note_car_day" formatted="false">Die Ersparnis des Autos zählt an dem Tag, an dem das Laden begann.</string>
+  <string name="card_house_earn_note_heat_day" formatted="false">Die Ersparnis der Wärme ist eine Schätzung für den ganzen Tag und hat keinen Stundenbalken.</string>
+  <string name="card_house_earn_note_heat" formatted="false">Die Ersparnis der Wärme ist eine Schätzung.</string>
+  <string name="card_hist_title_house" formatted="false">Verlauf des Hauses</string>
+  <string name="card_hist_legend_cost" formatted="false">Kosten</string>
+  <string name="card_hist_house_legend_saving" formatted="false">Von der Batterie gespart</string>
+  <string name="card_hist_house_legend_extra" formatted="false">Teurer mit der Batterie</string>
+  <string name="card_hist_house_bar_money" formatted="false">{when}: Kosten {cost}, ohne Batterie {without}, gespart {saving}</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when}: Kosten {cost}, ohne Batterie {without}, die Batterie machte es {extra} teurer</string>
+  <string name="card_hist_house_bar_unreviewed" formatted="false">{when}: Kosten {cost}, nicht ausgewertet</string>
+  <string name="card_hist_house_bar_hourly" formatted="false">{when}: Kosten {cost}, die Ersparnis wird je Tag gezeigt</string>
+  <string name="card_hist_house_bar_no_cost" formatted="false">{when}: {use} verbraucht, {bought} gekauft</string>
+  <string name="card_hist_house_money" formatted="false">Geld</string>
+  <string name="card_hist_house_cost" formatted="false">Stromkosten</string>
+  <string name="card_hist_house_cost_parts" formatted="false">{kwhIn} für {bought} gekauft, {kwhOut} für {sold} verkauft, zu den Preisen mit den heutigen Gebühren.</string>
+  <string name="card_hist_house_saved_battery" formatted="false">Die Batterie sparte</string>
+  <string name="card_hist_house_saved_sun" formatted="false">Die Sonne sparte</string>
+  <string name="card_hist_house_saved_both" formatted="false">Sonne und Batterie sparten</string>
+  <string name="card_hist_house_saved_days_one" formatted="false">{figure} an {days} Tag</string>
+  <string name="card_hist_house_saved_days_other" formatted="false">{figure} an {days} Tagen</string>
+  <string name="card_hist_house_spotnav" formatted="false">SpotNav hat gespart</string>
+  <string name="card_hist_house_spotnav_total" formatted="false">Insgesamt</string>
+  <string name="card_hist_house_spotnav_battery" formatted="false">Batterie</string>
+  <string name="card_hist_house_spotnav_car" formatted="false">Auto</string>
+  <string name="card_hist_house_spotnav_heat" formatted="false">Wärme (geschätzt)</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Jeder Teil gegen seinen eigenen Vergleich, siehe „So wird gerechnet“ unten. Ein Teil, den SpotNav nicht gesteuert hat, bleibt außen vor.</string>
+  <string name="card_hist_house_no_price_source" formatted="false">Für diesen Standort ist kein Strompreis eingerichtet, daher keine Kosten.</string>
+  <string name="card_hist_house_baselines_note" formatted="false">Verglichen mit denselben Tagen ohne Batterie und ohne Sonne.</string>
+  <string name="card_hist_house_reviewed" formatted="false">Die Ersparnis wurde an {days} der {total} Tage des Zeitraums gemessen.</string>
+  <string name="card_hist_house_archived" formatted="false">{days} davon aus dem Tagesarchiv (mit spotnav.export_day exportierte Tage).</string>
+  <string name="card_hist_house_no_review" formatted="false">Keine Batterieprüfung für diesen Zeitraum. Die nächtlichen Prüfungen werden 30 Tage aufbewahrt; ein älterer Tag nur, wenn er ins Tagesarchiv exportiert wurde.</string>
+  <string name="card_hist_house_modes" formatted="false">Die Modi der Batterie gegen Eigenverbrauch</string>
+  <string name="card_hist_house_modes_note" formatted="false">Jeder Modus auf derselben gemessenen Last und Sonne geplant, und was die Batterie wirklich tat, gegen reinen Eigenverbrauch; über die geprüften Tage summiert.</string>
+  <string name="card_hist_house_days" formatted="false">Tag für Tag</string>
+  <string name="card_hist_house_col_battery" formatted="false">Batterie</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
+  <string name="card_hist_house_col_own" formatted="false">Eigen</string>
+  <string name="card_hist_house_col_share" formatted="false">Vom Perfekten</string>
+  <string name="card_hist_house_share_partial" formatted="false">unvollständig</string>
+  <string name="card_hist_house_share_small" formatted="false">zu klein</string>
+  <string name="card_hist_house_days_note" formatted="false">Batterie: gegen keine Batterie. Plan: SpotNavs Plan, eigen: die eigene Art der Batterie, beide gegen Eigenverbrauch.</string>
+  <string name="card_hist_house_footnote" formatted="false">Die Werte zeigen, was gemessen wurde und was die Pläne getan hätten.</string>
+  <string name="card_hist_house_how" formatted="false">So wird gerechnet</string>
+  <string name="card_hist_house_perfect_differs" formatted="false">{name} sparte hier {own}, während „Die Batterie sparte“ unter Geld {battery} zeigt. Beide vergleichen mit keiner Batterie, aber hier zählen nur ganze Tage ({days}) und was um Mitternacht noch in der Batterie war; unter Geld zählen alle gemessenen Tage ({batteryDays}) und nicht, was übrig war.</string>
+  <string name="card_hist_forecast_heading" formatted="false">Prognosefehler</string>
+  <string name="card_hist_forecast_house" formatted="false">Hauslast</string>
+  <string name="card_hist_forecast_sun" formatted="false">Sonne</string>
+  <string name="card_hist_forecast_sun_corrected" formatted="false">Sonne, korrigiert</string>
+  <string name="card_hist_forecast_soc" formatted="false">Batteriestand</string>
+  <string name="card_hist_forecast_note" formatted="false">Der Mittelwert der mittleren Fehler jedes geprüften Tages (die Prüfungen werden 30 Tage aufbewahrt).</string>
+  <string name="card_hist_forecast_none" formatted="false">In diesem Zeitraum wurde keine Prognose geprüft (die Prüfungen werden 30 Tage aufbewahrt).</string>
+  <string name="card_house_compare_in_force" formatted="false">gewählt</string>
+  <string name="card_house_compare_none" formatted="false">noch kein voller Tag</string>
+  <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
+  <string name="card_house_days_date" formatted="false">Tag</string>
+  <string name="card_perfect_heading_period" formatted="false">Anteil am Perfekten</string>
+  <string name="card_perfect_headline" formatted="false">{own} {ownShare} des Perfekten · {plan} {planShare}</string>
+  <string name="card_perfect_headline_one" formatted="false">{name} {share} des Perfekten</string>
+  <string name="card_perfect_explain" formatted="false">Perfekt: das Bestmögliche im Nachhinein, mit denselben Regeln.</string>
+  <string name="card_perfect_explain_sell" formatted="false">Perfekt: das Bestmögliche im Nachhinein, darf verkaufen (Regeln von {mode}).</string>
+  <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: das Bestmögliche im Nachhinein, ohne Verkauf (nichts ging ins Netz).</string>
+  <string name="card_perfect_midnight" formatted="false">Gerechnet mit dem, was um Mitternacht noch im Akku war.</string>
+  <string name="card_perfect_provisional_one" formatted="false">Was um Mitternacht übrig war, zählt für {days} der Tage zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
+  <string name="card_perfect_provisional_other" formatted="false">Was um Mitternacht übrig war, zählt für {days} der Tage zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
+  <string name="card_perfect_provisional_day" formatted="false">Was um Mitternacht übrig war, zählt zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: außerhalb von 0–100 %, an der nächsten Grenze gezeigt (ein Verlust als 0 %).</string>
+  <string name="card_perfect_nothing" formatted="false">zu kleiner Unterschied zum Vergleichen</string>
+  <string name="card_perfect_partial_day" formatted="false">Unvollständiger Tag: unter 90 % des Tages gemessen, daher kein Vergleich.</string>
+  <string name="card_perfect_partial_one" formatted="false">{days} unvollständiger Tag wird nicht mitgezählt.</string>
+  <string name="card_perfect_partial_other" formatted="false">{days} unvollständige Tage werden nicht mitgezählt.</string>
+  <string name="card_perfect_partial_only_one" formatted="false">Nur {days} unvollständiger Tag: noch nichts zu vergleichen.</string>
+  <string name="card_perfect_partial_only_other" formatted="false">Nur {days} unvollständige Tage: noch nichts zu vergleichen.</string>
+  <string name="card_perfect_money_saved" formatted="false">Gespart</string>
+  <string name="card_perfect_money_perfect" formatted="false">Perfekt</string>
+  <string name="card_perfect_money_note" formatted="false">Jede Variante gegen dieselben Tage ohne Batterie. Was um Mitternacht noch in der Batterie war, zählt zum mittleren Kaufpreis des nächsten Tages, abzüglich der Verluste der Batterie. Ein Anteil setzt voraus, dass der perfekte Plan mindestens {amount} am Tag spart.</string>
+  <string name="card_perfect_work_cycles" formatted="false">Zyklen</string>
+  <string name="card_perfect_work_switches" formatted="false">Wechsel</string>
+  <string name="card_perfect_work_from_grid" formatted="false">Aus dem Netz</string>
+  <string name="card_perfect_work_to_grid" formatted="false">Ins Netz</string>
+  <string name="card_perfect_work_note" formatted="false">Zyklen: entladene kWh geteilt durch die Kapazität des Akkus. Wechsel: zwischen Laden und Entladen. Aus dem und ins Netz: kWh, die der Akku aus dem Netz lud und dorthin verkaufte.</string>
+  <string name="card_perfect_temperature_one" formatted="false">Akkuzellen: Mittel {mean}, höchstens {max}, {minutes} min über 30 °C ({days} Tag).</string>
+  <string name="card_perfect_temperature_other" formatted="false">Akkuzellen: Mittel {mean}, höchstens {max}, {minutes} min über 30 °C ({days} Tage).</string>
+  <string name="card_house_saving_details_head" formatted="false">Was SpotNav gespart hat, wird verglichen mit:</string>
+  <string name="card_house_saving_details_battery" formatted="false">Batterie: was sie verdient hat, während SpotNav sie gesteuert hat.</string>
+  <string name="card_house_saving_details_battery_own" formatted="false">Batterie: sie lief unter eigener Steuerung, was sie verdient hat, ist also ihr eigenes und zählt nicht als Ersparnis von SpotNav.</string>
+  <string name="card_house_saving_details_car" formatted="false">Auto: sofortiges Laden beim Einstecken, mit derselben Leistung und allen Gebühren. Nur die kWh des Autos aus dem Netz zählen; eine Ladung, die jemand selbst gestartet hat, zählt als 0.</string>
+  <string name="card_house_saving_details_car_since" formatted="false">Das Auto wird ab dem {date} gezählt.</string>
+  <string name="card_house_saving_details_heat" formatted="false">Wärme (geschätzt): was die eigenen Absenkungen von SpotNav zu den Preisen der Stunden eingespart haben, abzüglich der danach zurückgekauften Wärme.</string>
+  <string name="card_house_flow_rule" formatted="false">Die Zähler sagen nicht, welche Quelle was versorgt hat: Jede Stunde geht die Sonne zuerst ins Haus, dann ins Auto, in die Batterie und ins Netz; die Batterie versorgt das Haus vor dem Netz.</string>
+  <string name="card_house_flow_rule_quarter" formatted="false">Die Zähler sagen nicht, welche Quelle was versorgt hat: Jede Viertelstunde geht die Sonne zuerst ins Haus, dann ins Auto, in die Batterie und ins Netz; die Batterie versorgt das Haus vor dem Netz.</string>
+  <string name="card_house_flow_car_part" formatted="false">Das Auto war nicht jede Stunde lesbar; in diesen Stunden zählt es zum Haus.</string>
+  <string name="card_house_flow_heat_rule" formatted="false">Wärme ist der eigene Zähler der Wärmepumpe und die eigenen Sensoren der Heizzonen; das Haus ist der Rest.</string>
+  <string name="card_house_flow_heat_part" formatted="false">Der Zähler der Wärmepumpe war nicht jede Stunde lesbar; in diesen Stunden zählt sie zum Haus.</string>
+  <string name="card_house_sources_heading" formatted="false">Quellen</string>
+  <string name="card_house_sources_weather" formatted="false">Wetter: {name}</string>
+  <string name="card_house_sources_weather_no_forecast" formatted="false">Wetter: {name}, ohne Stundenprognose</string>
+  <string name="card_house_sources_weather_none" formatted="false">Wetter: keines gefunden</string>
+  <string name="card_house_sources_outdoor_sensor" formatted="false">Außentemperatur: {name}</string>
+  <string name="card_house_sources_outdoor_weather" formatted="false">Außentemperatur: aus dem Wetter</string>
+  <string name="card_house_sources_outdoor_none" formatted="false">Außentemperatur: keine</string>
+  <string name="card_house_sources_holidays" formatted="false">Feiertage: {name}</string>
+  <string name="card_house_sources_holidays_none" formatted="false">Feiertage: nur Werktag und Wochenende</string>
+  <string name="card_house_sources_temperature_on" formatted="false">Temperatur in der Prognose: an</string>
+  <string name="card_house_sources_temperature_off" formatted="false">Temperatur in der Prognose: aus ({reason})</string>
+  <string name="card_house_temperature_too_few" formatted="false">noch zu wenige Stunden mit Temperatur</string>
+  <string name="card_house_temperature_too_little" formatted="false">sie erklärt zu wenig der Last</string>
+  <string name="card_house_sources_solar" formatted="false">Solarprognose: {names}</string>
+  <string name="card_house_sources_solar_learning" formatted="false">Solarprognose: {names} · Korrektur lernt, {left}</string>
+  <string name="card_house_sources_heat_from_dashboard" formatted="false">Wärmepumpenzähler: {name} (Energie-Dashboard)</string>
+  <string name="card_house_sources_heat_from_integration" formatted="false">Wärmepumpenzähler: {name} (Integration der Wärmepumpe)</string>
+  <string name="card_house_sources_heat_from_setting" formatted="false">Wärmepumpenzähler: {name} (in den Einstellungen gewählt)</string>
+  <string name="card_house_sources_heat_split" formatted="false">Hausprognose als Wärme plus Rest: {split} gegen {whole} für das Ganze ({hours} h, nur angezeigt)</string>
+  <string name="card_house_sources_battery" formatted="false">Batterie: {name}</string>
+  <string name="card_house_sources_stored" formatted="false">Jetzt gespeichert: {kwh} zu durchschnittlich {cost}</string>
+  <string name="card_house_sources_stored_estimated" formatted="false">Jetzt gespeichert: {kwh} zu durchschnittlich {cost} (vom Start geschätzt, bis diese Energie verbraucht ist)</string>
+  <string name="card_house_note_self_managed" formatted="false">Die Batterie läuft mit ihrem eigenen Optimierer. SpotNav plant daneben nur zum Vergleich und schreibt nichts an sie.</string>
+  <string name="card_house_note_shadow" formatted="false">Test: SpotNav plant die Batterie, steuert sie aber noch nicht.</string>
+  <string name="card_house_note_controlling" formatted="false">SpotNav steuert die Batterie nach dem Plan.</string>
+  <string name="card_house_note_assumed" formatted="false">Bisher angenommen: {list}.</string>
+  <string name="card_house_note_counts_battery" formatted="false">Die Last des Hauses wird als Netz minus Ladegeräte gemessen; deckt die Batterie das Haus, wirkt sie kleiner.</string>
+  <string name="card_house_estimate_min_soc_assumed" formatted="false">der niedrigste Ladestand der Batterie</string>
+  <string name="card_house_estimate_round_trip_assumed" formatted="false">der Wirkungsgrad der Batterie</string>
+  <string name="card_house_estimate_solar_in_house_history" formatted="false">die Sonne in der Hausgeschichte</string>
+  <string name="card_house_estimate_battery_mode_unknown" formatted="false">der Modus (unbekannt, Ausgewogen genutzt)</string>
+  <string name="card_house_estimate_wear_currency_unknown" formatted="false">die Verschleißkosten der Batterie</string>
+  <string name="card_house_estimate_no_solar_forecast" formatted="false">keine Sonne</string>
+  <string name="card_house_estimate_horizon_cut_by_forecast" formatted="false">ein von der Prognose verkürzter Horizont</string>
+  <string name="card_house_estimate_capacity_from_ah" formatted="false">die Größe (aus Amperestunden errechnet)</string>
+  <string name="card_house_estimate_rated_from_current" formatted="false">die Nennleistung (aus den Stromgrenzen errechnet)</string>
+  <string name="card_house_estimate_capacity_learned" formatted="false">die Größe (aus der Nutzung gelernt)</string>
+  <string name="card_house_estimate_rated_learned" formatted="false">die Nennleistung (der bisher höchste beobachtete Wert)</string>
+  <string name="card_history_savings_plug_in" formatted="false">SpotNav hat {amount} gegenüber sofortigem Laden beim Einstecken gespart</string>
+  <string name="card_history_savings_plug_in_extra" formatted="false">{amount} mehr als sofortiges Laden beim Einstecken</string>
+  <string name="card_history_savings_plug_in_note" formatted="false">SpotNav hat gespart: dieselben kWh aus dem Netz, hätte das Auto sofort beim Einstecken geladen, mit Gebühren. Eine Ladung, die jemand selbst gestartet hat, zählt als 0, und kWh aus der Hausbatterie zählen zur Batterie. Dieselbe Zahl wie auf der Hauskarte.</string>
+  <string name="card_house_details_open" formatted="false">Details</string>
+  <!-- Heat details cost bars (step A4) -->
+  <string name="card_hist_heat_chart" formatted="false">Kosten der Wärmepumpe</string>
+  <string name="card_hist_heat_legend_saving" formatted="false">Hätte gespart</string>
+  <string name="card_hist_heat_bar_saving" formatted="false">hätte {saving} gespart</string>
+  <string name="card_hist_heat_bar_zones" formatted="false">Zonen {kwh}</string>
+  <string name="card_hist_heat_bar_hot_water" formatted="false">Warmwasser {kwh}</string>
+  <string name="card_hist_heat_bar_outdoor" formatted="false">draußen {temp}</string>
+  <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} Gradtage</string>
 </resources>

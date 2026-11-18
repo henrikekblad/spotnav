@@ -1,11 +1,29 @@
 package se.sensnology.spotnav.ui.site
 
+import android.view.View
 import se.sensnology.spotnav.ha.house.House
 
 /** The period boxes the house page stacks under the Now box and its picker, in the card's order; [tabKey] names the box's heading. */
 internal enum class HouseBox(val tabKey: String, val chart: String) {
     GRAPH("graph", "house.graph"),
+    EARN("earn", "house.earn"),
     PRICE("price", "house.price")
+}
+
+/** What the page asks of a period box: read for the period, say it changed, draw (`false`: nothing to show, left out). */
+internal interface HousePeriodBox {
+    val panel: View
+
+    /** The box came into view or its period changed: ask for what it draws. */
+    fun open(force: Boolean = false)
+
+    /** Every minute while in view: the running period is read again, a past one is not. */
+    fun refresh()
+
+    /** The shared picker moved: forget what was chosen on the old period. */
+    fun periodChanged()
+
+    fun render(): Boolean
 }
 
 /**
@@ -29,5 +47,7 @@ internal object HouseBoxes {
     private fun has(house: House, box: HouseBox): Boolean = when (box) {
         HouseBox.PRICE -> house.battery != null || house.hours.any { it.buy != null || it.sell != null }
         HouseBox.GRAPH -> true
+        HouseBox.EARN -> house.battery != null || house.heat?.status == "found" || house.saving != null ||
+            house.energyFlow?.nodes?.any { it.role == "car" } == true
     }
 }

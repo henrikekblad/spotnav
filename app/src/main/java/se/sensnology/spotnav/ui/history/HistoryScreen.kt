@@ -341,10 +341,14 @@ internal class HistoryScreen(shell: ScreenShell) : ScreenPart(shell) {
         readRow(card.body, t(R.string.history_average_price), figures.price(summary.averagePriceMinorPerKwh))
         readRow(card.body, t(R.string.history_sessions), summary.sessions.toString())
         readRow(card.body, t(R.string.history_solar), figures.share(summary.solarShare))
-        readRow(card.body, t(R.string.history_saving), figures.saving(summary.savings))
+        // With SpotNav's saving against charging at once on plug-in (the house card's figure for the car) that is the
+        // saving; without it (an older Home Assistant, a charger in no site) the estimate against the day's average price.
+        val plugIn = summary.plugIn
+        if (plugIn == null) readRow(card.body, t(R.string.history_saving), figures.saving(summary.savings))
+        else HistoryPlugIn.sentence(cardWords(), plugIn, figures)?.let { card.body.addView(note(it)) }
         val notes = listOfNotNull(
             if (summary.estimated) t(R.string.history_estimated_note) else null,
-            if (summary.savings != null) t(R.string.history_saving_note) else null
+            if (plugIn != null) cardWords().say("history.savings.plugInNote") else if (summary.savings != null) t(R.string.history_saving_note) else null
         )
         if (notes.isNotEmpty()) card.body.addView(TextView(context).apply {
             text = notes.joinToString(" ")

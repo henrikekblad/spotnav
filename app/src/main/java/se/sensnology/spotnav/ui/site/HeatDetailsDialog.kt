@@ -105,6 +105,7 @@ internal class HeatDetailsDialog(
                 when (row) {
                     is DetailRow.Figure -> results.addView(figure(row), wide().apply { topMargin = scope.dp(2) })
                     is DetailRow.Note -> results.addView(note(row.text), wide().apply { topMargin = scope.dp(4) })
+                    is DetailRow.Bars -> results.addView(costBars(row), wide().apply { topMargin = scope.dp(4) })
                     is DetailRow.Trend -> {
                         results.addView(note(row.title), wide().apply { topMargin = scope.dp(8) })
                         results.addView(trend(row), wide().apply { topMargin = scope.dp(4) })
@@ -113,6 +114,18 @@ internal class HeatDetailsDialog(
             }
         }
         results.addView(note(HeatDetailsModel.footnote(text)), wide().apply { topMargin = scope.dp(14) })
+    }
+
+    /** The cost bars: the filled cost in the heat's colour, the plan's shadow saving hatched on top. */
+    private fun costBars(row: DetailRow.Bars) = StackedBarsView(scope, colours).apply {
+        val heat = colours.of(Tone.HEAT)
+        show(
+            BarsSpec(
+                label = row.label, bars = row.bars, series = row.series.map { BarSeries(it.key, it.label, heat, hatched = it.hatched) }
+                    .ifEmpty { listOf(BarSeries(HeatDetailsModel.COST, "", heat)) },
+                scale = row.scale, hint = row.hint, toggles = false
+            )
+        )
     }
 
     private fun trend(row: DetailRow.Trend) = StackedBarsView(scope, colours, plotHeightDp = 110).apply {

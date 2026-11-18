@@ -1294,4 +1294,164 @@
   <string name="card_heat_settings_night_end" formatted="false">Til</string>
   <string name="site_settings_in_home_assistant">Av og på for styringen og valget av sensorer, måler og styringsvei endres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeinnstillingene kunne ikke leses.</string>
+  <!-- House details and Intäkt (step A4) -->
+  <string name="card_house_earn_total" formatted="false">Inntekt {amount}</string>
+  <string name="card_house_earn_none" formatted="false">Ingen besparelse å vise for perioden ennå.</string>
+  <string name="card_house_earn_parts" formatted="false">Deler som vises</string>
+  <string name="card_house_earn_label" formatted="false">Inntekt per del</string>
+  <string name="card_house_earn_part_battery" formatted="false">Arbitrasje (batteri)</string>
+  <string name="card_house_earn_part_own" formatted="false">Batteri, egen styring</string>
+  <string name="card_house_earn_part_would" formatted="false">SpotNav ville ha spart</string>
+  <string name="card_house_earn_part_heat" formatted="false">Varme</string>
+  <string name="card_house_earn_part_car" formatted="false">Bil</string>
+  <string name="card_house_earn_bar_none" formatted="false">{when}: ingen tall</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Timeverdier lagres i 40 dager; denne dagen har bare summene sine.</string>
+  <string name="card_house_earn_note_would_day" formatted="false">På batteriet ville SpotNav ha spart {amount} denne dagen.</string>
+  <string name="card_house_earn_note_would_days" formatted="false">Hva SpotNav ville ha spart er kjent for {reviewed} av {days} dager; resten regnes slik de gikk.</string>
+  <string name="card_house_earn_note_would_tonight" formatted="false">Hva SpotNav ville ha spart på batteriet regnes ut i natt.</string>
+  <string name="card_house_earn_note_would_none" formatted="false">Hva SpotNav ville ha spart på batteriet er ikke kjent for perioden.</string>
+  <string name="card_house_earn_note_car_hour" formatted="false">Bilens besparelse ligger på timen da ladingen startet.</string>
+  <string name="card_house_earn_note_car_day" formatted="false">Bilens besparelse regnes på dagen da ladingen startet.</string>
+  <string name="card_house_earn_note_heat_day" formatted="false">Varmens besparelse er et anslag for hele dagen og tegnes ikke per time.</string>
+  <string name="card_house_earn_note_heat" formatted="false">Varmens besparelse er et anslag.</string>
+  <string name="card_hist_title_house" formatted="false">Husets historikk</string>
+  <string name="card_hist_legend_cost" formatted="false">Kostnad</string>
+  <string name="card_hist_house_legend_saving" formatted="false">Spart av batteriet</string>
+  <string name="card_hist_house_legend_extra" formatted="false">Dyrere med batteriet</string>
+  <string name="card_hist_house_bar_money" formatted="false">{when}: kostnad {cost}, uten batteri {without}, spart {saving}</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when}: kostnad {cost}, uten batteri {without}, batteriet gjorde det {extra} dyrere</string>
+  <string name="card_hist_house_bar_unreviewed" formatted="false">{when}: kostnad {cost}, ikke vurdert</string>
+  <string name="card_hist_house_bar_hourly" formatted="false">{when}: kostnad {cost}, besparelsen vises per døgn</string>
+  <string name="card_hist_house_bar_no_cost" formatted="false">{when}: brukte {use}, kjøpte {bought}</string>
+  <string name="card_hist_house_money" formatted="false">Penger</string>
+  <string name="card_hist_house_cost" formatted="false">Strømkostnad</string>
+  <string name="card_hist_house_cost_parts" formatted="false">Kjøpte {kwhIn} for {bought}, solgte {kwhOut} for {sold}, til prisene med dagens avgifter.</string>
+  <string name="card_hist_house_saved_battery" formatted="false">Batteriet sparte</string>
+  <string name="card_hist_house_saved_sun" formatted="false">Solen sparte</string>
+  <string name="card_hist_house_saved_both" formatted="false">Sol og batteri sparte</string>
+  <string name="card_hist_house_saved_days_one" formatted="false">{figure} på {days} døgn</string>
+  <string name="card_hist_house_saved_days_other" formatted="false">{figure} på {days} døgn</string>
+  <string name="card_hist_house_spotnav" formatted="false">SpotNav sparte</string>
+  <string name="card_hist_house_spotnav_total" formatted="false">Totalt</string>
+  <string name="card_hist_house_spotnav_battery" formatted="false">Batteri</string>
+  <string name="card_hist_house_spotnav_car" formatted="false">Bil</string>
+  <string name="card_hist_house_spotnav_heat" formatted="false">Varme (anslått)</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Hver del mot sin egen sammenligning, se Slik regnes det nedenfor. En del SpotNav ikke styrte, er utelatt.</string>
+  <string name="card_hist_house_no_price_source" formatted="false">Ingen strømpris er satt opp for anlegget, så ingen kostnad vises.</string>
+  <string name="card_hist_house_baselines_note" formatted="false">Sammenlignet med de samme døgnene uten batteri og uten sol.</string>
+  <string name="card_hist_house_reviewed" formatted="false">Besparelsen er målt for {days} av periodens {total} døgn.</string>
+  <string name="card_hist_house_archived" formatted="false">{days} av dem fra dagsarkivet (døgn eksportert med spotnav.export_day).</string>
+  <string name="card_hist_house_no_review" formatted="false">Ingen batterigjennomgang for perioden. Nattens gjennomganger lagres i 30 døgn; en eldre dag bare hvis den ble eksportert til dagsarkivet.</string>
+  <string name="card_hist_house_modes" formatted="false">Batteriets moduser mot egenforbruk</string>
+  <string name="card_hist_house_modes_note" formatted="false">Hver modus planlagt på samme målte last og sol, og hva batteriet faktisk gjorde, mot rent egenforbruk; summert over de gjennomgåtte døgnene.</string>
+  <string name="card_hist_house_days" formatted="false">Døgn for døgn</string>
+  <string name="card_hist_house_col_battery" formatted="false">Batteri</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
+  <string name="card_hist_house_col_own" formatted="false">Eget</string>
+  <string name="card_hist_house_col_share" formatted="false">Av perfekt</string>
+  <string name="card_hist_house_share_partial" formatted="false">ufullstendig døgn</string>
+  <string name="card_hist_house_share_small" formatted="false">for liten forskjell</string>
+  <string name="card_hist_house_days_note" formatted="false">Batteri: mot intet batteri. Plan: SpotNavs plan, eget: batteriets egen måte, begge mot egenforbruk.</string>
+  <string name="card_hist_house_footnote" formatted="false">Tallene viser hva som ble målt og hva planene ville ha gjort.</string>
+  <string name="card_hist_house_how" formatted="false">Slik regnes det</string>
+  <string name="card_hist_house_perfect_differs" formatted="false">{name} sparte {own} her, mens Batteriet sparte under Penger viser {battery}. Begge er mot intet batteri, men her regnes bare hele døgn ({days}) og det som var igjen i batteriet ved midnatt; under Penger regnes alle målte døgn ({batteryDays}) og ikke det som var igjen.</string>
+  <string name="card_hist_forecast_heading" formatted="false">Prognosefeil</string>
+  <string name="card_hist_forecast_house" formatted="false">Husets last</string>
+  <string name="card_hist_forecast_sun" formatted="false">Sol</string>
+  <string name="card_hist_forecast_sun_corrected" formatted="false">Sol, korrigert</string>
+  <string name="card_hist_forecast_soc" formatted="false">Batterinivå</string>
+  <string name="card_hist_forecast_note" formatted="false">Gjennomsnittet av hvert gjennomgått døgns middelfeil (gjennomgangene lagres i 30 døgn).</string>
+  <string name="card_hist_forecast_none" formatted="false">Ingen prognose ble gjennomgått i perioden (gjennomgangene lagres i 30 døgn).</string>
+  <string name="card_house_compare_in_force" formatted="false">valgt</string>
+  <string name="card_house_compare_none" formatted="false">ingen hele døgn</string>
+  <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
+  <string name="card_house_days_date" formatted="false">Dag</string>
+  <string name="card_perfect_heading_period" formatted="false">Andel av perfekt</string>
+  <string name="card_perfect_headline" formatted="false">{own} {ownShare} av perfekt · {plan} {planShare}</string>
+  <string name="card_perfect_headline_one" formatted="false">{name} {share} av perfekt</string>
+  <string name="card_perfect_explain" formatted="false">Perfekt: det beste mulige i ettertid, med de samme reglene.</string>
+  <string name="card_perfect_explain_sell" formatted="false">Perfekt: det beste mulige i ettertid, kan selge ({mode}-regler).</string>
+  <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: det beste mulige i ettertid, uten salg (ingenting gikk ut på nettet).</string>
+  <string name="card_perfect_midnight" formatted="false">Regnet med det som var igjen i batteriet ved midnatt.</string>
+  <string name="card_perfect_provisional_one" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris for {days} av døgnene, til neste døgns priser finnes.</string>
+  <string name="card_perfect_provisional_other" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris for {days} av døgnene, til neste døgns priser finnes.</string>
+  <string name="card_perfect_provisional_day" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris til neste døgns priser finnes.</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: utenfor 0–100 %, vises ved nærmeste grense (et tap som 0 %).</string>
+  <string name="card_perfect_nothing" formatted="false">for liten forskjell å sammenligne</string>
+  <string name="card_perfect_partial_day" formatted="false">Ufullstendig døgn: under 90 % av døgnet ble målt, så det sammenlignes ikke.</string>
+  <string name="card_perfect_partial_one" formatted="false">{days} ufullstendig døgn regnes ikke med.</string>
+  <string name="card_perfect_partial_other" formatted="false">{days} ufullstendige døgn regnes ikke med.</string>
+  <string name="card_perfect_partial_only_one" formatted="false">Bare {days} ufullstendig døgn: ingenting å sammenligne ennå.</string>
+  <string name="card_perfect_partial_only_other" formatted="false">Bare {days} ufullstendige døgn: ingenting å sammenligne ennå.</string>
+  <string name="card_perfect_money_saved" formatted="false">Spart</string>
+  <string name="card_perfect_money_perfect" formatted="false">Perfekt</string>
+  <string name="card_perfect_money_note" formatted="false">Hver måte mot de samme døgnene uten batteri. Det som var igjen i batteriet ved midnatt, regnes til neste døgns gjennomsnittlige kjøpspris minus batteriets tap. En andel krever at den perfekte planen sparer minst {amount} per døgn.</string>
+  <string name="card_perfect_work_cycles" formatted="false">Sykluser</string>
+  <string name="card_perfect_work_switches" formatted="false">Vekslinger</string>
+  <string name="card_perfect_work_from_grid" formatted="false">Fra nettet</string>
+  <string name="card_perfect_work_to_grid" formatted="false">Til nettet</string>
+  <string name="card_perfect_work_note" formatted="false">Sykluser: utladede kWh delt på batteriets kapasitet. Vekslinger: mellom lading og utlading. Fra og til nettet: kWh batteriet ladet fra nettet og solgte til det.</string>
+  <string name="card_perfect_temperature_one" formatted="false">Battericeller: snitt {mean}, høyest {max}, {minutes} min over 30 °C ({days} døgn).</string>
+  <string name="card_perfect_temperature_other" formatted="false">Battericeller: snitt {mean}, høyest {max}, {minutes} min over 30 °C ({days} døgn).</string>
+  <string name="card_house_saving_details_head" formatted="false">Det SpotNav sparte, sammenlignes med:</string>
+  <string name="card_house_saving_details_battery" formatted="false">Batteri: det batteriet tjente mens SpotNav styrte det.</string>
+  <string name="card_house_saving_details_battery_own" formatted="false">Batteri: det gikk på egen styring, så det det tjente er dets eget og regnes ikke som SpotNavs.</string>
+  <string name="card_house_saving_details_car" formatted="false">Bil: å lade med en gang ved tilkobling, med samme effekt og alle avgifter. Bare bilens kWh fra strømnettet teller; en lading noen startet selv teller som 0.</string>
+  <string name="card_house_saving_details_car_since" formatted="false">Bilen regnes fra {date}.</string>
+  <string name="card_house_saving_details_heat" formatted="false">Varme (anslått): det SpotNavs egne senkinger tok bort til timenes pris, minus varmen som ble kjøpt tilbake etterpå.</string>
+  <string name="card_house_flow_rule" formatted="false">Målerne sier ikke hvilken kilde som gikk til hva: hver time går solen først til huset, så bilen, batteriet og nettet; batteriet dekker huset før nettet.</string>
+  <string name="card_house_flow_rule_quarter" formatted="false">Målerne sier ikke hvilken kilde som gikk til hva: hvert kvarter går solen først til huset, så bilen, batteriet og nettet; batteriet dekker huset før nettet.</string>
+  <string name="card_house_flow_car_part" formatted="false">Bilen kunne ikke leses hver time; de timene regnes den inn i huset.</string>
+  <string name="card_house_flow_heat_rule" formatted="false">Varme er varmepumpens egen måler og varmesonenes egne sensorer; huset er det som blir igjen.</string>
+  <string name="card_house_flow_heat_part" formatted="false">Varmepumpens måler kunne ikke leses hver time; de timene regnes den med i huset.</string>
+  <string name="card_house_sources_heading" formatted="false">Kilder</string>
+  <string name="card_house_sources_weather" formatted="false">Vær: {name}</string>
+  <string name="card_house_sources_weather_no_forecast" formatted="false">Vær: {name}, uten timeprognose</string>
+  <string name="card_house_sources_weather_none" formatted="false">Vær: ingen funnet</string>
+  <string name="card_house_sources_outdoor_sensor" formatted="false">Utetemperatur: {name}</string>
+  <string name="card_house_sources_outdoor_weather" formatted="false">Utetemperatur: fra været</string>
+  <string name="card_house_sources_outdoor_none" formatted="false">Utetemperatur: ingen</string>
+  <string name="card_house_sources_holidays" formatted="false">Helligdager: {name}</string>
+  <string name="card_house_sources_holidays_none" formatted="false">Helligdager: bare hverdag og helg</string>
+  <string name="card_house_sources_temperature_on" formatted="false">Temperatur i prognosen: på</string>
+  <string name="card_house_sources_temperature_off" formatted="false">Temperatur i prognosen: av ({reason})</string>
+  <string name="card_house_temperature_too_few" formatted="false">for få timer med temperatur ennå</string>
+  <string name="card_house_temperature_too_little" formatted="false">den forklarer for lite av lasten</string>
+  <string name="card_house_sources_solar" formatted="false">Solprognose: {names}</string>
+  <string name="card_house_sources_solar_learning" formatted="false">Solprognose: {names} · korreksjonen lærer, {left}</string>
+  <string name="card_house_sources_heat_from_dashboard" formatted="false">Varmepumpens måler: {name} (Energi-dashbordet)</string>
+  <string name="card_house_sources_heat_from_integration" formatted="false">Varmepumpens måler: {name} (varmepumpens integrasjon)</string>
+  <string name="card_house_sources_heat_from_setting" formatted="false">Varmepumpens måler: {name} (valgt i Innstillinger)</string>
+  <string name="card_house_sources_heat_split" formatted="false">Husprognose som varme pluss resten: {split} mot {whole} for helheten ({hours} t, bare vist)</string>
+  <string name="card_house_sources_battery" formatted="false">Batteri: {name}</string>
+  <string name="card_house_sources_stored" formatted="false">Lagret nå: {kwh} à {cost} i snitt</string>
+  <string name="card_house_sources_stored_estimated" formatted="false">Lagret nå: {kwh} à {cost} i snitt (anslått fra start til den energien er brukt)</string>
+  <string name="card_house_note_self_managed" formatted="false">Batteriet styres av sin egen optimerer. SpotNav planlegger ved siden av bare for å sammenligne og skriver ingenting til det.</string>
+  <string name="card_house_note_shadow" formatted="false">Test: SpotNav planlegger batteriet, men styrer det ikke ennå.</string>
+  <string name="card_house_note_controlling" formatted="false">SpotNav styrer batteriet etter planen.</string>
+  <string name="card_house_note_assumed" formatted="false">Antatt så langt: {list}.</string>
+  <string name="card_house_note_counts_battery" formatted="false">Husets last måles som nettet minus laderne, så når batteriet dekker huset, ser lasten mindre ut.</string>
+  <string name="card_house_estimate_min_soc_assumed" formatted="false">batteriets laveste nivå</string>
+  <string name="card_house_estimate_round_trip_assumed" formatted="false">batteriets virkningsgrad</string>
+  <string name="card_house_estimate_solar_in_house_history" formatted="false">solen i husets historikk</string>
+  <string name="card_house_estimate_battery_mode_unknown" formatted="false">modusen (ukjent, Balansert brukes)</string>
+  <string name="card_house_estimate_wear_currency_unknown" formatted="false">batteriets slitasjekostnad</string>
+  <string name="card_house_estimate_no_solar_forecast" formatted="false">ingen sol</string>
+  <string name="card_house_estimate_horizon_cut_by_forecast" formatted="false">en horisont forkortet av prognosen</string>
+  <string name="card_house_estimate_capacity_from_ah" formatted="false">størrelsen (regnet ut fra amperetimer)</string>
+  <string name="card_house_estimate_rated_from_current" formatted="false">nominell effekt (regnet ut fra strømgrensene)</string>
+  <string name="card_house_estimate_capacity_learned" formatted="false">størrelsen (lært av bruk)</string>
+  <string name="card_house_estimate_rated_learned" formatted="false">nominell effekt (den høyeste sett så langt)</string>
+  <string name="card_history_savings_plug_in" formatted="false">SpotNav sparte {amount} mot å lade med en gang ved tilkobling</string>
+  <string name="card_history_savings_plug_in_extra" formatted="false">{amount} mer enn å lade med en gang ved tilkobling</string>
+  <string name="card_history_savings_plug_in_note" formatted="false">SpotNav sparte: de samme kWh fra strømnettet om bilen hadde ladet med en gang ved tilkobling, med avgifter. En lading noen startet selv teller som 0, og kWh fra hjemmebatteriet regnes til batteriet. Samme tall som på husets kort.</string>
+  <string name="card_house_details_open" formatted="false">Detaljer</string>
+  <!-- Heat details cost bars (step A4) -->
+  <string name="card_hist_heat_chart" formatted="false">Varmepumpens kostnad</string>
+  <string name="card_hist_heat_legend_saving" formatted="false">Ville ha spart</string>
+  <string name="card_hist_heat_bar_saving" formatted="false">ville ha spart {saving}</string>
+  <string name="card_hist_heat_bar_zones" formatted="false">soner {kwh}</string>
+  <string name="card_hist_heat_bar_hot_water" formatted="false">varmtvann {kwh}</string>
+  <string name="card_hist_heat_bar_outdoor" formatted="false">ute {temp}</string>
+  <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graddager</string>
 </resources>

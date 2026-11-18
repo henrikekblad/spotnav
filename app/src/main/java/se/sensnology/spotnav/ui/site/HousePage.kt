@@ -8,6 +8,7 @@ import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -58,16 +59,22 @@ internal class HousePage(
     private val history = HouseHistoryStore(session) { render() }
     private val locale = AppLanguageSettings.locale(context)
     private val choice: PeriodChoice get() = history.choice
-    private val boxes = HouseBox.entries.associateWith { box ->
-        HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+    private val boxes: Map<HouseBox, HousePeriodBox> = HouseBox.entries.associateWith { box ->
+        if (box == HouseBox.EARN) HouseEarnPanel(this, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+        else HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
     }
     private var boxesOpen = false
-    private val picker = PeriodPickerView(this, words, locale) { next ->
+    /** The shared period moved, in the page's picker or the details sheet's: read it for every box and the sheet. */
+    private fun periodChosen(next: PeriodChoice) {
         history.choice = next
         boxes.values.forEach { it.periodChanged() }
         openBoxes()
+        if (details.isOpen) history.request(next, needsHistory = true, force = false)
         render()
     }
+
+    private val picker = PeriodPickerView(this, words, locale) { periodChosen(it) }
+    private val details = HouseDetailsDialog(this, history, text, colours, locale, { memory.house }, ::todayDate, ::periodChosen)
     private val periodRow = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(14), 0, dp(14), 0)
@@ -120,11 +127,29 @@ internal class HousePage(
         }
     }
 
+    /** The "i" that opens the details sheet (the card's header button): a period's cost, the shares of perfect, the forecasts' errors. */
+    private val infoButton = ImageButton(context).apply {
+        setImageResource(R.drawable.ic_info)
+        setColorFilter(muted)
+        background = null
+        contentDescription = words.say("house.details.open")
+        minimumWidth = dp(48)
+        minimumHeight = dp(48)
+        visibility = View.GONE
+        setOnClickListener { details.open() }
+    }
+    private val headerRow = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        addView(title, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        addView(infoButton, LinearLayout.LayoutParams(dp(48), dp(48)))
+    }
+
     override val view: View = ScrollView(context).apply {
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             // The page's heading: its name and what the battery does now. The mark and the gear are the top row's.
-            addView(title, wide().apply { bottomMargin = dp(8) })
+            addView(headerRow, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
             // One picker above the period boxes, under the Now box; it drives every box below it.
@@ -165,6 +190,7 @@ internal class HousePage(
     }
 
     override fun setInView(inView: Boolean) {
+        if (!inView) details.dismiss()
         schematic.running = inView
         if (inView) polling.start() else polling.stop()
     }
@@ -237,6 +263,8 @@ internal class HousePage(
                 null -> null
             }
         )
+        infoButton.visibility = if (house != null) View.VISIBLE else View.GONE
+        details.refresh()
         // "Test" opens its own explanation, as on the card.
         title.isClickable = test
         testExplain.visibility = if (test && testOpen) View.VISIBLE else View.GONE
