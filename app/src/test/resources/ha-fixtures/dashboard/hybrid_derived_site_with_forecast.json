@@ -2237,6 +2237,8 @@
   "settings": {
     "amps": 10,
     "area_id": "SE4",
+    "departure_calendar": null,
+    "departure_calendar_only": false,
     "departure_date": null,
     "departure_enabled": false,
     "departure_time": "08:00",
@@ -2389,6 +2391,10 @@
       "measurement_mode": "derived_phase_current"
     },
     "vehicles": {}
+  },
+  "sun": {
+    "hours": [],
+    "quarters": []
   },
   "target_vehicle_id": null,
   "vehicle_choices": [],

@@ -62,6 +62,25 @@ class HaImportTargetActionsTest {
         assertNull(older.demand)
     }
 
+    @Test fun theSuppliersFiguresAreReadFromHomeAssistant3AndAbsentFromAnOlderOne() {
+        assertEquals("off", pilot.supplierMarkup!!.policy)
+        assertEquals("off", pilot.sellAdjustment!!.policy)
+        assertEquals(false, pilot.sells)
+        // Nothing is sold and no figure is stored: the row for sold power is not shown.
+        assertEquals(false, pilot.sellAdjustmentShown)
+        val json = HaFixtures.json("grid_tariff/pilot_demand.json")
+        json.put("sell_adjustment", JSONObject().put("policy", "manual").put("explicit_value", -5.0).put("effective_value", -5.0).put("unit", "öre/kWh"))
+        assertTrue(DashboardGridTariff.parse(json)!!.sellAdjustmentShown)
+        // Home Assistant 2.5 sends none of the three keys.
+        listOf("supplier_markup", "sell_adjustment", "sells").forEach(json::remove)
+        val older = DashboardGridTariff.parse(json)!!
+        assertNull(older.supplierMarkup)
+        assertNull(older.sellAdjustment)
+        assertNull(older.sells)
+        // A write never names them, so Home Assistant keeps the stored figures.
+        assertEquals(setOf("transfer_percent", "transfer_high", "high_load_window", "demand_components"), pilot.storedBody().keys().asSequence().toSet())
+    }
+
     @Test fun aPartIsWrittenWithTheFeesAsReadAndTheOtherPartsKept() {
         val added = DemandComponent(null, 3, 30.0, null)
         val body = pilot.bodyWith(2, added)

@@ -2213,6 +2213,8 @@
   "settings": {
     "amps": 16,
     "area_id": "SE4",
+    "departure_calendar": null,
+    "departure_calendar_only": false,
     "departure_date": null,
     "departure_enabled": false,
     "departure_time": "08:00",
@@ -2399,6 +2401,7 @@
           "reading": null
         }
       },
+      "learned_capacity_kwh": null,
       "max_percent": null,
       "min_percent": null,
       "name": "EV6",

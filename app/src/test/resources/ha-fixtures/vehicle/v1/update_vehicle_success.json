@@ -381,6 +381,22 @@
         "writable": true
       },
       {
+        "allowed_device_classes": [
+          "power",
+          "energy"
+        ],
+        "allowed_domains": [
+          "sensor"
+        ],
+        "current": null,
+        "effective": null,
+        "field": "heat_meter_entity",
+        "kind": "entity",
+        "required": false,
+        "scope": "site",
+        "writable": true
+      },
+      {
         "field": "max_age_s",
         "kind": "number",
         "minimum": 1.0,
@@ -487,6 +503,7 @@
         "reading": null
       }
     },
+    "learned_capacity_kwh": null,
     "max_percent": null,
     "min_percent": null,
     "name": "Niro",

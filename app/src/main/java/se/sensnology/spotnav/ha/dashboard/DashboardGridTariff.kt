@@ -123,8 +123,26 @@ internal data class DashboardGridTariff(
     val highLoadWindow: HighLoadWindow?,
     /** `null` from a Home Assistant before the demand charge: the tariff is then written without it. */
     val demand: DemandBlock?,
-    val writable: Boolean
+    val writable: Boolean,
+    /**
+     * The electricity supplier's markup on each bought kWh, before VAT (`supplier_markup`, asked for with the `reads`
+     * value `supplier_fees`); `null` from a Home Assistant before 3.0. Read only here: a write leaves it out, and Home
+     * Assistant then keeps the stored figure.
+     */
+    val supplierMarkup: GridTariffFee? = null,
+    /** What a sold kWh earns beyond the spot price, as it is paid out (`sell_adjustment`, may be negative); `null` as [supplierMarkup]. */
+    val sellAdjustment: GridTariffFee? = null,
+    /** Whether anything is sold on this price (`sells`); `null` where Home Assistant does not say. */
+    val sells: Boolean? = null
 ) {
+    /**
+     * Whether the row for sold power is shown, as the card decides it: where something is sold, where the figure is on
+     * or has a stored value (a figure in use is never hidden), and where Home Assistant does not say what is sold.
+     */
+    val sellAdjustmentShown: Boolean
+        get() = sellAdjustment != null &&
+            (sells != false || sellAdjustment.policy == "manual" || sellAdjustment.explicitValue != null)
+
     /** Whether the area's published price already holds the grid fee: the tariff's rows are then locked. */
     val included: Boolean get() = transferPercent.policy == "included" || transferHigh.policy == "included"
 
@@ -180,6 +198,7 @@ internal data class DashboardGridTariff(
 
     companion object {
         private val POLICIES = listOf("off", "manual", "included")
+        private val OPTIONAL_KEYS = listOf("demand", "supplier_markup", "sell_adjustment", "sells")
 
         /** The block, or `null` when it is absent or cannot be read (the price section then shows no tariff rows). */
         fun parse(raw: Any?): DashboardGridTariff? {
@@ -193,7 +212,8 @@ internal data class DashboardGridTariff(
 
         fun decode(json: JSONObject): DashboardGridTariff {
             val keys = arrayOf("entry_id", "write_revision", "transfer_percent", "transfer_high", "high_load_window", "writable")
-            if (json.has("demand")) exactKeys(json, *keys, "demand") else exactKeys(json, *keys)
+            // `demand` (2.4) and the supplier's figures (3.0, sent only to an app that reads them) are additive.
+            exactKeys(json, *keys, *OPTIONAL_KEYS.filter(json::has).toTypedArray())
             val entryId = (json.opt("entry_id") as? String)?.takeIf { it.isNotEmpty() } ?: bad()
             return DashboardGridTariff(
                 entryId = entryId,
@@ -202,7 +222,10 @@ internal data class DashboardGridTariff(
                 transferHigh = fee(json.opt("transfer_high")),
                 highLoadWindow = json.opt("high_load_window").let { if (it == JSONObject.NULL) null else HighLoadWindow.parse(it) },
                 demand = if (json.has("demand")) demand(json.opt("demand")) else null,
-                writable = json.opt("writable") as? Boolean ?: bad()
+                writable = json.opt("writable") as? Boolean ?: bad(),
+                supplierMarkup = if (json.has("supplier_markup")) fee(json.opt("supplier_markup")) else null,
+                sellAdjustment = if (json.has("sell_adjustment")) fee(json.opt("sell_adjustment")) else null,
+                sells = if (json.has("sells")) json.opt("sells") as? Boolean ?: bad() else null
             )
         }
 
