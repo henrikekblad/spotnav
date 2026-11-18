@@ -17,6 +17,7 @@ import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
+import se.sensnology.spotnav.ui.common.iconAction
 
 /** The main screen's pages, in their fixed order. */
 internal enum class PageKind { CHARGER, HOUSE, HEAT }
@@ -72,28 +73,57 @@ internal object PageOffer {
 }
 
 /**
- * The main screen's pages and the row of icons that chooses between them: the charger (the screen's own scrolling
- * body), the house and the heat. A page exists only when Home Assistant says it serves it ([offer]); with the
- * charger's page alone the row is not drawn and the screen is as it was before there were pages. The page chosen is
- * kept while the Activity lives, across the other screens and a redraw of this one.
+ * The main screen's pages and the top row that chooses between them: the charger (the screen's own scrolling body),
+ * the house and the heat. A page exists only when Home Assistant says it serves it ([offer]); with the charger's
+ * page alone the row has no page icons and there is nothing to swipe. The page in view is remembered per charger:
+ * across the other screens and a redraw of this one, and on this phone for the next time the app starts, where it
+ * is opened again while Home Assistant still offers it.
  */
-internal class SitePages(private val scope: ViewScope, private val chargerPage: View) {
+internal class SitePages(
+    private val scope: ViewScope,
+    private val chargerPage: View,
+    private val preferences: SitePreferences = SitePreferences.of(scope.context)
+) {
     val pager = PagerLayout(scope.context).apply {
         addView(chargerPage, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         onPage = { index -> kinds.getOrNull(index)?.let(::chosen) }
     }
 
-    /** The row of icons, above the pager; gone with one page. */
-    val icons = LinearLayout(scope.context).apply {
+    /** The page icons, in the middle of [top]; none with one page. */
+    private val icons = LinearLayout(scope.context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
+    }
+
+    /** The Settings gear's place at the right end of [top]. */
+    private val gear = FrameLayout(scope.context)
+
+    /**
+     * The main screen's top row, above the pager and still while a page scrolls: the app's mark at the left end, the
+     * page icons in the middle and the Settings gear at the right end. With one page it has the mark and the gear
+     * alone, so the screen is laid out the same whatever Home Assistant serves. Gone on the other screens.
+     */
+    val top = LinearLayout(scope.context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
         visibility = View.GONE
+        // The mark and the gear in boxes of one width, so the icons between them are in the screen's middle.
+        addView(FrameLayout(context).apply {
+            addView(ImageView(context).apply {
+                setImageResource(R.drawable.ic_spotnav_mark)
+                imageTintList = ColorStateList.valueOf(scope.dark)
+                contentDescription = scope.getString(R.string.app_name)
+            }, FrameLayout.LayoutParams(scope.dp(28), scope.dp(36), Gravity.START or Gravity.CENTER_VERTICAL))
+        }, LinearLayout.LayoutParams(scope.dp(48), scope.dp(48)))
+        addView(icons, LinearLayout.LayoutParams(0, scope.dp(48), 1f))
+        addView(gear, LinearLayout.LayoutParams(scope.dp(48), scope.dp(48)))
     }
 
     private var kinds: List<PageKind> = listOf(PageKind.CHARGER)
     private var pages: List<SitePage> = emptyList()
     private var offeredFor: String? = null
     private val known = HashMap<String, List<PageKind>>()
+    private val chosenFor = HashMap<String, PageKind>()
     private val memories = HashMap<String, SiteMemory>()
 
     /** The page in view, or the one to return to when the main screen is drawn again. */
@@ -113,24 +143,48 @@ internal class SitePages(private val scope: ViewScope, private val chargerPage: 
     /** Whether the charger's page is the one in view. */
     val chargerInView: Boolean get() = selected == PageKind.CHARGER || PageKind.CHARGER == kinds.singleOrNull()
 
-    /** The pages [profileId]'s Home Assistant last offered in this Activity's life, or `null` before its first answer. */
-    fun knownFor(profileId: String): List<PageKind>? = known[profileId]
+    /**
+     * The pages [profileId]'s Home Assistant last offered: in this Activity's life, else as remembered from the last
+     * time the app ran; `null` when it never answered.
+     */
+    fun knownFor(profileId: String): List<PageKind>? = known[profileId] ?: run {
+        val names = PageKind.entries.map { it.name }
+        val kept = preferences.pages(profileId, names).map(PageKind::valueOf)
+        // The charger's page is always the first; anything else stored is not a list of pages.
+        kept.takeIf { it.firstOrNull() == PageKind.CHARGER && it.distinct() == it }
+    }
+
+    /**
+     * The main screen is on show: the top row with its gear, which opens Settings. The page icons come with
+     * [offer].
+     */
+    fun showTop(onSettings: () -> Unit) {
+        gear.removeAllViews()
+        gear.addView(scope.iconAction(R.drawable.ic_settings, scope.t(R.string.settings)) { onSettings() })
+        top.visibility = View.VISIBLE
+    }
 
     fun memory(profileId: String): SiteMemory = memories.getOrPut(profileId) { SiteMemory() }
 
     /**
-     * Another screen is drawn into the body, or this one afresh: the other pages go, the row with them. The page
-     * chosen is remembered for [offer].
+     * Another screen is drawn into the body, or this one afresh: the other pages go, and the top row with them. The
+     * page in view is remembered for [offer].
      */
     fun reset() {
+        clearPages()
+        onChargerInView = null
+        gear.removeAllViews()
+        top.visibility = View.GONE
+    }
+
+    /** Take the pages beside the charger's away, and their icons; the charger's page is the one in view. */
+    private fun clearPages() {
         pages.forEach { it.setInView(false) }
         pages.forEach { pager.removeView(it.view) }
         pages = emptyList()
         kinds = listOf(PageKind.CHARGER)
         offeredFor = null
-        onChargerInView = null
         icons.removeAllViews()
-        icons.visibility = View.GONE
         pager.onPage = {}
         pager.show(0, animate = false)
         pager.onPage = { index -> kinds.getOrNull(index)?.let(::chosen) }
@@ -142,10 +196,14 @@ internal class SitePages(private val scope: ViewScope, private val chargerPage: 
      * beside the charger's. The same pages as are shown are left as they are.
      */
     fun offer(profileId: String, offered: List<PageKind>, build: (PageKind) -> SitePage) {
+        if (known[profileId] != offered) preferences.setPages(profileId, offered.map { it.name })
         known[profileId] = offered
         if (offeredFor == profileId && offered == kinds) return
-        val wanted = selected
-        reset()
+        // The page chosen for this charger while the Activity lived, else the one last in view when the app last ran.
+        val wanted = chosenFor[profileId]
+            ?: preferences.page(profileId, PageKind.entries.map { it.name })?.let(PageKind::valueOf)
+            ?: PageKind.CHARGER
+        clearPages()
         offeredFor = profileId
         kinds = offered
         pages = offered.filter { it != PageKind.CHARGER }.map(build)
@@ -162,6 +220,10 @@ internal class SitePages(private val scope: ViewScope, private val chargerPage: 
     private fun chosen(kind: PageKind) {
         if (kind == selected) return
         selected = kind
+        offeredFor?.let {
+            chosenFor[it] = kind
+            preferences.setPage(it, kind.name)
+        }
         drawIcons()
         tellPages()
         if (kind == PageKind.CHARGER) onChargerInView?.invoke()
@@ -180,7 +242,6 @@ internal class SitePages(private val scope: ViewScope, private val chargerPage: 
 
     private fun drawIcons() {
         icons.removeAllViews()
-        icons.visibility = if (kinds.size > 1) View.VISIBLE else View.GONE
         if (kinds.size < 2) return
         val words = scope.cardWords()
         for (kind in kinds) {

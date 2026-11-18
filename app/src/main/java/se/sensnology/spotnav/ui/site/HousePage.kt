@@ -1,6 +1,5 @@
 package se.sensnology.spotnav.ui.site
 
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableString
@@ -9,10 +8,8 @@ import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.Space
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
@@ -21,7 +18,6 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
-import se.sensnology.spotnav.ui.common.iconAction
 import java.time.Instant
 
 /** The house page's tabs, in the Home Assistant card's fixed order. [key] is what is remembered. */
@@ -53,8 +49,7 @@ internal class HousePage(
     private val memory: SiteMemory,
     private val preferences: SitePreferences,
     /** What the remembered choices are kept under until the house has said its site. */
-    private val profileId: String,
-    onSettings: () -> Unit
+    private val profileId: String
 ) : ViewScope(scope), SitePage {
     override val kind = PageKind.HOUSE
 
@@ -73,6 +68,7 @@ internal class HousePage(
         textSize = 21f
         setTextColor(dark)
         gravity = Gravity.CENTER_VERTICAL
+        minimumHeight = dp(40)
         setOnClickListener {
             testOpen = !testOpen
             render()
@@ -100,19 +96,8 @@ internal class HousePage(
     override val view: View = ScrollView(context).apply {
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            addView(LinearLayout(context).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-                minimumHeight = dp(52)
-                addView(ImageView(context).apply {
-                    setImageResource(R.drawable.ic_spotnav_mark)
-                    imageTintList = ColorStateList.valueOf(dark)
-                    contentDescription = getString(R.string.app_name)
-                }, LinearLayout.LayoutParams(dp(28), dp(36)).apply { marginEnd = dp(7) })
-                addView(title, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-                addView(Space(context), LinearLayout.LayoutParams(dp(4), 1))
-                addView(iconAction(R.drawable.ic_settings, t(R.string.settings)) { onSettings() })
-            }, wide())
+            // The page's heading: its name and what the battery does now. The mark and the gear are the top row's.
+            addView(title, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
         })

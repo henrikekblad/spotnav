@@ -55,9 +55,9 @@ internal class ScreenShell(
     val scrollView = ScrollView(activity).apply { addView(content) }
 
     /**
-     * The main screen's pages (the charger, the house, the heat) and the row of icons that chooses between them.
-     * The scrolling body is the charger's page and every other screen's; with that page alone there is no row and
-     * nothing to swipe.
+     * The main screen's pages (the charger, the house, the heat) and its top row: the app's mark, the icons that
+     * choose between the pages, and the Settings gear. The scrolling body is the charger's page and every other
+     * screen's; with that page alone the row has no page icons and there is nothing to swipe.
      */
     val pages = SitePages(this, scrollView)
 
@@ -147,7 +147,7 @@ internal class ScreenShell(
         root.addView(chrome, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ))
-        root.addView(pages.icons, LinearLayout.LayoutParams(
+        root.addView(pages.top, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ))
         root.addView(pages.pager, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))

@@ -55,6 +55,28 @@ class SharedViewsTest {
         assertTrue(preferences.flag("site_b", "heat.use.money", fallback = true))
     }
 
+    @Test fun thePageLastInViewAndThePagesOfferedAreRememberedPerCharger() {
+        val preferences = SitePreferences(FakeKeyValueStore())
+        val known = PageKind.entries.map { it.name }
+        // Nothing remembered: the caller opens the charger's page and waits for Home Assistant's word on the others.
+        assertNull(preferences.page("garage", known))
+        assertEquals(emptyList<String>(), preferences.pages("garage", known))
+        preferences.setPage("garage", PageKind.HOUSE.name)
+        preferences.setPages("garage", listOf("CHARGER", "HOUSE"))
+        assertEquals("HOUSE", preferences.page("garage", known))
+        assertEquals(listOf("CHARGER", "HOUSE"), preferences.pages("garage", known))
+        // Another charger has its own.
+        assertNull(preferences.page("cabin", known))
+        // A page this app does not have (a newer app wrote it) is nothing remembered.
+        preferences.setPage("garage", "POOL")
+        preferences.setPages("garage", listOf("CHARGER", "POOL", "HOUSE"))
+        assertNull(preferences.page("garage", known))
+        assertEquals(listOf("CHARGER", "HOUSE"), preferences.pages("garage", known))
+        // The page remembered is opened only while it is still offered, else the charger's.
+        assertEquals(PageKind.HOUSE, PageOffer.opening(PageKind.HOUSE, PageOffer.kinds(house = true, heat = false)))
+        assertEquals(PageKind.CHARGER, PageOffer.opening(PageKind.HOUSE, PageOffer.kinds(house = false, heat = false)))
+    }
+
     @Test fun aStoreThatThrowsRemembersNothing() {
         val broken = object : se.sensnology.spotnav.app.KeyValueStore {
             override fun getString(key: String): String? = throw IllegalStateException("blocked")
@@ -66,5 +88,8 @@ class SharedViewsTest {
         preferences.setTab("site_a", "house", "now")
         assertEquals(emptySet<String>(), preferences.hidden("site_a", "house.graph"))
         assertTrue(preferences.flag("site_a", "x", fallback = true))
+        assertNull(preferences.page("garage", listOf("HOUSE")))
+        preferences.setPage("garage", "HOUSE")
+        assertEquals(emptyList<String>(), preferences.pages("garage", listOf("CHARGER")))
     }
 }

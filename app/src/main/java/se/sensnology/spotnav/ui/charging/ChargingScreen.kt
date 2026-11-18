@@ -46,7 +46,6 @@ import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.settings.SettingsTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
-import se.sensnology.spotnav.ui.common.addMainHeader
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.pairAgainNotice
 import se.sensnology.spotnav.ui.haSession
@@ -170,9 +169,9 @@ internal class ChargingScreen(
     fun show() {
         beginScreen()
         generation = viewGeneration
-        // The page's own header, first, and *inside* the scroll body: it is what a tap on a widget
-        // lands on, and it has to scroll away with the rest.
-        addMainHeader(content) { showScreen(Screen.SETTINGS) }
+        // The top row, above the pages and still while they scroll: the mark, the page icons and the Settings gear.
+        // The page itself begins with its cards; the charger's name and status are its card's own heading.
+        shell.pages.showTop { showScreen(Screen.SETTINGS) }
         // Debug builds only, and only while test mode is on: the screen must never look like the
         // real thing while it is showing mocked chargers.
         TestMode.addBanner(context, content)
@@ -333,9 +332,7 @@ internal class ChargingScreen(
         val held = session ?: return
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
-                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id) {
-                    showScreen(Screen.SETTINGS)
-                }
+                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
                 else -> error("no page for $kind")
             }
         }
