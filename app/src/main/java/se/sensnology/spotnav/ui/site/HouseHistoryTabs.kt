@@ -357,10 +357,8 @@ internal class HouseHistoryPanel(
             }
         }
         val parts = mutableListOf<String>()
-        if (now.battery != null) {
-            val brand = if (now.battery.brand == "sigenergy") "Sigenergy" else null
-            parts += if (brand == null) words.say("house.todayHint") else words.say("house.todayHintApp", "brand" to brand)
-        }
+        // What it counts; no maker's app is named, as some count the battery's cash flow hour by hour.
+        if (now.battery != null) parts += words.say("house.todayHint")
         val cost = history?.cost
         if (running && now.today != null) {
             parts += words.say("house.todayCost", "amount" to text.amount(now.today.bought, now.money))

@@ -156,7 +156,7 @@ class HouseEarnTest {
         val old = day.copy(buckets = day.buckets.map { it.copy(saving = null, savingCar = null, ownBattery = null) }, today = day.date.plusDays(5))
         assertNull(bars(old))
         assertEquals(735.0, HouseEarn.total(old, emptySet())!!, 0.0)
-        assertTrue(HouseEarn.notes(text(), old, emptySet(), day.money)[0].startsWith("Timvärden sparas i 40 dagar; den här dagen har bara sina summor."))
+        assertTrue(HouseEarn.notes(text(), old, emptySet(), day.money)[0].startsWith("Den här dagen saknar timvärden (de sparas i 40 dagar)."))
     }
 
     @Test fun everyWordOfTheBoxIsInAllNineLanguages() {

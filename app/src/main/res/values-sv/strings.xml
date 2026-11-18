@@ -1197,7 +1197,6 @@
   <string name="card_house_readout_price_sell" formatted="false">sälj {sell}</string>
   <string name="card_house_now" formatted="false">Nu</string>
   <string name="card_house_today_hint" formatted="false">Det batteriet gav tillbaka, till elpriset då, minus vad laddningen kostade.</string>
-  <string name="card_house_today_hint_app" formatted="false">Samma mått som {brand}-appen.</string>
   <string name="card_house_today_cost" formatted="false">Elkostnad {amount}</string>
   <string name="card_house_today_sold" formatted="false">sålt solel {amount}</string>
   <string name="card_house_day_money" formatted="false">{day}: batteriet tjänade {amount}</string>
@@ -1309,7 +1308,7 @@
   <string name="card_house_earn_part_heat" formatted="false">Värme</string>
   <string name="card_house_earn_part_car" formatted="false">Bil</string>
   <string name="card_house_earn_bar_none" formatted="false">{when}: ingen siffra</string>
-  <string name="card_house_earn_note_no_hours" formatted="false">Timvärden sparas i 40 dagar; den här dagen har bara sina summor.</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Den här dagen saknar timvärden (de sparas i 40 dagar).</string>
   <string name="card_house_earn_note_would_day" formatted="false">På batteriet skulle SpotNav ha sparat {amount} den här dagen.</string>
   <string name="card_house_earn_note_would_days" formatted="false">Vad SpotNav skulle ha sparat är känt för {reviewed} av {days} dagar; övriga räknas som de gick.</string>
   <string name="card_house_earn_note_would_tonight" formatted="false">Vad SpotNav skulle ha sparat på batteriet räknas ut i natt.</string>

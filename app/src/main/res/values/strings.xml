@@ -1210,7 +1210,6 @@
   <string name="card_house_readout_price_sell" formatted="false">sell {sell}</string>
   <string name="card_house_now" formatted="false">Now</string>
   <string name="card_house_today_hint" formatted="false">What the battery gave back, at the price then, less what charging it cost.</string>
-  <string name="card_house_today_hint_app" formatted="false">The same measure as the {brand} app.</string>
   <string name="card_house_today_cost" formatted="false">Electricity {amount}</string>
   <string name="card_house_today_sold" formatted="false">sold solar {amount}</string>
   <string name="card_house_day_money" formatted="false">{day}: the battery earned {amount}</string>
@@ -1322,7 +1321,7 @@
   <string name="card_house_earn_part_heat" formatted="false">Heat</string>
   <string name="card_house_earn_part_car" formatted="false">Car</string>
   <string name="card_house_earn_bar_none" formatted="false">{when}: no figure</string>
-  <string name="card_house_earn_note_no_hours" formatted="false">Hourly figures are kept for 40 days; this day has only its sums.</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">This day has no hourly figures (they are kept for 40 days).</string>
   <string name="card_house_earn_note_would_day" formatted="false">On the battery SpotNav would have saved {amount} this day.</string>
   <string name="card_house_earn_note_would_days" formatted="false">What SpotNav would have saved is known for {reviewed} of {days} days; the others count as they went.</string>
   <string name="card_house_earn_note_would_tonight" formatted="false">What SpotNav would have saved on the battery is worked out tonight.</string>

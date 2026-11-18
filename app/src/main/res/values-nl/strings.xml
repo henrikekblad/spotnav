@@ -1197,7 +1197,6 @@
   <string name="card_house_readout_price_sell" formatted="false">verkoop {sell}</string>
   <string name="card_house_now" formatted="false">Nu</string>
   <string name="card_house_today_hint" formatted="false">Wat de batterij teruggaf, tegen de prijs van toen, min wat het laden kostte.</string>
-  <string name="card_house_today_hint_app" formatted="false">Dezelfde maat als de {brand}-app.</string>
   <string name="card_house_today_cost" formatted="false">Stroom {amount}</string>
   <string name="card_house_today_sold" formatted="false">verkochte zonnestroom {amount}</string>
   <string name="card_house_day_money" formatted="false">{day}: de batterij verdiende {amount}</string>
@@ -1309,7 +1308,7 @@
   <string name="card_house_earn_part_heat" formatted="false">Warmte</string>
   <string name="card_house_earn_part_car" formatted="false">Auto</string>
   <string name="card_house_earn_bar_none" formatted="false">{when}: geen cijfer</string>
-  <string name="card_house_earn_note_no_hours" formatted="false">Uurwaarden worden 40 dagen bewaard; deze dag heeft alleen zijn totalen.</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Deze dag heeft geen uurwaarden (ze worden 40 dagen bewaard).</string>
   <string name="card_house_earn_note_would_day" formatted="false">Met de batterij zou SpotNav deze dag {amount} hebben bespaard.</string>
   <string name="card_house_earn_note_would_days" formatted="false">Wat SpotNav zou hebben bespaard is bekend voor {reviewed} van {days} dagen; de overige tellen zoals ze gingen.</string>
   <string name="card_house_earn_note_would_tonight" formatted="false">Wat SpotNav met de batterij zou hebben bespaard wordt vannacht berekend.</string>

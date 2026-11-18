@@ -1197,7 +1197,6 @@
   <string name="card_house_readout_price_sell" formatted="false">salg {sell}</string>
   <string name="card_house_now" formatted="false">Nu</string>
   <string name="card_house_today_hint" formatted="false">Det batteriet gav tilbage, til elprisen dengang, minus hvad opladningen kostede.</string>
-  <string name="card_house_today_hint_app" formatted="false">Samme mål som {brand}-appen.</string>
   <string name="card_house_today_cost" formatted="false">Udgift til el {amount}</string>
   <string name="card_house_today_sold" formatted="false">solgt solstrøm {amount}</string>
   <string name="card_house_day_money" formatted="false">{day}: batteriet tjente {amount}</string>
@@ -1309,7 +1308,7 @@
   <string name="card_house_earn_part_heat" formatted="false">Varme</string>
   <string name="card_house_earn_part_car" formatted="false">Bil</string>
   <string name="card_house_earn_bar_none" formatted="false">{when}: intet tal</string>
-  <string name="card_house_earn_note_no_hours" formatted="false">Timeværdier gemmes i 40 dage; denne dag har kun sine summer.</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Denne dag har ingen timeværdier (de gemmes i 40 dage).</string>
   <string name="card_house_earn_note_would_day" formatted="false">På batteriet ville SpotNav have sparet {amount} denne dag.</string>
   <string name="card_house_earn_note_would_days" formatted="false">Hvad SpotNav ville have sparet kendes for {reviewed} af {days} dage; resten tælles som de gik.</string>
   <string name="card_house_earn_note_would_tonight" formatted="false">Hvad SpotNav ville have sparet på batteriet regnes ud i nat.</string>

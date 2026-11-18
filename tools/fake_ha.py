@@ -1022,7 +1022,7 @@ SITE_BATTERY_MODE = {"mode": "balanced"}
 SITE_HEAT: dict = {}
 SITE_BATTERY_FILES = {"off": "live.json", "ai": "needs_ack.json", "test": "checking.json", "on": "checking.json"}
 BATTERY_MODES = ("self_consumption", "balanced", "max_profit")
-HEAT_WEBHOOK_FIELDS = ("target_c", "mode", "away_until", "night", "zones", "indoor_offsets")
+HEAT_WEBHOOK_FIELDS = ("target_c", "mode", "away_until", "night", "zones", "indoor_offsets", "away_delta_c")
 
 
 def _site_heat_fixture() -> dict:
@@ -1119,6 +1119,12 @@ def site_update_heat_body(payload: dict) -> tuple[int, dict]:
             errors.append({"field": "night", "code": "out_of_range"})
         elif abs(float(delta) * 2 - round(float(delta) * 2)) > 1e-9:
             errors.append({"field": "night", "code": "not_a_step"})
+    if "away_delta_c" in changes:
+        away = changes["away_delta_c"]
+        if isinstance(away, bool) or not isinstance(away, (int, float)) or not 1.0 <= float(away) <= 6.0:
+            errors.append({"field": "away_delta_c", "code": "out_of_range"})
+        elif abs(float(away) * 2 - round(float(away) * 2)) > 1e-9:
+            errors.append({"field": "away_delta_c", "code": "not_a_step"})
     for key in ("zones", "indoor_offsets"):
         for item in changes.get(key) or []:
             code = _half_steps(item.get("offset_c"))
