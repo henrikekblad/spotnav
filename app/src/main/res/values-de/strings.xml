@@ -220,6 +220,14 @@
   <string name="departure_day_daily">Jeden Tag</string>
   <string name="departure_day_on_date">An einem Datum</string>
   <string name="departure_date_help">Der Ladeplan kann auf Stunden warten, die meist günstiger sind. Die Abfahrt wird immer eingehalten.</string>
+  <string name="departure_calendar_label">Kalender</string>
+  <string name="departure_calendar_used">Nächste Abfahrt laut Kalender: %1$s.</string>
+  <string name="departure_calendar_used_target">Nächste Abfahrt laut Kalender: %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">Das Ziel des Termins ist von der anderen Art (Ladestand oder Energie) und wird nicht verwendet.</string>
+  <string name="departure_calendar_daily">Kein Termin in den nächsten 7 Tagen verschiebt die Abfahrt: Die tägliche Abfahrt gilt.</string>
+  <string name="departure_calendar_date">Das gewählte Datum gilt vor dem Kalender.</string>
+  <string name="departure_calendar_unavailable">Der Kalender kann nicht gelesen werden: Die tägliche Abfahrt gilt, bis er wieder lesbar ist.</string>
+  <string name="departure_calendar_no_event">Kein Termin in den nächsten 7 Tagen: Es gibt keine Abfahrt, also nutzt der Plan die günstigsten bekannten Stunden.</string>
   <string name="departure_date_past">Dieses Datum ist vorbei, daher läuft der Ladeplan jeden Tag, bis du ein neues Datum wählst. Beim Speichern wird es gelöscht.</string>
   <string name="departure_weekdays_title">Wochentage</string>
   <string name="departure_weekdays_help">An einem nicht gewählten Tag gibt es keine Abfahrt: Der Ladeplan läuft bis zum nächsten gewählten Tag.</string>
@@ -279,6 +287,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Tippen zum Auswählen.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">vom Fahrzeug gemeldet</string>
+  <string name="vehicle_capacity_learned">aus Ladevorgängen gelernt: etwa %1$s kWh</string>
   <string name="vehicle_error_capacity">Die Batteriekapazität muss zwischen 1 und 500 kWh liegen.</string>
   <string name="vehicle_error_consumption">Der Verbrauch muss zwischen 0,1 und 50 kWh/10 km liegen.</string>
   <string name="vehicle_error_unknown">Dieses Fahrzeug ist nicht mehr verfügbar.</string>
@@ -307,6 +316,8 @@
   <string name="site_active_reason_no_charger">Nicht verfügbar: Keine Ladestation an diesem Standort nimmt einen Strombefehl an.</string>
   <string name="site_active_reason_measurement">Nicht verfügbar: Die eigene Leistungsmessung dieses Standorts ist nicht in Ordnung.</string>
   <string name="site_active_reason_direction_unknown">Das Lastmanagement kann nicht erkennen, ob der Strom aus dem Netz bezogen oder eingespeist wird. Es schützt daher nur die Sicherung und nutzt nicht den ganzen Spielraum. Ändere die Einstellungen des Zählers in Home Assistant.</string>
+  <string name="site_active_reason_direction_use_power">Das Lastmanagement kann nicht erkennen, ob der Strom aus dem Netz bezogen oder eingespeist wird. Es schützt daher nur die Sicherung und nutzt nicht den ganzen Spielraum. Dein Zähler meldet auch die Leistung je Phase, die die Richtung angibt: Öffne die Einstellungen der SpotNav-Karte in Home Assistant und drücke Übernehmen bei deinem Zähler unter In Home Assistant gefunden.</string>
+  <string name="site_active_reason_direction_magnitude">Dein Zähler meldet den Strom ohne Richtung, daher kann das Lastmanagement nicht erkennen, ob er aus dem Netz bezogen oder eingespeist wird. Es schützt nur die Sicherung und nutzt nicht den ganzen Spielraum.</string>
   <string name="site_active_reason_unknown">Nicht verfügbar, aus einem Grund, den diese App noch nicht kennt.</string>
   <string name="site_active_note">Nach bestem Bemühen, keine Schutzeinrichtung. Beim Ausschalten wird jeder abgesenkte Strom zurückgegeben.</string>
   <string name="site_error_conflict">Woanders geändert. Die aktuellen Werte werden angezeigt.</string>
@@ -703,6 +714,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">Erster Monat</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Letzter Monat</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">Von und Bis dürfen nicht dieselbe Stunde sein.</string>
+  <string name="card_supplier_markup" formatted="false">Aufschlag des Stromanbieters</string>
+  <string name="card_supplier_sell" formatted="false">Zuschlag für verkauften Strom</string>
   <string name="card_demand_title" formatted="false">Leistungspreis</string>
   <string name="card_demand_part" formatted="false">Leistungspreis {n}</string>
   <string name="card_demand_add_part" formatted="false">Ein weiterer Teil des Leistungspreises</string>

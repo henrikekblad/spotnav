@@ -78,6 +78,7 @@
   <string name="table_title">%1$s · %2$d-minute prices · %3$s</string>
   <string name="widget_choice">Widget %1$d · %2$s</string>
   <string name="amps_power" translatable="false">%1$d A · %2$.1f kW</string>
+  <string name="power_kw" translatable="false">%1$.1f kW</string>
   <string name="consumption_value" translatable="false">%1$.1f kWh/10 km</string>
   <string name="charging_window" translatable="false">%1$s  –  %2$s</string>
   <string name="language_system">System default</string>
@@ -229,6 +230,14 @@
   <string name="departure_day_daily">Every day</string>
   <string name="departure_day_on_date">On a date</string>
   <string name="departure_date_help">The plan may wait for hours that are usually cheaper. The departure is always kept.</string>
+  <string name="departure_calendar_label">Calendar</string>
+  <string name="departure_calendar_used">Next departure from the calendar: %1$s.</string>
+  <string name="departure_calendar_used_target">Next departure from the calendar: %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">The event\'s target is of the other kind (level or energy) and is not used.</string>
+  <string name="departure_calendar_daily">No event in the next 7 days moves the departure: the daily departure is used.</string>
+  <string name="departure_calendar_date">The date you chose is used before the calendar.</string>
+  <string name="departure_calendar_unavailable">The calendar cannot be read: the daily departure is used until it can.</string>
+  <string name="departure_calendar_no_event">No event in the next 7 days: there is no departure, so the plan uses the cheapest hours known.</string>
   <string name="departure_date_past">This date has gone by, so the plan runs every day until you choose a new date. Saving clears it.</string>
   <string name="departure_weekdays_title">Weekdays</string>
   <string name="departure_weekdays_help">On a day you leave out there is no departure: the plan runs to the next day you choose.</string>
@@ -288,6 +297,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Tap to choose.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">reported by the vehicle</string>
+  <string name="vehicle_capacity_learned">learned from charging: about %1$s kWh</string>
   <string name="vehicle_card_consumption_unknown" translatable="false">\? kWh/10 km</string>
   <string name="vehicle_error_capacity">Battery capacity must be between 1 and 500 kWh.</string>
   <string name="vehicle_error_consumption">Consumption must be between 0.1 and 50 kWh/10 km.</string>
@@ -317,6 +327,8 @@
   <string name="site_active_reason_no_charger">Not available: no charger on this site accepts a current command.</string>
   <string name="site_active_reason_measurement">Not available: this site\'s own power measurement is not healthy.</string>
   <string name="site_active_reason_direction_unknown">Load balancing cannot tell whether the current is drawn from the grid or exported, so it only protects the fuse and does not use all the room there is. Change the meter\'s settings in Home Assistant.</string>
+  <string name="site_active_reason_direction_use_power">Load balancing cannot tell whether the current is drawn from the grid or exported, so it only protects the fuse and does not use all the room there is. Your meter also reports power per phase, which gives the direction: open the SpotNav card\'s settings in Home Assistant and press Use on your meter under Found in Home Assistant.</string>
+  <string name="site_active_reason_direction_magnitude">Your meter reports the current without a direction, so load balancing cannot tell whether it is drawn from the grid or exported. It only protects the fuse and does not use all the room there is.</string>
   <string name="site_active_reason_unknown">Not available, for a reason this app does not know yet.</string>
   <string name="site_active_note">Best effort, not a protective device. Turning it off gives any current it had lowered back.</string>
   <string name="site_error_conflict">Changed elsewhere. The current values are shown.</string>
@@ -715,6 +727,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">First month</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Last month</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">From and To cannot be the same hour.</string>
+  <string name="card_supplier_markup" formatted="false">Supplier markup</string>
+  <string name="card_supplier_sell" formatted="false">Extra for sold power</string>
   <string name="card_demand_title" formatted="false">Demand charge</string>
   <string name="card_demand_part" formatted="false">Demand charge {n}</string>
   <string name="card_demand_add_part" formatted="false">Another part of the demand charge</string>

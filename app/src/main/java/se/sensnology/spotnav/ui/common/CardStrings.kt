@@ -37,6 +37,8 @@ internal object CardStrings {
         "gridFee.window.fromMonth" to R.string.card_grid_fee_window_from_month,
         "gridFee.window.toMonth" to R.string.card_grid_fee_window_to_month,
         "gridFee.window.sameHours" to R.string.card_grid_fee_window_same_hours,
+        "supplier.markup" to R.string.card_supplier_markup,
+        "supplier.sell" to R.string.card_supplier_sell,
         "demand.title" to R.string.card_demand_title,
         "demand.part" to R.string.card_demand_part,
         "demand.addPart" to R.string.card_demand_add_part,

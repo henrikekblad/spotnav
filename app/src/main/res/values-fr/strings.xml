@@ -224,6 +224,14 @@
   <string name="departure_day_daily">Tous les jours</string>
   <string name="departure_day_on_date">À une date</string>
   <string name="departure_date_help">Le plan peut attendre des heures habituellement moins chères. Le départ est toujours respecté.</string>
+  <string name="departure_calendar_label">Calendrier</string>
+  <string name="departure_calendar_used">Prochain départ selon le calendrier : %1$s.</string>
+  <string name="departure_calendar_used_target">Prochain départ selon le calendrier : %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">L\'objectif de l\'événement est de l\'autre type (niveau ou énergie) et n\'est pas utilisé.</string>
+  <string name="departure_calendar_daily">Aucun événement dans les 7 prochains jours ne déplace le départ : le départ quotidien s\'applique.</string>
+  <string name="departure_calendar_date">La date choisie passe avant le calendrier.</string>
+  <string name="departure_calendar_unavailable">Le calendrier ne peut pas être lu : le départ quotidien s\'applique jusqu\'à ce qu\'il le soit.</string>
+  <string name="departure_calendar_no_event">Aucun événement dans les 7 prochains jours : il n\'y a pas de départ, le plan utilise donc les heures les moins chères connues.</string>
   <string name="departure_date_past">Cette date est passée, le plan s\'applique donc tous les jours jusqu\'à ce que vous choisissiez une nouvelle date. L\'enregistrement l\'efface.</string>
   <string name="departure_weekdays_title">Jours de la semaine</string>
   <string name="departure_weekdays_help">Un jour non coché n\'a pas de départ : le plan court jusqu\'au prochain jour choisi.</string>
@@ -283,6 +291,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Touchez pour choisir.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">indiquée par le véhicule</string>
+  <string name="vehicle_capacity_learned">apprise des recharges : environ %1$s kWh</string>
   <string name="vehicle_error_capacity">La capacité de la batterie doit être comprise entre 1 et 500 kWh.</string>
   <string name="vehicle_error_consumption">La consommation doit être comprise entre 0,1 et 50 kWh/10 km.</string>
   <string name="vehicle_error_unknown">Ce véhicule n\'est plus disponible.</string>
@@ -312,6 +321,8 @@
   <string name="site_active_reason_no_charger">Indisponible : aucune borne de ce site n\'accepte de consigne de courant.</string>
   <string name="site_active_reason_measurement">Indisponible : la mesure de puissance propre à ce site n\'est pas fiable.</string>
   <string name="site_active_reason_direction_unknown">L\'équilibrage de charge ne peut pas savoir si le courant est soutiré du réseau ou injecté : il protège seulement le fusible et n\'utilise pas toute la marge. Modifiez les réglages du compteur dans Home Assistant.</string>
+  <string name="site_active_reason_direction_use_power">L\'équilibrage de charge ne peut pas savoir si le courant est soutiré du réseau ou injecté : il protège seulement le fusible et n\'utilise pas toute la marge. Votre compteur indique aussi la puissance par phase, qui donne le sens : ouvrez les réglages de la carte SpotNav dans Home Assistant et appuyez sur Utiliser pour votre compteur sous Trouvé dans Home Assistant.</string>
+  <string name="site_active_reason_direction_magnitude">Votre compteur indique le courant sans sens, donc l\'équilibrage de charge ne peut pas savoir s\'il est soutiré du réseau ou injecté. Il protège seulement le fusible et n\'utilise pas toute la marge.</string>
   <string name="site_active_reason_unknown">Indisponible, pour une raison que cette application ne connaît pas encore.</string>
   <string name="site_active_note">Au mieux, ce n\'est pas un dispositif de protection. Le désactiver rend tout courant qu\'il avait réduit.</string>
   <string name="site_error_conflict">Modifié ailleurs. Les valeurs actuelles sont affichées.</string>
@@ -711,6 +722,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">Premier mois</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Dernier mois</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">« De » et « À » ne peuvent pas être la même heure.</string>
+  <string name="card_supplier_markup" formatted="false">Marge du fournisseur</string>
+  <string name="card_supplier_sell" formatted="false">Supplément pour l’électricité vendue</string>
   <string name="card_demand_title" formatted="false">Tarif de puissance</string>
   <string name="card_demand_part" formatted="false">Tarif de puissance {n}</string>
   <string name="card_demand_add_part" formatted="false">Une autre part du tarif de puissance</string>

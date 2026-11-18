@@ -454,9 +454,17 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
         // The slider's floor: 6 A until Home Assistant states the charger's own range
         // (`current_range`, see `setRange`).
         var minAmps = DEFAULT_MIN_AMPS
+        // A charger given a power (Home Assistant's `current_range.kw_per_a`): the current is then shown in kW alone.
+        var kwPerA: Double? = null
+        val currentText = { value: Int ->
+            when (val perAmp = CurrentReadout.powerKw(value, kwPerA)) {
+                null -> t(R.string.amps_power, value, ChargingPlanner.powerKw(value, selectedPhases()))
+                else -> t(R.string.power_kw, perAmp)
+            }
+        }
         // No heading: the popover renders the name and this value itself.
         val amps = slider(null, DEFAULT_MIN_AMPS, DEFAULT_MAX_AMPS, settings.chargingAmps, ampsValue, ampsParent) { value ->
-            ampsValue.text = if (ampsNotSet) notSetText else t(R.string.amps_power, value, ChargingPlanner.powerKw(value, selectedPhases()))
+            ampsValue.text = if (ampsNotSet) notSetText else currentText(value)
         }
         val ampsNow = { amps.progress + minAmps }
         val controls = ConnectionControls(
@@ -475,7 +483,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             refreshValueLabel = {
                 // The piece owns the number, so it owns every label showing it: the popover's large
                 // value, and the card's row.
-                val text = if (ampsNotSet) notSetText else t(R.string.amps_power, ampsNow(), ChargingPlanner.powerKw(ampsNow(), selectedPhases()))
+                val text = if (ampsNotSet) notSetText else currentText(ampsNow())
                 ampsValue.text = text
                 cardAmpsValue.text = text
             },
@@ -484,6 +492,7 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             ampsNotSet = { ampsNotSet },
             minAmps = { minAmps },
             maxAmps = { minAmps + amps.max },
+            setKwPerA = { perAmp -> kwPerA = perAmp },
             setAmps = { value, floor, ceiling ->
                 // The range, with the value held:
                 val low = minOf(floor, value)
@@ -517,6 +526,15 @@ internal class ChargerCardController(scope: ViewScope, private val widgetId: Int
             return TickAxis(min, max, stops.map { Tick(it, it.toString()) })
         }
     }
+}
+
+/** The planned current as the reader is shown it (the card's `currentText`). */
+internal object CurrentReadout {
+    /**
+     * The kW a charger given a power is written at [amps] amperes per phase, [kwPerA] each; `null` for a charger given
+     * a current, which is shown in amperes with the power its phases make.
+     */
+    fun powerKw(amps: Int, kwPerA: Double?): Double? = kwPerA?.takeIf { it > 0.0 }?.let { amps * it }
 }
 
 /** What [ChargerCardController.add] hands back: */
@@ -608,6 +626,8 @@ internal class ConnectionControls(
     /** The slider's floor and ceiling now, in amperes. */
     val minAmps: () -> Int,
     val maxAmps: () -> Int,
+    /** The kW one ampere per phase is written as for a charger given a power, or `null` for one given a current. */
+    val setKwPerA: (Double?) -> Unit,
     /**
      * Show [value] on a slider spanning [floor]..[ceiling] (widened to hold [value] when it lies
      * outside), without saving anything.

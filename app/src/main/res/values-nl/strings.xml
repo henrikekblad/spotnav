@@ -220,6 +220,14 @@
   <string name="departure_day_daily">Elke dag</string>
   <string name="departure_day_on_date">Op een datum</string>
   <string name="departure_date_help">Het plan mag wachten op uren die meestal goedkoper zijn. Het vertrek wordt altijd gehaald.</string>
+  <string name="departure_calendar_label">Agenda</string>
+  <string name="departure_calendar_used">Volgende vertrek volgens de agenda: %1$s.</string>
+  <string name="departure_calendar_used_target">Volgende vertrek volgens de agenda: %1$s, %2$s.</string>
+  <string name="departure_calendar_target_ignored">Het doel van de afspraak is van de andere soort (niveau of energie) en wordt niet gebruikt.</string>
+  <string name="departure_calendar_daily">Geen afspraak in de komende 7 dagen verschuift het vertrek: het dagelijkse vertrek geldt.</string>
+  <string name="departure_calendar_date">De gekozen datum gaat voor de agenda.</string>
+  <string name="departure_calendar_unavailable">De agenda is niet te lezen: het dagelijkse vertrek geldt tot dat weer kan.</string>
+  <string name="departure_calendar_no_event">Geen afspraak in de komende 7 dagen: er is geen vertrek, dus het plan gebruikt de goedkoopste bekende uren.</string>
   <string name="departure_date_past">Deze datum is voorbij, dus het plan loopt elke dag tot je een nieuwe datum kiest. Opslaan wist hem.</string>
   <string name="departure_weekdays_title">Weekdagen</string>
   <string name="departure_weekdays_help">Op een dag die je weglaat is er geen vertrek: het plan loopt door tot de volgende dag die je kiest.</string>
@@ -279,6 +287,7 @@
   <string name="strategy_row_description">%1$s. %2$s. Tik om te kiezen.</string>
   <!-- Vehicle, site and plan figures for a paired charger (webhook update_vehicle / update_site_settings). -->
   <string name="vehicle_capacity_reported">doorgegeven door de auto</string>
+  <string name="vehicle_capacity_learned">geleerd uit laadbeurten: ongeveer %1$s kWh</string>
   <string name="vehicle_error_capacity">Batterijcapaciteit moet tussen 1 en 500 kWh liggen.</string>
   <string name="vehicle_error_consumption">Verbruik moet tussen 0,1 en 50 kWh/10 km liggen.</string>
   <string name="vehicle_error_unknown">Die auto is niet meer beschikbaar.</string>
@@ -307,6 +316,8 @@
   <string name="site_active_reason_no_charger">Niet beschikbaar: geen enkele laadpaal op deze locatie accepteert een stroomcommando.</string>
   <string name="site_active_reason_measurement">Niet beschikbaar: de eigen vermogensmeting van deze locatie is niet in orde.</string>
   <string name="site_active_reason_direction_unknown">Load balancing kan niet zien of de stroom van het net komt of wordt teruggeleverd, dus beschermt het alleen de zekering en benut het niet alle ruimte. Wijzig de instellingen van de meter in Home Assistant.</string>
+  <string name="site_active_reason_direction_use_power">Load balancing kan niet zien of de stroom van het net komt of wordt teruggeleverd, dus beschermt het alleen de zekering en benut het niet alle ruimte. Je meter meldt ook het vermogen per fase, dat de richting geeft: open de instellingen van de SpotNav-kaart in Home Assistant en druk op Gebruiken bij je meter onder Gevonden in Home Assistant.</string>
+  <string name="site_active_reason_direction_magnitude">Je meter meldt de stroom zonder richting, dus load balancing kan niet zien of die van het net komt of wordt teruggeleverd. Het beschermt alleen de zekering en benut niet alle ruimte.</string>
   <string name="site_active_reason_unknown">Niet beschikbaar, om een reden die deze app nog niet kent.</string>
   <string name="site_active_note">Naar beste vermogen, geen beveiligingsapparaat. Uitzetten geeft de stroom die werd verlaagd weer terug.</string>
   <string name="site_error_conflict">Elders gewijzigd. De huidige waarden worden getoond.</string>
@@ -703,6 +714,8 @@
   <string name="card_grid_fee_window_from_month" formatted="false">Eerste maand</string>
   <string name="card_grid_fee_window_to_month" formatted="false">Laatste maand</string>
   <string name="card_grid_fee_window_same_hours" formatted="false">Van en Tot kunnen niet hetzelfde uur zijn.</string>
+  <string name="card_supplier_markup" formatted="false">Opslag van de leverancier</string>
+  <string name="card_supplier_sell" formatted="false">Toeslag voor verkochte stroom</string>
   <string name="card_demand_title" formatted="false">Capaciteitstarief</string>
   <string name="card_demand_part" formatted="false">Capaciteitstarief {n}</string>
   <string name="card_demand_add_part" formatted="false">Nog een deel van het capaciteitstarief</string>

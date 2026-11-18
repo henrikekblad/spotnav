@@ -15,6 +15,7 @@ import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.chart.DashboardChart
 import se.sensnology.spotnav.chart.PlanChartView
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.settings.DepartureDays
@@ -249,6 +250,45 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 note = t(R.string.plan_card_departure_note)
             ))
         }
+        // What the charger's departure calendar (chosen in Home Assistant) makes of the departure above: said under
+        // it, as the card's Plan dialog says it under the calendar. Hidden when there is nothing to say.
+        val calendarNote = TextView(context).apply {
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(2), 0, dp(6))
+            visibility = View.GONE
+        }
+        card.body.addView(calendarNote)
+        val showCalendarNote = { dashboard: Dashboard? ->
+            val block = dashboard?.departureCalendar
+            val note = DepartureCalendarNote.of(
+                block, dashboard?.settings?.departureEnabled == true, dashboard?.let { DashboardChart.zone(it) }
+            )
+            val numbers = AppLanguageSettings.numberLocale(context)
+            val sentence = when (note) {
+                null -> null
+                is DepartureCalendarNote.Used -> {
+                    val today = dashboard?.let { DashboardChart.localDate(it, java.time.Instant.now()) }
+                    val whenText = DepartureText.text(
+                        note.date, "%02d:%02d".format(note.time.hour, note.time.minute), today, dayLocale(),
+                        t(R.string.departure_today), t(R.string.departure_tomorrow)
+                    )
+                    val target = note.targetPercent?.let { String.format(numbers, "%.0f %%", it) }
+                        ?: note.targetKwh?.let { kwhText(it) }
+                    val line = if (target == null) t(R.string.departure_calendar_used, whenText)
+                        else t(R.string.departure_calendar_used_target, whenText, target)
+                    if (note.targetIgnored) "$line ${t(R.string.departure_calendar_target_ignored)}" else line
+                }
+                DepartureCalendarNote.Daily -> t(R.string.departure_calendar_daily)
+                DepartureCalendarNote.Date -> t(R.string.departure_calendar_date)
+                DepartureCalendarNote.Unavailable -> t(R.string.departure_calendar_unavailable)
+                DepartureCalendarNote.NoEvent -> t(R.string.departure_calendar_no_event)
+            }
+            calendarNote.text = sentence?.let { said ->
+                block?.name?.let { name -> "${t(R.string.departure_calendar_label)}: $name. $said" } ?: said
+            }.orEmpty()
+            calendarNote.visibility = if (sentence == null) View.GONE else View.VISIBLE
+        }
         val refreshDepartureLabel = {
             val reading = PlanReadout.departureReading(useDeparture.isChecked, departureHour, departureMinute)
             // The plan summary names a dated departure's day, as the card's Plan cell does:
@@ -414,6 +454,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 if (dashboard != null && soc == null) targetSoc.applyVehicle(vehicle)
                 if (dashboard == null) targetSoc.applyVehicle(vehicle)
                 refreshDepartureLabel()
+                showCalendarNote(dashboard)
                 refreshDriver()
             },
             refreshDriver = { refreshDriver() },

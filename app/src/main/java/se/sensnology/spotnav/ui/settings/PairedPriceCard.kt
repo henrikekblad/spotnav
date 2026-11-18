@@ -123,6 +123,8 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
             }
             settingRow(tariffRows, row.label, row.value, onTap = edit)
         }
+        // The supplier's figures are set in Home Assistant; a tariff write from here leaves them as stored.
+        for ((label, value) in tariffText().supplierRows(block)) settingRow(tariffRows, label, value)
     }
 
     /**
