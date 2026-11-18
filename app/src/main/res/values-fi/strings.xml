@@ -918,4 +918,84 @@
   <string name="card_hist_pick_day" formatted="false">Valitse päivä</string>
   <string name="card_hist_pick_month" formatted="false">Valitse kuukausi</string>
   <string name="card_hist_pick_year" formatted="false">Valitse vuosi</string>
+  <string name="card_battery_title" formatted="false">Kotiakku</string>
+  <string name="card_battery_intro" formatted="false">SpotNav voi ohjata akkua: estää sen purkautumisen, kun auto latautuu verkosta, ladata sitä halvalla sähköllä ja lopettaa syötön verkkoon, kun siitä joutuu maksamaan. Pois päältä, kunnes kytket sen päälle.</string>
+  <string name="card_battery_mode_label" formatted="false">Tila</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">Akku latautuu auringosta ja kattaa talon kulutuksen. Ei kauppaa verkon kanssa.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Latautuu myös verkosta, kun sähkö on halpaa, ja sitä käytetään, kun se on kallista. Ei myy.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Kuten Tasapainoinen, mutta saa myös myydä verkkoon, kun se kannattaa, kulumisen huomioiden.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Kun SpotNav ei ohjaa akkua, valinta vain vaihtaa, mikä vertailun rivi on merkitty valituksi.</string>
+  <string name="card_battery_switch" formatted="false">Akun ohjaus</string>
+  <string name="card_battery_line_off" formatted="false">Pois: SpotNav ei vielä ohjaa mitään ja näyttää vain, mitä se tekisi.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Testi: SpotNav ei vielä ohjaa mitään ja kirjaa vain lokiin, mitä se tekisi.</string>
+  <string name="card_battery_line_checking" formatted="false">Tarkistetaan, että akku tottelee (noin 40 minuuttia).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Tarkistetaan akku uudelleen päivityksen jälkeen.</string>
+  <string name="card_battery_line_on" formatted="false">Päällä: SpotNav ohjaa akkua.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Ei vielä ohjaa: akku pysyy AI-tilassa, kunnes hyväksyt ohjauksen siirron.</string>
+  <string name="card_battery_line_waiting" formatted="false">Odotetaan sopivaa hetkeä tarkistukselle.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Odotetaan sopivaa hetkeä tarkistaa akku uudelleen päivityksen jälkeen.</string>
+  <string name="card_battery_line_failed" formatted="false">Tarkistus epäonnistui: ”{mode}” ei toiminut. Kytke pois ja päälle tarkistaaksesi uudelleen.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Se luovutti viiden yrityksen jälkeen.</string>
+  <string name="card_battery_line_blocked" formatted="false">Pysäytetty: tapahtui jotain odottamatonta, ja akku on palautettu.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Pysäytetty tältä päivältä: päivän kirjoitukset on käytetty.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Akun laiteohjelmistoa ei voi vielä lukea.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Seuraava yritys aikaisintaan tunnin päästä edellisestä.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Akun ohjausta ei löydy.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Päivityksen jälkeen se odottaa iltaa.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Se odottaa, kunnes auto lopettaa latauksen.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Se odottaa, kunnes akku purkautuu.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Se odottaa akun varaustasoa 30–80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Se odottaa lisää tilaa pääsulakkeen alle.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Se odottaa tuoreita lukemia.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Se odottaa, kun akun ohjaus on varattu.</string>
+  <string name="card_battery_mode_hold" formatted="false">Pito</string>
+  <string name="card_battery_mode_charge" formatted="false">Lataus verkosta</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Talon kattaminen</string>
+  <string name="card_battery_mode_normal" formatted="false">Palautus</string>
+  <string name="card_battery_cap_line" formatted="false">Enintään {kw} kW verkosta, jotta sulake kestää, vaikka Home Assistant pysähtyisi ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Ei latausta verkosta: talo yltää sulakkeeseen itsekin ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Tuontiraja suojaa sulaketta verkosta ladattaessa.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">opittu vaiheittain</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">varovainen, kunnes ensimmäiset vuorokaudet on opittu</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">kun talon huippuja opetellaan</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Ei latausta verkosta, kun talon huippuja opetellaan ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Akun ohjausta ei voitu lukea.</string>
+  <string name="card_battery_error_generic" formatted="false">Se ei onnistunut. Yritä uudelleen.</string>
+  <string name="card_settings_value_on" formatted="false">Päällä</string>
+  <string name="card_heat_settings_title" formatted="false">Lämmitys</string>
+  <string name="card_heat_settings_steer" formatted="false">Ohjaa lämmitystä</string>
+  <string name="card_heat_settings_indoor" formatted="false">Sisäanturit</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} valittu</string>
+  <string name="card_heat_settings_none" formatted="false">Ei mitään</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Ulkoanturi</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automaattinen</string>
+  <string name="card_heat_settings_meter" formatted="false">Lämpöpumpun mittari</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Lämpöpumpun sähkönkulutus. Sen portaat erottavat lämmityksen käyttövedestä.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Ei löydy</string>
+  <string name="card_heat_settings_path" formatted="false">Ohjaus</string>
+  <string name="card_heat_path_none" formatted="false">Ei vielä</string>
+  <string name="card_heat_path_relay" formatted="false">Rele (lasku)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (kaksi kosketinta)</string>
+  <string name="card_heat_path_offset" formatted="false">Lämpökäyrän siirto</string>
+  <string name="card_heat_path_setpoint" formatted="false">Asetusarvo</string>
+  <string name="card_heat_settings_control" formatted="false">Ohjauslähtö</string>
+  <string name="card_heat_settings_control_b" formatted="false">Toinen kosketin</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Käyttövesi</string>
+  <string name="card_heat_settings_zones" formatted="false">Vyöhykkeet</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Ei vyöhykkeitä</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Siirto talon lämpötilaan nähden, −3…+3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Huoneen oma tavoite talon lämpötilaan nähden, −3…+3 °C. Viileämpi yläkerta: −1,5. Anturi, joka näyttää puoli astetta liian lämmintä: +0,5. Kylmintä huonetta verrataan sen omaan tavoitteeseen.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Ilmalämpöpumppu: SpotNav muuttaa vain asetusarvoa, ei koskaan kytke sitä päälle tai pois.</string>
+  <string name="card_heat_settings_night" formatted="false">Viileämpi yö</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Valinnainen: muutama aste viileämpää kahden ajan välillä. Suunnitelma ottaa sen huomioon.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Astetta viileämpää</string>
+  <string name="card_heat_settings_night_start" formatted="false">Alkaen</string>
+  <string name="card_heat_settings_night_end" formatted="false">Asti</string>
+  <string name="card_heat_error_generic" formatted="false">Tallennus ei onnistunut.</string>
+  <string name="card_heat_error_conflict" formatted="false">Joku muu muutti samaan aikaan; uusin näytetään.</string>
+  <string name="card_heat_error_range" formatted="false">Arvo on sallitun ulkopuolella.</string>
+  <string name="card_heat_error_step" formatted="false">Valitse puolen asteen tarkkuudella.</string>
+  <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
+  <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
 </resources>

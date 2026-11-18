@@ -926,4 +926,84 @@
   <string name="card_hist_pick_day" formatted="false">Elegir un día</string>
   <string name="card_hist_pick_month" formatted="false">Elegir un mes</string>
   <string name="card_hist_pick_year" formatted="false">Elegir un año</string>
+  <string name="card_battery_title" formatted="false">Batería doméstica</string>
+  <string name="card_battery_intro" formatted="false">SpotNav puede controlar la batería: pausarla mientras el coche carga de la red, cargarla cuando la electricidad es barata y detener la exportación cuando cuesta dinero. Desactivado hasta que lo actives.</string>
+  <string name="card_battery_mode_label" formatted="false">Modo</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">La batería se carga con el sol y abastece la casa. Sin compraventa con la red.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">También se carga de la red cuando es barato y se usa cuando es caro. No vende.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Como Equilibrado, pero también puede vender a la red cuando compensa, con el desgaste incluido.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Mientras SpotNav no controle la batería, la elección solo cambia qué fila está marcada como elegida en la comparación.</string>
+  <string name="card_battery_switch" formatted="false">Control de la batería</string>
+  <string name="card_battery_line_off" formatted="false">Desactivado: SpotNav aún no controla nada y solo muestra lo que haría.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Prueba: SpotNav aún no controla nada y solo registra lo que haría.</string>
+  <string name="card_battery_line_checking" formatted="false">Comprobando que la batería obedece (unos 40 minutos).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Comprobando la batería de nuevo tras una actualización.</string>
+  <string name="card_battery_line_on" formatted="false">Activado: SpotNav controla la batería.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Aún no controla nada: la batería sigue en modo IA hasta que aceptes el traspaso del control.</string>
+  <string name="card_battery_line_waiting" formatted="false">Esperando un momento adecuado para la comprobación.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Esperando un momento adecuado para volver a comprobar la batería tras una actualización.</string>
+  <string name="card_battery_line_failed" formatted="false">La comprobación falló: «{mode}» no funcionó. Desactiva y vuelve a activar para comprobar de nuevo.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Se abandonó tras cinco intentos.</string>
+  <string name="card_battery_line_blocked" formatted="false">Detenido: ocurrió algo inesperado y la batería se ha devuelto.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Detenido por hoy: se agotaron las escrituras del día.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">El firmware de la batería aún no se puede leer.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">El siguiente intento será al menos una hora después del anterior.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">No se encuentran los controles de la batería.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Tras una actualización espera a una tarde.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Espera a que el coche deje de cargar.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Espera a que la batería se descargue.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Espera a un nivel de batería entre el 30 y el 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Espera a tener más margen bajo el fusible principal.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Espera lecturas recientes.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Espera mientras el control de la batería está ocupado.</string>
+  <string name="card_battery_mode_hold" formatted="false">Mantener</string>
+  <string name="card_battery_mode_charge" formatted="false">Cargar de la red</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Abastecer la casa</string>
+  <string name="card_battery_mode_normal" formatted="false">Devolver</string>
+  <string name="card_battery_cap_line" formatted="false">Como máximo {kw} kW de la red, para que el fusible aguante aunque Home Assistant se detenga ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Sin carga desde la red: la casa puede alcanzar el fusible por sí sola ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">El límite de importación protege el fusible al cargar desde la red.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">aprendido por fase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">prudente hasta aprender los primeros días</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">mientras se aprenden los picos de la casa</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Sin carga desde la red mientras se aprenden los picos de la casa ({left}).</string>
+  <string name="card_battery_failed" formatted="false">No se pudo leer el control de la batería.</string>
+  <string name="card_battery_error_generic" formatted="false">No funcionó. Inténtalo de nuevo.</string>
+  <string name="card_settings_value_on" formatted="false">Activado</string>
+  <string name="card_heat_settings_title" formatted="false">Calefacción</string>
+  <string name="card_heat_settings_steer" formatted="false">Controlar la calefacción</string>
+  <string name="card_heat_settings_indoor" formatted="false">Sensores interiores</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} elegidos</string>
+  <string name="card_heat_settings_none" formatted="false">Ninguno</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Sensor exterior</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automático</string>
+  <string name="card_heat_settings_meter" formatted="false">Contador de la bomba de calor</string>
+  <string name="card_heat_settings_meter_help" formatted="false">El consumo eléctrico de la bomba de calor. Sus escalones separan la calefacción del agua caliente.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">No encontrado</string>
+  <string name="card_heat_settings_path" formatted="false">Control</string>
+  <string name="card_heat_path_none" formatted="false">Ninguno aún</string>
+  <string name="card_heat_path_relay" formatted="false">Relé (bajada)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (dos contactos)</string>
+  <string name="card_heat_path_offset" formatted="false">Desplazamiento de la curva</string>
+  <string name="card_heat_path_setpoint" formatted="false">Consigna</string>
+  <string name="card_heat_settings_control" formatted="false">Salida de control</string>
+  <string name="card_heat_settings_control_b" formatted="false">Segundo contacto</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Agua caliente</string>
+  <string name="card_heat_settings_zones" formatted="false">Zonas</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Sin zonas</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Desplazamiento respecto a la temperatura de la casa, de −3 a +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">El objetivo propio de la habitación respecto a la temperatura de la casa, de −3 a +3 °C. Una planta alta más fresca: −1,5. Un sensor que marca medio grado de más: +0,5. La habitación más fría se mide con su propio objetivo.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Bomba de calor aire-aire: SpotNav solo ajusta su consigna, nunca la enciende ni la apaga.</string>
+  <string name="card_heat_settings_night" formatted="false">Noche más fresca</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Opcional: unos grados menos entre dos horas. El plan cuenta con ello.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Grados menos</string>
+  <string name="card_heat_settings_night_start" formatted="false">Desde</string>
+  <string name="card_heat_settings_night_end" formatted="false">Hasta</string>
+  <string name="card_heat_error_generic" formatted="false">No se pudo guardar.</string>
+  <string name="card_heat_error_conflict" formatted="false">Otra persona lo cambió a la vez; se muestra lo último.</string>
+  <string name="card_heat_error_range" formatted="false">El valor está fuera de lo permitido.</string>
+  <string name="card_heat_error_step" formatted="false">Elige medios grados.</string>
+  <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
+  <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
 </resources>

@@ -195,6 +195,8 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val pairedCards = settingsProfile?.let {
             PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it), chargerTabs = chargerTabs)
         }
+        // The home battery and the heat, after the site's cards: drawn only where Home Assistant offers them.
+        val siteCards = settingsProfile?.let { SiteSettingsCards(scope = this, parent = content) }
         // Opened from the charger card's car row: at that car, once.
         shell.settingsCar?.let { car -> pairedCards?.openAtCar(car) { y -> shell.scrollView.post { shell.scrollView.smoothScrollTo(0, y) } } }
         shell.settingsCar = null
@@ -239,6 +241,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 showNotifications()
             } else session.peekDashboard { dashboard ->
                 pairedCards.show(dashboard)
+                siteCards?.show(dashboard?.capabilities)
                 // Where the price lives (the electricity price the charger uses), above the area and fees.
                 dashboard?.let { pairedPrice?.showSource(it.priceSource, chargerTotal = it.chargers.size, onSite = it.site != null) }
                 // The grid tariff beside the grid fee: a percentage of spot, the high-load fee and its hours, and the demand charge.
@@ -355,6 +358,11 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                         if (PairedVehicles.feedback(outcome).reload) loadPaired()
                     }
                 }
+            )
+            siteCards?.attach(
+                battery = { mode, done -> session.batteryControl(mode, done) },
+                heatRead = { done -> session.heatSettings(done) },
+                heatWrite = { request, done -> session.updateHeatSettings(request, done) }
             )
             pairedCards.attachGuest { amountKwh, done ->
                 session.updateGuest(amountKwh) { outcome ->

@@ -8,6 +8,10 @@ import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.HouseNowRead
 import se.sensnology.spotnav.ha.house.HouseRead
 import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ha.site.BatteryControlRead
+import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.HeatSettingsRead
+import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -352,6 +356,24 @@ object HomeAssistantClient {
     internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
         val (status, body) = write(settings, HouseRead.payload(date))
         return HouseRead.answer(status, body)
+    }
+
+    /** The site's battery control status (webhook `battery_control`); with [mode] it writes the battery mode first. Never throws. */
+    internal fun batteryControl(settings: HomeAssistantSettings, mode: String?): BatteryControlRead.Outcome {
+        val (status, body) = write(settings, BatteryControlRead.payload(mode))
+        return BatteryControlRead.answer(status, body)
+    }
+
+    /** The site's heat settings (webhook `get_heat`), as the Settings screen reads them. Never throws. */
+    internal fun heatSettings(settings: HomeAssistantSettings): SiteRead<HeatSettings> {
+        val (status, body) = write(settings, HeatSettingsRead.payload())
+        return HeatSettingsRead.answer(status, body)
+    }
+
+    /** The heat settings the Settings screen writes (webhook `update_heat`: the night and the offsets). Never throws. */
+    internal fun updateHeatSettings(settings: HomeAssistantSettings, request: HeatSettingsUpdate.Request): HeatSettingsUpdate.Outcome {
+        val (status, body) = write(settings, request.payload())
+        return HeatSettingsUpdate.answer(status, body)
     }
 
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */

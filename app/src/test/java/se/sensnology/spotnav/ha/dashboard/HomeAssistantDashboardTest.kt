@@ -190,7 +190,7 @@ class HomeAssistantDashboardTest {
                 refreshVehicle = true, setChargeLimit = true, priceDays = true,
                 planPreview = true, dismissSetupItem = true, fixOwnMode = true,
                 releaseImportTarget = true, getPowerMonth = true, siteImportTarget = true,
-                suggestImportTarget = true, getHouse = true, getHeat = true
+                suggestImportTarget = true, getHouse = true, getHeat = true, batteryControl = true
             ),
             capabilities { }
         )
@@ -199,7 +199,7 @@ class HomeAssistantDashboardTest {
                 refreshVehicle = false, setChargeLimit = true, priceDays = true,
                 planPreview = true, dismissSetupItem = true, fixOwnMode = true,
                 releaseImportTarget = true, getPowerMonth = true, siteImportTarget = true,
-                suggestImportTarget = true, getHouse = true, getHeat = true
+                suggestImportTarget = true, getHouse = true, getHeat = true, batteryControl = true
             ),
             capabilities { put("refresh_vehicle", false) }
         )
@@ -217,6 +217,7 @@ class HomeAssistantDashboardTest {
             remove("suggest_import_target")
             remove("get_house")
             remove("get_heat")
+            remove("battery_control")
         })
         assertEquals(false, capabilities { put("price_days", 1) }.priceDays)
         // An older Home Assistant states none of the three webhook actions of 2.3: the features stay hidden.
@@ -229,6 +230,8 @@ class HomeAssistantDashboardTest {
         // Nor 3.0's house and heat: without the keys there is the charger's page alone.
         assertEquals(false, capabilities { remove("get_house") }.getHouse)
         assertEquals(false, capabilities { put("get_heat", "true") }.getHeat)
+        assertEquals(false, capabilities { put("battery_control", 1) }.batteryControl)
+        assertEquals(false, capabilities { remove("battery_control") }.batteryControl)
     }
 
     @Test fun theGetStartedRowsAreReadInTheCardsOrderAndAnUnknownRowIsSkipped() {

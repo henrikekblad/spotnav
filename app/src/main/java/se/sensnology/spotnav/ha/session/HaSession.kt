@@ -26,6 +26,9 @@ import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ha.site.BatteryControlRead
+import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.HeatSettingsUpdate
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -96,6 +99,15 @@ internal interface HaTransport {
     /** `suggest_import_target`: a suggested import target, `null` for none; never throws. */
     fun suggestImportTarget(): SuggestImportTarget.Suggestion? = null
 
+    /** `battery_control`: the battery control status, after writing the battery mode when [mode] is given; never throws. */
+    fun batteryControl(mode: String?): BatteryControlRead.Outcome = BatteryControlRead.Outcome.Failed(null)
+
+    /** `get_heat`: the site's heat settings; never throws. */
+    fun heatSettings(): SiteRead<HeatSettings> = SiteRead.Failed(null)
+
+    /** `update_heat` for the night and the offsets; never throws. */
+    fun updateHeatSettings(request: HeatSettingsUpdate.Request): HeatSettingsUpdate.Outcome = HeatSettingsUpdate.Outcome.Failed(null)
+
     /** `get_house_now`: the site's live flows. */
     fun houseNow(): SiteRead<HouseNow> = SiteRead.Failed(null)
 
@@ -160,6 +172,12 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun powerMonth(month: YearMonth?) = HomeAssistantClient.powerMonth(connection, month)
 
     override fun suggestImportTarget() = HomeAssistantClient.suggestImportTarget(connection)
+
+    override fun batteryControl(mode: String?) = HomeAssistantClient.batteryControl(connection, mode)
+
+    override fun heatSettings() = HomeAssistantClient.heatSettings(connection)
+
+    override fun updateHeatSettings(request: HeatSettingsUpdate.Request) = HomeAssistantClient.updateHeatSettings(connection, request)
 
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
@@ -398,6 +416,30 @@ internal class HaSession(
     fun house(date: LocalDate?, done: (SiteRead<House>) -> Unit) {
         background.execute {
             val outcome = transport.house(date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `battery_control`, writing the battery [mode] first when given (never throws). */
+    fun batteryControl(mode: String?, done: (BatteryControlRead.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.batteryControl(mode)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_heat` for the Settings screen (never throws). */
+    fun heatSettings(done: (SiteRead<HeatSettings>) -> Unit) {
+        background.execute {
+            val outcome = transport.heatSettings()
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_heat` for the night and the offsets (never throws). */
+    fun updateHeatSettings(request: HeatSettingsUpdate.Request, done: (HeatSettingsUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateHeatSettings(request)
             mainThread { done(outcome) }
         }
     }

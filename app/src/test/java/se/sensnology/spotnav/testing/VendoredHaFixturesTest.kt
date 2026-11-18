@@ -8,7 +8,7 @@ import java.io.File
 
 /** The vendored fixtures are a copy, so they can fall behind. */
 class VendoredHaFixturesTest {
-    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes", "grid_tariff", "power_month", "house", "house_now")
+    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes", "grid_tariff", "power_month", "house", "house_now", "battery_control", "heat_card")
 
     /** This repository's root: the directory holding the sync script. */
     private fun repoRoot(): File? {

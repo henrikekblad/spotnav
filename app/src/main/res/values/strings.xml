@@ -931,4 +931,84 @@
   <string name="card_hist_pick_day" formatted="false">Choose a day</string>
   <string name="card_hist_pick_month" formatted="false">Choose a month</string>
   <string name="card_hist_pick_year" formatted="false">Choose a year</string>
+  <string name="card_battery_title" formatted="false">Home battery</string>
+  <string name="card_battery_intro" formatted="false">SpotNav can run the battery: hold it while the car charges from the grid, charge it when power is cheap and stop export when it costs money. Off until you turn it on.</string>
+  <string name="card_battery_mode_label" formatted="false">Mode</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">The battery charges from the sun and covers the house. No trading with the grid.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Also charges from the grid when it is cheap and is used when it is dear. Does not sell.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Like Balanced, but may also sell to the grid when it pays, wear counted in.</string>
+  <string name="card_battery_mode_shadow" formatted="false">While SpotNav does not control the battery, the choice only moves which row is marked as chosen in the comparison.</string>
+  <string name="card_battery_switch" formatted="false">Battery control</string>
+  <string name="card_battery_line_off" formatted="false">Off: SpotNav controls nothing yet and only shows what it would do.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav controls nothing yet and only logs what it would do.</string>
+  <string name="card_battery_line_checking" formatted="false">Checking that the battery obeys (about 40 minutes).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Checking the battery again after an update.</string>
+  <string name="card_battery_line_on" formatted="false">On: SpotNav runs the battery.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Not controlling yet: the battery stays in AI mode until you accept the takeover.</string>
+  <string name="card_battery_line_waiting" formatted="false">Waiting for a suitable moment for the check.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Waiting for a suitable moment to check the battery again after an update.</string>
+  <string name="card_battery_line_failed" formatted="false">The check failed: “{mode}” did not work. Turn the switch off and on to check again.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">It gave up after five tries.</string>
+  <string name="card_battery_line_blocked" formatted="false">Stopped: something unexpected happened, and the battery is handed back.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Stopped for today: the day\'s writes are used up.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">The battery\'s firmware cannot be read yet.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">The next try is at least an hour after the last.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">The battery\'s controls are not found.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">After an update it waits for an evening.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">It waits until the car stops charging.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">It waits until the battery is discharging.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">It waits for a battery level between 30 and 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">It waits for more room under the main fuse.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">It waits for fresh readings.</string>
+  <string name="card_battery_waiting_busy" formatted="false">It waits while the battery control is busy.</string>
+  <string name="card_battery_mode_hold" formatted="false">Hold</string>
+  <string name="card_battery_mode_charge" formatted="false">Charge from the grid</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Cover the house</string>
+  <string name="card_battery_mode_normal" formatted="false">Hand back</string>
+  <string name="card_battery_cap_line" formatted="false">At most {kw} kW from the grid, so the fuse holds even if Home Assistant stops ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">No charging from the grid: the house can reach the fuse by itself ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">The import limit protects the fuse when charging from the grid.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">learned per phase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">cautious until the first days are learned</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">while the house\'s peaks are being learned</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">No charging from the grid while the house\'s peaks are being learned ({left}).</string>
+  <string name="card_battery_failed" formatted="false">The battery control could not be read.</string>
+  <string name="card_battery_error_generic" formatted="false">That did not work. Try again.</string>
+  <string name="card_settings_value_on" formatted="false">On</string>
+  <string name="card_heat_settings_title" formatted="false">Heating</string>
+  <string name="card_heat_settings_steer" formatted="false">Control the heat</string>
+  <string name="card_heat_settings_indoor" formatted="false">Indoor sensors</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} chosen</string>
+  <string name="card_heat_settings_none" formatted="false">None</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Outdoor sensor</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatic</string>
+  <string name="card_heat_settings_meter" formatted="false">Heat pump meter</string>
+  <string name="card_heat_settings_meter_help" formatted="false">The heat pump\'s electricity use. Its steps tell heating from hot water.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Not found</string>
+  <string name="card_heat_settings_path" formatted="false">Control</string>
+  <string name="card_heat_path_none" formatted="false">None yet</string>
+  <string name="card_heat_path_relay" formatted="false">Relay (lowering)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (two contacts)</string>
+  <string name="card_heat_path_offset" formatted="false">Heating curve offset</string>
+  <string name="card_heat_path_setpoint" formatted="false">Setpoint</string>
+  <string name="card_heat_settings_control" formatted="false">Control output</string>
+  <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_settings_zones" formatted="false">Zones</string>
+  <string name="card_heat_settings_zones_none" formatted="false">No zones</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Offset against the house temperature, −3 to +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">The room\'s own aim against the house temperature, −3 to +3 °C. A cooler upstairs: −1.5. A sensor that reads half a degree warm: +0.5. The coldest room is judged against its own aim.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Air-to-air heat pump: SpotNav only nudges its setpoint, never turns it on or off.</string>
+  <string name="card_heat_settings_night" formatted="false">Cooler night</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Optional: a few degrees cooler between two times. The plan counts on it.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Degrees cooler</string>
+  <string name="card_heat_settings_night_start" formatted="false">From</string>
+  <string name="card_heat_settings_night_end" formatted="false">To</string>
+  <string name="card_heat_error_generic" formatted="false">Could not save.</string>
+  <string name="card_heat_error_conflict" formatted="false">Someone else changed it meanwhile; showing the latest.</string>
+  <string name="card_heat_error_range" formatted="false">The value is outside what is allowed.</string>
+  <string name="card_heat_error_step" formatted="false">Choose half degrees.</string>
+  <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
+  <string name="site_settings_heat_failed">The heat settings could not be read.</string>
 </resources>

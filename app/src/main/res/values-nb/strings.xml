@@ -918,4 +918,84 @@
   <string name="card_hist_pick_day" formatted="false">Velg dag</string>
   <string name="card_hist_pick_month" formatted="false">Velg måned</string>
   <string name="card_hist_pick_year" formatted="false">Velg år</string>
+  <string name="card_battery_title" formatted="false">Hjemmebatteri</string>
+  <string name="card_battery_intro" formatted="false">SpotNav kan styre batteriet: holde det mens bilen lader fra nettet, lade det når strømmen er billig og stoppe eksport når den koster penger. Av til du slår det på.</string>
+  <string name="card_battery_mode_label" formatted="false">Modus</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">Batteriet lades av solen og dekker huset. Ingen handel med nettet.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Lader også fra nettet når det er billig og brukes når det er dyrt. Selger ikke.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Som Balansert, men kan også selge til nettet når det lønner seg, med slitasjen medregnet.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Så lenge SpotNav ikke styrer batteriet, flytter valget bare hvilken rad som er markert som valgt i sammenligningen.</string>
+  <string name="card_battery_switch" formatted="false">Batteristyring</string>
+  <string name="card_battery_line_off" formatted="false">Av: SpotNav styrer ingenting ennå og viser bare hva den ville gjort.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav styrer ingenting ennå og logger bare hva den ville gjort.</string>
+  <string name="card_battery_line_checking" formatted="false">Sjekker at batteriet adlyder (omtrent 40 minutter).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Sjekker batteriet igjen etter en oppdatering.</string>
+  <string name="card_battery_line_on" formatted="false">På: SpotNav styrer batteriet.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Styrer ingenting ennå: batteriet blir i AI-modus til du godtar overtakelsen.</string>
+  <string name="card_battery_line_waiting" formatted="false">Venter på et passende tidspunkt for sjekken.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Venter på et passende tidspunkt for å sjekke batteriet igjen etter en oppdatering.</string>
+  <string name="card_battery_line_failed" formatted="false">Sjekken mislyktes: «{mode}» fungerte ikke. Slå av og på igjen for å sjekke på nytt.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Den ga opp etter fem forsøk.</string>
+  <string name="card_battery_line_blocked" formatted="false">Stoppet: noe uventet skjedde, og batteriet er gitt tilbake.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Stoppet for i dag: dagens skrivinger er brukt opp.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Batteriets fastvare kan ikke leses ennå.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Neste forsøk er tidligst en time etter det forrige.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Batteriets styring ble ikke funnet.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Etter en oppdatering venter den til en kveld.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Den venter til bilen slutter å lade.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Den venter til batteriet lades ut.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Den venter på et batterinivå mellom 30 og 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Den venter på mer margin under hovedsikringen.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Den venter på ferske målinger.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Den venter mens batteristyringen er opptatt.</string>
+  <string name="card_battery_mode_hold" formatted="false">Holde</string>
+  <string name="card_battery_mode_charge" formatted="false">Lade fra nettet</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Dekke huset</string>
+  <string name="card_battery_mode_normal" formatted="false">Gi tilbake</string>
+  <string name="card_battery_cap_line" formatted="false">Høyst {kw} kW fra nettet, slik at sikringen holder selv om Home Assistant stopper ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Ingen lading fra nettet: huset kan nå sikringen selv ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Importgrensen beskytter sikringen ved lading fra nettet.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">innlært per fase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">forsiktig til de første døgnene er innlært</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">mens husets topper læres inn</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Ingen lading fra nettet mens husets topper læres inn ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Batteristyringen kunne ikke leses.</string>
+  <string name="card_battery_error_generic" formatted="false">Det gikk ikke. Prøv igjen.</string>
+  <string name="card_settings_value_on" formatted="false">På</string>
+  <string name="card_heat_settings_title" formatted="false">Varme</string>
+  <string name="card_heat_settings_steer" formatted="false">Styr varmen</string>
+  <string name="card_heat_settings_indoor" formatted="false">Innendørsfølere</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} valgt</string>
+  <string name="card_heat_settings_none" formatted="false">Ingen</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Utendørsføler</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatisk</string>
+  <string name="card_heat_settings_meter" formatted="false">Varmepumpens måler</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Varmepumpens strømforbruk. Trinnene i den skiller varme fra varmtvann.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Ikke funnet</string>
+  <string name="card_heat_settings_path" formatted="false">Styring</string>
+  <string name="card_heat_path_none" formatted="false">Ingen ennå</string>
+  <string name="card_heat_path_relay" formatted="false">Relé (senking)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (to kontakter)</string>
+  <string name="card_heat_path_offset" formatted="false">Kurvejustering</string>
+  <string name="card_heat_path_setpoint" formatted="false">Settpunkt</string>
+  <string name="card_heat_settings_control" formatted="false">Styreutgang</string>
+  <string name="card_heat_settings_control_b" formatted="false">Andre kontakt</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Varmtvann</string>
+  <string name="card_heat_settings_zones" formatted="false">Soner</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Ingen soner</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Forskyvning mot husets temperatur, −3 til +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Rommets eget mål mot husets temperatur, −3 til +3 °C. En kjøligere overetasje: −1,5. En føler som viser en halv grad for varmt: +0,5. Det kaldeste rommet måles mot sitt eget mål.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Luft-til-luft-varmepumpe: SpotNav endrer bare settpunktet, slår den aldri av eller på.</string>
+  <string name="card_heat_settings_night" formatted="false">Kjøligere natt</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Valgfritt: noen grader kjøligere mellom to tider. Planen regner med det.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Grader kjøligere</string>
+  <string name="card_heat_settings_night_start" formatted="false">Fra</string>
+  <string name="card_heat_settings_night_end" formatted="false">Til</string>
+  <string name="card_heat_error_generic" formatted="false">Kunne ikke lagre.</string>
+  <string name="card_heat_error_conflict" formatted="false">Noen andre endret det samtidig; det siste vises.</string>
+  <string name="card_heat_error_range" formatted="false">Verdien er utenfor det tillatte.</string>
+  <string name="card_heat_error_step" formatted="false">Velg halve grader.</string>
+  <string name="site_settings_in_home_assistant">Av og på for styringen og valget av sensorer, måler og styringsvei endres i Home Assistant.</string>
+  <string name="site_settings_heat_failed">Varmeinnstillingene kunne ikke leses.</string>
 </resources>
