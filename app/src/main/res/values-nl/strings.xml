@@ -1103,4 +1103,80 @@
   <string name="card_hist_house_chart" formatted="false">Kosten van het huis</string>
   <string name="card_hist_house_hint" formatted="false">Tik op een staaf voor de cijfers.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: niets gemeten</string>
+  <string name="card_battery_title" formatted="false">Thuisbatterij</string>
+  <string name="card_battery_intro" formatted="false">SpotNav kan de batterij aansturen: stilzetten terwijl de auto uit het net laadt, laden als stroom goedkoop is en teruglevering stoppen als die geld kost. Uit tot je het aanzet.</string>
+  <string name="card_battery_mode_label" formatted="false">Modus</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">De batterij laadt op met zonnestroom en voorziet het huis. Geen handel met het net.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Laadt ook uit het net als het goedkoop is en wordt gebruikt als het duur is. Verkoopt niet.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Zoals Gebalanceerd, maar mag ook aan het net verkopen als dat loont, slijtage meegerekend.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Zolang SpotNav de batterij niet aanstuurt, verschuift de keuze alleen welke rij in de vergelijking als gekozen is gemarkeerd.</string>
+  <string name="card_battery_switch" formatted="false">Batterijsturing</string>
+  <string name="card_battery_line_off" formatted="false">Uit: SpotNav stuurt nog niets en laat alleen zien wat het zou doen.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav stuurt nog niets en logt alleen wat het zou doen.</string>
+  <string name="card_battery_line_checking" formatted="false">Controleert of de batterij gehoorzaamt (ongeveer 40 minuten).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Controleert de batterij opnieuw na een update.</string>
+  <string name="card_battery_line_on" formatted="false">Aan: SpotNav stuurt de batterij aan.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Stuurt nog niets: de batterij blijft in AI-modus tot je de overname accepteert.</string>
+  <string name="card_battery_line_waiting" formatted="false">Wacht op een geschikt moment voor de controle.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Wacht op een geschikt moment om de batterij na een update opnieuw te controleren.</string>
+  <string name="card_battery_line_failed" formatted="false">De controle is mislukt: ‘{mode}’ werkte niet. Zet uit en weer aan om opnieuw te controleren.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Na vijf pogingen is het opgegeven.</string>
+  <string name="card_battery_line_blocked" formatted="false">Gestopt: er gebeurde iets onverwachts en de batterij is teruggegeven.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Gestopt voor vandaag: de schrijfacties van vandaag zijn op.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">De firmware van de batterij is nog niet leesbaar.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">De volgende poging is op zijn vroegst een uur na de vorige.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">De besturing van de batterij is niet gevonden.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Na een update wacht het tot een avond.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Het wacht tot de auto klaar is met laden.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Het wacht tot de batterij ontlaadt.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Het wacht op een batterijniveau tussen 30 en 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Het wacht op meer ruimte onder de hoofdzekering.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Het wacht op verse metingen.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Het wacht zolang de batterijsturing bezig is.</string>
+  <string name="card_battery_mode_hold" formatted="false">Vasthouden</string>
+  <string name="card_battery_mode_charge" formatted="false">Laden uit het net</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Het huis voeden</string>
+  <string name="card_battery_mode_normal" formatted="false">Teruggeven</string>
+  <string name="card_battery_cap_line" formatted="false">Maximaal {kw} kW uit het net, zodat de zekering het houdt, ook als Home Assistant stopt ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Niet laden uit het net: het huis haalt de zekering zelf al ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">De importlimiet beschermt de zekering bij laden uit het net.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">per fase geleerd</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">voorzichtig tot de eerste dagen zijn geleerd</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">terwijl de pieken van het huis worden geleerd</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Niet laden uit het net terwijl de pieken van het huis worden geleerd ({left}).</string>
+  <string name="card_battery_failed" formatted="false">De batterijsturing kon niet worden gelezen.</string>
+  <string name="card_battery_error_generic" formatted="false">Dat lukte niet. Probeer het opnieuw.</string>
+  <string name="card_settings_value_on" formatted="false">Aan</string>
+  <string name="card_heat_settings_title" formatted="false">Verwarming</string>
+  <string name="card_heat_settings_steer" formatted="false">Verwarming sturen</string>
+  <string name="card_heat_settings_indoor" formatted="false">Binnensensoren</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} gekozen</string>
+  <string name="card_heat_settings_none" formatted="false">Geen</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Buitensensor</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatisch</string>
+  <string name="card_heat_settings_meter" formatted="false">Meter van de warmtepomp</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Het stroomverbruik van de warmtepomp. De stappen erin onderscheiden verwarming van warm water.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Niet gevonden</string>
+  <string name="card_heat_settings_path" formatted="false">Sturing</string>
+  <string name="card_heat_path_none" formatted="false">Nog geen</string>
+  <string name="card_heat_path_relay" formatted="false">Relais (verlagen)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (twee contacten)</string>
+  <string name="card_heat_path_offset" formatted="false">Stooklijnverschuiving</string>
+  <string name="card_heat_path_setpoint" formatted="false">Instelpunt</string>
+  <string name="card_heat_settings_control" formatted="false">Stuuruitgang</string>
+  <string name="card_heat_settings_control_b" formatted="false">Tweede contact</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_settings_zones" formatted="false">Zones</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Geen zones</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Verschuiving ten opzichte van de huistemperatuur, −3 tot +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Het eigen doel van de kamer ten opzichte van de huistemperatuur, −3 tot +3 °C. Een koelere bovenverdieping: −1,5. Een sensor die een halve graad te warm meet: +0,5. De koudste kamer wordt aan zijn eigen doel gemeten.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Lucht-luchtwarmtepomp: SpotNav past alleen het instelpunt aan en zet hem nooit aan of uit.</string>
+  <string name="card_heat_settings_night" formatted="false">Koelere nacht</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Optioneel: een paar graden koeler tussen twee tijden. Het plan rekent ermee.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Graden koeler</string>
+  <string name="card_heat_settings_night_start" formatted="false">Van</string>
+  <string name="card_heat_settings_night_end" formatted="false">Tot</string>
+  <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
+  <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
 </resources>

@@ -38,7 +38,9 @@ data class ChargerCapabilities(
      */
     val getHouse: Boolean = false,
     /** Whether the webhook answers for the site's heating (`get_heat`, with `get_heat_history` and `update_heat`). */
-    val getHeat: Boolean = false
+    val getHeat: Boolean = false,
+    /** Whether the webhook answers `battery_control` (the site's battery control; the mode may be written). */
+    val batteryControl: Boolean = false
 )
 
 /**

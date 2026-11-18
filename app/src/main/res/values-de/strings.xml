@@ -1103,4 +1103,80 @@
   <string name="card_hist_house_chart" formatted="false">Kosten des Hauses</string>
   <string name="card_hist_house_hint" formatted="false">Tippe auf einen Balken für die Zahlen.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when}: nichts gemessen</string>
+  <string name="card_battery_title" formatted="false">Heimspeicher</string>
+  <string name="card_battery_intro" formatted="false">SpotNav kann den Speicher steuern: ihn pausieren, während das Auto aus dem Netz lädt, ihn bei günstigem Strom laden und die Einspeisung stoppen, wenn sie Geld kostet. Aus, bis du es einschaltest.</string>
+  <string name="card_battery_mode_label" formatted="false">Modus</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">Der Speicher lädt mit Sonnenstrom und versorgt das Haus. Kein Handel mit dem Netz.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Lädt auch aus dem Netz, wenn es günstig ist, und wird genutzt, wenn es teuer ist. Verkauft nicht.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Wie Ausgewogen, darf aber auch ins Netz verkaufen, wenn es sich lohnt, Verschleiß eingerechnet.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Solange SpotNav den Speicher nicht steuert, verschiebt die Wahl nur, welche Zeile im Vergleich als gewählt markiert ist.</string>
+  <string name="card_battery_switch" formatted="false">Speichersteuerung</string>
+  <string name="card_battery_line_off" formatted="false">Aus: SpotNav steuert noch nichts und zeigt nur, was es tun würde.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav steuert noch nichts und protokolliert nur, was es tun würde.</string>
+  <string name="card_battery_line_checking" formatted="false">Prüft, ob der Speicher gehorcht (etwa 40 Minuten).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Prüft den Speicher nach einem Update erneut.</string>
+  <string name="card_battery_line_on" formatted="false">An: SpotNav steuert den Speicher.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Steuert noch nichts: Der Speicher bleibt im KI-Modus, bis du die Übernahme bestätigst.</string>
+  <string name="card_battery_line_waiting" formatted="false">Wartet auf einen passenden Zeitpunkt für die Prüfung.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Wartet auf einen passenden Zeitpunkt, um den Speicher nach einem Update erneut zu prüfen.</string>
+  <string name="card_battery_line_failed" formatted="false">Die Prüfung ist fehlgeschlagen: „{mode}“ hat nicht funktioniert. Aus- und wieder einschalten, um erneut zu prüfen.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Nach fünf Versuchen wurde aufgegeben.</string>
+  <string name="card_battery_line_blocked" formatted="false">Gestoppt: Etwas Unerwartetes ist passiert, und der Speicher ist zurückgegeben.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Für heute gestoppt: Die Schreibvorgänge des Tages sind aufgebraucht.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Die Firmware des Speichers ist noch nicht lesbar.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Der nächste Versuch frühestens eine Stunde nach dem letzten.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Die Steuerung des Speichers wurde nicht gefunden.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Nach einem Update wartet sie auf einen Abend.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Sie wartet, bis das Auto nicht mehr lädt.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Sie wartet, bis der Speicher entlädt.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Sie wartet auf einen Ladestand zwischen 30 und 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Sie wartet auf mehr Luft unter der Hauptsicherung.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Sie wartet auf frische Messwerte.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Sie wartet, solange die Speichersteuerung beschäftigt ist.</string>
+  <string name="card_battery_mode_hold" formatted="false">Halten</string>
+  <string name="card_battery_mode_charge" formatted="false">Aus dem Netz laden</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Das Haus versorgen</string>
+  <string name="card_battery_mode_normal" formatted="false">Zurückgeben</string>
+  <string name="card_battery_cap_line" formatted="false">Höchstens {kw} kW aus dem Netz, damit die Sicherung auch hält, wenn Home Assistant stoppt ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Kein Laden aus dem Netz: Das Haus kann die Sicherung allein erreichen ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Das Importlimit schützt die Sicherung beim Laden aus dem Netz.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">pro Phase gelernt</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">vorsichtig, bis die ersten Tage gelernt sind</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">während die Spitzen des Hauses gelernt werden</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Kein Laden aus dem Netz, während die Spitzen des Hauses gelernt werden ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Die Speichersteuerung konnte nicht gelesen werden.</string>
+  <string name="card_battery_error_generic" formatted="false">Das hat nicht geklappt. Versuche es noch einmal.</string>
+  <string name="card_settings_value_on" formatted="false">An</string>
+  <string name="card_heat_settings_title" formatted="false">Heizung</string>
+  <string name="card_heat_settings_steer" formatted="false">Heizung steuern</string>
+  <string name="card_heat_settings_indoor" formatted="false">Innenfühler</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} gewählt</string>
+  <string name="card_heat_settings_none" formatted="false">Keiner</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Außenfühler</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatisch</string>
+  <string name="card_heat_settings_meter" formatted="false">Zähler der Wärmepumpe</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Der Stromverbrauch der Wärmepumpe. Seine Stufen trennen Heizung und Warmwasser.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Nicht gefunden</string>
+  <string name="card_heat_settings_path" formatted="false">Steuerung</string>
+  <string name="card_heat_path_none" formatted="false">Noch keine</string>
+  <string name="card_heat_path_relay" formatted="false">Relais (Absenkung)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (zwei Kontakte)</string>
+  <string name="card_heat_path_offset" formatted="false">Heizkurvenverschiebung</string>
+  <string name="card_heat_path_setpoint" formatted="false">Sollwert</string>
+  <string name="card_heat_settings_control" formatted="false">Steuerausgang</string>
+  <string name="card_heat_settings_control_b" formatted="false">Zweiter Kontakt</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Warmwasser</string>
+  <string name="card_heat_settings_zones" formatted="false">Zonen</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Keine Zonen</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Verschiebung gegenüber der Haustemperatur, −3 bis +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Das eigene Ziel des Raums gegenüber der Haustemperatur, −3 bis +3 °C. Ein kühleres Obergeschoss: −1,5. Ein Fühler, der ein halbes Grad zu warm misst: +0,5. Der kälteste Raum wird an seinem eigenen Ziel gemessen.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Luft-Luft-Wärmepumpe: SpotNav ändert nur den Sollwert und schaltet sie nie ein oder aus.</string>
+  <string name="card_heat_settings_night" formatted="false">Kühlere Nacht</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Optional: ein paar Grad kühler zwischen zwei Uhrzeiten. Der Plan rechnet damit.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Grad kühler</string>
+  <string name="card_heat_settings_night_start" formatted="false">Von</string>
+  <string name="card_heat_settings_night_end" formatted="false">Bis</string>
+  <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
+  <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
 </resources>

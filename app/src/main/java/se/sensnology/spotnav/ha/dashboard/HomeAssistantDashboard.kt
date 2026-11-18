@@ -764,7 +764,8 @@ internal data class Dashboard(
             siteImportTarget = json.strictBoolean("site_import_target") == true,
             suggestImportTarget = json.strictBoolean("suggest_import_target") == true,
             getHouse = json.strictBoolean("get_house") == true,
-            getHeat = json.strictBoolean("get_heat") == true
+            getHeat = json.strictBoolean("get_heat") == true,
+            batteryControl = json.strictBoolean("battery_control") == true
         )
 
         private fun plan(json: JSONObject) = DashboardPlan(

@@ -1111,4 +1111,80 @@
   <string name="card_hist_house_chart" formatted="false">Coût de la maison</string>
   <string name="card_hist_house_hint" formatted="false">Touchez une barre pour ses chiffres.</string>
   <string name="card_hist_house_bar_none" formatted="false">{when} : rien de mesuré</string>
+  <string name="card_battery_title" formatted="false">Batterie domestique</string>
+  <string name="card_battery_intro" formatted="false">SpotNav peut piloter la batterie : la mettre en pause pendant que la voiture charge sur le réseau, la charger quand l’électricité est bon marché et arrêter l’injection quand elle coûte de l’argent. Désactivé tant que vous ne l’activez pas.</string>
+  <string name="card_battery_mode_label" formatted="false">Mode</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">La batterie se charge avec le soleil et alimente la maison. Aucun échange avec le réseau.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend pas.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais peut aussi vendre au réseau quand c’est rentable, usure comprise.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Tant que SpotNav ne pilote pas la batterie, le choix ne fait que déplacer la ligne marquée comme choisie dans la comparaison.</string>
+  <string name="card_battery_switch" formatted="false">Pilotage de la batterie</string>
+  <string name="card_battery_line_off" formatted="false">Désactivé : SpotNav ne pilote encore rien et montre seulement ce qu’il ferait.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test : SpotNav ne pilote encore rien et consigne seulement ce qu’il ferait.</string>
+  <string name="card_battery_line_checking" formatted="false">Vérifie que la batterie obéit (environ 40 minutes).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Vérifie à nouveau la batterie après une mise à jour.</string>
+  <string name="card_battery_line_on" formatted="false">Activé : SpotNav pilote la batterie.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Ne pilote encore rien : la batterie reste en mode IA jusqu’à ce que vous acceptiez la prise de contrôle.</string>
+  <string name="card_battery_line_waiting" formatted="false">Attend un moment adapté pour la vérification.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Attend un moment adapté pour revérifier la batterie après une mise à jour.</string>
+  <string name="card_battery_line_failed" formatted="false">La vérification a échoué : « {mode} » n’a pas fonctionné. Désactivez puis réactivez pour vérifier à nouveau.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Abandon après cinq essais.</string>
+  <string name="card_battery_line_blocked" formatted="false">Arrêté : un événement inattendu s’est produit et la batterie a été rendue.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Arrêté pour aujourd’hui : les écritures du jour sont épuisées.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Le micrologiciel de la batterie n’est pas encore lisible.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Le prochain essai a lieu au moins une heure après le précédent.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Les commandes de la batterie sont introuvables.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Après une mise à jour, elle attend un soir.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Elle attend que la voiture arrête de charger.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Elle attend que la batterie se décharge.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Elle attend un niveau de batterie entre 30 et 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Elle attend plus de marge sous le fusible principal.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Elle attend des mesures récentes.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Elle attend que le pilotage de la batterie soit libre.</string>
+  <string name="card_battery_mode_hold" formatted="false">Maintenir</string>
+  <string name="card_battery_mode_charge" formatted="false">Charger sur le réseau</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Alimenter la maison</string>
+  <string name="card_battery_mode_normal" formatted="false">Rendre la main</string>
+  <string name="card_battery_cap_line" formatted="false">Au plus {kw} kW depuis le réseau, pour que le fusible tienne même si Home Assistant s\'arrête ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Pas de charge depuis le réseau : la maison peut atteindre le fusible seule ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">La limite d\'import protège le fusible lors de la charge depuis le réseau.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">appris par phase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">prudent jusqu\'à l\'apprentissage des premiers jours</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">pendant l\'apprentissage des pointes de la maison</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Pas de charge depuis le réseau pendant l\'apprentissage des pointes de la maison ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Le pilotage de la batterie n’a pas pu être lu.</string>
+  <string name="card_battery_error_generic" formatted="false">Cela n’a pas marché. Réessayez.</string>
+  <string name="card_settings_value_on" formatted="false">Activé</string>
+  <string name="card_heat_settings_title" formatted="false">Chauffage</string>
+  <string name="card_heat_settings_steer" formatted="false">Piloter le chauffage</string>
+  <string name="card_heat_settings_indoor" formatted="false">Sondes intérieures</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} choisies</string>
+  <string name="card_heat_settings_none" formatted="false">Aucune</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Sonde extérieure</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatique</string>
+  <string name="card_heat_settings_meter" formatted="false">Compteur de la pompe à chaleur</string>
+  <string name="card_heat_settings_meter_help" formatted="false">La consommation électrique de la pompe à chaleur. Ses paliers distinguent le chauffage de l\'eau chaude.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Introuvable</string>
+  <string name="card_heat_settings_path" formatted="false">Pilotage</string>
+  <string name="card_heat_path_none" formatted="false">Aucun pour l\'instant</string>
+  <string name="card_heat_path_relay" formatted="false">Relais (baisse)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (deux contacts)</string>
+  <string name="card_heat_path_offset" formatted="false">Décalage de la courbe de chauffe</string>
+  <string name="card_heat_path_setpoint" formatted="false">Consigne</string>
+  <string name="card_heat_settings_control" formatted="false">Sortie de commande</string>
+  <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_settings_zones" formatted="false">Zones</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Aucune zone</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Décalage par rapport à la température de la maison, de −3 à +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">L\'objectif propre de la pièce par rapport à la température de la maison, de −3 à +3 °C. Un étage plus frais : −1,5. Une sonde qui indique un demi-degré de trop : +0,5. La pièce la plus froide est jugée par rapport à son propre objectif.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Pompe à chaleur air-air : SpotNav ne modifie que sa consigne, sans jamais l\'allumer ni l\'éteindre.</string>
+  <string name="card_heat_settings_night" formatted="false">Nuit plus fraîche</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Facultatif : quelques degrés de moins entre deux heures. Le plan en tient compte.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Degrés en moins</string>
+  <string name="card_heat_settings_night_start" formatted="false">De</string>
+  <string name="card_heat_settings_night_end" formatted="false">À</string>
+  <string name="site_settings_in_home_assistant">L\'activation du pilotage et le choix des capteurs, du compteur et du mode de pilotage se modifient dans Home Assistant.</string>
+  <string name="site_settings_heat_failed">Les réglages du chauffage n\'ont pas pu être lus.</string>
 </resources>
