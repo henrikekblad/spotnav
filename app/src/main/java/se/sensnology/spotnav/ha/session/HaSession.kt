@@ -23,6 +23,8 @@ import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.HouseLoads
@@ -110,6 +112,12 @@ internal interface HaTransport {
     /** `get_house_loads`: what the house or the heat used, by device. */
     fun houseLoads(kind: String, period: String, date: LocalDate?): SiteRead<HouseLoads> = SiteRead.Failed(null)
 
+    /** `get_heat`: the site's heating. */
+    fun heat(): SiteRead<Heat> = SiteRead.Failed(null)
+
+    /** `update_heat`: the dial or Home/Away, with its compare-and-set; never throws. */
+    fun updateHeat(change: HeatWrite.Change): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -176,6 +184,10 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.houseHistory(connection, period, date)
 
     override fun houseLoads(kind: String, period: String, date: LocalDate?) = HomeAssistantClient.houseLoads(connection, kind, period, date)
+
+    override fun heat() = HomeAssistantClient.heat(connection)
+
+    override fun updateHeat(change: HeatWrite.Change) = HomeAssistantClient.updateHeat(connection, change)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -422,10 +434,26 @@ internal class HaSession(
         }
     }
 
+    /** `get_heat` (never throws). */
+    fun heat(done: (SiteRead<Heat>) -> Unit) {
+        background.execute {
+            val outcome = transport.heat()
+            mainThread { done(outcome) }
+        }
+    }
+
     /** `get_house_loads` (never throws). */
     fun houseLoads(kind: String, period: String, date: LocalDate?, done: (SiteRead<HouseLoads>) -> Unit) {
         background.execute {
             val outcome = transport.houseLoads(kind, period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_heat` (never throws). */
+    fun updateHeat(change: HeatWrite.Change, done: (HeatWrite.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateHeat(change)
             mainThread { done(outcome) }
         }
     }

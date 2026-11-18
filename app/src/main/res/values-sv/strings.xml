@@ -826,6 +826,91 @@
   <string name="card_heat_title" formatted="false">Värme</string>
   <string name="card_header_test" formatted="false">Test</string>
   <string name="card_header_test_explain" formatted="false">SpotNav styr inget än.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav räknar ut vad den skulle göra med värmen och visar det här. Inget skickas till värmepumpen än.</string>
+  <string name="card_heat_loading" formatted="false">Läser värmen…</string>
+  <string name="card_heat_failed" formatted="false">Värmen kunde inte läsas.</string>
+  <string name="card_heat_unsupported" formatted="false">Kortet behöver en nyare SpotNav.</string>
+  <string name="card_heat_dial_label" formatted="false">Önskad temperatur</string>
+  <string name="card_heat_dial_lower" formatted="false">Sänk en halv grad</string>
+  <string name="card_heat_dial_raise" formatted="false">Höj en halv grad</string>
+  <string name="card_heat_dial_band" formatted="false">inom {low}–{high} °C</string>
+  <string name="card_heat_measured" formatted="false">Inne {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Inne {value} (kallast: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Ingen inomhusgivare vald</string>
+  <string name="card_heat_outdoor" formatted="false">Ute {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Hemma</string>
+  <string name="card_heat_mode_away" formatted="false">Borta</string>
+  <string name="card_heat_mode_away_until" formatted="false">Borta till {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Ändra</string>
+  <string name="card_heat_away_title" formatted="false">Borta till</string>
+  <string name="card_heat_away_help" formatted="false">När SpotNav styr värmen håller den huset 3 °C svalare, aldrig under 16 °C, och värmer upp innan ni kommer hem.</string>
+  <string name="card_heat_away_date" formatted="false">Datum</string>
+  <string name="card_heat_away_time" formatted="false">Tid</string>
+  <string name="card_heat_pump_heating" formatted="false">Värmepumpen värmer · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Värmepumpen gör varmvatten · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Värmepumpen vilar · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Värmepumpen: inget mätvärde</string>
+  <string name="card_heat_would_lower" formatted="false">Skulle sänka till {temp} till {until}: dyra timmar</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Skulle sänka till {temp} till {until}: ger plats under effektmålet och säkringen</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Skulle sänka till {temp} till {until}: för varmt inne</string>
+  <string name="card_heat_would_preheat" formatted="false">Skulle förvärma till {temp} till {until}: billigt före dyra timmar</string>
+  <string name="card_heat_would_raise" formatted="false">Skulle höja värmen (SG Ready) till {temp} till {until}: billigt före dyra timmar</string>
+  <string name="card_heat_would_night" formatted="false">Skulle hålla svalare natt, {temp} till {until}</string>
+  <string name="card_heat_would_away" formatted="false">Skulle hålla {temp} till {until} medan ni är borta</string>
+  <string name="card_heat_would_return" formatted="false">Skulle värma upp inför hemkomsten: {temp} till {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Skulle hålla {temp} till {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Inga priser än: skulle inte sänka något</string>
+  <string name="card_heat_guard_too_cold" formatted="false">För kallt ute för att sänka</string>
+  <string name="card_heat_guard_room_cold" formatted="false">Kallaste rummet ligger under bandet: ingen sänkning</string>
+  <string name="card_heat_relay_closed" formatted="false">Reläet sänker värmen sedan {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Reläet sänker värmen sedan {since}, väntas öppna {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Reläet väntas sänka värmen {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">Temperaturen och Hemma/Borta som du ställer in här följer SpotNav när den börjar styra värmen.</string>
+  <string name="card_heat_today_label" formatted="false">I dag</string>
+  <string name="card_heat_today_heat" formatted="false">värme {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">varav zoner {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">varmvatten {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} styr själv efter elpriset. Stäng av det i värmepumpen ({where}) om SpotNav ska styra.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Mätvärden som SpotNav behöver är avstängda i värmepumpens integration: {names}. Slå på dem på enheten.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} styr värmepumpen; SpotNav räknar den som huslast och tittar bara på.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">Automationen \'{name}\' styr reläet: stäng av den när SpotNav ska styra värmen.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">Automationen \'{name}\' styr också {targets}: stäng av den när SpotNav ska styra.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Stäng av automationen \'{name}\' så att SpotNav kan styra värmen.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">utetemperatur</string>
+  <string name="card_heat_role_supply_temp" formatted="false">framledning</string>
+  <string name="card_heat_role_return_temp" formatted="false">returledning</string>
+  <string name="card_heat_role_room_temp" formatted="false">rumstemperatur</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">varmvattentemperatur</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">gradminuter</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">kompressorvarvtal</string>
+  <string name="card_heat_role_compressor_state" formatted="false">kompressorläge</string>
+  <string name="card_heat_role_immersion_power" formatted="false">elpatronens effekt</string>
+  <string name="card_heat_role_immersion_state" formatted="false">elpatronens läge</string>
+  <string name="card_heat_role_priority" formatted="false">prioritet</string>
+  <string name="card_heat_error_generic" formatted="false">Det gick inte att spara.</string>
+  <string name="card_heat_error_conflict" formatted="false">Någon annan ändrade samtidigt; det senaste visas.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Bara en administratör kan ändra det.</string>
+  <string name="card_heat_error_range" formatted="false">Värdet ligger utanför det tillåtna.</string>
+  <string name="card_heat_error_step" formatted="false">Välj halva grader.</string>
+  <string name="card_heat_error_past" formatted="false">Välj en tid framåt.</string>
+  <string name="card_heat_error_far" formatted="false">Högst 90 dagar framåt.</string>
+  <string name="card_heat_now_heating" formatted="false">Värmer</string>
+  <string name="card_heat_now_hot_water" formatted="false">Varmvatten</string>
+  <string name="card_heat_now_idle" formatted="false">Vilar</string>
+  <string name="card_heat_now_lowered" formatted="false">Sänkt</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Sänkt till {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Höjd</string>
+  <string name="card_heat_now_raised_until" formatted="false">Höjd till {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">sänkning {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">förvärmning {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">höjning {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">svalare natt {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">borta {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">varmvatten {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Ingen sänkning planerad de närmaste 12 timmarna</string>
   <string name="card_house_test_explain" formatted="false">SpotNav visar vad den skulle göra, men inget skickas härifrån än. Ett hembatteri styrs först när du slår på batteristyrningen i inställningarna.</string>
   <string name="card_house_now_hold" formatted="false">Håller</string>
   <string name="card_house_now_discharge" formatted="false">Laddar ur</string>

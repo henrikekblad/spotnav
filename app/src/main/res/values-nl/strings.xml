@@ -826,6 +826,91 @@
   <string name="card_heat_title" formatted="false">Verwarming</string>
   <string name="card_header_test" formatted="false">Test</string>
   <string name="card_header_test_explain" formatted="false">SpotNav stuurt nog niets.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav berekent wat het met de verwarming zou doen en laat dat hier zien. Er wordt nog niets naar de warmtepomp gestuurd.</string>
+  <string name="card_heat_loading" formatted="false">Verwarming wordt gelezen…</string>
+  <string name="card_heat_failed" formatted="false">De verwarming kon niet worden gelezen.</string>
+  <string name="card_heat_unsupported" formatted="false">De kaart heeft een nieuwere SpotNav nodig.</string>
+  <string name="card_heat_dial_label" formatted="false">Gewenste temperatuur</string>
+  <string name="card_heat_dial_lower" formatted="false">Halve graad lager</string>
+  <string name="card_heat_dial_raise" formatted="false">Halve graad hoger</string>
+  <string name="card_heat_dial_band" formatted="false">tussen {low} en {high} °C</string>
+  <string name="card_heat_measured" formatted="false">Binnen {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Binnen {value} (koudst: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Geen binnensensor gekozen</string>
+  <string name="card_heat_outdoor" formatted="false">Buiten {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Thuis</string>
+  <string name="card_heat_mode_away" formatted="false">Weg</string>
+  <string name="card_heat_mode_away_until" formatted="false">Weg tot {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Wijzigen</string>
+  <string name="card_heat_away_title" formatted="false">Weg tot</string>
+  <string name="card_heat_away_help" formatted="false">Zodra SpotNav de verwarming stuurt, blijft het huis 3 °C koeler, nooit onder 16 °C, en wordt het opgewarmd voordat je terug bent.</string>
+  <string name="card_heat_away_date" formatted="false">Datum</string>
+  <string name="card_heat_away_time" formatted="false">Tijd</string>
+  <string name="card_heat_pump_heating" formatted="false">Warmtepomp verwarmt · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Warmtepomp maakt warm water · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Warmtepomp rust · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Warmtepomp: geen meting</string>
+  <string name="card_heat_would_lower" formatted="false">Zou tot {until} verlagen naar {temp}: dure uren</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Zou tot {until} verlagen naar {temp}: maakt ruimte onder het afnamedoel en de zekering</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Zou tot {until} verlagen naar {temp}: binnen te warm</string>
+  <string name="card_heat_would_preheat" formatted="false">Zou tot {until} voorverwarmen naar {temp}: goedkoop voor dure uren</string>
+  <string name="card_heat_would_raise" formatted="false">Zou de verwarming (SG Ready) verhogen naar {temp} tot {until}: goedkoop vóór dure uren</string>
+  <string name="card_heat_would_night" formatted="false">Zou het \'s nachts koeler houden, {temp} tot {until}</string>
+  <string name="card_heat_would_away" formatted="false">Zou {temp} houden tot {until} terwijl je weg bent</string>
+  <string name="card_heat_would_return" formatted="false">Zou opwarmen voor je thuiskomst: {temp} tot {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Zou {temp} houden tot {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Nog geen prijzen: zou niets verlagen</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Te koud buiten om te verlagen</string>
+  <string name="card_heat_guard_room_cold" formatted="false">De koudste kamer ligt onder de band: geen verlaging</string>
+  <string name="card_heat_relay_closed" formatted="false">Het relais verlaagt de verwarming sinds {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Het relais verlaagt de verwarming sinds {since}, gaat naar verwachting open om {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Het relais verlaagt de verwarming naar verwachting {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">SpotNav volgt de temperatuur en Thuis/Weg die je hier instelt, zodra het de verwarming gaat sturen.</string>
+  <string name="card_heat_today_label" formatted="false">Vandaag</string>
+  <string name="card_heat_today_heat" formatted="false">verwarming {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">waarvan zones {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">warm water {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} stuurt zelf op de stroomprijs. Zet het uit in de warmtepomp ({where}) als SpotNav moet sturen.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Metingen die SpotNav nodig heeft staan uit in de integratie van de warmtepomp: {names}. Zet ze aan op het apparaat.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} stuurt de warmtepomp; SpotNav telt hem als huisverbruik en kijkt alleen mee.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">De automatisering \'{name}\' stuurt het relais: zet hem uit wanneer SpotNav de verwarming moet sturen.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">De automatisering \'{name}\' stuurt ook {targets}: zet hem uit wanneer SpotNav moet sturen.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Zet de automatisering \'{name}\' uit zodat SpotNav de verwarming kan sturen.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">buitentemperatuur</string>
+  <string name="card_heat_role_supply_temp" formatted="false">aanvoertemperatuur</string>
+  <string name="card_heat_role_return_temp" formatted="false">retourtemperatuur</string>
+  <string name="card_heat_role_room_temp" formatted="false">kamertemperatuur</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">warmwatertemperatuur</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">graadminuten</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">compressortoerental</string>
+  <string name="card_heat_role_compressor_state" formatted="false">compressorstatus</string>
+  <string name="card_heat_role_immersion_power" formatted="false">vermogen elektrisch element</string>
+  <string name="card_heat_role_immersion_state" formatted="false">status elektrisch element</string>
+  <string name="card_heat_role_priority" formatted="false">prioriteit</string>
+  <string name="card_heat_error_generic" formatted="false">Opslaan mislukt.</string>
+  <string name="card_heat_error_conflict" formatted="false">Iemand anders wijzigde het tegelijk; het nieuwste wordt getoond.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Alleen een beheerder kan dat wijzigen.</string>
+  <string name="card_heat_error_range" formatted="false">De waarde valt buiten wat is toegestaan.</string>
+  <string name="card_heat_error_step" formatted="false">Kies halve graden.</string>
+  <string name="card_heat_error_past" formatted="false">Kies een tijd in de toekomst.</string>
+  <string name="card_heat_error_far" formatted="false">Hoogstens 90 dagen vooruit.</string>
+  <string name="card_heat_now_heating" formatted="false">Verwarmt</string>
+  <string name="card_heat_now_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_now_idle" formatted="false">Rust</string>
+  <string name="card_heat_now_lowered" formatted="false">Verlaagd</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Verlaagd tot {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Verhoogd</string>
+  <string name="card_heat_now_raised_until" formatted="false">Verhoogd tot {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">verlaging {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">voorverwarmen {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">verhoging {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">koelere nacht {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">weg {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">warm water {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Geen verlaging gepland voor de komende 12 uur</string>
   <string name="card_house_test_explain" formatted="false">SpotNav laat zien wat het zou doen, maar vanaf hier wordt nog niets verstuurd. Een thuisbatterij wordt pas aangestuurd als je batterijsturing aanzet in de instellingen.</string>
   <string name="card_house_now_hold" formatted="false">Houdt vast</string>
   <string name="card_house_now_discharge" formatted="false">Ontlaadt</string>

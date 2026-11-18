@@ -53,6 +53,8 @@ import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
 import se.sensnology.spotnav.ui.settings.EntsoeKeyDialog
 import se.sensnology.spotnav.ui.settings.StandalonePrice
+import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ui.site.HeatPage
 import se.sensnology.spotnav.ui.site.HousePage
 import se.sensnology.spotnav.ui.site.PageKind
 import se.sensnology.spotnav.ui.site.PageOffer
@@ -321,11 +323,33 @@ internal class ChargingScreen(
 
     /**
      * The pages beside the charger's that Home Assistant serves for this charger's site: the house's where the
-     * dashboard states `capabilities.get_house`. The heat's (`get_heat`) is not built yet, so it is not offered.
-     * Without the flags (any Home Assistant 2.x) there is the charger's page alone, and no row of icons.
+     * dashboard states `capabilities.get_house`, the heat's where it states `capabilities.get_heat` and the heating
+     * has something to show (a meter, a pump, zones or sensors: asked once with `get_heat`, and remembered). Without
+     * the flags (any Home Assistant 2.x) there is the charger's page alone, and no row of icons.
      */
-    private fun offerPages(dashboard: Dashboard) =
-        offerPages(PageOffer.kinds(house = dashboard.capabilities.getHouse, heat = false))
+    private fun offerPages(dashboard: Dashboard) {
+        val house = dashboard.capabilities.getHouse
+        val id = profileId
+        if (!dashboard.capabilities.getHeat || id == null) {
+            offerPages(PageOffer.kinds(house = house, heat = false))
+            return
+        }
+        val memory = shell.pages.memory(id)
+        val seen = memory.heatShown
+        if (seen != null) {
+            offerPages(PageOffer.kinds(house = house, heat = seen))
+            return
+        }
+        // Not asked yet: the pages as last offered meanwhile, then the answer's.
+        shell.pages.knownFor(id)?.let { offerPages(it) } ?: offerPages(PageOffer.kinds(house = house, heat = false))
+        session?.heat { outcome ->
+            if (outcome is SiteRead.Read) {
+                memory.heat = outcome.value
+                memory.heatShown = outcome.value.hasSomething
+                offerPages(PageOffer.kinds(house = house, heat = outcome.value.hasSomething))
+            }
+        }
+    }
 
     private fun offerPages(kinds: List<PageKind>) {
         val id = profileId ?: return
@@ -333,6 +357,7 @@ internal class ChargingScreen(
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
                 PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
+                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id))
                 else -> error("no page for $kind")
             }
         }

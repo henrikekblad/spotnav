@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chart.DayRollover
+import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ui.common.ViewScope
@@ -35,6 +36,9 @@ internal interface SitePage {
 internal class SiteMemory {
     var house: House? = null
     var live: HouseNow? = null
+    var heat: Heat? = null
+    /** Whether the heating has something to show, as the last read of `get_heat` said (`null`: not asked yet). */
+    var heatShown: Boolean? = null
 }
 
 /** The platform's one-shot timer on the main thread. */
@@ -69,6 +73,9 @@ internal object PageOffer {
     }
 
     /** The page to open on: the one wanted while it is still offered, else the charger's. */
+    /** The row of page icons: shown only with two or more pages (owner 2026-11-18). */
+    fun iconsShown(kinds: List<PageKind>): Boolean = kinds.size >= 2
+
     fun opening(wanted: PageKind, kinds: List<PageKind>): PageKind = wanted.takeIf { it in kinds } ?: PageKind.CHARGER
 }
 
@@ -242,7 +249,7 @@ internal class SitePages(
 
     private fun drawIcons() {
         icons.removeAllViews()
-        if (kinds.size < 2) return
+        if (!PageOffer.iconsShown(kinds)) return
         val words = scope.cardWords()
         for (kind in kinds) {
             val chosen = kind == selected

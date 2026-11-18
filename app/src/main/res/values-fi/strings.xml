@@ -826,6 +826,91 @@
   <string name="card_heat_title" formatted="false">Lämmitys</string>
   <string name="card_header_test" formatted="false">Testi</string>
   <string name="card_header_test_explain" formatted="false">SpotNav ei vielä ohjaa mitään.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav laskee, mitä se tekisi lämmitykselle, ja näyttää sen tässä. Lämpöpumpulle ei vielä lähetetä mitään.</string>
+  <string name="card_heat_loading" formatted="false">Luetaan lämmitystä…</string>
+  <string name="card_heat_failed" formatted="false">Lämmitystä ei voitu lukea.</string>
+  <string name="card_heat_unsupported" formatted="false">Kortti tarvitsee uudemman SpotNavin.</string>
+  <string name="card_heat_dial_label" formatted="false">Haluttu lämpötila</string>
+  <string name="card_heat_dial_lower" formatted="false">Laske puoli astetta</string>
+  <string name="card_heat_dial_raise" formatted="false">Nosta puoli astetta</string>
+  <string name="card_heat_dial_band" formatted="false">välillä {low}–{high} °C</string>
+  <string name="card_heat_measured" formatted="false">Sisällä {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Sisällä {value} (kylmin: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Sisäanturia ei ole valittu</string>
+  <string name="card_heat_outdoor" formatted="false">Ulkona {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Kotona</string>
+  <string name="card_heat_mode_away" formatted="false">Poissa</string>
+  <string name="card_heat_mode_away_until" formatted="false">Poissa {when} asti</string>
+  <string name="card_heat_mode_change" formatted="false">Muuta</string>
+  <string name="card_heat_away_title" formatted="false">Poissa asti</string>
+  <string name="card_heat_away_help" formatted="false">Kun SpotNav ohjaa lämmitystä, se pitää talon 3 °C viileämpänä, ei koskaan alle 16 °C, ja lämmittää ennen kotiinpaluuta.</string>
+  <string name="card_heat_away_date" formatted="false">Päivä</string>
+  <string name="card_heat_away_time" formatted="false">Aika</string>
+  <string name="card_heat_pump_heating" formatted="false">Lämpöpumppu lämmittää · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Lämpöpumppu tekee käyttövettä · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Lämpöpumppu lepää · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Lämpöpumppu: ei lukemaa</string>
+  <string name="card_heat_would_lower" formatted="false">Laskisi {temp} asteeseen {until} asti: kalliit tunnit</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Laskisi {temp} asteeseen {until} asti: tekee tilaa tehotavoitteen ja sulakkeen alle</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Laskisi {temp} asteeseen {until} asti: sisällä liian lämmin</string>
+  <string name="card_heat_would_preheat" formatted="false">Esilämmittäisi {temp} asteeseen {until} asti: halpaa ennen kalliita tunteja</string>
+  <string name="card_heat_would_raise" formatted="false">Nostaisi lämpöä (SG Ready) {temp} asti klo {until} saakka: halpaa ennen kalliita tunteja</string>
+  <string name="card_heat_would_night" formatted="false">Yö olisi viileämpi: {temp} {until} asti</string>
+  <string name="card_heat_would_away" formatted="false">Lämpötila olisi {temp} {until} asti, kun olette poissa</string>
+  <string name="card_heat_would_return" formatted="false">Lämmittäisi kotiinpaluuta varten: {temp} {until} asti</string>
+  <string name="card_heat_would_normal" formatted="false">Lämpötila olisi {temp} {until} asti</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Ei vielä hintoja: ei laskisi mitään</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Ulkona liian kylmä laskemiseen</string>
+  <string name="card_heat_guard_room_cold" formatted="false">Kylmin huone on alueen alapuolella: ei laskua</string>
+  <string name="card_heat_relay_closed" formatted="false">Rele on laskenut lämmitystä {since} lähtien</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Rele on laskenut lämmitystä {since} lähtien, aukeaa arviolta {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Releen odotetaan laskevan lämmitystä {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">SpotNav noudattaa tässä asettamaasi lämpötilaa ja Kotona/Poissa-tilaa, kun se alkaa ohjata lämmitystä.</string>
+  <string name="card_heat_today_label" formatted="false">Tänään</string>
+  <string name="card_heat_today_heat" formatted="false">lämpö {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">josta vyöhykkeet {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">käyttövesi {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} ohjaa itse sähkön hinnan mukaan. Kytke se pois lämpöpumpusta ({where}), jos SpotNavin on määrä ohjata.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">SpotNavin tarvitsemat lukemat on kytketty pois lämpöpumpun integraatiossa: {names}. Kytke ne päälle laitteesta.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} ohjaa lämpöpumppua; SpotNav laskee sen talon kulutukseksi ja vain seuraa.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">Automaatio \'{name}\' ohjaa relettä: poista se käytöstä, kun SpotNavin on määrä ohjata lämmitystä.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">Automaatio \'{name}\' ohjaa myös kohdetta {targets}: poista se käytöstä, kun SpotNavin on määrä ohjata.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Poista automaatio \'{name}\' käytöstä, jotta SpotNav voi ohjata lämmitystä.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">ulkolämpötila</string>
+  <string name="card_heat_role_supply_temp" formatted="false">menoveden lämpötila</string>
+  <string name="card_heat_role_return_temp" formatted="false">paluuveden lämpötila</string>
+  <string name="card_heat_role_room_temp" formatted="false">huonelämpötila</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">käyttöveden lämpötila</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">asteminuutit</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">kompressorin nopeus</string>
+  <string name="card_heat_role_compressor_state" formatted="false">kompressorin tila</string>
+  <string name="card_heat_role_immersion_power" formatted="false">sähkövastuksen teho</string>
+  <string name="card_heat_role_immersion_state" formatted="false">sähkövastuksen tila</string>
+  <string name="card_heat_role_priority" formatted="false">prioriteetti</string>
+  <string name="card_heat_error_generic" formatted="false">Tallennus ei onnistunut.</string>
+  <string name="card_heat_error_conflict" formatted="false">Joku muu muutti samaan aikaan; uusin näytetään.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Vain ylläpitäjä voi muuttaa tätä.</string>
+  <string name="card_heat_error_range" formatted="false">Arvo on sallitun ulkopuolella.</string>
+  <string name="card_heat_error_step" formatted="false">Valitse puolen asteen tarkkuudella.</string>
+  <string name="card_heat_error_past" formatted="false">Valitse tuleva aika.</string>
+  <string name="card_heat_error_far" formatted="false">Enintään 90 päivää eteenpäin.</string>
+  <string name="card_heat_now_heating" formatted="false">Lämmittää</string>
+  <string name="card_heat_now_hot_water" formatted="false">Käyttövesi</string>
+  <string name="card_heat_now_idle" formatted="false">Lepää</string>
+  <string name="card_heat_now_lowered" formatted="false">Laskettu</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Laskettu klo {until} asti</string>
+  <string name="card_heat_now_raised" formatted="false">Nostettu</string>
+  <string name="card_heat_now_raised_until" formatted="false">Nostettu klo {until} asti</string>
+  <string name="card_heat_ahead_lead" formatted="false">Suunnitelma: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">lasku {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">esilämmitys {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">nosto {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">viileämpi yö {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">poissa {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">käyttövesi {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Ei suunniteltua laskua seuraavien 12 tunnin aikana</string>
   <string name="card_house_test_explain" formatted="false">SpotNav näyttää, mitä se tekisi, mutta täältä ei vielä lähetetä mitään. Kotiakkua ohjataan vasta, kun kytket akun ohjauksen päälle asetuksista.</string>
   <string name="card_house_now_hold" formatted="false">Pitää varauksen</string>
   <string name="card_house_now_discharge" formatted="false">Purkaa</string>
