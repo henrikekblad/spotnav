@@ -28,6 +28,8 @@ internal object SessionsRead {
     /** The request: [month] is `YYYY-MM`, or `null` for the current month; [csv] asks for the CSV text. */
     fun payload(month: YearMonth?, csv: Boolean = false): JSONObject = JSONObject().apply {
         put("version", 1)
+        // `reads` opts in to the saving against charging at once on plug-in (`plug_in_saving`).
+        WebhookReads.put(this)
         put("action", "sessions")
         put("api_version", API_VERSION)
         month?.let { put("month", it.toString()) }

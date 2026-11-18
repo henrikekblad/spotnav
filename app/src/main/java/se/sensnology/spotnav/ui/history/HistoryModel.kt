@@ -109,3 +109,17 @@ internal class HistoryFigures(private val locale: Locale, totals: SessionTotals,
     fun share(fraction: Double?): String? =
         fraction?.let { String.format(locale, "%d %%", Math.round(it * 100)) }
 }
+
+/** The charge history's line for SpotNav's saving against charging at once on plug-in, in the card's words (`savingsLine`). */
+internal object HistoryPlugIn {
+    /** Below this (the major unit) a saving is no difference worth a line. */
+    private const val NEGLIGIBLE = 0.005
+
+    /** "SpotNav sparade 12,50 kr mot att ladda direkt vid inkoppling", or the extra it cost; `null` where it is not known or nothing. */
+    fun sentence(words: se.sensnology.spotnav.ui.common.CardWords, saving: se.sensnology.spotnav.ha.sessions.PlugInSaving, figures: HistoryFigures): String? {
+        val value = saving.amount ?: return null
+        if (Math.abs(value) < NEGLIGIBLE) return null
+        val amount = figures.cost(Math.abs(value)) ?: return null
+        return words.say(if (value > 0) "history.savings.plugIn" else "history.savings.plugInExtra", "amount" to amount)
+    }
+}
