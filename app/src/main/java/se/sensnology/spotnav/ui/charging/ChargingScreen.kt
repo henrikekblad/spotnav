@@ -54,6 +54,10 @@ import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
 import se.sensnology.spotnav.ui.settings.EntsoeKeyDialog
 import se.sensnology.spotnav.ui.settings.StandalonePrice
+import se.sensnology.spotnav.ui.site.HousePage
+import se.sensnology.spotnav.ui.site.PageKind
+import se.sensnology.spotnav.ui.site.PageOffer
+import se.sensnology.spotnav.ui.site.SitePreferences
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerResolver
@@ -301,14 +305,40 @@ internal class ChargingScreen(
         }
         // In view, the paired dashboard is read again every minute, and just after a start-up Home
         // Assistant said would end sooner: a status line does not wait for a tap to move on.
-        shell.onLiveRefresh = { startDashboardFetch() }
+        // Only while the charger's page is the one in view; coming back to it reads at once.
+        shell.onLiveRefresh = { if (shell.pages.chargerInView) startDashboardFetch() }
+        shell.pages.onChargerInView = { startDashboardFetch() }
         shell.liveRefreshEnd = { pairedDashboard?.startingUpUntil }
         // A Start or Stop awaiting the charger's report is read every few seconds instead, so the
         // buttons return as soon as Home Assistant offers them again.
         shell.liveRefreshFast = { pendingRefresh() }
         // A running charge is read every half minute, as the Home Assistant card reads it.
         shell.liveRefreshCharging = { chargeBarShown() }
+        // The pages this charger's Home Assistant offered when it last answered, at once: a screen drawn again
+        // (back from Settings, another setting saved) keeps its pages and the one in view.
+        profileId?.let { shell.pages.knownFor(it) }?.let(::offerPages)
         startDashboardFetch()
+    }
+
+    /**
+     * The pages beside the charger's that Home Assistant serves for this charger's site: the house's where the
+     * dashboard states `capabilities.get_house`. The heat's (`get_heat`) is not built yet, so it is not offered.
+     * Without the flags (any Home Assistant 2.x) there is the charger's page alone, and no row of icons.
+     */
+    private fun offerPages(dashboard: Dashboard) =
+        offerPages(PageOffer.kinds(house = dashboard.capabilities.getHouse, heat = false))
+
+    private fun offerPages(kinds: List<PageKind>) {
+        val id = profileId ?: return
+        val held = session ?: return
+        shell.pages.offer(id, kinds) { kind ->
+            when (kind) {
+                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id) {
+                    showScreen(Screen.SETTINGS)
+                }
+                else -> error("no page for $kind")
+            }
+        }
     }
 
     /**
@@ -426,6 +456,8 @@ internal class ChargingScreen(
                     // Each answer (or failure) may have set or cleared the charger's pair-again mark.
                     refreshPairAgain()
                     pairedDashboard = dashboard
+                    // A failed read says nothing of the pages: they stay.
+                    dashboard?.let(::offerPages)
                     if (dashboard?.startingUpUntil != null) shell.liveRefreshReconsider?.invoke()
                     // A fresh answer is the record's own again: a pick that never became a write is
                     // dropped.

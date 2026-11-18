@@ -221,6 +221,7 @@ class WidgetConfigActivity : Activity() {
         if (resumedOnce) shell.onForeground?.invoke()
         resumedOnce = true
         foreground = true
+        shell.pages.foreground = true
         InAppQuestion.foreground = true
         if (currentScreen == Screen.MAIN) { dayRollover.arm(); liveRefresh.arm() }
         // A push wake-up while the app is in view reads the charging screen's charger at once (the
@@ -247,6 +248,8 @@ class WidgetConfigActivity : Activity() {
 
     override fun onStop() {
         foreground = false
+        // The house and heat pages read nothing while the app is out of view.
+        if (::shell.isInitialized) shell.pages.foreground = false
         InAppQuestion.foreground = false
         PushWakeListener.set(null)
         dayRollover.cancel()
