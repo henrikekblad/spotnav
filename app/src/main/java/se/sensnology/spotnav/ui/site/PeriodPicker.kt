@@ -33,6 +33,9 @@ internal class PeriodPickerView(
     private val kinds: List<HistoryPeriod> = HistoryPeriod.entries,
     private val onChange: (PeriodChoice) -> Unit
 ) : LinearLayout(scope.context) {
+    private val row = LinearLayout(context).apply { orientation = HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
+    private var segment: LinearLayout? = null
+    private var stacked = false
     private var choice = PeriodChoice(kinds.first())
     private var today: LocalDate = LocalDate.now()
 
@@ -64,13 +67,13 @@ internal class PeriodPickerView(
     }
 
     init {
-        orientation = HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
-        addView(back)
-        addView(label, LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-        addView(forward)
+        orientation = VERTICAL
+        addView(row, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        row.addView(back)
+        row.addView(label, LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        row.addView(forward)
         if (kinds.size > 1) {
-            addView(LinearLayout(context).apply {
+            segment = LinearLayout(context).apply {
                 orientation = HORIZONTAL
                 setPadding(scope.dp(2), scope.dp(2), scope.dp(2), scope.dp(2))
                 background = GradientDrawable().apply {
@@ -79,8 +82,34 @@ internal class PeriodPickerView(
                 }
                 contentDescription = words.say("hist.period.label")
                 kindButtons.forEach { (_, button) -> addView(button) }
-            }, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginStart = scope.dp(6) })
+            }
+            place()
         }
+    }
+
+    /** The segment beside the date, or on a row of its own under it. */
+    private fun place() {
+        val box = segment ?: return
+        (box.parent as? ViewGroup)?.removeView(box)
+        if (stacked) {
+            addView(box, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { gravity = Gravity.CENTER_HORIZONTAL; topMargin = scope.dp(2) })
+        } else {
+            row.addView(box, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginStart = scope.dp(6) })
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val box = segment
+        if (box != null && MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED) {
+            box.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED))
+            val arrows = 2 * scope.dp(44)
+            val want = PeriodPickerLayout.stacked(MeasureSpec.getSize(widthMeasureSpec), arrows, box.measuredWidth + scope.dp(6), scope.dp(PeriodPickerLayout.MIN_LABEL_DP))
+            if (want != stacked) {
+                stacked = want
+                post { place(); requestLayout() }
+            }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     /**
@@ -161,6 +190,21 @@ internal class PeriodPickerView(
     }
 
     private companion object {
-        val MEDIUM: Typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+
+        private val MEDIUM: Typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
     }
+}
+
+/** A details dialog at the screen's full width (less the dialog's own margins) rather than the default dialog width. */
+internal fun android.app.AlertDialog.useFullWidth() {
+    window?.setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+}
+
+/** The picker's layout decision, apart from the views. */
+internal object PeriodPickerLayout {
+    /** The least width (dp) the date label is given beside the segment. */
+    const val MIN_LABEL_DP = 110
+
+    /** Whether the segment goes on a row of its own: the row's [available] width less the arrows and the segment leaves the label under [minLabel]. */
+    fun stacked(available: Int, arrows: Int, segment: Int, minLabel: Int): Boolean = available - arrows - segment < minLabel
 }

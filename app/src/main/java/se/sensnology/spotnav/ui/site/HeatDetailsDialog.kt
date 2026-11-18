@@ -52,7 +52,7 @@ internal class HeatDetailsDialog(
         choice = PeriodChoice(HistoryPeriod.MONTH)
         val column = LinearLayout(scope.context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(scope.dp(20), scope.dp(8), scope.dp(20), scope.dp(4))
+            setPadding(scope.dp(8), scope.dp(8), scope.dp(8), scope.dp(4))
         }
         val bar = PeriodPickerView(scope, words, locale) { next ->
             choice = next
@@ -69,7 +69,7 @@ internal class HeatDetailsDialog(
             .setView(ScrollView(scope.context).apply { addView(column) })
             .setPositiveButton(scope.t(android.R.string.ok), null)
             .setOnDismissListener { main.removeCallbacks(minute) }
-            .create().also { it.show() }
+            .create().also { it.show(); it.useFullWidth() }
         held.request(choice)
         render()
         main.postDelayed(minute, MINUTE_MS)
