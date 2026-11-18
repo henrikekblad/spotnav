@@ -1,0 +1,5 @@
+- The charger's status now follows its name at the top of the card: Garage · Waiting
+- A car with no battery size set shows the size learned from charging, and offers it as a suggestion
+- Load balancing that cannot tell import from export says what your meter can do about it
+- Ready for SpotNav for Home Assistant 3.0: the sun in the price chart, the supplier's markup and the departure calendar
+- For SpotNav for Home Assistant 2.5

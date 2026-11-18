@@ -1,0 +1,5 @@
+- Laturin tila näkyy nyt sen nimen jälkeen kortin yläreunassa: Autotalli · Odottaa
+- Auto, jolle ei ole annettu akun kokoa, näyttää latauksista opitun koon ja ehdottaa sitä
+- Kuormanhallinta, joka ei erota ottoa syötöstä, kertoo, mitä mittarisi voi asialle tehdä
+- Valmis SpotNaville Home Assistantille 3.0: aurinko hintakaaviossa, sähkönmyyjän marginaali ja lähtö kalenterista
+- SpotNaville Home Assistantille 2.5

@@ -1,0 +1,5 @@
+- Laddboxens status står nu efter dess namn överst på kortet: Garage · Väntar
+- En bil utan angiven batteristorlek visar storleken som lärts in från laddning, och föreslår den
+- Lastbalansering som inte kan skilja import från export säger vad din mätare kan göra åt det
+- Redo för SpotNav för Home Assistant 3.0: solen i prisgrafen, elhandlarens påslag och avresa från kalendern
+- För SpotNav för Home Assistant 2.5
