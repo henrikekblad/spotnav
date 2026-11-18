@@ -1,4 +1,5 @@
 - Laturin tila näkyy nyt sen nimen jälkeen kortin yläreunassa: Autotalli · Odottaa
 - Auto, jolle ei ole annettu akun kokoa, näyttää latauksista opitun koon ja ehdottaa sitä
 - Kuormanhallinta, joka ei erota ottoa syötöstä, kertoo, mitä mittarisi voi asialle tehdä
+- Ilmoitus latauksen valmistumisesta tulee kerran latausta kohden
 - SpotNaville Home Assistantille 2.5

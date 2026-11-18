@@ -1,4 +1,5 @@
 - Laderens status står nu efter dens navn øverst på kortet: Garage · Venter
 - En bil uden angivet batteristørrelse viser størrelsen, der er lært fra opladninger, og foreslår den
 - Lastbalancering, der ikke kan skelne import fra eksport, siger, hvad din måler kan gøre ved det
+- Notifikationen om at opladningen er færdig kommer én gang pr. opladning
 - Til SpotNav til Home Assistant 2.5

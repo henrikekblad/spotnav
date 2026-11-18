@@ -1,4 +1,5 @@
 - El estado del cargador aparece ahora tras su nombre en la parte superior de la tarjeta: Garaje · En espera
 - Un coche sin tamaño de batería indicado muestra el tamaño aprendido de las cargas y lo propone
 - El equilibrado de carga que no distingue consumo de vertido dice qué puede hacer tu contador
+- La notificación de carga completa llega una sola vez por carga
 - Para SpotNav para Home Assistant 2.5

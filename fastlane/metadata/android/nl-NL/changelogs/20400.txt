@@ -1,4 +1,5 @@
 - De status van de laadpaal staat nu achter de naam bovenaan de kaart: Garage · Wacht
 - Een auto zonder opgegeven batterijgrootte toont de grootte die uit laadbeurten is geleerd, en stelt die voor
 - Load balancing dat afname en teruglevering niet kan onderscheiden, zegt wat je meter eraan kan doen
+- De melding dat het laden klaar is komt één keer per laadbeurt
 - Voor SpotNav voor Home Assistant 2.5
