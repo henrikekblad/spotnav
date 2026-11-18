@@ -105,7 +105,7 @@ internal interface HaTransport {
     fun house(date: LocalDate?): SiteRead<House> = SiteRead.Failed(null)
 
     /** `get_house_history`: a day, month or year of the house. */
-    fun houseHistory(period: String, date: LocalDate?): SiteRead<HouseHistory> = SiteRead.Failed(null)
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?): SiteRead<HouseHistory> = SiteRead.Failed(null)
 
     /** `get_house_loads`: what the house or the heat used, by device. */
     fun houseLoads(kind: String, period: String, date: LocalDate?): SiteRead<HouseLoads> = SiteRead.Failed(null)
@@ -173,7 +173,7 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
 
-    override fun houseHistory(period: String, date: LocalDate?) = HomeAssistantClient.houseHistory(connection, period, date)
+    override fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.houseHistory(connection, period, date)
 
     override fun houseLoads(kind: String, period: String, date: LocalDate?) = HomeAssistantClient.houseLoads(connection, kind, period, date)
 
@@ -415,7 +415,7 @@ internal class HaSession(
     }
 
     /** `get_house_history` (never throws). */
-    fun houseHistory(period: String, date: LocalDate?, done: (SiteRead<HouseHistory>) -> Unit) {
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?, done: (SiteRead<HouseHistory>) -> Unit) {
         background.execute {
             val outcome = transport.houseHistory(period, date)
             mainThread { done(outcome) }

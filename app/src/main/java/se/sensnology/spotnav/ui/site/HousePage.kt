@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
+import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
@@ -53,19 +54,27 @@ internal class HousePage(
     private var liveInFlight = false
     private var liveMisses = 0
 
-    // The period the boxes show, and the Energy flow's history, and what was read for it when it is not today's day.
-    private var choice = PeriodChoice(HistoryPeriod.DAY)
-    private var history: HouseHistory? = null
-    private var historyFailure: FlowModel.FlowFailure? = null
-    private var historyInFlight = false
-    private val loads = LoadsDialog(this, session, text, colours)
-    private val picker = PeriodPickerView(this, words, AppLanguageSettings.locale(context)) { next ->
-        choice = next
-        history = null
-        historyFailure = null
-        readHistory()
+    // The period boxes under the Now box (the card's tabs, stacked as boxes): one shared period choice and one picker.
+    private val history = HouseHistoryStore(session) { render() }
+    private val locale = AppLanguageSettings.locale(context)
+    private val choice: PeriodChoice get() = history.choice
+    private val boxes = HouseBox.entries.associateWith { box ->
+        HouseHistoryPanel(this, box, history, preferences, colours, text, locale, ::siteKey) { memory.house }
+    }
+    private var boxesOpen = false
+    private val picker = PeriodPickerView(this, words, locale) { next ->
+        history.choice = next
+        boxes.values.forEach { it.periodChanged() }
+        openBoxes()
         render()
     }
+    private val periodRow = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(14), 0, dp(14), 0)
+        visibility = View.GONE
+        addView(picker, wide())
+    }
+    private val loads = LoadsDialog(this, session, text, colours)
     private val flowStatus = line().apply { setTextColor(muted) }
     private val sankey = SankeyView(context, text).apply { onOpen = ::openLoads }
     private val tiles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
@@ -118,8 +127,10 @@ internal class HousePage(
             addView(title, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })
             addView(body, wide().apply { bottomMargin = dp(14) })
-            addView(picker, wide().apply { bottomMargin = dp(6) })
+            // One picker above the period boxes, under the Now box; it drives every box below it.
+            addView(periodRow, wide().apply { bottomMargin = dp(6) })
             addView(flowGroup, wide().apply { bottomMargin = dp(14) })
+            boxes.values.forEach { addView(it.panel, wide().apply { bottomMargin = dp(14) }) }
         })
     }
 
@@ -146,43 +157,43 @@ internal class HousePage(
         render()
     }
 
+    /** Ask for what the visible period boxes draw (the house has answered, or the period changed). */
+    private fun openBoxes(force: Boolean = false) {
+        readFlow(force)
+        val shown = HouseBoxes.shown(memory.house)
+        boxes.forEach { (box, panel) -> if (box in shown) panel.open(force) }
+    }
+
     override fun setInView(inView: Boolean) {
         schematic.running = inView
         if (inView) polling.start() else polling.stop()
     }
 
-    /** The history of the period shown, when it is not today's day (which is the house's own answer). */
-    private fun readHistory() {
-        if (!HouseBoxes.flow(memory.house) || (choice.period == HistoryPeriod.DAY && choice.date == null)) return
-        if (historyInFlight) return
-        val asked = choice
-        historyInFlight = true
-        session.houseHistory(asked.period.key, asked.date) { outcome ->
-            historyInFlight = false
-            if (asked == choice) {
-                when (outcome) {
-                    is SiteRead.Read -> { history = outcome.value; historyFailure = null }
-                    SiteRead.Unsupported -> historyFailure = FlowModel.FlowFailure(null, unsupportedVersion = true)
-                    is SiteRead.Failed -> historyFailure = FlowModel.FlowFailure(outcome.code)
-                }
-                render()
-            } else {
-                // The period changed while it was on its way: read the one shown now.
-                readHistory()
-            }
-        }
+    /** The Energy flow's history of the period shown (today's own day is the house's answer); read through the shared store. */
+    private fun readFlow(force: Boolean) {
+        val c = choice
+        if (!HouseBoxes.flow(memory.house) || (c.period == HistoryPeriod.DAY && c.date == null)) return
+        history.request(c, needsHistory = true, force = force)
     }
 
+    private fun flowHistory(): HouseHistory? = (history.history() as? Load.Ready)?.value
+    private fun flowFailure(): FlowModel.FlowFailure? = (history.history() as? Load.Failed)?.let { FlowModel.FlowFailure(null, unsupportedVersion = it.unsupported) }
+
     private fun openLoads(kind: String) {
-        val flow = FlowModel.content(choice, memory.house, history, historyFailure).let { (it as? FlowContent.Diagram)?.flow } ?: return
+        val flow = FlowModel.content(choice, memory.house, flowHistory(), flowFailure()).let { (it as? FlowContent.Diagram)?.flow } ?: return
         val roles = SankeyLayout.shown(flow).filter { !it.source }.map { it.role }
-        val running = choice.date == null || history?.running == true
+        val running = choice.date == null || flowHistory()?.running == true
         this.loads.open(kind, choice, todayDate(), running, "car" in roles, "heat" in roles)
     }
 
     private fun todayDate(): java.time.LocalDate = memory.house?.zone?.let { java.time.LocalDate.now(it) } ?: java.time.LocalDate.now()
 
     private fun readHouse() {
+        // The running period is read again with the house, every minute.
+        if (boxesOpen) {
+            readFlow(force = choice.date == null)
+            boxes.values.forEach { it.refresh() }
+        }
         if (houseInFlight) return
         houseInFlight = true
         session.house(null) { outcome ->
@@ -195,8 +206,6 @@ internal class HousePage(
                 // What is held stays on screen; with nothing held, the page says it could not be read.
                 else -> failed = memory.house == null
             }
-            // The Energy flow tab's running period (not a past one) is read again with the house, every minute.
-            if (choice.date == null && choice.period != HistoryPeriod.DAY) readHistory()
             render()
         }
     }
@@ -238,17 +247,17 @@ internal class HousePage(
             }
         }
         // The boxes under Now: left out when there is nothing to show; the picker only with a box to drive.
-        val flowShown = HouseBoxes.flow(house)
-        flowGroup.visibility = if (flowShown) View.VISIBLE else View.GONE
-        picker.visibility = if (HouseBoxes.picker(house)) View.VISIBLE else View.GONE
-        if (flowShown) renderFlow()
         if (house == null) {
             state.text = words.say(if (failed) "house.failed" else "house.loading")
             state.visibility = View.VISIBLE
             listOf(schematic, plan, money, notes, learning).forEach { it.visibility = View.GONE }
+            periodRow.visibility = View.GONE
+            flowGroup.visibility = View.GONE
+            boxes.values.forEach { it.panel.visibility = View.GONE }
             return
         }
         state.visibility = View.GONE
+        renderBoxes(house)
         val live = memory.live
         schematic.visibility = View.VISIBLE
         schematic.show { wide -> HouseNowModel.schematic(text, house, live, wide) }
@@ -259,14 +268,9 @@ internal class HousePage(
     }
 
     /** The Energy flow box: its heading, then the diagram, or the line saying why there is none, or the tiles. */
-    private fun renderFlow() {
-        val house = memory.house
+    private fun renderFlow(house: House) {
         flowTitle.text = words.say("house.tab.flow")
-        val today = todayDate()
-        val running = choice.period == HistoryPeriod.DAY && choice.date == null
-        val through = if (running) house?.energyFlow?.through?.let { text.clock(it, house.zone) } else null
-        picker.show(choice, today, through)
-        val content = FlowModel.content(choice, house, history, historyFailure)
+        val content = FlowModel.content(choice, house, flowHistory(), flowFailure())
         flowStatus.visibility = View.GONE
         sankey.visibility = View.GONE
         tiles.visibility = View.GONE
@@ -308,6 +312,26 @@ internal class HousePage(
         }
     }
 
+    /** Decide each box: the picker is shown only when some period box is. */
+    private fun renderBoxes(house: House) {
+        if (!boxesOpen) {
+            boxesOpen = true
+            openBoxes()
+        }
+        val flowShown = HouseBoxes.flow(house)
+        flowGroup.visibility = if (flowShown) View.VISIBLE else View.GONE
+        if (flowShown) renderFlow(house)
+        val shown = HouseBoxes.shown(house)
+        var any = flowShown
+        boxes.forEach { (box, panel) -> if (box in shown) any = panel.render() || any else panel.panel.visibility = View.GONE }
+        periodRow.visibility = if (any) View.VISIBLE else View.GONE
+        if (any) {
+            val running = choice.period == HistoryPeriod.DAY && choice.date == null
+            val through = if (running) house.energyFlow?.through?.let { text.clock(it, house.zone) } else null
+            picker.show(choice, todayDate(), through)
+        }
+    }
+
     private fun tile(tile: FlowModel.Tile) = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         addView(TextView(context).apply {
@@ -322,6 +346,8 @@ internal class HousePage(
             this.text = words.say(tile.word)
         })
     }
+
+    private fun siteKey(): String = memory.house?.siteId ?: profileId
 
     private fun say(view: TextView, words: String?) {
         view.text = words.orEmpty()

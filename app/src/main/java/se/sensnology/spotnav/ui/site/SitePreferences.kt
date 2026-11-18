@@ -22,6 +22,10 @@ internal class SitePreferences(private val store: KeyValueStore) {
     fun hidden(site: String, chart: String): Set<String> =
         read("hidden.$chart.$site")?.split(',')?.filter { it.isNotEmpty() }?.toSet().orEmpty()
 
+    /** Like [hidden], but [default] while nothing is remembered (a chart that starts with something hidden). */
+    fun hiddenOr(site: String, chart: String, default: Set<String>): Set<String> =
+        if (read("hidden.$chart.$site") == null) default else hidden(site, chart)
+
     fun setHidden(site: String, chart: String, parts: Set<String>) {
         require(parts.none { ',' in it }) { "a part's name has no comma" }
         write("hidden.$chart.$site", parts.sorted().joinToString(","))

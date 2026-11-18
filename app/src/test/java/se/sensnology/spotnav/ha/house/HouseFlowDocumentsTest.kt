@@ -31,7 +31,7 @@ class HouseFlowDocumentsTest {
         assertEquals(expected.keys, HaFixtures.files("house_history").map { it.name }.toSet())
         for ((name, row) in expected) {
             val read = history(HaFixtures.json("house_history/$name"))
-            assertEquals(name, row, listOf(read.period, read.date.toString(), read.end.toString(), read.running, read.energyFlow?.nodes?.size))
+            assertEquals(name, row, listOf(read.period.key, read.date.toString(), read.end.toString(), read.running, read.energyFlow?.nodes?.size))
         }
         val month = history(HaFixtures.json("house_history/villa_month.json")).energyFlow!!
         assertEquals(321.8, month.kwh(source = true, role = "grid")!!, 0.0)
@@ -43,7 +43,7 @@ class HouseFlowDocumentsTest {
     @Test fun theWebhookTwinOfTheHistoryDecodesAndRefusesAsHomeAssistantDoes() {
         val ok = File(HaFixtures.root, "webhook/get_house_history_success.json").readText()
         val read = (HouseHistoryRead.answer(200, ok) as SiteRead.Read).value
-        assertEquals("day", read.period)
+        assertEquals("day", read.period.key)
         // A site with no meter: the flow is null, not missing.
         assertNull(read.energyFlow)
         assertEquals(LocalDate.parse("2026-09-22"), read.date)
@@ -127,10 +127,10 @@ class HouseFlowDocumentsTest {
     }
 
     @Test fun theRequestsNameTheirActionVersionAndPeriodAndNeverASite() {
-        val h = HouseHistoryRead.payload("month", LocalDate.parse("2026-10-05"))
+        val h = HouseHistoryRead.payload(HouseHistory.HistoryKind.MONTH, LocalDate.parse("2026-10-05"))
         assertEquals(setOf("version", "action", "api_version", "period", "date"), h.keys().asSequence().toSet())
         assertEquals("get_house_history", h.getString("action"))
-        assertFalse(HouseHistoryRead.payload("day", null).has("date"))
+        assertFalse(HouseHistoryRead.payload(HouseHistory.HistoryKind.DAY, null).has("date"))
         val l = HouseLoadsRead.payload("heat", "year", null)
         assertEquals(setOf("version", "action", "api_version", "kind", "period"), l.keys().asSequence().toSet())
         assertEquals("get_house_loads", l.getString("action"))

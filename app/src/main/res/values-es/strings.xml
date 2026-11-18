@@ -971,4 +971,59 @@
   <string name="card_house_tile_sold" formatted="false">Vendido</string>
   <string name="card_house_tile_heat" formatted="false">Calor</string>
   <string name="card_house_tile_car" formatted="false">Coche</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Leyenda</string>
+  <string name="card_house_legend_house" formatted="false">Casa</string>
+  <string name="card_house_legend_heat" formatted="false">Calefacción</string>
+  <string name="card_house_legend_forecast" formatted="false">Previsión</string>
+  <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_battery" formatted="false">Nivel de batería · discontinuo = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Precio de compra</string>
+  <string name="card_house_legend_sell_price" formatted="false">Precio de venta</string>
+  <string name="card_house_legend_car" formatted="false">Coche</string>
+  <string name="card_house_chart_label" formatted="false">Casa, sol y batería: 12 horas atrás, 24 adelante</string>
+  <string name="card_house_chart_description" formatted="false">Barras: el consumo de la casa por hora, medido hasta ahora y previsto después (más claro). Área: el sol. Raya corta sobre una barra pasada: lo que se preveía para esa hora.</string>
+  <string name="card_house_chart_price_label" formatted="false">Precios y batería: 12 horas atrás, 24 adelante</string>
+  <string name="card_house_chart_price_description" formatted="false">Líneas: el precio de compra con todos los cargos y el precio de venta por hora. Línea violeta: el nivel de la batería en el eje derecho, discontinua donde está planificado. Tonos: el plan carga de la red o vende a ella.</string>
+  <string name="card_house_hint" formatted="false">Toca el gráfico para ver las cifras de una hora.</string>
+  <string name="card_house_hint_energy" formatted="false">Toca una hora para ver sus cifras. Las barras claras son previsión.</string>
+  <string name="card_house_readout_house" formatted="false">casa {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">casa {kw} prevista</string>
+  <string name="card_house_readout_heat" formatted="false">calefacción {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">calefacción {kw} prevista</string>
+  <string name="card_house_readout_house_both" formatted="false">casa {kw} (previsión {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">sol {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">sol {kwh} previsto</string>
+  <string name="card_house_readout_soc" formatted="false">batería {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batería {pct} planificada</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">carga de la red</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">vende a la red</string>
+  <string name="card_house_readout_action_hold" formatted="false">mantiene la carga</string>
+  <string name="card_house_readout_price" formatted="false">compra {buy} · venta {sell}</string>
+  <string name="card_house_readout_car" formatted="false">coche {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">compra {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">venta {sell}</string>
+  <string name="card_house_now" formatted="false">Ahora</string>
+  <string name="card_house_today_hint" formatted="false">Lo que la batería devolvió, al precio de ese momento, menos lo que costó cargarla.</string>
+  <string name="card_house_today_hint_app" formatted="false">La misma medida que la app de {brand}.</string>
+  <string name="card_house_today_cost" formatted="false">Electricidad {amount}</string>
+  <string name="card_house_today_sold" formatted="false">solar vendida {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: la batería ganó {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: la batería ganó {amount} (control propio)</string>
+  <string name="card_house_today" formatted="false">La batería ha ganado {amount} hoy</string>
+  <string name="card_house_today_own" formatted="false">La batería ha ganado {amount} hoy (control propio)</string>
+  <string name="card_house_day_no_data" formatted="false">Este día no se midió nada.</string>
+  <string name="card_house_graph_label" formatted="false">Energía usada y sol, por periodo</string>
+  <string name="card_house_value_label" formatted="false">Lo que ganó la batería</string>
+  <string name="card_house_value_bar" formatted="false">{when}: la batería ganó {amount}</string>
+  <string name="card_house_value_bar_cost" formatted="false">{when}: la batería perdió {amount}</string>
+  <string name="card_house_earned" formatted="false">La batería ganó {amount}</string>
+  <string name="card_house_value_hour" formatted="false">la batería ganó {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">la batería perdió {amount}</string>
+  <string name="card_house_flow_out" formatted="false">descargado {kwh}, valor {worth}, menos {cost} que costó cargar la energía = {net}</string>
+  <string name="card_house_flow_in" formatted="false">cargado {kwh} por {cost} (se cuenta cuando se usa la energía)</string>
+  <string name="card_house_value_none" formatted="false">No hay batería en esta instalación.</string>
+  <string name="card_hist_house_chart" formatted="false">Coste de la casa</string>
+  <string name="card_hist_house_hint" formatted="false">Toca una barra para ver sus cifras.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: nada medido</string>
 </resources>

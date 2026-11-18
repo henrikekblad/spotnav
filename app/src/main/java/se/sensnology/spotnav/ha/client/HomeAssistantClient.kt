@@ -358,8 +358,8 @@ object HomeAssistantClient {
         return HouseRead.answer(status, body)
     }
 
-    /** One [period] (`day`, `month`, `year`) of the house around [date] (`null`: the running one) (webhook `get_house_history`). Never throws. */
-    internal fun houseHistory(settings: HomeAssistantSettings, period: String, date: java.time.LocalDate?): SiteRead<HouseHistory> {
+    /** One day, month or year of the house (webhook `get_house_history`), under the same capability. Never throws. */
+    internal fun houseHistory(settings: HomeAssistantSettings, period: HouseHistory.HistoryKind, date: java.time.LocalDate? = null): SiteRead<HouseHistory> {
         val (status, body) = write(settings, HouseHistoryRead.payload(period, date))
         return HouseHistoryRead.answer(status, body)
     }

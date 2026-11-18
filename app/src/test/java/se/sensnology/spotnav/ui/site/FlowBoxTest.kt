@@ -292,7 +292,9 @@ class FlowBoxTest {
     }
 
     @Test fun thePickerIsDrawnOnlyWhileABoxNeedsIt() {
-        assertFalse(HouseBoxes.picker(house("house_learning.json")))
+        // A house with no energy flow still has the energy chart (hours), so the picker has a box to drive.
+        assertTrue(HouseBoxes.picker(house("house_learning.json")))
+        assertFalse(HouseBoxes.flow(house("house_learning.json")))
         assertFalse(HouseBoxes.picker(null))
         assertTrue(HouseBoxes.picker(house()))
     }

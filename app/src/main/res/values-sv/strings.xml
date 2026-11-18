@@ -963,4 +963,59 @@
   <string name="card_house_tile_sold" formatted="false">Sålt</string>
   <string name="card_house_tile_heat" formatted="false">Värme</string>
   <string name="card_house_tile_car" formatted="false">Bil</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Diagrammets förklaring</string>
+  <string name="card_house_legend_house" formatted="false">Huset</string>
+  <string name="card_house_legend_heat" formatted="false">Värme</string>
+  <string name="card_house_legend_forecast" formatted="false">Prognos</string>
+  <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_battery" formatted="false">Batterinivå · streckat = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Köppris</string>
+  <string name="card_house_legend_sell_price" formatted="false">Säljpris</string>
+  <string name="card_house_legend_car" formatted="false">Bil</string>
+  <string name="card_house_chart_label" formatted="false">Huset, solen och batteriet: 12 timmar bakåt, 24 framåt</string>
+  <string name="card_house_chart_description" formatted="false">Staplar: husets last per timme, uppmätt före nu och prognos efter (ljusare). Yta: solen. Kort linje över en passerad stapel: vad prognosen var för timmen.</string>
+  <string name="card_house_chart_price_label" formatted="false">Priser och batteriet: 12 timmar bakåt, 24 framåt</string>
+  <string name="card_house_chart_price_description" formatted="false">Linjer: köppriset med alla avgifter och säljpriset per timme. Lila linje: batteriets laddnivå på högra axeln, streckad där den är planerad. Toner: planen laddar från nätet eller säljer till det.</string>
+  <string name="card_house_hint" formatted="false">Tryck i diagrammet för en timmes siffror.</string>
+  <string name="card_house_hint_energy" formatted="false">Tryck på en timme för siffror. Ljusa staplar är prognos.</string>
+  <string name="card_house_readout_house" formatted="false">huset {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">huset {kw} väntat</string>
+  <string name="card_house_readout_heat" formatted="false">värme {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">värme {kw} väntat</string>
+  <string name="card_house_readout_house_both" formatted="false">huset {kw} (prognos {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">sol {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">sol {kwh} väntat</string>
+  <string name="card_house_readout_soc" formatted="false">batteri {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batteri {pct} planerat</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">laddar från nätet</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">säljer till nätet</string>
+  <string name="card_house_readout_action_hold" formatted="false">håller laddningen</string>
+  <string name="card_house_readout_price" formatted="false">köp {buy} · sälj {sell}</string>
+  <string name="card_house_readout_car" formatted="false">bil {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">köp {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">sälj {sell}</string>
+  <string name="card_house_now" formatted="false">Nu</string>
+  <string name="card_house_today_hint" formatted="false">Det batteriet gav tillbaka, till elpriset då, minus vad laddningen kostade.</string>
+  <string name="card_house_today_hint_app" formatted="false">Samma mått som {brand}-appen.</string>
+  <string name="card_house_today_cost" formatted="false">Elkostnad {amount}</string>
+  <string name="card_house_today_sold" formatted="false">sålt solel {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: batteriet tjänade {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: batteriet tjänade {amount} (egen styrning)</string>
+  <string name="card_house_today" formatted="false">Batteriet har tjänat {amount} i dag</string>
+  <string name="card_house_today_own" formatted="false">Batteriet har tjänat {amount} i dag (egen styrning)</string>
+  <string name="card_house_day_no_data" formatted="false">Inget mättes den här dagen.</string>
+  <string name="card_house_graph_label" formatted="false">Använd energi och solen, per period</string>
+  <string name="card_house_value_label" formatted="false">Vad batteriet tjänade</string>
+  <string name="card_house_value_bar" formatted="false">{when}: batteriet tjänade {amount}</string>
+  <string name="card_house_value_bar_cost" formatted="false">{when}: batteriet förlorade {amount}</string>
+  <string name="card_house_earned" formatted="false">Batteriet tjänade {amount}</string>
+  <string name="card_house_value_hour" formatted="false">batteriet tjänade {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">batteriet förlorade {amount}</string>
+  <string name="card_house_flow_out" formatted="false">urladdat {kwh}, värt {worth}, minus {cost} som energin kostade att ladda = {net}</string>
+  <string name="card_house_flow_in" formatted="false">laddade {kwh} för {cost} (räknas när energin används)</string>
+  <string name="card_house_value_none" formatted="false">Inget batteri på den här anläggningen.</string>
+  <string name="card_hist_house_chart" formatted="false">Husets kostnad</string>
+  <string name="card_hist_house_hint" formatted="false">Tryck på en stapel för siffror.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: inget mätt</string>
 </resources>
