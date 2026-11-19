@@ -1,0 +1,8 @@
+Leert je huis kennen. Plant je energie.
+
+Nieuw in 3.0:
+- Werkt zonder laadpaal: verbind met je huis
+- Huispagina met batterij en prijs
+- Weergaven voor verwarming en warm water
+- Het plan met de batterij
+- Voor SpotNav voor Home Assistant 3.0

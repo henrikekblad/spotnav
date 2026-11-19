@@ -1,4 +1,13 @@
-SpotNav ajoittaa sähköauton latauksen vuorokauden edullisimmille tunneille ja näyttää sähkön pörssihinnan widgetinä ja värikoodattuna hintataulukkona.
+Oppii kotisi. Suunnittelee energiasi.
+
+SpotNav suunnittelee sähköauton latauksen, kotiakun ja lämmityksen vuorokauden halvimmille tunneille ja näyttää sähkön pörssihinnan widgettinä ja värikoodattuna hintataulukkona.
+
+KOKO KOTI, EI VAIN LATAUSPISTE
+- Sovellus toimii ilman latauspistettä. Yhdistä se kotiisi Home Assistantissa ja käytä sitä talon, akun ja hintojen seuraamiseen.
+- Talonäkymä näyttää, mitä talo kuluttaa, mitä akussa on ja mitä se tekee, sekä hinnan juuri nyt.
+- Lämmitys- ja käyttövesinäkymät näyttävät sisälämpötilan, tavoitelämpötilan, käyttöveden ja sen, mitä SpotNav niille suunnittelee.
+- Akun suunnitelma näyttää, milloin akku lataa, odottaa tai purkaa, ja miksi.
+- Latauspisteet, aurinkolataus ja kuormanhallinta toimivat kuten ennenkin.
 
 LATAUS HOME ASSISTANTIN KANSSA
 - Yhdistä sovellus Home Assistantisi SpotNav-integraatioon. Latauksen ohjaus, aurinko- ja hybridilataus sekä kuormanhallinta toimivat siellä, myös kun puhelin on pois päältä.

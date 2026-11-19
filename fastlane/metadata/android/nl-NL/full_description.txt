@@ -1,4 +1,13 @@
-SpotNav plant het laden van je elektrische auto op de goedkoopste uren van de dag en toont de spotprijzen voor stroom als widget en in een prijstabel met kleurcodes.
+Leert je huis kennen. Plant je energie.
+
+SpotNav plant het laden van je EV, je thuisbatterij en je verwarming in de goedkoopste uren van de dag en toont stroomprijzen als widget en als kleurgecodeerde prijstabel.
+
+HET HELE HUIS, NIET ALLEEN DE LAADPAAL
+- De app werkt zonder laadpaal. Verbind haar in Home Assistant met je huis en gebruik haar voor het huis, de batterij en de prijzen.
+- De huispagina toont wat het huis verbruikt, wat de batterij bevat en doet, en de prijs op dit moment.
+- Weergaven voor verwarming en warm water tonen de binnentemperatuur, het instelpunt, warm water en wat SpotNav daarvoor plant.
+- Het plan met de batterij toont wanneer die laadt, wacht of ontlaadt, en waarom.
+- Laadpalen, laden op zonnestroom en load balancing werken zoals voorheen.
 
 LADEN MET HOME ASSISTANT
 - Koppel de app aan de SpotNav-integratie in je Home Assistant. Laadsturing, laden op zon en hybride, en load balancing draaien daar, ook als je telefoon uit staat.

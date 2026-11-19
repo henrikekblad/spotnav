@@ -1,4 +1,13 @@
-SpotNav planerar elbilsladdningen till dygnets billigaste timmar och visar elens spotpris som widget och färgkodad pristabell.
+Lär sig ditt hem. Planerar din energi.
+
+SpotNav planerar elbilsladdningen, hemmabatteriet och värmen till dygnets billigaste timmar och visar elens spotpris som widget och färgkodad pristabell.
+
+HELA HEMMET, INTE BARA LADDBOXEN
+- Appen fungerar utan laddbox. Koppla den till ditt hem i Home Assistant och använd den för huset, batteriet och priserna.
+- Husvyn visar vad huset drar, vad batteriet rymmer och gör, och priset just nu.
+- Vyerna för värme och varmvatten visar innetemperatur, börvärde, varmvatten och vad SpotNav planerar för dem.
+- Planen med batteriet visar när det laddar, väntar eller laddar ur, och varför.
+- Laddboxar, solladdning och lastbalansering fungerar som förut.
 
 LADDNING MED HOME ASSISTANT
 - Koppla appen till SpotNav-integrationen i din Home Assistant. Där körs laddstyrning, sol- och hybridladdning och lastbalansering, även när telefonen är avstängd.

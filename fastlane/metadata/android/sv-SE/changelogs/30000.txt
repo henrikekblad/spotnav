@@ -1,0 +1,8 @@
+Lär sig ditt hem. Planerar din energi.
+
+Nytt i 3.0:
+- Fungerar utan laddbox: koppla till ditt hem
+- Husvy med batteri och pris
+- Vyer för värme och varmvatten
+- Planen med batteriet
+- För SpotNav för Home Assistant 3.0

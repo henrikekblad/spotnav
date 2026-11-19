@@ -1,4 +1,13 @@
-SpotNav legt das Laden deines Elektroautos in die günstigsten Stunden des Tages und zeigt Strom-Spotpreise als Widget und in einer farbcodierten Preistabelle.
+Lernt dein Zuhause kennen. Plant deine Energie.
+
+SpotNav plant das Laden deines Elektroautos, deinen Heimspeicher und deine Heizung für die günstigsten Stunden des Tages und zeigt Strom-Spotpreise als Widget und in einer farbcodierten Preistabelle.
+
+DAS GANZE ZUHAUSE, NICHT NUR DIE WALLBOX
+- Die App funktioniert ohne Wallbox. Verbinde sie in Home Assistant mit deinem Zuhause und nutze sie für Haus, Batterie und Preise.
+- Die Hausseite zeigt, was das Haus verbraucht, was die Batterie speichert und was sie gerade tut, und den aktuellen Preis.
+- Ansichten für Heizung und Warmwasser zeigen Raumtemperatur, Sollwert, Warmwasser und das, was SpotNav dafür plant.
+- Der Plan mit der Batterie zeigt, wann sie lädt, hält oder entlädt, und warum.
+- Wallboxen, Solarladen und Lastmanagement funktionieren wie bisher.
 
 LADEN MIT HOME ASSISTANT
 - Kopple die App mit der SpotNav-Integration in deinem Home Assistant. Dort laufen Ladesteuerung, Solar- und Hybridladen sowie Lastmanagement, auch wenn das Telefon aus ist.
