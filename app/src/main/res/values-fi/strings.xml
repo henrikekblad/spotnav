@@ -1504,4 +1504,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">Lämpöpumppu ei reagoinut. Tarkista asetus ja kytke uudelleen päälle.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Odottaa: joku muu muutti asetusta. SpotNav ohjaa taas huomenna.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Odottaa: lämpöpumppu ei vastannut. SpotNav yrittää uudelleen huomenna.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Käyttövettä nyt</string>
+  <string name="card_heat_boost_starting" formatted="false">Käynnistyy…</string>
+  <string name="card_heat_boost_left" formatted="false">Käyttövesi · noin {minutes} min jäljellä</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Käyttövesi · {minutes} min jäljellä</string>
+  <string name="card_heat_boost_on" formatted="false">Käyttövesi · käynnissä</string>
+  <string name="card_heat_boost_heating" formatted="false">Lämmittää käyttövettä · noin {minutes} min jäljellä</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Lämmittää käyttövettä</string>
+  <string name="card_heat_boost_stop" formatted="false">Peru</string>
+  <string name="card_heat_boost_failed" formatted="false">Käyttöveden lämmitystä ei voitu käynnistää</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Käyttövesi käynnistettiin juuri; yritä uudelleen muutaman minuutin kuluttua</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Pääsulake on nyt täysin kuormitettu; sammuta jotain ja yritä uudelleen</string>
 </resources>

@@ -1504,4 +1504,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">De warmtepomp reageerde niet. Controleer de instelling en zet het weer aan.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Wacht: iemand anders veranderde de instelling. SpotNav stuurt morgen weer.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Wacht: de warmtepomp reageerde niet. SpotNav probeert het morgen opnieuw.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Warm water nu</string>
+  <string name="card_heat_boost_starting" formatted="false">Starten…</string>
+  <string name="card_heat_boost_left" formatted="false">Warm water · nog ongeveer {minutes} min</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Warm water · nog {minutes} min</string>
+  <string name="card_heat_boost_on" formatted="false">Warm water · bezig</string>
+  <string name="card_heat_boost_heating" formatted="false">Verwarmt water · nog ongeveer {minutes} min</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Verwarmt water</string>
+  <string name="card_heat_boost_stop" formatted="false">Annuleren</string>
+  <string name="card_heat_boost_failed" formatted="false">Kon het warme water niet starten</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Warm water is net gestart; probeer het over een paar minuten opnieuw</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">De hoofdzekering is nu volledig belast; zet iets uit en probeer het opnieuw</string>
 </resources>

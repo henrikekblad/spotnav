@@ -1512,4 +1512,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">La pompe à chaleur n\'a pas répondu. Vérifiez le réglage et réactivez.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">En attente : quelqu\'un d\'autre a changé le réglage. SpotNav reprend demain.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">En attente : la pompe à chaleur n\'a pas répondu. SpotNav réessaie demain.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Eau chaude maintenant</string>
+  <string name="card_heat_boost_starting" formatted="false">Démarrage…</string>
+  <string name="card_heat_boost_left" formatted="false">Eau chaude · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Eau chaude · {minutes} min restantes</string>
+  <string name="card_heat_boost_on" formatted="false">Eau chaude · en cours</string>
+  <string name="card_heat_boost_heating" formatted="false">Chauffe l’eau · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Chauffe l’eau</string>
+  <string name="card_heat_boost_stop" formatted="false">Annuler</string>
+  <string name="card_heat_boost_failed" formatted="false">Impossible de lancer l’eau chaude</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">L’eau chaude vient d’être lancée ; réessayez dans quelques minutes</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Le disjoncteur principal est à pleine charge ; éteignez un appareil et réessayez</string>
 </resources>

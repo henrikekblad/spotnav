@@ -1504,4 +1504,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">Värmepumpen svarade inte. Kontrollera inställningen och slå på igen.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Väntar: någon annan ändrade inställningen. SpotNav styr igen i morgon.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Väntar: värmepumpen svarade inte. SpotNav försöker igen i morgon.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Varmvatten nu</string>
+  <string name="card_heat_boost_starting" formatted="false">Startar…</string>
+  <string name="card_heat_boost_left" formatted="false">Varmvatten · ca {minutes} min kvar</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Varmvatten · {minutes} min kvar</string>
+  <string name="card_heat_boost_on" formatted="false">Varmvatten · pågår</string>
+  <string name="card_heat_boost_heating" formatted="false">Värmer varmvatten · ca {minutes} min kvar</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Värmer varmvatten</string>
+  <string name="card_heat_boost_stop" formatted="false">Avbryt</string>
+  <string name="card_heat_boost_failed" formatted="false">Kunde inte starta varmvattnet</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Varmvattnet startades nyss; försök igen om några minuter</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Säkringen är fullt belastad just nu; stäng av något och försök igen</string>
 </resources>

@@ -1512,4 +1512,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">La bomba de calor no respondió. Revisa el ajuste y vuelve a activarlo.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Esperando: otra persona cambió el ajuste. SpotNav vuelve a controlar mañana.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Esperando: la bomba de calor no respondió. SpotNav lo intenta de nuevo mañana.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Agua caliente ahora</string>
+  <string name="card_heat_boost_starting" formatted="false">Iniciando…</string>
+  <string name="card_heat_boost_left" formatted="false">Agua caliente · quedan unos {minutes} min</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Agua caliente · quedan {minutes} min</string>
+  <string name="card_heat_boost_on" formatted="false">Agua caliente · en curso</string>
+  <string name="card_heat_boost_heating" formatted="false">Calentando agua · quedan unos {minutes} min</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Calentando agua</string>
+  <string name="card_heat_boost_stop" formatted="false">Cancelar</string>
+  <string name="card_heat_boost_failed" formatted="false">No se pudo iniciar el agua caliente</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">El agua caliente se acaba de iniciar; inténtalo de nuevo en unos minutos</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">El fusible principal está a plena carga ahora; apaga algo e inténtalo de nuevo</string>
 </resources>

@@ -1504,4 +1504,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">Die Wärmepumpe hat nicht reagiert. Prüfe die Einstellung und schalte wieder ein.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Wartet: jemand anderes hat die Einstellung geändert. SpotNav steuert morgen wieder.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Wartet: die Wärmepumpe hat nicht reagiert. SpotNav versucht es morgen wieder.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Warmwasser jetzt</string>
+  <string name="card_heat_boost_starting" formatted="false">Startet…</string>
+  <string name="card_heat_boost_left" formatted="false">Warmwasser · noch etwa {minutes} min</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Warmwasser · noch {minutes} min</string>
+  <string name="card_heat_boost_on" formatted="false">Warmwasser · läuft</string>
+  <string name="card_heat_boost_heating" formatted="false">Bereitet Warmwasser · noch etwa {minutes} min</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Bereitet Warmwasser</string>
+  <string name="card_heat_boost_stop" formatted="false">Abbrechen</string>
+  <string name="card_heat_boost_failed" formatted="false">Warmwasser konnte nicht gestartet werden</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Warmwasser wurde gerade gestartet; in ein paar Minuten erneut versuchen</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Die Hauptsicherung ist gerade voll belastet; etwas ausschalten und erneut versuchen</string>
 </resources>

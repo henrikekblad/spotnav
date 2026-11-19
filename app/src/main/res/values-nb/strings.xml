@@ -1504,4 +1504,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">Varmepumpen svarte ikke. Sjekk innstillingen og slå på igjen.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Venter: noen andre endret innstillingen. SpotNav styrer igjen i morgen.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Venter: varmepumpen svarte ikke. SpotNav prøver igjen i morgen.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Varmtvann nå</string>
+  <string name="card_heat_boost_starting" formatted="false">Starter…</string>
+  <string name="card_heat_boost_left" formatted="false">Varmtvann · ca. {minutes} min igjen</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Varmtvann · {minutes} min igjen</string>
+  <string name="card_heat_boost_on" formatted="false">Varmtvann · pågår</string>
+  <string name="card_heat_boost_heating" formatted="false">Varmer varmtvann · ca. {minutes} min igjen</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Varmer varmtvann</string>
+  <string name="card_heat_boost_stop" formatted="false">Avbryt</string>
+  <string name="card_heat_boost_failed" formatted="false">Kunne ikke starte varmtvannet</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Varmtvannet ble startet nettopp; prøv igjen om noen minutter</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Hovedsikringen er fullt belastet nå; slå av noe og prøv igjen</string>
 </resources>

@@ -804,7 +804,19 @@ internal object CardStrings {
         "heat.control.path.wait.no_signal" to R.string.card_heat_control_path_wait_no_signal,
         "heat.control.path.wait.check_failed" to R.string.card_heat_control_path_wait_check_failed,
         "heat.control.path.wait.foreign_change" to R.string.card_heat_control_path_wait_foreign_change,
-        "heat.control.path.wait.no_read_back" to R.string.card_heat_control_path_wait_no_read_back
+        "heat.control.path.wait.no_read_back" to R.string.card_heat_control_path_wait_no_read_back,
+        // The Boost button (3.0)
+        "heat.boost.start" to R.string.card_heat_boost_start,
+        "heat.boost.starting" to R.string.card_heat_boost_starting,
+        "heat.boost.left" to R.string.card_heat_boost_left,
+        "heat.boost.leftExact" to R.string.card_heat_boost_left_exact,
+        "heat.boost.on" to R.string.card_heat_boost_on,
+        "heat.boost.heating" to R.string.card_heat_boost_heating,
+        "heat.boost.heatingOn" to R.string.card_heat_boost_heating_on,
+        "heat.boost.stop" to R.string.card_heat_boost_stop,
+        "heat.boost.failed" to R.string.card_heat_boost_failed,
+        "heat.boost.rateLimited" to R.string.card_heat_boost_rate_limited,
+        "heat.boost.noHeadroom" to R.string.card_heat_boost_no_headroom
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

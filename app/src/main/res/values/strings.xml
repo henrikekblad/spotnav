@@ -1517,4 +1517,16 @@
   <string name="card_heat_control_path_wait_check_failed" formatted="false">The heat pump did not answer. Check the setting and turn on again.</string>
   <string name="card_heat_control_path_wait_foreign_change" formatted="false">Waiting: someone else changed the setting. SpotNav controls again tomorrow.</string>
   <string name="card_heat_control_path_wait_no_read_back" formatted="false">Waiting: the heat pump did not answer. SpotNav tries again tomorrow.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Hot water now</string>
+  <string name="card_heat_boost_starting" formatted="false">Starting…</string>
+  <string name="card_heat_boost_left" formatted="false">Hot water · about {minutes} min left</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Hot water · {minutes} min left</string>
+  <string name="card_heat_boost_on" formatted="false">Hot water · running</string>
+  <string name="card_heat_boost_heating" formatted="false">Heating hot water · about {minutes} min left</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Heating hot water</string>
+  <string name="card_heat_boost_stop" formatted="false">Cancel</string>
+  <string name="card_heat_boost_failed" formatted="false">Could not start the hot water</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Hot water was started a moment ago; try again in a few minutes</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">The main fuse is fully loaded right now; turn something off and try again</string>
 </resources>

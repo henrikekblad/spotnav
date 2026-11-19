@@ -34,8 +34,8 @@ import java.time.ZonedDateTime
 /**
  * The heat page: the header ("Värme · Test · Värmer 1,1 kW") and the Now tab as the Home Assistant card has it: the
  * thermostat dial with its buttons (the target in half degrees, 16 to 25), Home or Away until a date, what the heat
- * pump does and what SpotNav would do, the plan's next twelve hours, today's figures and the notes the household can
- * act on.
+ * pump does and what SpotNav would do, the Boost button (hot water now, where the pump has a boost that ends by
+ * itself), the plan's next twelve hours, today's figures and the notes the household can act on.
  *
  * It reads only while in view with the app in the foreground: when it opens, then every minute, and at once after a
  * write ([SitePolling]). The dial's figure waits 0.7 s after the last press and is written then; a write carries what
@@ -130,6 +130,25 @@ internal class HeatPage(
     }
     private val shadow = note()
     private val statusBlock = line()
+    // The Boost button with its state beside it (only where Home Assistant says the pump has a boost that ends by itself).
+    private var boostBusy = false
+    private var boostError: String? = null
+    private var boostPolls = 0
+    private var boostPoll: Runnable? = null
+    private val boostLine = note().apply { accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }
+    private val boostButton = Button(context).apply {
+        isAllCaps = false
+        setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_drop, 0, 0, 0)
+        compoundDrawablePadding = dp(6)
+        setOnClickListener { pressBoost() }
+    }
+    private val boostErrorLine = note()
+    private val boostRow = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        addView(boostLine, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        addView(boostButton, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        addView(boostErrorLine, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    }
     private val ahead = AheadStripView(context, palette, colours)
     private val aheadLine = note()
     private val today = line()
@@ -184,6 +203,7 @@ internal class HeatPage(
         body.addView(change, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { gravity = Gravity.CENTER })
         body.addView(shadow, wide().apply { topMargin = dp(8) })
         body.addView(statusBlock, wide().apply { topMargin = dp(8) })
+        body.addView(boostRow, wide().apply { topMargin = dp(8) })
         body.addView(ahead, wide().apply { topMargin = dp(12) })
         body.addView(aheadLine, wide().apply { topMargin = dp(4) })
         body.addView(today, wide().apply { topMargin = dp(10) })
@@ -194,6 +214,8 @@ internal class HeatPage(
     override fun setInView(inView: Boolean) {
         if (inView) polling.start() else {
             polling.stop()
+            boostPoll?.let(main::removeCallbacks)
+            boostPoll = null
             // A press waiting to be written is written at once rather than lost.
             settle?.let { main.removeCallbacks(it); it.run() }
         }
@@ -291,6 +313,59 @@ internal class HeatPage(
         }
     }
 
+    /** The Boost button pressed: the start or stop sent, its answer read back, and while it starts (read back, up to a
+     * few minutes through a cloud) the heating is read again every [BOOST_POLL_MS]. */
+    private fun pressBoost() {
+        val heat = memory.heat ?: return
+        val action = HeatNowModel.boostWords(text, heat, Instant.now())?.action ?: return
+        if (boostBusy) return
+        boostBusy = true
+        boostError = null
+        render()
+        session.heatBoost(action) { outcome ->
+            boostBusy = false
+            boostError = HeatNowModel.boostError(text, outcome)
+            inFlight = false
+            read()
+            boostPolls = BOOST_POLLS
+            scheduleBoostPoll()
+        }
+    }
+
+    /** Look again while the boost is starting, a set number of times. */
+    private fun scheduleBoostPoll() {
+        boostPoll?.let(main::removeCallbacks)
+        boostPoll = null
+        if (boostPolls <= 0) return
+        val run = Runnable {
+            boostPoll = null
+            if (memory.heat?.hotWater?.boost?.state != "starting") return@Runnable
+            boostPolls--
+            read()
+            scheduleBoostPoll()
+        }
+        boostPoll = run
+        main.postDelayed(run, BOOST_POLL_MS)
+    }
+
+    private fun renderBoost(heat: Heat) {
+        val boost = HeatNowModel.boostWords(text, heat, Instant.now())
+        if (boost == null) {
+            boostRow.visibility = View.GONE
+            return
+        }
+        boostRow.visibility = View.VISIBLE
+        say(boostLine, boost.text)
+        if (boost.label == null) {
+            boostButton.visibility = View.GONE
+        } else {
+            boostButton.visibility = View.VISIBLE
+            boostButton.text = if (boostBusy && boost.action == "start") words.say("heat.boost.starting") else boost.label
+            boostButton.isEnabled = boost.action != null && !boostBusy
+        }
+        say(boostErrorLine, boostError)
+    }
+
     private fun render() {
         val heat = memory.heat
         title.text = headerTitle(words.say("heat.title"), heat?.let { HeatNowModel.statusAfterName(text, it) })
@@ -306,7 +381,7 @@ internal class HeatPage(
         if (heat == null) {
             state.text = words.say(if (unsupported) "heat.unsupported" else if (failed) "heat.failed" else "heat.loading")
             state.visibility = View.VISIBLE
-            listOf(dialRow, errorLine, measured, modes, awayLine, change, shadow, statusBlock, ahead, aheadLine, today, notes).forEach { it.visibility = View.GONE }
+            listOf(dialRow, errorLine, measured, modes, awayLine, change, shadow, statusBlock, boostRow, ahead, aheadLine, today, notes).forEach { it.visibility = View.GONE }
             periodRow.visibility = View.GONE
             info.visibility = View.GONE
             planBox.panel.visibility = View.GONE
@@ -338,6 +413,7 @@ internal class HeatPage(
         // The header says what the pump does; here only while the header is taken by SpotNav's own lowering or raise.
         val pump = if (live == null || live.first == "lower" || live.first == "raise") HeatNowModel.pumpLine(text, heat) else null
         say(statusBlock, listOfNotNull(pump, HeatNowModel.wouldLine(text, heat), HeatNowModel.relayLine(text, heat, heat.now.coerceAtLeastNow())).joinToString("\n").ifEmpty { null })
+        renderBoost(heat)
         val line = HeatNowModel.aheadLine(text, heat)
         ahead.visibility = if (line == null) View.GONE else View.VISIBLE
         ahead.show(HeatNowModel.aheadCells(heat), HeatNowModel.aheadAxis(text, heat))
@@ -436,5 +512,9 @@ internal class HeatPage(
     private companion object {
         /** The dial's figure is written this long after the last press (the card's `DIAL_SETTLE_MS`). */
         const val SETTLE_MS = 700L
+
+        /** While the Boost button's start waits for its read-back: look again this often, this many times (the card's). */
+        const val BOOST_POLL_MS = 5_000L
+        const val BOOST_POLLS = 40
     }
 }
