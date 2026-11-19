@@ -1196,7 +1196,6 @@
   <string name="card_house_readout_price_buy" formatted="false">køb {buy}</string>
   <string name="card_house_readout_price_sell" formatted="false">salg {sell}</string>
   <string name="card_house_now" formatted="false">Nu</string>
-  <string name="card_house_today_hint" formatted="false">Det batteriet gav tilbage, til elprisen dengang, minus hvad opladningen kostede.</string>
   <string name="card_house_today_cost" formatted="false">Udgift til el {amount}</string>
   <string name="card_house_today_sold" formatted="false">solgt solstrøm {amount}</string>
   <string name="card_house_day_money" formatted="false">{day}: batteriet tjente {amount}</string>

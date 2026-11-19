@@ -131,7 +131,7 @@ class HouseGraphModelTest {
             assertNotNull(language, HouseGraph.flowWords(t, month.buckets.first { it.batteryFlow != null }.batteryFlow!!, month.money))
             val hour = house().hours.first { it.houseKw != null }
             assertTrue(language, HouseGraph.hourWords(t, hour, house().zone, Instant.parse("2026-11-14T00:00:00Z").toEpochMilli(), ChartView.PRICE, emptySet()).isNotEmpty())
-            for (key in listOf("house.hint", "house.hint.energy", "hist.loading", "hist.failed", "hist.unsupported", "hist.house.noEnergy", "house.value.hour", "house.todayHint", "house.chart.label", "house.chart.priceLabel")) {
+            for (key in listOf("house.hint", "house.hint.energy", "hist.loading", "hist.failed", "hist.unsupported", "hist.house.noEnergy", "house.value.hour", "house.chart.label", "house.chart.priceLabel")) {
                 assertTrue("$language $key", t.words.say(key, "amount" to "1").isNotEmpty())
             }
         }

@@ -336,8 +336,6 @@ internal class HouseHistoryPanel(
     private fun priceHeading(now: House, choice: PeriodChoice, history: HouseHistory?, money: House.Money?) {
         val running = choice.period == HistoryPeriod.DAY && choice.date == null
         val parts = mutableListOf<String>()
-        // What it counts; no maker's app is named, as some count the battery's cash flow hour by hour.
-        if (now.battery != null) parts += words.say("house.todayHint")
         val cost = history?.cost
         if (running && now.today != null) {
             parts += words.say("house.todayCost", "amount" to text.amount(now.today.bought, now.money))

@@ -505,7 +505,6 @@ internal object CardStrings {
         "house.readout.priceBuy" to R.string.card_house_readout_price_buy,
         "house.readout.priceSell" to R.string.card_house_readout_price_sell,
         "house.now" to R.string.card_house_now,
-        "house.todayHint" to R.string.card_house_today_hint,
         "house.todayCost" to R.string.card_house_today_cost,
         "house.todaySold" to R.string.card_house_today_sold,
         "house.dayMoney" to R.string.card_house_day_money,
