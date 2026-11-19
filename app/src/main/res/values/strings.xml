@@ -1116,6 +1116,10 @@
   <string name="card_house_tab_flow" formatted="false">Energy flow</string>
   <string name="card_house_tab_graph" formatted="false">Energy chart</string>
   <string name="card_house_tab_price" formatted="false">Price and battery</string>
+  <string name="card_house_tab_price_only" formatted="false">Price</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav can only read the heating here.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav can only read the heating here – choose a control path in Settings → Heating → Control.</string>
+  <string name="card_heat_none_value" formatted="false">Nothing found</string>
   <string name="card_house_tab_earn" formatted="false">Earnings</string>
   <string name="card_house_tab_short_now" formatted="false">Now</string>
   <string name="card_house_tab_short_flow" formatted="false">Flow</string>
@@ -1314,6 +1318,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Degrees colder</string>
   <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
   <string name="site_settings_heat_failed">The heat settings could not be read.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Heating is set up in Home Assistant: Settings → Heating on the house or heat card.</string>
   <string name="site_settings_offset_home_in_home_assistant">Answer in Home Assistant: the heat card\'s settings, as an administrator.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Earned {amount}</string>

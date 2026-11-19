@@ -1103,6 +1103,10 @@
   <string name="card_house_tab_flow" formatted="false">Energiflow</string>
   <string name="card_house_tab_graph" formatted="false">Energigraf</string>
   <string name="card_house_tab_price" formatted="false">Pris og batteri</string>
+  <string name="card_house_tab_price_only" formatted="false">Pris</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav kan kun aflæse varmen her.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav kan kun aflæse varmen her – vælg styring under Indstillinger → Varme → Styring.</string>
+  <string name="card_heat_none_value" formatted="false">Intet fundet</string>
   <string name="card_house_tab_earn" formatted="false">Indtægt</string>
   <string name="card_house_tab_short_now" formatted="false">Nu</string>
   <string name="card_house_tab_short_flow" formatted="false">Flow</string>
@@ -1301,6 +1305,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grader køligere</string>
   <string name="site_settings_in_home_assistant">Til og fra for styringen og valget af sensorer, måler og styringsvej ændres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeindstillingerne kunne ikke læses.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Varme sættes op i Home Assistant: Indstillinger → Varme på hus- eller varmekortet.</string>
   <string name="site_settings_offset_home_in_home_assistant">Svar i Home Assistant: varmekortets indstillinger, som administrator.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Indtægt {amount}</string>

@@ -1103,6 +1103,10 @@
   <string name="card_house_tab_flow" formatted="false">Energiefluss</string>
   <string name="card_house_tab_graph" formatted="false">Energiediagramm</string>
   <string name="card_house_tab_price" formatted="false">Preis und Batterie</string>
+  <string name="card_house_tab_price_only" formatted="false">Preis</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav kann die Heizung hier nur auslesen.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav kann die Heizung hier nur auslesen – wähle eine Steuerung unter Einstellungen → Heizung → Steuerung.</string>
+  <string name="card_heat_none_value" formatted="false">Nichts gefunden</string>
   <string name="card_house_tab_earn" formatted="false">Ertrag</string>
   <string name="card_house_tab_short_now" formatted="false">Jetzt</string>
   <string name="card_house_tab_short_flow" formatted="false">Fluss</string>
@@ -1301,6 +1305,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grad kühler</string>
   <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
   <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Die Heizung wird in Home Assistant eingerichtet: Einstellungen → Heizung auf der Haus- oder Heizungskarte.</string>
   <string name="site_settings_offset_home_in_home_assistant">Antworte in Home Assistant: in den Einstellungen der Wärmekarte, als Administrator.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Ertrag {amount}</string>
