@@ -107,7 +107,7 @@ class HouseDetailsTest {
         assertEquals(30, bars.bars.size)
         val reviewed = bars.bars.first { it.key == "2026-11-05" }
         assertEquals(listOf(HouseDetails.COST to 3342.0, HouseDetails.SAVING to 400.0), reviewed.lanes.single().map { it.series to it.value })
-        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 37 kr, sparat 4,0 kr", reviewed.words)
+        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 37 kr, sparat 4,00 kr", reviewed.words)
         assertEquals(listOf("Kostnad", "Sparat av batteriet"), bars.series.map { it.label })
         assertTrue(bars.series.last().hatched)
         assertEquals("37 kr", bars.scale(BarsLayout.extent(bars.bars, emptySet()).top))
@@ -125,7 +125,7 @@ class HouseDetailsTest {
         val bars = sections(worse).section("bars")!!.bars()
         val bar = bars.bars.first { it.key == "2026-11-05" }
         assertEquals(listOf(HouseDetails.COST to 3000.0, HouseDetails.EXTRA to 342.0), bar.lanes.single().map { it.series to it.value })
-        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 30 kr, batteriet gjorde det 3,4 kr dyrare", bar.words)
+        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 30 kr, batteriet gjorde det 3,42 kr dyrare", bar.words)
         assertTrue(bars.series.map { it.label }.contains("Dyrare med batteriet"))
     }
 
@@ -155,7 +155,7 @@ class HouseDetailsTest {
         assertTrue(money.figures()[0].name == "Elkostnad" && money.figures()[0].value == "521 kr")
         assertEquals("Batteriet sparade" to "52 kr", money.figures().first { it.name == "Batteriet sparade" }.let { it.name to it.value })
         assertTrue(money.notes().contains("Sparat är mätt för 13 av periodens 15 dygn."))
-        assertTrue(money.notes().first().startsWith("Köpte 335 kWh för 529 kr, sålde 12,8 kWh för 7,7 kr"))
+        assertTrue(money.notes().first().startsWith("Köpte 335 kWh för 529 kr, sålde 12,8 kWh för 7,68 kr"))
     }
 
     @Test fun oneDayCountForTheSavingsAndARowsOwnOnlyWhereItHasFewer() {
@@ -236,7 +236,7 @@ class HouseDetailsTest {
         assertTrue(modes.notes().any { it.startsWith("Battericeller") })
         // On a day, before the first perfect plan, the same: and its figures.
         val day = history("villa_day.json") { h -> h.copy(review = h.review!!.copy(perfect = null)) }
-        assertTrue(sections(day).section("modes")!!.figures().first { it.name.startsWith("SpotNav Max vinst") }.value.contains("2,0 kr"))
+        assertTrue(sections(day).section("modes")!!.figures().first { it.name.startsWith("SpotNav Max vinst") }.value.contains("2,00 kr"))
     }
 
     @Test fun aDayHasItsMidnightNoteItsForecastErrorsAndNoDayByDayList() {

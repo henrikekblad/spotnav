@@ -39,13 +39,8 @@ internal object HeatUseModel {
     fun slot(parts: List<HeatHistory.Part>, part: HeatHistory.Part): String =
         if (part.kind != "zone") part.kind else "zone-${parts.filter { it.kind == "zone" }.indexOf(part) % 4}"
 
-    /** Money in the minor unit shown in the major one (whole units from 10 up), as the heat card writes it. */
-    fun money(text: SiteText, minor: Double, units: House.Money?): String {
-        val unit = units?.majorUnit
-        if (units == null || unit == null) return text.fixed(minor, 0) + (units?.minorUnit?.takeIf { it.isNotEmpty() }?.let { " $it" } ?: "")
-        val major = minor / 100
-        return "${text.fixed(major, if (abs(major) >= 10) 0 else 2)} $unit"
-    }
+    /** Money in the minor unit shown in the major one, as the card writes it everywhere. */
+    fun money(text: SiteText, minor: Double, units: House.Money?): String = text.amount(minor, units)
 
     /** Whether the period can be shown in money: some part has a priced hour. */
     fun hasMoney(answer: HeatHistory): Boolean = answer.money != null && answer.parts.any { it.cost != null }

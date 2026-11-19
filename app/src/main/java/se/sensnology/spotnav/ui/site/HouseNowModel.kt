@@ -85,7 +85,7 @@ internal class SiteText(val words: CardWords, val locale: Locale, private val nu
 
     fun percent(value: Double): String = "${fixed(value, 0)} %"
 
-    /** Money given in the minor unit, shown in the major one: whole units from 10 up and for nothing, else one decimal. */
+    /** Money given in the minor unit, shown in the major one: two decimals below 10 (exactly zero is "0"), whole units from 10 up (negatives by size). */
     fun amount(minor: Double, money: House.Money?): String {
         val major = minor / 100.0
         val unit = money?.majorUnit
@@ -93,7 +93,7 @@ internal class SiteText(val words: CardWords, val locale: Locale, private val nu
             val small = money?.minorUnit?.takeIf { it.isNotEmpty() }
             return fixed(minor, 0) + (small?.let { " $it" } ?: "")
         }
-        return "${fixed(major, if (abs(major) >= 10 || major == 0.0) 0 else 1)} $unit"
+        return "${fixed(major, if (abs(major) >= 10 || major == 0.0) 0 else 2)} $unit"
     }
 
     fun clock(at: Instant, zone: ZoneId): String = CLOCK.format(at.atZone(zone))

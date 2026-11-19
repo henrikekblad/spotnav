@@ -188,7 +188,7 @@ class HouseNowModelTest {
         assertEquals("I dag: batteriet tjänade 11 kr", HouseNowModel.moneyLine(text(), house().copy(saving = null)))
         // Whole units from 10 up and for nothing, one decimal below; the minor unit where there is no major one.
         val money = House.Money("SEK", "kr", "öre")
-        assertEquals(listOf("51 kr", "4,0 kr", "0,8 kr", "0 kr", "-12 kr"), listOf(5100.0, 400.0, 80.0, 0.0, -1200.0).map { text().amount(it, money) })
+        assertEquals(listOf("51 kr", "4,00 kr", "0,80 kr", "0 kr", "-12 kr"), listOf(5100.0, 400.0, 80.0, 0.0, -1200.0).map { text().amount(it, money) })
         assertEquals("80 öre", text().amount(80.0, House.Money("SEK", null, "öre")))
         assertEquals("80", text().amount(80.0, null))
     }
