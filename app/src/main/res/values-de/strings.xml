@@ -1170,6 +1170,7 @@
   <string name="card_house_legend_heat" formatted="false">Wärme</string>
   <string name="card_house_legend_forecast" formatted="false">Prognose</string>
   <string name="card_house_legend_sun" formatted="false">Sonne</string>
+  <string name="card_house_legend_sun_day" formatted="false">Sonne · gepunktet = Prognosedienst</string>
   <string name="card_house_legend_battery" formatted="false">Batteriestand · gestrichelt = Plan</string>
   <string name="card_house_legend_buy" formatted="false">Kaufpreis</string>
   <string name="card_house_legend_sell_price" formatted="false">Verkaufspreis</string>

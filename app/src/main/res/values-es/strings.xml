@@ -1178,6 +1178,7 @@
   <string name="card_house_legend_heat" formatted="false">Calefacción</string>
   <string name="card_house_legend_forecast" formatted="false">Previsión</string>
   <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_sun_day" formatted="false">Sol · punteado = servicio de previsión</string>
   <string name="card_house_legend_battery" formatted="false">Nivel de batería · discontinuo = plan</string>
   <string name="card_house_legend_buy" formatted="false">Precio de compra</string>
   <string name="card_house_legend_sell_price" formatted="false">Precio de venta</string>

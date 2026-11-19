@@ -1183,6 +1183,7 @@
   <string name="card_house_legend_heat" formatted="false">Heat</string>
   <string name="card_house_legend_forecast" formatted="false">Forecast</string>
   <string name="card_house_legend_sun" formatted="false">Sun</string>
+  <string name="card_house_legend_sun_day" formatted="false">Sun · dotted = forecast service</string>
   <string name="card_house_legend_battery" formatted="false">Battery level · dashed = plan</string>
   <string name="card_house_legend_buy" formatted="false">Buy price</string>
   <string name="card_house_legend_sell_price" formatted="false">Sell price</string>

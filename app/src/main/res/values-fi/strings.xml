@@ -1170,6 +1170,7 @@
   <string name="card_house_legend_heat" formatted="false">Lämpö</string>
   <string name="card_house_legend_forecast" formatted="false">Ennuste</string>
   <string name="card_house_legend_sun" formatted="false">Aurinko</string>
+  <string name="card_house_legend_sun_day" formatted="false">Aurinko · pisteviiva = ennustepalvelu</string>
   <string name="card_house_legend_battery" formatted="false">Akun taso · katkoviiva = suunnitelma</string>
   <string name="card_house_legend_buy" formatted="false">Ostohinta</string>
   <string name="card_house_legend_sell_price" formatted="false">Myyntihinta</string>

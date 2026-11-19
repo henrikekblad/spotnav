@@ -293,7 +293,9 @@ internal class HouseHistoryPanel(
         add(BarSeries(Series.HOUSE, words.say("house.legend.house"), colours.of(Tone.HOUSE)))
         if (hours.any { HouseGraph.heatShown(it) != null }) add(BarSeries(Series.HEAT, words.say("house.legend.heat"), colours.of(Tone.HEAT)))
         if (hours.any { it.houseKw != null && it.houseForecastKw != null }) add(BarSeries(Series.FORECAST, words.say("house.legend.forecast"), colours.text, line = true))
-        if (shown.sun != null) add(BarSeries(Series.SUN, words.say("house.legend.sun"), colours.of(Tone.SUN)))
+        // The area is the measured sun, then SpotNav's corrected forecast; the dotted line ahead is the service's own.
+        val sunKey = if (hours.any { it.sunForecastKwh != null }) "house.legend.sunDay" else "house.legend.sun"
+        if (shown.sun != null) add(BarSeries(Series.SUN, words.say(sunKey), colours.of(Tone.SUN)))
         if (hours.any { (it.carKw ?: 0.0) > 0 }) add(BarSeries(Series.CAR, words.say("house.legend.car"), colours.of(Tone.CAR)))
     }
 

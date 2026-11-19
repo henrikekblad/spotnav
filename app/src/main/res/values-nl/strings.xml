@@ -1170,6 +1170,7 @@
   <string name="card_house_legend_heat" formatted="false">Warmte</string>
   <string name="card_house_legend_forecast" formatted="false">Prognose</string>
   <string name="card_house_legend_sun" formatted="false">Zon</string>
+  <string name="card_house_legend_sun_day" formatted="false">Zon · stippen = voorspellingsdienst</string>
   <string name="card_house_legend_battery" formatted="false">Batterijniveau · gestippeld = plan</string>
   <string name="card_house_legend_buy" formatted="false">Inkoopprijs</string>
   <string name="card_house_legend_sell_price" formatted="false">Verkoopprijs</string>

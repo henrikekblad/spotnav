@@ -1170,6 +1170,7 @@
   <string name="card_house_legend_heat" formatted="false">Varme</string>
   <string name="card_house_legend_forecast" formatted="false">Prognose</string>
   <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_sun_day" formatted="false">Sol · prikket = prognosetjenesten</string>
   <string name="card_house_legend_battery" formatted="false">Batterinivå · stiplet = plan</string>
   <string name="card_house_legend_buy" formatted="false">Kjøpspris</string>
   <string name="card_house_legend_sell_price" formatted="false">Salgspris</string>

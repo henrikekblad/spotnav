@@ -479,6 +479,7 @@ internal object CardStrings {
         "house.legend.heat" to R.string.card_house_legend_heat,
         "house.legend.forecast" to R.string.card_house_legend_forecast,
         "house.legend.sun" to R.string.card_house_legend_sun,
+        "house.legend.sunDay" to R.string.card_house_legend_sun_day,
         "house.legend.battery" to R.string.card_house_legend_battery,
         "house.legend.buy" to R.string.card_house_legend_buy,
         "house.legend.sellPrice" to R.string.card_house_legend_sell_price,

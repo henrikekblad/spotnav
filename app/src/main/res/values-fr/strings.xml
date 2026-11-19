@@ -1178,6 +1178,7 @@
   <string name="card_house_legend_heat" formatted="false">Chauffage</string>
   <string name="card_house_legend_forecast" formatted="false">Prévision</string>
   <string name="card_house_legend_sun" formatted="false">Soleil</string>
+  <string name="card_house_legend_sun_day" formatted="false">Soleil · points = service de prévision</string>
   <string name="card_house_legend_battery" formatted="false">Niveau de batterie · pointillé = plan</string>
   <string name="card_house_legend_buy" formatted="false">Prix d\'achat</string>
   <string name="card_house_legend_sell_price" formatted="false">Prix de vente</string>
