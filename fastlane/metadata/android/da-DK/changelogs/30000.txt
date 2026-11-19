@@ -1,0 +1,8 @@
+Lærer dit hjem at kende. Planlægger din energi.
+
+Nyt i 3.0:
+- Virker uden lader: forbind til dit hjem
+- Husvisning med batteri og pris
+- Visninger for varme og varmtvand
+- Planen med batteriet
+- Batteri, varme og varmt vand kræver SpotNav til Home Assistant 3.0 (beta); med 2.x virker appen som før

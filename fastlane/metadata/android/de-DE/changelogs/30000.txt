@@ -1,0 +1,8 @@
+Lernt dein Zuhause. Plant deine Energie.
+
+Neu in 3.0:
+- Funktioniert ohne Wallbox: mit deinem Zuhause verbinden
+- Hausseite mit Batterie und Preis
+- Ansichten für Heizung und Warmwasser
+- Der Plan mit der Batterie
+- Batterie, Heizung und Warmwasser brauchen SpotNav für Home Assistant 3.0 (Beta); mit 2.x funktioniert die App wie bisher

@@ -1,1 +1,1 @@
-Ladda elbilen när elen är billigast – med Home Assistant eller egen nyckel.
+Lär sig ditt hem. Planerar din energi. Elbil, batteri, värme och priser.

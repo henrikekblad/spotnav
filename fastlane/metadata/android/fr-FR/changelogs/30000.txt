@@ -1,0 +1,8 @@
+Apprend votre maison. Planifie votre énergie.
+
+Nouveau dans la 3.0 :
+- Fonctionne sans borne : reliez-la à votre maison
+- Page de la maison avec batterie et prix
+- Vues du chauffage et de l'eau chaude
+- Le plan avec la batterie
+- Batterie, chauffage et eau chaude nécessitent SpotNav pour Home Assistant 3.0 (bêta) ; avec 2.x l'app fonctionne comme avant

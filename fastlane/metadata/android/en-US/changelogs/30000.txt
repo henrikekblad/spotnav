@@ -1,0 +1,8 @@
+Learns your home. Plans your energy.
+
+New in 3.0:
+- Works without a charger: connect to your home
+- House page with battery and price
+- Heating and hot water views
+- The plan with the battery
+- Battery, heating and hot water need SpotNav for Home Assistant 3.0 (beta); with 2.x the app works as before

@@ -1,0 +1,8 @@
+Oppii kotisi. Suunnittelee energiasi.
+
+Uutta versiossa 3.0:
+- Toimii ilman latauspistettä: yhdistä kotiisi
+- Talonäkymä akulla ja hinnalla
+- Lämmitys- ja käyttövesinäkymät
+- Akun suunnitelma
+- Akku, lämmitys ja käyttövesi vaativat SpotNav for Home Assistant 3.0:n (beta); 2.x:n kanssa sovellus toimii kuten ennen

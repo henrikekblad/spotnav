@@ -1,1 +1,1 @@
-Lad elbilen, når strømmen er billigst – med Home Assistant eller egen nøgle.
+Lærer dit hjem at kende. Planlægger din energi. Elbil, batteri, varme og priser.
