@@ -118,7 +118,8 @@ class WidgetConfigActivity : Activity() {
         // This phone's own notification check: scheduled while it is on and something is paired.
         LocalNotifications.sync(this)
         // Once per start: chargers paired before 3.0 move to their home's webhook, and a home's new chargers appear.
-        SiteUpkeep.startOnce(this, shell.io)
+        // Its own thread, so the screen's first reads never wait behind it.
+        SiteUpkeep.startOnce(this, { task -> Thread(task, "site-upkeep").start() })
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))
