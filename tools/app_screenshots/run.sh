@@ -26,8 +26,8 @@ AVD=SpotNavDocs
 AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
 EMU_PORT="${EMU_PORT:-5584}"
 SERIAL="emulator-$EMU_PORT"
-HA_PORT=8129
-STUB_PORT=8130
+HA_PORT="${HA_PORT:-8129}"
+STUB_PORT="${STUB_PORT:-8130}"
 KEEP=0
 DOCS_LANGS=(en)
 LANGS=(en sv nb da fi de nl es fr)
@@ -89,6 +89,9 @@ http:
   server_port: $HA_PORT
 frontend:
 config:
+recorder:
+history:
+energy:
 logger:
   default: warning
   logs:
@@ -112,7 +115,7 @@ trap cleanup EXIT INT TERM
 #    exchange rate that converts them to SEK.
 "$VENV/bin/python" "$HA_TOOL/rates_stub.py" "$STUB_PORT" >"$LOGS/rates_stub.log" 2>&1 &
 PIDS+=($!)
-DOCS_SEED_SESSIONS=1 DOCS_PRICE_FIXTURE="$HA_REPO/tests/fixtures/relay/day_SE4_2026-09-22_96.json" \
+DOCS_SEED_SESSIONS=1 DOCS_SEED_HOUSE=1 DOCS_PRICE_FIXTURE="$HA_REPO/tests/fixtures/relay/day_SE4_2026-09-22_96.json" \
   RATES_STUB_URL="http://127.0.0.1:$STUB_PORT" \
   "$VENV/bin/python" "$HA_TOOL/ha_launch.py" -c "$CONFIG" >"$LOGS/home-assistant.log" 2>&1 &
 PIDS+=($!)

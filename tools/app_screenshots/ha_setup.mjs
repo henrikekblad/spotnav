@@ -2,6 +2,7 @@
 //
 //   node ha_setup.mjs setup      onboard, add the demo devices, a SpotNav charger and a site; set up the camera
 //                                and let "Family car" be identified at the charger by its charging cable
+//   node ha_setup.mjs scene '{"sun":1.8,...}'   pin the demo house's live power (kW) for a picture
 //   node ha_setup.mjs approve    approve the pairing request the app has just made
 //   node ha_setup.mjs unplug     unplug the car (both cars' cables off)
 //   node ha_setup.mjs plug-in    plug in again, once the unplug counts (about two minutes after it): identifying
@@ -27,77 +28,24 @@ async function signedIn() {
   return new ha.Api(await ha.login());
 }
 
-/** Answer a config flow form by form: each form gets the values `answer(step)` returns for it. */
-async function flow(api, handler, answer) {
-  let r = await api.post("/api/config/config_entries/flow", { handler, show_advanced_options: false });
-  for (let i = 0; i < 20 && (r.type === "form" || r.type === "menu"); i++) {
-    const reply = answer(r);
-    if (reply === undefined) throw new Error(`${handler}: no answer for step ${r.step_id}: ${JSON.stringify(r).slice(0, 400)}`);
-    r = await api.post(`/api/config/config_entries/flow/${r.flow_id}`, reply);
-    if (r.errors && Object.keys(r.errors).length) throw new Error(`${handler} ${r.step_id}: ${JSON.stringify(r.errors)}`);
-  }
-  if (r.type !== "create_entry") throw new Error(`${handler}: flow ended with ${JSON.stringify(r).slice(0, 400)}`);
-  return r;
-}
-
-async function waitForState(api, entityId, timeoutS = 90) {
-  for (let i = 0; i < timeoutS * 2; i++) {
-    const r = await fetch(`${ha.BASE}/api/states/${entityId}`, { headers: api.h });
-    if (r.ok) return;
-    await sleep(500);
-  }
-  throw new Error("no state for " + entityId);
-}
-
 async function setup() {
   const api = await signedIn();
-  await ha.promoteHttp(api);
-  await ha.setLocation(api);
-  // The address the app pairs with: the approval hands it back, so it must be the one the emulator uses.
-  await api.ws({ type: "config/core/update", internal_url: APP_HA_URL });
-  for (const integration of ["ocpp", "sigen", "kia_uvo", "demo_vision", "nordpool"]) {
-    if ((await api.entries(integration)).length === 0) await api.flow(integration);
-  }
-  for (const entry of await api.entries("spotnav")) {
-    await fetch(`${ha.BASE}/api/config/config_entries/entry/${entry.entry_id}`, { method: "DELETE", headers: api.h });
-  }
-  await waitForState(api, "sensor.sigen_plant_grid_phase_c_active");
-  const devices = await api.ws({ type: "config/device_registry/list" });
-  const deviceId = (name) => {
-    const found = devices.find((d) => d.name === name);
-    if (!found) throw new Error("no demo device " + name);
-    return found.id;
-  };
-
-  log("SpotNav charger");
-  await flow(api, "spotnav", (s) => ({
-    user: { entry_type: "charger" },
-    charger: { mode: "detected" },
-  }[s.step_id] ?? (s.data_schema?.some((f) => f.name === "device") ? { device: deviceId("Garage") }
-    : s.data_schema?.some((f) => f.name === "charger_phases") ? { charger_phases: "3" } : {})));
-  log("camera and the first car");
-  const garage = await chargerId(api);
-  await demo.setupCamera(api, garage);
-  await demo.decideFamilyCar(api, garage);
-
-  log("SpotNav site");
-  await flow(api, "spotnav", (s) => {
-    if (s.step_id === "user") return { entry_type: "site" };
-    const names = (s.data_schema || []).map((f) => f.name);
-    if (names.includes("main_fuse_a")) return { name: "Home", main_fuse_a: 25 };
-    if (names.includes("phases")) return { phases: 3 };
-    return {};
-  });
+  // The same installation as the Home Assistant documentation pictures (the Home Assistant tool's `v3setup.mjs`):
+  // the demo devices with a sun, a home battery, a heat pump and weeks of history, a charger ("Garage") with two
+  // cars and a site ("Home"). The address the app pairs with is the internal URL: the approval hands it back.
+  const v3 = await import(path.join(process.env.HA_DRIVER, "v3setup.mjs"));
+  const ids = await v3.setupInstall(api, { appUrl: APP_HA_URL });
   for (const e of await api.entries("spotnav")) console.log(`   ${e.title}`);
+  return ids;
+}
 
-  // A fully set-up installation: every "Get started" row left is answered "Not needed", as a person would in
-  // the card's dialog, so the app shows no "Get started: N things left" line.
-  log("Get started rows answered");
-  for (const item of (await demo.dashboard(api, garage)).setup?.items ?? []) {
-    if (!item.dismissible) throw new Error(`setup row ${item.id} cannot be answered "Not needed"`);
-    await api.ws({ type: "spotnav/dismiss_setup_item", item: item.id });
-    console.log(`   ${item.id}`);
-  }
+/** Pin the live power sensors of the demo house (kW; battery charge positive), so a picture does not depend on the
+ * hour of the day. Without values it is cleared. */
+async function scene(values) {
+  const api = await signedIn();
+  await api.post("/api/services/demo_house/docs_scene", values);
+  await sleep(7000);
+  log("scene " + JSON.stringify(values));
 }
 
 async function chargerId(api) {
@@ -144,6 +92,7 @@ async function approve() {
 
 const command = process.argv[2];
 if (command === "setup") await setup();
+else if (command === "scene") await scene(JSON.parse(process.argv[3] || "{}"));
 else if (command === "approve") await approve();
 else if (["unplug", "plug-in", "city", "ask"].includes(command)) await identification(command);
 else throw new Error("usage: ha_setup.mjs setup|approve|unplug|plug-in|city|ask");
