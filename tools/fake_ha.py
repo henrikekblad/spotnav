@@ -131,6 +131,18 @@ write it takes) and `get_heat` / `update_heat` (the villa of `ha-fixtures/heat_c
 `spotnav_not_permitted_over_webhook`), judged and compared as Home Assistant judges them.
 `GET /spotnav-mock/sitesettings?bat=off|ai|test|on&refuse=none|conflict|forbid` chooses the battery's state (off, waiting for
 the AI-mode takeover, test, on) and makes the next writes answer a conflict or a refusal; `reset=1` puts the settings back.
+The homes (Home Assistant 3.0's site webhook, the app's single door) are served beside the chargers, each on its own
+webhook id `site-<home>`: `siteonly` ("Stugan"), a home without a charger (its webhook answers `get_site`, the house and
+heat actions, `battery_control` and `get_site_settings_view`; the app shows the house and heat pages and no charger page),
+and `siteonly_charger` ("Villan"), a home with the charger `sitecharger`. That charger's own webhook answers
+`get_site_access` with its home, so an app paired before 3.0 moves to the home's webhook; the home's webhook answers
+every charger action with `charger_id` (`spotnav_charger_required`, `spotnav_unknown_charger` and
+`spotnav_charger_not_in_site` as Home Assistant refuses them). The pairing hands over `sites` and each charger's
+`site_id`. `GET /spotnav-mock/sites?add=1|0&pairing=on|off&access=ok|unloaded|limited&unloaded=0|1` adds the second
+charger `sitecharger2` ("Carport") to Villan (it then appears in `get_site` with no new pairing), leaves `sites` out of
+the pairing (Home Assistant 2.5), makes `get_site_access` answer 503 `spotnav_site_unloaded` or 429
+`spotnav_rate_limited`, or makes every home's webhook answer 503 `spotnav_site_unloaded`. `ha25` is a charger of Home
+Assistant 2.5: `get_site_access` is an unknown action there (400 "Unsupported action"), as on every other scenario.
 Every other scenario is a Home Assistant before 3.0 in this respect: its dashboard states none of the site
 capabilities, so the app has the charger's page alone and no icon row.
 """
@@ -175,6 +187,9 @@ DASHBOARD_BY_SCENARIO = {
     "sitesettings": "hybrid_derived_site_with_forecast.json",
     "guest": "target_soc_two_vehicles.json",
     "newer": "target_soc_two_vehicles.json",
+    "sitecharger": "hybrid_derived_site_with_forecast.json",
+    "sitecharger2": "hybrid_derived_site_with_forecast.json",
+    "ha25": "cheapest_no_site.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -1182,6 +1197,12 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     # The site over the webhook is Home Assistant 3.0's: only the `house` scenario states it, and of it the house.
     for name in SITE_CAPABILITIES:
         body["charger"]["capabilities"].pop(name, None)
+    if scenario in SITE_CHARGERS:
+        # A charger of a home: the house and heat over its webhook, and its entry id as the pairing names it.
+        body["charger"]["charger_id"] = scenario
+        body["charger"]["charger_name"] = SCENARIOS[scenario].name
+        body["chargers"] = [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers("siteonly_charger")]
+        body["charger"]["capabilities"].update({"get_house": True, "get_heat": True, "battery_control": True})
     if scenario in ("house", "heat"):
         today = datetime.now(ZoneInfo("Europe/Stockholm")).date()
         body = _moved_to_today(body, (today - date.fromisoformat(body["prices"]["today"])).days)
@@ -1333,11 +1354,122 @@ SCENARIOS: dict[str, Charger] = {
         "Hus och värme",
         why="the battery and heat settings over the webhook (HA 3.0): the battery mode, the cooler night and the zones' and sensors' offsets in Settings; set at /spotnav-mock/sitesettings",
     ),
+    "sitecharger": Charger(
+        "Garage hemma",
+        why="a charger of the home Villan (HA 3.0): get_site_access hands over the home's webhook, which then carries this charger's actions with charger_id",
+    ),
+    "sitecharger2": Charger(
+        "Carport",
+        why="the charger added to Villan later (GET /spotnav-mock/sites?add=1): it appears in get_site with no new pairing",
+    ),
+    "ha25": Charger(
+        "HA 2.5",
+        why="a charger of Home Assistant 2.5: get_site_access is an unknown action, so the app keeps this charger's own webhook",
+    ),
     "demand": Charger(
         "Effektmål",
         why="the demand charge and the import target (HA 2.4): its parts in the price, the target on the site, its status lines, Release tonight and the Power view",
     ),
 }
+
+#: The homes (Home Assistant 3.0): name and chargers; `sitecharger2` joins Villan with /spotnav-mock/sites?add=1.
+HOMES = {
+    "siteonly": {"name": "Stugan", "chargers": []},
+    "siteonly_charger": {"name": "Villan", "chargers": ["sitecharger"]},
+}
+#: The site scenarios' switches (see the module's text): the added charger, `sites` in the pairing, get_site_access's
+#: answer and whether the homes are loaded.
+SITES = {"added": False, "pairing": True, "access": "ok", "unloaded": False}
+SITE_CHARGERS = ("sitecharger", "sitecharger2")
+#: The actions a home answers itself; every other one is a charger's and needs `charger_id`.
+HOME_ACTIONS = (
+    "get_site", "get_house", "get_house_now", "get_house_history", "get_house_loads", "get_heat", "get_heat_history",
+    "update_heat", "heat_boost", "battery_control", "get_site_settings_view", "update_site_settings", "get_power_month",
+    "suggest_import_target",
+)
+#: Read-only on a home's webhook in the beta: the price and the grid tariff.
+HOME_REFUSED = ("choose_price_source", "answer_price_duplicate", "update_grid_tariff")
+
+
+def _home_chargers(home: str) -> list[str]:
+    chargers = list(HOMES[home]["chargers"])
+    if home == "siteonly_charger" and SITES["added"]:
+        chargers.append("sitecharger2")
+    return chargers
+
+
+def _home_of(charger: str) -> str | None:
+    return next((home for home in HOMES if charger in _home_chargers(home)), None)
+
+
+def site_webhook_id(home: str, generation: int | None = None) -> str:
+    """A home's webhook id now (or in [generation]), replaced with the chargers' by /spotnav-mock/rotate-webhooks."""
+    n = WEBHOOKS["generation"] if generation is None else generation
+    return f"site-{home}" if n == 0 else f"site-{home}-r{n}"
+
+
+def home_for_webhook(hook: str) -> str | None:
+    return next((home for home in HOMES if site_webhook_id(home) == hook), None)
+
+
+def paired_sites() -> list[dict]:
+    """The pairing's `sites`: every home with its chargers (Home Assistant 3.0)."""
+    return [
+        {"id": home, "name": spec["name"], "webhook": site_webhook_id(home),
+         "chargers": [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers(home)]}
+        for home, spec in HOMES.items()
+    ]
+
+
+def site_access_body(charger: str) -> tuple[int, dict]:
+    """`get_site_access` on a charger's own webhook: its home, or Home Assistant 2.5's unknown action."""
+    home = _home_of(charger)
+    if home is None:
+        return 400, {"ok": False, "error": "Unsupported action"}
+    if SITES["access"] == "limited":
+        return 429, {"ok": False, "error": "spotnav_rate_limited", "action": "get_site_access", "retry_after_s": 60}
+    if SITES["access"] == "unloaded" or SITES["unloaded"]:
+        return 503, {"ok": False, "error": "spotnav_site_unloaded", "action": "get_site_access"}
+    site = next(row for row in paired_sites() if row["id"] == home)
+    return 200, {"ok": True, "action": "get_site_access", "api_version": 1, "site": site}
+
+
+def get_site_body(home: str) -> dict:
+    return {
+        "ok": True, "action": "get_site", "api_version": 1, "site_id": home, "name": HOMES[home]["name"], "loaded": True,
+        "capabilities": {name: True for name in (
+            "get_house", "get_heat", "battery_control", "get_site_settings_view", "update_site_settings",
+            "get_power_month", "suggest_import_target")},
+        "chargers": [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers(home)],
+    }
+
+
+def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
+    """One of the home's own actions, answered as the `heat` and `sitesettings` scenarios answer them."""
+    if action == "get_site":
+        return 200, get_site_body(home)
+    if action == "get_house_now":
+        return house_now_body()
+    if action == "get_house":
+        return house_body(payload)
+    if action == "get_house_history":
+        return house_history_body(payload)
+    if action == "get_house_loads":
+        return house_loads_body(payload)
+    if action == "get_heat":
+        return heat_body(payload)
+    if action == "get_heat_history":
+        return heat_history_body(payload)
+    if action == "update_heat":
+        return update_heat_body(payload)
+    if action == "battery_control":
+        return battery_control_body(payload)
+    if action == "get_site_settings_view":
+        body = json.loads((DASHBOARD_FIXTURES.parent / "webhook/site_webhook_get_site_settings_view.json").read_text(encoding="utf-8"))
+        body.update({"site_id": home, "name": HOMES[home]["name"], "charger_ids": _home_chargers(home)})
+        return 200, body
+    return 400, {"ok": False, "error": "spotnav_not_supported_here", "action": action}
+
 
 _lock = threading.Lock()
 _PATH = re.compile(r"^/api/webhook/([^/?#]+)$")
@@ -1413,10 +1545,16 @@ def paired_chargers() -> list[dict]:
     """What an approval hands over: every scenario, as the integration hands
     over every charger config entry -- `id`, `name` and that one's own webhook.
     """
-    return [
-        {"id": key, "name": charger.name, "webhook": webhook_id(key)}
-        for key, charger in SCENARIOS.items()
-    ]
+    chargers = []
+    for key, charger in SCENARIOS.items():
+        home = _home_of(key)
+        if key == "sitecharger2" and home is None:
+            continue
+        row = {"id": key, "name": charger.name, "webhook": webhook_id(key)}
+        if home is not None and SITES["pairing"]:
+            row["site_id"] = home
+        chargers.append(row)
+    return chargers
 
 
 #: How many times the webhook ids were replaced (`/spotnav-mock/rotate-webhooks`). Generation 0 is
@@ -1436,8 +1574,10 @@ def scenario_for_webhook(hook: str) -> str | None:
 
 
 def retired_webhook(hook: str) -> bool:
-    """Whether [hook] was a scenario's webhook id before the last rotation."""
-    return any(webhook_id(key, n) == hook for key in SCENARIOS for n in range(WEBHOOKS["generation"]))
+    """Whether [hook] was a scenario's or a home's webhook id before the last rotation."""
+    generations = range(WEBHOOKS["generation"])
+    return any(webhook_id(key, n) == hook for key in SCENARIOS for n in generations) or \
+        any(site_webhook_id(home, n) == hook for home in HOMES for n in generations)
 
 # What a debug build broadcasts to find this, and what comes back. Deliberately
 # nothing like Home Assistant's own discovery: this announces a *mock*, and a
@@ -1631,6 +1771,21 @@ class Handler(BaseHTTPRequestHandler):
                 state = dict(GUEST)
             self._json(200, state)
             return
+        if path == "/spotnav-mock/sites":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                if "add" in query:
+                    SITES["added"] = query["add"] == "1"
+                if query.get("pairing") in ("on", "off"):
+                    SITES["pairing"] = query["pairing"] == "on"
+                if query.get("access") in ("ok", "unloaded", "limited"):
+                    SITES["access"] = query["access"]
+                if "unloaded" in query:
+                    SITES["unloaded"] = query["unloaded"] == "1"
+                state = dict(SITES)
+            self._json(200, state)
+            return
         if path == "/spotnav-mock/rotate-webhooks":
             # Every charger gets a new webhook id, as when the integration is set up again: the
             # old ones answer empty from now on, and the next pairing hands over the new ones
@@ -1709,6 +1864,10 @@ class Handler(BaseHTTPRequestHandler):
         if match.group(1) == PAIRING_WEBHOOK_ID:
             self._pairing(self._body())
             return
+        home = home_for_webhook(match.group(1))
+        if home is not None:
+            self._home(home)
+            return
         key = scenario_for_webhook(match.group(1))
         if key is None and retired_webhook(match.group(1)):
             # A webhook id handed out before /spotnav-mock/rotate-webhooks: answered exactly as Home
@@ -1725,10 +1884,61 @@ class Handler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
-            if payload.get("version") != 1:
+        except ValueError as error:
+            self._json(400, {"ok": False, "error": str(error)})
+            return
+        self._charger(key, charger, payload)
+
+    def _home(self, home: str) -> None:
+        """A home's webhook: its own actions, and every charger action of its chargers with `charger_id`."""
+        try:
+            payload = self._body()
+            if not isinstance(payload, dict) or payload.get("version") != 1:
+                raise ValueError("Unsupported payload version")
+        except ValueError as error:
+            self._json(400, {"ok": False, "error": str(error)})
+            return
+        action = payload.get("action")
+        if SITES["unloaded"]:
+            self._json(503, {"ok": False, "error": "spotnav_site_unloaded", "action": action})
+            return
+        charger_id = payload.get("charger_id")
+        if charger_id is None:
+            if action in HOME_REFUSED:
+                self._json(403, {"ok": False, "error": "spotnav_not_permitted_over_webhook", "action": action})
+                return
+            if action not in HOME_ACTIONS:
+                self._json(400, {"ok": False, "error": "spotnav_charger_required", "action": action})
+                return
+            with _lock:
+                self._json(*home_action_body(home, action, payload))
+            return
+        if charger_id not in SCENARIOS:
+            self._json(404, {"ok": False, "error": "spotnav_unknown_charger", "action": action})
+            return
+        if charger_id not in _home_chargers(home):
+            self._json(403, {"ok": False, "error": "spotnav_charger_not_in_site", "action": action})
+            return
+        if action in HOME_ACTIONS:
+            with _lock:
+                self._json(*home_action_body(home, action, payload))
+            return
+        self._charger(charger_id, SCENARIOS[charger_id], payload)
+
+    def _charger(self, key: str, charger: "Charger", payload: dict) -> None:
+        """One charger's action, from its own webhook or its home's."""
+        action = None
+        try:
+            if not isinstance(payload, dict) or payload.get("version") != 1:
                 raise ValueError("Unsupported payload version")
             action = payload.get("action")
             with _lock:
+                if action == "get_site_access":
+                    self._json(*site_access_body(key))
+                    return
+                if key in SITE_CHARGERS and action in HOME_ACTIONS:
+                    self._json(*home_action_body(_home_of(key) or "siteonly_charger", action, payload))
+                    return
                 if action == "dashboard":
                     self._json(200, dashboard_body(key, payload.get("reads")))
                     return
@@ -1866,11 +2076,10 @@ class Handler(BaseHTTPRequestHandler):
                 with _lock:
                     verdict = PAIRING.take(request_id)
                 if verdict == "approved":
-                    self._json(200, {
-                        "status": "approved",
-                        "url": self._base_url(),
-                        "chargers": paired_chargers(),
-                    })
+                    answer = {"status": "approved", "url": self._base_url(), "chargers": paired_chargers()}
+                    if SITES["pairing"]:
+                        answer["sites"] = paired_sites()
+                    self._json(200, answer)
                     return
                 self._json(200, {"status": verdict})
                 return
@@ -1887,6 +2096,8 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8099)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--list", action="store_true", help="print the scenarios and exit")
+    parser.add_argument("--quiet", action="store_true",
+                        help="no mDNS, no discovery and no request log: for the app's tests, which start it themselves")
     args = parser.parse_args()
 
     if args.list:
@@ -1895,6 +2106,11 @@ def main() -> None:
             print(f"{name:<{width}}  {charger.name} -- {charger.why}")
         return
 
+    if args.quiet:
+        Handler.log_message = lambda self, fmt, *a: None  # type: ignore[assignment]
+        print(f"Fake Home Assistant on http://{args.host}:{args.port}", flush=True)
+        ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
+        return
     print(f"Fake Home Assistant on http://{args.host}:{args.port}")
     print(f"Discovery listening on UDP {args.port}; catalogue at /spotnav-mock/scenarios")
     print(f"Pairing: approve requests at http://<this machine>:{args.port}/pairing")
