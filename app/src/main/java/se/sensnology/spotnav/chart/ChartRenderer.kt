@@ -382,7 +382,7 @@ internal object ChartRenderer {
         }
         canvas.save()
         canvas.clipRect(metrics.left, metrics.top, metrics.right, metrics.bottom)
-        for (run in ChartSuns.runs(sun.points)) {
+        for (run in ChartSuns.litRuns(sun.points)) {
             val area = line(run).apply {
                 lineTo(x(run.last()), metrics.bottom)
                 lineTo(x(run.first()), metrics.bottom)
