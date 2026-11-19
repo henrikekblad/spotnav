@@ -489,7 +489,7 @@ def site_pages(lang: str) -> None:
     s = strings(lang)
     step("the house page and the heat page")
     ha("scene", SCENE)
-    if wanted("app-house-earnings") or wanted("app-heat-use"):
+    if wanted("app-house-earnings"):
         ha("wait-prices")
     open_page(lang, "card_house_title")
     docs_full("app-house", lang)
