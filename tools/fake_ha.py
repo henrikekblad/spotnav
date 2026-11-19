@@ -122,7 +122,10 @@ to the day, month or year asked for; with no heat meter, in `network_pump` and `
 page's Plan and Förbrukning boxes and its details sheet have something to show, and the house as the `house` scenario does.
 `GET /spotnav-mock/heat?fixture=villa|controlled|network_pump|empty&reset=1` chooses what the site has: a villa with
 three rooms and a meter (Test), the same with SpotNav lowering, a heat pump seen over the network with the house away,
-or a heating with nothing to show (no heat page); `reset=1` sets the dial and Home/Away back to the fixture's.
+or a heating with nothing to show (no heat page); `reset=1` sets the dial, Home/Away and the Boost button back to the
+fixture's. `heat_boost` presses the Boost button of a fixture that has one (`network_pump` idle, the villa's own run):
+a start reads "starting" for 10 s, then runs 30 minutes that Cancel ends; a second start within a minute is
+`spotnav_rate_limited` (HTTP 429).
 The `sitesettings` scenario is the same Home Assistant's battery and heat settings over the webhook: its dashboard states
 `capabilities.battery_control` and `capabilities.get_heat`, so the app's Settings screen shows the battery and heat
 cards. The webhook answers `battery_control` (the status from `ha-fixtures/battery_control/`, `battery_mode` the only
@@ -710,7 +713,12 @@ HOUSE_FLOWS = {"now": "villa_now.json", "export": "villa_export.json", "car": "v
 HOUSE_CONTROLS = ("own", "test", "on")
 
 #: The `heat` scenario's state: which fixture, and the settings the dial and Home/Away have written since.
-HEAT = {"fixture": "villa", "target_c": None, "mode": None, "away_until": None}
+HEAT = {"fixture": "villa", "target_c": None, "mode": None, "away_until": None, "boost_started": None, "boost_stopped": False}
+#: The Boost button in the `heat` scenario: a press reads "starting" this long, then runs this long; a second start
+#: within the rate limit is `spotnav_rate_limited` (HTTP 429).
+BOOST_STARTING_S = 10
+BOOST_RUN_S = 30 * 60
+BOOST_RATE_S = 60
 HEAT_FIXTURES = ("villa", "controlled", "network_pump", "empty")
 
 #: What Home Assistant 3.0's dashboard states of the charger's site over the webhook (`docs/api.md`, "The site over
@@ -948,6 +956,8 @@ def heat_body(payload: dict) -> tuple[int, dict]:
     if HEAT["mode"] is not None:
         config["mode"] = comfort["mode"] = HEAT["mode"]
         config["away_until"] = comfort["away_until"] = HEAT["away_until"]
+    if body.get("hot_water") is not None and (HEAT["boost_started"] is not None or HEAT["boost_stopped"]):
+        body["hot_water"]["boost"] = _boost_state()
     if HEAT["fixture"] == "empty":
         for key in ("pump", "meter", "today", "relay", "review", "indoor_day"):
             body[key] = None
@@ -956,6 +966,46 @@ def heat_body(payload: dict) -> tuple[int, dict]:
         body["config"]["indoor_sensors"] = []
         body["status"].update({"pump_state": None, "kw": None, "would": None})
     return 200, {"ok": True, "action": action, **body}
+
+
+def _boost_state() -> dict:
+    """The Boost button's state after the presses so far: starting, then the household's own run that can be ended."""
+    idle = {"state": "idle", "source": None, "started": None, "ends": None, "ends_estimated": False, "stoppable": False}
+    started = HEAT["boost_started"]
+    if started is None:
+        return idle
+    now = datetime.now(ZoneInfo("UTC"))
+    ends = started + timedelta(seconds=BOOST_RUN_S)
+    if now >= ends:
+        return idle
+    stamp = lambda moment: moment.replace(microsecond=0).isoformat()
+    if (now - started).total_seconds() < BOOST_STARTING_S:
+        return {"state": "starting", "source": "user", "started": stamp(started), "ends": None, "ends_estimated": False, "stoppable": False}
+    return {"state": "running", "source": "user", "started": stamp(started), "ends": stamp(ends), "ends_estimated": True, "stoppable": True}
+
+
+def heat_boost_body(payload: dict) -> tuple[int, dict]:
+    """`heat_boost` in the `heat` scenario: "start" or "stop" as the integration answers them (429 for a start
+    within a minute of the last, 409 for a refusal, 400 for an unknown `boost_action`)."""
+    action = "heat_boost"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if _heat_fixture().get("hot_water", {}) is None or (_heat_fixture().get("hot_water") or {}).get("boost") is None:
+        return 409, {"api_version": 1, "ok": False, "error": "spotnav_not_supported", "boost": None, "action": action}
+    asked = payload.get("boost_action")
+    now = datetime.now(ZoneInfo("UTC"))
+    if asked == "start":
+        started = HEAT["boost_started"]
+        if started is not None and (now - started).total_seconds() < BOOST_RATE_S:
+            return 429, {"api_version": 1, "ok": False, "error": "spotnav_rate_limited", "boost": _boost_state(), "action": action}
+        HEAT["boost_started"], HEAT["boost_stopped"] = now, False
+    elif asked == "stop":
+        if _boost_state()["state"] != "running":
+            return 409, {"api_version": 1, "ok": False, "error": "spotnav_not_own", "boost": _boost_state(), "action": action}
+        HEAT["boost_started"], HEAT["boost_stopped"] = None, True
+    else:
+        return 400, {"api_version": 1, "ok": False, "error": "spotnav_invalid_value", "boost": None, "action": action}
+    return 200, {"api_version": 1, "ok": True, "error": None, "boost": _boost_state(), "action": action}
 
 
 def heat_history_body(payload: dict) -> tuple[int, dict]:
@@ -1462,6 +1512,8 @@ def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
         return heat_history_body(payload)
     if action == "update_heat":
         return update_heat_body(payload)
+    if action == "heat_boost":
+        return heat_boost_body(payload)
     if action == "battery_control":
         return battery_control_body(payload)
     if action == "get_site_settings_view":
@@ -1744,8 +1796,8 @@ class Handler(BaseHTTPRequestHandler):
                 if query.get("fixture") in HEAT_FIXTURES:
                     HEAT["fixture"] = query["fixture"]
                 if query.get("reset") == "1":
-                    HEAT.update({"target_c": None, "mode": None, "away_until": None})
-                state = dict(HEAT)
+                    HEAT.update({"target_c": None, "mode": None, "away_until": None, "boost_started": None, "boost_stopped": False})
+                state = {key: value.isoformat() if isinstance(value, datetime) else value for key, value in HEAT.items()}
             self._json(200, state)
             return
         if path == "/spotnav-mock/sitesettings":
@@ -1962,8 +2014,8 @@ class Handler(BaseHTTPRequestHandler):
                     handler = {"battery_control": battery_control_body, "get_heat": site_heat_body, "update_heat": site_update_heat_body}[action]
                     self._json(*handler(payload))
                     return
-                if action in ("get_heat", "update_heat", "get_heat_history") and key == "heat":
-                    self._json(*{"get_heat": heat_body, "update_heat": update_heat_body, "get_heat_history": heat_history_body}[action](payload))
+                if action in ("get_heat", "update_heat", "get_heat_history", "heat_boost") and key == "heat":
+                    self._json(*{"get_heat": heat_body, "update_heat": update_heat_body, "get_heat_history": heat_history_body, "heat_boost": heat_boost_body}[action](payload))
                     return
                 if action in ("get_house_now", "get_house", "get_house_history", "get_house_loads") and key in ("house", "heat"):
                     handlers = {
