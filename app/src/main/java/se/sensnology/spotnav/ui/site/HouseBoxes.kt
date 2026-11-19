@@ -44,6 +44,10 @@ internal object HouseBoxes {
 
     fun picker(house: House?): Boolean = periodBoxes(house) > 0
 
+    /** The card key of the box's heading: Pris och batteri is called Pris without a battery, as the card does. */
+    fun titleKey(box: HouseBox, house: House?): String =
+        if (box == HouseBox.PRICE && house != null && house.battery == null) "house.tab.priceOnly" else "house.tab.${box.tabKey}"
+
     private fun has(house: House, box: HouseBox): Boolean = when (box) {
         HouseBox.PRICE -> house.battery != null || house.hours.any { it.buy != null || it.sell != null }
         HouseBox.GRAPH -> true
