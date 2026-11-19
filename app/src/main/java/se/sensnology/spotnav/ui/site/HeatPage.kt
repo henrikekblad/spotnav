@@ -396,19 +396,24 @@ internal class HeatPage(
             "${words.say("heat.dial.label")}, ${HeatNowModel.degrees(text, target)}" +
                 (heat.indoor.valueC?.let { ", ${HeatNowModel.degrees(text, it)}" } ?: "")
         )
+        // On heating SpotNav can only read, the target is shown without − and +, and Home/Away is left out.
+        val readOnly = HeatNowModel.readOnly(heat)
+        lower.visibility = if (readOnly) View.GONE else View.VISIBLE
+        raise.visibility = if (readOnly) View.GONE else View.VISIBLE
         lower.isEnabled = target - HeatNowModel.TARGET_STEP >= HeatNowModel.TARGET_MIN - 1e-9
         raise.isEnabled = target + HeatNowModel.TARGET_STEP <= HeatNowModel.TARGET_MAX + 1e-9
         say(errorLine, error)
         measured.text = HeatNowModel.measuredLine(text, heat)
         measured.visibility = View.VISIBLE
-        modes.visibility = View.VISIBLE
+        modes.visibility = if (readOnly) View.GONE else View.VISIBLE
         val awayNow = heat.comfort.mode == "away"
         paint(home, !awayNow)
         paint(away, awayNow)
-        val awayWords = HeatNowModel.awayLine(text, heat)
+        val awayWords = if (readOnly) null else HeatNowModel.awayLine(text, heat)
         say(awayLine, awayWords)
         change.visibility = if (awayWords == null) View.GONE else View.VISIBLE
-        say(shadow, if (heat.shadow) words.say("heat.shadow") else null)
+        // Read-only: one line on it in place of the Test line, which promises a control that cannot come.
+        say(shadow, if (readOnly) HeatNowModel.readOnlyLine(words, heat) else if (heat.shadow) words.say("heat.shadow") else null)
         val live = HeatNowModel.live(text, heat)
         // The header says what the pump does; here only while the header is taken by SpotNav's own lowering or raise.
         val pump = if (live == null || live.first == "lower" || live.first == "raise") HeatNowModel.pumpLine(text, heat) else null

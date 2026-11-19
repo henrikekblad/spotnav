@@ -1111,6 +1111,10 @@
   <string name="card_house_tab_flow" formatted="false">Flujo de energía</string>
   <string name="card_house_tab_graph" formatted="false">Gráfico de energía</string>
   <string name="card_house_tab_price" formatted="false">Precio y batería</string>
+  <string name="card_house_tab_price_only" formatted="false">Precio</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav solo puede leer la calefacción aquí.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav solo puede leer la calefacción aquí: elige un control en Ajustes → Calefacción → Control.</string>
+  <string name="card_heat_none_value" formatted="false">Nada encontrado</string>
   <string name="card_house_tab_earn" formatted="false">Ingresos</string>
   <string name="card_house_tab_short_now" formatted="false">Ahora</string>
   <string name="card_house_tab_short_flow" formatted="false">Flujo</string>
@@ -1309,6 +1313,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grados menos</string>
   <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
   <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
+  <string name="site_settings_heat_add_in_home_assistant">La calefacción se configura en Home Assistant: Ajustes → Calefacción en la tarjeta de la casa o de la calefacción.</string>
   <string name="site_settings_offset_home_in_home_assistant">Responde en Home Assistant: en los ajustes de la tarjeta de calor, como administrador.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Ingresos {amount}</string>

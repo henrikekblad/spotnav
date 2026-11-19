@@ -116,8 +116,8 @@ internal class HouseHistoryPanel(
     private val view = if (boxKind == HouseBox.PRICE) ChartView.PRICE else ChartView.ENERGY
     private val priceTab = boxKind == HouseBox.PRICE
 
-    /** The box's own name above its picture: the card's name of the tab ("Energigraf", "Pris och batteri"). */
-    private val title = scope.cardTitle(words.say("house.tab.${boxKind.tabKey}"))
+    /** The box's own name above its picture: the card's name of the tab ("Energigraf", "Pris och batteri", "Pris" without a battery), set as the house answers. */
+    private val title = scope.cardTitle(words.say(HouseBoxes.titleKey(boxKind, null)))
     private val sub = TextView(scope.context).apply {
         textSize = 13f
         setTextColor(scope.muted)
@@ -183,6 +183,7 @@ internal class HouseHistoryPanel(
     /** Draw the box; it is left out (and this says `false`) where there is nothing to show for the period. */
     override fun render(): Boolean {
         val now = house() ?: return false
+        title.text = words.say(HouseBoxes.titleKey(boxKind, now))
         val choice = store.choice
         nothing = false
         val history = (store.history(choice) as? Load.Ready)?.value

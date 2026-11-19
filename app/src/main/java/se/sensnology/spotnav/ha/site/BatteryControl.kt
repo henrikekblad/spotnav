@@ -22,7 +22,9 @@ internal data class BatteryStatus(
     val allowedActions: List<String>,
     val gridChargeCap: GridChargeCap,
     /** The plan's two fixed figures; `null` from a Home Assistant without them or a site with no price area. */
-    val planCosts: PlanCosts? = null
+    val planCosts: PlanCosts? = null,
+    /** Whether the site's battery facts name a battery (`status.battery_found`); `true` from a Home Assistant without the field. */
+    val batteryFound: Boolean = true
 ) {
     /** What the status row says: the switch's position, and "test" while control is on paper only. */
     enum class Control { OFF, TEST, ON }
@@ -124,7 +126,8 @@ internal object BatteryControlRead {
                 daysSpread = learned?.let { count(it.opt("days_spread"), "days_spread") },
                 daysLeft = learned?.let { count(it.opt("days_left"), "days_left") }
             ),
-            planCosts = planCosts(status.opt("plan_costs"))
+            planCosts = planCosts(status.opt("plan_costs")),
+            batteryFound = additive(status, "battery_found", true) { flag(it, "battery_found") }
         )
     }
 

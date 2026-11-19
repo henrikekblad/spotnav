@@ -72,7 +72,13 @@ internal data class HeatSettings(
     val now: Instant? = null,
     val zone: ZoneId? = null,
     /** Why SpotNav would lower now (`status.would.reason`): "room_warm" words the lowering. */
-    val wouldReason: String? = null
+    val wouldReason: String? = null,
+    /**
+     * Whether anything heat-related was found, by the card's `heatFound()`: a heat pump, a meter, climate zones (found
+     * or to choose), or settings already made (a control path, indoor sensors, a heat meter). Without it the heat
+     * settings card is one "Nothing found" row.
+     */
+    val found: Boolean = true
 ) {
     /** The friendly name the answer carries for [entityId]; `null` where it carries none (the id is never shown instead). */
     fun nameOf(entityId: String): String? = names[entityId]
@@ -166,8 +172,24 @@ internal object HeatSettingsRead {
             zone = additive(json, "time_zone", null) { raw -> runCatching { ZoneId.of(text(raw, "time_zone")) }.getOrElse { bad("time_zone") } },
             wouldReason = additive(json, "status", null) { raw ->
                 objOrNull(raw, "status")?.let { status -> objOrNull(status.opt("would"), "status.would")?.let { text(it.opt("reason"), "would.reason") } }
-            }
+            },
+            found = found(json, config)
         )
+    }
+
+    /** The card's `heatFound()` (`frontend/src/heat-model.ts`), read leniently: a part the answer lacks counts as none. */
+    private fun found(json: JSONObject, config: JSONObject): Boolean {
+        val meter = json.optJSONObject("meter")
+        val meterId = meter?.opt("entity_id")?.takeUnless { it === JSONObject.NULL }
+        val choiceZones = json.optJSONObject("choices")?.optJSONArray("zones")?.length() ?: 0
+        val meterEntity = config.opt("heat_meter_entity")?.takeUnless { it === JSONObject.NULL }
+        return json.optJSONObject("pump") != null ||
+            meterId != null ||
+            (json.optJSONArray("zones")?.length() ?: 0) > 0 ||
+            choiceZones > 0 ||
+            config.optString("control_path", "none") != "none" ||
+            (config.optJSONArray("indoor_sensors")?.length() ?: 0) > 0 ||
+            meterEntity != null
     }
 
     private fun control(json: JSONObject): HeatControlStatus = with(StrictJson) {

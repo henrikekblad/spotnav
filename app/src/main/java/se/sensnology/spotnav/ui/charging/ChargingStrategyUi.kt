@@ -94,7 +94,15 @@ internal data class StrategyChoice(
     val gap: StrategyGap?,
     val chosen: Boolean,
     val selectable: Boolean
-)
+) {
+    /**
+     * Left out of the chooser: a solar strategy held back because the site has no solar, which the phone cannot set
+     * up. The total grid power case stays, disabled with its hint (the meter's setting is an action); a strategy in
+     * force always stays.
+     */
+    val hidden: Boolean
+        get() = !chosen && (gap == StrategyGap.MEASURED_SOLAR_PRODUCTION || gap == StrategyGap.SOLAR_MEASUREMENT_AND_CONTROL)
+}
 
 /** Everything the screen's strategy row and chooser need, and nothing they may rediscover. */
 internal data class ChargingStrategyUi(

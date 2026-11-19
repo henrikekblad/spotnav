@@ -1103,6 +1103,10 @@
   <string name="card_house_tab_flow" formatted="false">Energiavirta</string>
   <string name="card_house_tab_graph" formatted="false">Energiakaavio</string>
   <string name="card_house_tab_price" formatted="false">Hinta ja akku</string>
+  <string name="card_house_tab_price_only" formatted="false">Hinta</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav voi vain lukea lämmityksen tietoja täällä.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav voi vain lukea lämmityksen tietoja täällä – valitse ohjaus kohdassa Asetukset → Lämmitys → Ohjaus.</string>
+  <string name="card_heat_none_value" formatted="false">Mitään ei löytynyt</string>
   <string name="card_house_tab_earn" formatted="false">Tuotto</string>
   <string name="card_house_tab_short_now" formatted="false">Nyt</string>
   <string name="card_house_tab_short_flow" formatted="false">Virta</string>
@@ -1301,6 +1305,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Astetta viileämpää</string>
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Lämmitys otetaan käyttöön Home Assistantissa: Asetukset → Lämmitys talo- tai lämmityskortilla.</string>
   <string name="site_settings_offset_home_in_home_assistant">Vastaa Home Assistantissa: lämpökortin asetuksissa, ylläpitäjänä.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Tuotto {amount}</string>
