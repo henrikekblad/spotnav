@@ -1239,6 +1239,8 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Also charges from the grid when it is cheap and is used when it is expensive. Sells only when it is highly profitable.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Like Balanced, but sells to the grid whenever it pays, wear counted in.</string>
   <string name="card_battery_mode_shadow" formatted="false">While SpotNav does not control the battery, the choice only moves which row is marked as chosen in the comparison.</string>
+  <string name="card_battery_plan_costs" formatted="false">Wear counted as {wear} each way · Balanced sells at {margin} net or more</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Battery plan</string>
   <string name="card_battery_switch" formatted="false">Battery control</string>
   <string name="card_battery_line_off" formatted="false">Off: SpotNav controls nothing yet and only shows what it would do.</string>
   <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav controls nothing yet and only logs what it would do.</string>

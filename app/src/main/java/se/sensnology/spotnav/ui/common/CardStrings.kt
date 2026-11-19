@@ -530,6 +530,8 @@ internal object CardStrings {
         "battery.modeHelp.balanced" to R.string.card_battery_mode_help_balanced,
         "battery.modeHelp.max_profit" to R.string.card_battery_mode_help_max_profit,
         "battery.modeShadow" to R.string.card_battery_mode_shadow,
+        "battery.planCosts" to R.string.card_battery_plan_costs,
+        "battery.planCostsDocs" to R.string.card_battery_plan_costs_docs,
         "battery.switch" to R.string.card_battery_switch,
         "battery.line.off" to R.string.card_battery_line_off,
         "battery.line.shadowOnly" to R.string.card_battery_line_shadow_only,

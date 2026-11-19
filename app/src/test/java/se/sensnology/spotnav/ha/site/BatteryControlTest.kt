@@ -25,6 +25,27 @@ class BatteryControlTest {
         assertEquals("max_profit", status("webhook/battery_control_mode.json").mode)
     }
 
+    @Test fun thePlansFixedCostsAreReadTolerantly() {
+        val costs = status("webhook/battery_control_success.json").planCosts!!
+        assertEquals(15.0, costs.wearMinorPerKwh, 0.0)
+        assertEquals(100.0, costs.balancedMarginMinorPerKwh, 0.0)
+        assertEquals("kr", costs.majorUnit)
+        assertEquals("öre", costs.minorUnit)
+        // No price area: null. An older Home Assistant without the key, or a shape unknown here: no costs, still a status.
+        assertNull(status("battery_control/checking.json").planCosts)
+        for (change in listOf<(JSONObject) -> Unit>(
+            { it.getJSONObject("status").remove("plan_costs") },
+            { it.getJSONObject("status").put("plan_costs", "later") },
+            { it.getJSONObject("status").getJSONObject("plan_costs").remove("minor_unit") }
+        )) {
+            val doc = HaFixtures.json("webhook/battery_control_success.json")
+            change(doc)
+            val outcome = BatteryControlRead.answer(200, doc.toString()) as BatteryControlRead.Outcome.Status
+            assertNull(outcome.status.planCosts)
+            assertEquals("balanced", outcome.status.mode)
+        }
+    }
+
     @Test fun theRicherStatusesSayOnOffOrTest() {
         // Off while shadow only is the switch's own default: off, not test.
         assertEquals(BatteryStatus.Control.OFF, status("battery_control/live.json").control)

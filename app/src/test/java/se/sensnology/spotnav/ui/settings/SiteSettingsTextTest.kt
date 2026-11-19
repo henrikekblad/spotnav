@@ -44,6 +44,23 @@ class SiteSettingsTextTest {
         assertNull(text().gridChargeCap(status("battery_control/live.json")))
     }
 
+    @Test fun thePlansFixedCostsAreSaidInTheSitesMoney() {
+        val live = status("battery_control/live.json")
+        assertEquals("Wear counted as 15 öre/kWh each way · Balanced sells at 1 kr/kWh net or more", text().planCosts(live))
+        assertEquals("Slitage räknas som 15 öre/kWh åt varje håll · Balanserad säljer vid minst 1 kr/kWh netto", text("sv").planCosts(live))
+        val euro = BatteryStatus.PlanCosts(1.4, 10.0, "EUR", "cent")
+        assertEquals("1.4 cent", text().planMoney(1.4, euro))
+        assertEquals("1.40 EUR", text().planMoney(140.0, euro))
+        assertEquals("0 EUR", text().planMoney(0.0, euro))
+        assertEquals("25 EUR", text().planMoney(2500.0, euro))
+        // Without the block (an older Home Assistant, or no price area): no line.
+        assertNull(text().planCosts(status("battery_control/checking.json")))
+        for (language in listOf("en", "sv", "da", "de", "nb", "fi", "fr", "nl", "es")) {
+            val line = text(language).planCosts(live)
+            assertTrue(language, line != null && "15" in line && "{" !in line)
+        }
+    }
+
     @Test fun learningThatLeavesNoChargeGivesOneReasonNotTwo() {
         val learning = status("battery_control/checking.json").let {
             it.copy(
