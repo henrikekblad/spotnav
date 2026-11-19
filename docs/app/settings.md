@@ -100,8 +100,9 @@ Shown where Home Assistant offers battery control (SpotNav 3.0 or newer).
   here but turned on and off in Home Assistant.
 - **Mode**, which you can change here:
   - **Self-consumption**: the battery charges from the sun and covers the house. No trading with the grid.
-  - **Balanced**: also charges from the grid when it is cheap, and is used when it is expensive. Does not sell.
-  - **Max profit**: like Balanced, but may also sell to the grid when it pays, wear counted in.
+  - **Balanced**: also charges from the grid when it is cheap, and is used when it is expensive. Sells only surplus,
+    and only when it is highly profitable (the house's need comes first).
+  - **Max profit**: like Balanced, but sells to the grid whenever it pays, wear counted in.
 
   While SpotNav does not control the battery, the mode only chooses which row is marked in the comparison on the
   house page.

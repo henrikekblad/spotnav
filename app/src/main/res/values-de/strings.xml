@@ -1223,8 +1223,8 @@
   <string name="card_battery_intro" formatted="false">SpotNav kann den Speicher steuern: ihn pausieren, während das Auto aus dem Netz lädt, ihn bei günstigem Strom laden und die Einspeisung stoppen, wenn sie Geld kostet. Aus, bis du es einschaltest.</string>
   <string name="card_battery_mode_label" formatted="false">Modus</string>
   <string name="card_battery_mode_help_self_consumption" formatted="false">Der Speicher lädt mit Sonnenstrom und versorgt das Haus. Kein Handel mit dem Netz.</string>
-  <string name="card_battery_mode_help_balanced" formatted="false">Lädt auch aus dem Netz, wenn es günstig ist, und wird genutzt, wenn es teuer ist. Verkauft nicht.</string>
-  <string name="card_battery_mode_help_max_profit" formatted="false">Wie Ausgewogen, darf aber auch ins Netz verkaufen, wenn es sich lohnt, Verschleiß eingerechnet.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Lädt auch aus dem Netz, wenn es günstig ist, und wird genutzt, wenn es teuer ist. Verkauft nur, wenn es sich sehr lohnt.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Wie Ausgewogen, verkauft aber ins Netz, sobald es sich lohnt, Verschleiß eingerechnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Solange SpotNav den Speicher nicht steuert, verschiebt die Wahl nur, welche Zeile im Vergleich als gewählt markiert ist.</string>
   <string name="card_battery_switch" formatted="false">Speichersteuerung</string>
   <string name="card_battery_line_off" formatted="false">Aus: SpotNav steuert noch nichts und zeigt nur, was es tun würde.</string>

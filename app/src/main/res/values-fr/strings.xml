@@ -1231,8 +1231,8 @@
   <string name="card_battery_intro" formatted="false">SpotNav peut piloter la batterie : la mettre en pause pendant que la voiture charge sur le réseau, la charger quand l’électricité est bon marché et arrêter l’injection quand elle coûte de l’argent. Désactivé tant que vous ne l’activez pas.</string>
   <string name="card_battery_mode_label" formatted="false">Mode</string>
   <string name="card_battery_mode_help_self_consumption" formatted="false">La batterie se charge avec le soleil et alimente la maison. Aucun échange avec le réseau.</string>
-  <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend pas.</string>
-  <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais peut aussi vendre au réseau quand c’est rentable, usure comprise.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend que quand c’est très rentable.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais vend au réseau dès que c’est rentable, usure comprise.</string>
   <string name="card_battery_mode_shadow" formatted="false">Tant que SpotNav ne pilote pas la batterie, le choix ne fait que déplacer la ligne marquée comme choisie dans la comparaison.</string>
   <string name="card_battery_switch" formatted="false">Pilotage de la batterie</string>
   <string name="card_battery_line_off" formatted="false">Désactivé : SpotNav ne pilote encore rien et montre seulement ce qu’il ferait.</string>

@@ -1223,8 +1223,8 @@
   <string name="card_battery_intro" formatted="false">SpotNav voi ohjata akkua: estää sen purkautumisen, kun auto latautuu verkosta, ladata sitä halvalla sähköllä ja lopettaa syötön verkkoon, kun siitä joutuu maksamaan. Pois päältä, kunnes kytket sen päälle.</string>
   <string name="card_battery_mode_label" formatted="false">Tila</string>
   <string name="card_battery_mode_help_self_consumption" formatted="false">Akku latautuu auringosta ja kattaa talon kulutuksen. Ei kauppaa verkon kanssa.</string>
-  <string name="card_battery_mode_help_balanced" formatted="false">Latautuu myös verkosta, kun sähkö on halpaa, ja sitä käytetään, kun se on kallista. Ei myy.</string>
-  <string name="card_battery_mode_help_max_profit" formatted="false">Kuten Tasapainoinen, mutta saa myös myydä verkkoon, kun se kannattaa, kulumisen huomioiden.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Latautuu myös verkosta, kun sähkö on halpaa, ja sitä käytetään, kun se on kallista. Myy vain, kun se on erittäin kannattavaa.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Kuten Tasapainoinen, mutta myy verkkoon aina kun se kannattaa, kulumisen huomioiden.</string>
   <string name="card_battery_mode_shadow" formatted="false">Kun SpotNav ei ohjaa akkua, valinta vain vaihtaa, mikä vertailun rivi on merkitty valituksi.</string>
   <string name="card_battery_switch" formatted="false">Akun ohjaus</string>
   <string name="card_battery_line_off" formatted="false">Pois: SpotNav ei vielä ohjaa mitään ja näyttää vain, mitä se tekisi.</string>
