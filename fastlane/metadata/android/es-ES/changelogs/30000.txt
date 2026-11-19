@@ -5,4 +5,4 @@ Novedades de la 3.0:
 - Página de la casa con batería y precio
 - Vistas de calefacción y agua caliente
 - El plan con la batería
-- Para SpotNav para Home Assistant 3.0
+- Batería, calefacción y agua caliente requieren SpotNav para Home Assistant 3.0 (beta); con 2.x la app funciona como antes

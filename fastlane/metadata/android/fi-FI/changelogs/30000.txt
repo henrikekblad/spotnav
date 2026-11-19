@@ -5,4 +5,4 @@ Uutta versiossa 3.0:
 - Talonäkymä akulla ja hinnalla
 - Lämmitys- ja käyttövesinäkymät
 - Akun suunnitelma
-- SpotNav for Home Assistant 3.0:lle
+- Akku, lämmitys ja käyttövesi vaativat SpotNav for Home Assistant 3.0:n (beta); 2.x:n kanssa sovellus toimii kuten ennen

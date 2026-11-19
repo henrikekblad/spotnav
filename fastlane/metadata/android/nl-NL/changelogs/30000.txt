@@ -5,4 +5,4 @@ Nieuw in 3.0:
 - Huispagina met batterij en prijs
 - Weergaven voor verwarming en warm water
 - Het plan met de batterij
-- Voor SpotNav voor Home Assistant 3.0
+- Batterij, verwarming en warm water vereisen SpotNav voor Home Assistant 3.0 (bèta); met 2.x werkt de app zoals voorheen
