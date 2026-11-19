@@ -415,6 +415,27 @@ object HomeAssistantClient {
         return SuggestImportTarget.answer(status, body)
     }
 
+    /** One request whose answer is read whole: the status and body, or the failure (a gone webhook among them). */
+    private fun ask(settings: HomeAssistantSettings, body: JSONObject): Triple<Int?, String?, Throwable?> = try {
+        Triple(200, post(settings, body.toString()).toString(), null)
+    } catch (refused: WebhookHttpStatusException) {
+        Triple(refused.status, refused.bodyText, null)
+    } catch (failure: Exception) {
+        Triple(null, null, failure)
+    }
+
+    /** The home as its own webhook states it (`get_site`). Never throws. */
+    internal fun getSite(settings: HomeAssistantSettings): SiteDoor.GetSite {
+        val (status, body, failure) = ask(settings, SiteDoor.getSitePayload())
+        return SiteDoor.getSite(status, body, failure)
+    }
+
+    /** The charger's home and its webhook (`get_site_access`, asked on the charger's own webhook). Never throws. */
+    internal fun getSiteAccess(settings: HomeAssistantSettings): SiteDoor.Access {
+        val (status, body, failure) = ask(settings, SiteDoor.accessPayload())
+        return SiteDoor.access(status, body, failure)
+    }
+
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
     internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
         val (status, body) = write(settings, PushRegister.payload(pushRef, events))
