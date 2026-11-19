@@ -31,6 +31,9 @@ import se.sensnology.spotnav.ui.common.openEditor
 import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.weight
 
+/** The docs page that explains the plan's wear and Balanced's margin. */
+private const val PLAN_DOCS_URL = "https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/battery-plan.md#the-wear-cost"
+
 /**
  * The battery and heat cards of a paired charger's Settings, drawn only where the charger's Home Assistant offers them
  * (`capabilities.battery_control`, `capabilities.get_heat`). What the webhook lets the app change is written: the
@@ -136,6 +139,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
                 helps = modes.map { text.modeHelp(it) }
             ) { index, done -> writeMode(modes[index], done) }
         })
+        text.planCosts(status)?.let { addPlanCosts(card.body, it, words.say("battery.planCostsDocs")) }
         // The mode counts even when nothing is controlled: it moves the comparison's marked row.
         if (status.control != BatteryStatus.Control.ON) card.body.addView(muted(words.say("battery.modeShadow"), bottom = 4))
         // The control switch is Home Assistant's alone: shown, with the one line under it that says what it does.
@@ -143,6 +147,20 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         text.gridChargeCap(status)?.let { card.body.addView(muted(it, bottom = 4)) }
         card.body.addView(muted(t(R.string.site_settings_in_home_assistant), top = 2))
         notice?.let { card.body.addView(muted(it, top = 4)) }
+    }
+
+    /** The two fixed figures of the plan, with the docs page's name as a link after them. */
+    private fun addPlanCosts(body: LinearLayout, line: String, docs: String) {
+        val view = muted("$line $docs", top = 2, bottom = 4)
+        view.text = android.text.SpannableString("$line $docs").apply {
+            setSpan(object : android.text.style.ClickableSpan() {
+                override fun onClick(widget: View) {
+                    runCatching { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(PLAN_DOCS_URL))) }
+                }
+            }, line.length + 1, line.length + 1 + docs.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        view.movementMethod = android.text.method.LinkMovementMethod.getInstance()
+        body.addView(view)
     }
 
     private fun writeMode(mode: String, done: (String?) -> Unit) {

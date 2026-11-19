@@ -1226,6 +1226,8 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Laadt ook uit het net als het goedkoop is en wordt gebruikt als het duur is. Verkoopt alleen als het zeer winstgevend is.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Zoals Gebalanceerd, maar verkoopt aan het net zodra dat loont, slijtage meegerekend.</string>
   <string name="card_battery_mode_shadow" formatted="false">Zolang SpotNav de batterij niet aanstuurt, verschuift de keuze alleen welke rij in de vergelijking als gekozen is gemarkeerd.</string>
+  <string name="card_battery_plan_costs" formatted="false">Slijtage wordt geteld als {wear} in elke richting · Gebalanceerd verkoopt vanaf {margin} netto</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Het batterijplan</string>
   <string name="card_battery_switch" formatted="false">Batterijsturing</string>
   <string name="card_battery_line_off" formatted="false">Uit: SpotNav stuurt nog niets en laat alleen zien wat het zou doen.</string>
   <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav stuurt nog niets en logt alleen wat het zou doen.</string>

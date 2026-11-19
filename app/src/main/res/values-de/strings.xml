@@ -1226,6 +1226,8 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Lädt auch aus dem Netz, wenn es günstig ist, und wird genutzt, wenn es teuer ist. Verkauft nur, wenn es sich sehr lohnt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Wie Ausgewogen, verkauft aber ins Netz, sobald es sich lohnt, Verschleiß eingerechnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Solange SpotNav den Speicher nicht steuert, verschiebt die Wahl nur, welche Zeile im Vergleich als gewählt markiert ist.</string>
+  <string name="card_battery_plan_costs" formatted="false">Verschleiß wird mit {wear} je Richtung gerechnet · Ausgewogen verkauft ab mindestens {margin} netto</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Der Speicherplan</string>
   <string name="card_battery_switch" formatted="false">Speichersteuerung</string>
   <string name="card_battery_line_off" formatted="false">Aus: SpotNav steuert noch nichts und zeigt nur, was es tun würde.</string>
   <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav steuert noch nichts und protokolliert nur, was es tun würde.</string>

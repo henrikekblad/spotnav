@@ -89,6 +89,28 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         else words.say("battery.cap.line", "kw" to fixed(kw, 1), "rule" to rule)
     }
 
+    /**
+     * The muted line under the battery's mode: the wear the plan counts and Balanced's selling margin, fixed figures
+     * (the card's `planCostsLine`); `null` without them.
+     */
+    fun planCosts(status: BatteryStatus): String? {
+        val costs = status.planCosts ?: return null
+        return words.say(
+            "battery.planCosts",
+            "wear" to "${planMoney(costs.wearMinorPerKwh, costs)}/kWh",
+            "margin" to "${planMoney(costs.balancedMarginMinorPerKwh, costs)}/kWh"
+        )
+    }
+
+    /** The minor unit below one major unit ("15 öre"), the major one from there, whole when it is or from 10 up ("1 kr"). */
+    fun planMoney(minor: Double, costs: BatteryStatus.PlanCosts): String {
+        if (Math.abs(minor) < 100 && minor != 0.0) {
+            return "${fixed(minor, if (minor % 1.0 == 0.0) 0 else 1)} ${costs.minorUnit}"
+        }
+        val major = minor / 100
+        return "${fixed(major, if (major % 1.0 == 0.0 || Math.abs(major) >= 10) 0 else 2)} ${costs.majorUnit}"
+    }
+
     private fun daysLeft(days: Int): String =
         words.say("learning.daysLeft.${if (days == 1) "one" else "other"}", "days" to days.toString())
 

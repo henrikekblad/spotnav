@@ -20,7 +20,9 @@ internal data class BatteryStatus(
     /** The one line under the switch as a stable code (`off`, `waiting:retry_gap`, ...). */
     val line: String,
     val allowedActions: List<String>,
-    val gridChargeCap: GridChargeCap
+    val gridChargeCap: GridChargeCap,
+    /** The plan's two fixed figures; `null` from a Home Assistant without them or a site with no price area. */
+    val planCosts: PlanCosts? = null
 ) {
     /** What the status row says: the switch's position, and "test" while control is on paper only. */
     enum class Control { OFF, TEST, ON }
@@ -41,6 +43,14 @@ internal data class BatteryStatus(
         val daysMin: Int?,
         val daysSpread: Int?,
         val daysLeft: Int?
+    )
+
+    /** The battery plan's wear per kWh each way and Balanced's selling margin per kWh, in the area's minor unit. */
+    data class PlanCosts(
+        val wearMinorPerKwh: Double,
+        val balancedMarginMinorPerKwh: Double,
+        val majorUnit: String,
+        val minorUnit: String
     )
 
     companion object {
@@ -113,7 +123,22 @@ internal object BatteryControlRead {
                 daysMin = learned?.let { count(it.opt("days_min"), "days_min") },
                 daysSpread = learned?.let { count(it.opt("days_spread"), "days_spread") },
                 daysLeft = learned?.let { count(it.opt("days_left"), "days_left") }
-            )
+            ),
+            planCosts = planCosts(status.opt("plan_costs"))
         )
     }
+
+    /** Tolerant: a Home Assistant without the block, or one that sends it in a shape unknown here, shows no line. */
+    private fun planCosts(raw: Any?): BatteryStatus.PlanCosts? = runCatching {
+        with(StrictJson) {
+            objOrNull(raw, "plan_costs")?.let {
+                BatteryStatus.PlanCosts(
+                    wearMinorPerKwh = number(it.opt("wear_minor_per_kwh"), "wear_minor_per_kwh"),
+                    balancedMarginMinorPerKwh = number(it.opt("balanced_margin_minor_per_kwh"), "balanced_margin_minor_per_kwh"),
+                    majorUnit = text(it.opt("major_unit"), "major_unit"),
+                    minorUnit = text(it.opt("minor_unit"), "minor_unit")
+                )
+            }
+        }
+    }.getOrNull()
 }

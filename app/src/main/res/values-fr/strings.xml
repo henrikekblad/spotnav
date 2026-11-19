@@ -1234,6 +1234,8 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend que quand c’est très rentable.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais vend au réseau dès que c’est rentable, usure comprise.</string>
   <string name="card_battery_mode_shadow" formatted="false">Tant que SpotNav ne pilote pas la batterie, le choix ne fait que déplacer la ligne marquée comme choisie dans la comparaison.</string>
+  <string name="card_battery_plan_costs" formatted="false">Usure comptée à {wear} dans chaque sens · Équilibré vend à partir de {margin} net</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Le plan de la batterie</string>
   <string name="card_battery_switch" formatted="false">Pilotage de la batterie</string>
   <string name="card_battery_line_off" formatted="false">Désactivé : SpotNav ne pilote encore rien et montre seulement ce qu’il ferait.</string>
   <string name="card_battery_line_shadow_only" formatted="false">Test : SpotNav ne pilote encore rien et consigne seulement ce qu’il ferait.</string>

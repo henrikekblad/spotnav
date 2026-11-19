@@ -1226,6 +1226,8 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Lader også fra nettet når det er billig og brukes når det er dyrt. Selger bare når det er svært lønnsomt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Som Balansert, men selger til nettet så snart det lønner seg, med slitasjen medregnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Så lenge SpotNav ikke styrer batteriet, flytter valget bare hvilken rad som er markert som valgt i sammenligningen.</string>
+  <string name="card_battery_plan_costs" formatted="false">Slitasje regnes som {wear} hver vei · Balansert selger ved minst {margin} netto</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Batteriplanen</string>
   <string name="card_battery_switch" formatted="false">Batteristyring</string>
   <string name="card_battery_line_off" formatted="false">Av: SpotNav styrer ingenting ennå og viser bare hva den ville gjort.</string>
   <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav styrer ingenting ennå og logger bare hva den ville gjort.</string>
