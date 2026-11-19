@@ -227,12 +227,8 @@ internal object HeatNowModel {
         return (0 until AHEAD_HOURS step 3).map { text.clock(first.plus(Duration.ofHours(it.toLong())), heat.zone) }
     }
 
-    /** Money in the minor unit as the heat card says it: whole units from 10 up, else two decimals. */
-    fun amount(text: SiteText, minor: Double, money: House.Money?): String {
-        val unit = money?.majorUnit ?: return text.fixed(minor, 0)
-        val major = minor / 100.0
-        return "${text.fixed(major, if (abs(major) >= 10) 0 else 2)} $unit"
-    }
+    /** Money in the minor unit as the card says it everywhere. */
+    fun amount(text: SiteText, minor: Double, money: House.Money?): String = text.amount(minor, money)
 
     /** "I dag · värme 13,9 kWh · varav zoner 0,8 kWh · varmvatten 1,7 kWh · 19 kr"; `null` without today. */
     fun todayLine(text: SiteText, heat: Heat): String? {

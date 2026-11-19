@@ -413,13 +413,7 @@ internal object HeatPlanModel {
         val review = heat.review ?: return emptyList()
         val words = text.words
         val money: House.Money? = heat.today?.money
-        fun amount(minor: Double): String = when {
-            money?.majorUnit == null -> text.fixed(minor, 0)
-            else -> {
-                val major = minor / 100
-                "${text.fixed(major, if (abs(major) >= 10) 0 else 2)} ${money.majorUnit}"
-            }
-        }
+        fun amount(minor: Double): String = text.amount(minor, money)
         fun comfort(part: se.sensnology.spotnav.ha.heat.HeatReview.Part): List<String> {
             val out = mutableListOf<String>()
             val coldest = part.coldestMinC ?: return out

@@ -80,7 +80,7 @@ class HouseEarnTest {
         assertEquals(2, day.slotCount)
         assertTrue(day.words, day.words.startsWith("tors 12 nov"))
         assertTrue(day.words, day.words.contains("urladdat 5,0 kWh, värt 15 kr, minus 11 kr"))
-        assertTrue(day.words, day.words.endsWith(" · Värme 0,6 kr · Bil 2,7 kr · SpotNav skulle ha sparat 4,8 kr"))
+        assertTrue(day.words, day.words.endsWith(" · Värme 0,60 kr · Bil 2,70 kr · SpotNav skulle ha sparat 4,75 kr"))
         // Today (the 16th) is not reviewed yet: no would-be lane; a day before any figure says so.
         assertEquals(listOf(listOf("own", "car")), lanes(all.first { it.key == "2026-11-16" }).map { it.first })
         assertEquals("sön 1 nov: ingen siffra", all[0].words)
@@ -102,7 +102,7 @@ class HouseEarnTest {
         val all = bars(day)!!
         assertEquals(24, all.size)
         assertEquals(listOf(listOf("car") to 0), lanes(all[22]))
-        assertEquals("22:00: Bil 3,0 kr", all[22].words)
+        assertEquals("22:00: Bil 3,00 kr", all[22].words)
         assertEquals(listOf(listOf("own") to 0), lanes(all[17]))
         // 07:00: the battery gave back below what it was stored at: a negative part, below the line.
         assertTrue(all[7].lanes.single().single().value < 0)
@@ -123,14 +123,14 @@ class HouseEarnTest {
         val month = history("villa_month.json")
         val legend = HouseEarn.legend(month, text(), month.money)
         assertEquals(
-            listOf("Batteri, egen styrning 26 kr", "Värme 1,2 kr", "Bil 20 kr", "SpotNav skulle ha sparat 32 kr"),
+            listOf("Batteri, egen styrning 26 kr", "Värme 1,20 kr", "Bil 20 kr", "SpotNav skulle ha sparat 32 kr"),
             legend.map { it.second }
         )
         assertEquals(EarnPart.WOULD, legend.last().first)
         // A day's hours have the plan's figure in words alone: no toggle for it.
         val day = history("villa_day.json")
         assertFalse(HouseEarn.legend(day, text(), day.money).any { it.first == EarnPart.WOULD })
-        assertTrue(HouseEarn.notes(text(), day, emptySet(), day.money).any { it.startsWith("På batteriet skulle SpotNav ha sparat 4,8 kr") })
+        assertTrue(HouseEarn.notes(text(), day, emptySet(), day.money).any { it.startsWith("På batteriet skulle SpotNav ha sparat 4,75 kr") })
     }
 
     @Test fun theNotesSayWhatEachFigureCounts() {
@@ -143,7 +143,7 @@ class HouseEarnTest {
         assertFalse(HouseEarn.notes(text(), month, setOf("car"), month.money).joinToString(" ").contains("Bilens"))
         val day = history("villa_day.json").let { it.copy(saving = it.saving!!.copy(heat = 60.0, heatDays = 1, total = 360.0)) }
         assertEquals(
-            "På batteriet skulle SpotNav ha sparat 4,8 kr den här dagen. Bilens besparing ligger på timmen då laddningen startade. " +
+            "På batteriet skulle SpotNav ha sparat 4,75 kr den här dagen. Bilens besparing ligger på timmen då laddningen startade. " +
                 "Värmens besparing är en uppskattning för hela dagen och ritas inte per timme.",
             HouseEarn.notes(text(), day, emptySet(), day.money).joinToString(" ")
         )

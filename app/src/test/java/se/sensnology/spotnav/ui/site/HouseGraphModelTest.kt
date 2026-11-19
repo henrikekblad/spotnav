@@ -74,10 +74,10 @@ class HouseGraphModelTest {
         val month = history("villa_month.json")
         val bucket = month.buckets.first { it.key == "2026-11-16" }
         val said = HouseGraph.flowWords(text(), bucket.batteryFlow!!, month.money)!!
-        // 5 kWh given back, worth 15 kr, minus 11 kr it cost, = 3,8 kr; and what was charged.
+        // 5 kWh given back, worth 15 kr, minus 11 kr it cost, = 3,75 kr; and what was charged.
         assertTrue(said, said.startsWith("urladdat 5,0 kWh, värt 15 kr, minus 11 kr"))
-        assertTrue(said, said.contains("= 3,8 kr"))
-        assertTrue(said, said.contains("laddade 2,5 kWh för 2,0 kr"))
+        assertTrue(said, said.contains("= 3,75 kr"))
+        assertTrue(said, said.contains("laddade 2,5 kWh för 2,00 kr"))
         assertNull(HouseGraph.flowWords(text(), HouseHistory.BatteryFlow(0.0, 0.0, 0.0, 0.0, 0.0), month.money))
     }
 
