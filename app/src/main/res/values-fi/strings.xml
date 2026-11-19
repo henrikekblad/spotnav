@@ -1299,6 +1299,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Astetta viileämpää</string>
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Vastaa Home Assistantissa: lämpökortin asetuksissa, ylläpitäjänä.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Tuotto {amount}</string>
   <string name="card_house_earn_none" formatted="false">Tältä jaksolta ei ole vielä säästöä näytettäväksi.</string>
@@ -1461,4 +1462,46 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} astepäivää</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Valittu</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready integraation kautta (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Aktivointi</string>
+  <string name="card_heat_settings_untested" formatted="false">Tätä ohjaustapaa ei ole vielä kokeiltu oikealla lämpöpumpulla. Seuraa ensimmäisiä päiviä.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Käyrän siirtoa ei ole palautettu</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (oli {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Lämpökäyrän siirto on {value}; se oli {home} ennen SpotNavia. Palautetaanko se, vai pidetäänkö {value} omana arvonasi?</string>
+  <string name="card_heat_control_off" formatted="false">Pois: SpotNav näyttää vain, mitä se tekisi.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Kokeillaan, reagoiko lämpöpumppu releeseen: odotetaan hetkeä, jolloin se lämmittää.</string>
+  <string name="card_heat_control_verifying" formatted="false">Kokeillaan nyt, reagoiko lämpöpumppu releeseen.</string>
+  <string name="card_heat_control_lowered" formatted="false">Ohjaa: laskee lämmitystä {until} asti.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Ohjaa: laskee lämmitystä {until} asti, sisällä liian lämmin.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Ohjaa: laskee lämmitystä nyt.</string>
+  <string name="card_heat_control_raised" formatted="false">Ohjaa: nostaa lämpöä klo {until} asti.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Ohjaa: nostaa lämpöä nyt.</string>
+  <string name="card_heat_control_normal" formatted="false">Ohjaa: lämpöpumppu käy juuri nyt tavallisella käyrällään.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Ohjaa: ulkona liian kylmä laskemiseen.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Ohjaa: huone on alueen alapuolella, ei laskua.</string>
+  <string name="card_heat_control_stale" formatted="false">Ohjaa: odottaa tuoreita lukemia, ei laskua.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Ohjaa: SG Readyn toinen kosketin on päällä, ei laskua.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Ohjaa: lisälämmin vesi on päällä, ei laskua.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Ohjaa: käyttövesi on viileää, ei laskua.</string>
+  <string name="card_heat_control_waiting" formatted="false">Odottaa.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Odottaa: poista automaatio \'{name}\' käytöstä, jotta SpotNav voi ohjata lämmitystä.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Odottaa: toinen lämmönohjaus ohjaa lämpöpumppua.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Odottaa: lämpöpumpun oma hintaohjaus on päällä.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Odottaa: relettä ei voi lukea.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Odottaa: joku muu on sulkenut releen.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Odottaa: valitse rele kohdassa Ohjaus.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Odottaa: valitse lämpöpumpun mittari, jotta SpotNav näkee releen toimivan.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">Lämpöpumppu ei reagoinut releeseen. Tarkista kytkentä ja kytke uudelleen päälle.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Odottaa: joku muu muutti relettä. SpotNav ohjaa taas huomenna.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Odottaa: rele ei vastannut. SpotNav yrittää uudelleen huomenna.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Kokeillaan, reagoiko lämpöpumppu: odotetaan hetkeä, jolloin se lämmittää.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Kokeillaan nyt, reagoiko lämpöpumppu.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Odottaa: lämpöpumpun asetusta ei voi lukea.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Odottaa: joku muu on jo laskenut tai nostanut lämmitystä.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Odottaa: valitse kohdassa Ohjaus, mitä SpotNav ohjaa.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Odottaa: valitse lämpöpumpun mittari, jotta SpotNav näkee ohjauksen toimivan.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">Lämpöpumppu ei reagoinut. Tarkista asetus ja kytke uudelleen päälle.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Odottaa: joku muu muutti asetusta. SpotNav ohjaa taas huomenna.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Odottaa: lämpöpumppu ei vastannut. SpotNav yrittää uudelleen huomenna.</string>
 </resources>

@@ -25,6 +25,33 @@ class HeatSettingsTest {
         assertFalse(plain.controlEnabled)
     }
 
+    @Test fun theControlsStatusIsRead() {
+        val villa = villa
+        val control = villa.control!!
+        assertEquals("running", control.state)
+        assertTrue(control.lowered)
+        assertEquals(java.time.Instant.parse("2026-11-16T18:00:00Z"), control.until)
+        assertEquals("dear_hour", villa.wouldReason)
+        assertEquals("Europe/Stockholm", villa.zone!!.id)
+        val api = read("heat_card/sg_api_pump.json")
+        assertEquals("sg_ready_api", api.controlPath)
+        assertTrue(api.control!!.untested)
+        assertEquals(null, api.control!!.offsetHome)
+        // The stored offset not put back, as the integration states it.
+        val json = HaFixtures.json("heat_card/sg_api_pump.json")
+        json.getJSONObject("control").put("offset_home", JSONObject().put("entity_id", "number.offset").put("value", -2).put("home", 0))
+        val shown = (HeatSettingsRead.decode(json) as SiteRead.Read).value
+        assertEquals(HeatControlStatus.OffsetHome("number.offset", -2.0, 0.0), shown.control!!.offsetHome)
+        // An older Home Assistant without the newer keys still reads; a mistyped one is no document.
+        json.getJSONObject("control").remove("offset_home")
+        json.getJSONObject("control").remove("untested")
+        assertEquals(false, (HeatSettingsRead.decode(json) as SiteRead.Read).value.control!!.untested)
+        json.getJSONObject("control").put("untested", "yes")
+        assertTrue(HeatSettingsRead.decode(json) is SiteRead.Failed)
+        json.remove("control")
+        assertEquals(null, (HeatSettingsRead.decode(json) as SiteRead.Read).value.control)
+    }
+
     @Test fun aVillaWithZonesOffsetsAndAMeter() {
         val villa = villa
         assertTrue(villa.controlEnabled)

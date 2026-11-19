@@ -1307,6 +1307,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grados menos</string>
   <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
   <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Responde en Home Assistant: en los ajustes de la tarjeta de calor, como administrador.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Ingresos {amount}</string>
   <string name="card_house_earn_none" formatted="false">Aún no hay ahorro que mostrar para este periodo.</string>
@@ -1469,4 +1470,46 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} grados-día</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Elegido</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready mediante la integración (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activación</string>
+  <string name="card_heat_settings_untested" formatted="false">Esta forma de controlar aún no se ha probado en una bomba de calor real. Vigila los primeros días.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Desplazamiento de curva sin restablecer</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (era {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">El desplazamiento de la curva de calefacción está en {value}; era {home} antes de SpotNav. ¿Restablecerlo, o mantener {value} como tu propio valor?</string>
+  <string name="card_heat_control_off" formatted="false">Apagado: SpotNav solo muestra lo que haría.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Comprobando que la bomba de calor responde al relé: espera un momento en que caliente.</string>
+  <string name="card_heat_control_verifying" formatted="false">Comprobando ahora que la bomba de calor responde al relé.</string>
+  <string name="card_heat_control_lowered" formatted="false">Controla: baja la calefacción hasta las {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Controla: baja la calefacción hasta las {until}, demasiado calor dentro.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Controla: baja la calefacción ahora.</string>
+  <string name="card_heat_control_raised" formatted="false">Controlando: sube la calefacción hasta las {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Controlando: sube la calefacción ahora.</string>
+  <string name="card_heat_control_normal" formatted="false">Controla: la bomba de calor sigue ahora su curva normal.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Controla: hace demasiado frío fuera para bajar.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Controla: una habitación está por debajo de la banda, sin bajar.</string>
+  <string name="card_heat_control_stale" formatted="false">Controla: espera lecturas recientes, sin bajar.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Controla: el segundo contacto SG Ready está activo, sin bajar.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Controla: agua caliente extra activada, sin bajar.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Controla: el agua caliente está tibia, sin bajar.</string>
+  <string name="card_heat_control_waiting" formatted="false">Esperando.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Esperando: desactiva la automatización \'{name}\' para que SpotNav pueda controlar la calefacción.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Esperando: otro control de calefacción gobierna la bomba de calor.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Esperando: el control por precio propio de la bomba de calor está activo.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Esperando: no se puede leer el relé.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Esperando: otra persona ha cerrado el relé.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Esperando: elige el relé en Control.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Esperando: elige el contador de la bomba de calor para que SpotNav vea que el relé funciona.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">La bomba de calor no respondió al relé. Revisa el cableado y vuelve a activarlo.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Esperando: otra persona cambió el relé. SpotNav vuelve a controlar mañana.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Esperando: el relé no respondió. SpotNav lo intenta de nuevo mañana.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Comprobando que la bomba de calor responde: espera un momento en que caliente.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Comprobando ahora que la bomba de calor responde.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Esperando: no se puede leer el ajuste de la bomba de calor.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Esperando: otra persona ya ha bajado o subido la calefacción.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Esperando: elige en Control qué debe controlar SpotNav.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Esperando: elige el contador de la bomba de calor para que SpotNav vea que el control funciona.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">La bomba de calor no respondió. Revisa el ajuste y vuelve a activarlo.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Esperando: otra persona cambió el ajuste. SpotNav vuelve a controlar mañana.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Esperando: la bomba de calor no respondió. SpotNav lo intenta de nuevo mañana.</string>
 </resources>

@@ -43,10 +43,13 @@ internal object HeatNowModel {
     /** SpotNav's own heat control runs (else the page says Test). */
     fun controls(heat: Heat): Boolean = heat.control?.let { it.enabled && it.state == "running" } == true
 
-    private fun moment(text: SiteText, heat: Heat, at: Instant): String {
-        val clock = text.clock(at, heat.zone)
-        val day = at.atZone(heat.zone).toLocalDate()
-        return if (day == heat.now.atZone(heat.zone).toLocalDate()) clock else "${DAY.withLocale(text.locale).format(at.atZone(heat.zone))} $clock"
+    private fun moment(text: SiteText, heat: Heat, at: Instant): String = moment(text, heat.now, heat.zone, at)
+
+    /** A time as the card's `whenLabel` says it: the clock on [now]'s day, the day before it otherwise. */
+    fun moment(text: SiteText, now: Instant, zone: java.time.ZoneId, at: Instant): String {
+        val clock = text.clock(at, zone)
+        val day = at.atZone(zone).toLocalDate()
+        return if (day == now.atZone(zone).toLocalDate()) clock else "${DAY.withLocale(text.locale).format(at.atZone(zone))} $clock"
     }
 
     /**

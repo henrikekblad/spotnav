@@ -3,8 +3,12 @@ package se.sensnology.spotnav.ui.settings
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
+import se.sensnology.spotnav.ha.site.HeatSettings
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.CardWords
+import se.sensnology.spotnav.ui.site.HeatNowModel
+import se.sensnology.spotnav.ui.site.SiteText
+import java.time.Instant
 import java.util.Locale
 
 /**
@@ -101,6 +105,65 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
 
     fun pathName(path: String): String = if (path in PATHS) words.say("heat.path.$path") else path
 
+    /** Whether "Styr värmen" has a row: on the paths SpotNav can steer, or while it is on. */
+    fun steers(settings: HeatSettings): Boolean = settings.controlPath in STEERED_PATHS || settings.controlEnabled
+
+    /** The label of the second entity's row: SG Ready's B contact, or the API's activation switch; `null`: no row. */
+    fun secondEntityLabel(path: String): String? = when (path) {
+        "sg_ready" -> words.say("heat.settings.controlB")
+        "sg_ready_api" -> words.say("heat.settings.controlApiSwitch")
+        else -> null
+    }
+
+    /** An offset as the card writes it: "0", "+1", "−2", "+1,5". */
+    fun offsetValue(value: Double): String {
+        if (value == 0.0) return "0"
+        val whole = value == Math.floor(value)
+        return "${if (value > 0) "+" else "−"}${fixed(Math.abs(value), if (whole) 0 else 1)}"
+    }
+
+    /** The stored offset's row value: "−2 (var 0)". */
+    fun offsetHomeValue(home: se.sensnology.spotnav.ha.site.HeatControlStatus.OffsetHome): String =
+        words.say("heat.settings.offsetHomeValue", "value" to offsetValue(home.value), "home" to offsetValue(home.home))
+
+    /** The stored offset's question, as the card's editor asks it. */
+    fun offsetHomeHelp(home: se.sensnology.spotnav.ha.site.HeatControlStatus.OffsetHome): String =
+        words.say("heat.settings.offsetHomeHelp", "value" to offsetValue(home.value), "home" to offsetValue(home.home))
+
+    /**
+     * The line under "Styr värmen" (the card's `controlLine`): off, checking that the pump answers, controlling
+     * (lowered or raised until when, or the pump's normal curve and why), or what it waits for. The relay's words name
+     * the relay; the paths through the pump's own settings have their own. `null` without the control's status.
+     */
+    fun controlLine(settings: HeatSettings): String? {
+        val control = settings.control ?: return null
+        if (!control.enabled || control.state == "off") return words.say("heat.control.off")
+        val own = if (settings.controlPath in RELAY_WORD_PATHS) "heat.control" else "heat.control.path"
+        val reason = control.reason ?: ""
+        return when (control.state) {
+            "verifying" -> words.say("$own.${if (reason == "wait") "verifyingWait" else "verifying"}")
+            "running" -> when {
+                control.raised -> control.raiseUntil?.let { words.say("heat.control.raised", "until" to moment(settings, it)) }
+                    ?: words.say("heat.control.raisedNow")
+                control.lowered -> control.until?.let {
+                    words.say(if (settings.wouldReason == "room_warm") "heat.control.loweredWarm" else "heat.control.lowered", "until" to moment(settings, it))
+                } ?: words.say("heat.control.loweredNow")
+                reason in CONTROL_SAFETY -> words.say("heat.control.$reason")
+                else -> words.say("heat.control.normal")
+            }
+            else -> when {
+                reason !in CONTROL_WAITS -> words.say("heat.control.waiting")
+                else -> words.say("${if (reason in PATH_WAITS) own else "heat.control"}.wait.$reason", "name" to (control.automationName ?: ""))
+            }
+        }
+    }
+
+    /** A time the line names: the clock today, the day before it otherwise ("fre 20 nov 16:00"). */
+    private fun moment(settings: HeatSettings, at: Instant): String {
+        val zone = settings.zone ?: java.time.ZoneId.systemDefault()
+        return HeatNowModel.moment(SiteText(words, locale), settings.now ?: Instant.now(), zone, at)
+    }
+
     fun fixed(value: Double, decimals: Int): String = String.format(locale, "%.${decimals}f", value)
 
     /** The sensor's name as a room: the word for temperature at its end left out ("Ovanvåning temperatur" is "Ovanvåning"). */
@@ -173,6 +236,17 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
             "discharge_house" to "battery.mode.dischargeHouse",
             "normal" to "battery.mode.normal"
         )
-        val PATHS = setOf("none", "relay", "sg_ready", "offset", "setpoint")
+        val PATHS = setOf("none", "relay", "sg_ready", "sg_ready_api", "offset", "setpoint")
+        /** The paths SpotNav steers itself: "Styr värmen" has a row on them. */
+        val STEERED_PATHS = setOf("relay", "sg_ready", "sg_ready_api", "offset")
+        /** The paths whose control line names the relay (the card's `isRelayPath`). */
+        val RELAY_WORD_PATHS = setOf("none", "relay", "sg_ready")
+        val CONTROL_WAITS = setOf(
+            "automation", "other_controller", "pump_price_control", "relay_unavailable", "relay_closed", "no_relay", "no_signal",
+            "check_failed", "foreign_change", "no_read_back"
+        )
+        val CONTROL_SAFETY = setOf("too_cold", "room_cold", "stale", "sg_ready_b", "hot_water", "hot_water_low")
+        /** The waits whose words name the relay: the other paths have their own (`heat.control.path.wait.*`). */
+        val PATH_WAITS = setOf("relay_unavailable", "relay_closed", "no_relay", "no_signal", "check_failed", "foreign_change", "no_read_back")
     }
 }

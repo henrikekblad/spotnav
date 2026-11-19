@@ -1299,6 +1299,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Graden koeler</string>
   <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
   <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Antwoord in Home Assistant: in de instellingen van de warmtekaart, als beheerder.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Opbrengst {amount}</string>
   <string name="card_house_earn_none" formatted="false">Nog geen besparing om te tonen voor deze periode.</string>
@@ -1461,4 +1462,46 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graaddagen</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Gekozen</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready via de integratie (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activering</string>
+  <string name="card_heat_settings_untested" formatted="false">Deze manier van sturen is nog niet op een echte warmtepomp geprobeerd. Houd de eerste dagen in de gaten.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Stooklijnverschuiving niet teruggezet</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (was {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">De stooklijnverschuiving staat op {value}; vóór SpotNav was die {home}. Terugzetten, of {value} houden als je eigen waarde?</string>
+  <string name="card_heat_control_off" formatted="false">Uit: SpotNav laat alleen zien wat het zou doen.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Controleert of de warmtepomp op het relais reageert: wacht op een moment dat hij verwarmt.</string>
+  <string name="card_heat_control_verifying" formatted="false">Controleert nu of de warmtepomp op het relais reageert.</string>
+  <string name="card_heat_control_lowered" formatted="false">Stuurt: verlaagt de verwarming tot {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Stuurt: verlaagt de verwarming tot {until}, binnen te warm.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Stuurt: verlaagt de verwarming nu.</string>
+  <string name="card_heat_control_raised" formatted="false">Stuurt: verhoogt de verwarming tot {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Stuurt: verhoogt de verwarming nu.</string>
+  <string name="card_heat_control_normal" formatted="false">Stuurt: de warmtepomp draait nu op zijn normale stooklijn.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Stuurt: te koud buiten om te verlagen.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Stuurt: een kamer zit onder de band, geen verlaging.</string>
+  <string name="card_heat_control_stale" formatted="false">Stuurt: wacht op verse waarden, geen verlaging.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Stuurt: het tweede SG Ready-contact staat aan, geen verlaging.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Stuurt: extra warm water staat aan, geen verlaging.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Stuurt: het warme water is koel, geen verlaging.</string>
+  <string name="card_heat_control_waiting" formatted="false">Wacht.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Wacht: zet de automatisering \'{name}\' uit zodat SpotNav de verwarming kan sturen.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Wacht: een andere verwarmingssturing stuurt de warmtepomp.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Wacht: de eigen prijssturing van de warmtepomp staat aan.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Wacht: het relais is niet te lezen.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Wacht: iemand anders heeft het relais gesloten.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Wacht: kies het relais onder Sturing.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Wacht: kies de meter van de warmtepomp zodat SpotNav kan zien dat het relais werkt.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">De warmtepomp reageerde niet op het relais. Controleer de bedrading en zet het weer aan.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Wacht: iemand anders veranderde het relais. SpotNav stuurt morgen weer.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Wacht: het relais reageerde niet. SpotNav probeert het morgen opnieuw.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Controleert of de warmtepomp reageert: wacht op een moment dat hij verwarmt.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Controleert nu of de warmtepomp reageert.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Wacht: de instelling van de warmtepomp is niet te lezen.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Wacht: iemand anders heeft de verwarming al verlaagd of verhoogd.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Wacht: kies onder Sturing wat SpotNav moet sturen.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Wacht: kies de meter van de warmtepomp zodat SpotNav kan zien dat de sturing werkt.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">De warmtepomp reageerde niet. Controleer de instelling en zet het weer aan.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Wacht: iemand anders veranderde de instelling. SpotNav stuurt morgen weer.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Wacht: de warmtepomp reageerde niet. SpotNav probeert het morgen opnieuw.</string>
 </resources>

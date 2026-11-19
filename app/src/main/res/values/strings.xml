@@ -1312,6 +1312,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Degrees colder</string>
   <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
   <string name="site_settings_heat_failed">The heat settings could not be read.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Answer in Home Assistant: the heat card\'s settings, as an administrator.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Earned {amount}</string>
   <string name="card_house_earn_none" formatted="false">Nothing saved to show for this period yet.</string>
@@ -1474,4 +1475,46 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} degree-days</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Chosen</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready through the integration (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activation</string>
+  <string name="card_heat_settings_untested" formatted="false">This way of controlling has not been tried on a real heat pump yet. Keep an eye on the first days.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Offset not put back</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (was {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">The heating curve offset reads {value}; it was {home} before SpotNav. Put it back, or keep {value} as your own value?</string>
+  <string name="card_heat_control_off" formatted="false">Off: SpotNav only shows what it would do.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Checking that the heat pump answers the relay: waiting for a moment when it heats.</string>
+  <string name="card_heat_control_verifying" formatted="false">Checking now that the heat pump answers the relay.</string>
+  <string name="card_heat_control_lowered" formatted="false">Controlling: lowering the heat until {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Controlling: lowering the heat until {until}, too warm indoors.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Controlling: lowering the heat now.</string>
+  <string name="card_heat_control_raised" formatted="false">Controlling: raising the heat until {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Controlling: raising the heat now.</string>
+  <string name="card_heat_control_normal" formatted="false">Controlling: the heat pump runs on its normal curve right now.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Controlling: too cold outside to lower.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Controlling: a room is below the band, no lowering.</string>
+  <string name="card_heat_control_stale" formatted="false">Controlling: waiting for fresh readings, no lowering.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Controlling: SG Ready\'s second contact is on, no lowering.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Controlling: extra hot water is on, no lowering.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Controlling: the hot water is cool, no lowering.</string>
+  <string name="card_heat_control_waiting" formatted="false">Waiting.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Waiting: turn off the automation \'{name}\' so SpotNav can control the heating.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Waiting: another heat controller steers the heat pump.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Waiting: the heat pump\'s own price control is on.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Waiting: the relay cannot be read.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Waiting: someone else has closed the relay.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Waiting: choose the relay under Control.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Waiting: choose the heat pump\'s meter so SpotNav can see that the relay works.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">The heat pump did not answer the relay. Check the wiring and turn it on again.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Waiting: someone else changed the relay. SpotNav controls again tomorrow.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Waiting: the relay did not respond. SpotNav tries again tomorrow.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Checking that the heat pump answers: waiting for a moment when it heats.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Checking now that the heat pump answers.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Waiting: the heat pump\'s setting cannot be read.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Waiting: someone else has already lowered or raised the heat.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Waiting: choose what SpotNav should control under Control.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Waiting: choose the heat pump\'s meter so that SpotNav can see that the control works.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">The heat pump did not answer. Check the setting and turn on again.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Waiting: someone else changed the setting. SpotNav controls again tomorrow.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Waiting: the heat pump did not answer. SpotNav tries again tomorrow.</string>
 </resources>

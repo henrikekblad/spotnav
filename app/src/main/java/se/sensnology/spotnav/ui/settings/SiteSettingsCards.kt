@@ -169,9 +169,21 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         val none = words.say("heat.settings.none")
         val body = card.body
-        // "Styr värmen": the opt-in is Home Assistant's alone, so it is read here.
-        if (settings.controlPath == "relay" || settings.controlPath == "sg_ready" || settings.controlEnabled) {
-            settingRow(body, words.say("heat.settings.steer"), words.say(if (settings.controlEnabled) "settings.value.on" else "settings.value.off"))
+        // "Styr värmen": the opt-in is Home Assistant's alone, so it is read here, with the one line on what it does.
+        if (text.steers(settings)) {
+            settingRow(
+                body, words.say("heat.settings.steer"), words.say(if (settings.controlEnabled) "settings.value.on" else "settings.value.off"),
+                text.controlLine(settings)
+            )
+            // A path that has not run on a real heat pump yet says so, on or off.
+            if (settings.control?.untested == true) body.addView(muted(words.say("heat.settings.untested"), bottom = 4))
+            // A stored offset that was not put back: put back or kept by an administrator in Home Assistant only.
+            settings.control?.offsetHome?.let { home ->
+                settingRow(
+                    body, words.say("heat.settings.offsetHome"), text.offsetHomeValue(home),
+                    "${text.offsetHomeHelp(home)} ${t(R.string.site_settings_offset_home_in_home_assistant)}"
+                )
+            }
         }
         val sensors = settings.indoorSensors
         settingRow(
@@ -200,7 +212,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         )
         settingRow(body, words.say("heat.settings.path"), text.pathName(settings.controlPath))
         if (settings.controlPath != "none") settingRow(body, words.say("heat.settings.control"), settings.controlEntity?.let { named(settings, it) } ?: none)
-        if (settings.controlPath == "sg_ready") settingRow(body, words.say("heat.settings.controlB"), settings.controlEntityB?.let { named(settings, it) } ?: none)
+        text.secondEntityLabel(settings.controlPath)?.let { label -> settingRow(body, label, settings.controlEntityB?.let { named(settings, it) } ?: none) }
         settingRow(body, words.say("heat.settings.hotWater"), settings.hotWaterEntity?.let { named(settings, it) } ?: none)
         settingRow(
             body, words.say("heat.settings.zones"),
