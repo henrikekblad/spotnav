@@ -4,6 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatBoostWrite
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatHistoryRead
 import se.sensnology.spotnav.ha.heat.HeatRead
@@ -395,6 +396,12 @@ object HomeAssistantClient {
     internal fun updateHeat(settings: HomeAssistantSettings, request: HeatWrite.Request): HeatWrite.Outcome {
         val (status, body) = write(settings, request.payload())
         return HeatWrite.answer(status, body)
+    }
+
+    /** The Boost button's "start" or "stop" (webhook `heat_boost`); 429 and 409 carry the refusal's envelope. Never throws. */
+    internal fun heatBoost(settings: HomeAssistantSettings, action: String): HeatBoostWrite.Outcome {
+        val (status, body) = write(settings, HeatBoostWrite.payload(action))
+        return HeatBoostWrite.answer(status, body)
     }
 
     /** The site's battery control status (webhook `battery_control`); with [mode] it writes the battery mode first. Never throws. */

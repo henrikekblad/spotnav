@@ -1299,6 +1299,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grad kühler</string>
   <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
   <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Antworte in Home Assistant: in den Einstellungen der Wärmekarte, als Administrator.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Ertrag {amount}</string>
   <string name="card_house_earn_none" formatted="false">Für diesen Zeitraum gibt es noch keine Ersparnis.</string>
@@ -1461,4 +1462,92 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} Gradtage</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Gewählt</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready über die Integration (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Aktivierung</string>
+  <string name="card_heat_settings_untested" formatted="false">Diese Art der Steuerung wurde noch nicht an einer echten Wärmepumpe erprobt. Behalte die ersten Tage im Auge.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Kurvenverschiebung nicht zurückgesetzt</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (war {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Die Heizkurvenverschiebung steht auf {value}; vor SpotNav war sie {home}. Zurücksetzen, oder {value} als deinen eigenen Wert behalten?</string>
+  <string name="card_heat_control_off" formatted="false">Aus: SpotNav zeigt nur, was es tun würde.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Prüft, ob die Wärmepumpe auf das Relais reagiert: wartet auf einen Moment, in dem sie heizt.</string>
+  <string name="card_heat_control_verifying" formatted="false">Prüft jetzt, ob die Wärmepumpe auf das Relais reagiert.</string>
+  <string name="card_heat_control_lowered" formatted="false">Steuert: senkt die Heizung bis {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Steuert: senkt die Heizung bis {until}, drinnen zu warm.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Steuert: senkt die Heizung jetzt.</string>
+  <string name="card_heat_control_raised" formatted="false">Steuert: hebt die Heizung bis {until} an.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Steuert: hebt die Heizung jetzt an.</string>
+  <string name="card_heat_control_normal" formatted="false">Steuert: die Wärmepumpe läuft gerade auf ihrer normalen Kurve.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Steuert: draußen zu kalt zum Absenken.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Steuert: ein Raum liegt unter dem Band, keine Absenkung.</string>
+  <string name="card_heat_control_stale" formatted="false">Steuert: wartet auf frische Werte, keine Absenkung.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Steuert: der zweite SG-Ready-Kontakt ist an, keine Absenkung.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Steuert: Extra-Warmwasser läuft, keine Absenkung.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Steuert: das Warmwasser ist kühl, keine Absenkung.</string>
+  <string name="card_heat_control_waiting" formatted="false">Wartet.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Wartet: schalte die Automatisierung \'{name}\' aus, damit SpotNav die Heizung steuern kann.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Wartet: eine andere Heizungssteuerung steuert die Wärmepumpe.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Wartet: die eigene Preissteuerung der Wärmepumpe ist an.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Wartet: das Relais lässt sich nicht lesen.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Wartet: jemand anderes hat das Relais geschlossen.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Wartet: wähle das Relais unter Steuerung.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Wartet: wähle den Zähler der Wärmepumpe, damit SpotNav sieht, dass das Relais wirkt.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">Die Wärmepumpe hat nicht auf das Relais reagiert. Prüfe die Verdrahtung und schalte wieder ein.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Wartet: jemand anderes hat das Relais geändert. SpotNav steuert morgen wieder.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Wartet: das Relais hat nicht reagiert. SpotNav versucht es morgen wieder.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Prüft, ob die Wärmepumpe reagiert: wartet auf einen Moment, in dem sie heizt.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Prüft jetzt, ob die Wärmepumpe reagiert.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Wartet: die Einstellung der Wärmepumpe lässt sich nicht lesen.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Wartet: jemand anderes hat die Heizung bereits gesenkt oder angehoben.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Wartet: wähle unter Steuerung, was SpotNav steuern soll.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Wartet: wähle den Zähler der Wärmepumpe, damit SpotNav sieht, dass die Steuerung wirkt.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">Die Wärmepumpe hat nicht reagiert. Prüfe die Einstellung und schalte wieder ein.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Wartet: jemand anderes hat die Einstellung geändert. SpotNav steuert morgen wieder.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Wartet: die Wärmepumpe hat nicht reagiert. SpotNav versucht es morgen wieder.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Warmwasser jetzt</string>
+  <string name="card_heat_boost_starting" formatted="false">Startet…</string>
+  <string name="card_heat_boost_left" formatted="false">Warmwasser · noch etwa {minutes} min</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Warmwasser · noch {minutes} min</string>
+  <string name="card_heat_boost_on" formatted="false">Warmwasser · läuft</string>
+  <string name="card_heat_boost_heating" formatted="false">Bereitet Warmwasser · noch etwa {minutes} min</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Bereitet Warmwasser</string>
+  <string name="card_heat_boost_stop" formatted="false">Abbrechen</string>
+  <string name="card_heat_boost_failed" formatted="false">Warmwasser konnte nicht gestartet werden</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Warmwasser wurde gerade gestartet; in ein paar Minuten erneut versuchen</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Die Hauptsicherung ist gerade voll belastet; etwas ausschalten und erneut versuchen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Warmwasser {from}–{to} · {price}/kWh · fertig bis {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Würde Warmwasser bereiten {from}–{to} · {price}/kWh · fertig bis {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Hätte Warmwasser um {time} bereitet</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">die Pumpe lief selbst um {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">mit Solarstrom</string>
+  <string name="card_heat_chart_peak" formatted="false">Dusche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">Sperre vor der Dusche {time} verkürzt</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">würde die Sperre vor der Dusche {time} verkürzen</string>
+  <string name="card_heat_chart_cut_day" formatted="false">Sperre verkürzt, damit das Warmwasser nachheizen kann</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">würde die Sperre verkürzen, damit das Warmwasser nachheizen kann</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">Sperre verkürzt für die periodische Warmwassererhöhung</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">würde die Sperre für die periodische Warmwassererhöhung verkürzen</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">Sperre fürs Warmwasser verschoben</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">würde die Sperre fürs Warmwasser verschieben</string>
+  <string name="card_heat_water_review" formatted="false">Warmwasser gestern: {kwh} verschoben · {value} gespart</string>
+  <string name="card_heat_water_review_none" formatted="false">Warmwasser gestern: nichts zu verschieben</string>
+  <string name="card_heat_water_shadow" formatted="false">(Schattenbetrieb)</string>
+  <string name="card_heat_water_peaks" formatted="false">Spitzen: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} getroffen</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} keine Entnahme</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} nach dem Boost nachgeheizt</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} nach einer Sperre spät nachgeheizt</string>
+  <string name="card_heat_water_gate" formatted="false">Warmwasser im Schattenbetrieb: Tag {days} von {needed}, {hits} von {peaks} Spitzen getroffen</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} von 7 Wochentagen</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Warmwasser: bereit zur Steuerung mit „Heizung steuern“</string>
+  <string name="card_heat_water_live" formatted="false">Warmwasser wird von SpotNav gesteuert</string>
+  <string name="card_heat_water_backed_off" formatted="false">Warmwasser nach zu vielem Nachheizen wieder im Schattenbetrieb</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Sperren mit Rücksicht aufs Warmwasser im Schattenbetrieb: Tag {days} von {needed}, {hits} von {peaks} Spitzen getroffen</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Sperren mit Rücksicht aufs Warmwasser: bereit für „Heizung steuern“</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav hält seine Sperren vom Warmwasser fern</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Sperren halten nach zu vielem spätem Nachheizen mehr Abstand zum Warmwasser</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Sperren gestern: {hours} h fürs Warmwasser verkürzt · {risks}-mal spät nachgeheizt vor einer Spitze</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Sperren gestern: {hours} h wären fürs Warmwasser verkürzt worden · {risks}-mal spät nachgeheizt vor einer Spitze</string>
 </resources>

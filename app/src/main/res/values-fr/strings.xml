@@ -1307,6 +1307,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Degrés en moins</string>
   <string name="site_settings_in_home_assistant">L\'activation du pilotage et le choix des capteurs, du compteur et du mode de pilotage se modifient dans Home Assistant.</string>
   <string name="site_settings_heat_failed">Les réglages du chauffage n\'ont pas pu être lus.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Répondez dans Home Assistant : dans les réglages de la carte chauffage, en administrateur.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Gains {amount}</string>
   <string name="card_house_earn_none" formatted="false">Aucune économie à afficher pour cette période pour l\'instant.</string>
@@ -1469,4 +1470,92 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} degrés-jours</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Choisi</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready par l\'intégration (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activation</string>
+  <string name="card_heat_settings_untested" formatted="false">Cette façon de piloter n\'a pas encore été essayée sur une vraie pompe à chaleur. Surveillez les premiers jours.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Décalage de courbe non remis</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (était {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Le décalage de la courbe de chauffe est à {value} ; il était à {home} avant SpotNav. Le remettre, ou garder {value} comme votre propre valeur ?</string>
+  <string name="card_heat_control_off" formatted="false">Désactivé : SpotNav montre seulement ce qu\'il ferait.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Vérifie que la pompe à chaleur répond au relais : attend un moment où elle chauffe.</string>
+  <string name="card_heat_control_verifying" formatted="false">Vérifie maintenant que la pompe à chaleur répond au relais.</string>
+  <string name="card_heat_control_lowered" formatted="false">Pilote : abaisse le chauffage jusqu\'à {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Pilote : abaisse le chauffage jusqu\'à {until}, trop chaud à l\'intérieur.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Pilote : abaisse le chauffage maintenant.</string>
+  <string name="card_heat_control_raised" formatted="false">Pilote : augmente le chauffage jusqu\'à {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Pilote : augmente le chauffage maintenant.</string>
+  <string name="card_heat_control_normal" formatted="false">Pilote : la pompe à chaleur suit sa courbe normale en ce moment.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Pilote : trop froid dehors pour abaisser.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Pilote : une pièce est sous la plage, pas d\'abaissement.</string>
+  <string name="card_heat_control_stale" formatted="false">Pilote : attend des valeurs récentes, pas d\'abaissement.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Pilote : le second contact SG Ready est actif, pas d\'abaissement.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Pilote : eau chaude supplémentaire en cours, pas d\'abaissement.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Pilote : l\'eau chaude est tiède, pas d\'abaissement.</string>
+  <string name="card_heat_control_waiting" formatted="false">En attente.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">En attente : désactivez l\'automatisation \'{name}\' pour que SpotNav puisse piloter le chauffage.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">En attente : un autre pilotage du chauffage commande la pompe à chaleur.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">En attente : le pilotage par prix propre à la pompe à chaleur est actif.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">En attente : le relais ne peut pas être lu.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">En attente : quelqu\'un d\'autre a fermé le relais.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">En attente : choisissez le relais sous Pilotage.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">En attente : choisissez le compteur de la pompe à chaleur pour que SpotNav voie que le relais agit.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">La pompe à chaleur n\'a pas répondu au relais. Vérifiez le câblage et réactivez.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">En attente : quelqu\'un d\'autre a changé le relais. SpotNav reprend demain.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">En attente : le relais n\'a pas répondu. SpotNav réessaie demain.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Vérifie que la pompe à chaleur répond : attend un moment où elle chauffe.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Vérifie maintenant que la pompe à chaleur répond.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">En attente : le réglage de la pompe à chaleur ne peut pas être lu.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">En attente : quelqu\'un d\'autre a déjà baissé ou augmenté le chauffage.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">En attente : choisissez sous Pilotage ce que SpotNav doit piloter.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">En attente : choisissez le compteur de la pompe à chaleur pour que SpotNav voie que le pilotage agit.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">La pompe à chaleur n\'a pas répondu. Vérifiez le réglage et réactivez.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">En attente : quelqu\'un d\'autre a changé le réglage. SpotNav reprend demain.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">En attente : la pompe à chaleur n\'a pas répondu. SpotNav réessaie demain.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Eau chaude maintenant</string>
+  <string name="card_heat_boost_starting" formatted="false">Démarrage…</string>
+  <string name="card_heat_boost_left" formatted="false">Eau chaude · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Eau chaude · {minutes} min restantes</string>
+  <string name="card_heat_boost_on" formatted="false">Eau chaude · en cours</string>
+  <string name="card_heat_boost_heating" formatted="false">Chauffe l’eau · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Chauffe l’eau</string>
+  <string name="card_heat_boost_stop" formatted="false">Annuler</string>
+  <string name="card_heat_boost_failed" formatted="false">Impossible de lancer l’eau chaude</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">L’eau chaude vient d’être lancée ; réessayez dans quelques minutes</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Le disjoncteur principal est à pleine charge ; éteignez un appareil et réessayez</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Eau chaude {from}–{to} · {price}/kWh · prête pour {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Chaufferait l’eau {from}–{to} · {price}/kWh · prête pour {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Aurait chauffé l’eau à {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">la pompe a tourné seule à {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">à l’énergie solaire</string>
+  <string name="card_heat_chart_peak" formatted="false">douche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blocage raccourci avant la douche de {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">raccourcirait le blocage avant la douche de {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blocage raccourci pour que l\'eau chaude puisse se réchauffer</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">raccourcirait le blocage pour que l\'eau chaude puisse se réchauffer</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blocage raccourci pour la montée périodique de l\'eau chaude</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">raccourcirait le blocage pour la montée périodique de l\'eau chaude</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blocage déplacé pour l\'eau chaude</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">déplacerait le blocage pour l\'eau chaude</string>
+  <string name="card_heat_water_review" formatted="false">Eau chaude hier : {kwh} déplacés · {value} économisés</string>
+  <string name="card_heat_water_review_none" formatted="false">Eau chaude hier : rien à déplacer</string>
+  <string name="card_heat_water_shadow" formatted="false">(en observation)</string>
+  <string name="card_heat_water_peaks" formatted="false">Pics : {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} juste</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} pas de puisage</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} réchauffée après le boost</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} réchauffée tard après un blocage</string>
+  <string name="card_heat_water_gate" formatted="false">Eau chaude en observation : jour {days} sur {needed}, {hits} pics justes sur {peaks}</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} jours de la semaine sur 7</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Eau chaude : prête à être pilotée avec « Piloter le chauffage »</string>
+  <string name="card_heat_water_live" formatted="false">L’eau chaude est pilotée par SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Eau chaude de retour en observation après trop de réchauffes</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blocages autour de l\'eau chaude en observation : jour {days} sur {needed}, {hits} pics sur {peaks} atteints</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blocages autour de l\'eau chaude : prêts à être pilotés avec « Piloter le chauffage »</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav tient ses blocages à l\'écart de l\'eau chaude</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blocages tenus plus loin de l\'eau chaude après trop de réchauffes tardives</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blocages hier : {hours} h raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blocages hier : {hours} h auraient été raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
 </resources>

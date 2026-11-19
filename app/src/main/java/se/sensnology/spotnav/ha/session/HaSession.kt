@@ -24,6 +24,7 @@ import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatBoostWrite
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
@@ -131,6 +132,9 @@ internal interface HaTransport {
     /** `update_heat`: the dial or Home/Away, with its compare-and-set; never throws. */
     fun updateHeat(request: HeatWrite.Request): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
 
+    /** `heat_boost`: the Boost button's "start" or "stop"; never throws. */
+    fun heatBoost(action: String): HeatBoostWrite.Outcome = HeatBoostWrite.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -207,6 +211,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.heatHistory(connection, period, date)
 
     override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
+
+    override fun heatBoost(action: String) = HomeAssistantClient.heatBoost(connection, action)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -497,6 +503,14 @@ internal class HaSession(
     fun updateHeat(request: HeatWrite.Request, done: (HeatWrite.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updateHeat(request)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `heat_boost`: the Boost button pressed (never throws). */
+    fun heatBoost(action: String, done: (HeatBoostWrite.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.heatBoost(action)
             mainThread { done(outcome) }
         }
     }

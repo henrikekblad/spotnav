@@ -5,9 +5,36 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.client.WriteEnvelope
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.house.StrictJson
+import java.time.Instant
+import java.time.ZoneId
 
 /** One entity's offset against the house temperature, in degrees (a zone's or an indoor sensor's). */
 internal data class HeatOffset(val entityId: String, val offsetC: Double)
+
+/**
+ * SpotNav's own steering of the pump ("Styr värmen", `control` of `get_heat`) as far as the settings' line under it
+ * says it: the state and its reason, what it holds and until when, whether the path is untested, and a stored offset
+ * that was not put back ([offsetHome]).
+ */
+internal data class HeatControlStatus(
+    val enabled: Boolean,
+    /** `off`, `verifying`, `running` or `waiting`. */
+    val state: String,
+    val reason: String?,
+    /** The automation that steers the pump, by its name, while the control waits for it. */
+    val automationName: String?,
+    val lowered: Boolean,
+    val raised: Boolean,
+    val until: Instant?,
+    val raiseUntil: Instant?,
+    /** The path has not run on a real heat pump yet. */
+    val untested: Boolean,
+    /** A stored offset reading other than the household's own value; `null` when the two agree. */
+    val offsetHome: OffsetHome?
+) {
+    /** The offset now ([value]) and the household's own ([home]); put back or kept in Home Assistant only. */
+    data class OffsetHome(val entityId: String, val value: Double, val home: Double)
+}
 
 /** The cooler night: [deltaC] lower between [start] and [end] (`HH:MM`). */
 internal data class HeatNight(val on: Boolean, val deltaC: Double, val start: String, val end: String)
@@ -20,7 +47,7 @@ internal data class HeatNight(val on: Boolean, val deltaC: Double, val start: St
  */
 internal data class HeatSettings(
     val controlEnabled: Boolean,
-    /** `none`, `relay`, `sg_ready`, `offset`, `setpoint` or a newer word. */
+    /** `none`, `relay`, `sg_ready`, `sg_ready_api`, `offset`, `setpoint` or a newer word. */
     val controlPath: String,
     val controlEntity: String?,
     val controlEntityB: String?,
@@ -38,7 +65,14 @@ internal data class HeatSettings(
     /** The zone's kind (`floor`, `air`, ...) by entity id. */
     val zoneKinds: Map<String, String>,
     /** The setback while away, in degrees (1 to 6); `null` from a Home Assistant that does not have the setting (no row). */
-    val awayDeltaC: Double? = null
+    val awayDeltaC: Double? = null,
+    /** The control's status for the line under "Styr värmen"; `null` without one. */
+    val control: HeatControlStatus? = null,
+    /** The answer's moment and time zone, for the times the line names. */
+    val now: Instant? = null,
+    val zone: ZoneId? = null,
+    /** Why SpotNav would lower now (`status.would.reason`): "room_warm" words the lowering. */
+    val wouldReason: String? = null
 ) {
     /** The friendly name the answer carries for [entityId]; `null` where it carries none (the id is never shown instead). */
     fun nameOf(entityId: String): String? = names[entityId]
@@ -126,7 +160,36 @@ internal object HeatSettingsRead {
             zones = offsets(config.opt("zones"), "zones"),
             names = names,
             zoneKinds = kinds,
-            awayDeltaC = if (config.has("away_delta_c")) number(config.opt("away_delta_c"), "away_delta_c") else null
+            awayDeltaC = if (config.has("away_delta_c")) number(config.opt("away_delta_c"), "away_delta_c") else null,
+            control = additive(json, "control", null) { objOrNull(it, "control")?.let(::control) },
+            now = additive(json, "now", null) { instant(it, "now") },
+            zone = additive(json, "time_zone", null) { raw -> runCatching { ZoneId.of(text(raw, "time_zone")) }.getOrElse { bad("time_zone") } },
+            wouldReason = additive(json, "status", null) { raw ->
+                objOrNull(raw, "status")?.let { status -> objOrNull(status.opt("would"), "status.would")?.let { text(it.opt("reason"), "would.reason") } }
+            }
+        )
+    }
+
+    private fun control(json: JSONObject): HeatControlStatus = with(StrictJson) {
+        HeatControlStatus(
+            enabled = flag(json.opt("enabled"), "control.enabled"),
+            state = text(json.opt("state"), "control.state"),
+            reason = textOrNull(json.opt("reason"), "control.reason"),
+            automationName = objOrNull(json.opt("automation"), "control.automation")?.let { text(it.opt("name"), "automation.name") },
+            lowered = flag(json.opt("lowered"), "control.lowered"),
+            raised = flag(json.opt("raised"), "control.raised"),
+            until = instantOrNull(json.opt("until"), "control.until"),
+            raiseUntil = instantOrNull(json.opt("raise_until"), "control.raise_until"),
+            untested = additive(json, "untested", false) { flag(it, "control.untested") },
+            offsetHome = additive(json, "offset_home", null) { raw ->
+                objOrNull(raw, "control.offset_home")?.let {
+                    HeatControlStatus.OffsetHome(
+                        entityId = text(it.opt("entity_id"), "offset_home.entity_id"),
+                        value = number(it.opt("value"), "offset_home.value"),
+                        home = number(it.opt("home"), "offset_home.home")
+                    )
+                }
+            }
         )
     }
 

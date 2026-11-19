@@ -45,7 +45,12 @@ internal class DayChart(
     /** The moment drawn as now, `null` for a past day. */
     val nowMs: Long?,
     /** SpotNav only watches (its control does not run): a planned raise reads "would raise". */
-    val shadow: Boolean
+    val shadow: Boolean,
+    /** The boosts planned (hollow droplets with a bar) and the peaks they fill; none on a past day. */
+    val planned: List<DayText> = emptyList(),
+    val peaks: List<DayPeak> = emptyList(),
+    /** The hours the hot water's rules took out of the heat plan, said in the readout only. */
+    val notes: List<DayText> = emptyList()
 ) {
     class Point(val startMs: Long, val meanC: Double, val coldestC: Double, val coldest: String)
 
@@ -59,6 +64,12 @@ internal class DayChart(
         const val DIFFERS_C = 0.05
     }
 }
+
+/** A span of the day said in words: a planned boost (drawn) or an hour the hot water's rules took out of the plan (said only). */
+internal data class DayText(val startMs: Long, val endMs: Long, val text: String)
+
+/** A hot-water peak: a tick on the time axis, its words in the readout ("dusch 06:00"). */
+internal data class DayPeak(val ms: Long, val label: String)
 
 /** A legend entry: [kind] picks its swatch and colour in the view. */
 internal class DayLegend(val kind: String, val label: String)
@@ -79,20 +90,161 @@ internal object HeatPlanModel {
     private fun points(day: HeatIndoorDay?): List<DayChart.Point> =
         day?.points?.map { DayChart.Point(it.start.toEpochMilli(), it.meanC, it.coldestC, it.coldest) }.orEmpty()
 
-    /** Today's chart (the page's own answer); `null` with nothing to draw (no measured room and no hour of the plan). */
-    fun today(heat: Heat, nowMs: Long): DayChart? {
+    /**
+     * Today's chart (the page's own answer); `null` with nothing to draw (no measured room and no hour of the plan).
+     * With [text] the hot water's planned boosts, peaks and cuts carry their words for the readout.
+     */
+    fun today(heat: Heat, nowMs: Long, text: SiteText? = null): DayChart? {
         val hours = heat.band.map(::hourOf)
         val indoor = heat.indoorDay
         val start = indoor?.start?.toEpochMilli() ?: hours.minOfOrNull { it.startMs } ?: return null
         val end = indoor?.end?.toEpochMilli() ?: (hours.maxOf { it.startMs } + HOUR_MS)
+        val water = waterOf(heat, start, end, text)
         val chart = DayChart(
             zone = heat.zone, startMs = start, endMs = end, stepMs = (indoor?.stepMin ?: 60) * 60_000L,
             points = points(indoor), rooms = indoor?.rooms.orEmpty(), hours = hours,
-            water = heat.band.filter { it.hotWater }.map { DaySpan(it.start.toEpochMilli(), it.start.toEpochMilli() + HOUR_MS) },
+            water = water.water,
             lowC = indoor?.lowC ?: heat.comfort.lowC, highC = indoor?.highC ?: heat.comfort.highC,
-            nowMs = nowMs, shadow = heat.shadow
+            nowMs = nowMs, shadow = heat.shadow,
+            planned = water.planned, peaks = water.peaks, notes = water.notes
         )
         return chart.takeIf { chart.points.isNotEmpty() || chart.hours.isNotEmpty() }?.takeIf { it.endMs > it.startMs }
+    }
+
+    private class Water(val water: List<DaySpan>, val planned: List<DayText>, val peaks: List<DayPeak>, val notes: List<DayText>)
+
+    /** The day chart's hot water: the measured runs, the boosts planned and the peaks; without the hot-water block, the
+     * band's hours marked hot water (the card's `waterOf`). Words come with the chart's figures ([figures]). */
+    private fun waterOf(heat: Heat, startMs: Long, endMs: Long, text: SiteText? = null): Water {
+        val hotWater = heat.hotWater
+            ?: return Water(heat.band.filter { it.hotWater }.map { DaySpan(it.start.toEpochMilli(), it.start.toEpochMilli() + HOUR_MS) }, emptyList(), emptyList(), emptyList())
+        val runs = if (hotWater.runsToday.isNotEmpty()) hotWater.runsToday.map { it.start to it.end } else heat.today?.runs.orEmpty()
+        val water = runs.map { DaySpan(it.first.toEpochMilli(), it.second.toEpochMilli()) }
+        val planned = hotWater.planned
+            .map { DayText(it.start.toEpochMilli(), it.end.toEpochMilli(), text?.let { t -> plannedWaterText(t, heat, it) } ?: "") }
+            .filter { it.endMs > startMs && it.startMs < endMs }
+        val date = heat.now.atZone(heat.zone).toLocalDate()
+        val peaks = hotWater.peaks.mapNotNull { peak ->
+            val ms = runCatching { date.atTime(java.time.LocalTime.parse(peak.readyBy)).atZone(heat.zone).toInstant().toEpochMilli() }.getOrNull()
+            ms?.takeIf { it in startMs until endMs }?.let { DayPeak(it, text?.words?.say("heat.chart.peak", "time" to text.clock(Instant.ofEpochMilli(it), heat.zone)) ?: "") }
+        }
+        val notes = hotWater.blocking?.cuts.orEmpty()
+            .map { DayText(it.start.toEpochMilli(), it.end.toEpochMilli(), text?.let { t -> cutText(t, it) } ?: "") }
+            .filter { it.endMs > startMs && it.startMs < endMs }
+        return Water(water, planned, peaks, notes)
+    }
+
+    /** A price per kWh in the minor unit ("42 öre"). */
+    private fun perKwh(text: SiteText, minor: Double, money: House.Money?): String {
+        val unit = money?.minorUnit
+        return if (unit == null) text.fixed(minor, 0) else "${text.fixed(minor, 0)} $unit"
+    }
+
+    /** One planned boost in words: what SpotNav does or would do, and once past in shadow, what the pump did itself
+     * ("Skulle ha värmt varmvatten 04:15 · pumpen körde själv 06:20"); the card's `plannedWaterText`. */
+    fun plannedWaterText(text: SiteText, heat: Heat, item: se.sensnology.spotnav.ha.heat.HeatHotWater.Planned): String {
+        val words = text.words
+        val past = !item.start.isAfter(heat.now)
+        val parts = mutableListOf<String>()
+        if (!item.live && past) {
+            parts += words.say("heat.chart.waterWouldPast", "time" to text.clock(item.start, heat.zone))
+        } else {
+            parts += words.say(
+                if (item.live) "heat.chart.water" else "heat.chart.waterWould",
+                "from" to text.clock(item.start, heat.zone), "to" to text.clock(item.end, heat.zone),
+                "price" to perKwh(text, item.price, heat.today?.money), "peak" to item.peak
+            )
+        }
+        if (item.reason == "sun") parts += words.say("heat.chart.waterSun")
+        if (!item.live && item.pumpRun != null) parts += words.say("heat.chart.waterPumpRan", "time" to text.clock(item.pumpRun, heat.zone))
+        return parts.joinToString(" · ")
+    }
+
+    private val CUT_KEYS = mapOf(
+        "peak" to ("heat.chart.cutPeak" to "heat.chart.cutPeakWould"),
+        "day_cap" to ("heat.chart.cutDay" to "heat.chart.cutDayWould"),
+        "hygiene" to ("heat.chart.cutHygiene" to "heat.chart.cutHygieneWould"),
+        "moved" to ("heat.chart.cutMoved" to "heat.chart.cutMovedWould")
+    )
+
+    /** An hour level A took out of the heat plan, in words: done (live) or what it would do (shadow); the card's `cutText`. */
+    fun cutText(text: SiteText, cut: se.sensnology.spotnav.ha.heat.HeatHotWater.Cut): String {
+        val keys = CUT_KEYS[cut.reason] ?: CUT_KEYS.getValue("day_cap")
+        return text.words.say(if (cut.live) keys.first else keys.second, "time" to (cut.peak ?: ""))
+    }
+
+    /** A sentence's first letter in lower case, for a part after "·". */
+    private fun lowerFirst(text: SiteText, line: String): String =
+        if (line.isEmpty()) line else line.substring(0, 1).lowercase(text.locale) + line.substring(1)
+
+    /**
+     * The hot water's lines under the heat's review (the card's `hotWaterLines`): where the plan stands (in shadow, the
+     * gate's progress; steered; back in shadow), level A's blocks, yesterday's review and each peak against what the
+     * pump did. Nothing where the pump has no way to make hot water at SpotNav's word.
+     */
+    fun hotWaterLines(text: SiteText, heat: Heat): List<Pair<String, String>> {
+        val hotWater = heat.hotWater ?: return emptyList()
+        if (hotWater.level == null || hotWater.mode == "watch") return emptyList()
+        val words = text.words
+        val out = mutableListOf<Pair<String, String>>()
+        val gate = hotWater.gate
+        if (hotWater.mode == "live") {
+            out += "water-live" to words.say("heat.water.live")
+        } else if (hotWater.level == "B") {
+            if (gate.open) {
+                out += "water-gate" to words.say("heat.water.gateReady")
+            } else {
+                var line = words.say(
+                    "heat.water.gate", "days" to min(gate.days, gate.daysNeeded).toString(), "needed" to gate.daysNeeded.toString(),
+                    "hits" to gate.hits.toString(), "peaks" to max(gate.peaks, gate.peaksNeeded).toString()
+                )
+                if (gate.days >= gate.daysNeeded && gate.weekdays < 7) line += " · ${words.say("heat.water.gateWeekdays", "weekdays" to gate.weekdays.toString())}"
+                out += "water-gate" to line
+            }
+            if (gate.backedOff != null) out += "water-backed-off" to words.say("heat.water.backedOff")
+        }
+        val blocking = hotWater.blocking
+        if (blocking != null && blocking.mode != "watch") {
+            val blockGate = blocking.gate
+            out += when {
+                blocking.mode == "live" -> "water-blocking-live" to words.say("heat.water.blockingLive")
+                blockGate.open -> "water-blocking-gate" to words.say("heat.water.blockingReady")
+                else -> "water-blocking-gate" to words.say(
+                    "heat.water.blockingGate", "days" to min(blockGate.days, blockGate.daysNeeded).toString(), "needed" to blockGate.daysNeeded.toString(),
+                    "hits" to blockGate.hits.toString(), "peaks" to max(blockGate.peaks, blockGate.peaksNeeded).toString()
+                )
+            }
+            if (blocking.strict) out += "water-blocking-backed-off" to words.say("heat.water.blockingBackedOff")
+        }
+        val review = hotWater.review ?: return out
+        val money = heat.today?.money
+        var line = if (review.movedKwh > 0) {
+            words.say("heat.water.review", "kwh" to "${text.fixed(review.movedKwh, 1)} kWh", "value" to HeatNowModel.amount(text, review.saved, money))
+        } else words.say("heat.water.reviewNone")
+        if (review.mode == "shadow") line += " ${words.say("heat.water.shadow")}"
+        out += "water-review" to line
+        val peaks = review.perPeak.map { item ->
+            val key = when {
+                item.coldRisk -> "heat.water.peakCold"
+                item.miss -> "heat.water.peakMiss"
+                item.hit -> "heat.water.peakHit"
+                else -> "heat.water.peakNoUse"
+            }
+            val parts = mutableListOf(words.say(key, "peak" to item.peak))
+            if (item.pick != null && review.mode == "shadow") {
+                parts += lowerFirst(text, words.say("heat.chart.waterWouldPast", "time" to text.clock(item.pick, heat.zone)))
+                item.pumpRun?.let { parts += words.say("heat.chart.waterPumpRan", "time" to text.clock(it, heat.zone)) }
+            }
+            parts.joinToString(" · ")
+        }
+        if (peaks.isNotEmpty()) out += "water-peaks" to words.say("heat.water.peaks", "list" to peaks.joinToString("; "))
+        if (blocking != null && (review.blocksCut > 0 || review.coldRisks > 0)) {
+            out += "water-blocking-review" to words.say(
+                if (review.aMode == "live") "heat.water.blockingReview" else "heat.water.blockingReviewWould",
+                "hours" to review.blocksCut.toString(), "risks" to review.coldRisks.toString()
+            )
+        }
+        return out
     }
 
     /** A past day's chart from its history: the rooms by the hour, SpotNav's setpoint and the hot-water runs. */
@@ -189,6 +341,7 @@ internal object HeatPlanModel {
                 parts += words.say(if (chart.shadow) "heat.chart.wouldRaiseHour" else "heat.chart.plannedRaiseHour")
             }
             if (lowering.planned && hour.reason == "room_warm") parts += words.say("heat.chart.roomWarm")
+            for (note in chart.notes) if (note.startMs < at + chart.stepMs && at < note.endMs) parts += note.text
             when (hour.action) {
                 "preheat", "return" -> parts += words.say("heat.chart.preheat")
                 "night" -> parts += words.say("heat.chart.night")
@@ -197,6 +350,8 @@ internal object HeatPlanModel {
         }
         val end = at + chart.stepMs
         if (chart.water.any { it.startMs < end && at < it.endMs }) parts += words.say("heat.chart.hotWater")
+        for (span in chart.planned) if (span.startMs < end && at < span.endMs) parts += span.text
+        for (peak in chart.peaks) if (peak.ms >= at && peak.ms < end) parts += peak.label
         if (hour?.car == true) parts += words.say("heat.chart.car")
         return parts.joinToString(" · ")
     }
@@ -216,7 +371,7 @@ internal object HeatPlanModel {
             if (lowerings.any { it.raisePlanned }) add(DayLegend("raise_planned", words.say(if (chart.shadow) "heat.chart.wouldRaise" else "heat.chart.plannedRaise")))
             if (lowerings.any { it.relay > 0 && !it.relayExpected }) add(DayLegend("relay", words.say("heat.band.relay")))
             if (lowerings.any { it.relayExpected }) add(DayLegend("relay_expected", words.say("heat.band.relayExpected")))
-            if (chart.water.isNotEmpty()) add(DayLegend("hot_water", words.say("heat.band.hotWater")))
+            if (chart.water.isNotEmpty() || chart.planned.isNotEmpty()) add(DayLegend("hot_water", words.say("heat.band.hotWater")))
             if (chart.sorted.any { it.car }) add(DayLegend("car", words.say("heat.band.car")))
         }
     }

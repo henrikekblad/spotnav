@@ -6,6 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatBoostWrite
 import se.sensnology.spotnav.ha.heat.HeatRead
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.SiteRead
@@ -149,5 +150,88 @@ class HeatNowModelTest {
                 for (line in said) assertFalse("$language $name: $line", line.contains("heat.") || line.contains("{"))
             }
         }
+    }
+
+    private fun withBoost(boost: org.json.JSONObject?, name: String = "villa.json") = heat(name) {
+        it.getJSONObject("hot_water").put("boost", boost ?: org.json.JSONObject.NULL)
+    }
+
+    private fun boost(state: String, source: String? = null, ends: Instant? = null, estimated: Boolean = false, stoppable: Boolean = false) =
+        org.json.JSONObject().put("state", state).put("source", source ?: org.json.JSONObject.NULL)
+            .put("started", org.json.JSONObject.NULL).put("ends", ends?.toString() ?: org.json.JSONObject.NULL)
+            .put("ends_estimated", estimated).put("stoppable", stoppable)
+
+    @Test fun theBoostButtonAsTheCardWordsIt() {
+        // No boost that ends by itself: no button at all.
+        assertNull(HeatNowModel.boostWords(text(), withBoost(null), now))
+        assertNull(HeatNowModel.boostWords(text(), heat("sg_api_pump.json"), now))
+        val idle = HeatNowModel.boostWords(text(), withBoost(boost("idle"), "network_pump.json"), now)!!
+        assertEquals(HeatNowModel.BoostWords(null, "start", "Varmvatten nu"), idle)
+        assertEquals(HeatNowModel.BoostWords("Kunde inte starta varmvattnet", "start", "Varmvatten nu"), HeatNowModel.boostWords(text(), withBoost(boost("failed")), now))
+        assertEquals(HeatNowModel.BoostWords(null, null, "Startar…"), HeatNowModel.boostWords(text(), withBoost(boost("starting")), now))
+        val ends = now.plusSeconds(20 * 60)
+        val own = HeatNowModel.boostWords(text(), withBoost(boost("running", "user", ends, estimated = true, stoppable = true)), now)!!
+        assertEquals(HeatNowModel.BoostWords("Varmvatten · ca 20 min kvar", "stop", "Avbryt"), own)
+        assertEquals("Varmvatten · 20 min kvar", HeatNowModel.boostWords(text(), withBoost(boost("running", "user", ends, stoppable = true)), now)!!.text)
+        // The villa's pulse: the household's run that cannot be ended early: the time left, no button.
+        val pulse = HeatNowModel.boostWords(text(), heat("villa.json"), now)!!
+        assertTrue(pulse.text!!, Regex("^Varmvatten · ca \\d+ min kvar$").matches(pulse.text!!))
+        assertNull(pulse.label)
+        // SpotNav's own or the pump's own run: what it does, never a button.
+        assertEquals(HeatNowModel.BoostWords("Värmer varmvatten · ca 20 min kvar", null, null), HeatNowModel.boostWords(text(), withBoost(boost("running", "plan", ends, stoppable = false)), now))
+        assertEquals(HeatNowModel.BoostWords("Värmer varmvatten", null, null), HeatNowModel.boostWords(text(), withBoost(boost("running", "pump")), now))
+        assertEquals("Hot water now", HeatNowModel.boostWords(text("en"), withBoost(boost("idle")), now)!!.label)
+    }
+
+    @Test fun aRefusedPressOfTheBoostButtonSaysWhy() {
+        val sv = text()
+        assertEquals("Säkringen är fullt belastad just nu; stäng av något och försök igen", HeatNowModel.boostError(sv, HeatBoostWrite.Outcome.Refused("spotnav_no_headroom")))
+        assertEquals(sv.words.say("heat.boost.rateLimited"), HeatNowModel.boostError(sv, HeatBoostWrite.Outcome.Refused("spotnav_rate_limited")))
+        assertEquals("Kunde inte starta varmvattnet", HeatNowModel.boostError(sv, HeatBoostWrite.Outcome.Refused("spotnav_write_failed")))
+        assertEquals("Kunde inte starta varmvattnet", HeatNowModel.boostError(sv, HeatBoostWrite.Outcome.Failed(null)))
+        assertNull(HeatNowModel.boostError(sv, HeatBoostWrite.Outcome.Done(null)))
+    }
+
+    @Test fun theStripPutsTheHotWaterAtThePlannedBoostsOwnTime() {
+        // The villa's plan reaches into tomorrow's night, with hot water in its 03:00 hour; the boost planned is at 03:30.
+        val longer = heat("villa.json") { json ->
+            val ahead = json.getJSONArray("ahead")
+            var start = Instant.parse(ahead.getJSONObject(ahead.length() - 1).getString("start"))
+            while (ahead.length() < 12) {
+                start = start.plusSeconds(3600)
+                ahead.put(org.json.JSONObject(ahead.getJSONObject(ahead.length() - 1).toString()).put("start", start.toString()).put("action", "normal")
+                    .put("hot_water", start == Instant.parse("2026-11-17T02:00:00Z")))
+            }
+        }
+        assertTrue(HeatNowModel.aheadLine(text(), longer)!!.contains("varmvatten 03:30"))
+        // Without the hot-water block, at its hour.
+        val plain = heat("villa.json") { json ->
+            json.put("hot_water", org.json.JSONObject.NULL)
+            json.getJSONArray("ahead").getJSONObject(2).put("hot_water", true)
+        }
+        assertTrue(HeatNowModel.aheadLine(text(), plain)!!.contains("varmvatten 19:00"))
+    }
+
+    @Test fun aPreHeatIsARaiseOnSgReadyThroughTheApiAndOnAnOffset() {
+        val api = heat("sg_api_pump.json") { json ->
+            json.getJSONObject("status").put("would", org.json.JSONObject().put("action", "preheat").put("target_c", 21.5)
+                .put("until", "2026-11-16T17:00:00+00:00").put("reason", "cheap_before_dear"))
+            json.getJSONArray("ahead").getJSONObject(1).put("action", "preheat")
+        }
+        assertTrue(HeatNowModel.raisable(api))
+        assertTrue(HeatNowModel.wouldLine(text(), api)!!.startsWith("Skulle höja värmen (SG Ready)"))
+        assertEquals("raise", HeatNowModel.aheadCells(api)[1]!!.action)
+        // An offset raises too, but keeps the pre-heat's own words for what it would do.
+        val offset = heat("sg_api_pump.json") { json ->
+            json.getJSONObject("config").put("control_path", "offset").put("control_entity_b", org.json.JSONObject.NULL)
+            json.getJSONObject("status").put("would", org.json.JSONObject().put("action", "preheat").put("target_c", 21.5)
+                .put("until", "2026-11-16T17:00:00+00:00").put("reason", "cheap_before_dear"))
+            json.getJSONArray("ahead").getJSONObject(1).put("action", "preheat")
+        }
+        assertTrue(HeatNowModel.raisable(offset))
+        assertTrue(HeatNowModel.wouldLine(text(), offset)!!.startsWith("Skulle förvärma"))
+        assertEquals("raise", HeatNowModel.aheadCells(offset)[1]!!.action)
+        // A relay cannot raise.
+        assertFalse(HeatNowModel.raisable(heat("villa.json")))
     }
 }

@@ -65,7 +65,7 @@ internal object HeatChartColours {
 /**
  * The Plan box's day chart (the card's `heat-day-chart.ts`): the measured rooms up to now, the comfort band, SpotNav's
  * setpoint as a dashed step, the hours SpotNav lowered (solid) and plans to lower (light), the relay as anyone else
- * closed it, hot water as red drops on the time axis, the car's charging as a thin bar under it. A touch scrubs by x
+ * closed it, hot water as red drops on the time axis (a planned boost a hollow drop with a thin bar, a peak a tick), the car's charging as a thin bar under it. A touch scrubs by x
  * alone (a sideways drag never moves the page), the arrow keys move a step at a time; the figures of the step are said
  * in words under the chart, with the legend under them.
  */
@@ -336,6 +336,26 @@ internal class HeatDayPlotView(
         }
         fill.color = HeatChartColours.WATER
         for (span in chart.water) canvas.drawPath(droplet(x((span.startMs + span.endMs) / 2), plotBottom, d), fill)
+        // The boosts planned: a thin bar over the run on the axis, a hollow droplet at its start.
+        for (span in chart.planned) {
+            if (span.endMs <= chart.startMs || span.startMs >= chart.endMs) continue
+            fill.color = HeatChartColours.withAlpha(HeatChartColours.WATER, 0.55f)
+            val from = x(span.startMs)
+            canvas.drawRect(from, plotBottom - 2 * d, max(from + d, x(span.endMs)), plotBottom, fill)
+            val drop = droplet(from, plotBottom, d)
+            fill.color = colours.card
+            canvas.drawPath(drop, fill)
+            line.color = HeatChartColours.WATER
+            line.strokeWidth = 1.5f * d
+            canvas.drawPath(drop, line)
+        }
+        // The peaks: a small tick under the axis.
+        line.color = HeatChartColours.WATER
+        line.strokeWidth = 1.5f * d
+        for (peak in chart.peaks) {
+            if (peak.ms < chart.startMs || peak.ms >= chart.endMs) continue
+            canvas.drawLine(x(peak.ms), plotBottom, x(peak.ms), plotBottom + 4 * d, line)
+        }
         label.textAlign = Paint.Align.LEFT
         label.color = colours.muted
         var ms = chart.startMs

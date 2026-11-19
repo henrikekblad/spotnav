@@ -160,4 +160,64 @@ class HeatDocumentsTest {
         assertEquals("2026-11-20T15:00:00+00:00", home.getJSONObject("expected").getString("away_until"))
         assertNull(home.getJSONObject("changes").opt("away_until"))
     }
+
+    @Test fun theHotWaterIsRead() {
+        val water = fixture("villa.json").hotWater!!
+        assertEquals("running", water.boost!!.state)
+        assertEquals("user", water.boost!!.source)
+        assertTrue(water.boost!!.endsEstimated)
+        assertFalse(water.boost!!.stoppable)
+        assertEquals(listOf("05:00", "17:00"), water.peaks.map { it.readyBy })
+        assertEquals(3, water.planned.size)
+        assertEquals(Instant.parse("2026-11-16T04:10:00Z"), water.planned[0].pumpRun)
+        assertEquals(75.0, water.planned[0].price, 0.0)
+        assertEquals(listOf("pump", "button"), water.runsToday.map { it.source })
+        assertEquals(2, water.review!!.perPeak.size)
+        assertEquals(1, water.review!!.coldRisks)
+        assertEquals("B", water.level)
+        assertEquals("shadow", water.mode)
+        assertEquals(7, water.gate.daysNeeded)
+        assertEquals(14, water.blocking!!.gate.daysNeeded)
+        assertEquals(listOf("peak", "peak"), water.blocking!!.cuts.map { it.reason })
+        val idle = fixture("network_pump.json").hotWater!!
+        assertEquals("idle", idle.boost!!.state)
+        assertEquals("watch", idle.mode)
+        assertNull(idle.blocking)
+        assertNull(fixture("sg_api_pump.json").hotWater)
+        assertNull(heat(HaFixtures.json("webhook/get_heat_success.json")).hotWater!!.boost)
+    }
+
+    @Test fun theHotWaterIsAdditiveAndStrict() {
+        // An older Home Assistant has no hot water: still a document.
+        val old = HaFixtures.json("heat_card/villa.json").apply { remove("hot_water") }
+        assertNull(heat(old).hotWater)
+        // A required key missing or mistyped is no document.
+        val bad = HaFixtures.json("heat_card/villa.json")
+        bad.getJSONObject("hot_water").getJSONObject("boost").put("stoppable", "no")
+        assertTrue(HeatRead.decode(bad) is SiteRead.Failed)
+        val noGate = HaFixtures.json("heat_card/villa.json")
+        noGate.getJSONObject("hot_water").remove("gate")
+        assertTrue(HeatRead.decode(noGate) is SiteRead.Failed)
+        val badPeak = HaFixtures.json("heat_card/villa.json")
+        badPeak.getJSONObject("hot_water").getJSONArray("peaks").getJSONObject(0).put("ready_by", "5")
+        assertTrue(HeatRead.decode(badPeak) is SiteRead.Failed)
+    }
+
+    @Test fun theBoostButtonsWriteAndItsAnswers() {
+        val payload = HeatBoostWrite.payload("start")
+        assertEquals("heat_boost", payload.getString("action"))
+        assertEquals("start", payload.getString("boost_action"))
+        assertEquals(1, payload.getInt("api_version"))
+        val running = """{"api_version":1,"ok":true,"error":null,"action":"heat_boost","boost":{"state":"starting","source":"user","started":"2026-11-16T16:20:00+00:00","ends":null,"ends_estimated":false,"stoppable":false}}"""
+        val done = HeatBoostWrite.answer(200, running) as HeatBoostWrite.Outcome.Done
+        assertEquals("starting", done.boost!!.state)
+        assertEquals(HeatBoostWrite.Outcome.Done(null), HeatBoostWrite.answer(200, """{"api_version":1,"ok":true,"error":null,"boost":null}"""))
+        // 429 and 409 carry the refusal's envelope.
+        assertEquals(HeatBoostWrite.Outcome.Refused("spotnav_rate_limited"), HeatBoostWrite.answer(429, """{"api_version":1,"ok":false,"error":"spotnav_rate_limited","boost":null,"action":"heat_boost"}"""))
+        assertEquals(HeatBoostWrite.Outcome.Refused("spotnav_no_headroom"), HeatBoostWrite.answer(409, """{"api_version":1,"ok":false,"error":"spotnav_no_headroom","boost":null}"""))
+        assertEquals(HeatBoostWrite.Outcome.Unsupported, HeatBoostWrite.answer(400, """{"ok":false,"error":"spotnav_unsupported_api_version","action":"heat_boost"}"""))
+        assertEquals(HeatBoostWrite.Outcome.Failed(null), HeatBoostWrite.answer(null, null))
+        assertEquals(HeatBoostWrite.Outcome.Failed(null), HeatBoostWrite.answer(200, "not json"))
+        assertEquals(HeatBoostWrite.Outcome.Failed(null), HeatBoostWrite.answer(200, """{"api_version":1,"ok":true,"error":null,"boost":{"state":"idle"}}"""))
+    }
 }

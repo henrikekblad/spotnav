@@ -40,7 +40,9 @@ class HeatPlanModelTest {
         assertTrue(c.withColdest)
         assertTrue(c.shadow)
         assertEquals(7, c.hours.count { HeatPlanModel.lowering(it).planned })
-        assertEquals(4, c.water.size)
+        // The hot water's own runs today (the meter's, the button's), not the band's hours.
+        assertEquals(2, c.water.size)
+        assertEquals(4, chart(heat { it.put("hot_water", org.json.JSONObject.NULL) }).water.size)
         // The car's four hours in a row are one bar.
         assertEquals(1, HeatPlanModel.carRuns(c).size)
         assertEquals(4 * HeatPlanModel.HOUR_MS, HeatPlanModel.carRuns(c).single().let { it.endMs - it.startMs })
@@ -56,6 +58,7 @@ class HeatPlanModelTest {
         )
         // Nothing lowered and no room that differs from the mean: plain setpoint.
         val flat = heat { json ->
+            json.put("hot_water", org.json.JSONObject.NULL)
             val hours = json.getJSONObject("band").getJSONArray("hours")
             for (i in 0 until hours.length()) hours.getJSONObject(i).put("action", "normal").put("target_c", 21).put("relay_min", org.json.JSONObject.NULL).put("hot_water", false).put("car", false)
             val points = json.getJSONObject("indoor_day").getJSONArray("points")
@@ -120,8 +123,10 @@ class HeatPlanModelTest {
             val t = text(language)
             for (name in listOf("villa.json", "controlled.json", "network_pump.json")) {
                 val h = heat(name)
-                val c = HeatPlanModel.today(h, now) ?: continue
+                val c = HeatPlanModel.today(h, now, t) ?: continue
                 val said = HeatPlanModel.legend(t, c).map { it.label } + HeatPlanModel.reviewLines(t, h).map { it.second } +
+                    HeatPlanModel.hotWaterLines(t, h).map { it.second } + h.hotWater?.planned.orEmpty().map { HeatPlanModel.plannedWaterText(t, h, it) } +
+                    h.hotWater?.blocking?.cuts.orEmpty().flatMap { listOf(HeatPlanModel.cutText(t, it), HeatPlanModel.cutText(t, it.copy(live = true))) } +
                     (0 until HeatPlanModel.stepCount(c)).map { HeatPlanModel.figures(t, c, c.startMs + it * c.stepMs) }
                 for (line in said) assertFalse("$language $name: $line", line.contains("heat.") || line.contains("{"))
             }
@@ -131,5 +136,73 @@ class HeatPlanModelTest {
             }
             assertTrue(t.words.say("heat.chart.hint").isNotEmpty())
         }
+    }
+
+    @Test fun thePlannedBoostsAndThePeaksAreOnTodaysChart() {
+        val h = heat()
+        val c = HeatPlanModel.today(h, now, text())!!
+        // Today's two would-be boosts (tomorrow's is not today's), and the peaks as ticks.
+        assertEquals(2, c.planned.size)
+        assertEquals(listOf("dusch 05:00", "dusch 17:00"), c.peaks.map { it.label })
+        // Today's cut; tomorrow's is not today's.
+        assertEquals(1, c.notes.size)
+        // The readout says the boost, the peak and the cut at their step.
+        assertTrue(HeatPlanModel.figures(text(), c, Instant.parse("2026-11-16T13:00:00Z").toEpochMilli()).contains("Skulle ha värmt varmvatten 14:00"))
+        assertTrue(HeatPlanModel.figures(text(), c, Instant.parse("2026-11-16T04:00:00Z").toEpochMilli()).contains("dusch 05:00"))
+        assertTrue(HeatPlanModel.figures(text(), c, Instant.parse("2026-11-16T15:05:00Z").toEpochMilli()).contains("skulle förkorta blockeringen före duschen 17:00"))
+        // Without words asked for, the chart still has the marks.
+        assertEquals(2, HeatPlanModel.today(h, now)!!.planned.size)
+        // A day with only planned boosts still names the hot water in the legend.
+        val plannedOnly = heat { json -> json.getJSONObject("hot_water").put("runs_today", org.json.JSONArray()) }
+        assertTrue(HeatPlanModel.legend(text(), HeatPlanModel.today(plannedOnly, now, text())!!).any { it.kind == "hot_water" })
+    }
+
+    @Test fun eachBoostInWordsAsTheCardSaysIt() {
+        val h = heat()
+        val (morning, evening, tomorrow) = h.hotWater!!.planned
+        assertEquals("Skulle ha värmt varmvatten 03:15 · pumpen körde själv 05:10", HeatPlanModel.plannedWaterText(text(), h, morning))
+        assertEquals("Skulle ha värmt varmvatten 14:00", HeatPlanModel.plannedWaterText(text(), h, evening))
+        assertEquals("Skulle värma varmvatten 03:30–04:00 · 76 öre/kWh · klart till 05:00", HeatPlanModel.plannedWaterText(text(), h, tomorrow))
+        assertEquals(
+            "Varmvatten 03:30–04:00 · 76 öre/kWh · klart till 05:00 · på solel",
+            HeatPlanModel.plannedWaterText(text(), h, tomorrow.copy(live = true, reason = "sun"))
+        )
+    }
+
+    @Test fun theCutHoursInWords() {
+        val cut = heat().hotWater!!.blocking!!.cuts[0]
+        assertEquals("skulle förkorta blockeringen före duschen 17:00", HeatPlanModel.cutText(text(), cut))
+        assertEquals("blockering förkortad före duschen 17:00", HeatPlanModel.cutText(text(), cut.copy(live = true)))
+        assertEquals("blockering förkortad så att varmvattnet hinner värmas", HeatPlanModel.cutText(text(), cut.copy(reason = "day_cap", peak = null, live = true)))
+        assertEquals("skulle förkorta blockeringen för varmvattnets periodiska höjning", HeatPlanModel.cutText(text(), cut.copy(reason = "hygiene", peak = null)))
+        assertEquals("blockering flyttad för varmvattnet", HeatPlanModel.cutText(text(), cut.copy(reason = "moved", peak = null, live = true)))
+    }
+
+    @Test fun theHotWatersLinesUnderTheReview() {
+        val lines = HeatPlanModel.hotWaterLines(text(), heat())
+        assertEquals(listOf("water-gate", "water-blocking-gate", "water-review", "water-peaks", "water-blocking-review"), lines.map { it.first })
+        assertEquals(
+            listOf(
+                "Varmvatten i skuggning: dag 5 av 7, 8 av 10 toppar träffade",
+                "Blockeringar kring varmvattnet i skuggning: dag 5 av 14, 8 av 10 toppar träffade",
+                "Varmvatten i går: 1,1 kWh flyttade · 0,61 kr sparade (skuggning)",
+                "Toppar: 05:00 värmdes sent efter en blockering · skulle ha värmt varmvatten 03:15 · pumpen körde själv 05:10; 17:00 ingen tappning",
+                "Blockeringar i går: 2 h skulle ha förkortats för varmvattnet · 1 sena uppvärmningar före en topp"
+            ),
+            lines.map { it.second }
+        )
+        // Watch only (the pump's own price control): nothing about SpotNav's hot water.
+        assertEquals(emptyList<Pair<String, String>>(), HeatPlanModel.hotWaterLines(text(), heat("network_pump.json")))
+        assertEquals(emptyList<Pair<String, String>>(), HeatPlanModel.hotWaterLines(text(), heat("sg_api_pump.json")))
+        val week = heat { it.getJSONObject("hot_water").getJSONObject("gate").put("days", 8).put("weekdays", 6) }
+        assertEquals("Varmvatten i skuggning: dag 7 av 7, 8 av 10 toppar träffade · 6 av 7 veckodagar", HeatPlanModel.hotWaterLines(text(), week)[0].second)
+        val ready = heat { it.getJSONObject("hot_water").getJSONObject("gate").put("open", true) }
+        assertEquals("Varmvatten: redo att styras med ”Styr värmen”", HeatPlanModel.hotWaterLines(text(), ready)[0].second)
+        val live = heat { it.getJSONObject("hot_water").getJSONObject("blocking").put("mode", "live").put("strict", true) }
+        val liveLines = HeatPlanModel.hotWaterLines(text(), live).toMap()
+        assertEquals("SpotNav håller sina blockeringar undan varmvattnet", liveLines["water-blocking-live"])
+        assertEquals("Blockeringarna hålls längre från varmvattnet efter för många sena uppvärmningar", liveLines["water-blocking-backed-off"])
+        val none = heat { it.getJSONObject("hot_water").put("blocking", org.json.JSONObject.NULL) }
+        assertEquals(listOf("water-gate", "water-review", "water-peaks"), HeatPlanModel.hotWaterLines(text(), none).map { it.first })
     }
 }

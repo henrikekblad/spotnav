@@ -30,8 +30,9 @@ private fun box(scope: ViewScope): LinearLayout = LinearLayout(scope.context).ap
 private fun heading(scope: ViewScope, words: String, marker: Int) = scope.cardHeading(marker, scope.cardTitle(words))
 
 /**
- * The Plan box (the card's Plan tab): the day's chart, today's from the page's own answer with the plan ahead and under
- * it yesterday's review, a past day's from its history. Day only: while the shared picker is on Månad or År the box is
+ * The Plan box (the card's Plan tab): the day's chart, today's from the page's own answer with the plan ahead (the hot
+ * water's planned boosts and peaks on it) and under it yesterday's review and the hot water's lines (the gate's
+ * progress, level A's blocks, yesterday per peak), a past day's from its history. Day only: while the shared picker is on Månad or År the box is
  * left out. Left out too where the day has nothing to draw.
  */
 internal class HeatPlanPanel(
@@ -80,9 +81,9 @@ internal class HeatPlanPanel(
     private fun draw(heat: Heat?, choice: PeriodChoice, nowMs: Long): Boolean {
         if (heat == null || choice.period != HistoryPeriod.DAY || !HeatBoxes.plan(heat, nowMs)) return false
         if (choice.date == null) {
-            val today = HeatPlanModel.today(heat, nowMs) ?: return false
+            val today = HeatPlanModel.today(heat, nowMs, text) ?: return false
             drawChart(today)
-            val lines = HeatPlanModel.reviewLines(text, heat)
+            val lines = HeatPlanModel.reviewLines(text, heat) + HeatPlanModel.hotWaterLines(text, heat)
             review.text = lines.joinToString("\n") { it.second }
             review.visibility = if (lines.isEmpty()) View.GONE else View.VISIBLE
             return true

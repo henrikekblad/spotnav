@@ -1299,6 +1299,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grader svalare</string>
   <string name="site_settings_in_home_assistant">Styrningens av och på och valet av sensorer, mätare och styrväg ändras i Home Assistant.</string>
   <string name="site_settings_heat_failed">Värmeinställningarna kunde inte läsas.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Svara i Home Assistant: värmekortets inställningar, som administratör.</string>
   <!-- House details and Intäkt (step A4) -->
   <string name="card_house_earn_total" formatted="false">Intäkt {amount}</string>
   <string name="card_house_earn_none" formatted="false">Ingen besparing att visa för perioden ännu.</string>
@@ -1461,4 +1462,92 @@
   <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graddagar</string>
   <!-- Chosen without a name (step A4) -->
   <string name="card_settings_status_chosen" formatted="false">Vald</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready via integrationen (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Aktivering</string>
+  <string name="card_heat_settings_untested" formatted="false">Det här sättet att styra är inte provat på en riktig värmepump än. Håll ett öga på de första dagarna.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Kurvjusteringen är inte tillbaka</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (var {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Kurvjusteringen står på {value}; den var {home} innan SpotNav. Sätta tillbaka den, eller behålla {value} som ditt eget värde?</string>
+  <string name="card_heat_control_off" formatted="false">Av: SpotNav visar bara vad den skulle göra.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Provar att värmepumpen svarar på reläet: väntar på en stund när den värmer.</string>
+  <string name="card_heat_control_verifying" formatted="false">Provar nu att värmepumpen svarar på reläet.</string>
+  <string name="card_heat_control_lowered" formatted="false">Styr: sänker värmen till {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Styr: sänker värmen till {until}, för varmt inne.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Styr: sänker värmen nu.</string>
+  <string name="card_heat_control_raised" formatted="false">Styr: höjer värmen till {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Styr: höjer värmen nu.</string>
+  <string name="card_heat_control_normal" formatted="false">Styr: värmepumpen går på sin vanliga kurva just nu.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Styr: för kallt ute för att sänka.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Styr: ett rum ligger under bandet, ingen sänkning.</string>
+  <string name="card_heat_control_stale" formatted="false">Styr: väntar på färska värden, ingen sänkning.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Styr: SG Readys andra kontakt är på, ingen sänkning.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Styr: extra varmvatten är på, ingen sänkning.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Styr: varmvattnet är svalt, ingen sänkning.</string>
+  <string name="card_heat_control_waiting" formatted="false">Väntar.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Väntar: stäng av automationen \'{name}\' så att SpotNav kan styra värmen.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Väntar: en annan värmestyrning styr värmepumpen.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Väntar: värmepumpens egen prisstyrning är på.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Väntar: reläet går inte att läsa.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Väntar: någon annan har slutit reläet.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Väntar: välj reläet under Styrning.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Väntar: välj värmepumpens mätare så att SpotNav kan se att reläet verkar.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">Värmepumpen svarade inte på reläet. Kontrollera kopplingen och slå på igen.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Väntar: någon annan ändrade reläet. SpotNav styr igen i morgon.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Väntar: reläet svarade inte. SpotNav försöker igen i morgon.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Provar att värmepumpen svarar: väntar på en stund när den värmer.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Provar nu att värmepumpen svarar.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Väntar: värmepumpens inställning går inte att läsa.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Väntar: någon annan har redan sänkt eller höjt värmen.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Väntar: välj vad SpotNav ska styra under Styrning.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Väntar: välj värmepumpens mätare så att SpotNav kan se att styrningen verkar.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">Värmepumpen svarade inte. Kontrollera inställningen och slå på igen.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Väntar: någon annan ändrade inställningen. SpotNav styr igen i morgon.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Väntar: värmepumpen svarade inte. SpotNav försöker igen i morgon.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Varmvatten nu</string>
+  <string name="card_heat_boost_starting" formatted="false">Startar…</string>
+  <string name="card_heat_boost_left" formatted="false">Varmvatten · ca {minutes} min kvar</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Varmvatten · {minutes} min kvar</string>
+  <string name="card_heat_boost_on" formatted="false">Varmvatten · pågår</string>
+  <string name="card_heat_boost_heating" formatted="false">Värmer varmvatten · ca {minutes} min kvar</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Värmer varmvatten</string>
+  <string name="card_heat_boost_stop" formatted="false">Avbryt</string>
+  <string name="card_heat_boost_failed" formatted="false">Kunde inte starta varmvattnet</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Varmvattnet startades nyss; försök igen om några minuter</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Säkringen är fullt belastad just nu; stäng av något och försök igen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Varmvatten {from}–{to} · {price}/kWh · klart till {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Skulle värma varmvatten {from}–{to} · {price}/kWh · klart till {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Skulle ha värmt varmvatten {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">pumpen körde själv {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">på solel</string>
+  <string name="card_heat_chart_peak" formatted="false">dusch {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blockering förkortad före duschen {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">skulle förkorta blockeringen före duschen {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blockering förkortad så att varmvattnet hinner värmas</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">skulle förkorta blockeringen så att varmvattnet hinner värmas</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blockering förkortad för varmvattnets periodiska höjning</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">skulle förkorta blockeringen för varmvattnets periodiska höjning</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blockering flyttad för varmvattnet</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">skulle flytta blockeringen för varmvattnet</string>
+  <string name="card_heat_water_review" formatted="false">Varmvatten i går: {kwh} flyttade · {value} sparade</string>
+  <string name="card_heat_water_review_none" formatted="false">Varmvatten i går: inget att flytta</string>
+  <string name="card_heat_water_shadow" formatted="false">(skuggning)</string>
+  <string name="card_heat_water_peaks" formatted="false">Toppar: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} träffad</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} ingen tappning</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} laddade om efter boosten</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} värmdes sent efter en blockering</string>
+  <string name="card_heat_water_gate" formatted="false">Varmvatten i skuggning: dag {days} av {needed}, {hits} av {peaks} toppar träffade</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} av 7 veckodagar</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Varmvatten: redo att styras med ”Styr värmen”</string>
+  <string name="card_heat_water_live" formatted="false">Varmvattnet styrs av SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Varmvattnet är tillbaka i skuggning efter för många omladdningar</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blockeringar kring varmvattnet i skuggning: dag {days} av {needed}, {hits} av {peaks} toppar träffade</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blockeringar kring varmvattnet: redo att styras med ”Styr värmen”</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav håller sina blockeringar undan varmvattnet</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blockeringarna hålls längre från varmvattnet efter för många sena uppvärmningar</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blockeringar i går: {hours} h förkortade för varmvattnet · {risks} sena uppvärmningar före en topp</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blockeringar i går: {hours} h skulle ha förkortats för varmvattnet · {risks} sena uppvärmningar före en topp</string>
 </resources>

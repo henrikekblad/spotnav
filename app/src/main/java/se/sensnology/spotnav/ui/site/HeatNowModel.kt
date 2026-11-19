@@ -43,10 +43,13 @@ internal object HeatNowModel {
     /** SpotNav's own heat control runs (else the page says Test). */
     fun controls(heat: Heat): Boolean = heat.control?.let { it.enabled && it.state == "running" } == true
 
-    private fun moment(text: SiteText, heat: Heat, at: Instant): String {
-        val clock = text.clock(at, heat.zone)
-        val day = at.atZone(heat.zone).toLocalDate()
-        return if (day == heat.now.atZone(heat.zone).toLocalDate()) clock else "${DAY.withLocale(text.locale).format(at.atZone(heat.zone))} $clock"
+    private fun moment(text: SiteText, heat: Heat, at: Instant): String = moment(text, heat.now, heat.zone, at)
+
+    /** A time as the card's `whenLabel` says it: the clock on [now]'s day, the day before it otherwise. */
+    fun moment(text: SiteText, now: Instant, zone: java.time.ZoneId, at: Instant): String {
+        val clock = text.clock(at, zone)
+        val day = at.atZone(zone).toLocalDate()
+        return if (day == now.atZone(zone).toLocalDate()) clock else "${DAY.withLocale(text.locale).format(at.atZone(zone))} $clock"
     }
 
     /**
@@ -114,7 +117,21 @@ internal object HeatNowModel {
         return text.words.say(key, "kw" to (power?.let { "${text.fixed(it, 1)} kW" } ?: "–")).replace(Regex(" · –$"), "")
     }
 
-    private fun raisable(heat: Heat) = heat.config.controlPath == "sg_ready" && heat.config.controlEntity != null && heat.config.controlEntityB != null
+    private val SG_READY_PATHS = setOf("sg_ready", "sg_ready_api")
+
+    /**
+     * Whether a pre-heat is a raise of the pump (the strip and the plan's words): through SG Ready's second contact, the
+     * SG Ready API's low-price mode (which needs its activation switch), or a curve offset above the value found.
+     */
+    fun raisable(heat: Heat): Boolean {
+        val config = heat.config
+        if (config.controlEntity == null) return false
+        return config.controlPath == "offset" || (config.controlPath in SG_READY_PATHS && config.controlEntityB != null)
+    }
+
+    /** Whether "would pre-heat" is said as SG Ready's raise: on SG Ready with both contacts, or through its API (an offset keeps the pre-heat's words). */
+    private fun sgRaise(heat: Heat): Boolean =
+        heat.config.controlPath in SG_READY_PATHS && heat.config.controlEntity != null && heat.config.controlEntityB != null
 
     /** What SpotNav would do now, in shadow. */
     fun wouldLine(text: SiteText, heat: Heat): String? {
@@ -131,7 +148,7 @@ internal object HeatNowModel {
                 "room_warm" -> "heat.would.lowerWarm"
                 else -> "heat.would.lower"
             }
-            would.action == "preheat" && raisable(heat) -> "heat.would.raise"
+            would.action == "preheat" && sgRaise(heat) -> "heat.would.raise"
             else -> "heat.would.${would.action}"
         }
         return words.say(key, "temp" to degrees(text, would.targetC), "until" to (would.until?.let { moment(text, heat, it) } ?: ""))
@@ -186,8 +203,11 @@ internal object HeatNowModel {
                 "to" to text.clock(hours[last].start.plus(Duration.ofHours(1)), heat.zone)
             )
         }
-        hours.firstOrNull { it.hotWater }?.let {
-            parts += it.start to words.say("heat.ahead.water", "time" to text.clock(it.start, heat.zone))
+        // Hot water at its planned boost's own time where there is one ("varmvatten 04:15"), else at its hour.
+        val last = hours.last().start.plus(Duration.ofHours(1))
+        val planned = heat.hotWater?.planned.orEmpty().map { it.start }.filter { !it.isBefore(heat.now) && it.isBefore(last) }.minOrNull()
+        (planned ?: hours.firstOrNull { it.hotWater }?.start)?.let {
+            parts += it to words.say("heat.ahead.water", "time" to text.clock(it, heat.zone))
         }
         if (parts.isEmpty()) return words.say("heat.ahead.none")
         return words.say("heat.ahead.lead", "parts" to parts.sortedBy { it.first }.joinToString(" · ") { it.second })
@@ -268,6 +288,42 @@ internal object HeatNowModel {
         val until = heat.comfort.awayUntil ?: return null
         if (heat.comfort.mode != "away") return null
         return text.words.say("heat.mode.awayUntil", "when" to moment(text, heat, until))
+    }
+
+    /** The Boost button's words now: the line beside it, the button's label and what pressing does (`null`: no button). */
+    data class BoostWords(val text: String?, val action: String?, val label: String?)
+
+    /** The Boost button's state in words (the card's `boostWords`); `null` where the pump has no self-ending boost. */
+    fun boostWords(text: SiteText, heat: Heat, now: Instant): BoostWords? {
+        val boost = heat.hotWater?.boost ?: return null
+        val words = text.words
+        val left = boost.ends?.let { maxOf(1L, Math.ceil((it.toEpochMilli() - now.toEpochMilli()) / 60_000.0).toLong()) }
+        return when (boost.state) {
+            "starting" -> BoostWords(null, null, words.say("heat.boost.starting"))
+            "running" -> if (boost.source == "user") {
+                val line = if (left == null) words.say("heat.boost.on")
+                else words.say(if (boost.endsEstimated) "heat.boost.left" else "heat.boost.leftExact", "minutes" to left.toString())
+                if (boost.stoppable) BoostWords(line, "stop", words.say("heat.boost.stop")) else BoostWords(line, null, null)
+            } else {
+                BoostWords(if (left == null) words.say("heat.boost.heatingOn") else words.say("heat.boost.heating", "minutes" to left.toString()), null, null)
+            }
+            "failed" -> BoostWords(words.say("heat.boost.failed"), "start", words.say("heat.boost.start"))
+            else -> BoostWords(null, "start", words.say("heat.boost.start"))
+        }
+    }
+
+    /** A refused press of the Boost button in words (the card's `boostErrorKey`); `null` when it went through. */
+    fun boostError(text: SiteText, outcome: se.sensnology.spotnav.ha.heat.HeatBoostWrite.Outcome): String? = when (outcome) {
+        is se.sensnology.spotnav.ha.heat.HeatBoostWrite.Outcome.Done -> null
+        is se.sensnology.spotnav.ha.heat.HeatBoostWrite.Outcome.Refused -> text.words.say(
+            when (outcome.code) {
+                se.sensnology.spotnav.ha.heat.HeatBoostWrite.RATE_LIMITED -> "heat.boost.rateLimited"
+                se.sensnology.spotnav.ha.heat.HeatBoostWrite.NO_HEADROOM -> "heat.boost.noHeadroom"
+                else -> "heat.boost.failed"
+            }
+        )
+        is se.sensnology.spotnav.ha.heat.HeatBoostWrite.Outcome.Unsupported -> text.words.say("heat.error.generic")
+        is se.sensnology.spotnav.ha.heat.HeatBoostWrite.Outcome.Failed -> text.words.say("heat.boost.failed")
     }
 
     /** A refused write in words (the card's `writeError`). */
