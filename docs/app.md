@@ -11,6 +11,8 @@ section: Get started
 
 Local control for your EV, battery and heating, planned around spot prices, solar and weather. Built for Home Assistant.
 
+**[Get SpotNav on Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav)** · free, Android 8 or newer
+
 SpotNav is a HEMS (home energy management system) that runs inside your own Home Assistant. The Android app is its
 companion: it shows what SpotNav plans and does at home, and lets you change the everyday choices from your phone.
 
