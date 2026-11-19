@@ -68,9 +68,23 @@ data class ChargerProfile(
      * Whether this charger's Home Assistant answers `price_days`, as its last dashboard stated it; `null`
      * until a dashboard has been read since the app learnt to ask.
      */
-    val priceDays: Boolean? = null
+    val priceDays: Boolean? = null,
+    /**
+     * The Home Assistant entry id of the home this charger belongs to (Home Assistant 3.0), or `null` for a charger in
+     * no home, or one this app has not yet moved into its home (see [SiteAccessUpgrade]).
+     */
+    val siteId: String? = null,
+    /**
+     * The home's webhook id, the app's single door since Home Assistant 3.0: while it is set, every request for this
+     * charger goes there, naming [remoteChargerId] as `charger_id`. A copy of [SiteProfile.webhookId], written
+     * together with it. [webhookId] (the charger's own, blank for a charger the home listed later) stays as it was.
+     */
+    val siteWebhookId: String? = null
 ) {
-    val configured: Boolean get() = baseUrl.isNotBlank() && webhookId.isNotBlank()
+    /** Whether requests for this charger go through its home's webhook. */
+    val viaSite: Boolean get() = !siteWebhookId.isNullOrBlank() && !remoteChargerId.isNullOrBlank()
+
+    val configured: Boolean get() = baseUrl.isNotBlank() && (webhookId.isNotBlank() || viaSite)
 
     /** Whether this charger waits to be paired again. */
     val needsPairing: Boolean get() = pairAgain != null
@@ -107,7 +121,7 @@ data class ChargerProfile(
         "detectedPhases=$detectedPhases, " +
         "phaseDetectionSource=$phaseDetectionSource, phaseDetectionConfidence=$phaseDetectionConfidence, " +
         "selectedVehicleId=$selectedVehicleId, targetSocPercent=$targetSocPercent, pairAgain=$pairAgain, " +
-        "priceDays=$priceDays)"
+        "priceDays=$priceDays, siteId=$siteId, siteWebhookId=${if (siteWebhookId == null) null else "<redacted>"})"
 }
 
 /**
@@ -115,4 +129,8 @@ data class ChargerProfile(
  * place that mapping happens, so callers never duplicate it (or accidentally read the wrong pair of
  * fields) inline.
  */
-fun ChargerProfile.toHomeAssistantSettings(): HomeAssistantSettings = HomeAssistantSettings(baseUrl, webhookId)
+fun ChargerProfile.toHomeAssistantSettings(): HomeAssistantSettings =
+    if (viaSite) HomeAssistantSettings(baseUrl, siteWebhookId.orEmpty(), remoteChargerId) else ownWebhook()
+
+/** The charger's own webhook, whatever door it is reached through now: where `get_site_access` is asked. */
+fun ChargerProfile.ownWebhook(): HomeAssistantSettings = HomeAssistantSettings(baseUrl, webhookId)
