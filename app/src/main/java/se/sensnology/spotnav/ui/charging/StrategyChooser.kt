@@ -15,18 +15,20 @@ internal fun ViewScope.showStrategyChooser(
     onChoose: (ChargingStrategy) -> Unit,
     onClosed: () -> Unit
 ): AlertDialog {
+    // The rows the chooser shows: a solar strategy the site has no solar for is left out.
+    val choices = ui.choices.filterNot { it.hidden }
     val adapter = object : BaseAdapter() {
-        override fun getCount() = ui.choices.size
-        override fun getItem(position: Int) = ui.choices[position]
+        override fun getCount() = choices.size
+        override fun getItem(position: Int) = choices[position]
         override fun getItemId(position: Int) = position.toLong()
 
         // A row that cannot be chosen is a statement, and a list that reported "all items enabled"
         // while refusing them would read to a screen reader as a list of choices.
         override fun areAllItemsEnabled() = false
-        override fun isEnabled(position: Int) = ui.choices[position].selectable
+        override fun isEnabled(position: Int) = choices[position].selectable
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val choice = ui.choices[position]
+            val choice = choices[position]
             val enabled = choice.selectable
             val row = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
@@ -58,7 +60,7 @@ internal fun ViewScope.showStrategyChooser(
     }
     val dialog = AlertDialog.Builder(context)
         .setTitle(t(R.string.strategy_chooser_title))
-        .setAdapter(adapter) { _, position -> onChoose(ui.choices[position].strategy) }
+        .setAdapter(adapter) { _, position -> onChoose(choices[position].strategy) }
         .create()
     // Closing clears this screen's own chooser state and returns focus to the row that opened it:
     dialog.setOnDismissListener { onClosed() }
