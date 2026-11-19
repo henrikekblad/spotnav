@@ -2,6 +2,7 @@
 title: Settings
 description: Every card in the app's Settings, what it changes, and what stays in Home Assistant.
 order: 5
+section: Settings
 ---
 
 # Settings

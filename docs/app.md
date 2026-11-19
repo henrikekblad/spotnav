@@ -2,6 +2,7 @@
 title: SpotNav for Android
 description: The SpotNav app for Android, its pages and settings, with or without Home Assistant.
 order: 1
+section: Get started
 ---
 
 # SpotNav for Android

@@ -2,6 +2,7 @@
 title: Getting started
 description: Install the app, pair it with SpotNav in Home Assistant, or use it on its own with an ENTSO-E key.
 order: 1
+section: Get started
 ---
 
 # Getting started

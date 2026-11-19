@@ -2,6 +2,7 @@
 title: FAQ
 description: Common questions about the SpotNav app.
 order: 9
+section: Help
 ---
 
 # FAQ

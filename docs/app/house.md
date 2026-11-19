@@ -2,6 +2,7 @@
 title: The house page
 description: Live flows, the energy flow, the energy chart, earnings, prices and the home battery, stacked as boxes.
 order: 3
+section: The pages
 ---
 
 # The house page

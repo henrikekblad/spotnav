@@ -2,6 +2,7 @@
 title: Notifications
 description: Charging notifications through the Home Assistant app or the SpotNav app, and the car question.
 order: 7
+section: Settings
 ---
 
 # Notifications

@@ -2,6 +2,7 @@
 title: The charger page
 description: The charger's status, the car, planning, the price chart, the price table and the charge history.
 order: 2
+section: The pages
 ---
 
 # The charger page

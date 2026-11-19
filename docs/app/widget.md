@@ -2,6 +2,7 @@
 title: The widget
 description: Today's and tomorrow's prices with the planned charging on the home screen.
 order: 6
+section: Settings
 ---
 
 # The widget

@@ -2,6 +2,7 @@
 title: Privacy
 description: What the app sends, where it goes, and what it stores on the phone.
 order: 8
+section: Help
 ---
 
 # Privacy

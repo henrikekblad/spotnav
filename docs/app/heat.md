@@ -2,6 +2,7 @@
 title: The heat page
 description: The thermostat dial, home and away, what the heat pump does, the day's plan and the heating's use, stacked as boxes.
 order: 4
+section: The pages
 ---
 
 # The heat page
