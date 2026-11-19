@@ -75,7 +75,9 @@ internal data class Heat(
         val zonesKwh: Double?,
         /** In the minor unit. */
         val cost: Double?,
-        val money: House.Money?
+        val money: House.Money?,
+        /** Today's hot-water runs by the meter (start, end), drawn where the hot water has none of its own. */
+        val runs: List<Pair<Instant, Instant>> = emptyList()
     )
 
     data class Would(val action: String, val targetC: Double, val until: Instant?, val reason: String)
@@ -230,6 +232,12 @@ internal object HeatRead {
                     majorUnit = textOrNull(it.opt("major_unit"), "money.major_unit"),
                     minorUnit = textOrNull(it.opt("minor_unit"), "money.minor_unit")
                 )
+            },
+            runs = additive(json, "runs", emptyList()) { raw ->
+                list(raw, "today.runs").map {
+                    val run = obj(it, "today.run")
+                    instant(run.opt("start"), "today.run.start") to instant(run.opt("end"), "today.run.end")
+                }
             }
         )
     }

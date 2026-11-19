@@ -1529,4 +1529,38 @@
   <string name="card_heat_boost_failed" formatted="false">Could not start the hot water</string>
   <string name="card_heat_boost_rate_limited" formatted="false">Hot water was started a moment ago; try again in a few minutes</string>
   <string name="card_heat_boost_no_headroom" formatted="false">The main fuse is fully loaded right now; turn something off and try again</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Hot water {from}–{to} · {price}/kWh · ready by {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Would heat hot water {from}–{to} · {price}/kWh · ready by {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Would have heated hot water at {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">the pump ran by itself at {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">on solar</string>
+  <string name="card_heat_chart_peak" formatted="false">shower {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">block shortened before the {time} shower</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">would shorten the block before the {time} shower</string>
+  <string name="card_heat_chart_cut_day" formatted="false">block shortened so the hot water gets its reheat</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">would shorten the block so the hot water gets its reheat</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">block shortened for the hot water\'s periodic increase</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">would shorten the block for the hot water\'s periodic increase</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">block moved for the hot water</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">would move the block for the hot water</string>
+  <string name="card_heat_water_review" formatted="false">Hot water yesterday: {kwh} moved · {value} saved</string>
+  <string name="card_heat_water_review_none" formatted="false">Hot water yesterday: nothing to move</string>
+  <string name="card_heat_water_shadow" formatted="false">(shadow)</string>
+  <string name="card_heat_water_peaks" formatted="false">Peaks: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} hit</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} no use</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} reloaded after the boost</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} reheated late after a block</string>
+  <string name="card_heat_water_gate" formatted="false">Hot water in shadow: day {days} of {needed}, {hits} of {peaks} peaks hit</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} of 7 weekdays</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Hot water: ready to be steered with “Control the heat”</string>
+  <string name="card_heat_water_live" formatted="false">Hot water is steered by SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Hot water back in shadow after too many reloads</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blocks around the hot water in shadow: day {days} of {needed}, {hits} of {peaks} peaks hit</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blocks around the hot water: ready to be steered with “Control the heat”</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav keeps its blocks clear of the hot water</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blocks kept further from the hot water after too many late reheats</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blocks yesterday: {hours} h shortened for the hot water · {risks} late reheats before a peak</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blocks yesterday: {hours} h would have been shortened for the hot water · {risks} late reheats before a peak</string>
 </resources>

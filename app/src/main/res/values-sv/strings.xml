@@ -1516,4 +1516,38 @@
   <string name="card_heat_boost_failed" formatted="false">Kunde inte starta varmvattnet</string>
   <string name="card_heat_boost_rate_limited" formatted="false">Varmvattnet startades nyss; försök igen om några minuter</string>
   <string name="card_heat_boost_no_headroom" formatted="false">Säkringen är fullt belastad just nu; stäng av något och försök igen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Varmvatten {from}–{to} · {price}/kWh · klart till {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Skulle värma varmvatten {from}–{to} · {price}/kWh · klart till {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Skulle ha värmt varmvatten {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">pumpen körde själv {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">på solel</string>
+  <string name="card_heat_chart_peak" formatted="false">dusch {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blockering förkortad före duschen {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">skulle förkorta blockeringen före duschen {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blockering förkortad så att varmvattnet hinner värmas</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">skulle förkorta blockeringen så att varmvattnet hinner värmas</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blockering förkortad för varmvattnets periodiska höjning</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">skulle förkorta blockeringen för varmvattnets periodiska höjning</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blockering flyttad för varmvattnet</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">skulle flytta blockeringen för varmvattnet</string>
+  <string name="card_heat_water_review" formatted="false">Varmvatten i går: {kwh} flyttade · {value} sparade</string>
+  <string name="card_heat_water_review_none" formatted="false">Varmvatten i går: inget att flytta</string>
+  <string name="card_heat_water_shadow" formatted="false">(skuggning)</string>
+  <string name="card_heat_water_peaks" formatted="false">Toppar: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} träffad</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} ingen tappning</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} laddade om efter boosten</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} värmdes sent efter en blockering</string>
+  <string name="card_heat_water_gate" formatted="false">Varmvatten i skuggning: dag {days} av {needed}, {hits} av {peaks} toppar träffade</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} av 7 veckodagar</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Varmvatten: redo att styras med ”Styr värmen”</string>
+  <string name="card_heat_water_live" formatted="false">Varmvattnet styrs av SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Varmvattnet är tillbaka i skuggning efter för många omladdningar</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blockeringar kring varmvattnet i skuggning: dag {days} av {needed}, {hits} av {peaks} toppar träffade</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blockeringar kring varmvattnet: redo att styras med ”Styr värmen”</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav håller sina blockeringar undan varmvattnet</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blockeringarna hålls längre från varmvattnet efter för många sena uppvärmningar</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blockeringar i går: {hours} h förkortade för varmvattnet · {risks} sena uppvärmningar före en topp</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blockeringar i går: {hours} h skulle ha förkortats för varmvattnet · {risks} sena uppvärmningar före en topp</string>
 </resources>

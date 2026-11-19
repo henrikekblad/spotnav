@@ -1516,4 +1516,38 @@
   <string name="card_heat_boost_failed" formatted="false">Käyttöveden lämmitystä ei voitu käynnistää</string>
   <string name="card_heat_boost_rate_limited" formatted="false">Käyttövesi käynnistettiin juuri; yritä uudelleen muutaman minuutin kuluttua</string>
   <string name="card_heat_boost_no_headroom" formatted="false">Pääsulake on nyt täysin kuormitettu; sammuta jotain ja yritä uudelleen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Käyttövesi {from}–{to} · {price}/kWh · valmis klo {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Lämmittäisi käyttövettä {from}–{to} · {price}/kWh · valmis klo {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Olisi lämmittänyt käyttövettä klo {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">pumppu ajoi itse klo {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">aurinkosähköllä</string>
+  <string name="card_heat_chart_peak" formatted="false">suihku {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">esto lyhennetty ennen suihkua {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">lyhentäisi eston ennen suihkua {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">esto lyhennetty, jotta käyttövesi ehtii lämmetä</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">lyhentäisi eston, jotta käyttövesi ehtii lämmetä</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">esto lyhennetty käyttöveden jaksottaisen korotuksen vuoksi</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">lyhentäisi eston käyttöveden jaksottaisen korotuksen vuoksi</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">esto siirretty käyttöveden vuoksi</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">siirtäisi eston käyttöveden vuoksi</string>
+  <string name="card_heat_water_review" formatted="false">Käyttövesi eilen: {kwh} siirretty · {value} säästetty</string>
+  <string name="card_heat_water_review_none" formatted="false">Käyttövesi eilen: ei siirrettävää</string>
+  <string name="card_heat_water_shadow" formatted="false">(varjo)</string>
+  <string name="card_heat_water_peaks" formatted="false">Huiput: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} osui</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} ei käyttöä</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} lämmitti uudelleen tehostuksen jälkeen</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} lämmitettiin myöhään eston jälkeen</string>
+  <string name="card_heat_water_gate" formatted="false">Käyttövesi varjossa: päivä {days}/{needed}, {hits}/{peaks} huippua osui</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays}/7 viikonpäivää</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Käyttövesi: valmis ohjattavaksi kohdasta ”Ohjaa lämmitystä”</string>
+  <string name="card_heat_water_live" formatted="false">SpotNav ohjaa käyttövettä</string>
+  <string name="card_heat_water_backed_off" formatted="false">Käyttövesi palasi varjoon liian monen uudelleenlämmityksen jälkeen</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Käyttöveden huomioivat estot varjossa: päivä {days}/{needed}, {hits}/{peaks} huippua osui</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Käyttöveden huomioivat estot: valmiina ohjattavaksi ”Ohjaa lämmitystä” -valinnalla</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav pitää estonsa erossa käyttövedestä</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Estot pidetään kauempana käyttövedestä liian monen myöhäisen lämmityksen jälkeen</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Estot eilen: {hours} h lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Estot eilen: {hours} h olisi lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
 </resources>

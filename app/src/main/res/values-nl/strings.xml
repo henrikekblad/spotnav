@@ -1516,4 +1516,38 @@
   <string name="card_heat_boost_failed" formatted="false">Kon het warme water niet starten</string>
   <string name="card_heat_boost_rate_limited" formatted="false">Warm water is net gestart; probeer het over een paar minuten opnieuw</string>
   <string name="card_heat_boost_no_headroom" formatted="false">De hoofdzekering is nu volledig belast; zet iets uit en probeer het opnieuw</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Warm water {from}–{to} · {price}/kWh · klaar om {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Zou water verwarmen {from}–{to} · {price}/kWh · klaar om {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Zou water om {time} hebben verwarmd</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">de pomp draaide zelf om {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">op zonnestroom</string>
+  <string name="card_heat_chart_peak" formatted="false">douche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blokkering ingekort vóór de douche van {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">zou de blokkering vóór de douche van {time} inkorten</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blokkering ingekort zodat het warme water kan opwarmen</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">zou de blokkering inkorten zodat het warme water kan opwarmen</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blokkering ingekort voor de periodieke verhoging van het warme water</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">zou de blokkering inkorten voor de periodieke verhoging van het warme water</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blokkering verschoven voor het warme water</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">zou de blokkering verschuiven voor het warme water</string>
+  <string name="card_heat_water_review" formatted="false">Warm water gisteren: {kwh} verschoven · {value} bespaard</string>
+  <string name="card_heat_water_review_none" formatted="false">Warm water gisteren: niets te verschuiven</string>
+  <string name="card_heat_water_shadow" formatted="false">(schaduw)</string>
+  <string name="card_heat_water_peaks" formatted="false">Pieken: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} raak</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} geen gebruik</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} na de boost opnieuw verwarmd</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} laat opgewarmd na een blokkering</string>
+  <string name="card_heat_water_gate" formatted="false">Warm water in schaduw: dag {days} van {needed}, {hits} van {peaks} pieken raak</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} van 7 weekdagen</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Warm water: klaar om gestuurd te worden met ‘Verwarming sturen’</string>
+  <string name="card_heat_water_live" formatted="false">Warm water wordt door SpotNav gestuurd</string>
+  <string name="card_heat_water_backed_off" formatted="false">Warm water terug in schaduw na te vaak opnieuw verwarmen</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blokkeringen rond het warme water in schaduw: dag {days} van {needed}, {hits} van {peaks} pieken geraakt</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blokkeringen rond het warme water: klaar om te sturen met ‘Verwarming sturen’</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav houdt zijn blokkeringen weg van het warme water</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blokkeringen blijven verder weg van het warme water na te vaak laat opwarmen</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blokkeringen gisteren: {hours} u ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blokkeringen gisteren: {hours} u zouden zijn ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
 </resources>

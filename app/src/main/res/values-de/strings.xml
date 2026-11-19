@@ -1516,4 +1516,38 @@
   <string name="card_heat_boost_failed" formatted="false">Warmwasser konnte nicht gestartet werden</string>
   <string name="card_heat_boost_rate_limited" formatted="false">Warmwasser wurde gerade gestartet; in ein paar Minuten erneut versuchen</string>
   <string name="card_heat_boost_no_headroom" formatted="false">Die Hauptsicherung ist gerade voll belastet; etwas ausschalten und erneut versuchen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Warmwasser {from}–{to} · {price}/kWh · fertig bis {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Würde Warmwasser bereiten {from}–{to} · {price}/kWh · fertig bis {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Hätte Warmwasser um {time} bereitet</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">die Pumpe lief selbst um {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">mit Solarstrom</string>
+  <string name="card_heat_chart_peak" formatted="false">Dusche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">Sperre vor der Dusche {time} verkürzt</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">würde die Sperre vor der Dusche {time} verkürzen</string>
+  <string name="card_heat_chart_cut_day" formatted="false">Sperre verkürzt, damit das Warmwasser nachheizen kann</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">würde die Sperre verkürzen, damit das Warmwasser nachheizen kann</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">Sperre verkürzt für die periodische Warmwassererhöhung</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">würde die Sperre für die periodische Warmwassererhöhung verkürzen</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">Sperre fürs Warmwasser verschoben</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">würde die Sperre fürs Warmwasser verschieben</string>
+  <string name="card_heat_water_review" formatted="false">Warmwasser gestern: {kwh} verschoben · {value} gespart</string>
+  <string name="card_heat_water_review_none" formatted="false">Warmwasser gestern: nichts zu verschieben</string>
+  <string name="card_heat_water_shadow" formatted="false">(Schattenbetrieb)</string>
+  <string name="card_heat_water_peaks" formatted="false">Spitzen: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} getroffen</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} keine Entnahme</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} nach dem Boost nachgeheizt</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} nach einer Sperre spät nachgeheizt</string>
+  <string name="card_heat_water_gate" formatted="false">Warmwasser im Schattenbetrieb: Tag {days} von {needed}, {hits} von {peaks} Spitzen getroffen</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} von 7 Wochentagen</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Warmwasser: bereit zur Steuerung mit „Heizung steuern“</string>
+  <string name="card_heat_water_live" formatted="false">Warmwasser wird von SpotNav gesteuert</string>
+  <string name="card_heat_water_backed_off" formatted="false">Warmwasser nach zu vielem Nachheizen wieder im Schattenbetrieb</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Sperren mit Rücksicht aufs Warmwasser im Schattenbetrieb: Tag {days} von {needed}, {hits} von {peaks} Spitzen getroffen</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Sperren mit Rücksicht aufs Warmwasser: bereit für „Heizung steuern“</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav hält seine Sperren vom Warmwasser fern</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Sperren halten nach zu vielem spätem Nachheizen mehr Abstand zum Warmwasser</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Sperren gestern: {hours} h fürs Warmwasser verkürzt · {risks}-mal spät nachgeheizt vor einer Spitze</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Sperren gestern: {hours} h wären fürs Warmwasser verkürzt worden · {risks}-mal spät nachgeheizt vor einer Spitze</string>
 </resources>

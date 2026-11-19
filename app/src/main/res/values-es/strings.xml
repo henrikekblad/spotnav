@@ -1524,4 +1524,38 @@
   <string name="card_heat_boost_failed" formatted="false">No se pudo iniciar el agua caliente</string>
   <string name="card_heat_boost_rate_limited" formatted="false">El agua caliente se acaba de iniciar; inténtalo de nuevo en unos minutos</string>
   <string name="card_heat_boost_no_headroom" formatted="false">El fusible principal está a plena carga ahora; apaga algo e inténtalo de nuevo</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Agua caliente {from}–{to} · {price}/kWh · lista para las {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Calentaría agua {from}–{to} · {price}/kWh · lista para las {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Habría calentado agua a las {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">la bomba funcionó sola a las {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">con energía solar</string>
+  <string name="card_heat_chart_peak" formatted="false">ducha {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">bloqueo acortado antes de la ducha de {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">acortaría el bloqueo antes de la ducha de {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">bloqueo acortado para que el agua caliente pueda recalentarse</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">acortaría el bloqueo para que el agua caliente pueda recalentarse</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">bloqueo acortado por el aumento periódico del agua caliente</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">acortaría el bloqueo por el aumento periódico del agua caliente</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">bloqueo movido por el agua caliente</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">movería el bloqueo por el agua caliente</string>
+  <string name="card_heat_water_review" formatted="false">Agua caliente ayer: {kwh} desplazados · {value} ahorrados</string>
+  <string name="card_heat_water_review_none" formatted="false">Agua caliente ayer: nada que desplazar</string>
+  <string name="card_heat_water_shadow" formatted="false">(en sombra)</string>
+  <string name="card_heat_water_peaks" formatted="false">Picos: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} acertado</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} sin consumo</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} recalentada tras el refuerzo</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} recalentada tarde tras un bloqueo</string>
+  <string name="card_heat_water_gate" formatted="false">Agua caliente en sombra: día {days} de {needed}, {hits} de {peaks} picos acertados</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} de 7 días de la semana</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Agua caliente: lista para controlarse con «Controlar la calefacción»</string>
+  <string name="card_heat_water_live" formatted="false">SpotNav controla el agua caliente</string>
+  <string name="card_heat_water_backed_off" formatted="false">Agua caliente de vuelta en sombra tras demasiados recalentamientos</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Bloqueos según el agua caliente en sombra: día {days} de {needed}, {hits} de {peaks} picos acertados</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Bloqueos según el agua caliente: listos para controlarse con «Controlar la calefacción»</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav mantiene sus bloqueos lejos del agua caliente</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Bloqueos más alejados del agua caliente tras demasiados recalentamientos tardíos</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Bloqueos ayer: {hours} h acortadas por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Bloqueos ayer: {hours} h se habrían acortado por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
 </resources>
