@@ -495,6 +495,7 @@ object HomeAssistantClient {
         connectTimeoutMs: Int,
         readTimeoutMs: Int
     ): Pair<Int, String> {
+        val sent = settings.addressed(body)
         val connection = URL(settings.webhookUrl()).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
@@ -503,7 +504,7 @@ object HomeAssistantClient {
             connection.instanceFollowRedirects = false
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+            connection.outputStream.use { it.write(sent.toByteArray(Charsets.UTF_8)) }
             val status = connection.responseCode
             val responseBody = (if (status in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader()?.use { it.readText() }.orEmpty()

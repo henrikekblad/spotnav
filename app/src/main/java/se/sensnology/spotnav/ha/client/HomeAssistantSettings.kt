@@ -2,9 +2,15 @@ package se.sensnology.spotnav.ha.client
 
 import java.net.URI
 
+/**
+ * Where one webhook request goes: the instance, the webhook id, and -- for a charger reached through its home's
+ * webhook (Home Assistant 3.0, the app's single door) -- the charger's entry id, which every request then names as
+ * `charger_id`. `null` for a charger's own webhook or a home's own actions.
+ */
 data class HomeAssistantSettings(
     val baseUrl: String = "",
-    val webhookId: String = ""
+    val webhookId: String = "",
+    val chargerId: String? = null
 ) {
     val configured: Boolean get() = baseUrl.isNotBlank() && webhookId.isNotBlank()
 
@@ -12,6 +18,15 @@ data class HomeAssistantSettings(
         val base = baseUrl.trim().trimEnd('/')
         return "$base/api/webhook/${webhookId.trim()}"
     }
+
+    /** [body] (a JSON object's text) as sent: with `charger_id` when this names a charger behind a home's webhook. */
+    fun addressed(body: String): String {
+        val charger = chargerId ?: return body
+        return org.json.JSONObject(body).put("charger_id", charger).toString()
+    }
+
+    /** Never the webhook id: it is a secret (see ChargerProfile.toString). */
+    override fun toString(): String = "HomeAssistantSettings(baseUrl=$baseUrl, webhookId=<redacted>, chargerId=$chargerId)"
 
     companion object {
         fun isAllowedBaseUrl(value: String): Boolean {
