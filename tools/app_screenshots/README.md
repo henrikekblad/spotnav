@@ -62,6 +62,17 @@ thirty-five minutes, most of it the nine language passes.
      "identified by the car's charging cable ⇄", and `ask` (a quick replug with both cars saying they are plugged
      in) for the question, which stays open for every language's store picture.
 
+   - after the language passes, the 3.0 pages (English only): the demo house's live power is pinned
+     (`ha_setup.mjs scene`, so the pictures do not depend on the hour of the day), then the house page (its top, the
+     Now box, the period picker with the Energy flow box and the Earnings box, for a month) and the heat page (its top,
+     the dial with Home and Away, the Use box for a month). The page icons in the top row are tapped to get there, and
+     the charger page is chosen again afterwards, since the app opens on the page it was left on.
+
+The Home Assistant side is the Home Assistant tool's 3.0 installation (`driver/v3setup.mjs`: a demo house with a sun, a
+home battery, a heat pump and weeks of history, see its README). Take the earnings after midnight or an hour into the
+run: the past days' prices come with the next price refresh cycle, and the box has nothing to show without them.
+`HA_PORT` and `STUB_PORT` move the demo instance's ports, so that it can run beside another one.
+
 Logs are in `.work/logs`.
 
 ## Pictures
@@ -69,8 +80,9 @@ Logs are in `.work/logs`.
 Documentation (English; `--sv` adds `docs/images/sv/`): `app-standalone`, `app-pairing-code`,
 `app-main`, `app-planning`, `app-planning-target`, `app-plan-chart`, `app-price-table`, `app-widget`, `app-settings-general`,
 `app-settings-display`, `app-settings-price`, `app-settings-vehicle`, `app-settings-charger`,
-`app-settings-site`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
-`app-reference-picture`, `app-history`, `app-identifying`, `app-identified`, `app-identify-question`.
+`app-settings-site`, `app-settings-battery`, `app-settings-heat`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
+`app-reference-picture`, `app-history`, `app-house`, `app-house-now`, `app-house-flow`,
+`app-house-earnings`, `app-heat`, `app-heat-now`, `app-heat-use`, `app-identifying`, `app-identified`, `app-identify-question`.
 Whole screens lose the status and gesture bars; settings sections are cropped to their card.
 
 Store (each of en-US, sv-SE, nb-NO, da-DK, fi-FI, de-DE, nl-NL, es-ES, fr-FR, with the app in that
