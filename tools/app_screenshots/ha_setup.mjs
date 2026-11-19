@@ -3,6 +3,7 @@
 //   node ha_setup.mjs setup      onboard, add the demo devices, a SpotNav charger and a site; set up the camera
 //                                and let "Family car" be identified at the charger by its charging cable
 //   node ha_setup.mjs scene '{"sun":1.8,...}'   pin the demo house's live power (kW) for a picture
+//   node ha_setup.mjs wait-prices [minutes]   wait for the past days' prices (the earnings need them)
 //   node ha_setup.mjs approve    approve the pairing request the app has just made
 //   node ha_setup.mjs unplug     unplug the car (both cars' cables off)
 //   node ha_setup.mjs plug-in    plug in again, once the unplug counts (about two minutes after it): identifying
@@ -46,6 +47,22 @@ async function scene(values) {
   await api.post("/api/services/demo_house/docs_scene", values);
   await sleep(7000);
   log("scene " + JSON.stringify(values));
+}
+
+/** Wait until the month's past days have prices: the history is filled at a price refresh cycle (hourly, and at
+ * midnight), and the earnings and the cost need it. At most `minutes` (default 90). */
+async function waitPrices(minutes = 90) {
+  const api = await signedIn();
+  const site = (await api.entries("spotnav")).find((e) => e.title === "Home")?.entry_id;
+  const deadline = Date.now() + minutes * 60_000;
+  while (Date.now() < deadline) {
+    const answer = await api.ws({ type: "spotnav/get_house_history", api_version: 1, site_id: site, period: "month" });
+    const priced = answer.cost?.priced ?? 0;
+    if (priced > 100) { log(`past prices are in (${priced} hours priced)`); return; }
+    log(`waiting for the past days' prices (${priced} hours priced)`);
+    await sleep(60_000);
+  }
+  throw new Error("the past days' prices did not arrive");
 }
 
 async function chargerId(api) {
@@ -92,6 +109,7 @@ async function approve() {
 
 const command = process.argv[2];
 if (command === "setup") await setup();
+else if (command === "wait-prices") await waitPrices(Number(process.argv[3] || 90))
 else if (command === "scene") await scene(JSON.parse(process.argv[3] || "{}"));
 else if (command === "approve") await approve();
 else if (["unplug", "plug-in", "city", "ask"].includes(command)) await identification(command);
