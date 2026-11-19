@@ -114,6 +114,7 @@
   <string name="instance_removed">Die Verbindung wurde entfernt</string>
   <string name="instance_refreshing">Suche…</string>
   <string name="instance_connected">Verbunden mit %1$s</string>
+  <string name="instance_connected_nothing">Verbunden, aber SpotNav in Home Assistant hat noch keine Ladestation und kein Zuhause. Füge eines in Home Assistant hinzu oder aktualisiere SpotNav dort auf 3.0.</string>
   <string name="instance_stale">Nicht mehr in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant, aber nicht mit dieser App gekoppelt: %1$s</string>
   <string name="instance_pair_again">Erneut koppeln</string>

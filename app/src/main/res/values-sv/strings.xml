@@ -111,6 +111,7 @@
   <string name="instance_removed">Anslutningen har tagits bort</string>
   <string name="instance_refreshing">Söker…</string>
   <string name="instance_connected">Ansluten till %1$s</string>
+  <string name="instance_connected_nothing">Ansluten, men SpotNav i Home Assistant har ingen laddare eller inget hem än. Lägg till ett i Home Assistant, eller uppdatera SpotNav där till 3.0.</string>
   <string name="instance_stale">Finns inte längre i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Finns i Home Assistant men är inte parkopplad med appen: %1$s</string>
   <string name="instance_pair_again">Parkoppla igen</string>

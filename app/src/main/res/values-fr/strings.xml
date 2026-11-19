@@ -118,6 +118,7 @@
   <string name="instance_removed">La connexion a été supprimée</string>
   <string name="instance_refreshing">Recherche…</string>
   <string name="instance_connected">Connecté à %1$s</string>
+  <string name="instance_connected_nothing">Connecté, mais SpotNav dans Home Assistant n\'a encore ni borne ni maison. Ajoutez-en une dans Home Assistant, ou mettez-y SpotNav à jour vers la 3.0.</string>
   <string name="instance_stale">N\'est plus dans Home Assistant : %1$s</string>
   <string name="instance_unprovisioned">Dans Home Assistant mais pas associé à cette application : %1$s</string>
   <string name="instance_pair_again">Associer à nouveau</string>

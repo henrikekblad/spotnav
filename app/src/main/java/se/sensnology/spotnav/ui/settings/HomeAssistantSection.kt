@@ -36,9 +36,10 @@ import se.sensnology.spotnav.ha.pairing.HomeAssistantInstanceStore
 import se.sensnology.spotnav.ha.pairing.HomeAssistantNsdDiscovery
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.pairing.InstanceDiscovery
-import se.sensnology.spotnav.ha.pairing.PairedCharger
 import se.sensnology.spotnav.ha.pairing.PairingProtocol
 import se.sensnology.spotnav.ha.pairing.PairingStop
+import se.sensnology.spotnav.sites.SiteProfile
+import se.sensnology.spotnav.sites.SiteProfileStore
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.chargerName
@@ -184,18 +185,22 @@ internal class HomeAssistantSection(
          * What an approval means on this device: the instance is remembered, and every charger it
          * handed over becomes a profile.
          */
-        val applyApproval: (String, List<PairedCharger>) -> Unit = { baseUrl, chargers ->
+        val applyApproval: (PairingStop.Approved) -> Unit = { approved ->
+            val baseUrl = approved.baseUrl
             instanceStore.remember(baseUrl, pairedName)
+            val siteStore = SiteProfileStore.forContext(applicationContext)
             val bindingStore = WidgetChargerBindingStore.forContext(applicationContext)
             // What this approval means is [ChargerPairingApproval]'s decision, taken on the widget
             // that asked for the pairing:
             val applied = ChargerPairingApproval.apply(
-                outcome = PairingStop.Approved(baseUrl, chargers),
+                outcome = approved,
                 existing = profileStore.listProfiles(),
                 baseUrl = baseUrl,
                 // What is *stored* for this widget, never a lazy default:
                 storedBinding = bindingStore.storedBinding(widgetId),
-                newLocalId = { ChargerProfileStore.newLocalId() }
+                newLocalId = { ChargerProfileStore.newLocalId() },
+                existingSites = siteStore.list(),
+                newSiteLocalId = { SiteProfileStore.newLocalId() }
             )
             ChargerPairingApproval.commit(applied, object : ChargerPairingApproval.Device {
                 override fun forgetCached(localId: String) = ProfileCaches.forget(applicationContext, localId)
@@ -205,6 +210,12 @@ internal class HomeAssistantSection(
                 override fun activeProfileId(): String? = profileStore.getActiveProfileId()
 
                 override fun activate(localId: String) = profileStore.setActiveProfileId(localId)
+
+                override fun upsertSite(site: SiteProfile) = siteStore.upsert(site)
+
+                override fun activeSiteId(): String? = siteStore.activeSiteId()
+
+                override fun activateSite(localId: String) = siteStore.setActiveSiteId(localId)
 
                 override fun forgetPushRegistration(localId: String) =
                     PushStore.forContext(applicationContext).remember(localId, null)
@@ -222,7 +233,9 @@ internal class HomeAssistantSection(
 
                 override fun repaint() {
                     report = null
-                    statusLine = t(R.string.instance_connected, baseUrl)
+                    // Nothing handed over: say what to do about it (add one, or update SpotNav there).
+                    statusLine = if (applied?.empty == true) t(R.string.instance_connected_nothing)
+                    else t(R.string.instance_connected, baseUrl)
                     redraw()
                 }
             })
@@ -269,7 +282,7 @@ internal class HomeAssistantSection(
                     if (cancelled.get()) return@runOnUiThread
                     pairing = false
                     when (stop) {
-                        is PairingStop.Approved -> applyApproval(stop.baseUrl, stop.chargers)
+                        is PairingStop.Approved -> applyApproval(stop)
                         PairingStop.Denied -> { statusLine = t(R.string.instance_pairing_denied); redraw() }
                         PairingStop.Expired -> { statusLine = t(R.string.instance_pairing_expired); redraw() }
                         PairingStop.TimedOut -> { statusLine = t(R.string.instance_pairing_timed_out); redraw() }
@@ -326,6 +339,9 @@ internal class HomeAssistantSection(
                         widgetIds + LauncherActivity.STANDALONE_SETTINGS_ID + widgetId
                     )
                     widgetIds.forEach { PriceWidgetProvider.update(applicationContext, manager, it) }
+                    // Its homes go with it.
+                    val siteStore = SiteProfileStore.forContext(applicationContext)
+                    siteStore.list().filter { it.baseUrl == baseUrl }.forEach { siteStore.remove(it.localId) }
                     instanceStore.forget()
                     report = null
                     statusLine = t(R.string.instance_removed)
