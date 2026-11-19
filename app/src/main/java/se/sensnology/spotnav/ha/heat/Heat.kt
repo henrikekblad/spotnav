@@ -50,7 +50,9 @@ internal data class Heat(
     /** The day's measured rooms up to now; `null` without indoor sensors. */
     val indoorDay: HeatIndoorDay? = null,
     /** Yesterday's review under today's chart; `null` without one. */
-    val review: HeatReview? = null
+    val review: HeatReview? = null,
+    /** The site's hot water (`heat/dhw_runtime.py`); `null` without the heat shadow or from an older Home Assistant. */
+    val hotWater: HeatHotWater? = null
 ) {
     /** What the dial and Home/Away are written against. The raw text of `away_until` is what the compare-and-set sends back. */
     data class Config(
@@ -211,7 +213,8 @@ internal object HeatRead {
             },
             band = list(obj(json.opt("band"), "band").opt("hours"), "band.hours").map(HeatDayRead::bandHour),
             indoorDay = additive(json, "indoor_day", null) { objOrNull(it, "indoor_day")?.let(HeatDayRead::indoorDay) },
-            review = additive(json, "review", null) { objOrNull(it, "review")?.let(HeatDayRead::review) }
+            review = additive(json, "review", null) { objOrNull(it, "review")?.let(HeatDayRead::review) },
+            hotWater = additive(json, "hot_water", null) { objOrNull(it, "hot_water")?.let(HeatHotWaterRead::hotWater) }
         )
     }
 
