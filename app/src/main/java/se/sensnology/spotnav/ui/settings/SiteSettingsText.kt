@@ -1,9 +1,15 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.dashboard.DashboardSite
+import se.sensnology.spotnav.ha.dashboard.DashboardSummary
+import se.sensnology.spotnav.ha.dashboard.DemandBlock
+import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.heat.HeatSteering
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.site.HeatNowModel
@@ -128,7 +134,7 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
     fun pathName(path: String): String = if (path in PATHS) words.say("heat.path.$path") else path
 
     /** Whether "Styr värmen" has a row: on the paths SpotNav can steer, or while it is on. */
-    fun steers(settings: HeatSettings): Boolean = settings.controlPath in STEERED_PATHS || settings.controlEnabled
+    fun steers(settings: HeatSettings): Boolean = SiteSettingsShown.heatComfort(settings)
 
     /** The label of the second entity's row: SG Ready's B contact, or the API's activation switch; `null`: no row. */
     fun secondEntityLabel(path: String): String? = when (path) {
@@ -259,8 +265,6 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
             "normal" to "battery.mode.normal"
         )
         val PATHS = setOf("none", "relay", "sg_ready", "sg_ready_api", "offset", "setpoint")
-        /** The paths SpotNav steers itself: "Styr värmen" has a row on them. */
-        val STEERED_PATHS = setOf("relay", "sg_ready", "sg_ready_api", "offset")
         /** The paths whose control line names the relay (the card's `isRelayPath`). */
         val RELAY_WORD_PATHS = setOf("none", "relay", "sg_ready")
         val CONTROL_WAITS = setOf(
@@ -271,4 +275,42 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         /** The waits whose words name the relay: the other paths have their own (`heat.control.path.wait.*`). */
         val PATH_WAITS = setOf("relay_unavailable", "relay_closed", "no_relay", "no_signal", "check_failed", "foreign_change", "no_read_back")
     }
+}
+
+/**
+ * What the paired Settings leave out where it could not act, by the Home Assistant card's rules (`settings-popover.ts`,
+ * `heat-model.ts`, `card-view.ts`): the battery and heat cards, the import target, car or battery first, the Solar card.
+ */
+internal object SiteSettingsShown {
+    /** The battery card is left out on a site with no battery; a failed read still shows the card with its line. */
+    fun batteryCard(outcome: BatteryControlRead.Outcome): Boolean =
+        !(outcome is BatteryControlRead.Outcome.Status && !outcome.status.batteryFound)
+
+    /** The heat card's rows, or the one "Nothing found" row where no heating is found. */
+    fun heatRows(settings: HeatSettings): Boolean = settings.found
+
+    /** The offsets, night and away act only through SpotNav's steering: shown on a path it steers, or while it is on. */
+    fun heatComfort(settings: HeatSettings): Boolean =
+        HeatSteering.steers(settings.controlPath, settings.controlEnabled)
+
+    /**
+     * The import target row is shown unless the site cannot measure it (no total grid power) and none is set: a set
+     * target stays, so it can be cleared (the card's `importTargetShown`).
+     */
+    fun importTarget(demand: DemandBlock): Boolean =
+        demand.importTargetKw != null || demand.available || demand.reason != DEMAND_NEEDS_TOTAL_GRID_POWER
+
+    /**
+     * Car or battery first chooses between two solar sinks: shown only with a home battery and where the site follows
+     * solar (Sol and Hybrid both offered), as the card has it.
+     */
+    fun solarPriority(dashboard: Dashboard, setup: DashboardSummary.Site?): Boolean =
+        setup?.batteryName != null &&
+            HaSettingsStrategy.SOLAR in dashboard.strategyOptions && HaSettingsStrategy.HYBRID in dashboard.strategyOptions
+
+    /** The Solar card holds the forecast source only: left out where there is none to choose and none chosen. */
+    fun solarCard(site: DashboardSite): Boolean =
+        site.solarForecastChoices.isNotEmpty() || site.solarForecastSelected.isNotEmpty()
+
+    const val DEMAND_NEEDS_TOTAL_GRID_POWER = "needs_total_grid_power"
 }

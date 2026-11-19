@@ -101,7 +101,8 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     private fun repaint() {
         container.removeAllViews()
         val offered = capabilities ?: return
-        if (offered.batteryControl && battery != null) addBatteryCard()
+        // The battery card only where the site has a battery: its own section in Home Assistant adds one.
+        if (offered.batteryControl && battery?.let(SiteSettingsShown::batteryCard) == true) addBatteryCard()
         if (offered.getHeat && heat != null) addHeatCard()
     }
 
@@ -187,6 +188,13 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         val none = words.say("heat.settings.none")
         val body = card.body
+        // Nothing heat-related found: one row, and where heating is added.
+        if (!SiteSettingsShown.heatRows(settings)) {
+            settingRow(body, words.say("heat.settings.title"), words.say("heat.none.value"), t(R.string.site_settings_heat_add_in_home_assistant))
+            return
+        }
+        // The offsets, night and away are left out until there is a path SpotNav steers: they could not act.
+        val comfort = SiteSettingsShown.heatComfort(settings)
         // "Styr värmen": the opt-in is Home Assistant's alone, so it is read here, with the one line on what it does.
         if (text.steers(settings)) {
             settingRow(
@@ -213,7 +221,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             }
         )
         // Each chosen sensor's room aim against the house: a cooler upstairs, a sensor that reads warm.
-        for (sensor in sensors) {
+        for (sensor in if (comfort) sensors else emptyList()) {
             val label = text.roomName(named(settings, sensor))
             val current = settings.indoorOffsetOf(sensor)
             settingRow(body, label, text.signedDegrees(current), onTap = {
@@ -236,7 +244,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             body, words.say("heat.settings.zones"),
             if (settings.zones.isEmpty()) words.say("heat.settings.zonesNone") else settings.zones.size.toString()
         )
-        for (zone in settings.zones) {
+        for (zone in if (comfort) settings.zones else emptyList()) {
             val label = named(settings, zone.entityId)
             val air = settings.zoneKinds[zone.entityId] == "air"
             val help = if (air) words.say("heat.settings.offsetHelp") + " " + words.say("heat.settings.airHelp") else words.say("heat.settings.offsetHelp")
@@ -244,9 +252,9 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
                 editOffset(label, zone.offsetC, help) { offset -> HeatWrite.zoneOffset(settings, zone.entityId, offset) }
             })
         }
-        settingRow(body, words.say("heat.settings.night"), text.nightValue(settings.night), onTap = { editNight(settings) })
+        if (comfort) settingRow(body, words.say("heat.settings.night"), text.nightValue(settings.night), onTap = { editNight(settings) })
         // Only from a Home Assistant that has the setting.
-        settings.awayDeltaC?.let { away ->
+        settings.awayDeltaC?.takeIf { comfort }?.let { away ->
             settingRow(
                 body, words.say("heat.settings.away"), words.say("heat.settings.awayValue", "delta" to text.degrees(away)),
                 onTap = {
