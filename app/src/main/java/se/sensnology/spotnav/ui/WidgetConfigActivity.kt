@@ -18,6 +18,7 @@ import se.sensnology.spotnav.push.PushWakeListener
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
+import se.sensnology.spotnav.sites.SiteUpkeep
 import se.sensnology.spotnav.ui.charging.ChargingScreen
 import se.sensnology.spotnav.ui.common.Palette
 import se.sensnology.spotnav.ui.history.HistoryScreen
@@ -116,6 +117,8 @@ class WidgetConfigActivity : Activity() {
         setContentView(shell.root)
         // This phone's own notification check: scheduled while it is on and something is paired.
         LocalNotifications.sync(this)
+        // Once per start: chargers paired before 3.0 move to their home's webhook, and a home's new chargers appear.
+        SiteUpkeep.startOnce(this, shell.io)
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))

@@ -71,7 +71,7 @@ data class ChargerProfile(
     val priceDays: Boolean? = null,
     /**
      * The Home Assistant entry id of the home this charger belongs to (Home Assistant 3.0), or `null` for a charger in
-     * no home, or one this app has not yet moved into its home (see [SiteAccessUpgrade]).
+     * no home, or one this app has not yet moved into its home (see se.sensnology.spotnav.sites.SiteUpkeep).
      */
     val siteId: String? = null,
     /**
