@@ -1,6 +1,8 @@
 package se.sensnology.spotnav.ui.site
 
 import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatSteering
+import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ha.house.House
 import java.time.Duration
 import java.time.Instant
@@ -82,6 +84,15 @@ internal object HeatNowModel {
             .joinToString(" · ").ifEmpty { null }
 
     /** "Inne 20,4 °C (kallast: Toalett NV)", with the outdoor reading after it. */
+    /**
+     * Whether SpotNav can only read this heating (the card's `!heatSteers(config)`): no path it steers and its steering
+     * off. The target is then shown without − and +, Home/Away is left out, and [readOnlyLine] takes the Test line's place.
+     */
+    fun readOnly(heat: Heat): Boolean = !HeatSteering.steers(heat.config.controlPath, heat.config.controlEnabled)
+
+    /** The one line under a read-only dial; an administrator's answer names where a control path is chosen. */
+    fun readOnlyLine(words: CardWords, heat: Heat): String = words.say(if (heat.writable) "heat.readOnly.admin" else "heat.readOnly")
+
     fun measuredLine(text: SiteText, heat: Heat): String {
         val words = text.words
         val parts = mutableListOf<String>()
