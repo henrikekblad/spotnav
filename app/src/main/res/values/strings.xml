@@ -869,11 +869,11 @@
   <string name="card_heat_pump_hot_water" formatted="false">Heat pump: hot water · {kw}</string>
   <string name="card_heat_pump_idle" formatted="false">Heat pump: resting · {kw}</string>
   <string name="card_heat_pump_unknown" formatted="false">Heat pump: no reading</string>
-  <string name="card_heat_would_lower" formatted="false">Would lower to {temp} until {until}: dear hours</string>
+  <string name="card_heat_would_lower" formatted="false">Would lower to {temp} until {until}: expensive hours</string>
   <string name="card_heat_would_lower_tight" formatted="false">Would lower to {temp} until {until}: makes room under the import target and the fuse</string>
   <string name="card_heat_would_lower_warm" formatted="false">Would lower to {temp} until {until}: too warm indoors</string>
-  <string name="card_heat_would_preheat" formatted="false">Would pre-heat to {temp} until {until}: cheap before dear hours</string>
-  <string name="card_heat_would_raise" formatted="false">Would raise the heat (SG Ready) to {temp} until {until}: cheap before dear hours</string>
+  <string name="card_heat_would_preheat" formatted="false">Would pre-heat to {temp} until {until}: cheap before expensive hours</string>
+  <string name="card_heat_would_raise" formatted="false">Would raise the heat (SG Ready) to {temp} until {until}: cheap before expensive hours</string>
   <string name="card_heat_would_night" formatted="false">Would keep a cooler night, {temp} until {until}</string>
   <string name="card_heat_would_away" formatted="false">Would keep {temp} until {until} while you are away</string>
   <string name="card_heat_would_return" formatted="false">Would warm up for your return: {temp} until {until}</string>
@@ -1026,7 +1026,7 @@
   <string name="card_hist_heat_runs_note" formatted="false">Told from the energy alone (no tank sensor): a run well above the usual small one is a draw, about its size the tank cooling while nobody drew.</string>
   <string name="card_hist_heat_shadow" formatted="false">What SpotNav would have done</string>
   <string name="card_hist_heat_shadow_learned" formatted="false">Learned from {blocks} measured lowerings of the relay.</string>
-  <string name="card_hist_heat_shadow_line" formatted="false">Would have moved {kwh} out of {hours} dear hours over {days} days.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Would have moved {kwh} out of {hours} expensive hours over {days} days.</string>
   <string name="card_hist_heat_shadow_none" formatted="false">Shown once there is at least one whole day with prices and meter readings.</string>
   <string name="card_hist_heat_shadow_note" formatted="false">SpotNav\'s plan as it was made hour by hour ({kept} of {days} days), else run again on the day\'s prices with today\'s settings. A lowering is counted to take {share} of the heat away, and {rebound} of that is bought back after it; the house holding the band is assumed.</string>
   <string name="card_hist_heat_shadow_prior" formatted="false">A cautious assumption until the relay\'s lowerings have been measured with the heat meter.</string>
@@ -1236,7 +1236,7 @@
   <string name="card_battery_intro" formatted="false">SpotNav can run the battery: hold it while the car charges from the grid, charge it when power is cheap and stop export when it costs money. Off until you turn it on.</string>
   <string name="card_battery_mode_label" formatted="false">Mode</string>
   <string name="card_battery_mode_help_self_consumption" formatted="false">The battery charges from the sun and covers the house. No trading with the grid.</string>
-  <string name="card_battery_mode_help_balanced" formatted="false">Also charges from the grid when it is cheap and is used when it is dear. Does not sell.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Also charges from the grid when it is cheap and is used when it is expensive. Does not sell.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Like Balanced, but may also sell to the grid when it pays, wear counted in.</string>
   <string name="card_battery_mode_shadow" formatted="false">While SpotNav does not control the battery, the choice only moves which row is marked as chosen in the comparison.</string>
   <string name="card_battery_switch" formatted="false">Battery control</string>
@@ -1336,9 +1336,9 @@
   <string name="card_hist_title_house" formatted="false">House history</string>
   <string name="card_hist_legend_cost" formatted="false">Cost</string>
   <string name="card_hist_house_legend_saving" formatted="false">Saved by the battery</string>
-  <string name="card_hist_house_legend_extra" formatted="false">Dearer with the battery</string>
+  <string name="card_hist_house_legend_extra" formatted="false">More expensive with the battery</string>
   <string name="card_hist_house_bar_money" formatted="false">{when}: cost {cost}, without the battery {without}, saved {saving}</string>
-  <string name="card_hist_house_bar_worse" formatted="false">{when}: cost {cost}, without the battery {without}, the battery made it {extra} dearer</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when}: cost {cost}, without the battery {without}, the battery made it {extra} more expensive</string>
   <string name="card_hist_house_bar_unreviewed" formatted="false">{when}: cost {cost}, not evaluated</string>
   <string name="card_hist_house_bar_hourly" formatted="false">{when}: cost {cost}, the saving is shown per day</string>
   <string name="card_hist_house_bar_no_cost" formatted="false">{when}: used {use}, bought {bought}</string>

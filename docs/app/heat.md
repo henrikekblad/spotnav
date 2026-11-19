@@ -18,7 +18,7 @@ As on the house page, the views are boxes stacked on one page. A box with nothin
 ## Test or control
 
 Until you turn on **Control the heat** in Home Assistant, SpotNav controls nothing. The heading then shows **Test**,
-and the page says what SpotNav would do, for example *Would lower to 20.5 until 18:00: dear hours*. Nothing is sent
+and the page says what SpotNav would do, for example *Would lower to 20.5 until 18:00: expensive hours*. Nothing is sent
 to the heat pump.
 
 The temperature and Home or Away you set in the app are kept all the same. They are what SpotNav follows once it
@@ -39,7 +39,7 @@ while SpotNav has lowered it. The **i** opens the [details](#details).
 - **Home** or **Away until.** Choose **Away**, then a date and a time, at most 90 days ahead. While you are away,
   SpotNav keeps the house cooler (by the **Setback when away** in Settings, never below 16 °C) and warms it up before
   you are back. **Change** moves the return time.
-- **What the heat pump does**, and what SpotNav does or would do with it, and why: dear hours, room under the import
+- **What the heat pump does**, and what SpotNav does or would do with it, and why: expensive hours, room under the import
   target and the fuse, too warm indoors, a cooler night, away, or warming up for your return.
 - **Guards**, when SpotNav holds back: *No prices yet*, *Too cold outdoors to lower*, or *The coldest room is below
   the band*.
@@ -81,7 +81,7 @@ The **i** in the heading opens the details for the period:
   for the same weather.
 - **Hot-water runs** and the **Immersion heater**.
 - **The relay and SpotNav's plan**: what the relay lowered against what SpotNav would have lowered.
-- **What SpotNav would have done**: the energy it would have moved out of dear hours, and what that would have saved.
+- **What SpotNav would have done**: the energy it would have moved out of expensive hours, and what that would have saved.
 - **House model**: how far the forecast of the heating was from the meter.
 
 Hot water is split out only for days that Home Assistant's history still holds in 5-minute detail (about ten
