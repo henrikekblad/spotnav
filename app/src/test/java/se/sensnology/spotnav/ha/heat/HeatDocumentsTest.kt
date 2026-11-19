@@ -26,6 +26,7 @@ class HeatDocumentsTest {
         val expected = mapOf(
             "controlled.json" to listOf(21.0, "home", false, 20.6, false, true, 4, true, 7, 0),
             "network_pump.json" to listOf(20.5, "away", true, null, true, false, 0, true, 7, 3),
+            "sg_api_pump.json" to listOf(21.0, "home", true, null, true, false, 0, true, 7, 0),
             "villa.json" to listOf(21.0, "home", true, 20.6, false, true, 4, true, 7, 2)
         )
         assertEquals(expected.keys, HaFixtures.files("heat_card").map { it.name }.toSet())

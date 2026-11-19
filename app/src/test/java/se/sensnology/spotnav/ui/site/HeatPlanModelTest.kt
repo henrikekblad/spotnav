@@ -40,7 +40,7 @@ class HeatPlanModelTest {
         assertTrue(c.withColdest)
         assertTrue(c.shadow)
         assertEquals(7, c.hours.count { HeatPlanModel.lowering(it).planned })
-        assertEquals(2, c.water.size)
+        assertEquals(4, c.water.size)
         // The car's four hours in a row are one bar.
         assertEquals(1, HeatPlanModel.carRuns(c).size)
         assertEquals(4 * HeatPlanModel.HOUR_MS, HeatPlanModel.carRuns(c).single().let { it.endMs - it.startMs })

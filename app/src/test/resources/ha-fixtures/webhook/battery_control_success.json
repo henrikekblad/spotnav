@@ -6,10 +6,12 @@
   "status": {
     "allowed_actions": [],
     "device_id": null,
+    "enable_entities": null,
     "grid_charge_cap": {
       "cap_conservative_kw": 0.0,
       "cap_kw": 0.0,
       "cap_learned_kw": null,
+      "import_limit": null,
       "learned": {
         "basis": "none",
         "days_counted": 0,
@@ -43,12 +45,12 @@
     "notes": [],
     "options": {
       "battery_control_ai_takeover_ack": false,
-      "battery_control_allow_sell": false,
       "battery_control_enabled": false,
       "battery_control_import_limit_acts": false,
       "battery_control_shadow_only": true,
       "battery_mode": "balanced"
     },
+    "per_phase": null,
     "report": null,
     "state": "off",
     "trial": null,
