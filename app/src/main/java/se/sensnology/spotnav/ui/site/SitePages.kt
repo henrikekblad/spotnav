@@ -62,21 +62,25 @@ internal class MainTimer : DayRollover.Timer {
 /** Which pages a site's Home Assistant serves, apart from the views. */
 internal object PageOffer {
     /**
-     * The pages to show: the charger's always, the house's where the charger's webhook answers for its site's house
-     * ([house], `capabilities.get_house`), the heat's where it answers for the heating and the page is built
-     * ([heat]). A Home Assistant before 3.0 states neither: one page, and no icon row.
+     * The pages to show: the charger's where there is a charger ([charger]; a home without one has none), the house's
+     * where the webhook answers for the site's house ([house], `capabilities.get_house`), the heat's where it answers
+     * for the heating and the page is built ([heat]). A Home Assistant before 3.0 states neither: the charger's page
+     * alone, and no icon row.
      */
-    fun kinds(house: Boolean, heat: Boolean): List<PageKind> = buildList {
-        add(PageKind.CHARGER)
+    fun kinds(house: Boolean, heat: Boolean, charger: Boolean = true): List<PageKind> = buildList {
+        if (charger) add(PageKind.CHARGER)
         if (house) add(PageKind.HOUSE)
         if (heat) add(PageKind.HEAT)
     }
 
-    /** The page to open on: the one wanted while it is still offered, else the charger's. */
     /** The row of page icons: shown only with two or more pages (owner 2026-11-18). */
     fun iconsShown(kinds: List<PageKind>): Boolean = kinds.size >= 2
 
-    fun opening(wanted: PageKind, kinds: List<PageKind>): PageKind = wanted.takeIf { it in kinds } ?: PageKind.CHARGER
+    /** The page to open on: the one wanted while it is still offered, else the first (the charger's, where there is one). */
+    fun opening(wanted: PageKind, kinds: List<PageKind>): PageKind = wanted.takeIf { it in kinds } ?: kinds.firstOrNull() ?: PageKind.CHARGER
+
+    /** Whether [kinds] (as remembered) is a list of pages: in their fixed order, each once, the charger's first if there. */
+    fun valid(kinds: List<PageKind>): Boolean = kinds.isNotEmpty() && kinds == kinds.distinct().sortedBy { it.ordinal }
 }
 
 /**
@@ -159,8 +163,8 @@ internal class SitePages(
     fun knownFor(profileId: String): List<PageKind>? = known[profileId] ?: run {
         val names = PageKind.entries.map { it.name }
         val kept = preferences.pages(profileId, names).map(PageKind::valueOf)
-        // The charger's page is always the first; anything else stored is not a list of pages.
-        kept.takeIf { it.firstOrNull() == PageKind.CHARGER && it.distinct() == it }
+        // Pages in their fixed order (the charger's first where there is one); anything else stored is not a list of pages.
+        kept.takeIf { PageOffer.valid(it) }
     }
 
     /**
@@ -193,6 +197,8 @@ internal class SitePages(
         pages = emptyList()
         kinds = listOf(PageKind.CHARGER)
         offeredFor = null
+        // A home without a charger took the charger's page (the scrolling body) out: it is back for every other screen.
+        if (chargerPage.parent == null) pager.addView(chargerPage, 0, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         icons.removeAllViews()
         pager.onPage = {}
         pager.show(0, animate = false)
@@ -211,11 +217,13 @@ internal class SitePages(
         // The page chosen for this charger while the Activity lived, else the one last in view when the app last ran.
         val wanted = chosenFor[profileId]
             ?: preferences.page(profileId, PageKind.entries.map { it.name })?.let(PageKind::valueOf)
-            ?: PageKind.CHARGER
+            ?: offered.firstOrNull() ?: PageKind.CHARGER
         clearPages()
         offeredFor = profileId
         kinds = offered
         pages = offered.filter { it != PageKind.CHARGER }.map(build)
+        // A home without a charger: no charger's page, so the pages are the pager's only children.
+        if (PageKind.CHARGER !in offered) pager.removeView(chargerPage)
         val whole = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         pages.forEach { pager.addView(it.view, whole) }
         selected = PageOffer.opening(wanted, kinds)

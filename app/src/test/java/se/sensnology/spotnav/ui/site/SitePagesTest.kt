@@ -23,6 +23,24 @@ class SitePagesTest {
         assertEquals(PageKind.CHARGER, PageOffer.opening(PageKind.HOUSE, PageOffer.kinds(house = false, heat = false)))
     }
 
+    @Test fun aHomeWithoutAChargerHasNoChargerPageAndNoChargerIcon() {
+        assertEquals(listOf(PageKind.HOUSE), PageOffer.kinds(house = true, heat = false, charger = false))
+        assertEquals(listOf(PageKind.HOUSE, PageKind.HEAT), PageOffer.kinds(house = true, heat = true, charger = false))
+        // The house alone: no icon row; with the heat: two icons, neither the charger's.
+        assertFalse(PageOffer.iconsShown(PageOffer.kinds(house = true, heat = false, charger = false)))
+        assertTrue(PageOffer.iconsShown(PageOffer.kinds(house = true, heat = true, charger = false)))
+        // It opens on the page wanted, else the house.
+        val home = PageOffer.kinds(house = true, heat = true, charger = false)
+        assertEquals(PageKind.HEAT, PageOffer.opening(PageKind.HEAT, home))
+        assertEquals(PageKind.HOUSE, PageOffer.opening(PageKind.CHARGER, home))
+        // Remembered page lists: in their order, each once; a home's need no charger's page.
+        assertTrue(PageOffer.valid(home))
+        assertTrue(PageOffer.valid(PageOffer.kinds(house = true, heat = false)))
+        assertFalse(PageOffer.valid(listOf(PageKind.HOUSE, PageKind.CHARGER)))
+        assertFalse(PageOffer.valid(listOf(PageKind.HOUSE, PageKind.HOUSE)))
+        assertFalse(PageOffer.valid(emptyList()))
+    }
+
     @Test fun pageIconsShowOnlyWithTwoOrMorePages() {
         assertFalse(PageOffer.iconsShown(PageOffer.kinds(house = false, heat = false)))
         assertTrue(PageOffer.iconsShown(PageOffer.kinds(house = true, heat = false)))

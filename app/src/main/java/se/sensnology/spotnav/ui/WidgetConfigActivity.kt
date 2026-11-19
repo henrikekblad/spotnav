@@ -19,6 +19,11 @@ import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
 import se.sensnology.spotnav.sites.SiteUpkeep
+import se.sensnology.spotnav.sites.MainSubject
+import se.sensnology.spotnav.sites.SiteProfileStore
+import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.ui.site.SiteScreen
+import se.sensnology.spotnav.widget.WidgetChargerResolver
 import se.sensnology.spotnav.ui.charging.ChargingScreen
 import se.sensnology.spotnav.ui.common.Palette
 import se.sensnology.spotnav.ui.history.HistoryScreen
@@ -182,7 +187,12 @@ class WidgetConfigActivity : Activity() {
 
     /** The charging screen, drawn afresh; a new charger chosen on its card calls this to redraw in place. */
     private fun showCharging() {
-        ChargingScreen(shell) { showCharging() }.show()
+        // A home without a charger (Home Assistant 3.0) has its own main screen: the house and heat pages alone.
+        val resolved = WidgetChargerResolver.resolve(WidgetSettings.load(this, widgetId), ChargerProfileStore.forContext(this))
+        val sites = SiteProfileStore.forContext(this)
+        val site = MainSubject.site(resolved, ChargerProfileStore.forContext(this).listProfiles(), sites.list(), sites.activeSiteId())
+        if (site != null) SiteScreen(shell, site) { showCharging() }.show()
+        else ChargingScreen(shell) { showCharging() }.show()
         if (foreground) { dayRollover.arm(); liveRefresh.arm() }
     }
 
