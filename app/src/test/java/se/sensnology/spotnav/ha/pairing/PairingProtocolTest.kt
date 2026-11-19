@@ -6,6 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
+import se.sensnology.spotnav.testing.HaFixtures
 import java.security.SecureRandom
 
 /** The pairing handshake, read as untrusted input end to end. */
@@ -83,6 +84,37 @@ class PairingProtocolTest {
         val approval = poll as PairingPoll.Approved
         assertEquals("http://192.168.1.50:8123", approval.baseUrl)
         assertEquals(listOf(PairedCharger("entry_a", "Garage", "wh-a")), approval.chargers)
+    }
+
+    @Test fun anApprovalCarriesTheHomesWithTheirChargers() {
+        // The integration's own fixture (Home Assistant 3.0): one home with a charger, one without.
+        val text = HaFixtures.root.resolve("pairing/approved_v1_sites.json").readText()
+        val approval = PairingProtocol.poll(text, allowed) as PairingPoll.Approved
+        assertEquals(listOf(PairedCharger("entry_charger_a", "Garage", "9c41e07b2fd85a3e6b1d4c70a2e59f18", siteId = "site_garage")), approval.chargers)
+        assertEquals(
+            listOf(
+                PairedSite("site_garage", "Home", "<site_garage_webhook>", listOf(SiteCharger("entry_charger_a", "Garage"))),
+                PairedSite("site_cabin", "Cabin", "<site_cabin_webhook>", emptyList())
+            ),
+            approval.sites
+        )
+        // And the loop's stop carries them on.
+        val stop = (PairingProtocol.next(0, approval) as PairingStep.Stop).reason as PairingStop.Approved
+        assertEquals(approval.sites, stop.sites)
+    }
+
+    @Test fun aHomeNeedsAnIdAndAWebhookAndAnApprovalWithoutHomesHasNone() {
+        val poll = PairingProtocol.poll(
+            """{"status":"approved","url":"http://192.168.1.50:8123","chargers":[],
+               "sites":[{"id":"s1","webhook":"w1","chargers":[{"name":"no id"},{"id":"c1"}]},{"id":"s2"},{"webhook":"w3"},"x"]}""",
+            allowed
+        ) as PairingPoll.Approved
+        assertEquals(listOf(PairedSite("s1", "s1", "w1", listOf(SiteCharger("c1", "c1")))), poll.sites)
+        // Home Assistant 2.x: no `sites`, no `site_id`.
+        val old = PairingProtocol.poll(approved, allowed) as PairingPoll.Approved
+        assertEquals(emptyList<PairedSite>(), old.sites)
+        assertNull(old.chargers.single().siteId)
+        assertTrue("<redacted>" in PairedSite("s", "n", "secret", emptyList()).toString())
     }
 
     @Test fun anApprovalWithNoChargersIsStillAnApproval() {
