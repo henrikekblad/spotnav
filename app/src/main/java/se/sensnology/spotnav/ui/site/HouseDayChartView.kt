@@ -303,9 +303,11 @@ internal class HouseDayChartView(
                     line.strokeWidth = 1.5f * density
                     line.strokeCap = Paint.Cap.ROUND
                     line.pathEffect = DashPathEffect(floatArrayOf(1f * density, 4f * density), 0f)
+                    // Only ahead (from the running hour: the past is the measured sun alone) and where the sun is up.
                     fun up(i: Int) = (hours.getOrNull(i)?.sunForecastKwh ?: 0.0) > 0
                     val raw = hours.mapIndexed { i, h ->
-                        if (h.sunForecastKwh == null || !(up(i - 1) || up(i) || up(i + 1))) null
+                        val past = h.start.toEpochMilli() + HouseGraph.HOUR_MS <= s.nowMs
+                        if (h.sunForecastKwh == null || past || !(up(i - 1) || up(i) || up(i + 1))) null
                         else x(h.start.toEpochMilli() + HouseGraph.HOUR_MS / 2) to y(h.sunForecastKwh)
                     }
                     canvas.drawPath(pathOf(raw), line)
