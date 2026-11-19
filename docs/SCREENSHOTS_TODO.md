@@ -1,6 +1,7 @@
 ---
 title: Screenshots to take
 description: Screenshots the app guide refers to that do not exist yet.
+hidden: true
 ---
 
 # Screenshots to take
