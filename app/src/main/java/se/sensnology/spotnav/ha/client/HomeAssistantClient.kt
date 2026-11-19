@@ -430,6 +430,12 @@ object HomeAssistantClient {
         return SiteDoor.getSite(status, body, failure)
     }
 
+    /** The home's electricity price from its settings view (`get_site_settings_view`); `null` for none. Never throws. */
+    internal fun homePrice(settings: HomeAssistantSettings): HomePrice? {
+        val (status, body, _) = ask(settings, SiteDoor.settingsViewPayload())
+        return SiteDoor.homePrice(status, body)
+    }
+
     /** The charger's home and its webhook (`get_site_access`, asked on the charger's own webhook). Never throws. */
     internal fun getSiteAccess(settings: HomeAssistantSettings): SiteDoor.Access {
         val (status, body, failure) = ask(settings, SiteDoor.accessPayload())

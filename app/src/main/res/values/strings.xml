@@ -119,6 +119,11 @@
   <string name="instance_refreshing">Searching…</string>
   <string name="instance_connected">Connected to %1$s</string>
   <string name="instance_connected_nothing">Connected, but SpotNav in Home Assistant has no charger or home yet. Add one in Home Assistant, or update SpotNav there to 3.0.</string>
+  <string name="site_home_title">Home: %1$s</string>
+  <string name="site_home_chargers">Chargers: %1$s</string>
+  <string name="site_home_no_charger">No charger: the house and heat pages</string>
+  <string name="site_show">Show</string>
+  <string name="site_price_read_only">A home without a charger shows its electricity price and grid tariff here; they are changed in Home Assistant.</string>
   <string name="instance_stale">No longer in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant but not paired with this app: %1$s</string>
   <string name="instance_pair_again">Pair again</string>

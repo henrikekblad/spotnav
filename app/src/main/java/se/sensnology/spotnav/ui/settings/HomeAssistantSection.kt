@@ -153,6 +153,13 @@ internal class HomeAssistantSection(
         fun refresh() {
             val baseUrl = instanceStore.baseUrl() ?: return
             // A charger whose webhook is known to be gone is asked only when nothing else can be:
+            // The homes are asked too (`get_site`): a charger added to one appears, a gone webhook is marked.
+            val siteStore = SiteProfileStore.forContext(applicationContext)
+            ioExecutor.execute {
+                val upkeep = se.sensnology.spotnav.sites.SiteUpkeep(profileStore, siteStore)
+                siteStore.list().filter { it.baseUrl == baseUrl }.forEach { upkeep.refresh(it.localId) }
+                runOnUiThread { if (!pairing) redraw() }
+            }
             val asked = profileStore.listProfiles()
                 .filter { it.baseUrl == baseUrl && it.configured }
                 .minByOrNull { if (it.needsPairing) 1 else 0 } ?: return
@@ -408,6 +415,8 @@ internal class HomeAssistantSection(
                             LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                                 .apply { topMargin = dp(4); bottomMargin = dp(6) })
                     }
+                    // The homes (Home Assistant 3.0): each with its chargers, the one shown or a Show to switch to it.
+                    body.showHomes(baseUrl) { pairAgain(baseUrl) }
                     report?.let { reconciled ->
                         val stale = reconciled.stale
                         if (stale.isNotEmpty()) {
@@ -453,6 +462,13 @@ internal class HomeAssistantSection(
         }
 
         redraw()
+        // "Pair again" pressed on a home's screen: the same, for the home's instance.
+        val siteAsked = shell.pairAgainSite?.let { SiteProfileStore.forContext(applicationContext).get(it) }
+        shell.pairAgainSite = null
+        if (siteAsked != null && siteAsked.baseUrl.isNotBlank()) {
+            pairAgain(siteAsked.baseUrl)
+            return
+        }
         // "Pair again" pressed on the charging screen: the handshake starts here at once, for that
         // charger's own instance.
         val pairAgainAsked = shell.pairAgainProfile?.let { profileStore.getProfile(it) }
@@ -462,6 +478,53 @@ internal class HomeAssistantSection(
             // A connected instance shows what it has without being asked: the checklist is the answer
             // to "is it still there, and what does it have".
             instanceStore.baseUrl() != null -> refresh()
+        }
+    }
+
+    /**
+     * The homes of the instance at [baseUrl], under it: the home's name, its chargers (or that it has none: the house and
+     * heat pages), a pair-again notice when Home Assistant no longer has its webhook, and Show, which makes the main
+     * screen show it: its first charger, or the home itself when it has none.
+     */
+    private fun LinearLayout.showHomes(baseUrl: String, pairAgain: () -> Unit) {
+        val sites = SiteProfileStore.forContext(applicationContext)
+        val chargers = ChargerProfileStore.forContext(applicationContext)
+        val bindings = WidgetChargerBindingStore.forContext(applicationContext)
+        val resolved = se.sensnology.spotnav.widget.WidgetChargerResolver.resolve(WidgetSettings.load(context, widgetId), chargers)
+        val shownSite = se.sensnology.spotnav.sites.MainSubject.site(resolved, chargers.listProfiles(), sites.list(), sites.activeSiteId())
+        for (site in sites.list().filter { it.baseUrl == baseUrl }) {
+            val inside = chargers.listProfiles().filter { it.baseUrl == baseUrl && it.siteId == site.siteId }
+            val shown = if (inside.isEmpty()) shownSite?.localId == site.localId else resolved?.localId in inside.map { it.localId }
+            addView(LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(0, dp(8), 0, 0)
+                addView(TextView(context).apply {
+                    text = t(R.string.site_home_title, site.name)
+                    textSize = 14f
+                    setTextColor(dark)
+                    typeface = Typeface.DEFAULT_BOLD
+                }, weight())
+                if (!shown && !site.needsPairing) addView(Button(context).apply {
+                    text = t(R.string.site_show)
+                    isAllCaps = false
+                    setOnClickListener {
+                        val first = inside.firstOrNull()
+                        bindings.setBinding(widgetId, first?.localId)
+                        sites.setActiveSiteId(if (first == null) site.localId else null)
+                        shell.navigate(se.sensnology.spotnav.ui.Screen.MAIN)
+                    }
+                })
+            })
+            addView(TextView(context).apply {
+                text = if (inside.isEmpty()) t(R.string.site_home_no_charger)
+                else t(R.string.site_home_chargers, inside.joinToString(", ") { chargerName(it) })
+                textSize = 13f
+                setTextColor(muted)
+                setPadding(0, dp(2), 0, dp(6))
+            })
+            if (site.needsPairing) addView(pairAgainNotice(t(R.string.pair_again_needed)) { pairAgain() },
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { bottomMargin = dp(6) })
         }
     }
 

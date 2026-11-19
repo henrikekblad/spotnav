@@ -115,6 +115,11 @@
   <string name="instance_refreshing">Zoeken…</string>
   <string name="instance_connected">Verbonden met %1$s</string>
   <string name="instance_connected_nothing">Verbonden, maar SpotNav in Home Assistant heeft nog geen laadpaal of huis. Voeg er een toe in Home Assistant, of werk SpotNav daar bij naar 3.0.</string>
+  <string name="site_home_title">Huis: %1$s</string>
+  <string name="site_home_chargers">Laadpalen: %1$s</string>
+  <string name="site_home_no_charger">Geen laadpaal: de huis- en verwarmingspagina\'s</string>
+  <string name="site_show">Tonen</string>
+  <string name="site_price_read_only">Een huis zonder laadpaal toont hier zijn stroomprijs en nettarief; ze worden gewijzigd in Home Assistant.</string>
   <string name="instance_stale">Niet meer in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant maar niet gekoppeld aan deze app: %1$s</string>
   <string name="instance_pair_again">Opnieuw koppelen</string>

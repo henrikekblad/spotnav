@@ -112,6 +112,11 @@
   <string name="instance_refreshing">Søker…</string>
   <string name="instance_connected">Tilkoblet %1$s</string>
   <string name="instance_connected_nothing">Tilkoblet, men SpotNav i Home Assistant har ingen lader eller hjem ennå. Legg til et i Home Assistant, eller oppdater SpotNav der til 3.0.</string>
+  <string name="site_home_title">Hjem: %1$s</string>
+  <string name="site_home_chargers">Ladere: %1$s</string>
+  <string name="site_home_no_charger">Ingen lader: hus- og varmesidene</string>
+  <string name="site_show">Vis</string>
+  <string name="site_price_read_only">Et hjem uten lader viser strømprisen og nettleien her; de endres i Home Assistant.</string>
   <string name="instance_stale">Finnes ikke lenger i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Finnes i Home Assistant, men er ikke paret med appen: %1$s</string>
   <string name="instance_pair_again">Pare igjen</string>

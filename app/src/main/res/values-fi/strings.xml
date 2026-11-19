@@ -112,6 +112,11 @@
   <string name="instance_refreshing">Etsitään…</string>
   <string name="instance_connected">Yhdistetty: %1$s</string>
   <string name="instance_connected_nothing">Yhdistetty, mutta Home Assistantin SpotNavissa ei ole vielä laturia eikä kotia. Lisää sellainen Home Assistantissa tai päivitä SpotNav siellä versioon 3.0.</string>
+  <string name="site_home_title">Koti: %1$s</string>
+  <string name="site_home_chargers">Laturit: %1$s</string>
+  <string name="site_home_no_charger">Ei laturia: talo- ja lämmityssivut</string>
+  <string name="site_show">Näytä</string>
+  <string name="site_price_read_only">Koti ilman laturia näyttää sähkön hinnan ja siirtomaksun tässä; ne muutetaan Home Assistantissa.</string>
   <string name="instance_stale">Ei enää Home Assistantissa: %1$s</string>
   <string name="instance_unprovisioned">On Home Assistantissa, mutta ei liitetty sovellukseen: %1$s</string>
   <string name="instance_pair_again">Liitä uudelleen</string>

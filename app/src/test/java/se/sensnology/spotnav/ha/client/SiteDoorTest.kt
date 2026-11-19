@@ -49,4 +49,15 @@ class SiteDoorTest {
         // An ok answer without a usable home is no move.
         assertEquals(SiteDoor.Access.Unsupported, SiteDoor.access(200, """{"ok": true, "site": {"id": "s"}}""", null))
     }
+
+    @Test fun aHomesPriceIsReadFromItsSettingsViewAndAPriceWriteIsRefused() {
+        assertEquals(HomePrice("Electricity price SE4", "SE4", "Malmö"), SiteDoor.homePrice(200, fixture("site_webhook_get_site_settings_view")))
+        assertEquals(null, SiteDoor.homePrice(403, fixture("site_webhook_price_not_permitted")))
+        assertEquals(null, SiteDoor.homePrice(200, "{}"))
+        assertEquals(
+            "Electricity price SE4 · Malmö (SE4)",
+            se.sensnology.spotnav.ui.settings.HomePriceRows.line(HomePrice("Electricity price SE4", "SE4", "Malmö"))
+        )
+        assertEquals("SE4", se.sensnology.spotnav.ui.settings.HomePriceRows.line(HomePrice(null, "SE4", null)))
+    }
 }

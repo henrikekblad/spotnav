@@ -27,6 +27,9 @@ data class HomeSite(
     val chargers: List<SiteCharger>
 )
 
+/** The electricity price a home uses, as its settings view states it (read-only from a home without a charger). */
+data class HomePrice(val title: String?, val areaId: String?, val areaName: String?)
+
 /**
  * The two reads of the home's door: `get_site` on the home's webhook, and `get_site_access` on a charger's own
  * webhook (how a phone paired before 3.0 moves to the home's webhook without pairing again). Pure: the client hands
@@ -73,6 +76,19 @@ internal object SiteDoor {
     fun getSitePayload(): JSONObject = JSONObject().put("version", 1).put("action", "get_site").put("api_version", 1)
 
     fun accessPayload(): JSONObject = JSONObject().put("version", 1).put("action", "get_site_access").put("api_version", 1)
+
+    fun settingsViewPayload(): JSONObject = JSONObject().put("version", 1).put("action", "get_site_settings_view")
+
+    /** The price block of `get_site_settings_view`, or `null` when there is none to show. */
+    fun homePrice(status: Int?, body: String?): HomePrice? {
+        if (status != 200) return null
+        val json = body?.let { runCatching { JSONObject(it) }.getOrNull() } ?: return null
+        if (json.strictBoolean("ok") != true) return null
+        val price = json.optJSONObject("price") ?: return null
+        val area = price.strictText("area_id")
+        return HomePrice(price.strictText("title"), area, price.strictText("area_name"))
+            .takeIf { it.title != null || it.areaId != null }
+    }
 
     fun getSite(status: Int?, body: String?, failure: Throwable?): GetSite {
         if (WebhookGone.isGone(failure)) return GetSite.Gone

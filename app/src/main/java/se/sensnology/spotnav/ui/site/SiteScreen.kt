@@ -1,7 +1,5 @@
 package se.sensnology.spotnav.ui.site
 
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -11,7 +9,6 @@ import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.ha.client.SiteDoor
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
-import se.sensnology.spotnav.ha.session.HomeAssistantTransport
 import se.sensnology.spotnav.sites.MainSubject
 import se.sensnology.spotnav.sites.SiteProfile
 import se.sensnology.spotnav.sites.SiteProfileStore
@@ -20,6 +17,7 @@ import se.sensnology.spotnav.ui.Screen
 import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.pairAgainNotice
+import se.sensnology.spotnav.ui.siteSession
 
 /**
  * The main screen for a home without a charger (Home Assistant 3.0): the top row with the app's mark and the gear,
@@ -35,17 +33,7 @@ internal class SiteScreen(shell: ScreenShell, private val site: SiteProfile, pri
     fun show() {
         beginScreen()
         shell.pages.showTop { showScreen(Screen.SETTINGS) }
-        val generation = viewGeneration
-        val handler = Handler(Looper.getMainLooper())
-        fun current() = !activity.isDestroyed && generation == shell.generation
-        session = HaSession(
-            transport = HomeAssistantTransport(site.toHomeAssistantSettings()),
-            // A home has no dashboard: nothing to record.
-            recorder = { null },
-            background = shell.io,
-            mainThread = { block -> activity.runOnUiThread { if (current()) block() } },
-            schedule = { delayMs, block -> handler.postDelayed({ if (current()) block() }, delayMs) }
-        )
+        session = shell.siteSession(site)
         // The scrolling body, shown until the pages are known (and when the home waits to be paired again).
         content.addView(TextView(context).apply {
             text = site.name
