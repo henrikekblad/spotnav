@@ -1082,6 +1082,7 @@
   <string name="card_house_now_tab_line_heat_out" formatted="false">De warmte gebruikt {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Vandaag: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">de batterij verdiende {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">de batterij verdiende {amount} (eigen sturing)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav bespaarde {amount}</string>
   <string name="card_house_now_tab_car_today" formatted="false">{kwh} vandaag</string>
   <string name="card_house_now_tab_today" formatted="false">vandaag</string>

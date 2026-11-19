@@ -179,8 +179,11 @@ class HouseNowModelTest {
     }
 
     @Test fun todaysMoneyIsOneLine() {
-        assertEquals("I dag: batteriet tjänade 11 kr · SpotNav sparade 17 kr", HouseNowModel.moneyLine(text(), house()))
-        assertEquals("Today: the battery earned 11 kr · SpotNav saved 17 kr", HouseNowModel.moneyLine(text("en"), house()))
+        // The fixture's battery ran under its own control (battery_share 0): its figure is its own.
+        assertEquals("I dag: batteriet tjänade 11 kr (egen styrning) · SpotNav sparade 17 kr", HouseNowModel.moneyLine(text(), house()))
+        assertEquals("Today: the battery earned 11 kr (own control) · SpotNav saved 17 kr", HouseNowModel.moneyLine(text("en"), house()))
+        val steered = house().let { it.copy(saving = it.saving!!.copy(batteryShare = 1.0)) }
+        assertEquals("I dag: batteriet tjänade 11 kr · SpotNav sparade 17 kr", HouseNowModel.moneyLine(text(), steered))
         assertNull(HouseNowModel.moneyLine(text(), house("house_learning.json")))
         assertEquals("I dag: batteriet tjänade 11 kr", HouseNowModel.moneyLine(text(), house().copy(saving = null)))
         // Whole units from 10 up and for nothing, one decimal below; the minor unit where there is no major one.

@@ -1082,6 +1082,7 @@
   <string name="card_house_now_tab_line_heat_out" formatted="false">Varmen bruker {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">I dag: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">batteriet tjente {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">batteriet tjente {amount} (egen styring)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparte {amount}</string>
   <string name="card_house_now_tab_car_today" formatted="false">{kwh} i dag</string>
   <string name="card_house_now_tab_today" formatted="false">i dag</string>

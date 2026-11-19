@@ -1082,6 +1082,7 @@
   <string name="card_house_now_tab_line_heat_out" formatted="false">Lämmitys käyttää {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Tänään: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">akku tienasi {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">akku tienasi {amount} (oma ohjaus)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav säästi {amount}</string>
   <string name="card_house_now_tab_car_today" formatted="false">{kwh} tänään</string>
   <string name="card_house_now_tab_today" formatted="false">tänään</string>

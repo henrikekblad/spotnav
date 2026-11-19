@@ -391,6 +391,7 @@ internal object CardStrings {
         "house.nowTab.line.heat.out" to R.string.card_house_now_tab_line_heat_out,
         "house.nowTab.money" to R.string.card_house_now_tab_money,
         "house.nowTab.moneyBattery" to R.string.card_house_now_tab_money_battery,
+        "house.nowTab.moneyBatteryOwn" to R.string.card_house_now_tab_money_battery_own,
         "house.nowTab.moneySaved" to R.string.card_house_now_tab_money_saved,
         "house.nowTab.carToday" to R.string.card_house_now_tab_car_today,
         "house.nowTab.today" to R.string.card_house_now_tab_today,

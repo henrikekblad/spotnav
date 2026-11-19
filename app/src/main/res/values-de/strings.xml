@@ -1082,6 +1082,7 @@
   <string name="card_house_now_tab_line_heat_out" formatted="false">Die Wärme braucht {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Heute: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">die Batterie brachte {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">die Batterie brachte {amount} (eigene Steuerung)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparte {amount}</string>
   <string name="card_house_now_tab_car_today" formatted="false">{kwh} heute</string>
   <string name="card_house_now_tab_today" formatted="false">heute</string>

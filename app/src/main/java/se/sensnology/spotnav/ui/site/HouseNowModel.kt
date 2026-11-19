@@ -314,13 +314,16 @@ internal object HouseNowModel {
         else words.say("house.plan.wouldNext", "who" to who, "act" to first, "time" to time, "then" to then)
     }
 
-    /** Today's money, one line: "I dag: batteriet tjänade 11 kr · SpotNav sparade 17 kr"; `null` with neither. */
+    /** Today's money, one line: "I dag: batteriet tjänade 11 kr · SpotNav sparade 17 kr", with "(egen styrning)" after the
+     * battery's figure when it ran under its own control; `null` with neither. */
     fun moneyLine(text: SiteText, house: House): String? {
         val words = text.words
         val parts = ArrayList<String>()
         val today = house.today
         if (house.battery != null && today != null) {
-            parts.add(words.say("house.nowTab.moneyBattery", "amount" to text.amount(today.arbitrage, house.money)))
+            // Under its own control (SpotNav off or in test, Sigenergy's AI) the battery's earnings are its own.
+            val key = if (house.saving?.batteryShare == 0.0) "house.nowTab.moneyBatteryOwn" else "house.nowTab.moneyBattery"
+            parts.add(words.say(key, "amount" to text.amount(today.arbitrage, house.money)))
         }
         house.saving?.total?.let { parts.add(words.say("house.nowTab.moneySaved", "amount" to text.amount(it, house.money))) }
         return if (parts.isEmpty()) null else words.say("house.nowTab.money", "parts" to parts.joinToString(" · "))
