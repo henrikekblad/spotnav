@@ -52,7 +52,9 @@ internal data class Heat(
     /** Yesterday's review under today's chart; `null` without one. */
     val review: HeatReview? = null,
     /** The site's hot water (`heat/dhw_runtime.py`); `null` without the heat shadow or from an older Home Assistant. */
-    val hotWater: HeatHotWater? = null
+    val hotWater: HeatHotWater? = null,
+    /** An administrator's answer (`writable`); `false` over the webhook. */
+    val writable: Boolean = false
 ) {
     /** What the dial and Home/Away are written against. The raw text of `away_until` is what the compare-and-set sends back. */
     data class Config(
@@ -61,7 +63,9 @@ internal data class Heat(
         val awayUntilRaw: String?,
         val controlPath: String,
         val controlEntity: String?,
-        val controlEntityB: String?
+        val controlEntityB: String?,
+        /** SpotNav's own steering is on (`config.control_enabled`). */
+        val controlEnabled: Boolean = false
     )
 
     data class Comfort(val targetC: Double, val lowC: Double, val highC: Double, val mode: String, val awayUntil: Instant?, val aimC: Double)
@@ -96,6 +100,14 @@ internal data class Heat(
 
     /** Whether the heat page has anything to show: a meter, a pump, heat zones or indoor sensors. */
     val hasSomething: Boolean get() = hasMeter || hasPump || zones > 0 || indoor.sensorsRead > 0 || indoor.valueC != null
+}
+
+/** The card's `heatSteers()` (`frontend/src/heat-model.ts`): SpotNav steers the heating on these paths, or while its steering is on. */
+internal object HeatSteering {
+    /** The control paths SpotNav steers itself ("Styr värmen" has a row on them). */
+    val STEERED_PATHS = setOf("relay", "sg_ready", "sg_ready_api", "offset")
+
+    fun steers(controlPath: String, controlEnabled: Boolean): Boolean = controlPath in STEERED_PATHS || controlEnabled
 }
 
 internal object HeatRead {
@@ -137,7 +149,8 @@ internal object HeatRead {
                 awayUntilRaw = textOrNull(config.opt("away_until"), "config.away_until"),
                 controlPath = text(config.opt("control_path"), "config.control_path"),
                 controlEntity = textOrNull(config.opt("control_entity"), "config.control_entity"),
-                controlEntityB = textOrNull(config.opt("control_entity_b"), "config.control_entity_b")
+                controlEntityB = textOrNull(config.opt("control_entity_b"), "config.control_entity_b"),
+                controlEnabled = additive(config, "control_enabled", false) { flag(it, "config.control_enabled") }
             ),
             comfort = Heat.Comfort(
                 targetC = number(comfort.opt("target_c"), "comfort.target_c"),
@@ -216,7 +229,8 @@ internal object HeatRead {
             band = list(obj(json.opt("band"), "band").opt("hours"), "band.hours").map(HeatDayRead::bandHour),
             indoorDay = additive(json, "indoor_day", null) { objOrNull(it, "indoor_day")?.let(HeatDayRead::indoorDay) },
             review = additive(json, "review", null) { objOrNull(it, "review")?.let(HeatDayRead::review) },
-            hotWater = additive(json, "hot_water", null) { objOrNull(it, "hot_water")?.let(HeatHotWaterRead::hotWater) }
+            hotWater = additive(json, "hot_water", null) { objOrNull(it, "hot_water")?.let(HeatHotWaterRead::hotWater) },
+            writable = additive(json, "writable", false) { flag(it, "writable") }
         )
     }
 
