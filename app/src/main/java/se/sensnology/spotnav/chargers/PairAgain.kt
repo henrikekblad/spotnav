@@ -21,8 +21,11 @@ internal object PairAgain {
     const val SLOW_CHECK_MS = 15 * 60 * 1_000L
 
     /** Whether [profile]'s webhook may be asked at [now]. */
-    fun mayRead(profile: ChargerProfile, now: Long): Boolean {
-        val mark = profile.pairAgain ?: return true
+    fun mayRead(profile: ChargerProfile, now: Long): Boolean = mayRead(profile.pairAgain, now)
+
+    /** Whether a webhook with [mark] (a charger's or a home's) may be asked at [now]. */
+    fun mayRead(mark: PairAgainMark?, now: Long): Boolean {
+        if (mark == null) return true
         return now - mark.checkedAt >= SLOW_CHECK_MS || now < mark.checkedAt
     }
 
@@ -32,11 +35,15 @@ internal object PairAgain {
      * first found), and any other failure -- offline, an error Home Assistant worded -- changes
      * nothing but when a marked webhook was last asked.
      */
-    fun afterRead(profile: ChargerProfile, failure: Throwable?, now: Long): ChargerProfile = when {
-        failure == null -> profile.copy(pairAgain = null)
-        WebhookGone.isGone(failure) -> profile.copy(
-            pairAgain = PairAgainMark(markedAt = profile.pairAgain?.markedAt ?: now, checkedAt = now)
-        )
-        else -> profile.pairAgain?.let { profile.copy(pairAgain = it.copy(checkedAt = now)) } ?: profile
+    fun afterRead(profile: ChargerProfile, failure: Throwable?, now: Long): ChargerProfile {
+        val mark = markAfter(profile.pairAgain, failure, now)
+        return if (mark == profile.pairAgain) profile else profile.copy(pairAgain = mark)
+    }
+
+    /** A webhook's [mark] (a charger's or a home's) after one read at [now] that ended in [failure]; see [afterRead]. */
+    fun markAfter(mark: PairAgainMark?, failure: Throwable?, now: Long): PairAgainMark? = when {
+        failure == null -> null
+        WebhookGone.isGone(failure) -> PairAgainMark(markedAt = mark?.markedAt ?: now, checkedAt = now)
+        else -> mark?.copy(checkedAt = now)
     }
 }

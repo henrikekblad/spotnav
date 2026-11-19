@@ -415,6 +415,33 @@ object HomeAssistantClient {
         return SuggestImportTarget.answer(status, body)
     }
 
+    /** One request whose answer is read whole: the status and body, or the failure (a gone webhook among them). */
+    private fun ask(settings: HomeAssistantSettings, body: JSONObject): Triple<Int?, String?, Throwable?> = try {
+        Triple(200, post(settings, body.toString()).toString(), null)
+    } catch (refused: WebhookHttpStatusException) {
+        Triple(refused.status, refused.bodyText, null)
+    } catch (failure: Exception) {
+        Triple(null, null, failure)
+    }
+
+    /** The home as its own webhook states it (`get_site`). Never throws. */
+    internal fun getSite(settings: HomeAssistantSettings): SiteDoor.GetSite {
+        val (status, body, failure) = ask(settings, SiteDoor.getSitePayload())
+        return SiteDoor.getSite(status, body, failure)
+    }
+
+    /** The home's electricity price from its settings view (`get_site_settings_view`); `null` for none. Never throws. */
+    internal fun homePrice(settings: HomeAssistantSettings): HomePrice? {
+        val (status, body, _) = ask(settings, SiteDoor.settingsViewPayload())
+        return SiteDoor.homePrice(status, body)
+    }
+
+    /** The charger's home and its webhook (`get_site_access`, asked on the charger's own webhook). Never throws. */
+    internal fun getSiteAccess(settings: HomeAssistantSettings): SiteDoor.Access {
+        val (status, body, failure) = ask(settings, SiteDoor.accessPayload())
+        return SiteDoor.access(status, body, failure)
+    }
+
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
     internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
         val (status, body) = write(settings, PushRegister.payload(pushRef, events))
@@ -495,6 +522,7 @@ object HomeAssistantClient {
         connectTimeoutMs: Int,
         readTimeoutMs: Int
     ): Pair<Int, String> {
+        val sent = settings.addressed(body)
         val connection = URL(settings.webhookUrl()).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
@@ -503,7 +531,7 @@ object HomeAssistantClient {
             connection.instanceFollowRedirects = false
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+            connection.outputStream.use { it.write(sent.toByteArray(Charsets.UTF_8)) }
             val status = connection.responseCode
             val responseBody = (if (status in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader()?.use { it.readText() }.orEmpty()

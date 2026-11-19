@@ -124,6 +124,9 @@ internal class ScreenShell(
      */
     var pairAgainProfile: String? = null
 
+    /** The same for a home without a charger whose "Pair again" was pressed on its screen (a site profile's local id). */
+    var pairAgainSite: String? = null
+
     /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
     var onNotificationPermission: (() -> Unit)? = null
 

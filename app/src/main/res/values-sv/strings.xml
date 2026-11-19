@@ -111,6 +111,12 @@
   <string name="instance_removed">Anslutningen har tagits bort</string>
   <string name="instance_refreshing">Söker…</string>
   <string name="instance_connected">Ansluten till %1$s</string>
+  <string name="instance_connected_nothing">Ansluten, men SpotNav i Home Assistant har ingen laddare eller inget hem än. Lägg till ett i Home Assistant, eller uppdatera SpotNav där till 3.0.</string>
+  <string name="site_home_title">Hem: %1$s</string>
+  <string name="site_home_chargers">Laddare: %1$s</string>
+  <string name="site_home_no_charger">Ingen laddare: hus- och värmesidorna</string>
+  <string name="site_show">Visa</string>
+  <string name="site_price_read_only">Ett hem utan laddare visar sitt elpris och sin nätavgift här; de ändras i Home Assistant.</string>
   <string name="instance_stale">Finns inte längre i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Finns i Home Assistant men är inte parkopplad med appen: %1$s</string>
   <string name="instance_pair_again">Parkoppla igen</string>

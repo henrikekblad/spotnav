@@ -27,6 +27,12 @@ import android.widget.TextView
 import android.widget.Toast
 import se.sensnology.spotnav.BuildConfig
 import se.sensnology.spotnav.R
+import se.sensnology.spotnav.chargers.ChargerCapabilities
+import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.client.SiteDoor
+import se.sensnology.spotnav.sites.MainSubject
+import se.sensnology.spotnav.sites.SiteProfileStore
+import se.sensnology.spotnav.ui.siteSession
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.app.AppThemeSettings
 import se.sensnology.spotnav.chart.ChartAxisMode
@@ -119,7 +125,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         val shownProfile = WidgetChargerResolver.resolve(old, profileStore)?.takeIf { it.configured }
         val pairedProfiles = profileStore.listProfiles().filter { it.configured }
         val tabbedId = PairedOverview.selectedChargerTab(pairedProfiles.map { it.localId }, chosenCharger, shownProfile?.localId)
-        val settingsProfile = tabbedId?.let { id -> pairedProfiles.firstOrNull { it.localId == id } } ?: shownProfile
+        // A home without a charger on the main screen (Home Assistant 3.0): its settings, unless a charger tab was chosen.
+        val siteStore = SiteProfileStore.forContext(applicationContext)
+        val shownSite = MainSubject.site(shownProfile, profileStore.listProfiles(), siteStore.list(), siteStore.activeSiteId())
+            ?.takeIf { chosenCharger == null }
+        val settingsProfile = if (shownSite != null) null
+        else tabbedId?.let { id -> pairedProfiles.firstOrNull { it.localId == id } } ?: shownProfile
         val settingsCache = ConfirmedSettingsStore.forContext(applicationContext)
         val settingsAuthority = AuthorityController(
             profileId = settingsProfile?.localId,
@@ -151,7 +162,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Unpaired: this phone's own price as value rows, whose dialog applies at once. Paired: the
         // record's, whose dialog writes through the paired path (wired below).
         val pairedPrice = if (paired) PairedPriceCard(this) else null
-        val localPrice = if (paired) null else LocalPriceCard(this).apply { onKeyChanged = { refreshWidget() } }
+        // A home's price is Home Assistant's, read-only here (the phone's own price is for a screen without one).
+        val localPrice = if (paired || shownSite != null) null else LocalPriceCard(this).apply { onKeyChanged = { refreshWidget() } }
+        val homePrice = shownSite?.let { HomePriceRows(this, priceCard.body) }
         pairedPrice?.add(priceCard.body, old) { values, replay, done -> runFormSave(values, replay, done) }
         localPrice?.add(priceCard.body, current = { WidgetSettings.load(context, widgetId) }) { next ->
             storeIfChanged(WidgetSettings.load(context, widgetId), next)
@@ -196,7 +209,28 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             PairedSettingsCards(scope = this, parent = content, chargerName = chargerName(it), chargerTabs = chargerTabs)
         }
         // The home battery and the heat, after the site's cards: drawn only where Home Assistant offers them.
-        val siteCards = settingsProfile?.let { SiteSettingsCards(scope = this, parent = content) }
+        val siteCards = (settingsProfile ?: shownSite)?.let { SiteSettingsCards(scope = this, parent = content) }
+        // A home without a charger: its battery and heat through the home's webhook, as `get_site` offers them.
+        if (shownSite != null && siteCards != null) {
+            val siteSession = shell.siteSession(shownSite)
+            siteCards.attach(
+                battery = { mode, done -> siteSession.batteryControl(mode, done) },
+                heatRead = { done -> siteSession.heatSettings(done) },
+                heatWrite = { request, done -> siteSession.updateHeat(request, done) }
+            )
+            val shownGeneration = viewGeneration
+            ioExecutor.execute {
+                val door = shownSite.toHomeAssistantSettings()
+                val site = HomeAssistantClient.getSite(door)
+                val price = HomeAssistantClient.homePrice(door)
+                runOnUiThread {
+                    if (isDestroyed || viewGeneration != shownGeneration) return@runOnUiThread
+                    val flags = (site as? SiteDoor.GetSite.Read)?.site?.capabilities
+                    siteCards.show(flags?.let { ChargerCapabilities(batteryControl = it.batteryControl, getHeat = it.getHeat) })
+                    homePrice?.show(price)
+                }
+            }
+        }
         // Opened from the charger card's car row: at that car, once.
         shell.settingsCar?.let { car -> pairedCards?.openAtCar(car) { y -> shell.scrollView.post { shell.scrollView.smoothScrollTo(0, y) } } }
         shell.settingsCar = null

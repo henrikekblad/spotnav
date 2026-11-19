@@ -25,3 +25,20 @@ internal fun ScreenShell.haSession(profile: ChargerProfile): HaSession {
         schedule = { delayMs, block -> handler.postDelayed({ if (current()) block() }, delayMs) }
     )
 }
+
+/**
+ * The session for a home without a charger (Home Assistant 3.0), on this screen's generation: the home's own webhook,
+ * and nothing recorded (a home has no dashboard).
+ */
+internal fun ScreenShell.siteSession(site: se.sensnology.spotnav.sites.SiteProfile): HaSession {
+    val generation = generation
+    val handler = Handler(Looper.getMainLooper())
+    fun current() = !activity.isDestroyed && generation == this.generation
+    return HaSession(
+        transport = HomeAssistantTransport(site.toHomeAssistantSettings()),
+        recorder = { null },
+        background = io,
+        mainThread = { block -> activity.runOnUiThread { if (current()) block() } },
+        schedule = { delayMs, block -> handler.postDelayed({ if (current()) block() }, delayMs) }
+    )
+}

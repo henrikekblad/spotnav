@@ -6,8 +6,24 @@ import se.sensnology.spotnav.app.strictText
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import java.security.SecureRandom
 
-/** One charger an approved pairing handed over, with the secret to control it. */
-data class PairedCharger(val id: String, val name: String, val webhookId: String)
+/**
+ * One charger an approved pairing handed over, with the secret to control it, and the home it belongs to ([siteId],
+ * Home Assistant 3.0; `null` for a charger in no home or from an earlier Home Assistant).
+ */
+data class PairedCharger(val id: String, val name: String, val webhookId: String, val siteId: String? = null) {
+    override fun toString(): String = "PairedCharger(id=$id, name=$name, webhookId=<redacted>, siteId=$siteId)"
+}
+
+/** A charger of a home, as the home lists it: addressed on the home's webhook by [id]. */
+data class SiteCharger(val id: String, val name: String)
+
+/**
+ * One home an approved pairing (or `get_site_access`) handed over (Home Assistant 3.0): its webhook is the app's
+ * single door to the home and to every charger in [chargers].
+ */
+data class PairedSite(val id: String, val name: String, val webhookId: String, val chargers: List<SiteCharger>) {
+    override fun toString(): String = "PairedSite(id=$id, name=$name, webhookId=<redacted>, chargers=$chargers)"
+}
 
 /** What one `poll` answer means. */
 sealed interface PairingPoll {
@@ -19,7 +35,7 @@ sealed interface PairingPoll {
      * [HomeAssistantSettings.isAllowedBaseUrl]. [chargers] may legitimately be empty -- an instance
      * with no chargers is a state, not a failure.
      */
-    data class Approved(val baseUrl: String, val chargers: List<PairedCharger>) : PairingPoll
+    data class Approved(val baseUrl: String, val chargers: List<PairedCharger>, val sites: List<PairedSite> = emptyList()) : PairingPoll
 
     /** A person declined it. */
     data object Denied : PairingPoll
@@ -51,7 +67,7 @@ sealed interface PairingStep {
 
 /** Why the pairing loop stopped. */
 sealed interface PairingStop {
-    data class Approved(val baseUrl: String, val chargers: List<PairedCharger>) : PairingStop
+    data class Approved(val baseUrl: String, val chargers: List<PairedCharger>, val sites: List<PairedSite> = emptyList()) : PairingStop
     data object Denied : PairingStop
     data object Expired : PairingStop
     /** Five minutes of asking, and nobody approved. */
@@ -139,7 +155,31 @@ object PairingProtocol {
                 charger((list.opt(index) as? JSONObject) ?: return@mapNotNull null)
             }
         }.orEmpty()
-        return PairingPoll.Approved(baseUrl, chargers)
+        val siteArray = json.opt("sites") as? org.json.JSONArray
+        val sites = siteArray?.let { list ->
+            (0 until list.length()).mapNotNull { index -> site((list.opt(index) as? JSONObject) ?: return@mapNotNull null) }
+        }.orEmpty()
+        return PairingPoll.Approved(baseUrl, chargers, sites)
+    }
+
+    /**
+     * One element of `sites` (or `get_site_access`'s `site`), or `null` when it is not a home this app can hold: `id`
+     * and `webhook` are both required. A charger of it without an `id` is left out.
+     */
+    fun site(json: JSONObject): PairedSite? {
+        val id = json.strictText("id") ?: return null
+        val webhookId = json.strictText("webhook") ?: return null
+        return PairedSite(id = id, name = json.strictText("name") ?: id, webhookId = webhookId, chargers = siteChargers(json.opt("chargers")))
+    }
+
+    /** A home's `chargers` (`[{id, name}]`), each without an `id` left out. */
+    fun siteChargers(raw: Any?): List<SiteCharger> {
+        val list = raw as? org.json.JSONArray ?: return emptyList()
+        return (0 until list.length()).mapNotNull { index ->
+            val charger = list.opt(index) as? JSONObject ?: return@mapNotNull null
+            val id = charger.strictText("id") ?: return@mapNotNull null
+            SiteCharger(id, charger.strictText("name") ?: id)
+        }
     }
 
     /**
@@ -150,7 +190,7 @@ object PairingProtocol {
     private fun charger(json: JSONObject): PairedCharger? {
         val id = json.strictText("id") ?: return null
         val webhookId = json.strictText("webhook") ?: return null
-        return PairedCharger(id = id, name = json.strictText("name") ?: id, webhookId = webhookId)
+        return PairedCharger(id = id, name = json.strictText("name") ?: id, webhookId = webhookId, siteId = json.strictText("site_id"))
     }
 
     /**
@@ -171,7 +211,7 @@ object PairingProtocol {
     fun timedOut(elapsedMillis: Long): Boolean = elapsedMillis >= POLL_TIMEOUT_MS
 
     private fun stopReason(poll: PairingPoll): PairingStop = when (poll) {
-        is PairingPoll.Approved -> PairingStop.Approved(poll.baseUrl, poll.chargers)
+        is PairingPoll.Approved -> PairingStop.Approved(poll.baseUrl, poll.chargers, poll.sites)
         PairingPoll.Denied -> PairingStop.Denied
         PairingPoll.Expired -> PairingStop.Expired
         PairingPoll.Pending -> error("pending is not a reason to stop")

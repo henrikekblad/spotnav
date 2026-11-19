@@ -118,6 +118,12 @@
   <string name="instance_removed">Se ha eliminado la conexión</string>
   <string name="instance_refreshing">Buscando…</string>
   <string name="instance_connected">Conectado a %1$s</string>
+  <string name="instance_connected_nothing">Conectado, pero SpotNav en Home Assistant aún no tiene cargador ni hogar. Añade uno en Home Assistant o actualiza allí SpotNav a la 3.0.</string>
+  <string name="site_home_title">Hogar: %1$s</string>
+  <string name="site_home_chargers">Cargadores: %1$s</string>
+  <string name="site_home_no_charger">Sin cargador: las páginas de casa y calefacción</string>
+  <string name="site_show">Mostrar</string>
+  <string name="site_price_read_only">Un hogar sin cargador muestra aquí su precio de la electricidad y su tarifa de red; se cambian en Home Assistant.</string>
   <string name="instance_stale">Ya no está en Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">En Home Assistant, pero sin vincular con esta app: %1$s</string>
   <string name="instance_pair_again">Vincular de nuevo</string>
