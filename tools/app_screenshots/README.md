@@ -10,12 +10,15 @@ is involved, and nothing is fetched from the network (after the first run's Pyth
     tools/app_screenshots/run.sh --langs "en sv"    # store set for these languages only
     tools/app_screenshots/run.sh app-main store-widget   # only the named pictures
     tools/app_screenshots/run.sh --keep             # leave Home Assistant and the emulator up afterwards
+    tools/app_screenshots/run.sh --fresh app-main   # force the slow path: wiped emulator, new demo installation
+    tools/app_screenshots/run.sh --workers 1        # the store languages one after another on one emulator
 
 Needs the Home Assistant repository next to this one (`../elpris-home-assistant`, or `HA_REPO=...`, which a
 run from a git worktree elsewhere needs),
 `node` 22 or newer, `python3`, and the Android SDK in `~/Android/Sdk` (or `ANDROID_SDK_ROOT`) with the
-emulator and the `android-36` `google_apis_playstore` `x86_64` system image. A run takes about
-thirty-five minutes, most of it the nine language passes.
+emulator and the `android-36` `google_apis_playstore` `x86_64` system image. Every phase's start and end goes to
+stderr as `[timing] ...`. See [Faster runs](#faster-runs) for what a run costs: about a quarter of an hour for
+everything, about three minutes for a few named pictures.
 
 ## What it does
 
@@ -35,8 +38,9 @@ thirty-five minutes, most of it the nine language passes.
    car" is identified by its charging cable. Every "Get started" row left is answered "Not needed", so the app
    shows a fully set-up installation.
 3. Creates the `SpotNavDocs` emulator once (`make_avd.sh`; the other AVDs are never touched): 1080x2160
-   at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. Every run
-   boots it wiped, headless, in Europe/Stockholm time.
+   at 420 dpi, because Play wants the long side of a screenshot at most twice the short one. It boots headless, in
+   Europe/Stockholm time, either wiped (the full path) or from the snapshot `docs-paired` (the kept path), see
+   [Faster runs](#faster-runs).
 4. Builds the debug app as the Play variant without Firebase:
    `./gradlew -Pstore=play -Ppush=false assembleDebug`. The app asks the relay for nothing here: its prices
    are the paired Home Assistant's, and push is off. (`-PrelayBaseUrl=...` can point a debug build's push
@@ -62,15 +66,67 @@ thirty-five minutes, most of it the nine language passes.
      "identified by the car's charging cable ⇄", and `ask` (a quick replug with both cars saying they are plugged
      in) for the question, which stays open for every language's store picture.
 
+   - after the language passes, the 3.0 pages (English only): the demo house's live power is pinned
+     (`ha_setup.mjs scene`, so the pictures do not depend on the hour of the day), then the house page (its top, the
+     Now box, the period picker with the Energy flow box and the Earnings box, for a month) and the heat page (its top,
+     the dial with Home and Away, the Use box for a month). The page icons in the top row are tapped to get there, and
+     the charger page is chosen again afterwards, since the app opens on the page it was left on.
+
+The Home Assistant side is the Home Assistant tool's 3.0 installation (`driver/v3setup.mjs`: a demo house with a sun, a
+home battery, a heat pump and weeks of history, see its README). The earnings need the past days' prices, which the demo has within seconds of its start.
+`HA_PORT` and `STUB_PORT` move the demo instance's ports, so that it can run beside another one.
+
 Logs are in `.work/logs`.
+
+## Faster runs
+
+A run is one of two paths, said on its first line:
+
+- **Full path** (no picture names, or `app-standalone` or `app-pairing-code` named, or `--fresh`, or nothing kept from
+  today): a wiped emulator cold boots, the demo installation is built, the app is installed, takes the unpaired
+  pictures, pairs and gets its widget. Then **the result is kept**: the emulator's snapshot `docs-paired` (booted,
+  installed, paired, widget on the home screen) and a copy of the demo configuration (`.work/ha-golden`, stamped with the
+  day: the demo house's weeks end at the day it was built), saved after the site had read for a while. The slow work
+  that only has to happen once a day.
+- **Kept path** (picture names given and a snapshot and a copy from today): the copy is laid out again (the integration
+  linked in, the demo components refreshed), Home Assistant starts from it, the emulator loads the snapshot (about a
+  second) and the debug app is installed over the one in it, which keeps its pairing. No onboarding, no site set-up, no
+  cold boot, no pairing, no widget. Use `--fresh` after a change that the paired state would hide (the pairing, the
+  widget, the app's stored preferences).
+
+What else is quick (the demo's own pace, see the Home Assistant tool's README, `demo_fast.py`):
+
+- The past days' prices (the earnings, the month's cost) are there within seconds of the start; the rates stub serves
+  ninety days of exchange rates, which the past days need to be priced at all. No hour-long wait for a price cycle. (A
+  question to the site about a month is kept for the hour, so the tool asks about single past days to find out when the
+  prices are in, never the month itself.)
+- The home battery's check takes about two minutes on a new installation (not twenty), and a kept one has passed it.
+- Only what the named pictures need is done: the language passes skip the steps (planning, price table, widget,
+  settings, history) none of the names belong to, and a name that is only on the house or heat page or in the
+  identification skips the passes. Name pictures to take a subset (`store-main`, `app-settings-battery`,
+  `app-house-earnings`): there is no "changed only" mode, since which pictures a change touches is a judgement.
+- The store languages run on **several emulators at once** (`--workers N`, default 3; only for a full set of three
+  languages or more). One emulator takes the first language, its documentation pictures, the house and heat pages and
+  the identification; the others, started from the same snapshot (all emulators of the AVD run `-read-only`, ports
+  5586 and 5588), share the rest and take their languages' pictures; when all have finished, the identification's
+  Home Assistant steps run once and each emulator takes the question's picture of its languages (the question is the
+  same for all). The app is switched to a language by writing its language preference and restarting it, inside the
+  running emulator, as before: nothing is reinstalled or rebooted per language.
+
+Measured on a machine with 32 cores (one named picture in two languages, `--langs "en sv" app-main store-main`):
+before, 8 s Home Assistant set-up + 36 s emulator boot + 110 s install, pairing and widget + 2 x 85 s language
+passes, 6 min in all; after, on the kept path, 6 s + no boot + no pairing + 2 x 85 s: 3 min (a language pass whose
+steps are not named is skipped, so `app-house-earnings` alone takes about a minute and a half). A full set of four
+languages on three emulators, including the pairing, the house and heat pages and the identification: 12 min.
 
 ## Pictures
 
 Documentation (English; `--sv` adds `docs/images/sv/`): `app-standalone`, `app-pairing-code`,
 `app-main`, `app-planning`, `app-planning-target`, `app-plan-chart`, `app-price-table`, `app-widget`, `app-settings-general`,
 `app-settings-display`, `app-settings-price`, `app-settings-vehicle`, `app-settings-charger`,
-`app-settings-site`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
-`app-reference-picture`, `app-history`, `app-identifying`, `app-identified`, `app-identify-question`.
+`app-settings-site`, `app-settings-battery`, `app-settings-heat`, `app-settings-notifications`, `app-settings-home-assistant`, `app-camera-frame`,
+`app-reference-picture`, `app-history`, `app-house`, `app-house-now`, `app-house-flow`,
+`app-house-earnings`, `app-heat`, `app-heat-now`, `app-heat-use`, `app-identifying`, `app-identified`, `app-identify-question`.
 Whole screens lose the status and gesture bars; settings sections are cropped to their card.
 
 Store (each of en-US, sv-SE, nb-NO, da-DK, fi-FI, de-DE, nl-NL, es-ES, fr-FR, with the app in that
