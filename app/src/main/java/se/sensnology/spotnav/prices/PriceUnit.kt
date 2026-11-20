@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.prices
 
+import se.sensnology.spotnav.app.noMinusZero
 import android.content.Context
 import se.sensnology.spotnav.app.KeyValueStore
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
@@ -106,7 +107,7 @@ internal class PriceFormat(
         format.maximumFractionDigits = most
         format.isGroupingUsed = false
         format.roundingMode = RoundingMode.HALF_UP
-        return format.format(value)
+        return format.format(noMinusZero(value, most))
     }
 
     companion object {
