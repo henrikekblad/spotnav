@@ -65,6 +65,59 @@ internal data class DemandComponent(val window: HighLoadWindow?, val topN: Int, 
     }
 }
 
+/**
+ * The price entry's power level (the card's `PowerLevel`): the hourly mean [levelKw] not to be exceeded in its hours,
+ * which are all hours ([window] `null`), the hours of [window] or, with [outside], the hours it does not count.
+ */
+internal data class PowerLevel(val levelKw: Double, val window: HighLoadWindow?, val outside: Boolean) {
+    fun toJson(): JSONObject = JSONObject()
+        .put("level_kw", levelKw)
+        .put("window", window?.toJson() ?: JSONObject.NULL)
+        .put("outside", outside)
+
+    companion object {
+        /** The most a level may be (the card's `parseLevel`). */
+        const val MAX_KW = 1000.0
+
+        fun parse(raw: Any?): PowerLevel {
+            val json = raw as? JSONObject ?: bad()
+            exactKeys(json, "level_kw", "window", "outside")
+            val kw = number(json.opt("level_kw")).takeIf { it > 0 && it <= MAX_KW } ?: bad()
+            val window = json.opt("window").let { if (it == JSONObject.NULL) null else HighLoadWindow.parse(it) }
+            val outside = json.opt("outside") as? Boolean ?: bad()
+            if (outside && window == null) bad()
+            return PowerLevel(kw, window, outside)
+        }
+    }
+}
+
+/**
+ * What the site measured of its [PowerLevel] (the card's `LevelCount`): the complete hours over the level in its hours in
+ * the rolling 12 months ([used], their starts in [exceeded]), how many are [allowed], whether the level holds in the
+ * running hour ([countsNow]) and the start of the next hour it holds in ([nextCountedStart], `null` for none).
+ */
+internal data class LevelCount(
+    val used: Int,
+    val allowed: Int,
+    val exceeded: List<String>,
+    val countsNow: Boolean,
+    val nextCountedStart: String?
+) {
+    companion object {
+        fun parse(raw: Any?): LevelCount {
+            val json = raw as? JSONObject ?: bad()
+            exactKeys(json, "used", "allowed", "counts_now", "next_counted_start")
+            return LevelCount(
+                used = whole(json.opt("used"), 0, Int.MAX_VALUE),
+                allowed = whole(json.opt("allowed"), 0, Int.MAX_VALUE),
+                exceeded = if (json.has("exceeded")) list(json.opt("exceeded")).map(::text) else emptyList(),
+                countsNow = json.opt("counts_now") as? Boolean ?: bad(),
+                nextCountedStart = textOrNull(json.opt("next_counted_start"))
+            )
+        }
+    }
+}
+
 /** A day's highest counted hour: the day it counts under, the hour's start and its mean import. */
 internal data class DemandPeak(val date: String, val start: String, val kw: Double)
 
@@ -97,7 +150,14 @@ internal data class DemandBlock(
      * `effective_target`): the import target lifted to the month's peak where a part counts the hour, else the target;
      * `null` without a target, where the site cannot measure, or from a Home Assistant that does not send it.
      */
-    val effectiveTargetKw: Double? = null
+    val effectiveTargetKw: Double? = null,
+    /**
+     * The price entry's power level (`power_level`, asked for with the `reads` value `power_level`); `null` for none, and
+     * from a Home Assistant that does not send it.
+     */
+    val powerLevel: PowerLevel? = null,
+    /** What the site measured of [powerLevel] (`level_count`); `null` without a level or where the site cannot measure. */
+    val levelCount: LevelCount? = null
 )
 
 /** One fee of the grid tariff: `off`, `manual` or `included` (the area's price already holds the grid fee). */
@@ -156,6 +216,11 @@ internal data class DashboardGridTariff(
         .put("transfer_high", transferHigh.toJson())
         .put("high_load_window", highLoadWindow?.toJson() ?: JSONObject.NULL)
         .also { body -> demand?.let { body.put("demand_components", JSONArray(it.components.map { part -> part.toJson() })) } }
+        // The power level as stored, so a write names it (absent, Home Assistant keeps it all the same).
+        .also { body -> demand?.powerLevel?.let { body.put("power_level", it.toJson()) } }
+
+    /** The power level set (`null` removes it), the rest as stored (the card's `withPowerLevel`). */
+    fun bodyWithLevel(level: PowerLevel?): JSONObject = storedBody().put("power_level", level?.toJson() ?: JSONObject.NULL)
 
     /** A fee turned on with [value], or off (`null`) keeping its stored figure, so turning it on again is one step. */
     private fun feeChange(fee: GridTariffFee, value: Double?): JSONObject =
@@ -240,7 +305,7 @@ internal data class DashboardGridTariff(
         private fun demand(raw: Any?): DemandBlock {
             val json = raw as? JSONObject ?: bad()
             val keys = arrayOf("components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
-            // `effective_target_kw` is additive: sent only to an app that reads it.
+            // `effective_target_kw`, `power_level` and `level_count` are additive: sent only to an app that reads them.
             exactKeys(json, *keys)
             val components = list(json.opt("components")).map(DemandComponent::parse)
             if (components.size > DemandComponent.MAX) bad()
@@ -261,7 +326,9 @@ internal data class DashboardGridTariff(
                 perComponent = months,
                 hour = hour,
                 importTargetKw = nonNegativeOrNull(json.opt("import_target_kw")),
-                effectiveTargetKw = if (json.has("effective_target_kw")) nonNegativeOrNull(json.opt("effective_target_kw")) else null
+                effectiveTargetKw = if (json.has("effective_target_kw")) nonNegativeOrNull(json.opt("effective_target_kw")) else null,
+                powerLevel = json.opt("power_level").let { if (it == null || it == JSONObject.NULL) null else PowerLevel.parse(it) },
+                levelCount = json.opt("level_count").let { if (it == null || it == JSONObject.NULL) null else LevelCount.parse(it) }
             )
         }
 
