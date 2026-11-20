@@ -2,7 +2,9 @@ package se.sensnology.spotnav.ha.dashboard
 
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import se.sensnology.spotnav.testing.HaFixtures
 
@@ -68,5 +70,54 @@ class ImportTargetReleaseConfirmTest {
         )
         // Without the key at all (an older Home Assistant): the plain sentence.
         assertEquals("Effektmålet är släppt av dig till avresan.", HaStatusText.line(StatusLine("import_target_released", mapOf("target_kw" to 6.0)), format, now))
+    }
+
+    private fun withLevel(used: Int, next: String?, peak: Double = 11.0, until: Any? = null): Dashboard {
+        val json = HaFixtures.json("webhook/dashboard.json")
+        json.getJSONObject("status").getJSONArray("lines").put(
+            JSONObject().put("code", "import_target_held").put("params", held(true, until).put("release_peak_kw", peak))
+        )
+        val demand = HaFixtures.json("grid_tariff/pilot_demand.json").getJSONObject("demand")
+            .put("power_level", JSONObject().put("level_kw", 10.0).put("window", JSONObject.NULL).put("outside", false))
+            .put("level_count", JSONObject().put("used", used).put("allowed", 3).put("exceeded", org.json.JSONArray()).put("counts_now", true).put("next_counted_start", next ?: JSONObject.NULL))
+        json.put("grid_tariff", JSONObject("""{"entry_id": "p", "write_revision": 1,
+            "transfer_percent": {"policy": "off", "explicit_value": null, "effective_value": null, "unit": "%"},
+            "transfer_high": {"policy": "off", "explicit_value": null, "effective_value": null, "unit": "öre/kWh"},
+            "high_load_window": null, "writable": true}""").put("demand", demand))
+        return Dashboard.parse(json)
+    }
+
+    @Test fun aReleaseAboveThePowerLevelSaysWhichExceedanceItWouldBe() {
+        val confirm = ImportTargetRelease.confirm(withLevel(1, "2026-09-22T19:00:00+00:00"), format, now)!!
+        assertTrue(confirm.text, confirm.text.endsWith("Det blir överskridande 2 av 3 av effektnivån (10,0 kW) på 12 månader."))
+        assertFalse(confirm.askTwice)
+        assertEquals(confirm.text, ImportTargetRelease.confirmText(withLevel(1, "2026-09-22T19:00:00+00:00"), format, now))
+    }
+
+    @Test fun theLastAllowedExceedanceAsksTwiceAndSoDoesOneBeyondIt() {
+        val last = ImportTargetRelease.confirm(withLevel(2, "2026-09-22T19:00:00+00:00"), format, now)!!
+        assertTrue(last.text, last.text.contains("överskridande 3 av 3"))
+        assertTrue(last.text, last.text.endsWith("Det är det sista som tillåts: ett till flyttar dig till en annan tariff."))
+        assertTrue(last.askTwice)
+        assertTrue(ImportTargetRelease.confirm(withLevel(3, "2026-09-22T19:00:00+00:00"), format, now)!!.askTwice)
+    }
+
+    @Test fun noLevelSentenceWhenThePeakStaysUnderItTheLevelDoesNotHoldBeforeTheReleaseEndsOrNothingIsCounted() {
+        val plain = ImportTargetRelease.confirmText(dashboard("import_target_held", held(true, null)), format, now)!!
+        // The peak at or under the level: the plain sentences.
+        assertEquals(false, ImportTargetRelease.confirm(withLevel(2, "2026-09-22T19:00:00+00:00", peak = 10.0), format, now)!!.text.contains("överskridande"))
+        // The level next holds after the release has ended (the departure at 07:00 on the 23rd).
+        assertEquals(false, ImportTargetRelease.confirm(withLevel(2, "2026-09-23T05:00:00+00:00", until = "2026-09-23T05:00:00+00:00"), format, now)!!.askTwice)
+        // No next hour that counts: no sentence either.
+        assertEquals(false, ImportTargetRelease.confirm(withLevel(2, null), format, now)!!.text.contains("överskridande"))
+        assertFalse(plain.contains("överskridande"))
+    }
+
+    @Test fun theLevelSentencesAreInEveryLanguage() {
+        for (language in listOf("en", "sv", "da", "nb", "fi", "de", "nl", "es", "fr")) {
+            val fmt = StatusFormat(language, java.time.ZoneId.of("Europe/Stockholm"), "SEK", "kr")
+            val text = ImportTargetRelease.confirm(withLevel(2, "2026-09-22T19:00:00+00:00"), fmt, now)!!.text
+            assertFalse(language, text.contains("release.confirm") || text.contains("{"))
+        }
     }
 }

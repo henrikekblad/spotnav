@@ -71,7 +71,17 @@ internal object ImportTargetRelease {
      * What setting the target aside would mean (the card's `releaseConfirmText`): until the unplug, or until the
      * departure at its time; and the month's peak it may reach against today's level. `null` where it is not offered.
      */
-    fun confirmText(dashboard: Dashboard?, format: StatusFormat, now: Instant): String? {
+    fun confirmText(dashboard: Dashboard?, format: StatusFormat, now: Instant): String? = confirm(dashboard, format, now)?.text
+
+    /** What the confirmation says, and whether it asks twice: the release is the last exceedance of the power level allowed. */
+    data class Confirm(val text: String, val askTwice: Boolean)
+
+    /**
+     * The confirmation (the card's `releaseConfirm`): [confirmText] and, where the month's peak it may reach is above the
+     * power level and the level holds before the release ends, which of the allowed exceedances it would be. At the last
+     * one allowed (or past it) the dialog asks twice.
+     */
+    fun confirm(dashboard: Dashboard?, format: StatusFormat, now: Instant): Confirm? {
         val line = line(dashboard) ?: return null
         val language = format.language
         fun say(key: String, params: Map<String, String> = emptyMap()): String {
@@ -102,6 +112,19 @@ internal object ImportTargetRelease {
                 "target" to HaStatusText.fixed(format.locale, today, 1)
             ))
         }
-        return sentences.joinToString(" ")
+        val demand = dashboard?.gridTariff?.demand
+        val level = demand?.powerLevel
+        val count = demand?.levelCount
+        val next = count?.nextCountedStart?.let { runCatching { OffsetDateTime.parse(it).toInstant() }.getOrNull() }
+        if (level == null || count == null || peak == null || peak <= level.levelKw || next == null || (until != null && !next.isBefore(until))) {
+            return Confirm(sentences.joinToString(" "), false)
+        }
+        val number = count.used + 1
+        sentences += say("release.confirm.level", mapOf(
+            "n" to number.toString(), "allowed" to count.allowed.toString(), "kw" to HaStatusText.fixed(format.locale, level.levelKw, 1)
+        ))
+        val last = number >= count.allowed
+        if (last) sentences += say("release.confirm.levelLast")
+        return Confirm(sentences.joinToString(" "), last)
     }
 }
