@@ -29,7 +29,7 @@ internal data class DashboardPriceProvider(
         private fun bad(): Nothing = throw Unreadable()
 
         /**
-         * The block read as the card reads it (`validate.ts:priceProviderOrNull`): exactly its keys, each of its
+         * The block read as the card reads it (`validate.ts:priceProviderOrNull`): its keys, each of its
          * type. Anything else is `null`, as if absent (no source line, no notice); it never fails the dashboard.
          */
         fun parse(raw: Any?): DashboardPriceProvider? {
@@ -58,7 +58,8 @@ internal data class DashboardPriceProvider(
         }
 
         private fun exactKeys(item: JSONObject, keys: Set<String>) {
-            if (item.keys().asSequence().toSet() != keys) bad()
+            // Every key the reader needs must be there; a key it does not know is not looked at.
+            if (!item.keys().asSequence().toSet().containsAll(keys)) bad()
         }
 
         /** A string, or `null` for JSON `null`; any other type is unreadable. */

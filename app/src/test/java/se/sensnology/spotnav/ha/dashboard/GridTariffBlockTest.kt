@@ -27,7 +27,12 @@ class GridTariffBlockTest {
         assertEquals(HighLoadWindow("weekdays", 11, 3, 7, 19), block.highLoadWindow)
         assertNull(block.demand)
         assertFalse(block.included)
-        assertNull(DashboardGridTariff.parse(JSONObject(example).put("extra", 1)))
+        // An unknown key, at the top and nested, is not looked at; a required one of the wrong type is no block.
+        val extra = JSONObject(example).put("extra", 1)
+        extra.getJSONObject("transfer_percent").put("more", 1)
+        extra.getJSONObject("high_load_window").put("more", 1)
+        assertEquals(block, DashboardGridTariff.parse(extra))
+        assertNull(DashboardGridTariff.parse(JSONObject(example).put("writable", "yes")))
         // A manual fee without a figure, or equal hours, is no block.
         assertNull(DashboardGridTariff.parse(JSONObject(example).apply { getJSONObject("transfer_percent").put("effective_value", JSONObject.NULL) }))
         assertNull(DashboardGridTariff.parse(JSONObject(example).apply { getJSONObject("high_load_window").put("to_hour", 7) }))
