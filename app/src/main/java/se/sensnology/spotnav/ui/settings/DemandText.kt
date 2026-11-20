@@ -5,6 +5,7 @@ import se.sensnology.spotnav.ha.dashboard.DemandBlock
 import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.DemandMonth
 import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
+import se.sensnology.spotnav.ha.dashboard.PowerLevel
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.client.SuggestImportTarget
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -32,7 +33,10 @@ internal class DemandText(
     private val zone: ZoneId?
 ) {
     /** One row of the price section: a part ([index]) or the row that adds one (`null`), with lines beneath. */
-    data class Row(val index: Int?, val label: String, val value: String, val lines: List<String>)
+    data class Row(val index: Int?, val label: String, val value: String, val lines: List<String>, val power: Power = Power.NO) {
+        /** `LEVEL` is the power level's own row, `ADD` the row that adds one; every other row is a part's. */
+        enum class Power { NO, LEVEL, ADD }
+    }
 
     /** A power in kW to one decimal ("7,0 kW"). */
     fun kw(kw: Double): String = "${fixed(kw, 1)} kW"
@@ -106,7 +110,9 @@ internal class DemandText(
     fun rows(demand: DemandBlock?): List<Row> {
         if (demand == null) return emptyList()
         val title = words.say("demand.title")
-        if (demand.components.isEmpty()) return listOf(Row(null, title, words.say("settings.value.none"), emptyList()))
+        if (demand.components.isEmpty()) {
+            return listOf(Row(null, title, words.say("settings.value.none"), emptyList())) + levelRows(demand)
+        }
         val rows = demand.components.mapIndexed { index, component ->
             val lines = listOfNotNull(
                 priceText(component, demand.priceUnit),
@@ -119,10 +125,50 @@ internal class DemandText(
                 componentText(component),
                 lines
             )
+        }.toMutableList()
+        // The card's order: the parts, the level, the row adding a part, then the row adding a level.
+        levelRows(demand).firstOrNull { it.power == Row.Power.LEVEL }?.let { rows += it }
+        if (demand.components.size < DemandComponent.MAX) {
+            rows += Row(null, words.say("demand.addPart"), words.say("demand.add"), emptyList())
         }
-        return if (demand.components.size < DemandComponent.MAX) {
-            rows + Row(null, words.say("demand.addPart"), words.say("demand.add"), emptyList())
-        } else rows
+        return rows + levelRows(demand).filter { it.power == Row.Power.ADD }
+    }
+
+    /** The power level's row (a level stored), or the row adding one (none stored), as the card's `levelRows`. */
+    private fun levelRows(demand: DemandBlock): List<Row> {
+        val level = demand.powerLevel
+            ?: return listOf(Row(null, words.say("demand.level.add"), words.say("demand.add"), emptyList(), Row.Power.ADD))
+        return listOf(
+            Row(
+                null, words.say("demand.level.title"),
+                words.say("demand.level.value", "kw" to kw(level.levelKw), "hours" to levelHoursText(level)),
+                listOf(levelCountLine(demand)), Row.Power.LEVEL
+            )
+        )
+    }
+
+    /** The power level's hours in one line: "Alla timmar", "Vardagar 07–20, nov–mar" or "Utanför vardagar 07–20, nov–mar". */
+    fun levelHoursText(level: PowerLevel): String {
+        val window = level.window ?: return words.say("demand.allHours")
+        val hours = windowText(window)
+        if (!level.outside) return hours
+        // Inside the sentence the window's first word is in lower case, except in German, where a noun keeps its capital.
+        val inner = if (numbers.language == "de") hours else hours.replaceFirstChar { it.lowercase(numbers) }
+        return words.say("demand.level.outside", "hours" to inner)
+    }
+
+    /** "Överskridningar: 1 av 3 de senaste 12 månaderna". */
+    fun levelCountText(used: Int, allowed: Int): String =
+        words.say("demand.level.count", "n" to used.toString(), "allowed" to allowed.toString())
+
+    /** The count beneath the level, or why nothing is counted. */
+    private fun levelCountLine(demand: DemandBlock): String {
+        val count = demand.levelCount
+        return when {
+            count != null -> levelCountText(count.used, count.allowed)
+            demand.available -> words.say("demand.level.noCount")
+            else -> reasonText(demand.reason)
+        }
     }
 
     /** The import target's value: "6,0 kW", or "Av" without one. */
@@ -140,6 +186,10 @@ internal class DemandText(
         val hour = demand.hour ?: return words.say("site.importTarget.noHour")
         // Where the month's peak lifts the target this hour, against that level, the target as set beside it.
         val effective = demand.effectiveTargetKw
+        // The power level holds this hour below the target: against the level, the target as set beside it.
+        if (effective != null && effective < target) {
+            return words.say("site.importTarget.hourLevel", "kw" to fixed(hour.kwSoFar, 1), "target" to kw(effective), "set" to kw(target))
+        }
         if (effective != null && effective > target) {
             return words.say("site.importTarget.hourPeak", "kw" to fixed(hour.kwSoFar, 1), "target" to kw(effective), "set" to kw(target))
         }
@@ -154,6 +204,12 @@ internal class DemandText(
 
         /** The locale a day is named in: English day-first ("Tue 22 Sep"), as the card writes it. */
         fun dateLocale(language: Locale): Locale = if (language.language == "en") Locale.UK else language
+
+        /** A power level as typed: a figure above 0 and at most 1000, else [Double.NaN] (the card's `parseLevel`). */
+        fun parseLevel(text: String): Double {
+            val value = text.trim().replace(',', '.').toDoubleOrNull()
+            return if (value != null && value.isFinite() && value > 0 && value <= PowerLevel.MAX_KW) value else Double.NaN
+        }
 
         /**
          * A price as typed: empty is unknown (`null`), a figure not below zero, else [Double.NaN] (the card's

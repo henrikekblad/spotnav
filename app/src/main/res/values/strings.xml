@@ -1570,4 +1570,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blocks kept further from the hot water after too many late reheats</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blocks yesterday: {hours} h shortened for the hot water · {risks} late reheats before a peak</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blocks yesterday: {hours} h would have been shortened for the hot water · {risks} late reheats before a peak</string>
+  <string name="card_demand_level_title" formatted="false">Power level</string>
+  <string name="card_demand_level_add" formatted="false">Power level</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Outside {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Exceedances: {n} of {allowed} in the last 12 months</string>
+  <string name="card_demand_level_no_count" formatted="false">Exceedances are counted from the site\'s meter.</string>
+  <string name="card_demand_level_help" formatted="false">Some grid companies sell a power level: an hourly mean you stay under in its hours, which you may exceed a few times a year before you are moved to another tariff. SpotNav keeps the chargers under it in those hours and never plans above it.</string>
+  <string name="card_demand_level_kw" formatted="false">Power level (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Outside certain hours</string>
+  <string name="card_demand_level_error_kw" formatted="false">A power level is a number above 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Yes, exceed it</string>
+  <string name="card_site_import_target_hour_level" formatted="false">This hour: {kw} of {target} – the power level (import target {set})</string>
 </resources>

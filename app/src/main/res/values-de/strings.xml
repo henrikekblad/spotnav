@@ -1557,4 +1557,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Sperren halten nach zu vielem spätem Nachheizen mehr Abstand zum Warmwasser</string>
   <string name="card_heat_water_blocking_review" formatted="false">Sperren gestern: {hours} h fürs Warmwasser verkürzt · {risks}-mal spät nachgeheizt vor einer Spitze</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Sperren gestern: {hours} h wären fürs Warmwasser verkürzt worden · {risks}-mal spät nachgeheizt vor einer Spitze</string>
+  <string name="card_demand_level_title" formatted="false">Leistungsstufe</string>
+  <string name="card_demand_level_add" formatted="false">Leistungsstufe</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Außerhalb {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Überschreitungen: {n} von {allowed} in den letzten 12 Monaten</string>
+  <string name="card_demand_level_no_count" formatted="false">Überschreitungen werden am Zähler des Standorts gezählt.</string>
+  <string name="card_demand_level_help" formatted="false">Manche Netzbetreiber verkaufen eine Leistungsstufe: ein Stundenmittel, unter dem du in ihren Stunden bleibst und das du einige Male im Jahr überschreiten darfst, bevor du in einen anderen Tarif wechselst. SpotNav hält die Ladegeräte in diesen Stunden darunter und plant nie darüber.</string>
+  <string name="card_demand_level_kw" formatted="false">Leistungsstufe (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Außerhalb bestimmter Stunden</string>
+  <string name="card_demand_level_error_kw" formatted="false">Eine Leistungsstufe ist eine Zahl über 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Ja, überschreiten</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Diese Stunde: {kw} von {target} – die Leistungsstufe (Bezugsziel {set})</string>
 </resources>

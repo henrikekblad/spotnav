@@ -1557,4 +1557,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blokkeringen blijven verder weg van het warme water na te vaak laat opwarmen</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blokkeringen gisteren: {hours} u ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blokkeringen gisteren: {hours} u zouden zijn ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
+  <string name="card_demand_level_title" formatted="false">Vermogensniveau</string>
+  <string name="card_demand_level_add" formatted="false">Vermogensniveau</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Buiten {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Overschrijdingen: {n} van {allowed} in de laatste 12 maanden</string>
+  <string name="card_demand_level_no_count" formatted="false">Overschrijdingen worden geteld op de meter van de locatie.</string>
+  <string name="card_demand_level_help" formatted="false">Sommige netbeheerders verkopen een vermogensniveau: een uurgemiddelde waar je in de uren ervan onder blijft en dat je een paar keer per jaar mag overschrijden voordat je naar een ander tarief gaat. SpotNav houdt de laders in die uren eronder en plant er nooit boven.</string>
+  <string name="card_demand_level_kw" formatted="false">Vermogensniveau (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Buiten bepaalde uren</string>
+  <string name="card_demand_level_error_kw" formatted="false">Een vermogensniveau is een getal boven 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Ja, overschrijden</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Dit uur: {kw} van {target} – het vermogensniveau (afnamedoel {set})</string>
 </resources>

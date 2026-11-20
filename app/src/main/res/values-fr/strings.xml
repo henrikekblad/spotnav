@@ -1565,4 +1565,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blocages tenus plus loin de l\'eau chaude après trop de réchauffes tardives</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blocages hier : {hours} h raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blocages hier : {hours} h auraient été raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
+  <string name="card_demand_level_title" formatted="false">Niveau de puissance</string>
+  <string name="card_demand_level_add" formatted="false">Niveau de puissance</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">En dehors de {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Dépassements : {n} sur {allowed} sur les 12 derniers mois</string>
+  <string name="card_demand_level_no_count" formatted="false">Les dépassements sont comptés sur le compteur du site.</string>
+  <string name="card_demand_level_help" formatted="false">Certains gestionnaires de réseau vendent un niveau de puissance : une moyenne horaire à ne pas dépasser pendant ses heures, que vous pouvez dépasser quelques fois par an avant de passer à un autre tarif. SpotNav maintient les bornes en dessous pendant ces heures et ne planifie jamais au-dessus.</string>
+  <string name="card_demand_level_kw" formatted="false">Niveau de puissance (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">En dehors de certaines heures</string>
+  <string name="card_demand_level_error_kw" formatted="false">Un niveau de puissance est un nombre supérieur à 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Oui, le dépasser</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Cette heure : {kw} sur {target} – le niveau de puissance (objectif de soutirage {set})</string>
 </resources>

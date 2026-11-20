@@ -1557,4 +1557,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blokkeringene holdes lenger unna varmtvannet etter for mange sene oppvarminger</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blokkeringer i går: {hours} t forkortet for varmtvannet · {risks} sene oppvarminger før en topp</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blokkeringer i går: {hours} t ville blitt forkortet for varmtvannet · {risks} sene oppvarminger før en topp</string>
+  <string name="card_demand_level_title" formatted="false">Effektnivå</string>
+  <string name="card_demand_level_add" formatted="false">Effektnivå</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Utenfor {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Overskridelser: {n} av {allowed} de siste 12 månedene</string>
+  <string name="card_demand_level_no_count" formatted="false">Overskridelser telles fra anleggets strømmåler.</string>
+  <string name="card_demand_level_help" formatted="false">Noen nettselskaper selger et effektnivå: et timesgjennomsnitt du holder deg under i timene det gjelder, og som du kan overskride noen ganger i året før du flyttes til en annen tariff. SpotNav holder laderne under det i de timene og planlegger aldri over det.</string>
+  <string name="card_demand_level_kw" formatted="false">Effektnivå (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Utenfor visse timer</string>
+  <string name="card_demand_level_error_kw" formatted="false">Et effektnivå er et tall over 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Ja, overskrid det</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Denne timen: {kw} av {target} – effektnivået (effektmål {set})</string>
 </resources>

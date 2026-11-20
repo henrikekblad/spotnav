@@ -1557,4 +1557,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Estot pidetään kauempana käyttövedestä liian monen myöhäisen lämmityksen jälkeen</string>
   <string name="card_heat_water_blocking_review" formatted="false">Estot eilen: {hours} h lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Estot eilen: {hours} h olisi lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
+  <string name="card_demand_level_title" formatted="false">Tehotaso</string>
+  <string name="card_demand_level_add" formatted="false">Tehotaso</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Muulloin kuin {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Ylitykset: {n} / {allowed} viimeisten 12 kuukauden aikana</string>
+  <string name="card_demand_level_no_count" formatted="false">Ylitykset lasketaan kohteen sähkömittarista.</string>
+  <string name="card_demand_level_help" formatted="false">Jotkin verkkoyhtiöt myyvät tehotason: tuntikeskitehon, jonka alla pysyt sen tunteina ja jonka saat ylittää muutaman kerran vuodessa ennen kuin sinut siirretään toiseen tariffiin. SpotNav pitää laturit sen alla noina tunteina eikä koskaan suunnittele sen yli.</string>
+  <string name="card_demand_level_kw" formatted="false">Tehotaso (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Muulloin kuin tiettyinä tunteina</string>
+  <string name="card_demand_level_error_kw" formatted="false">Tehotaso on luku, joka on yli 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Kyllä, ylitä se</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Tämä tunti: {kw} / {target} – tehotaso (tehotavoite {set})</string>
 </resources>

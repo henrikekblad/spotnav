@@ -1565,4 +1565,16 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Bloqueos más alejados del agua caliente tras demasiados recalentamientos tardíos</string>
   <string name="card_heat_water_blocking_review" formatted="false">Bloqueos ayer: {hours} h acortadas por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Bloqueos ayer: {hours} h se habrían acortado por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
+  <string name="card_demand_level_title" formatted="false">Nivel de potencia</string>
+  <string name="card_demand_level_add" formatted="false">Nivel de potencia</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Fuera de {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Excesos: {n} de {allowed} en los últimos 12 meses</string>
+  <string name="card_demand_level_no_count" formatted="false">Los excesos se cuentan en el contador de la instalación.</string>
+  <string name="card_demand_level_help" formatted="false">Algunas distribuidoras venden un nivel de potencia: una media horaria por debajo de la cual te mantienes en sus horas y que puedes superar unas pocas veces al año antes de pasar a otra tarifa. SpotNav mantiene los cargadores por debajo en esas horas y nunca planifica por encima.</string>
+  <string name="card_demand_level_kw" formatted="false">Nivel de potencia (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Fuera de ciertas horas</string>
+  <string name="card_demand_level_error_kw" formatted="false">Un nivel de potencia es un número mayor que 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Sí, superarlo</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Esta hora: {kw} de {target} – el nivel de potencia (objetivo de consumo {set})</string>
 </resources>

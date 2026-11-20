@@ -856,7 +856,19 @@ internal object CardStrings {
         "heat.water.blockingLive" to R.string.card_heat_water_blocking_live,
         "heat.water.blockingBackedOff" to R.string.card_heat_water_blocking_backed_off,
         "heat.water.blockingReview" to R.string.card_heat_water_blocking_review,
-        "heat.water.blockingReviewWould" to R.string.card_heat_water_blocking_review_would
+        "heat.water.blockingReviewWould" to R.string.card_heat_water_blocking_review_would,
+        "demand.level.title" to R.string.card_demand_level_title,
+        "demand.level.add" to R.string.card_demand_level_add,
+        "demand.level.value" to R.string.card_demand_level_value,
+        "demand.level.outside" to R.string.card_demand_level_outside,
+        "demand.level.count" to R.string.card_demand_level_count,
+        "demand.level.noCount" to R.string.card_demand_level_no_count,
+        "demand.level.help" to R.string.card_demand_level_help,
+        "demand.level.kw" to R.string.card_demand_level_kw,
+        "demand.level.counted.outside" to R.string.card_demand_level_counted_outside,
+        "demand.level.error.kw" to R.string.card_demand_level_error_kw,
+        "release.confirm.levelAgain" to R.string.card_release_confirm_level_again,
+        "site.importTarget.hourLevel" to R.string.card_site_import_target_hour_level,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */
