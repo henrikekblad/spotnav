@@ -38,4 +38,4 @@ companion: it shows what SpotNav plans and does at home, and lets you change the
 9. [FAQ](app/faq.md): common questions.
 
 The Home Assistant side (installing SpotNav, chargers, meters, batteries and heat pumps) is in the
-[SpotNav documentation]({{SITE_URL}}).
+[SpotNav documentation](https://spotnav.sensnology.se).

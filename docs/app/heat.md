@@ -9,7 +9,7 @@ section: The pages
 
 The heat page shows the heating as SpotNav in Home Assistant sees it. It needs SpotNav 3.0 or newer in Home
 Assistant, and is shown only when the heating has something to show: a heat pump, a heat pump meter or indoor
-sensors. The heating itself is set up in Home Assistant (see the [SpotNav documentation]({{SITE_URL}})).
+sensors. The heating itself is set up in Home Assistant (see the [SpotNav documentation](https://spotnav.sensnology.se)).
 
 ![The heat page](../images/app-heat.png)
 

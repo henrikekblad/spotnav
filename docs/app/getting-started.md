@@ -15,7 +15,7 @@ The source and the release builds are on [GitHub](https://github.com/henrikekbla
 ## Pair with Home Assistant
 
 You need the SpotNav integration in Home Assistant with at least one charger. See the
-[SpotNav documentation]({{SITE_URL}}) for the Home Assistant setup.
+[SpotNav documentation](https://spotnav.sensnology.se) for the Home Assistant setup.
 
 ![The Home Assistant card in Settings with a six-digit pairing code](../images/app-pairing-code.png)
 

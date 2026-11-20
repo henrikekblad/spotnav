@@ -45,7 +45,7 @@ the cars report and, if you set one up, the charger's camera.
 ![The car line after the car was identified](../images/app-identified.png)
 
 How the camera and the identification work is in the Home Assistant documentation, under
-[Which car is plugged in?]({{SITE_URL}}).
+[Which car is plugged in?](https://spotnav.sensnology.se).
 
 ## Vehicle
 
