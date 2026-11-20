@@ -244,13 +244,25 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             body, words.say("heat.settings.zones"),
             if (settings.zones.isEmpty()) words.say("heat.settings.zonesNone") else settings.zones.size.toString()
         )
-        for (zone in if (comfort) settings.zones else emptyList()) {
-            val label = named(settings, zone.entityId)
-            val air = settings.zoneKinds[zone.entityId] == "air"
-            val help = if (air) words.say("heat.settings.offsetHelp") + " " + words.say("heat.settings.airHelp") else words.say("heat.settings.offsetHelp")
-            settingRow(body, label, text.signedDegrees(zone.offsetC), if (air) words.say("heat.settings.airHelp") else null, onTap = {
-                editOffset(label, zone.offsetC, help) { offset -> HeatWrite.zoneOffset(settings, zone.entityId, offset) }
-            })
+        // Each zone: watched, or set by SpotNav from the person's own setting (an administrator's opt-in in Home Assistant, so
+        // read only here); a zone's offset no longer acts, so it is not shown. The line under it says what SpotNav holds.
+        val hold = text.hold(settings)
+        for (zone in settings.zones) {
+            settingRow(
+                body, named(settings, zone.entityId),
+                words.say(if (zone.control) "heat.settings.zoneControlled" else "heat.settings.zoneWatched"),
+                settings.zoneStatus[zone.entityId]?.let(hold::zoneLine)
+            )
+        }
+        // The plain water heater: its switch, the opt-in (read only) with its line, and the optional tank sensor.
+        val heater = settings.waterHeater
+        settingRow(body, words.say("heat.settings.waterHeater"), heater?.let { named(settings, it.entityId) } ?: none)
+        if (heater != null) {
+            settingRow(
+                body, words.say("heat.settings.waterHeaterControl"), words.say(if (heater.control) "settings.value.on" else "settings.value.off"),
+                settings.waterHeaterStatus?.let { hold.waterHeaterLine(it, heater.control) }
+            )
+            settingRow(body, words.say("heat.settings.tankSensor"), heater.tankSensor?.let { named(settings, it) } ?: none)
         }
         if (comfort) settingRow(body, words.say("heat.settings.night"), text.nightValue(settings.night), onTap = { editNight(settings) })
         // Only from a Home Assistant that has the setting.

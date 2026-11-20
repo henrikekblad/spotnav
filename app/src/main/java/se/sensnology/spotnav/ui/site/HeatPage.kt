@@ -417,7 +417,7 @@ internal class HeatPage(
         val live = HeatNowModel.live(text, heat)
         // The header says what the pump does; here only while the header is taken by SpotNav's own lowering or raise.
         val pump = if (live == null || live.first == "lower" || live.first == "raise") HeatNowModel.pumpLine(text, heat) else null
-        say(statusBlock, listOfNotNull(pump, HeatNowModel.wouldLine(text, heat), HeatNowModel.relayLine(text, heat, heat.now.coerceAtLeastNow())).joinToString("\n").ifEmpty { null })
+        say(statusBlock, (listOfNotNull(pump, HeatNowModel.wouldLine(text, heat), HeatNowModel.relayLine(text, heat, heat.now.coerceAtLeastNow())) + HeatNowModel.holdLines(text, heat).map { it.second }).joinToString("\n").ifEmpty { null })
         renderBoost(heat)
         val line = HeatNowModel.aheadLine(text, heat)
         ahead.visibility = if (line == null) View.GONE else View.VISIBLE

@@ -285,10 +285,15 @@ internal object HeatNowModel {
                     val targets = (params["targets"] as? List<*>).orEmpty().joinToString(", ") { it.toString() }
                     out += note.code to words.say(key, "name" to (params["name"]?.toString() ?: ""), "targets" to targets)
                 }
+                "water_heater_not_full" -> out += note.code to words.say("heat.note.water_heater_not_full")
             }
         }
         return out
     }
+
+    /** The things SpotNav holds beside the pump now, and the water heater's next windows, under the status lines (the card's `holdLines`). */
+    fun holdLines(text: SiteText, heat: Heat): List<Pair<String, String>> =
+        HeatHoldText.of(text, heat).holdLines(heat.zoneList, heat.waterHeater)
 
     /** "Borta till fre 20 16:00": the return time of an away, for the line under the buttons. */
     fun awayLine(text: SiteText, heat: Heat): String? {

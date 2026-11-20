@@ -1577,4 +1577,47 @@
   <string name="card_demand_level_error_kw" formatted="false">Un niveau de puissance est un nombre supérieur à 0 kW.</string>
   <string name="card_release_confirm_level_again" formatted="false">Oui, le dépasser</string>
   <string name="card_site_import_target_hour_level" formatted="false">Cette heure : {kw} sur {target} – le niveau de puissance (objectif de soutirage {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav maintient {value} jusqu\'à {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav maintient {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Votre propre consigne, {value}, s\'applique.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Vérification que le thermostat répond…</string>
+  <string name="card_heat_zone_waiting" formatted="false">En attente.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">En attente : désactivez l\'automatisation \'{name}\' pour que SpotNav puisse régler ce thermostat.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Modifié à la main : SpotNav le laisse jusqu\'à demain.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">Le thermostat n\'a pas pris le réglage de SpotNav : laissé jusqu\'à demain.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">Le thermostat n\'a pas répondu au réglage de SpotNav. Désactivez puis réactivez pour réessayer.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav ne règle qu\'un thermostat en mode chauffage, avec une seule consigne.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">En attente d\'une valeur du thermostat.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Modifié de nombreuses fois aujourd\'hui : SpotNav le laisse jusqu\'à demain.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Surveillé : SpotNav autoriserait {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Surveillé.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Coupé jusqu\'à {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">Allumé : {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Vérification que l\'interrupteur coupe le chauffe-eau…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">En attente de voir la puissance de la résistance sur le compteur.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">une heure bon marché</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">chauffe complète</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">jamais coupé plus de 8 heures</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">une mesure manque</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">pas de prix</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">le ballon est froid</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">assez de commutations aujourd\'hui</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">En attente : désactivez l\'automatisation \'{name}\' pour que SpotNav puisse piloter le chauffe-eau.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Allumé à la main : laissé allumé jusqu\'à demain.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Coupé à la main : laissé coupé jusqu\'à demain.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">L\'interrupteur n\'a pas répondu : laissé allumé jusqu\'à demain.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">L\'interrupteur n\'a pas coupé le chauffe-eau. Vérifiez que c\'est le bon interrupteur, puis désactivez et réactivez.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Arrêté : le chauffe-eau n\'a pas atteint son thermostat depuis deux jours.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">En attente d\'une valeur de l\'interrupteur.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} jusqu\'à {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Chauffe-eau coupé jusqu\'à {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Chauffe-eau allumé {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Le chauffe-eau serait allumé {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">Le chauffe-eau n\'a pas atteint son thermostat depuis deux jours : vérifiez le thermostat et la résistance.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Piloté</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Surveillé</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Chauffe-eau</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Piloter le chauffe-eau</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Sonde du ballon</string>
 </resources>

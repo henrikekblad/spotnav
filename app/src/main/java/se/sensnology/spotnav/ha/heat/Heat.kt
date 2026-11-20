@@ -54,7 +54,11 @@ internal data class Heat(
     /** The site's hot water (`heat/dhw_runtime.py`); `null` without the heat shadow or from an older Home Assistant. */
     val hotWater: HeatHotWater? = null,
     /** An administrator's answer (`writable`); `false` over the webhook. */
-    val writable: Boolean = false
+    val writable: Boolean = false,
+    /** The heat zones with SpotNav's control of each; empty from a Home Assistant before it controls zones. */
+    val zoneList: List<HeatZone> = emptyList(),
+    /** A plain water heater on a switch; `null` without one, and from a Home Assistant before it. */
+    val waterHeater: HeatWaterHeater? = null
 ) {
     /** What the dial and Home/Away are written against. The raw text of `away_until` is what the compare-and-set sends back. */
     data class Config(
@@ -65,7 +69,9 @@ internal data class Heat(
         val controlEntity: String?,
         val controlEntityB: String?,
         /** SpotNav's own steering is on (`config.control_enabled`). */
-        val controlEnabled: Boolean = false
+        val controlEnabled: Boolean = false,
+        /** SpotNav switches the water heater itself (`config.water_heater.control`). */
+        val waterHeaterControl: Boolean = false
     )
 
     data class Comfort(val targetC: Double, val lowC: Double, val highC: Double, val mode: String, val awayUntil: Instant?, val aimC: Double)
@@ -150,7 +156,8 @@ internal object HeatRead {
                 controlPath = text(config.opt("control_path"), "config.control_path"),
                 controlEntity = textOrNull(config.opt("control_entity"), "config.control_entity"),
                 controlEntityB = textOrNull(config.opt("control_entity_b"), "config.control_entity_b"),
-                controlEnabled = additive(config, "control_enabled", false) { flag(it, "config.control_enabled") }
+                controlEnabled = additive(config, "control_enabled", false) { flag(it, "config.control_enabled") },
+                waterHeaterControl = additive(config, "water_heater", false) { raw -> objOrNull(raw, "config.water_heater")?.let { flag(it.opt("control"), "config.water_heater.control") } ?: false }
             ),
             comfort = Heat.Comfort(
                 targetC = number(comfort.opt("target_c"), "comfort.target_c"),
@@ -174,7 +181,7 @@ internal object HeatRead {
                 // A meter that is not found or usable is something to set up, not something to show.
                 text(it.opt("status"), "meter.status") == "found"
             } ?: false,
-            zones = list(json.opt("zones"), "zones").onEach { obj(it, "zone") }.size,
+            zones = list(json.opt("zones"), "zones").size,
             today = objOrNull(json.opt("today"), "today")?.let(::today),
             status = Heat.Status(
                 pumpState = textOrNull(status.opt("pump_state"), "status.pump_state"),
@@ -230,7 +237,9 @@ internal object HeatRead {
             indoorDay = additive(json, "indoor_day", null) { objOrNull(it, "indoor_day")?.let(HeatDayRead::indoorDay) },
             review = additive(json, "review", null) { objOrNull(it, "review")?.let(HeatDayRead::review) },
             hotWater = additive(json, "hot_water", null) { objOrNull(it, "hot_water")?.let(HeatHotWaterRead::hotWater) },
-            writable = additive(json, "writable", false) { flag(it, "writable") }
+            writable = additive(json, "writable", false) { flag(it, "writable") },
+            zoneList = HeatZonesRead.zones(json.opt("zones")),
+            waterHeater = additive(json, "water_heater", null) { HeatZonesRead.waterHeater(it) }
         )
     }
 
@@ -269,7 +278,7 @@ internal object HeatRead {
 /**
  * `update_heat`, the one write of the heating (webhook `update_heat`): a [Request] of `changes` and the values they were
  * judged against (`expected`, a compare-and-set). The heat page writes the dial and Home/Away ([Change]); the Settings
- * screen writes the night and the offsets ([night], [zoneOffset], [indoorOffset]). One [Outcome] for both.
+ * screen writes the night and the offsets ([night], [awayDelta], [indoorOffset]). One [Outcome] for both.
  */
 internal object HeatWrite {
     const val NIGHT_MIN = 0.5
@@ -336,12 +345,6 @@ internal object HeatWrite {
     fun awayDelta(stored: HeatSettings, next: Double): Request = Request(
         changes = JSONObject().put("away_delta_c", next),
         expected = JSONObject().put("away_delta_c", stored.awayDeltaC ?: JSONObject.NULL)
-    )
-
-    /** One stored zone's offset; the list names exactly the stored zones in their stored order, as the webhook takes it. */
-    fun zoneOffset(stored: HeatSettings, entityId: String, offsetC: Double): Request = Request(
-        changes = JSONObject().put("zones", offsetsJson(stored.zones.map { if (it.entityId == entityId) it.copy(offsetC = offsetC) else it })),
-        expected = JSONObject().put("zones", offsetsJson(stored.zones))
     )
 
     /** One stored indoor sensor's offset; the list stays sparse (a sensor at 0 is left out) and names stored sensors only. */

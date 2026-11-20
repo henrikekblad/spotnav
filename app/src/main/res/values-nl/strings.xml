@@ -1569,4 +1569,47 @@
   <string name="card_demand_level_error_kw" formatted="false">Een vermogensniveau is een getal boven 0 kW.</string>
   <string name="card_release_confirm_level_again" formatted="false">Ja, overschrijden</string>
   <string name="card_site_import_target_hour_level" formatted="false">Dit uur: {kw} van {target} – het vermogensniveau (afnamedoel {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav houdt {value} tot {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav houdt {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Je eigen instelling, {value}, geldt.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Controleert of de thermostaat reageert…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Wacht.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Wacht: zet de automatisering \'{name}\' uit zodat SpotNav deze thermostaat kan instellen.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Met de hand gewijzigd: SpotNav laat hem tot morgen.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">De thermostaat nam de instelling van SpotNav niet over: blijft tot morgen.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">De thermostaat reageerde niet op de instelling van SpotNav. Zet dit uit en aan om het opnieuw te proberen.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav stelt alleen een thermostaat in verwarmingsstand met één setpoint in.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Wacht tot de thermostaat zich meldt.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Vandaag vaak gewijzigd: SpotNav laat hem tot morgen.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Bewaakt: SpotNav zou {windows} toestaan.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Bewaakt.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Uit tot {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">Aan: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Controleert of de schakelaar de boiler uitzet…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Wacht tot het vermogen van het element op de meter te zien is.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">een goedkoop uur</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">volledige opwarming</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">nooit langer dan 8 uur uit</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">een meting ontbreekt</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">geen prijzen</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">het vat is koud</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">vandaag genoeg geschakeld</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Wacht: zet de automatisering \'{name}\' uit zodat SpotNav de boiler kan sturen.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Met de hand aangezet: blijft aan tot morgen.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Met de hand uitgezet: blijft uit tot morgen.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">De schakelaar reageerde niet: blijft aan tot morgen.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">De schakelaar zette de boiler niet uit. Controleer of het de juiste schakelaar is en zet dit daarna uit en aan.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Gestopt: de boiler heeft zijn thermostaat al twee dagen niet bereikt.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Wacht tot de schakelaar zich meldt.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} tot {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Boiler uit tot {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Boiler aan {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Boiler zou aan zijn {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">De boiler heeft zijn thermostaat al twee dagen niet bereikt: controleer de thermostaat en het element.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Gestuurd</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Bewaakt</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Boiler</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Boiler sturen</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Vatsensor</string>
 </resources>

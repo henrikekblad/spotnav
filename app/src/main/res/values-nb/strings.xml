@@ -1569,4 +1569,47 @@
   <string name="card_demand_level_error_kw" formatted="false">Et effektnivå er et tall over 0 kW.</string>
   <string name="card_release_confirm_level_again" formatted="false">Ja, overskrid det</string>
   <string name="card_site_import_target_hour_level" formatted="false">Denne timen: {kw} av {target} – effektnivået (effektmål {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav holder {value} til {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav holder {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Din egen innstilling, {value}, gjelder.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Sjekker at termostaten svarer…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Venter.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Venter: slå av automasjonen \'{name}\' så SpotNav kan stille termostaten.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Endret for hånd: SpotNav lar den være til i morgen.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">Termostaten tok ikke SpotNavs innstilling: står til i morgen.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">Termostaten svarte ikke på SpotNavs innstilling. Slå av og på for å prøve igjen.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav stiller bare en termostat i varmemodus, med ett settpunkt.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Venter på at termostaten skal rapportere.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Endret mange ganger i dag: SpotNav lar den være til i morgen.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Overvåkes: SpotNav ville tillate {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Overvåkes.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Av til {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">På: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Sjekker at bryteren slår av berederen…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Venter på å se varmeelementets effekt på måleren.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">en billig time</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">full oppvarming</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">aldri av mer enn 8 timer</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">en måling mangler</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">ingen priser</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">tanken er kald</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">slått nok i dag</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Venter: slå av automasjonen \'{name}\' så SpotNav kan styre berederen.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Slått på for hånd: står på til i morgen.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Slått av for hånd: står av til i morgen.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">Bryteren svarte ikke: står på til i morgen.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">Bryteren slo ikke av berederen. Sjekk at det er riktig bryter, og slå så av og på igjen.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Stoppet: berederen har ikke nådd termostaten sin på to døgn.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Venter på at bryteren skal rapportere.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} til {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Varmtvannsberederen av til {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Varmtvannsberederen på {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Varmtvannsberederen ville vært på {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">Varmtvannsberederen har ikke nådd termostaten sin på to døgn: sjekk termostaten og varmeelementet.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Styres</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Overvåkes</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Varmtvannsbereder</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Styr varmtvannsberederen</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Tankføler</string>
 </resources>

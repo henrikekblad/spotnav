@@ -10,6 +10,7 @@ import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ui.site.HeatHoldText
 import se.sensnology.spotnav.ha.heat.HeatSteering
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.CardWords
@@ -186,6 +187,10 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
             }
         }
     }
+
+    /** The words for what SpotNav holds on the zones and the water heater, in the answer's moment and time zone. */
+    fun hold(settings: HeatSettings): HeatHoldText =
+        HeatHoldText(SiteText(words, locale), settings.now ?: Instant.now(), settings.zone ?: java.time.ZoneId.systemDefault())
 
     /** A time the line names: the clock today, the day before it otherwise ("fre 20 nov 16:00"). */
     private fun moment(settings: HeatSettings, at: Instant): String {
