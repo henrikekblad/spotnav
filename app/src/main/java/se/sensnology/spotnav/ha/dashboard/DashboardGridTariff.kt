@@ -198,7 +198,6 @@ internal data class DashboardGridTariff(
 
     companion object {
         private val POLICIES = listOf("off", "manual", "included")
-        private val OPTIONAL_KEYS = listOf("demand", "supplier_markup", "sell_adjustment", "sells")
 
         /** The block, or `null` when it is absent or cannot be read (the price section then shows no tariff rows). */
         fun parse(raw: Any?): DashboardGridTariff? {
@@ -213,7 +212,7 @@ internal data class DashboardGridTariff(
         fun decode(json: JSONObject): DashboardGridTariff {
             val keys = arrayOf("entry_id", "write_revision", "transfer_percent", "transfer_high", "high_load_window", "writable")
             // `demand` (2.4) and the supplier's figures (3.0, sent only to an app that reads them) are additive.
-            exactKeys(json, *keys, *OPTIONAL_KEYS.filter(json::has).toTypedArray())
+            exactKeys(json, *keys)
             val entryId = (json.opt("entry_id") as? String)?.takeIf { it.isNotEmpty() } ?: bad()
             return DashboardGridTariff(
                 entryId = entryId,
@@ -242,7 +241,7 @@ internal data class DashboardGridTariff(
             val json = raw as? JSONObject ?: bad()
             val keys = arrayOf("components", "available", "reason", "price_unit", "per_component", "hour", "import_target_kw")
             // `effective_target_kw` is additive: sent only to an app that reads it.
-            if (json.has("effective_target_kw")) exactKeys(json, *keys, "effective_target_kw") else exactKeys(json, *keys)
+            exactKeys(json, *keys)
             val components = list(json.opt("components")).map(DemandComponent::parse)
             if (components.size > DemandComponent.MAX) bad()
             val months = list(json.opt("per_component")).map(::month)
@@ -291,7 +290,8 @@ internal class Malformed : RuntimeException()
 private fun bad(): Nothing = throw Malformed()
 
 private fun exactKeys(json: JSONObject, vararg keys: String) {
-    if (json.length() != keys.size || keys.any { !json.has(it) }) bad()
+    // Every key the reader needs must be there; a key it does not know is not looked at.
+    if (keys.any { !json.has(it) }) bad()
 }
 
 private fun whole(value: Any?, min: Int, max: Int): Int {

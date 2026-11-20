@@ -73,17 +73,23 @@ class PriceProviderTest {
         assertNull(DashboardPriceProvider.parse(block().put("name", JSONObject.NULL))!!.url)
     }
 
+    @Test fun anUnknownKeyAtAnyLevelIsIgnored() {
+        val plain = DashboardPriceProvider.parse(block())
+        assertEquals(plain, DashboardPriceProvider.parse(block().put("extra", 1)))
+        val notice = JSONObject().put("code", "add_nordpool").put("params", JSONObject()).put("x", 1)
+        val read = DashboardPriceProvider.parse(block(notice))!!
+        assertEquals("add_nordpool", read.notice?.code)
+    }
+
     @Test fun anythingElseIsNoBlockAndNeverFailsTheDashboard() {
         val bad = listOf(
             "not an object",
             JSONArray(),
-            block().put("extra", 1),
             JSONObject().put("key", "nordpool").put("name", "Nord Pool").put("url", "https://www.nordpoolgroup.com/"),
             block().put("key", 3),
             block("add_nordpool"),
             block(JSONObject().put("code", "add_nordpool")),
-            block(JSONObject().put("code", "add_nordpool").put("params", JSONObject()).put("x", 1)),
-            block(JSONObject().put("code", 1).put("params", JSONObject())),
+                        block(JSONObject().put("code", 1).put("params", JSONObject())),
             block(JSONObject().put("code", "octopus_region_mismatch").put("params", JSONObject().put("region", 3)))
         )
         bad.forEachIndexed { index, raw ->

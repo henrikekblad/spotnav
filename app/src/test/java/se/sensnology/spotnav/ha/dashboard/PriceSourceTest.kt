@@ -85,10 +85,19 @@ class PriceSourceTest {
         assertNull(dashboard(JSONObject.NULL).priceSource)
     }
 
+    @Test fun anUnknownKeyAtAnyLevelIsIgnored() {
+        val plain = DashboardPriceSource.parse(block(duplicate()))!!
+        val raw = block(duplicate().put("other", 1)).put("extra", 1)
+        raw.getJSONArray("choices").put(JSONObject().put("entry_id", "x").put("title", "y").put("more", 1))
+        val read = DashboardPriceSource.parse(raw)!!
+        assertEquals(plain.duplicate, read.duplicate)
+        assertEquals(plain.choices.size + 1, read.choices.size)
+        assertEquals(plain.entryId, read.entryId)
+    }
+
     @Test fun anUnreadableBlockIsAsIfAbsentAndNeverRefusesTheDashboard() {
         val unreadable = listOf<JSONObject.() -> Unit>(
             { remove("writable") },
-            { put("extra", 1) },
             { put("charger_count", -1) },
             { put("charger_count", 1.5) },
             { put("charger_count", "2") },
@@ -97,13 +106,11 @@ class PriceSourceTest {
             { put("entry_id", 7) },
             { put("choices", JSONObject()) },
             { getJSONArray("choices").put(JSONObject().put("entry_id", "x")) },
-            { getJSONArray("choices").put(JSONObject().put("entry_id", "x").put("title", "y").put("more", 1)) },
             { put("duplicate", "SE4") },
             { put("duplicate", duplicate().put("titles", JSONArray().put("only one"))) },
             { put("duplicate", duplicate().put("entry_ids", JSONArray().put("price1").put(""))) },
             { put("duplicate", duplicate().put("entry_ids", JSONArray().put("price1")).put("titles", JSONArray().put("a")).put("fees", JSONArray().put(JSONObject.NULL))) },
             { put("duplicate", duplicate().put("fees", JSONArray().put(JSONObject().put("vat", 1)).put(JSONObject.NULL))) },
-            { put("duplicate", duplicate().put("other", 1)) },
         )
         for ((index, edit) in unreadable.withIndex()) {
             val raw = block(duplicate()).apply(edit)

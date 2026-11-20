@@ -54,9 +54,14 @@ class HaImportTargetActionsTest {
         assertTrue(pilot.writable)
     }
 
-    @Test fun aTariffWithAnUnknownKeyIsNoTariffAndOneWithoutDemandHasNone() {
+    @Test fun aTariffWithAnUnknownKeyIsReadAndOneWithoutDemandHasNone() {
         val json = HaFixtures.json("grid_tariff/pilot_demand.json")
-        assertNull(DashboardGridTariff.parse(JSONObject(json.toString()).put("extra", 1)))
+        val extra = JSONObject(json.toString()).put("extra", 1)
+        extra.getJSONObject("demand").put("later", 1)
+        extra.getJSONObject("demand").getJSONArray("per_component").getJSONObject(0).put("later", 1)
+        extra.getJSONObject("demand").getJSONObject("hour").put("later", 1)
+        assertEquals(DashboardGridTariff.parse(json), DashboardGridTariff.parse(extra))
+        assertNull(DashboardGridTariff.parse(JSONObject(json.toString()).apply { getJSONObject("demand").put("available", "yes") }))
         json.remove("demand")
         val older = DashboardGridTariff.parse(json)!!
         assertNull(older.demand)
