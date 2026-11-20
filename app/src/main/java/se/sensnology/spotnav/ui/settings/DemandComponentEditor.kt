@@ -15,6 +15,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
+import se.sensnology.spotnav.ha.dashboard.PowerLevel
 import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.editorBody
@@ -112,6 +113,97 @@ internal fun ViewScope.editDemandComponent(
         val chosen = DemandComponent(hours, DemandComponent.TOP_N[topN.selectedItemPosition], winterPrice, summerPrice)
         // The part as stored, unchanged: nothing to write.
         if (chosen == current) dialog.dismiss() else send(chosen)
+    }
+}
+
+/**
+ * The power level, the card's `levelEditor`: the kW not to exceed, and its hours (all, a window's, or outside a window:
+ * the low-price hours outside a demand-charge part's window). Save hands [save] the level; an existing one ([current])
+ * also has Remove, which hands it `null`. [partWindow] is the window the hours start from when adding (a demand-charge
+ * part's: the level then holds outside it). [save] answers `null` when it took or the message to show.
+ */
+internal fun ViewScope.editPowerLevel(
+    words: CardWords,
+    current: PowerLevel?,
+    partWindow: HighLoadWindow?,
+    save: (PowerLevel?, (String?) -> Unit) -> Unit
+) {
+    val body = editorBody()
+    fun label(text: String) = TextView(context).apply {
+        this.text = text; textSize = 14f; setTextColor(dark); setPadding(0, dp(10), 0, dp(2))
+    }
+    body.addView(TextView(context).apply {
+        text = words.say("demand.level.help"); textSize = 13f; setTextColor(muted); setPadding(0, 0, 0, dp(6))
+    })
+    val figures = AppLanguageSettings.numberLocale(activity)
+    val kw = EditText(context).apply {
+        inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        setText(current?.levelKw?.let { java.text.NumberFormat.getNumberInstance(figures).apply { isGroupingUsed = false; maximumFractionDigits = 3 }.format(it) }.orEmpty())
+        gravity = Gravity.START
+    }
+    body.addView(label(words.say("demand.level.kw")))
+    body.addView(kw)
+    val chosen = when {
+        current == null -> if (partWindow == null) 0 else 2
+        current.window == null -> 0
+        current.outside -> 2
+        else -> 1
+    }
+    val counted = Spinner(context).apply {
+        val items = listOf(words.say("demand.counted.all"), words.say("demand.counted.window"), words.say("demand.level.counted.outside"))
+        adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, items)
+        setSelection(chosen)
+    }
+    body.addView(label(words.say("demand.counted")))
+    body.addView(counted)
+    val window = highLoadWindowFields(words, current?.window ?: partWindow ?: HighLoadWindow.SUGGESTED)
+    val windowBox = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        window.nodes.forEach(::addView)
+        visibility = if (chosen == 0) View.GONE else View.VISIBLE
+    }
+    counted.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            windowBox.visibility = if (position == 0) View.GONE else View.VISIBLE
+        }
+        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+    }
+    body.addView(windowBox)
+    val error = errorLine().also { body.addView(it) }
+
+    val builder = AlertDialog.Builder(context)
+        .setTitle(words.say("demand.level.title"))
+        .setView(ScrollView(context).apply { addView(body) })
+        .setNegativeButton(t(android.R.string.cancel), null)
+        .setPositiveButton(t(R.string.paired_save), null)
+    if (current != null) builder.setNeutralButton(words.say("demand.remove"), null)
+    val dialog = builder.create()
+    dialog.show()
+    val buttons = listOfNotNull(dialog.getButton(AlertDialog.BUTTON_POSITIVE), dialog.getButton(AlertDialog.BUTTON_NEUTRAL))
+    fun send(level: PowerLevel?) {
+        buttons.forEach { it.isEnabled = false }
+        error.visibility = View.GONE
+        save(level) { message ->
+            if (isDestroyed) return@save
+            if (message == null) dialog.dismiss() else {
+                buttons.forEach { it.isEnabled = true }
+                error.text = message
+                error.visibility = View.VISIBLE
+            }
+        }
+    }
+    fun refuse(message: String) {
+        error.text = message
+        error.visibility = View.VISIBLE
+    }
+    dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener { send(null) }
+    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+        val level = DemandText.parseLevel(kw.text.toString().trim())
+        if (level.isNaN()) return@setOnClickListener refuse(words.say("demand.level.error.kw"))
+        val hours = if (counted.selectedItemPosition == 0) null else window.read()
+        if (hours != null && hours.fromHour == hours.toHour) return@setOnClickListener refuse(words.say("gridFee.window.sameHours"))
+        val chosenLevel = PowerLevel(level, hours, hours != null && counted.selectedItemPosition == 2)
+        if (chosenLevel == current) dialog.dismiss() else send(chosenLevel)
     }
 }
 

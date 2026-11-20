@@ -1557,4 +1557,59 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Estot pidetään kauempana käyttövedestä liian monen myöhäisen lämmityksen jälkeen</string>
   <string name="card_heat_water_blocking_review" formatted="false">Estot eilen: {hours} h lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Estot eilen: {hours} h olisi lyhennetty käyttöveden vuoksi · {risks} myöhäistä lämmitystä ennen huippua</string>
+  <string name="card_demand_level_title" formatted="false">Tehotaso</string>
+  <string name="card_demand_level_add" formatted="false">Tehotaso</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Muulloin kuin {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Ylitykset: {n} / {allowed} viimeisten 12 kuukauden aikana</string>
+  <string name="card_demand_level_no_count" formatted="false">Ylitykset lasketaan kohteen sähkömittarista.</string>
+  <string name="card_demand_level_help" formatted="false">Jotkin verkkoyhtiöt myyvät tehotason: tuntikeskitehon, jonka alla pysyt sen tunteina ja jonka saat ylittää muutaman kerran vuodessa ennen kuin sinut siirretään toiseen tariffiin. SpotNav pitää laturit sen alla noina tunteina eikä koskaan suunnittele sen yli.</string>
+  <string name="card_demand_level_kw" formatted="false">Tehotaso (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Muulloin kuin tiettyinä tunteina</string>
+  <string name="card_demand_level_error_kw" formatted="false">Tehotaso on luku, joka on yli 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Kyllä, ylitä se</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Tämä tunti: {kw} / {target} – tehotaso (tehotavoite {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav pitää {value} klo {until} asti.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav pitää {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Oma asetuksesi, {value}, on voimassa.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Tarkistetaan, että termostaatti vastaa…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Odottaa.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Odottaa: poista automaatio \'{name}\' käytöstä, jotta SpotNav voi säätää termostaattia.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Muutettu käsin: SpotNav jättää sen huomiseen.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">Termostaatti ei ottanut SpotNavin asetusta: jätetään huomiseen.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">Termostaatti ei vastannut SpotNavin asetukseen. Kytke pois ja päälle yrittääksesi uudelleen.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav säätää vain lämmitystilassa olevaa termostaattia, jossa on yksi asetusarvo.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Odottaa termostaatin tietoja.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Muutettu monta kertaa tänään: SpotNav jättää sen huomiseen.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Seurataan: SpotNav sallisi {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Seurataan.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Pois päältä klo {until} asti.</string>
+  <string name="card_heat_water_heater_on" formatted="false">Päällä: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Tarkistetaan, että kytkin sammuttaa varaajan…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Odotetaan, että mittari näyttää vastuksen tehon.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">halpa tunti</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">täysi lämmitys</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">ei koskaan pois päältä yli 8 tuntia</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">mittaus puuttuu</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">ei hintoja</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">säiliö on kylmä</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">kytketty tänään tarpeeksi</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Odottaa: poista automaatio \'{name}\' käytöstä, jotta SpotNav voi ohjata varaajaa.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Kytketty päälle käsin: jätetään päälle huomiseen.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Sammutettu käsin: jätetään pois päältä huomiseen.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">Kytkin ei vastannut: jätetään päälle huomiseen.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">Kytkin ei sammuttanut varaajaa. Tarkista, että kytkin on oikea, ja kytke sitten pois ja päälle.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Pysäytetty: varaaja ei ole saavuttanut termostaattiaan kahteen vuorokauteen.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Odottaa kytkimen tietoja.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} klo {until} asti</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Lämminvesivaraaja pois päältä klo {until} asti</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Lämminvesivaraaja päällä {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Lämminvesivaraaja olisi päällä {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">Lämminvesivaraaja ei ole saavuttanut termostaattiaan kahteen vuorokauteen: tarkista termostaatti ja vastus.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Ohjataan</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Seurataan</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Lämminvesivaraaja</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Ohjaa lämminvesivaraajaa</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Säiliön anturi</string>
 </resources>

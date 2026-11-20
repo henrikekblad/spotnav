@@ -161,7 +161,10 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         val block = tariff ?: return
         val words = demandText(tariffDashboard)
         for (row in words.rows(block.demand)) {
-            settingRow(demandRows, row.label, row.value, onTap = if (block.writable) ({ editDemand(row.index) }) else null)
+            // The row adding a power level is for a writer only; one already stored is shown to every reader.
+            if (row.power == DemandText.Row.Power.ADD && !block.writable) continue
+            val edit = if (row.power == DemandText.Row.Power.NO) ({ editDemand(row.index) }) else ({ editLevel() })
+            settingRow(demandRows, row.label, row.value, onTap = if (block.writable) edit else null)
             row.lines.forEach { demandRows.addView(demandLine(it)) }
         }
     }
@@ -173,6 +176,15 @@ internal class PairedPriceCard(scope: ViewScope) : ViewScope(scope) {
         val at = index ?: parts.size
         editDemandComponent(cardWords(), index?.let { parts.getOrNull(it) }, block.demand?.priceUnit) { part, done ->
             writeTariffChange({ it.bodyWith(at, part) }, done)
+        }
+    }
+
+    /** The power level's editor (adding one starts from a demand-charge part's window): Save writes it, Remove clears it. */
+    private fun editLevel() {
+        val block = tariff ?: return
+        val part = block.demand?.components?.firstOrNull { it.window != null }
+        editPowerLevel(cardWords(), block.demand?.powerLevel, part?.window) { level, done ->
+            writeTariffChange({ it.bodyWithLevel(level) }, done)
         }
     }
 

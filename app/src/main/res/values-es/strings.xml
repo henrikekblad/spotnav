@@ -1565,4 +1565,59 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Bloqueos más alejados del agua caliente tras demasiados recalentamientos tardíos</string>
   <string name="card_heat_water_blocking_review" formatted="false">Bloqueos ayer: {hours} h acortadas por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Bloqueos ayer: {hours} h se habrían acortado por el agua caliente · {risks} recalentamientos tardíos antes de un pico</string>
+  <string name="card_demand_level_title" formatted="false">Nivel de potencia</string>
+  <string name="card_demand_level_add" formatted="false">Nivel de potencia</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Fuera de {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Excesos: {n} de {allowed} en los últimos 12 meses</string>
+  <string name="card_demand_level_no_count" formatted="false">Los excesos se cuentan en el contador de la instalación.</string>
+  <string name="card_demand_level_help" formatted="false">Algunas distribuidoras venden un nivel de potencia: una media horaria por debajo de la cual te mantienes en sus horas y que puedes superar unas pocas veces al año antes de pasar a otra tarifa. SpotNav mantiene los cargadores por debajo en esas horas y nunca planifica por encima.</string>
+  <string name="card_demand_level_kw" formatted="false">Nivel de potencia (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Fuera de ciertas horas</string>
+  <string name="card_demand_level_error_kw" formatted="false">Un nivel de potencia es un número mayor que 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Sí, superarlo</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Esta hora: {kw} de {target} – el nivel de potencia (objetivo de consumo {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav mantiene {value} hasta las {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav mantiene {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Rige tu propia consigna, {value}.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Comprobando que el termostato responde…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Esperando.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Esperando: desactiva la automatización \'{name}\' para que SpotNav pueda ajustar este termostato.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Cambiado a mano: SpotNav lo deja hasta mañana.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">El termostato no aceptó el ajuste de SpotNav: se deja hasta mañana.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">El termostato no respondió al ajuste de SpotNav. Desactívalo y actívalo para volver a intentarlo.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav solo ajusta un termostato en modo calor, con una sola consigna.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Esperando a que el termostato informe.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Cambiado muchas veces hoy: SpotNav lo deja hasta mañana.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Vigilado: SpotNav permitiría {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Vigilado.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Apagado hasta las {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">Encendido: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Comprobando que el interruptor apaga el termo…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Esperando a ver la potencia de la resistencia en el medidor.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">una hora barata</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">calentamiento completo</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">nunca apagado más de 8 horas</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">falta una lectura</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">sin precios</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">el depósito está frío</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">suficientes cambios hoy</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Esperando: desactiva la automatización \'{name}\' para que SpotNav pueda controlar el termo.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Encendido a mano: se deja encendido hasta mañana.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Apagado a mano: se deja apagado hasta mañana.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">El interruptor no respondió: se deja encendido hasta mañana.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">El interruptor no apagó el termo. Comprueba que es el interruptor correcto y luego desactívalo y actívalo.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Detenido: el termo no ha alcanzado su termostato en dos días.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Esperando a que el interruptor informe.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} hasta las {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Termo apagado hasta las {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Termo encendido {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">El termo estaría encendido {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">El termo no ha alcanzado su termostato en dos días: revisa el termostato y la resistencia.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Controlado</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Vigilado</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Termo eléctrico</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Controlar el termo</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Sonda del depósito</string>
 </resources>

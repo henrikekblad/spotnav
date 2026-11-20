@@ -52,14 +52,14 @@ class HeatSettingsTest {
         assertEquals(null, (HeatSettingsRead.decode(json) as SiteRead.Read).value.control)
     }
 
-    @Test fun aVillaWithZonesOffsetsAndAMeter() {
+    @Test fun aVillaWithZonesAndAMeter() {
         val villa = villa
         assertTrue(villa.controlEnabled)
         assertEquals("relay", villa.controlPath)
         assertEquals("switch.larm_utgang_1", villa.controlEntity)
         assertEquals("sensor.varme_effekt", villa.meterEntity)
         assertEquals("Elmätare värme (Nibe + panna) Effekt", villa.nameOf("sensor.varme_effekt"))
-        assertEquals(listOf(0.0, 0.0, -1.0, -0.5), villa.zones.map { it.offsetC })
+        assertEquals(listOf(false, true, false, false), villa.zones.map { it.control })
         assertEquals("air", villa.zoneKinds["climate.ovanvaning"])
         assertEquals(-1.0, villa.indoorOffsetOf("sensor.ovanvaning_temperatur"), 0.0)
         assertEquals(0.0, villa.indoorOffsetOf("sensor.inomhus_kok_temperatur"), 0.0)
@@ -95,16 +95,33 @@ class HeatSettingsTest {
         assertEquals(listOf("night"), request.getJSONObject("changes").keys().asSequence().toList())
     }
 
-    @Test fun aZoneOffsetKeepsTheStoredZonesInTheirStoredOrder() {
-        val request = HeatWrite.zoneOffset(villa, "climate.golvvarme_tvattstuga", 0.5).payload()
-        val zones = request.getJSONObject("changes").getJSONArray("zones")
-        assertEquals(
-            villa.zones.map { it.entityId },
-            (0 until zones.length()).map { zones.getJSONObject(it).getString("entity_id") }
+    @Test fun theZonesControlAndTheWaterHeaterAreReadButNeverWritten() {
+        val villa = villa
+        assertEquals(listOf("climate.golvvarme_toalett_nere", "climate.golvvarme_toalett_uppe", "climate.golvvarme_tvattstuga", "climate.ovanvaning"), villa.zones.map { it.entityId })
+        val held = villa.zoneStatus["climate.golvvarme_toalett_uppe"]!!.control!!
+        assertEquals("running", held.state)
+        assertEquals(21.0, held.heldC!!, 0.0)
+        assertEquals(22.0, held.homeC!!, 0.0)
+        assertEquals(null, villa.zoneStatus["climate.ovanvaning"]!!.control)
+        assertEquals(HeatWaterHeaterSetting("switch.varmvattenberedare", true, null), villa.waterHeater)
+        assertEquals("Varmvattenberedare", villa.nameOf("switch.varmvattenberedare"))
+        assertEquals("planned_off", villa.waterHeaterStatus!!.reason)
+        // Without the blocks (a Home Assistant before them, or no water heater): none, the rest read as before.
+        val plain = read("webhook/get_heat_success.json")
+        assertEquals(null, plain.waterHeater)
+        assertEquals(null, plain.waterHeaterStatus)
+        // Nothing the app writes names the zones or the water heater: the opt-ins are an administrator's.
+        val requests = listOf(
+            HeatWrite.night(villa, HeatNight(true, 1.5, "22:30", "05:30")),
+            HeatWrite.awayDelta(villa, 2.0),
+            HeatWrite.indoorOffset(villa, "sensor.inomhus_kok_temperatur", 0.5)
         )
-        assertEquals(listOf(0.0, 0.0, 0.5, -0.5), (0 until zones.length()).map { zones.getJSONObject(it).getDouble("offset_c") })
-        val stored = request.getJSONObject("expected").getJSONArray("zones")
-        assertEquals(-1.0, stored.getJSONObject(2).getDouble("offset_c"), 0.0)
+        for (request in requests) {
+            for (part in listOf(request.changes, request.expected)) {
+                assertFalse(part.has("zones"))
+                assertFalse(part.has("water_heater"))
+            }
+        }
     }
 
     @Test fun anIndoorOffsetStaysSparseAndNamesStoredSensorsOnly() {

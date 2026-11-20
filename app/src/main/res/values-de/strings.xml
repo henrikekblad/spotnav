@@ -1557,4 +1557,59 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Sperren halten nach zu vielem spätem Nachheizen mehr Abstand zum Warmwasser</string>
   <string name="card_heat_water_blocking_review" formatted="false">Sperren gestern: {hours} h fürs Warmwasser verkürzt · {risks}-mal spät nachgeheizt vor einer Spitze</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Sperren gestern: {hours} h wären fürs Warmwasser verkürzt worden · {risks}-mal spät nachgeheizt vor einer Spitze</string>
+  <string name="card_demand_level_title" formatted="false">Leistungsstufe</string>
+  <string name="card_demand_level_add" formatted="false">Leistungsstufe</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Außerhalb {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Überschreitungen: {n} von {allowed} in den letzten 12 Monaten</string>
+  <string name="card_demand_level_no_count" formatted="false">Überschreitungen werden am Zähler des Standorts gezählt.</string>
+  <string name="card_demand_level_help" formatted="false">Manche Netzbetreiber verkaufen eine Leistungsstufe: ein Stundenmittel, unter dem du in ihren Stunden bleibst und das du einige Male im Jahr überschreiten darfst, bevor du in einen anderen Tarif wechselst. SpotNav hält die Ladegeräte in diesen Stunden darunter und plant nie darüber.</string>
+  <string name="card_demand_level_kw" formatted="false">Leistungsstufe (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Außerhalb bestimmter Stunden</string>
+  <string name="card_demand_level_error_kw" formatted="false">Eine Leistungsstufe ist eine Zahl über 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Ja, überschreiten</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Diese Stunde: {kw} von {target} – die Leistungsstufe (Bezugsziel {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav hält {value} bis {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav hält {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Deine eigene Einstellung, {value}, gilt.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Prüft, ob der Thermostat reagiert…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Wartet.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Wartet: schalte die Automatisierung \'{name}\' aus, damit SpotNav diesen Thermostat einstellen kann.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Von Hand geändert: SpotNav lässt ihn bis morgen.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">Der Thermostat hat die Einstellung von SpotNav nicht übernommen: bis morgen in Ruhe gelassen.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">Der Thermostat hat auf die Einstellung von SpotNav nicht reagiert. Aus- und wieder einschalten, um es erneut zu versuchen.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav stellt nur einen Thermostat im Heizmodus mit einem Sollwert ein.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Wartet auf eine Meldung des Thermostats.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Heute oft geändert: SpotNav lässt ihn bis morgen.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Beobachtet: SpotNav würde {windows} erlauben.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Beobachtet.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Aus bis {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">An: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Prüft, ob der Schalter den Speicher ausschaltet…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Wartet darauf, die Leistung des Heizstabs am Zähler zu sehen.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">eine günstige Stunde</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">volles Aufheizen</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">nie länger als 8 Stunden aus</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">ein Messwert fehlt</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">keine Preise</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">der Speicher ist kalt</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">heute genug geschaltet</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Wartet: schalte die Automatisierung \'{name}\' aus, damit SpotNav den Speicher steuern kann.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Von Hand eingeschaltet: bleibt bis morgen an.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Von Hand ausgeschaltet: bleibt bis morgen aus.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">Der Schalter hat nicht reagiert: bleibt bis morgen an.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">Der Schalter hat den Speicher nicht ausgeschaltet. Prüfe, ob es der richtige Schalter ist, und schalte dies dann aus und wieder ein.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Gestoppt: der Speicher hat seinen Thermostat seit zwei Tagen nicht erreicht.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Wartet auf eine Meldung des Schalters.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} bis {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Warmwasserspeicher aus bis {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Warmwasserspeicher an {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Warmwasserspeicher wäre an {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">Der Warmwasserspeicher hat seinen Thermostat seit zwei Tagen nicht erreicht: prüfe den Thermostat und den Heizstab.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Gesteuert</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Beobachtet</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Warmwasserspeicher</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Warmwasserspeicher steuern</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Speicherfühler</string>
 </resources>

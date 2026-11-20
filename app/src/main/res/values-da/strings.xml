@@ -1557,4 +1557,59 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blokeringerne holdes længere væk fra det varme vand efter for mange sene opvarmninger</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blokeringer i går: {hours} t forkortet for det varme vand · {risks} sene opvarmninger før en top</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blokeringer i går: {hours} t ville være forkortet for det varme vand · {risks} sene opvarmninger før en top</string>
+  <string name="card_demand_level_title" formatted="false">Effektniveau</string>
+  <string name="card_demand_level_add" formatted="false">Effektniveau</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Uden for {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Overskridelser: {n} af {allowed} de seneste 12 måneder</string>
+  <string name="card_demand_level_no_count" formatted="false">Overskridelser tælles fra anlæggets elmåler.</string>
+  <string name="card_demand_level_help" formatted="false">Nogle netselskaber sælger et effektniveau: et timegennemsnit, du holder dig under i dets timer, og som du må overskride nogle gange om året, før du flyttes til en anden tarif. SpotNav holder laderne under det i de timer og planlægger aldrig over det.</string>
+  <string name="card_demand_level_kw" formatted="false">Effektniveau (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Uden for visse timer</string>
+  <string name="card_demand_level_error_kw" formatted="false">Et effektniveau er et tal over 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Ja, overskrid det</string>
+  <string name="card_site_import_target_hour_level" formatted="false">Denne time: {kw} af {target} – effektniveauet (effektmål {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav holder {value} til {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav holder {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Din egen indstilling, {value}, gælder.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Kontrollerer, at termostaten svarer…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Venter.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Venter: slå automatiseringen \'{name}\' fra, så SpotNav kan indstille termostaten.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Ændret i hånden: SpotNav lader den være til i morgen.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">Termostaten tog ikke SpotNavs indstilling: lades være til i morgen.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">Termostaten svarede ikke på SpotNavs indstilling. Slå fra og til for at prøve igen.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav indstiller kun en termostat i varmetilstand med ét sætpunkt.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Venter på, at termostaten melder sig.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Ændret mange gange i dag: SpotNav lader den være til i morgen.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Overvåges: SpotNav ville tillade {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Overvåges.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Slukket til {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">Tændt: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Kontrollerer, at kontakten slukker beholderen…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Venter på at se varmelegemets effekt på måleren.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">en billig time</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">fuld opvarmning</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">aldrig slukket mere end 8 timer</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">en måling mangler</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">ingen priser</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">tanken er kold</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">skiftet nok i dag</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Venter: slå automatiseringen \'{name}\' fra, så SpotNav kan styre beholderen.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Tændt i hånden: forbliver tændt til i morgen.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Slukket i hånden: forbliver slukket til i morgen.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">Kontakten svarede ikke: forbliver tændt til i morgen.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">Kontakten slukkede ikke beholderen. Kontrollér, at det er den rigtige kontakt, og slå derefter fra og til.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Stoppet: beholderen har ikke nået sin termostat i to døgn.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Venter på, at kontakten melder sig.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} til {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Varmtvandsbeholderen slukket til {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Varmtvandsbeholderen tændt {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Varmtvandsbeholderen ville være tændt {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">Varmtvandsbeholderen har ikke nået sin termostat i to døgn: kontrollér termostaten og varmelegemet.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Styres</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Overvåges</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Varmtvandsbeholder</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Styr varmtvandsbeholderen</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Tankføler</string>
 </resources>

@@ -129,6 +129,15 @@ class SiteSettingsTextTest {
 
     private fun HeatSettings.with(change: HeatControlStatus.() -> HeatControlStatus) = copy(control = control!!.change())
 
+    @Test fun theZonesAndTheWaterHeaterHaveTheirLinesUnderTheirRows() {
+        val settings = settings("controlled.json")
+        val hold = text("sv").hold(settings)
+        assertEquals("SpotNav håller 21,0 °C till 19:00.", hold.zoneLine(settings.zoneStatus["climate.golvvarme_toalett_uppe"]!!))
+        assertEquals(null, hold.zoneLine(settings.zoneStatus["climate.golvvarme_toalett_nere"]!!))
+        val line = hold.waterHeaterLine(settings.waterHeaterStatus!!, settings.waterHeater!!.control)!!
+        assertEquals(true, line.startsWith("Av till ") && line.endsWith("01:00."))
+    }
+
     @Test fun everyPathTheCardNamesHasItsName() {
         val sv = text("sv")
         assertEquals("SG Ready via integrationen (NIBE S)", sv.pathName("sg_ready_api"))

@@ -334,14 +334,27 @@ internal class ChargerDashboardController(
         val held = dashboard ?: return
         val language = AppLanguageSettings.language(context)
         val format = StatusFormat.of(language, held.market, AppLanguageSettings.numberLocale(context))
-        val text = ImportTargetRelease.confirmText(held, format, java.time.Instant.now()) ?: return
+        val confirm = ImportTargetRelease.confirm(held, format, java.time.Instant.now()) ?: return
         val words = cardWords()
-        android.app.AlertDialog.Builder(context)
+        val dialog = android.app.AlertDialog.Builder(context)
             .setTitle(words.say("release.confirm.title"))
-            .setMessage(text)
+            .setMessage(confirm.text)
             .setNegativeButton(words.say("settings.cancel"), null)
-            .setPositiveButton(words.say("release.confirm.release")) { _, _ -> releaseImportTarget() }
-            .show()
+            // Set below, so the first press can ask again instead of closing the dialog.
+            .setPositiveButton(words.say("release.confirm.release"), null)
+            .create()
+        dialog.show()
+        // At the power level's last allowed exceedance (or past it) the first press only asks again.
+        var asked = !confirm.askTwice
+        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener { button ->
+            if (!asked) {
+                asked = true
+                (button as android.widget.Button).text = words.say("release.confirm.levelAgain")
+                return@setOnClickListener
+            }
+            dialog.dismiss()
+            releaseImportTarget()
+        }
     }
 
     /** `release_import_target`: the import target set aside for this charge, then the dashboard read again whatever came of it. */

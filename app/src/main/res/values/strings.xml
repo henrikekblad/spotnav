@@ -1570,4 +1570,59 @@
   <string name="card_heat_water_blocking_backed_off" formatted="false">Blocks kept further from the hot water after too many late reheats</string>
   <string name="card_heat_water_blocking_review" formatted="false">Blocks yesterday: {hours} h shortened for the hot water · {risks} late reheats before a peak</string>
   <string name="card_heat_water_blocking_review_would" formatted="false">Blocks yesterday: {hours} h would have been shortened for the hot water · {risks} late reheats before a peak</string>
+  <string name="card_demand_level_title" formatted="false">Power level</string>
+  <string name="card_demand_level_add" formatted="false">Power level</string>
+  <string name="card_demand_level_value" formatted="false">{kw} · {hours}</string>
+  <string name="card_demand_level_outside" formatted="false">Outside {hours}</string>
+  <string name="card_demand_level_count" formatted="false">Exceedances: {n} of {allowed} in the last 12 months</string>
+  <string name="card_demand_level_no_count" formatted="false">Exceedances are counted from the site\'s meter.</string>
+  <string name="card_demand_level_help" formatted="false">Some grid companies sell a power level: an hourly mean you stay under in its hours, which you may exceed a few times a year before you are moved to another tariff. SpotNav keeps the chargers under it in those hours and never plans above it.</string>
+  <string name="card_demand_level_kw" formatted="false">Power level (kW)</string>
+  <string name="card_demand_level_counted_outside" formatted="false">Outside certain hours</string>
+  <string name="card_demand_level_error_kw" formatted="false">A power level is a number above 0 kW.</string>
+  <string name="card_release_confirm_level_again" formatted="false">Yes, exceed it</string>
+  <string name="card_site_import_target_hour_level" formatted="false">This hour: {kw} of {target} – the power level (import target {set})</string>
+  <string name="card_heat_zone_held" formatted="false">SpotNav holds {value} until {until}.</string>
+  <string name="card_heat_zone_held_now" formatted="false">SpotNav holds {value}.</string>
+  <string name="card_heat_zone_own" formatted="false">Your own setting, {value}, stands.</string>
+  <string name="card_heat_zone_verifying" formatted="false">Checking that the thermostat answers…</string>
+  <string name="card_heat_zone_waiting" formatted="false">Waiting.</string>
+  <string name="card_heat_zone_wait_automation" formatted="false">Waiting: turn off the automation \'{name}\' so SpotNav can set this thermostat.</string>
+  <string name="card_heat_zone_wait_foreign_change" formatted="false">Changed by hand: SpotNav leaves it until tomorrow.</string>
+  <string name="card_heat_zone_wait_no_read_back" formatted="false">The thermostat did not take SpotNav\'s setting: left until tomorrow.</string>
+  <string name="card_heat_zone_wait_check_failed" formatted="false">The thermostat did not answer SpotNav\'s setting. Turn this off and on to try again.</string>
+  <string name="card_heat_zone_wait_not_qualified" formatted="false">SpotNav sets a thermostat only in heat mode, with one setpoint.</string>
+  <string name="card_heat_zone_wait_unavailable" formatted="false">Waiting for the thermostat to report.</string>
+  <string name="card_heat_zone_wait_write_cap" formatted="false">Changed many times today: SpotNav leaves it until tomorrow.</string>
+  <string name="card_heat_water_heater_watched" formatted="false">Watched: SpotNav would allow {windows}.</string>
+  <string name="card_heat_water_heater_watched_none" formatted="false">Watched.</string>
+  <string name="card_heat_water_heater_off" formatted="false">Off until {until}.</string>
+  <string name="card_heat_water_heater_on" formatted="false">On: {why}.</string>
+  <string name="card_heat_water_heater_verifying" formatted="false">Checking that the switch turns the water heater off…</string>
+  <string name="card_heat_water_heater_meter_waiting" formatted="false">Waiting to see the element\'s power on the meter.</string>
+  <string name="card_heat_water_heater_why_cheap" formatted="false">a cheap hour</string>
+  <string name="card_heat_water_heater_why_full_heat" formatted="false">full heat</string>
+  <string name="card_heat_water_heater_why_max_off" formatted="false">never off more than 8 hours</string>
+  <string name="card_heat_water_heater_why_sensor_lost" formatted="false">a reading is missing</string>
+  <string name="card_heat_water_heater_why_no_plan" formatted="false">no prices</string>
+  <string name="card_heat_water_heater_why_tank_low" formatted="false">the tank is cold</string>
+  <string name="card_heat_water_heater_why_write_cap" formatted="false">switched enough today</string>
+  <string name="card_heat_water_heater_wait_automation" formatted="false">Waiting: turn off the automation \'{name}\' so SpotNav can control the water heater.</string>
+  <string name="card_heat_water_heater_wait_foreign_on" formatted="false">Turned on by hand: left on until tomorrow.</string>
+  <string name="card_heat_water_heater_wait_foreign_off" formatted="false">Turned off by hand: left off until tomorrow.</string>
+  <string name="card_heat_water_heater_wait_no_read_back" formatted="false">The switch did not answer: left on until tomorrow.</string>
+  <string name="card_heat_water_heater_wait_check_failed" formatted="false">The switch did not turn the water heater off. Check that it is the right switch, then turn this off and on.</string>
+  <string name="card_heat_water_heater_wait_not_full" formatted="false">Stopped: the water heater has not reached its thermostat for two days.</string>
+  <string name="card_heat_water_heater_wait_unavailable" formatted="false">Waiting for the switch to report.</string>
+  <string name="card_heat_now_zone" formatted="false">{name} {value} until {until}</string>
+  <string name="card_heat_now_zone_now" formatted="false">{name} {value}</string>
+  <string name="card_heat_now_water_heater_off" formatted="false">Water heater off until {until}</string>
+  <string name="card_heat_now_water_heater_windows" formatted="false">Water heater on {windows}</string>
+  <string name="card_heat_now_water_heater_would" formatted="false">Water heater would be on {windows}</string>
+  <string name="card_heat_note_water_heater_not_full" formatted="false">The water heater has not reached its thermostat for two days: check the thermostat and the element.</string>
+  <string name="card_heat_settings_zone_controlled" formatted="false">Controlled</string>
+  <string name="card_heat_settings_zone_watched" formatted="false">Watched</string>
+  <string name="card_heat_settings_water_heater" formatted="false">Water heater</string>
+  <string name="card_heat_settings_water_heater_control" formatted="false">Control the water heater</string>
+  <string name="card_heat_settings_tank_sensor" formatted="false">Tank sensor</string>
 </resources>

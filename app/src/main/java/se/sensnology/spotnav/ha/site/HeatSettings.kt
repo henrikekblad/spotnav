@@ -3,12 +3,15 @@ package se.sensnology.spotnav.ha.site
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.client.WriteEnvelope
+import se.sensnology.spotnav.ha.heat.HeatWaterHeater
+import se.sensnology.spotnav.ha.heat.HeatZone
+import se.sensnology.spotnav.ha.heat.HeatZonesRead
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.house.StrictJson
 import java.time.Instant
 import java.time.ZoneId
 
-/** One entity's offset against the house temperature, in degrees (a zone's or an indoor sensor's). */
+/** One entity's offset against the house temperature, in degrees (an indoor sensor's). */
 internal data class HeatOffset(val entityId: String, val offsetC: Double)
 
 /**
@@ -36,14 +39,20 @@ internal data class HeatControlStatus(
     data class OffsetHome(val entityId: String, val value: Double, val home: Double)
 }
 
+/** A stored zone and whether SpotNav sets its thermostat (`config.zones[].control`, an administrator's opt-in in Home Assistant). */
+internal data class HeatZoneSetting(val entityId: String, val control: Boolean)
+
+/** The plain water heater's settings (`config.water_heater`): its switch, the opt-in to switch it and the optional tank sensor. */
+internal data class HeatWaterHeaterSetting(val entityId: String, val control: Boolean, val tankSensor: String?)
+
 /** The cooler night: [deltaC] lower between [start] and [end] (`HH:MM`). */
 internal data class HeatNight(val on: Boolean, val deltaC: Double, val start: String, val end: String)
 
 /**
  * The heat settings as the Settings screen reads them (webhook `get_heat`, the twin of `spotnav/get_heat`,
  * `api_version` 1): the stored `config` and the names the answer gives the entities in it. Written back with
- * [HeatWrite]; over the webhook that is the night, the stored zones' offsets and the stored indoor sensors'
- * offsets only.
+ * [HeatWrite]; over the webhook that is the night, the away setback and the stored indoor sensors' offsets only. The
+ * zones' and the water heater's opt-ins are an administrator's in Home Assistant: read only here.
  */
 internal data class HeatSettings(
     val controlEnabled: Boolean,
@@ -58,12 +67,18 @@ internal data class HeatSettings(
     /** Sparse, as stored: a sensor left out (or at 0) has no offset. */
     val indoorOffsets: List<HeatOffset>,
     val night: HeatNight,
-    /** The stored zones in their stored order. */
-    val zones: List<HeatOffset>,
+    /** The stored zones in their stored order, each with SpotNav's opt-in to set it (read only here). */
+    val zones: List<HeatZoneSetting>,
     /** Entity id to the name Home Assistant shows for it. */
     val names: Map<String, String>,
     /** The zone's kind (`floor`, `air`, ...) by entity id. */
     val zoneKinds: Map<String, String>,
+    /** The zones as the answer reads them now, with SpotNav's control of each, by entity id. */
+    val zoneStatus: Map<String, HeatZone> = emptyMap(),
+    /** The water heater's switch, opt-in and tank sensor; `null` without one chosen. */
+    val waterHeater: HeatWaterHeaterSetting? = null,
+    /** The water heater as the answer reads it now; `null` without one. */
+    val waterHeaterStatus: HeatWaterHeater? = null,
     /** The setback while away, in degrees (1 to 6); `null` from a Home Assistant that does not have the setting (no row). */
     val awayDeltaC: Double? = null,
     /** The control's status for the line under "Styr värmen"; `null` without one. */
@@ -123,6 +138,10 @@ internal object HeatSettingsRead {
             names[id] = text(zone.opt("name"), "name")
             kinds[id] = text(zone.opt("kind"), "kind")
         }
+        // The water heater's own name, for its read-only row.
+        json.optJSONObject("water_heater")?.let { heater ->
+            names[text(heater.opt("entity_id"), "entity_id")] = text(heater.opt("name"), "name")
+        }
         // The meter, when found: its name for the read-only row. `null` without a meter.
         objOrNull(json.opt("meter"), "meter")?.let { meter ->
             val id = textOrNull(meter.opt("entity_id"), "entity_id")
@@ -163,9 +182,23 @@ internal object HeatSettingsRead {
                 start = time(night.opt("start"), "night.start"),
                 end = time(night.opt("end"), "night.end")
             ),
-            zones = offsets(config.opt("zones"), "zones"),
+            zones = list(config.opt("zones"), "zones").map {
+                val zone = obj(it, "zones")
+                HeatZoneSetting(text(zone.opt("entity_id"), "zones"), additive(zone, "control", false) { it2 -> flag(it2, "zones.control") })
+            },
             names = names,
             zoneKinds = kinds,
+            zoneStatus = additive(json, "zones", emptyMap()) { raw -> HeatZonesRead.zones(raw).associateBy { it.entityId } },
+            waterHeater = additive(config, "water_heater", null) { raw ->
+                objOrNull(raw, "config.water_heater")?.let {
+                    HeatWaterHeaterSetting(
+                        entityId = text(it.opt("entity_id"), "water_heater.entity_id"),
+                        control = flag(it.opt("control"), "water_heater.control"),
+                        tankSensor = additive(it, "tank_sensor", null) { sensor -> textOrNull(sensor, "water_heater.tank_sensor") }
+                    )
+                }
+            },
+            waterHeaterStatus = additive(json, "water_heater", null) { HeatZonesRead.waterHeater(it) },
             awayDeltaC = if (config.has("away_delta_c")) number(config.opt("away_delta_c"), "away_delta_c") else null,
             control = additive(json, "control", null) { objOrNull(it, "control")?.let(::control) },
             now = additive(json, "now", null) { instant(it, "now") },

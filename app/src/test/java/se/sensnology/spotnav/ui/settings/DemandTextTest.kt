@@ -7,6 +7,8 @@ import org.junit.Test
 import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
 import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
+import se.sensnology.spotnav.ha.dashboard.LevelCount
+import se.sensnology.spotnav.ha.dashboard.PowerLevel
 import se.sensnology.spotnav.testing.CardStringsXml
 import se.sensnology.spotnav.testing.HaFixtures
 import se.sensnology.spotnav.ui.common.CardStrings
@@ -33,7 +35,9 @@ class DemandTextTest {
 
     @Test fun thePilotsTwoPartsAreRowsWithTheirPricesAndMonthAndARowToAddAThird() {
         val rows = text().rows(pilot)
-        assertEquals(3, rows.size)
+        // The row adding a power level comes last.
+        assertEquals(4, rows.size)
+        assertEquals(DemandText.Row.Power.ADD, rows[3].power)
         assertEquals("Effektavgift 1", rows[0].label)
         assertEquals("Högsta timmen, Alla dagar 06–23, hela året", rows[0].value)
         assertEquals("45 / 23 kr/kW (vinter / sommar)", rows[0].lines[0])
@@ -46,10 +50,10 @@ class DemandTextTest {
 
     @Test fun noPartIsOneRowAndThreeHaveNoAddRow() {
         val none = text().rows(pilot.copy(components = emptyList(), perComponent = emptyList()))
-        assertEquals(listOf(DemandText.Row(null, "Effektavgift", "Inget", emptyList())), none)
+        assertEquals(listOf(DemandText.Row(null, "Effektavgift", "Inget", emptyList())), none.filter { it.power == DemandText.Row.Power.NO })
         val one = DemandComponent(null, 3, null, null)
         val three = text().rows(pilot.copy(components = listOf(one, one, one), perComponent = emptyList()))
-        assertEquals(3, three.size)
+        assertEquals(3, three.filter { it.power == DemandText.Row.Power.NO }.size)
         assertEquals("Snitt av de 3 högsta dagarna, Alla timmar", three[0].value)
         assertEquals(emptyList<String>(), three[0].lines)
         assertNull(text().rows(null).firstOrNull())
@@ -82,5 +86,47 @@ class DemandTextTest {
         assertEquals(45.5, DemandText.parsePrice("45,5")!!, 0.0)
         assertTrue(DemandText.parsePrice("-1")!!.isNaN())
         assertTrue(DemandText.parsePrice("x")!!.isNaN())
+    }
+
+    private val level = PowerLevel(10.0, HighLoadWindow("weekdays", 11, 3, 7, 19), true)
+    private val count = LevelCount(2, 3, emptyList(), false, null)
+
+    @Test fun thePowerLevelIsARowWithItsExceedancesBeneathAndARowToAddOneWhenThereIsNone() {
+        val withLevel = text("en").rows(pilot.copy(powerLevel = level, levelCount = count))
+        // The parts, the level, the row adding a part.
+        assertEquals(listOf(DemandText.Row.Power.NO, DemandText.Row.Power.NO, DemandText.Row.Power.LEVEL, DemandText.Row.Power.NO), withLevel.map { it.power })
+        val row = withLevel[2]
+        assertEquals("Power level", row.label)
+        assertEquals("10.0 kW · Outside weekdays 07–19, Nov–Mar", row.value)
+        assertEquals(listOf("Exceedances: 2 of 3 in the last 12 months"), row.lines)
+        val without = text("en").rows(pilot)
+        assertEquals(DemandText.Row.Power.ADD, without.last().power)
+        assertEquals("Power level", without.last().label)
+        assertEquals("Add", without.last().value)
+        assertEquals(DemandText.Row.Power.NO, without[without.size - 2].power)
+    }
+
+    @Test fun aLevelWithoutACountSaysWhyOrThatItIsCountedFromTheMeter() {
+        assertEquals(listOf("Exceedances are counted from the site's meter."), text("en").rows(pilot.copy(powerLevel = level))[2].lines)
+        val unavailable = text("en").rows(pilot.copy(powerLevel = level, available = false, reason = "needs_total_grid_power"))
+        assertEquals("Measured once the site has its total grid power.", unavailable.first { it.power == DemandText.Row.Power.LEVEL }.lines.single())
+        // No part: the level follows the "None" row.
+        val none = text("en").rows(pilot.copy(components = emptyList(), perComponent = emptyList(), powerLevel = level))
+        assertEquals(listOf(DemandText.Row.Power.NO, DemandText.Row.Power.LEVEL), none.map { it.power })
+        assertEquals("All hours", text("en").levelHoursText(level.copy(window = null, outside = false)))
+        assertEquals("Weekdays 07–19, Nov–Mar", text("en").levelHoursText(level.copy(outside = false)))
+    }
+
+    @Test fun aLevelIsAFigureAbove0AndAtMost1000() {
+        assertEquals(6.5, DemandText.parseLevel(" 6,5 "), 0.0)
+        assertTrue(DemandText.parseLevel("0").isNaN())
+        assertTrue(DemandText.parseLevel("1000,1").isNaN())
+        assertTrue(DemandText.parseLevel("abc").isNaN())
+        assertTrue(DemandText.parseLevel("").isNaN())
+    }
+
+    @Test fun theHourIsHeldAgainstTheLevelWhereItIsBelowTheTarget() {
+        val held = pilot.copy(importTargetKw = 8.0, effectiveTargetKw = 6.0, hour = pilot.hour ?: se.sensnology.spotnav.ha.dashboard.DemandHour("2026-09-22T08:00:00+00:00", 3.1, 1.0))
+        assertEquals("This hour: 3.1 of 6.0 kW – the power level (import target 8.0 kW)", text("en").hourLine(held))
     }
 }
