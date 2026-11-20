@@ -3,6 +3,24 @@ package se.sensnology.spotnav.ha.client
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatHistory
+import se.sensnology.spotnav.ha.heat.HeatHistoryRead
+import se.sensnology.spotnav.ha.heat.HeatRead
+import se.sensnology.spotnav.ha.heat.HeatWrite
+import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ha.house.HouseHistoryRead
+import se.sensnology.spotnav.ha.house.HouseLoads
+import se.sensnology.spotnav.ha.house.HouseLoadsRead
+import se.sensnology.spotnav.ha.house.HouseNow
+import se.sensnology.spotnav.ha.house.HouseNowRead
+import se.sensnology.spotnav.ha.house.HouseRead
+import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ha.site.BatteryControlRead
+import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.HeatSettingsRead
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.HaSettingsCodec
@@ -76,8 +94,9 @@ internal class WebhookHttpStatusException(
  * a name it does not know: `sun`, the dashboard's block with the sun for the price chart, `power_charger`, the
  * `current_range.kw_per_a` of a charger given a power, `supplier_fees`, the grid tariff's supplier markup and what sold
  * power earns, and `departure_calendar`, the dashboard's block for the calendar whose events are departures (with the
- * settings field of the same name, which the app never sends back, so Home Assistant keeps it). Every request the app
- * sends names them.
+ * settings field of the same name, which the app never sends back, so Home Assistant keeps it). The last is
+ * `plug_in_saving`, the saving against charging at once on plug-in that the charge history's summaries and sessions
+ * carry (read from the `sessions` answer only). Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -86,7 +105,7 @@ internal object WebhookReads {
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
         "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
-        "sun", "power_charger", "supplier_fees", "departure_calendar"
+        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
@@ -334,10 +353,100 @@ object HomeAssistantClient {
         return PowerMonthRead.answer(status, body)
     }
 
+    /**
+     * The site's live flows (webhook `get_house_now`), small and made to be polled. Asked only where the dashboard
+     * states `capabilities.get_house`. Never throws.
+     */
+    internal fun houseNow(settings: HomeAssistantSettings): SiteRead<HouseNow> {
+        val (status, body) = write(settings, HouseNowRead.payload())
+        return HouseNowRead.answer(status, body)
+    }
+
+    /** The site's house for today or [date] (webhook `get_house`), under the same capability. Never throws. */
+    internal fun house(settings: HomeAssistantSettings, date: java.time.LocalDate? = null): SiteRead<House> {
+        val (status, body) = write(settings, HouseRead.payload(date))
+        return HouseRead.answer(status, body)
+    }
+
+    /** One day, month or year of the house (webhook `get_house_history`), under the same capability. Never throws. */
+    internal fun houseHistory(settings: HomeAssistantSettings, period: HouseHistory.HistoryKind, date: java.time.LocalDate? = null): SiteRead<HouseHistory> {
+        val (status, body) = write(settings, HouseHistoryRead.payload(period, date))
+        return HouseHistoryRead.answer(status, body)
+    }
+
+    /** What the house or the heat ([kind]) used over a period, by device (webhook `get_house_loads`). Never throws. */
+    internal fun houseLoads(settings: HomeAssistantSettings, kind: String, period: String, date: java.time.LocalDate?): SiteRead<HouseLoads> {
+        val (status, body) = write(settings, HouseLoadsRead.payload(kind, period, date))
+        return HouseLoadsRead.answer(status, body)
+    }
+
+    /** The site's heating (webhook `get_heat`), asked only where the dashboard states `capabilities.get_heat`. Never throws. */
+    internal fun heat(settings: HomeAssistantSettings): SiteRead<Heat> {
+        val (status, body) = write(settings, HeatRead.payload())
+        return HeatRead.answer(status, body)
+    }
+
+    /** One day, month or year of the heating (webhook `get_heat_history`), under the same capability. Never throws. */
+    internal fun heatHistory(settings: HomeAssistantSettings, period: HouseHistory.HistoryKind, date: java.time.LocalDate? = null): SiteRead<HeatHistory> {
+        val (status, body) = write(settings, HeatHistoryRead.payload(period, date))
+        return HeatHistoryRead.answer(status, body)
+    }
+
+    /** The dial, Home/Away, the night or an offset written (webhook `update_heat`). Never throws. */
+    internal fun updateHeat(settings: HomeAssistantSettings, request: HeatWrite.Request): HeatWrite.Outcome {
+        val (status, body) = write(settings, request.payload())
+        return HeatWrite.answer(status, body)
+    }
+
+    /** The Boost button's "start" or "stop" (webhook `heat_boost`); 429 and 409 carry the refusal's envelope. Never throws. */
+    internal fun heatBoost(settings: HomeAssistantSettings, action: String): HeatBoostWrite.Outcome {
+        val (status, body) = write(settings, HeatBoostWrite.payload(action))
+        return HeatBoostWrite.answer(status, body)
+    }
+
+    /** The site's battery control status (webhook `battery_control`); with [mode] it writes the battery mode first. Never throws. */
+    internal fun batteryControl(settings: HomeAssistantSettings, mode: String?): BatteryControlRead.Outcome {
+        val (status, body) = write(settings, BatteryControlRead.payload(mode))
+        return BatteryControlRead.answer(status, body)
+    }
+
+    /** The site's heat settings (webhook `get_heat`), as the Settings screen reads them. Never throws. */
+    internal fun heatSettings(settings: HomeAssistantSettings): SiteRead<HeatSettings> {
+        val (status, body) = write(settings, HeatSettingsRead.payload())
+        return HeatSettingsRead.answer(status, body)
+    }
+
     /** A suggested import target from Home Assistant's statistics (webhook `suggest_import_target`); `null` for none. Never throws. */
     internal fun suggestImportTarget(settings: HomeAssistantSettings): SuggestImportTarget.Suggestion? {
         val (status, body) = write(settings, SuggestImportTarget.payload())
         return SuggestImportTarget.answer(status, body)
+    }
+
+    /** One request whose answer is read whole: the status and body, or the failure (a gone webhook among them). */
+    private fun ask(settings: HomeAssistantSettings, body: JSONObject): Triple<Int?, String?, Throwable?> = try {
+        Triple(200, post(settings, body.toString()).toString(), null)
+    } catch (refused: WebhookHttpStatusException) {
+        Triple(refused.status, refused.bodyText, null)
+    } catch (failure: Exception) {
+        Triple(null, null, failure)
+    }
+
+    /** The home as its own webhook states it (`get_site`). Never throws. */
+    internal fun getSite(settings: HomeAssistantSettings): SiteDoor.GetSite {
+        val (status, body, failure) = ask(settings, SiteDoor.getSitePayload())
+        return SiteDoor.getSite(status, body, failure)
+    }
+
+    /** The home's electricity price from its settings view (`get_site_settings_view`); `null` for none. Never throws. */
+    internal fun homePrice(settings: HomeAssistantSettings): HomePrice? {
+        val (status, body, _) = ask(settings, SiteDoor.settingsViewPayload())
+        return SiteDoor.homePrice(status, body)
+    }
+
+    /** The charger's home and its webhook (`get_site_access`, asked on the charger's own webhook). Never throws. */
+    internal fun getSiteAccess(settings: HomeAssistantSettings): SiteDoor.Access {
+        val (status, body, failure) = ask(settings, SiteDoor.accessPayload())
+        return SiteDoor.access(status, body, failure)
     }
 
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
@@ -420,6 +529,7 @@ object HomeAssistantClient {
         connectTimeoutMs: Int,
         readTimeoutMs: Int
     ): Pair<Int, String> {
+        val sent = settings.addressed(body)
         val connection = URL(settings.webhookUrl()).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
@@ -428,7 +538,7 @@ object HomeAssistantClient {
             connection.instanceFollowRedirects = false
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+            connection.outputStream.use { it.write(sent.toByteArray(Charsets.UTF_8)) }
             val status = connection.responseCode
             val responseBody = (if (status in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader()?.use { it.readText() }.orEmpty()

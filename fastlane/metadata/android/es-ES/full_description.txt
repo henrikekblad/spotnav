@@ -1,4 +1,13 @@
-SpotNav planifica la carga de tu vehículo eléctrico en las horas más baratas del día y muestra los precios spot de la electricidad en un widget y en una tabla de precios por colores.
+Aprende tu casa. Planifica tu energía.
+
+SpotNav planifica la carga de tu VE, tu batería doméstica y tu calefacción para las horas más baratas del día y muestra los precios spot de la electricidad como widget y como tabla de precios con colores.
+
+TODA LA CASA, NO SOLO EL CARGADOR
+- La app funciona sin cargador. Conéctala a tu hogar en Home Assistant y úsala para la casa, la batería y los precios.
+- La página de la casa muestra lo que consume la casa, lo que guarda la batería y lo que hace, y el precio actual.
+- Las vistas de calefacción y agua caliente muestran la temperatura interior, la consigna, el agua caliente y lo que SpotNav planifica para ellos.
+- El plan con la batería muestra cuándo carga, espera o descarga, y por qué.
+- Los cargadores, la carga solar y el equilibrio de carga funcionan como antes.
 
 CARGA CON HOME ASSISTANT
 - Vincula la app con la integración SpotNav de tu Home Assistant. El control de la carga, la carga solar e híbrida y el equilibrado de carga funcionan allí, incluso con el teléfono apagado.

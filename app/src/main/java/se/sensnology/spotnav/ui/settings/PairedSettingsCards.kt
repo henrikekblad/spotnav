@@ -271,7 +271,7 @@ internal class PairedSettingsCards(
         addChargerCard(dash)
         val site = adoptedSite ?: dash.site
         addSiteCard(site)
-        if (site != null) addSolarCard(site)
+        if (site != null && SiteSettingsShown.solarCard(site)) addSolarCard(site)
     }
 
     // --- Vehicles -------------------------------------------------------------------------------
@@ -825,7 +825,8 @@ internal class PairedSettingsCards(
         // Beside the fuse, as the card has it: the import target and the hour running now against it (Home Assistant
         // 2.4). Set here where the webhook's site write takes it (`capabilities.site_import_target`).
         val held = dashboard
-        held?.gridTariff?.demand?.let { demand ->
+        // Left out where the site cannot measure it and none is set.
+        held?.gridTariff?.demand?.takeIf(SiteSettingsShown::importTarget)?.let { demand ->
             val words = demandText(held)
             val label = cardWords().say("site.importTarget")
             val settable = held.capabilities.siteImportTarget && site.writable
@@ -846,13 +847,16 @@ internal class PairedSettingsCards(
         }
         // Car or home battery first sits beside the home battery, as in the card: it also decides who goes first at
         // the main fuse and what the import target counts, not only the sun's surplus.
+        // Shown only with a home battery and a site that follows solar.
         val solar = PairedOverview.solar(site)
-        valueRow(card.body, t(R.string.site_solar_priority), priorityText(solar.priority), onTap = if (solar.editable) ({
-            chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
-                SiteFacts.PRIORITIES.indexOf(site.solarPriority), intro = t(R.string.site_solar_priority_help)) { index, done ->
-                writeSolar(SiteUpdate.priorityRequest(site.solarPriority, SiteFacts.PRIORITIES[index]), done)
-            }
-        }) else null)
+        if (held != null && SiteSettingsShown.solarPriority(held, summary.setup)) {
+            valueRow(card.body, t(R.string.site_solar_priority), priorityText(solar.priority), onTap = if (solar.editable) ({
+                chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
+                    SiteFacts.PRIORITIES.indexOf(site.solarPriority), intro = t(R.string.site_solar_priority_help)) { index, done ->
+                    writeSolar(SiteUpdate.priorityRequest(site.solarPriority, SiteFacts.PRIORITIES[index]), done)
+                }
+            }) else null)
+        }
         readRow(card.body, t(R.string.site_active_title), t(if (summary.activeControlOn) R.string.site_on else R.string.site_off))
         val reason = when (summary.reason) {
             SiteFacts.Reason.NONE -> null

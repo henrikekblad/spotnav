@@ -111,6 +111,12 @@
   <string name="instance_removed">Forbindelsen er fjernet</string>
   <string name="instance_refreshing">Søger…</string>
   <string name="instance_connected">Forbundet til %1$s</string>
+  <string name="instance_connected_nothing">Forbundet, men SpotNav i Home Assistant har endnu ingen lader eller intet hjem. Tilføj et i Home Assistant, eller opdater SpotNav dér til 3.0.</string>
+  <string name="site_home_title">Hjem: %1$s</string>
+  <string name="site_home_chargers">Ladere: %1$s</string>
+  <string name="site_home_no_charger">Ingen lader: hus- og varmesiderne</string>
+  <string name="site_show">Vis</string>
+  <string name="site_price_read_only">Et hjem uden lader viser sin elpris og nettarif her; de ændres i Home Assistant.</string>
   <string name="instance_stale">Findes ikke længere i Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">Findes i Home Assistant, men er ikke parret med appen: %1$s</string>
   <string name="instance_pair_again">Par igen</string>
@@ -822,4 +828,733 @@
   <string name="card_grid_fee_high_fee" formatted="false">Afgift</string>
   <string name="card_grid_fee_high_remove" formatted="false">Fjern spidslastafgiften</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Angiv afgiften i spidslasttimerne.</string>
+  <string name="card_house_title" formatted="false">Huset</string>
+  <string name="card_heat_title" formatted="false">Varme</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav styrer ikke noget endnu.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav regner ud, hvad den ville gøre med varmen, og viser det her. Intet sendes til varmepumpen endnu.</string>
+  <string name="card_heat_loading" formatted="false">Læser varmen…</string>
+  <string name="card_heat_failed" formatted="false">Varmen kunne ikke læses.</string>
+  <string name="card_heat_unsupported" formatted="false">Kortet kræver en nyere SpotNav.</string>
+  <string name="card_heat_dial_label" formatted="false">Ønsket temperatur</string>
+  <string name="card_heat_dial_lower" formatted="false">Sænk en halv grad</string>
+  <string name="card_heat_dial_raise" formatted="false">Hæv en halv grad</string>
+  <string name="card_heat_dial_band" formatted="false">inden for {low}–{high} °C</string>
+  <string name="card_heat_measured" formatted="false">Inde {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Inde {value} (koldest: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Ingen indendørsføler valgt</string>
+  <string name="card_heat_outdoor" formatted="false">Ude {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Hjemme</string>
+  <string name="card_heat_mode_away" formatted="false">Ude</string>
+  <string name="card_heat_mode_away_until" formatted="false">Ude til {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Ændr</string>
+  <string name="card_heat_away_title" formatted="false">Ude til</string>
+  <string name="card_heat_away_help" formatted="false">Når SpotNav styrer varmen, holder den huset 3 °C køligere, aldrig under 16 °C, og varmer op, før I kommer hjem.</string>
+  <string name="card_heat_away_date" formatted="false">Dato</string>
+  <string name="card_heat_away_time" formatted="false">Tid</string>
+  <string name="card_heat_pump_heating" formatted="false">Varmepumpen varmer · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Varmepumpen laver varmt vand · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Varmepumpen hviler · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Varmepumpen: ingen måling</string>
+  <string name="card_heat_would_lower" formatted="false">Ville sænke til {temp} til {until}: dyre timer</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Ville sænke til {temp} til {until}: giver plads under effektmålet og sikringen</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Ville sænke til {temp} til {until}: for varmt inde</string>
+  <string name="card_heat_would_preheat" formatted="false">Ville forvarme til {temp} til {until}: billigt før dyre timer</string>
+  <string name="card_heat_would_raise" formatted="false">Ville hæve varmen (SG Ready) til {temp} til {until}: billigt før dyre timer</string>
+  <string name="card_heat_would_night" formatted="false">Ville holde det køligere om natten, {temp} til {until}</string>
+  <string name="card_heat_would_away" formatted="false">Ville holde {temp} til {until}, mens I er ude</string>
+  <string name="card_heat_would_return" formatted="false">Ville varme op til hjemkomsten: {temp} til {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Ville holde {temp} til {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Ingen priser endnu: ville ikke sænke noget</string>
+  <string name="card_heat_guard_too_cold" formatted="false">For koldt udenfor til at sænke</string>
+  <string name="card_heat_guard_room_cold" formatted="false">Det koldeste rum er under båndet: ingen sænkning</string>
+  <string name="card_heat_relay_closed" formatted="false">Relæet har sænket varmen siden {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Relæet har sænket varmen siden {since}, ventes at åbne {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Relæet ventes at sænke varmen {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">Temperaturen og Hjemme/Ude, som du indstiller her, følger SpotNav, når den begynder at styre varmen.</string>
+  <string name="card_heat_today_label" formatted="false">I dag</string>
+  <string name="card_heat_today_heat" formatted="false">varme {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">heraf zoner {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">varmt vand {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} styrer selv efter elprisen. Slå det fra i varmepumpen ({where}), hvis SpotNav skal styre.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Målinger, SpotNav skal bruge, er slået fra i varmepumpens integration: {names}. Slå dem til på enheden.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} styrer varmepumpen; SpotNav regner den som husforbrug og ser kun på.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">Automatiseringen \'{name}\' styrer relæet: slå den fra, når SpotNav skal styre varmen.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">Automatiseringen \'{name}\' styrer også {targets}: slå den fra, når SpotNav skal styre.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Slå automatiseringen \'{name}\' fra, så SpotNav kan styre varmen.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">udetemperatur</string>
+  <string name="card_heat_role_supply_temp" formatted="false">fremløbstemperatur</string>
+  <string name="card_heat_role_return_temp" formatted="false">returtemperatur</string>
+  <string name="card_heat_role_room_temp" formatted="false">rumtemperatur</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">varmtvandstemperatur</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">gradminutter</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">kompressorhastighed</string>
+  <string name="card_heat_role_compressor_state" formatted="false">kompressortilstand</string>
+  <string name="card_heat_role_immersion_power" formatted="false">elpatronens effekt</string>
+  <string name="card_heat_role_immersion_state" formatted="false">elpatronens tilstand</string>
+  <string name="card_heat_role_priority" formatted="false">prioritet</string>
+  <string name="card_heat_error_generic" formatted="false">Kunne ikke gemme.</string>
+  <string name="card_heat_error_conflict" formatted="false">En anden ændrede det samtidig; det seneste vises.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Kun en administrator kan ændre det.</string>
+  <string name="card_heat_error_range" formatted="false">Værdien er uden for det tilladte.</string>
+  <string name="card_heat_error_step" formatted="false">Vælg halve grader.</string>
+  <string name="card_heat_error_past" formatted="false">Vælg et tidspunkt fremad.</string>
+  <string name="card_heat_error_far" formatted="false">Højst 90 dage frem.</string>
+  <string name="card_heat_now_heating" formatted="false">Varmer</string>
+  <string name="card_heat_now_hot_water" formatted="false">Varmt vand</string>
+  <string name="card_heat_now_idle" formatted="false">Hviler</string>
+  <string name="card_heat_now_lowered" formatted="false">Sænket</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Sænket til {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Hævet</string>
+  <string name="card_heat_now_raised_until" formatted="false">Hævet til {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">sænkning {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">forvarmning {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">hævning {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">køligere nat {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">ude {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">varmt vand {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Ingen sænkning planlagt de næste 12 timer</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Bilen lader</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav sænkede</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav sænkede {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Varmt vand</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav hævede</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav hævede {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Relæet sænkede</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relæet ventes at sænke</string>
+  <string name="card_heat_band_relay_hour" formatted="false">relæet sænkede {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">relæet ventes at sænke {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">ude</string>
+  <string name="card_heat_chart_car" formatted="false">bilen lader</string>
+  <string name="card_heat_chart_coldest" formatted="false">koldest {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Tryk eller peg i diagrammet for et tidspunkts tal.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">varmt vand</string>
+  <string name="card_heat_chart_label" formatted="false">Dagen: indetemperatur, setpunkt, SpotNavs sænkning, varmt vand og bilen</string>
+  <string name="card_heat_chart_mean" formatted="false">rummene {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">nat</string>
+  <string name="card_heat_chart_planned" formatted="false">Planlagt sænkning</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">planlagt sænkning</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Planlagt hævning</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">planlagt hævning</string>
+  <string name="card_heat_chart_preheat" formatted="false">forvarmning</string>
+  <string name="card_heat_chart_room_warm" formatted="false">for varmt inde</string>
+  <string name="card_heat_chart_setpoint" formatted="false">setpunkt {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Ville hæve</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">ville hæve</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Koldeste rum</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Komfortbånd {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Rummene, gennemsnit</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Setpunkt</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Setpunkt (SpotNav sænker)</string>
+  <string name="card_heat_plan_none" formatted="false">Intet at vise for denne dag.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min under {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">koldest {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} de samme som relæet</string>
+  <string name="card_heat_review_plan" formatted="false">SpotNavs plan {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">SpotNavs plan sænkede ikke</string>
+  <string name="card_heat_review_relay" formatted="false">I går sænkede relæet {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">I går sænkede relæet ikke</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Forbrug</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: intet at vise</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav sparede {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Varmens forbrug pr. del</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Varmt vand</string>
+  <string name="card_heat_use_part_other" formatted="false">Øvrig varme</string>
+  <string name="card_heat_use_part_pump" formatted="false">Varmepumpe</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav sparede {amount} på varmen</string>
+  <string name="card_heat_use_total" formatted="false">Varme {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Enhed</string>
+  <string name="card_heat_use_unit_money" formatted="false">Omkostning i {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} d</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: ingen måleraflæsning</string>
+  <string name="card_hist_heat_below" formatted="false">Timer under {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} af {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">efter tapning</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">stilstandstab</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">årsag ukendt</string>
+  <string name="card_hist_heat_coldest" formatted="false">Koldeste rum</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">gennemsnit {mean} · lavest {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Komfort</string>
+  <string name="card_hist_heat_cost" formatted="false">Hvad det kostede</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Pr. graddag</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} graddage under {base} °C over {days} døgn. Målerens samlede energi (varmt vand medregnet) pr. graddag: samme hus i andet vejr giver samme tal, så en ny varmepumpe, isolering eller nye vinduer ses som et trin.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Udgifterne er beregnet med gemte priser og dagens afgifter.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">Udetemperaturen er vejrets, fra de timer husprognosen har gemt (otte uger): vælg en udeføler i varmeindstillingerne for hele historikken.</string>
+  <string name="card_hist_heat_hint" formatted="false">Tryk på eller peg på en søjle for dens tal.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Heraf varmt vand</string>
+  <string name="card_hist_heat_immersion" formatted="false">Elpatron</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} t, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Husmodellen</string>
+  <string name="card_hist_heat_model_error" formatted="false">Varmeprognosens fejl</string>
+  <string name="card_hist_heat_model_none" formatted="false">Vises, når husmodellen har gennemgået et døgn med varmemåleren.</string>
+  <string name="card_hist_heat_model_note" formatted="false">Hvor langt husmodellens prognose for varmen lå fra måleren, i gennemsnit pr. time over de gennemgåede døgn. Mindre er bedre.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">Varmepumpens måler har ingen aflæsning i perioden.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Ingen varmepumpemåler er fundet eller valgt: vælg en i varmeindstillingerne.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Ingen udetemperatur med historik: vælg en udeføler i varmeindstillingerne for graddage.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Indefølerne har ingen historik i perioden.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">Ingen indeføler er valgt i varmeindstillingerne.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">Ingen varmtvandskørsel fundet denne dag.</string>
+  <string name="card_hist_heat_no_split" formatted="false">Varmt vand skilles kun ud for døgn, som Home Assistants historik stadig har med 5 minutters opløsning (omkring ti døgn).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Varmepumpen pr. graddag</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/graddag</string>
+  <string name="card_hist_heat_review" formatted="false">Relæet og SpotNavs plan</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">koldest {min}, {minutes} min under båndet</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">ingen rumfølere</string>
+  <string name="card_hist_heat_review_note" formatted="false">Penge: varmen en sænkning fjerner, minus den der købes tilbage bagefter. Koldest: det koldeste rum under sænkningen og tre timer efter, båndets nederste kant {low}. SpotNavs timer viser deres egen virkning kun dér, hvor relæet også sænkede ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav ville have sænket {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Relæet sænkede {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Varmtvandskørsler</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Vurderet ud fra energien alene (ingen tankføler): en kørsel klart over den sædvanlige lille er en tapning, omtrent lige så stor er tanken, der er kølet af uden tapning.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Hvad SpotNav ville have gjort</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Lært af {blocks} målte sænkninger af relæet.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Ville have flyttet {kwh} ud af {hours} dyre timer over {days} døgn.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Vises, når der er mindst ét helt døgn med priser og målinger.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">SpotNavs plan, som den blev lagt time for time ({kept} af {days} døgn), ellers kørt igen med døgnets priser og dagens indstillinger. En sænkning regnes at fjerne {share} af varmen, og {rebound} af det købes tilbage bagefter; at huset holder båndet, antages.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">En forsigtig antagelse, indtil relæets sænkninger er målt med varmemåleren.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Ville have sparet</string>
+  <string name="card_hist_heat_split_days" formatted="false">Varmt vand er skilt ud for {days} af {total} døgn: de døgn, Home Assistants historik stadig har med 5 minutters opløsning.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Graddage vises, når der er et par kolde døgn at regne på.</string>
+  <string name="card_hist_heat_total" formatted="false">Varmepumpe, varme og varmt vand</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh pr. graddag, måned for måned</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh pr. graddag ({dd} graddage)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Tryk på en måned for tallet; et trin ned er huset, der bruger mindre i samme vejr.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: intet tal (for få graddage eller ingen data)</string>
+  <string name="card_hist_heat_use" formatted="false">Forbrug</string>
+  <string name="card_hist_heat_zones" formatted="false">Heraf zoner (gulvvarme, luft-til-luft)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Varmen tæller zonernes egne målere med fra {date}: forbruget tager et trin op der. Graddagstallet er varmepumpens alene.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Der er priser for {share} af perioden; resten er ikke med i udgiften.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Der er ingen priser for perioden, så ingen udgift vises.</string>
+  <string name="card_hist_title_heat" formatted="false">Varmens historik</string>
+  <string name="card_house_earn_none_shown" formatted="false">Ingen del valgt.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav viser, hvad den ville gøre, men intet sendes herfra endnu. Et hjemmebatteri styres først, når du slår batteristyring til i indstillingerne.</string>
+  <string name="card_house_now_hold" formatted="false">Holder</string>
+  <string name="card_house_now_discharge" formatted="false">Aflader</string>
+  <string name="card_house_now_sun" formatted="false">Lader med sol</string>
+  <string name="card_house_now_idle" formatted="false">Hviler</string>
+  <string name="card_house_now_own" formatted="false">Egen styring</string>
+  <string name="card_house_legend_charge" formatted="false">Lader fra nettet</string>
+  <string name="card_house_legend_sell" formatted="false">Sælger til nettet</string>
+  <string name="card_house_sub_mode" formatted="false">tilstand {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Egetforbrug</string>
+  <string name="card_house_mode_balanced" formatted="false">Balanceret</string>
+  <string name="card_house_mode_max_profit" formatted="false">Maks gevinst</string>
+  <string name="card_house_loading" formatted="false">Læser huset…</string>
+  <string name="card_house_failed" formatted="false">Huset kunne ikke læses.</string>
+  <string name="card_house_saving_waiting" formatted="false">Batteriplanen har ikke kørt endnu.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Ingen batteriplan lige nu; detaljerne viser, hvad der mangler.</string>
+  <string name="card_house_compare_own" formatted="false">Batteriets egen styring</string>
+  <string name="card_house_plan_next" formatted="false">Batteriet {act} til {time}, derefter {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">Batteriet {act} så langt planen rækker.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav ville {act} til {time}, derefter {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav ville {act} så langt planen rækker.</string>
+  <string name="card_house_plan_who_own" formatted="false">Batteriet styrer sig selv ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Kun test endnu</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">lader fra nettet</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">lade fra nettet</string>
+  <string name="card_house_plan_act_hold" formatted="false">holder ladningen</string>
+  <string name="card_house_plan_inf_hold" formatted="false">holde ladningen</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">sælger til nettet</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">sælge til nettet</string>
+  <string name="card_house_plan_act_self" formatted="false">dækker huset og gemmer solen</string>
+  <string name="card_house_plan_inf_self" formatted="false">dække huset og gemme solen</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">lader det fra nettet</string>
+  <string name="card_house_plan_then_hold" formatted="false">holder det ladningen</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">sælger det til nettet</string>
+  <string name="card_house_plan_then_self" formatted="false">dækker det huset og gemmer solen</string>
+  <string name="card_house_now_tab_sun" formatted="false">Sol i dag</string>
+  <string name="card_house_now_tab_grid" formatted="false">Købt i dag</string>
+  <string name="card_house_now_tab_sold" formatted="false">solgt {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batteri</string>
+  <string name="card_house_now_tab_car" formatted="false">Bil</string>
+  <string name="card_house_now_tab_heat" formatted="false">Varme i dag</string>
+  <string name="card_house_now_tab_house" formatted="false">Hus i dag</string>
+  <string name="card_house_now_tab_house_now" formatted="false">Huset nu</string>
+  <string name="card_house_now_tab_no_live" formatted="false">ingen live-værdier endnu</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">Solen giver {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">Solen giver {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Køber {kw} fra nettet</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Sælger {kw} til nettet</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">Batteriet giver {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">Batteriet lader {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">Bilen giver {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">Bilen lader {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Varme {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">Varmen bruger {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">I dag: {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">batteriet tjente {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">batteriet tjente {amount} (egen styring)</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparede {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} i dag</string>
+  <string name="card_house_now_tab_today" formatted="false">i dag</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">uden bilen</string>
+  <string name="card_house_learning_capped_while" formatted="false">Opladning fra nettet højst {kw} kW, mens husets toppe læres ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Lærer husets toppe, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Lader ikke fra nettet før da.</string>
+  <string name="card_learning_days_left_one" formatted="false">{days} døgn tilbage</string>
+  <string name="card_learning_days_left_other" formatted="false">{days} døgn tilbage</string>
+  <string name="card_house_tabs" formatted="false">Husets visninger</string>
+  <string name="card_house_tab_now" formatted="false">Nu</string>
+  <string name="card_house_tab_flow" formatted="false">Energiflow</string>
+  <string name="card_house_tab_graph" formatted="false">Energigraf</string>
+  <string name="card_house_tab_price" formatted="false">Pris og batteri</string>
+  <string name="card_house_tab_price_only" formatted="false">Pris</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav kan kun aflæse varmen her.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav kan kun aflæse varmen her – vælg styring under Indstillinger → Varme → Styring.</string>
+  <string name="card_heat_none_value" formatted="false">Intet fundet</string>
+  <string name="card_house_tab_earn" formatted="false">Indtægt</string>
+  <string name="card_house_tab_short_now" formatted="false">Nu</string>
+  <string name="card_house_tab_short_flow" formatted="false">Flow</string>
+  <string name="card_house_tab_short_graph" formatted="false">Graf</string>
+  <string name="card_house_tab_short_earn" formatted="false">Indtægt</string>
+  <string name="card_house_tab_short_price" formatted="false">Pris</string>
+  <string name="card_house_picker_today" formatted="false">I dag</string>
+  <string name="card_house_picker_yesterday" formatted="false">I går</string>
+  <string name="card_house_picker_through" formatted="false">{label} · til {time}</string>
+  <string name="card_hist_period_label" formatted="false">Periode</string>
+  <string name="card_hist_period_day" formatted="false">Dag</string>
+  <string name="card_hist_period_month" formatted="false">Måned</string>
+  <string name="card_hist_period_year" formatted="false">År</string>
+  <string name="card_hist_previous_day" formatted="false">Forrige dag</string>
+  <string name="card_hist_previous_month" formatted="false">Forrige måned</string>
+  <string name="card_hist_previous_year" formatted="false">Forrige år</string>
+  <string name="card_hist_next_day" formatted="false">Næste dag</string>
+  <string name="card_hist_next_month" formatted="false">Næste måned</string>
+  <string name="card_hist_next_year" formatted="false">Næste år</string>
+  <string name="card_hist_pick_day" formatted="false">Vælg dag</string>
+  <string name="card_hist_pick_month" formatted="false">Vælg måned</string>
+  <string name="card_hist_pick_year" formatted="false">Vælg år</string>
+  <string name="card_house_flow_solar" formatted="false">Sol</string>
+  <string name="card_house_flow_battery" formatted="false">Batteri</string>
+  <string name="card_house_flow_grid" formatted="false">Net</string>
+  <string name="card_house_flow_house" formatted="false">Hus</string>
+  <string name="card_house_flow_car" formatted="false">Bil</string>
+  <string name="card_house_flow_heat" formatted="false">Varme</string>
+  <string name="card_house_flow_soc_now" formatted="false">nu {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">slut {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Dagens energiflow vises, når de første fem minutter er inde.</string>
+  <string name="card_house_loads_title" formatted="false">Hvad huset brugte</string>
+  <string name="card_house_loads_title_heat" formatted="false">Hvad varmen brugte</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Vis hvad huset brugte</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Vis, hvad varmen brugte</string>
+  <string name="card_house_loads_tap" formatted="false">Tryk på Hus for at se, hvad der brugte energien.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Tryk på Hus eller Varme for at se, hvad der brugte energien.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Øvrigt målt</string>
+  <string name="card_house_loads_unknown" formatted="false">Ukendt</string>
+  <string name="card_house_loads_today" formatted="false">I dag indtil nu</string>
+  <string name="card_house_loads_reading" formatted="false">Læser målerne …</string>
+  <string name="card_house_loads_failed" formatted="false">Målerne kunne ikke læses lige nu.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Det kræver en nyere SpotNav-integration.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Der er intet tal for huset i denne periode.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Øvrigt målt: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Målerne giver tilsammen {kwh} mere end huset, så Ukendt vises som 0.</string>
+  <string name="card_house_loads_none" formatted="false">Ingen målere på enkelte apparater endnu. Tilføj dem i Home Assistants Energi-dashboard under Enkelte enheder, så vises de her.</string>
+  <string name="card_house_loads_car_heat" formatted="false">Bilen og varmen vises for sig i flowet og indgår ikke her.</string>
+  <string name="card_house_loads_car" formatted="false">Bilen vises for sig i flowet og indgår ikke her.</string>
+  <string name="card_house_loads_heat" formatted="false">Varmen vises for sig i flowet og indgår ikke her.</string>
+  <string name="card_house_loads_chart" formatted="false">Husets energi: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">ændret af dig</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} timer med umulige værdier tælles ikke med (måleren springer). Ret statistikken i Home Assistant under Udviklerværktøjer → Statistik.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: ingen time havde en mulig værdi, så måleren er udeladt (den springer). Ret statistikken i Home Assistant under Udviklerværktøjer → Statistik.</string>
+  <string name="card_hist_loading" formatted="false">Læser historikken…</string>
+  <string name="card_hist_failed" formatted="false">Historikken kunne ikke læses. Prøv igen om lidt.</string>
+  <string name="card_hist_unsupported" formatted="false">Integrationen har ikke denne historik endnu: opdater SpotNav.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Energipanelet har ingen netmåler, så energien kan ikke vises: tilføj nettets import under Indstillinger → Dashboards → Energi.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Ingen energi blev målt i perioden.</string>
+  <string name="card_house_tile_sun" formatted="false">Sol</string>
+  <string name="card_house_tile_house" formatted="false">Hus</string>
+  <string name="card_house_tile_discharged" formatted="false">Afladet</string>
+  <string name="card_house_tile_charged" formatted="false">Ladet</string>
+  <string name="card_house_tile_bought" formatted="false">Købt</string>
+  <string name="card_house_tile_sold" formatted="false">Solgt</string>
+  <string name="card_house_tile_heat" formatted="false">Varme</string>
+  <string name="card_house_tile_car" formatted="false">Bil</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Diagrammets forklaring</string>
+  <string name="card_house_legend_house" formatted="false">Huset</string>
+  <string name="card_house_legend_heat" formatted="false">Varme</string>
+  <string name="card_house_legend_forecast" formatted="false">Prognose</string>
+  <string name="card_house_legend_sun" formatted="false">Sol</string>
+  <string name="card_house_legend_sun_day" formatted="false">Sol · prikket = prognosetjenesten</string>
+  <string name="card_house_legend_battery" formatted="false">Batteriniveau · stiplet = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Købspris</string>
+  <string name="card_house_legend_sell_price" formatted="false">Salgspris</string>
+  <string name="card_house_legend_car" formatted="false">Bil</string>
+  <string name="card_house_chart_label" formatted="false">Huset, solen og batteriet: 12 timer tilbage, 24 frem</string>
+  <string name="card_house_chart_description" formatted="false">Søjler: husets forbrug pr. time, målt før nu og prognose efter (lysere). Flade: solen. Kort streg over en tidligere søjle: hvad prognosen var for timen.</string>
+  <string name="card_house_chart_price_label" formatted="false">Priser og batteriet: 12 timer tilbage, 24 frem</string>
+  <string name="card_house_chart_price_description" formatted="false">Linjer: købsprisen med alle afgifter og salgsprisen pr. time. Lilla linje: batteriets ladeniveau på højre akse, stiplet hvor det er planlagt. Toner: planen lader fra nettet eller sælger til det.</string>
+  <string name="card_house_hint" formatted="false">Tryk i diagrammet for en times tal.</string>
+  <string name="card_house_hint_energy" formatted="false">Tryk på en time for tallene. Lyse søjler er prognose.</string>
+  <string name="card_house_readout_house" formatted="false">huset {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">huset {kw} ventet</string>
+  <string name="card_house_readout_heat" formatted="false">varme {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">varme {kw} forventet</string>
+  <string name="card_house_readout_house_both" formatted="false">huset {kw} (prognose {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">sol {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">sol {kwh} ventet</string>
+  <string name="card_house_readout_soc" formatted="false">batteri {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batteri {pct} planlagt</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">lader fra nettet</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">sælger til nettet</string>
+  <string name="card_house_readout_action_hold" formatted="false">holder ladningen</string>
+  <string name="card_house_readout_price" formatted="false">køb {buy} · salg {sell}</string>
+  <string name="card_house_readout_car" formatted="false">bil {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">køb {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">salg {sell}</string>
+  <string name="card_house_now" formatted="false">Nu</string>
+  <string name="card_house_today_cost" formatted="false">Udgift til el {amount}</string>
+  <string name="card_house_today_sold" formatted="false">solgt solstrøm {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: batteriet tjente {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: batteriet tjente {amount} (egen styring)</string>
+  <string name="card_house_today" formatted="false">Batteriet har tjent {amount} i dag</string>
+  <string name="card_house_today_own" formatted="false">Batteriet har tjent {amount} i dag (egen styring)</string>
+  <string name="card_house_day_no_data" formatted="false">Intet blev målt denne dag.</string>
+  <string name="card_house_graph_label" formatted="false">Brugt energi og solen, per periode</string>
+  <string name="card_house_value_hour" formatted="false">batteriet tjente {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">batteriet tabte {amount}</string>
+  <string name="card_house_flow_out" formatted="false">afladet {kwh}, værd {worth}, minus {cost}, som energien kostede at lade = {net}</string>
+  <string name="card_house_flow_in" formatted="false">ladede {kwh} for {cost} (tælles, når energien bruges)</string>
+  <string name="card_hist_house_chart" formatted="false">Husets omkostning</string>
+  <string name="card_hist_house_hint" formatted="false">Tryk på en søjle for tal.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: intet målt</string>
+  <string name="card_battery_title" formatted="false">Hjemmebatteri</string>
+  <string name="card_battery_intro" formatted="false">SpotNav kan styre batteriet: holde det, mens bilen lader fra nettet, lade det, når strømmen er billig, og stoppe eksport, når den koster penge. Slået fra, indtil du slår det til.</string>
+  <string name="card_battery_mode_label" formatted="false">Tilstand</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">Batteriet lades af solen og dækker huset. Ingen handel med nettet.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Lader også fra nettet, når det er billigt, og bruges, når det er dyrt. Sælger kun, når det er meget rentabelt.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Som Balanceret, men sælger til nettet, så snart det kan betale sig, med slidtagen medregnet.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Så længe SpotNav ikke styrer batteriet, flytter valget kun, hvilken række der er markeret som valgt i sammenligningen.</string>
+  <string name="card_battery_plan_costs" formatted="false">Slid regnes som {wear} hver vej · Balanceret sælger ved mindst {margin} netto</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Batteriplanen</string>
+  <string name="card_battery_switch" formatted="false">Batteristyring</string>
+  <string name="card_battery_line_off" formatted="false">Fra: SpotNav styrer ikke noget endnu og viser kun, hvad den ville gøre.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav styrer ikke noget endnu og logger kun, hvad den ville gøre.</string>
+  <string name="card_battery_line_checking" formatted="false">Tjekker, at batteriet adlyder (cirka 40 minutter).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Tjekker batteriet igen efter en opdatering.</string>
+  <string name="card_battery_line_on" formatted="false">Til: SpotNav styrer batteriet.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Styrer ikke noget endnu: batteriet bliver i AI-tilstand, indtil du godkender overtagelsen.</string>
+  <string name="card_battery_line_waiting" formatted="false">Venter på et passende tidspunkt til tjekket.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Venter på et passende tidspunkt til at tjekke batteriet igen efter en opdatering.</string>
+  <string name="card_battery_line_failed" formatted="false">Tjekket mislykkedes: “{mode}” virkede ikke. Slå fra og til igen for at tjekke på ny.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Det blev opgivet efter fem forsøg.</string>
+  <string name="card_battery_line_blocked" formatted="false">Stoppet: noget uventet skete, og batteriet er givet tilbage.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Stoppet for i dag: dagens skrivninger er brugt op.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Batteriets firmware kan ikke læses endnu.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Næste forsøg er tidligst en time efter det forrige.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Batteriets styring blev ikke fundet.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Efter en opdatering venter den til en aften.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Den venter, til bilen holder op med at lade.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Den venter, til batteriet aflader.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Den venter på et batteriniveau mellem 30 og 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Den venter på mere plads under hovedsikringen.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Den venter på friske målinger.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Den venter, mens batteristyringen er optaget.</string>
+  <string name="card_battery_mode_hold" formatted="false">Holde</string>
+  <string name="card_battery_mode_charge" formatted="false">Lade fra nettet</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Dække huset</string>
+  <string name="card_battery_mode_normal" formatted="false">Give tilbage</string>
+  <string name="card_battery_cap_line" formatted="false">Højst {kw} kW fra nettet, så sikringen holder, selv hvis Home Assistant stopper ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Ingen opladning fra nettet: huset kan nå sikringen selv ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Importgrænsen beskytter sikringen ved opladning fra nettet.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">indlært pr. fase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">forsigtigt, indtil de første døgn er indlært</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">mens husets toppe læres</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Ingen opladning fra nettet, mens husets toppe læres ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Batteristyringen kunne ikke læses.</string>
+  <string name="card_battery_error_generic" formatted="false">Det lykkedes ikke. Prøv igen.</string>
+  <string name="card_settings_value_on" formatted="false">Til</string>
+  <string name="card_heat_settings_title" formatted="false">Varme</string>
+  <string name="card_heat_settings_steer" formatted="false">Styr varmen</string>
+  <string name="card_heat_settings_indoor" formatted="false">Indendørsfølere</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} valgt</string>
+  <string name="card_heat_settings_none" formatted="false">Ingen</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Udendørsføler</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatisk</string>
+  <string name="card_heat_settings_meter" formatted="false">Varmepumpens måler</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Varmepumpens elforbrug. Trinene i den skelner varme fra varmt vand.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Ikke fundet</string>
+  <string name="card_heat_settings_path" formatted="false">Styring</string>
+  <string name="card_heat_path_none" formatted="false">Ingen endnu</string>
+  <string name="card_heat_path_relay" formatted="false">Relæ (sænkning)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (to kontakter)</string>
+  <string name="card_heat_path_offset" formatted="false">Kurveforskydning</string>
+  <string name="card_heat_path_setpoint" formatted="false">Sætpunkt</string>
+  <string name="card_heat_settings_control" formatted="false">Styreudgang</string>
+  <string name="card_heat_settings_control_b" formatted="false">Anden kontakt</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Varmt vand</string>
+  <string name="card_heat_settings_zones" formatted="false">Zoner</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Ingen zoner</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Forskydning i forhold til husets temperatur, −3 til +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Rummets eget mål i forhold til husets temperatur, −3 til +3 °C. En køligere 1. sal: −1,5. En føler der viser en halv grad for varmt: +0,5. Det koldeste rum måles mod sit eget mål.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Luft-til-luft-varmepumpe: SpotNav ændrer kun sætpunktet og slår den aldrig til eller fra.</string>
+  <string name="card_heat_settings_night" formatted="false">Køligere nat</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Valgfrit: et par grader køligere mellem to tidspunkter. Planen regner med det.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Grader køligere</string>
+  <string name="card_heat_settings_night_start" formatted="false">Fra</string>
+  <string name="card_heat_settings_night_end" formatted="false">Til</string>
+  <string name="card_heat_settings_away" formatted="false">Sænkning når væk</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Hvor mange grader køligere huset holdes, mens I er væk. Aldrig under 16 °C. Planen varmer stadig huset op inden hjemkomsten.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Grader køligere</string>
+  <string name="site_settings_in_home_assistant">Til og fra for styringen og valget af sensorer, måler og styringsvej ændres i Home Assistant.</string>
+  <string name="site_settings_heat_failed">Varmeindstillingerne kunne ikke læses.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Varme sættes op i Home Assistant: Indstillinger → Varme på hus- eller varmekortet.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Svar i Home Assistant: varmekortets indstillinger, som administrator.</string>
+  <!-- House details and Intäkt (step A4) -->
+  <string name="card_house_earn_total" formatted="false">Indtægt {amount}</string>
+  <string name="card_house_earn_none" formatted="false">Ingen besparelse at vise for perioden endnu.</string>
+  <string name="card_house_earn_parts" formatted="false">Dele der vises</string>
+  <string name="card_house_earn_label" formatted="false">Indtægt pr. del</string>
+  <string name="card_house_earn_part_battery" formatted="false">Arbitrage (batteri)</string>
+  <string name="card_house_earn_part_own" formatted="false">Batteri, egen styring</string>
+  <string name="card_house_earn_part_would" formatted="false">SpotNav ville have sparet</string>
+  <string name="card_house_earn_part_heat" formatted="false">Varme</string>
+  <string name="card_house_earn_part_car" formatted="false">Bil</string>
+  <string name="card_house_earn_bar_none" formatted="false">{when}: intet tal</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Denne dag har ingen timeværdier (de gemmes i 40 dage).</string>
+  <string name="card_house_earn_note_would_day" formatted="false">På batteriet ville SpotNav have sparet {amount} denne dag.</string>
+  <string name="card_house_earn_note_would_days" formatted="false">Hvad SpotNav ville have sparet kendes for {reviewed} af {days} dage; resten tælles som de gik.</string>
+  <string name="card_house_earn_note_would_tonight" formatted="false">Hvad SpotNav ville have sparet på batteriet regnes ud i nat.</string>
+  <string name="card_house_earn_note_would_none" formatted="false">Hvad SpotNav ville have sparet på batteriet kendes ikke for perioden.</string>
+  <string name="card_house_earn_note_car_hour" formatted="false">Bilens besparelse ligger på den time, opladningen startede.</string>
+  <string name="card_house_earn_note_car_day" formatted="false">Bilens besparelse tælles på den dag, opladningen startede.</string>
+  <string name="card_house_earn_note_heat_day" formatted="false">Varmens besparelse er et skøn for hele dagen og tegnes ikke pr. time.</string>
+  <string name="card_house_earn_note_heat" formatted="false">Varmens besparelse er et skøn.</string>
+  <string name="card_hist_title_house" formatted="false">Husets historik</string>
+  <string name="card_hist_legend_cost" formatted="false">Udgift</string>
+  <string name="card_hist_house_legend_saving" formatted="false">Sparet af batteriet</string>
+  <string name="card_hist_house_legend_extra" formatted="false">Dyrere med batteriet</string>
+  <string name="card_hist_house_bar_money" formatted="false">{when}: omkostning {cost}, uden batteri {without}, sparet {saving}</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when}: omkostning {cost}, uden batteri {without}, batteriet gjorde det {extra} dyrere</string>
+  <string name="card_hist_house_bar_unreviewed" formatted="false">{when}: omkostning {cost}, ikke vurderet</string>
+  <string name="card_hist_house_bar_hourly" formatted="false">{when}: omkostning {cost}, besparelsen vises pr. døgn</string>
+  <string name="card_hist_house_bar_no_cost" formatted="false">{when}: brugte {use}, købte {bought}</string>
+  <string name="card_hist_house_money" formatted="false">Penge</string>
+  <string name="card_hist_house_cost" formatted="false">Udgift til el</string>
+  <string name="card_hist_house_cost_parts" formatted="false">Købte {kwhIn} for {bought}, solgte {kwhOut} for {sold}, til priserne med dagens afgifter.</string>
+  <string name="card_hist_house_saved_battery" formatted="false">Batteriet sparede</string>
+  <string name="card_hist_house_saved_sun" formatted="false">Solen sparede</string>
+  <string name="card_hist_house_saved_both" formatted="false">Sol og batteri sparede</string>
+  <string name="card_hist_house_saved_days_one" formatted="false">{figure} på {days} døgn</string>
+  <string name="card_hist_house_saved_days_other" formatted="false">{figure} på {days} døgn</string>
+  <string name="card_hist_house_spotnav" formatted="false">SpotNav sparede</string>
+  <string name="card_hist_house_spotnav_total" formatted="false">I alt</string>
+  <string name="card_hist_house_spotnav_battery" formatted="false">Batteri</string>
+  <string name="card_hist_house_spotnav_car" formatted="false">Bil</string>
+  <string name="card_hist_house_spotnav_heat" formatted="false">Varme (anslået)</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Hver del mod sin egen sammenligning, se Sådan beregnes det nedenfor. En del SpotNav ikke styrede, er udeladt.</string>
+  <string name="card_hist_house_no_price_source" formatted="false">Der er ingen elpris sat op for anlægget, så ingen udgift vises.</string>
+  <string name="card_hist_house_baselines_note" formatted="false">Sammenlignet med de samme døgn uden batteri og uden sol.</string>
+  <string name="card_hist_house_reviewed" formatted="false">Besparelsen er målt for {days} af periodens {total} døgn.</string>
+  <string name="card_hist_house_archived" formatted="false">{days} af dem fra dagsarkivet (døgn eksporteret med spotnav.export_day).</string>
+  <string name="card_hist_house_no_review" formatted="false">Ingen batterigennemgang for perioden. Nattens gennemgange gemmes i 30 døgn; en ældre dag kun hvis den blev eksporteret til dagsarkivet.</string>
+  <string name="card_hist_house_modes" formatted="false">Batteriets tilstande mod eget forbrug</string>
+  <string name="card_hist_house_modes_note" formatted="false">Hver tilstand planlagt på samme målte last og sol, og hvad batteriet faktisk gjorde, mod rent eget forbrug; summeret over de gennemgåede døgn.</string>
+  <string name="card_hist_house_days" formatted="false">Døgn for døgn</string>
+  <string name="card_hist_house_col_battery" formatted="false">Batteri</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
+  <string name="card_hist_house_col_own" formatted="false">Eget</string>
+  <string name="card_hist_house_col_share" formatted="false">Af perfekt</string>
+  <string name="card_hist_house_share_partial" formatted="false">ufuldstændigt døgn</string>
+  <string name="card_hist_house_share_small" formatted="false">for lille forskel</string>
+  <string name="card_hist_house_days_note" formatted="false">Batteri: mod intet batteri. Plan: SpotNavs plan, eget: batteriets egen måde, begge mod eget forbrug.</string>
+  <string name="card_hist_house_footnote" formatted="false">Tallene viser, hvad der blev målt, og hvad planerne ville have gjort.</string>
+  <string name="card_hist_house_how" formatted="false">Sådan beregnes det</string>
+  <string name="card_hist_house_perfect_differs" formatted="false">{name} sparede {own} her, mens Batteriet sparede under Penge viser {battery}. Begge er mod intet batteri, men her tæller kun hele døgn ({days}) og det, der var tilbage i batteriet ved midnat; under Penge tæller alle målte døgn ({batteryDays}) og ikke det, der var tilbage.</string>
+  <string name="card_hist_forecast_heading" formatted="false">Prognosefejl</string>
+  <string name="card_hist_forecast_house" formatted="false">Husets last</string>
+  <string name="card_hist_forecast_sun" formatted="false">Sol</string>
+  <string name="card_hist_forecast_sun_corrected" formatted="false">Sol, korrigeret</string>
+  <string name="card_hist_forecast_soc" formatted="false">Batteriniveau</string>
+  <string name="card_hist_forecast_note" formatted="false">Gennemsnittet af hvert gennemgået døgns middelfejl (gennemgangene gemmes i 30 døgn).</string>
+  <string name="card_hist_forecast_none" formatted="false">Ingen prognose blev gennemgået i perioden (gennemgangene gemmes i 30 døgn).</string>
+  <string name="card_house_compare_in_force" formatted="false">valgt</string>
+  <string name="card_house_compare_none" formatted="false">intet helt døgn</string>
+  <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
+  <string name="card_house_days_date" formatted="false">Dag</string>
+  <string name="card_perfect_heading_period" formatted="false">Andel af perfekt</string>
+  <string name="card_perfect_headline" formatted="false">{own} {ownShare} af perfekt · {plan} {planShare}</string>
+  <string name="card_perfect_headline_one" formatted="false">{name} {share} af perfekt</string>
+  <string name="card_perfect_explain" formatted="false">Perfekt: det bedst mulige set bagud, med de samme regler.</string>
+  <string name="card_perfect_explain_sell" formatted="false">Perfekt: det bedst mulige set bagud, må sælge ({mode}-regler).</string>
+  <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: det bedst mulige set bagud, uden salg (intet gik ud på nettet).</string>
+  <string name="card_perfect_midnight" formatted="false">Regnet med det, der var tilbage i batteriet ved midnat.</string>
+  <string name="card_perfect_provisional_one" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris for {days} af døgnene, indtil næste døgns priser findes.</string>
+  <string name="card_perfect_provisional_other" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris for {days} af døgnene, indtil næste døgns priser findes.</string>
+  <string name="card_perfect_provisional_day" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris, indtil næste døgns priser findes.</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: uden for 0–100 %, vises ved nærmeste grænse (et tab som 0 %).</string>
+  <string name="card_perfect_nothing" formatted="false">for lille forskel at sammenligne</string>
+  <string name="card_perfect_partial_day" formatted="false">Ufuldstændigt døgn: under 90 % af døgnet blev målt, så det sammenlignes ikke.</string>
+  <string name="card_perfect_partial_one" formatted="false">{days} ufuldstændigt døgn tælles ikke med.</string>
+  <string name="card_perfect_partial_other" formatted="false">{days} ufuldstændige døgn tælles ikke med.</string>
+  <string name="card_perfect_partial_only_one" formatted="false">Kun {days} ufuldstændigt døgn: intet at sammenligne endnu.</string>
+  <string name="card_perfect_partial_only_other" formatted="false">Kun {days} ufuldstændige døgn: intet at sammenligne endnu.</string>
+  <string name="card_perfect_money_saved" formatted="false">Sparet</string>
+  <string name="card_perfect_money_perfect" formatted="false">Perfekt</string>
+  <string name="card_perfect_money_note" formatted="false">Hver måde mod de samme døgn uden batteri. Det, der var tilbage i batteriet ved midnat, tæller til næste døgns gennemsnitlige købspris minus batteriets tab. En andel kræver, at den perfekte plan sparer mindst {amount} om døgnet.</string>
+  <string name="card_perfect_work_cycles" formatted="false">Cykler</string>
+  <string name="card_perfect_work_switches" formatted="false">Skift</string>
+  <string name="card_perfect_work_from_grid" formatted="false">Fra nettet</string>
+  <string name="card_perfect_work_to_grid" formatted="false">Til nettet</string>
+  <string name="card_perfect_work_note" formatted="false">Cykler: afladede kWh delt med batteriets kapacitet. Skift: mellem opladning og afladning. Fra og til nettet: kWh, som batteriet ladede fra nettet og solgte til det.</string>
+  <string name="card_perfect_temperature_one" formatted="false">Battericeller: gennemsnit {mean}, højest {max}, {minutes} min over 30 °C ({days} døgn).</string>
+  <string name="card_perfect_temperature_other" formatted="false">Battericeller: gennemsnit {mean}, højest {max}, {minutes} min over 30 °C ({days} døgn).</string>
+  <string name="card_house_saving_details_head" formatted="false">Det SpotNav sparede, sammenlignes med:</string>
+  <string name="card_house_saving_details_battery" formatted="false">Batteri: det batteriet tjente, mens SpotNav styrede det.</string>
+  <string name="card_house_saving_details_battery_own" formatted="false">Batteri: det kørte på egen styring, så det, det tjente, er dets eget og regnes ikke som SpotNavs.</string>
+  <string name="card_house_saving_details_car" formatted="false">Bil: at lade med det samme ved tilslutning, med samme effekt og alle afgifter. Kun bilens kWh fra elnettet tæller; en opladning, nogen selv startede, tæller som 0.</string>
+  <string name="card_house_saving_details_car_since" formatted="false">Bilen regnes fra {date}.</string>
+  <string name="card_house_saving_details_heat" formatted="false">Varme (anslået): det SpotNavs egne sænkninger tog væk til timernes pris, minus den varme der blev købt tilbage bagefter.</string>
+  <string name="card_house_flow_rule" formatted="false">Målerne siger ikke, hvilken kilde der gik til hvad: hver time går solen først til huset, så bilen, batteriet og nettet; batteriet dækker huset før nettet.</string>
+  <string name="card_house_flow_rule_quarter" formatted="false">Målerne siger ikke, hvilken kilde der gik til hvad: hvert kvarter går solen først til huset, så bilen, batteriet og nettet; batteriet dækker huset før nettet.</string>
+  <string name="card_house_flow_car_part" formatted="false">Bilen kunne ikke aflæses hver time; de timer tælles den med i huset.</string>
+  <string name="card_house_flow_heat_rule" formatted="false">Varme er varmepumpens egen måler og varmezonernes egne sensorer; huset er det, der er tilbage.</string>
+  <string name="card_house_flow_heat_part" formatted="false">Varmepumpens måler kunne ikke læses hver time; de timer regnes den med i huset.</string>
+  <string name="card_house_sources_heading" formatted="false">Kilder</string>
+  <string name="card_house_sources_weather" formatted="false">Vejr: {name}</string>
+  <string name="card_house_sources_weather_no_forecast" formatted="false">Vejr: {name}, uden timeprognose</string>
+  <string name="card_house_sources_weather_none" formatted="false">Vejr: ingen fundet</string>
+  <string name="card_house_sources_outdoor_sensor" formatted="false">Udetemperatur: {name}</string>
+  <string name="card_house_sources_outdoor_weather" formatted="false">Udetemperatur: fra vejret</string>
+  <string name="card_house_sources_outdoor_none" formatted="false">Udetemperatur: ingen</string>
+  <string name="card_house_sources_holidays" formatted="false">Helligdage: {name}</string>
+  <string name="card_house_sources_holidays_none" formatted="false">Helligdage: kun hverdag og weekend</string>
+  <string name="card_house_sources_temperature_on" formatted="false">Temperatur i prognosen: til</string>
+  <string name="card_house_sources_temperature_off" formatted="false">Temperatur i prognosen: fra ({reason})</string>
+  <string name="card_house_temperature_too_few" formatted="false">for få timer med temperatur endnu</string>
+  <string name="card_house_temperature_too_little" formatted="false">den forklarer for lidt af lasten</string>
+  <string name="card_house_sources_solar" formatted="false">Solprognose: {names}</string>
+  <string name="card_house_sources_solar_learning" formatted="false">Solprognose: {names} · korrektionen lærer, {left}</string>
+  <string name="card_house_sources_heat_from_dashboard" formatted="false">Varmepumpens måler: {name} (Energi-dashboardet)</string>
+  <string name="card_house_sources_heat_from_integration" formatted="false">Varmepumpens måler: {name} (varmepumpens integration)</string>
+  <string name="card_house_sources_heat_from_setting" formatted="false">Varmepumpens måler: {name} (valgt i Indstillinger)</string>
+  <string name="card_house_sources_heat_split" formatted="false">Husprognose som varme plus resten: {split} mod {whole} for helheden ({hours} t, kun vist)</string>
+  <string name="card_house_sources_battery" formatted="false">Batteri: {name}</string>
+  <string name="card_house_sources_stored" formatted="false">Lagret nu: {kwh} à {cost} i snit</string>
+  <string name="card_house_sources_stored_estimated" formatted="false">Lagret nu: {kwh} à {cost} i snit (anslået fra start, til den energi er brugt)</string>
+  <string name="card_house_note_self_managed" formatted="false">Batteriet styres af sin egen optimering. SpotNav planlægger ved siden af kun for at sammenligne og skriver intet til det.</string>
+  <string name="card_house_note_shadow" formatted="false">Test: SpotNav planlægger batteriet, men styrer det ikke endnu.</string>
+  <string name="card_house_note_controlling" formatted="false">SpotNav styrer batteriet efter planen.</string>
+  <string name="card_house_note_assumed" formatted="false">Antaget indtil videre: {list}.</string>
+  <string name="card_house_note_counts_battery" formatted="false">Husets last måles som nettet minus laderne, så når batteriet dækker huset, ser lasten mindre ud.</string>
+  <string name="card_house_estimate_min_soc_assumed" formatted="false">batteriets laveste niveau</string>
+  <string name="card_house_estimate_round_trip_assumed" formatted="false">batteriets virkningsgrad</string>
+  <string name="card_house_estimate_solar_in_house_history" formatted="false">solen i husets historik</string>
+  <string name="card_house_estimate_battery_mode_unknown" formatted="false">tilstanden (ukendt, Balanceret bruges)</string>
+  <string name="card_house_estimate_wear_currency_unknown" formatted="false">batteriets slidomkostning</string>
+  <string name="card_house_estimate_no_solar_forecast" formatted="false">ingen sol</string>
+  <string name="card_house_estimate_horizon_cut_by_forecast" formatted="false">en horisont forkortet af prognosen</string>
+  <string name="card_house_estimate_capacity_from_ah" formatted="false">størrelsen (regnet ud fra amperetimer)</string>
+  <string name="card_house_estimate_rated_from_current" formatted="false">nominel effekt (regnet ud fra strømgrænserne)</string>
+  <string name="card_house_estimate_capacity_learned" formatted="false">størrelsen (lært af brug)</string>
+  <string name="card_house_estimate_rated_learned" formatted="false">nominel effekt (den højeste set hidtil)</string>
+  <string name="card_history_savings_plug_in" formatted="false">SpotNav sparede {amount} i forhold til at lade med det samme ved tilslutning</string>
+  <string name="card_history_savings_plug_in_extra" formatted="false">{amount} mere end at lade med det samme ved tilslutning</string>
+  <string name="card_history_savings_plug_in_note" formatted="false">SpotNav sparede: de samme kWh fra elnettet, hvis bilen havde ladet med det samme ved tilslutning, med afgifter. En opladning, nogen selv startede, tæller som 0, og kWh fra hjemmebatteriet regnes til batteriet. Samme tal som på husets kort.</string>
+  <string name="card_house_details_open" formatted="false">Detaljer</string>
+  <!-- Heat details cost bars (step A4) -->
+  <string name="card_hist_heat_chart" formatted="false">Varmepumpens omkostning</string>
+  <string name="card_hist_heat_legend_saving" formatted="false">Kunne have sparet</string>
+  <string name="card_hist_heat_bar_saving" formatted="false">ville have sparet {saving}</string>
+  <string name="card_hist_heat_bar_zones" formatted="false">zoner {kwh}</string>
+  <string name="card_hist_heat_bar_hot_water" formatted="false">varmt vand {kwh}</string>
+  <string name="card_hist_heat_bar_outdoor" formatted="false">ude {temp}</string>
+  <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graddage</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Valgt</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready via integrationen (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Aktivering</string>
+  <string name="card_heat_settings_untested" formatted="false">Denne måde at styre på er endnu ikke prøvet på en rigtig varmepumpe. Hold øje med de første dage.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Kurvejusteringen er ikke sat tilbage</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (var {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Kurvejusteringen står på {value}; den var {home} før SpotNav. Sæt den tilbage, eller behold {value} som din egen værdi?</string>
+  <string name="card_heat_control_off" formatted="false">Fra: SpotNav viser kun, hvad den ville gøre.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Prøver at varmepumpen reagerer på relæet: venter på et øjeblik, hvor den varmer.</string>
+  <string name="card_heat_control_verifying" formatted="false">Prøver nu, at varmepumpen reagerer på relæet.</string>
+  <string name="card_heat_control_lowered" formatted="false">Styrer: sænker varmen til {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Styrer: sænker varmen til {until}, for varmt inde.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Styrer: sænker varmen nu.</string>
+  <string name="card_heat_control_raised" formatted="false">Styrer: hæver varmen til {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Styrer: hæver varmen nu.</string>
+  <string name="card_heat_control_normal" formatted="false">Styrer: varmepumpen kører på sin normale kurve lige nu.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Styrer: for koldt udenfor til at sænke.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Styrer: et rum ligger under båndet, ingen sænkning.</string>
+  <string name="card_heat_control_stale" formatted="false">Styrer: venter på friske værdier, ingen sænkning.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Styrer: SG Readys anden kontakt er tændt, ingen sænkning.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Styrer: ekstra varmt vand er slået til, ingen sænkning.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Styrer: det varme vand er køligt, ingen sænkning.</string>
+  <string name="card_heat_control_waiting" formatted="false">Venter.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Venter: slå automatiseringen \'{name}\' fra, så SpotNav kan styre varmen.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Venter: en anden varmestyring styrer varmepumpen.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Venter: varmepumpens egen prisstyring er slået til.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Venter: relæet kan ikke læses.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Venter: en anden har sluttet relæet.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Venter: vælg relæet under Styring.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Venter: vælg varmepumpens måler, så SpotNav kan se, at relæet virker.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">Varmepumpen reagerede ikke på relæet. Tjek forbindelsen og slå til igen.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Venter: en anden ændrede relæet. SpotNav styrer igen i morgen.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Venter: relæet svarede ikke. SpotNav prøver igen i morgen.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Prøver at varmepumpen reagerer: venter på et øjeblik, hvor den varmer.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Prøver nu, at varmepumpen reagerer.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Venter: varmepumpens indstilling kan ikke læses.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Venter: en anden har allerede sænket eller hævet varmen.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Venter: vælg, hvad SpotNav skal styre, under Styring.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Venter: vælg varmepumpens måler, så SpotNav kan se, at styringen virker.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">Varmepumpen reagerede ikke. Tjek indstillingen og slå til igen.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Venter: en anden ændrede indstillingen. SpotNav styrer igen i morgen.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Venter: varmepumpen svarede ikke. SpotNav prøver igen i morgen.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Varmt vand nu</string>
+  <string name="card_heat_boost_starting" formatted="false">Starter…</string>
+  <string name="card_heat_boost_left" formatted="false">Varmt vand · ca. {minutes} min tilbage</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Varmt vand · {minutes} min tilbage</string>
+  <string name="card_heat_boost_on" formatted="false">Varmt vand · i gang</string>
+  <string name="card_heat_boost_heating" formatted="false">Varmer vand · ca. {minutes} min tilbage</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Varmer vand</string>
+  <string name="card_heat_boost_stop" formatted="false">Annullér</string>
+  <string name="card_heat_boost_failed" formatted="false">Kunne ikke starte det varme vand</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Det varme vand blev startet for lidt siden; prøv igen om nogle minutter</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Hovedsikringen er fuldt belastet lige nu; sluk for noget og prøv igen</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Varmt vand {from}–{to} · {price}/kWh · klar til {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Ville varme vand {from}–{to} · {price}/kWh · klar til {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Ville have varmet vand {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">pumpen kørte selv {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">på solstrøm</string>
+  <string name="card_heat_chart_peak" formatted="false">bad {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blokering forkortet før badet {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">ville forkorte blokeringen før badet {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blokering forkortet så det varme vand når at blive varmet</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">ville forkorte blokeringen så det varme vand når at blive varmet</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blokering forkortet for det varme vands periodiske forhøjelse</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">ville forkorte blokeringen for det varme vands periodiske forhøjelse</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blokering flyttet for det varme vand</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">ville flytte blokeringen for det varme vand</string>
+  <string name="card_heat_water_review" formatted="false">Varmt vand i går: {kwh} flyttet · {value} sparet</string>
+  <string name="card_heat_water_review_none" formatted="false">Varmt vand i går: intet at flytte</string>
+  <string name="card_heat_water_shadow" formatted="false">(skygge)</string>
+  <string name="card_heat_water_peaks" formatted="false">Toppe: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} ramt</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} intet forbrug</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} genopvarmet efter boostet</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} opvarmet sent efter en blokering</string>
+  <string name="card_heat_water_gate" formatted="false">Varmt vand i skygge: dag {days} af {needed}, {hits} af {peaks} toppe ramt</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} af 7 ugedage</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Varmt vand: klar til at blive styret med »Styr varmen«</string>
+  <string name="card_heat_water_live" formatted="false">Det varme vand styres af SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Det varme vand er tilbage i skygge efter for mange genopvarmninger</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blokeringer omkring det varme vand i skygge: dag {days} af {needed}, {hits} af {peaks} toppe ramt</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blokeringer omkring det varme vand: klar til at blive styret med »Styr varmen«</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav holder sine blokeringer væk fra det varme vand</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blokeringerne holdes længere væk fra det varme vand efter for mange sene opvarmninger</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blokeringer i går: {hours} t forkortet for det varme vand · {risks} sene opvarmninger før en top</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blokeringer i går: {hours} t ville være forkortet for det varme vand · {risks} sene opvarmninger før en top</string>
 </resources>

@@ -1,1 +1,1 @@
-SpotNav : recharge VE pilotée
+SpotNav : planifie l'énergie

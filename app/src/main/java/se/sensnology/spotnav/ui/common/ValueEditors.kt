@@ -31,7 +31,8 @@ import kotlin.math.roundToLong
 internal data class NumberSpec(val min: Double, val max: Double, val decimals: Int, val minDecimals: Int = 0) {
     /** What was typed, judged: a comma or a dot is the decimal mark, and the value is rounded to [decimals]. */
     fun check(text: String): NumberCheck {
-        val number = text.trim().replace(',', '.').toDoubleOrNull()
+        // The minus a locale writes (U+2212 in Swedish) is read as the plain one.
+        val number = text.trim().replace('\u2212', '-').replace(',', '.').toDoubleOrNull()
         if (number == null || !number.isFinite()) return NumberCheck.NotANumber
         val scale = 10.0.pow(decimals)
         val rounded = (number * scale).roundToLong() / scale
@@ -72,6 +73,8 @@ internal fun ViewScope.editNumber(
     noneChecked: Boolean = current == null,
     /** A figure to offer ("Suggestion: 36 öre/kWh"): tapping it fills the field. */
     suggestion: Double? = null,
+    /** Whether the field takes a minus sign (an offset below zero). */
+    signed: Boolean = false,
     /**
      * Advice read after the editor opens (the import target's suggestion from Home Assistant's statistics): [Advice.loading]
      * shows until [Advice.load] answers, then its sentence and, with a figure, [Advice.use], which fills the field (nothing
@@ -88,7 +91,8 @@ internal fun ViewScope.editNumber(
         CheckBox(context).apply { text = label; textSize = 16f; isChecked = noneChecked }.also { body.addView(it) }
     }
     val field = EditText(context).apply {
-        inputType = InputType.TYPE_CLASS_NUMBER or (if (spec.decimals > 0) InputType.TYPE_NUMBER_FLAG_DECIMAL else 0)
+        inputType = InputType.TYPE_CLASS_NUMBER or (if (spec.decimals > 0) InputType.TYPE_NUMBER_FLAG_DECIMAL else 0) or
+            (if (signed) InputType.TYPE_NUMBER_FLAG_SIGNED else 0)
         current?.let { setText(spec.fieldText(it, locale)) }
         setSelectAllOnFocus(true)
     }

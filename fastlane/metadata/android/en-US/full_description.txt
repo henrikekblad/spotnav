@@ -1,4 +1,13 @@
-SpotNav plans your EV charging for the cheapest hours of the day and shows electricity spot prices as a widget and a colour-coded price table.
+Learns your home. Plans your energy.
+
+SpotNav plans your EV charging, your home battery and your heating for the cheapest hours of the day, and shows electricity spot prices as a widget and a colour-coded price table.
+
+WHOLE HOME, NOT ONLY THE CHARGER
+- The app works without a charger. Connect it to your home in Home Assistant and use it for the house, the battery and the prices.
+- The house page shows what the house draws, what the battery holds and what it is doing, and the price right now.
+- Heating and hot water views show indoor temperature, the setpoint, hot water and what SpotNav plans for them.
+- The plan with the battery shows when it charges, holds or discharges, and why.
+- Chargers, solar charging and load balancing work as before.
 
 CHARGING WITH HOME ASSISTANT
 - Pair the app with the SpotNav integration in your Home Assistant. Charging control, solar and hybrid charging and load balancing run there, even when the phone is off.

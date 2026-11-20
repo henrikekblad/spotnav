@@ -10,6 +10,13 @@ import java.time.YearMonth
 internal class SessionsDecodeException(message: String) : IllegalArgumentException(message)
 
 /**
+ * What SpotNav saved against charging at once on plug-in (major unit; the house card's figure for the car): [amount] is
+ * `null` where it cannot be known (a session from before plug-in times were kept). An answer without the key has none
+ * of this at all (a charger in no site, an older Home Assistant), which is the field being `null`, not this.
+ */
+internal data class PlugInSaving(val amount: Double?)
+
+/**
  * The totals of one period (a month, as the dashboard's `sessions_summary` and the answer's
  * `month_summary` state them). Money is in the major unit, prices in the minor unit per kWh; a
  * figure Home Assistant could not work out (no prices for the energy) is `null`, never zero.
@@ -29,7 +36,9 @@ internal data class SessionTotals(
     /** What the charging saved against the day's average price: an estimate, and signed. */
     val savings: Double?,
     /** Some of the energy was estimated rather than metered. */
-    val estimated: Boolean
+    val estimated: Boolean,
+    /** SpotNav's saving against charging at once on plug-in; `null` where the answer does not carry it. */
+    val plugIn: PlugInSaving? = null
 ) {
     val isEmpty: Boolean get() = sessions == 0 && energyKwh <= 0.0
 }
@@ -58,7 +67,8 @@ internal data class ChargeSessionRow(
     val startedBy: String?,
     val strategy: String?,
     val vehicle: String?,
-    val estimated: Boolean
+    val estimated: Boolean,
+    val plugIn: PlugInSaving? = null
 )
 
 /** The answer for one month of the webhook's `sessions` action. */
@@ -128,7 +138,8 @@ internal object SessionsCodec {
         averagePriceMinorPerKwh = number(json, "average_price_minor_per_kwh"),
         solarShare = number(json, "solar_share"),
         savings = number(json, "savings"),
-        estimated = json.opt("estimated") == true
+        estimated = json.opt("estimated") == true,
+        plugIn = plugIn(json)
     )
 
     private fun day(json: JSONObject) = SessionDay(
@@ -153,8 +164,17 @@ internal object SessionsCodec {
         startedBy = text(json, "started_by"),
         strategy = text(json, "strategy"),
         vehicle = text(json, "vehicle"),
-        estimated = json.opt("estimated") == true
+        estimated = json.opt("estimated") == true,
+        plugIn = plugIn(json)
     )
+
+    /** The additive `plug_in_saving`: absent stays absent, present is a number or `null`; anything else is not read. */
+    private fun plugIn(json: JSONObject): PlugInSaving? = when (val raw = json.opt("plug_in_saving")) {
+        null -> null
+        JSONObject.NULL -> PlugInSaving(null)
+        is Number -> raw.toDouble().takeIf { it.isFinite() }?.let { PlugInSaving(it) }
+        else -> null
+    }
 
     private fun list(json: JSONObject, key: String): List<JSONObject> {
         val array = json.opt(key) as? JSONArray ?: throw SessionsDecodeException("`$key` is not a list")

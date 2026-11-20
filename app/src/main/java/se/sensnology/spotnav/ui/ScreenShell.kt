@@ -15,6 +15,7 @@ import se.sensnology.spotnav.prices.PriceScreenRefresh
 import se.sensnology.spotnav.ui.common.Palette
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.addPanelHeader
+import se.sensnology.spotnav.ui.site.SitePages
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -52,6 +53,13 @@ internal class ScreenShell(
     }
     val content = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
     val scrollView = ScrollView(activity).apply { addView(content) }
+
+    /**
+     * The main screen's pages (the charger, the house, the heat) and its top row: the app's mark, the icons that
+     * choose between the pages, and the Settings gear. The scrolling body is the charger's page and every other
+     * screen's; with that page alone the row has no page icons and there is nothing to swipe.
+     */
+    val pages = SitePages(this, scrollView)
 
     /**
      * The screen generation: late async work checks it before touching the views, so a load started
@@ -116,6 +124,9 @@ internal class ScreenShell(
      */
     var pairAgainProfile: String? = null
 
+    /** The same for a home without a charger whose "Pair again" was pressed on its screen (a site profile's local id). */
+    var pairAgainSite: String? = null
+
     /** The settings screen's answer to the Android 13+ notification prompt; cleared with [reloadPrices]. */
     var onNotificationPermission: (() -> Unit)? = null
 
@@ -139,7 +150,15 @@ internal class ScreenShell(
         root.addView(chrome, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ))
-        root.addView(scrollView, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        root.addView(pages.top, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ))
+        root.addView(pages.pager, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        // A page slides across the whole screen, through the page's side margins: the pager is drawn past its own
+        // edges, and its pages stand a margin apart so a neighbour is never seen in one.
+        root.clipChildren = false
+        root.clipToPadding = false
+        pages.pager.gap = dp(40)
     }
 
     /**
@@ -148,6 +167,7 @@ internal class ScreenShell(
      */
     fun begin() {
         generation++
+        pages.reset()
         scrollView.setOnScrollChangeListener(null as View.OnScrollChangeListener?)
         content.removeAllViews()
         chrome.removeAllViews()
@@ -161,6 +181,8 @@ internal class ScreenShell(
     /** Invalidate everything in flight: the Activity is going away. */
     fun close() {
         generation++
+        pages.foreground = false
+        pages.reset()
         io.shutdownNow()
         reloadPrices = null
     }

@@ -1,234 +1,41 @@
+---
+title: SpotNav for Android
+description: The SpotNav app for Android, its pages and settings, with or without Home Assistant.
+order: 1
+section: Get started
+---
+
 # SpotNav for Android
 
-A tour of the app's screens. The pictures are taken by `tools/app_screenshots/run.sh` against a demo
-Home Assistant with made-up devices (an OCPP charger, two Kia cars called "Family car" and "City car", a camera
-whose picture is drawn, a site called "Home") and recorded relay prices, so names and numbers are examples.
+**Learns your home. Plans your energy.**
 
-## Without Home Assistant
+Local control for your EV, battery and heating, planned around spot prices, solar and weather. Built for Home Assistant.
 
-<img src="images/app-standalone.png" alt="SpotNav main screen without Home Assistant: charging current, phases, consumption, departure, charging periods, the energy slider and the charging plan over today's and tomorrow's prices" width="360">
+**[Get SpotNav on Google Play](https://play.google.com/store/apps/details?id=se.sensnology.spotnav)** · free, Android 8 or newer
 
-Before anything is paired, the app plans on its own: choose charging current and phases, the car's
-consumption, a departure time, how many charging periods may be used and how much energy to add. The
-plan picks the cheapest quarter-hours before departure and shows them shaded on the price chart, with
-cost and range.
+SpotNav is a HEMS (home energy management system) that runs inside your own Home Assistant. The Android app is its
+companion: it shows what SpotNav plans and does at home, and lets you change the everyday choices from your phone.
 
-## Pairing with Home Assistant
+![The app's charger page paired with Home Assistant](images/app-main.png)
 
-<img src="images/app-pairing-code.png" alt="The Home Assistant section in Settings showing a six-digit pairing code and Waiting for approval" width="480">
+## Two ways to use the app
 
-In **Settings → Home Assistant**, tap **Find Home Assistant on the network** (or type its address when
-nothing answers). The app shows a six-digit code; Home Assistant shows the same code in **Settings →
-Devices & services** and asks you to approve the phone. Every charger on that instance is paired at
-once. The app gets one webhook ID per charger, never a Home Assistant password or token.
+- **With Home Assistant.** Pair the app with the SpotNav integration. The app then shows the charger, and with
+  SpotNav 3.0 also the house and the heating, as Home Assistant runs them.
+- **Without Home Assistant.** The app plans a charge on its own from the day-ahead prices. It does not control a
+  charger. You need a free ENTSO-E key for the prices.
 
-If SpotNav in Home Assistant no longer recognises a charger's webhook (the integration was set up
-again, or the webhook was replaced), the app says so instead of showing an error: *SpotNav in Home
-Assistant no longer recognises this phone. Pair again to reconnect.* appears above the charger card
-and in **Settings → Home Assistant**, with **Pair again**. Pairing again runs the same approval; a
-charger Home Assistant hands back under the same address and charger id gets the new webhook and keeps
-everything the app had for it (its settings, the widget showing it, its notifications), and instant
-notifications are registered again. Until then the app asks that charger's webhook only once every
-15 minutes. The app only decides this when the webhook answers empty twice in a row while Home
-Assistant itself answers; no contact at all is shown as before.
+## The guide
 
-## Main screen
+1. [Getting started](app/getting-started.md): install, pair with Home Assistant, or use the app on its own.
+2. [The charger page](app/charger.md): status, the car, planning, the price chart and the charge history.
+3. [The house page](app/house.md): live flows, the energy chart, earnings, prices and the battery.
+4. [The heat page](app/heat.md): the thermostat dial, home and away, the plan and the heating's use.
+5. [Settings](app/settings.md): every card in Settings and what it changes.
+6. [The widget](app/widget.md): prices and the charging status on the home screen.
+7. [Notifications](app/notifications.md): charging events, through the Home Assistant app or this app.
+8. [Privacy](app/privacy.md): what the app sends, and where.
+9. [FAQ](app/faq.md): common questions.
 
-<img src="images/app-main.png" alt="Main screen paired with Home Assistant: the charger card with its status line, charging current and charge history, Start and Pause buttons; the vehicle card with charge level, limit and capacity; and the top of the planning card" width="360">
-&nbsp;
-<img src="images/app-planning.png" alt="Planning card titled with the car, with the Charge by row, charging strategy, departure and the energy slider with its full mark, above the charging plan card with the price chart, cost, energy, range and the planned period" width="360">
-
-With Home Assistant paired, the main screen is the charger as Home Assistant runs it:
-
-- **Charger**: its name with its connection after it (*Garage · Waiting*, as the card in Home Assistant
-  writes it), what is happening and why, charging current and phases, this month's
-  charged energy (tap it for the history), and **Charge now** / **Pause** for the schedule. The status line
-  words what Home Assistant reports, for example *Charging to the minimum level (30 %)* while a car below its
-  minimum charge level charges, or, on Solar with no car plugged in, *Solar · surplus available (4.2 kW)* while
-  the sun would start a charge and *Solar · no car plugged in* otherwise, and *Solar · 1 phase · 2.9 kW* while the
-  sun has switched the charge to one phase. A plan that leaves part of the charge for cheaper hours says what it
-  waits for, for example *Waiting for Thursday's prices (at 13:00), which have been 41 % cheaper over the last 4
-  weeks*, the time given while it is still ahead. When the car ends the plan's charge itself
-  short of the target, the plan waits for the car to report its level before charging again: *The car ended the
-  charge at ~86 % (estimated); waiting for the car's level*, without *~* and *(estimated)* when the level is the car's
-  own reading. A stop at the target says the level and the time, for example *Stopped at 80 % at 07:31*, with
-  *(estimated)* when SpotNav stopped on its estimate rather than the car's reading.
-- **Vehicle**: charge level, charge limit, battery capacity, consumption and onboard charger, as the
-  car reports them or as you set them.
-- **Planning**: titled with the car Home Assistant plans for (**Planning for EV6**; just **Planning** while no car
-  is known). **Charge by** is one row showing **Energy · kWh** or **Target SoC · %**; tap the value to switch. Then
-  come the strategy, departure, and the energy to add or the target charge level. The slider
-  marks where the battery is full. How the charge is split into periods is a charger setting, **Settings →
-  Charger → Charge periods**: **Automatic** (the default: the cheapest hours, split only where the saving is worth
-  another start, each period at least 30 minutes) or **1 period** to **8 periods**, the most a plan may use.
-- **Charging plan**: the plan Home Assistant has installed.
-
-<img src="images/app-planning-target.png" alt="Planning card charging by Target SoC: the car's charge level and charge limit above the target state of charge slider at 80 %, and the energy needed" width="420">
-
-With **Charge by** set to **Target SoC · %** instead of **Energy · kWh**, you set the charge level to reach; the app works out
-the energy from the car's charge level and battery. **Charge by** is there only when a target can work: when the car's
-charge level is known (with the phone's own plan, also its battery capacity). The car's level now, its charge limit
-and how old the reading is share one line above the slider. The slider marks the car's level now (**now**, or **≈ now**
-when estimated) and its charge limit (**limit**, only below 100 %), and, when the car has a minimum charge level,
-shades the track from 0 to it in a darker tone with **min 30 %** under it. A target that is already met, or one at
-the car's own limit, is said once instead of an energy of 0.0 kWh.
-
-## Which car is plugged in?
-
-When more than one car can charge at a charger, Home Assistant finds out which one was plugged in, from what
-the cars report and, if you set one up, the charger's camera. The app shows the same as the Home Assistant card:
-
-<img src="images/app-identify-question.png" alt="The charger card asking Which car is plugged in? with a button for each car, City car and Family car" width="360">
-
-- **The question.** When Home Assistant cannot tell, the charger card shows **Which car is plugged in?** with one
-  button per car, the likeliest first. The first answer wins, from the app, the card or the notification on any
-  phone. If nobody answers, the car that was chosen stays.
-- **The notification.** With the app's own notifications on (Settings → Notifications → via the SpotNav app), the
-  event **Which car is plugged in?** is on by default where Home Assistant identifies cars. The app posts the
-  question with a button per car (with more than three cars, the two likeliest and one that opens the app); a
-  button answers at once, also with the app closed, and the notification then says "EV6 · selected" quietly and
-  goes. When the question is answered elsewhere or decided, the app takes it off at its next check. With instant
-  notifications it comes as soon as Home Assistant asks, otherwise at the next 15-minute check.
-- **The status line** says **Identifying the car…** while Home Assistant looks at the cars, and **Waiting for an
-  answer: which car is plugged in?** while the question is open. Both go once the car is decided.
-- **The car line** on the charger card names the car being planned for, with how it was decided (by the car's
-  charging cable, by position, by the camera, selected manually, or assumed). **⇄ Change car** changes it at any
-  time while a car is plugged in; any paired phone may do it, and it counts as an answer.
-
-<img src="images/app-identifying.png" alt="The charger card just after a plug-in: Identifying the car… on the status line and identifying… on the car line" width="360">
-&nbsp;
-<img src="images/app-identified.png" alt="The charger card with the car line City car, identified by the car's charging cable, and ⇄ to change the car" width="360">
-
-In **Settings → Charger**, the same settings as in the card:
-
-- **Cars at this charger**: the cars that can charge and be planned for here (at least one).
-- **Identification**: **Automatic** (from the cars' own reports, asking when they cannot tell), **Always ask**,
-  or **Off** (the car you chose stays).
-- **Camera**: the camera chosen in Home Assistant, shown here; the camera and its AI task are chosen in the Home
-  Assistant card. **Crop parking spot** fetches a picture to drag the selection around the parking spot; only what
-  is inside is compared.
-
-<img src="images/app-camera-frame.png" alt="Crop parking spot: the camera's picture with the selection around the parking bay, and what is compared" width="360">
-
-In **Settings → Vehicle**, each car has its **Reference picture**, shown as two equal tiles, **Day** and **Night**,
-each cropped as it is compared; tap either to open the reference dialog. With the car
-parked at the charger, **Take day picture** (and, in the dark, **Take night picture** for the camera's infrared);
-over a picture the button is **Retake**, and **Delete** removes only that picture. **Close** closes the dialog.
-A car without a reference picture is never recognised by the camera.
-
-<img src="images/app-reference-picture.png" alt="A car's reference pictures: the day picture with Retake and Delete, and an empty night slot" width="360">
-
-How it decides, what the camera can and cannot tell apart, which AI model to use and what to send with a field
-report are in [Which car is plugged in?](https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/vehicle-identification.md)
-in the Home Assistant integration's documentation.
-
-## Plan chart
-
-<img src="images/app-plan-chart.png" alt="Charging plan card: today's and tomorrow's prices as dots, the planned period shaded, the current time marked, with cost, energy, range and the period's start and end" width="480">
-
-By default (**Day**), today's prices and tomorrow's (grey) on one 24-hour axis, green below the day's average and red above
-it, with the highest, lowest and current price on top. The shaded band is the planned charging, solid
-today and hatched with diagonal lines tomorrow; the line is now. When Home Assistant has a new plan
-waiting for the current charging window to end, that window is drawn as installed and the new plan from
-its end, in place of the windows it replaces. The hours under the chart read 00, 03, 06 and so on every
-three hours, up to 24 at the right edge; where the chart is too narrow for them, every six hours. The
-table button opens the price table.
-
-With **From now** (Settings → Display) and tomorrow's prices published, the axis runs in real time from
-the start of the current hour to the end of the last published day, about 32 to 35 hours, with the now
-line at the left edge. Every interval sits at its own time: nothing that has already ended is drawn,
-tomorrow is drawn like today, and a charging period across midnight is one band; every band is solid.
-The hours are labelled every three hours as on **Day** (every six where they would touch), the right
-edge reads 24, and midnight is a dashed line labelled with the new day's weekday and date.
-The highest and lowest price then cover everything drawn rather than today's alone. Until tomorrow's
-prices are published, **From now** looks exactly like **Day**.
-
-## Price table
-
-<img src="images/app-price-table.png" alt="Price table with time, today's and tomorrow's price per quarter-hour, coloured by price, the current quarter outlined" width="360">
-
-Every published interval (a quarter-hour, half-hour or hour) of today and tomorrow, coloured from
-cheap to dear, starting at the current one.
-
-## Home-screen widget
-
-<img src="images/app-widget.png" alt="SpotNav widget on the home screen: the price chart for today and tomorrow with the planned period shaded and the charging status line underneath" width="480">
-
-The widget shows the same chart, on the same time axis as the app (Settings → Display), and, when a
-charger is paired, its status line. On a narrow widget the axis keeps fewer labels: every six hours in
-place of every three, then the 06 and 18 go, then noon and midnight, while a new day's label stays. Tap it to open the app. Each widget has
-its own settings.
-
-## Settings
-
-<img src="images/app-settings-general.png" alt="General settings: language and colour theme" width="420">
-
-**General**: the app's language and colour theme.
-
-<img src="images/app-settings-display.png" alt="Display settings: the chart time axis, Day or From now, and under Widget the settings of the widget the app was opened from" width="420">
-
-**Display**: **Chart time axis** is **Day** (00–24, with tomorrow drawn over today; the default) or
-**From now** (from this hour to the end of the last published day; see [Plan chart](#plan-chart)). The
-chart in the app and the widgets follow it. **Price unit** is the area's minor unit (for example **öre/kWh**, the
-default) or its major unit (**kr/kWh**), named from the area itself: 163,1 öre/kWh or 1,63 kr/kWh. The
-price on top of the chart, the highest and lowest, the price axis, a tapped price, the price table, the
-average price in the charge history and the widgets follow it; costs and savings stay in kronor (or the
-area's major unit), and energy tax and grid fee are still entered in öre. It is offered when the area
-names both units. Both settings are this phone's own and are not sent to Home Assistant. Under **Widget** are the settings of the widget the app was
-opened from: whether its status line is shown.
-
-<img src="images/app-settings-price.png" alt="Electricity price settings: price area, VAT, energy tax and grid fee, with a button to change area and taxes" width="420">
-
-**Electricity price**: the price area and additions. Prices are always shown as the area publishes
-them, every 15, 30 or 60 minutes, as in the Home Assistant card. Once paired, area and taxes are
-Home Assistant's and are changed through it. With a Home Assistant that keeps the price on its own **Electricity
-price** device, the card first names that price and how many chargers use it (**Electricity price SE4 · used by all
-2 chargers**), and a change to the area or a fee then applies to all of them. With several electricity prices,
-**Price from** chooses the one this charger uses (on a site, for every charger there). When two prices for the same
-area have different fees, the card asks once which to use, each button with that price's fees, or **Keep both**.
-
-<img src="images/app-settings-vehicle.png" alt="Vehicle card in settings with a tab per car: charge level, charge limit, charge target, minimum charge level, battery capacity reported by the vehicle, consumption, onboard charger, plug sensor, location and the day and night reference picture tiles" width="420">
-
-**Vehicle**: the car this charger plans for, and its properties. With two or more cars the card has a tab per car;
-each car has its own plug sensor, location and reference picture. **Charge target** is the car's own, the same at
-every charger; tapping it opens a slider from 0 to 100 %, the value shown large above it. A car with none stored
-opens at the target it is planned with, marked **(default)**, and nothing is saved unless you move the slider.
-**Minimum charge level** (Off, or 10 to 80 %, with a Home Assistant that has it) is the car's own too: its slider
-starts at Off, goes in steps of 5, and stops at the charge target, the track beyond it hatched. Below it Home
-Assistant charges at once at full current, whatever the strategy, unless you paused or stopped the charge. It needs
-the car's charge level, and says so beside the value when the car has no level sensor. **Charge limit** is the limit
-the car reports; where Home Assistant can write it, tapping it opens a slider over the range and step the car's
-integration takes (50 to 100 % in steps of 10 on a Kia, for example; 1 to 100 % when Home Assistant does not say),
-the value shown large above it. Nothing is written unless you move the slider, and at most once a minute per car.
-**Wake the car for a reading** (On or Off, shown only for a car whose integration Home Assistant can wake) asks the
-car itself to report its charge level when a charge ends and its last report is old. It uses the car's 12 V battery
-and the maker's limit on requests, so SpotNav does it at most once per charge end; the app's own Refresh never wakes
-the car.
-
-<img src="images/app-settings-charger.png" alt="Charger card in settings: how start and stop, charging current and the energy register are controlled, the charger's priority, the charge periods, the cars at this charger, identification and the camera" width="420">
-
-**Charger**: how Home Assistant starts and stops the charger, sets its current and reads its energy, the charger's priority among the site's chargers, **Phase switching for solar** (**Off** or **Automatic**: when the sun does not cover charging on three phases, the car charges on one instead of drawing from the grid; shown only for a charger Home Assistant can switch, wired for three phases, on a site with solar), **Charge periods** (**Automatic** or **1 period** to **8 periods**, see [above](#main-screen)), and, where several cars can charge, which car is plugged in (see [above](#which-car-is-plugged-in)). Whether users of the Home Assistant card who are not administrators may change the strategy and the plan is set in the card (Settings → Charger, administrators only); the app always may, and keeps that choice as it is when it saves settings.
-
-<img src="images/app-settings-site.png" alt="Site card in settings: main fuse, measurement mode, battery and load balancing" width="420">
-
-**Site**: the main fuse and how the site's load is measured, and load balancing.
-
-<img src="images/app-settings-notifications.png" alt="Notifications card: via the Home Assistant app and via the SpotNav app" width="420">
-
-**Notifications**: charging notifications through the Home Assistant companion app, or from this app. A charge
-that ends at the target is told in Home Assistant's words: *Charging complete: the target 80 % was reached (the car
-shows 81 %)* on the car's reading, *Charging stopped at 86 % (estimated), the target is 91 %* on SpotNav's estimate
-(also when the car ended the plan's charge itself on an estimate), and *The car stopped charging at 79 %, just below
-the target 80 %* when the car's reading is short of it.
-
-<img src="images/app-settings-home-assistant.png" alt="Home Assistant card in settings showing the paired address with Refresh and Remove" width="420">
-
-**Home Assistant**: the paired instance, with **Refresh** (ask it again; a charger added there since is offered for pairing) and **Remove**, and **Pair again** when Home Assistant no longer recognises the phone (see [Pairing](#pairing-with-home-assistant)).
-
-## Charge history
-
-<img src="images/app-history.png" alt="Charge history for a month: energy, cost, average price, number of charges and estimated saving, a bar per day coloured by price, and the list of charges" width="360">
-
-A paired charger's charges month by month: totals, an estimated saving against each day's average
-price, a bar per day (greener is cheaper) and every charge with its energy, cost and vehicle. **Export
-CSV** shares the month as a file.
+The Home Assistant side (installing SpotNav, chargers, meters, batteries and heat pumps) is in the
+[SpotNav documentation](https://spotnav.sensnology.se).

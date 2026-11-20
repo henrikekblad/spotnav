@@ -23,6 +23,17 @@ import se.sensnology.spotnav.ha.client.PriceSourceUpdate
 import se.sensnology.spotnav.ha.client.SiteUpdate
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.heat.Heat
+import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatHistory
+import se.sensnology.spotnav.ha.heat.HeatWrite
+import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ha.house.HouseLoads
+import se.sensnology.spotnav.ha.house.HouseNow
+import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ha.site.BatteryControlRead
+import se.sensnology.spotnav.ha.site.HeatSettings
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -30,6 +41,7 @@ import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.ha.client.SessionsOutcome
 import se.sensnology.spotnav.ha.sessions.SessionsCsv
 import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import java.time.LocalDate
 import java.time.YearMonth
 import java.util.concurrent.Executor
 
@@ -92,6 +104,37 @@ internal interface HaTransport {
     /** `suggest_import_target`: a suggested import target, `null` for none; never throws. */
     fun suggestImportTarget(): SuggestImportTarget.Suggestion? = null
 
+    /** `battery_control`: the battery control status, after writing the battery mode when [mode] is given; never throws. */
+    fun batteryControl(mode: String?): BatteryControlRead.Outcome = BatteryControlRead.Outcome.Failed(null)
+
+    /** `get_heat`: the site's heat settings; never throws. */
+    fun heatSettings(): SiteRead<HeatSettings> = SiteRead.Failed(null)
+
+
+    /** `get_house_now`: the site's live flows. */
+    fun houseNow(): SiteRead<HouseNow> = SiteRead.Failed(null)
+
+    /** `get_house`: the site's house for today or a past day. */
+    fun house(date: LocalDate?): SiteRead<House> = SiteRead.Failed(null)
+
+    /** `get_house_history`: a day, month or year of the house. */
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?): SiteRead<HouseHistory> = SiteRead.Failed(null)
+
+    /** `get_house_loads`: what the house or the heat used, by device. */
+    fun houseLoads(kind: String, period: String, date: LocalDate?): SiteRead<HouseLoads> = SiteRead.Failed(null)
+
+    /** `get_heat`: the site's heating. */
+    fun heat(): SiteRead<Heat> = SiteRead.Failed(null)
+
+    /** `get_heat_history`: a day, month or year of the heating. */
+    fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?): SiteRead<HeatHistory> = SiteRead.Failed(null)
+
+    /** `update_heat`: the dial or Home/Away, with its compare-and-set; never throws. */
+    fun updateHeat(request: HeatWrite.Request): HeatWrite.Outcome = HeatWrite.Outcome.Failed(null)
+
+    /** `heat_boost`: the Boost button's "start" or "stop"; never throws. */
+    fun heatBoost(action: String): HeatBoostWrite.Outcome = HeatBoostWrite.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -150,6 +193,26 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun powerMonth(month: YearMonth?) = HomeAssistantClient.powerMonth(connection, month)
 
     override fun suggestImportTarget() = HomeAssistantClient.suggestImportTarget(connection)
+
+    override fun batteryControl(mode: String?) = HomeAssistantClient.batteryControl(connection, mode)
+
+    override fun heatSettings() = HomeAssistantClient.heatSettings(connection)
+
+    override fun houseNow() = HomeAssistantClient.houseNow(connection)
+
+    override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
+
+    override fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.houseHistory(connection, period, date)
+
+    override fun houseLoads(kind: String, period: String, date: LocalDate?) = HomeAssistantClient.houseLoads(connection, kind, period, date)
+
+    override fun heat() = HomeAssistantClient.heat(connection)
+
+    override fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?) = HomeAssistantClient.heatHistory(connection, period, date)
+
+    override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
+
+    override fun heatBoost(action: String) = HomeAssistantClient.heatBoost(connection, action)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -368,6 +431,86 @@ internal class HaSession(
     fun powerMonth(month: YearMonth?, done: (PowerMonthRead.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.powerMonth(month)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_now` (never throws). */
+    fun houseNow(done: (SiteRead<HouseNow>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseNow()
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house` (never throws). */
+    fun house(date: LocalDate?, done: (SiteRead<House>) -> Unit) {
+        background.execute {
+            val outcome = transport.house(date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_history` (never throws). */
+    fun houseHistory(period: HouseHistory.HistoryKind, date: LocalDate?, done: (SiteRead<HouseHistory>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseHistory(period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `battery_control`, writing the battery [mode] first when given (never throws). */
+    fun batteryControl(mode: String?, done: (BatteryControlRead.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.batteryControl(mode)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_heat` (never throws). */
+    fun heat(done: (SiteRead<Heat>) -> Unit) {
+        background.execute {
+            val outcome = transport.heat()
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_heat` for the Settings screen (never throws). */
+    fun heatSettings(done: (SiteRead<HeatSettings>) -> Unit) {
+        background.execute {
+            val outcome = transport.heatSettings()
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_house_loads` (never throws). */
+    fun houseLoads(kind: String, period: String, date: LocalDate?, done: (SiteRead<HouseLoads>) -> Unit) {
+        background.execute {
+            val outcome = transport.houseLoads(kind, period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `get_heat_history` (never throws). */
+    fun heatHistory(period: HouseHistory.HistoryKind, date: LocalDate?, done: (SiteRead<HeatHistory>) -> Unit) {
+        background.execute {
+            val outcome = transport.heatHistory(period, date)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_heat` (never throws). */
+    fun updateHeat(request: HeatWrite.Request, done: (HeatWrite.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateHeat(request)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `heat_boost`: the Boost button pressed (never throws). */
+    fun heatBoost(action: String, done: (HeatBoostWrite.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.heatBoost(action)
             mainThread { done(outcome) }
         }
     }

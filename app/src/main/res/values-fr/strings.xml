@@ -118,6 +118,12 @@
   <string name="instance_removed">La connexion a été supprimée</string>
   <string name="instance_refreshing">Recherche…</string>
   <string name="instance_connected">Connecté à %1$s</string>
+  <string name="instance_connected_nothing">Connecté, mais SpotNav dans Home Assistant n\'a encore ni borne ni maison. Ajoutez-en une dans Home Assistant, ou mettez-y SpotNav à jour vers la 3.0.</string>
+  <string name="site_home_title">Maison : %1$s</string>
+  <string name="site_home_chargers">Bornes : %1$s</string>
+  <string name="site_home_no_charger">Aucune borne : les pages maison et chauffage</string>
+  <string name="site_show">Afficher</string>
+  <string name="site_price_read_only">Une maison sans borne affiche ici son prix de l\'électricité et son tarif réseau ; ils se modifient dans Home Assistant.</string>
   <string name="instance_stale">N\'est plus dans Home Assistant : %1$s</string>
   <string name="instance_unprovisioned">Dans Home Assistant mais pas associé à cette application : %1$s</string>
   <string name="instance_pair_again">Associer à nouveau</string>
@@ -830,4 +836,733 @@
   <string name="card_grid_fee_high_fee" formatted="false">Frais</string>
   <string name="card_grid_fee_high_remove" formatted="false">Supprimer les frais en heures de pointe</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Saisissez les frais en heures de pointe.</string>
+  <string name="card_house_title" formatted="false">Maison</string>
+  <string name="card_heat_title" formatted="false">Chauffage</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav ne pilote encore rien.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav calcule ce qu\'il ferait du chauffage et l\'affiche ici. Rien n\'est encore envoyé à la pompe à chaleur.</string>
+  <string name="card_heat_loading" formatted="false">Lecture du chauffage…</string>
+  <string name="card_heat_failed" formatted="false">Le chauffage n\'a pas pu être lu.</string>
+  <string name="card_heat_unsupported" formatted="false">La carte a besoin d\'un SpotNav plus récent.</string>
+  <string name="card_heat_dial_label" formatted="false">Température souhaitée</string>
+  <string name="card_heat_dial_lower" formatted="false">Baisser d\'un demi-degré</string>
+  <string name="card_heat_dial_raise" formatted="false">Monter d\'un demi-degré</string>
+  <string name="card_heat_dial_band" formatted="false">entre {low} et {high} °C</string>
+  <string name="card_heat_measured" formatted="false">Intérieur {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Intérieur {value} (la plus froide : {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Aucune sonde intérieure choisie</string>
+  <string name="card_heat_outdoor" formatted="false">Dehors {value}</string>
+  <string name="card_heat_mode_home" formatted="false">À la maison</string>
+  <string name="card_heat_mode_away" formatted="false">Absent</string>
+  <string name="card_heat_mode_away_until" formatted="false">Absent jusqu\'au {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Modifier</string>
+  <string name="card_heat_away_title" formatted="false">Absent jusqu\'au</string>
+  <string name="card_heat_away_help" formatted="false">Quand SpotNav pilotera le chauffage, il gardera la maison 3 °C plus fraîche, jamais sous 16 °C, et la réchauffera avant votre retour.</string>
+  <string name="card_heat_away_date" formatted="false">Date</string>
+  <string name="card_heat_away_time" formatted="false">Heure</string>
+  <string name="card_heat_pump_heating" formatted="false">Pompe à chaleur : chauffage · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Pompe à chaleur : eau chaude · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Pompe à chaleur : au repos · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Pompe à chaleur : aucune mesure</string>
+  <string name="card_heat_would_lower" formatted="false">Baisserait à {temp} jusqu\'à {until} : heures chères</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Baisserait à {temp} jusqu\'à {until} : libère de la place sous l\'objectif de soutirage et le fusible</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Baisserait à {temp} jusqu\'à {until} : trop chaud à l\'intérieur</string>
+  <string name="card_heat_would_preheat" formatted="false">Préchaufferait à {temp} jusqu\'à {until} : bon marché avant des heures chères</string>
+  <string name="card_heat_would_raise" formatted="false">Augmenterait le chauffage (SG Ready) à {temp} jusqu\'à {until} : bon marché avant les heures chères</string>
+  <string name="card_heat_would_night" formatted="false">Garderait la maison plus fraîche la nuit, {temp} jusqu\'à {until}</string>
+  <string name="card_heat_would_away" formatted="false">Garderait {temp} jusqu\'à {until} pendant votre absence</string>
+  <string name="card_heat_would_return" formatted="false">Réchaufferait pour votre retour : {temp} jusqu\'à {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Garderait {temp} jusqu\'à {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Pas encore de prix : ne baisserait rien</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Trop froid dehors pour baisser</string>
+  <string name="card_heat_guard_room_cold" formatted="false">La pièce la plus froide est sous la plage : pas de baisse</string>
+  <string name="card_heat_relay_closed" formatted="false">Le relais baisse le chauffage depuis {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Le relais baisse le chauffage depuis {since}, ouverture prévue à {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Le relais devrait baisser le chauffage {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">SpotNav suivra la température et le mode À la maison/Absent réglés ici dès qu\'il pilotera le chauffage.</string>
+  <string name="card_heat_today_label" formatted="false">Aujourd\'hui</string>
+  <string name="card_heat_today_heat" formatted="false">chauffage {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">dont zones {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">eau chaude {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} se règle seul sur le prix de l\'électricité. Désactivez-le dans la pompe à chaleur ({where}) si SpotNav doit piloter.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Des mesures dont SpotNav a besoin sont désactivées dans l\'intégration de la pompe à chaleur : {names}. Activez-les sur l\'appareil.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} pilote la pompe à chaleur ; SpotNav la compte dans la consommation de la maison et observe seulement.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">L\'automatisation \'{name}\' pilote le relais : désactivez-la quand SpotNav doit piloter le chauffage.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">L\'automatisation \'{name}\' pilote aussi {targets} : désactivez-la quand SpotNav doit piloter.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Désactivez l\'automatisation \'{name}\' pour que SpotNav puisse piloter le chauffage.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">température extérieure</string>
+  <string name="card_heat_role_supply_temp" formatted="false">température de départ</string>
+  <string name="card_heat_role_return_temp" formatted="false">température de retour</string>
+  <string name="card_heat_role_room_temp" formatted="false">température ambiante</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">température de l\'eau chaude</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">degrés-minutes</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">vitesse du compresseur</string>
+  <string name="card_heat_role_compressor_state" formatted="false">état du compresseur</string>
+  <string name="card_heat_role_immersion_power" formatted="false">puissance de l\'appoint électrique</string>
+  <string name="card_heat_role_immersion_state" formatted="false">état de l\'appoint électrique</string>
+  <string name="card_heat_role_priority" formatted="false">priorité</string>
+  <string name="card_heat_error_generic" formatted="false">Enregistrement impossible.</string>
+  <string name="card_heat_error_conflict" formatted="false">Quelqu\'un d\'autre l\'a modifié entre-temps ; la dernière version est affichée.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Seul un administrateur peut modifier cela.</string>
+  <string name="card_heat_error_range" formatted="false">La valeur est hors des limites permises.</string>
+  <string name="card_heat_error_step" formatted="false">Choisissez des demi-degrés.</string>
+  <string name="card_heat_error_past" formatted="false">Choisissez une heure à venir.</string>
+  <string name="card_heat_error_far" formatted="false">Au plus 90 jours à l\'avance.</string>
+  <string name="card_heat_now_heating" formatted="false">Chauffe</string>
+  <string name="card_heat_now_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_now_idle" formatted="false">Au repos</string>
+  <string name="card_heat_now_lowered" formatted="false">Abaissé</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Abaissé jusqu\'à {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Relevé</string>
+  <string name="card_heat_now_raised_until" formatted="false">Relevé jusqu\'à {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan : {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">abaissement {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">préchauffage {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">relèvement {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">nuit plus fraîche {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">absent {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">eau chaude {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Aucun abaissement prévu dans les 12 prochaines heures</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Voiture en charge</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav a abaissé</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav a abaissé {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav a augmenté</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav a augmenté {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Relais a baissé</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relais devrait baisser</string>
+  <string name="card_heat_band_relay_hour" formatted="false">relais a baissé {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">relais devrait baisser {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">absent</string>
+  <string name="card_heat_chart_car" formatted="false">voiture en charge</string>
+  <string name="card_heat_chart_coldest" formatted="false">la plus froide {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Touchez ou pointez le graphique pour les valeurs d\'un moment.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">eau chaude</string>
+  <string name="card_heat_chart_label" formatted="false">La journée : température intérieure, consigne, abaissement par SpotNav, eau chaude et voiture</string>
+  <string name="card_heat_chart_mean" formatted="false">pièces {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">nuit</string>
+  <string name="card_heat_chart_planned" formatted="false">Abaissement prévu</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">abaissement prévu</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Hausse prévue</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">hausse prévue</string>
+  <string name="card_heat_chart_preheat" formatted="false">préchauffage</string>
+  <string name="card_heat_chart_room_warm" formatted="false">trop chaud à l\'intérieur</string>
+  <string name="card_heat_chart_setpoint" formatted="false">consigne {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Augmenterait</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">augmenterait</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Pièce la plus froide</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Plage de confort {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Pièces, moyenne</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Consigne</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Consigne (SpotNav abaisse)</string>
+  <string name="card_heat_plan_none" formatted="false">Rien à afficher pour ce jour.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min sous {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">minimum {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} les mêmes que le relais</string>
+  <string name="card_heat_review_plan" formatted="false">Plan de SpotNav {hours} : {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">Le plan de SpotNav n\'a pas baissé</string>
+  <string name="card_heat_review_relay" formatted="false">Hier, le relais a baissé {hours} : {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Hier, le relais n\'a pas baissé</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Consommation</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when} : rien à afficher</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav a économisé {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Consommation du chauffage par part</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_use_part_other" formatted="false">Autre chauffage</string>
+  <string name="card_heat_use_part_pump" formatted="false">Pompe à chaleur</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav a économisé {amount} sur le chauffage</string>
+  <string name="card_heat_use_total" formatted="false">Chauffage {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Unité</string>
+  <string name="card_heat_use_unit_money" formatted="false">Coût en {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} j</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when} : pas de relevé</string>
+  <string name="card_hist_heat_below" formatted="false">Heures sous {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} sur {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">après un puisage</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">perte à l\'arrêt</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">cause inconnue</string>
+  <string name="card_hist_heat_coldest" formatted="false">Pièce la plus froide</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">moyenne {mean} · minimum {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Confort</string>
+  <string name="card_hist_heat_cost" formatted="false">Ce que cela a coûté</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Par degré-jour</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} degrés-jours sous {base} °C sur {days} jours. Toute l\'énergie du compteur (eau chaude comprise) par degré-jour : la même maison par un autre temps donne le même chiffre, une nouvelle pompe, une isolation ou des fenêtres se voient donc comme une marche.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Coûts calculés avec les prix enregistrés et les frais actuels.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">La température extérieure est celle de la météo, des heures gardées par la prévision de la maison (huit semaines) : choisissez une sonde extérieure dans les réglages du chauffage pour tout l\'historique.</string>
+  <string name="card_hist_heat_hint" formatted="false">Touchez ou pointez une barre pour ses chiffres.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Dont eau chaude</string>
+  <string name="card_hist_heat_immersion" formatted="false">Résistance d\'appoint</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} h, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Modèle de la maison</string>
+  <string name="card_hist_heat_model_error" formatted="false">Erreur de la prévision de chauffage</string>
+  <string name="card_hist_heat_model_none" formatted="false">Affiché dès que le modèle de la maison a évalué un jour avec le compteur de chauffage.</string>
+  <string name="card_hist_heat_model_note" formatted="false">L\'écart entre la prévision de chauffage du modèle de la maison et le compteur, en moyenne par heure sur les jours évalués. Plus c\'est petit, mieux c\'est.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">Le compteur de la pompe à chaleur n\'a aucun relevé sur cette période.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Aucun compteur de pompe à chaleur trouvé ni choisi : choisissez-en un dans les réglages du chauffage.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Aucune température extérieure avec historique : choisissez une sonde extérieure dans les réglages du chauffage pour les degrés-jours.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">Les sondes intérieures n\'ont pas d\'historique sur cette période.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">Aucune sonde intérieure n\'est choisie dans les réglages du chauffage.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">Aucun cycle d\'eau chaude trouvé ce jour-là.</string>
+  <string name="card_hist_heat_no_split" formatted="false">L’eau chaude n’est comptée à part que pour les jours que l’historique de Home Assistant garde encore à 5 minutes près (une dizaine de jours).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Pompe à chaleur par degré-jour</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/degré-jour</string>
+  <string name="card_hist_heat_review" formatted="false">Le relais et le plan de SpotNav</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">minimum {min}, {minutes} min sous la plage</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">aucune sonde de pièce</string>
+  <string name="card_hist_heat_review_note" formatted="false">Argent : la chaleur qu\'une baisse retire, moins ce qui est racheté après. Minimum : la pièce la plus froide pendant la baisse et trois heures après, bas de la plage {low}. Les heures de SpotNav ne montrent leur propre effet que là où le relais a aussi baissé ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav aurait baissé {hours}</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Le relais a baissé {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Cycles d\'eau chaude</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Déduit de la seule énergie (pas de sonde de ballon) : un cycle nettement au-dessus du petit habituel est un puisage, de même taille environ c\'est le ballon refroidi sans puisage.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Ce que SpotNav aurait fait</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Appris de {blocks} baisses mesurées du relais.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Aurait déplacé {kwh} hors de {hours} heures chères sur {days} jours.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">S’affiche dès qu’il y a au moins une journée entière avec prix et relevés.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">Le plan de SpotNav tel qu\'il a été fait heure par heure ({kept} sur {days} jours), sinon recalculé avec les prix du jour et les réglages actuels. Une baisse est comptée comme retirant {share} de la chaleur, dont {rebound} est racheté après ; on suppose que la maison reste dans la plage.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Une hypothèse prudente, jusqu\'à ce que les baisses du relais soient mesurées par le compteur de chaleur.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Aurait économisé</string>
+  <string name="card_hist_heat_split_days" formatted="false">L’eau chaude est comptée à part pour {days} jours sur {total} : ceux que l’historique de Home Assistant garde encore à 5 minutes près.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Les degrés-jours s’affichent dès qu’il y a quelques jours froids pour le calcul.</string>
+  <string name="card_hist_heat_total" formatted="false">Pompe à chaleur, chauffage et eau chaude</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh par degré-jour, mois par mois</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month} : {value} kWh par degré-jour ({dd} degrés-jours)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Touchez un mois pour son chiffre ; une marche vers le bas, c\'est la maison qui consomme moins par le même temps.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month} : pas de chiffre (trop peu de degrés-jours ou pas de données)</string>
+  <string name="card_hist_heat_use" formatted="false">Consommation</string>
+  <string name="card_hist_heat_zones" formatted="false">Dont zones (plancher chauffant, air-air)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">Le chauffage compte les compteurs propres des zones à partir du {date} : la consommation y monte d\'une marche. Les degrés-jours ne concernent que la pompe à chaleur.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Les prix sont connus pour {share} de la période ; le reste n\'est pas compté.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Aucun prix n\'est connu pour cette période, donc pas de coût.</string>
+  <string name="card_hist_title_heat" formatted="false">Historique du chauffage</string>
+  <string name="card_house_earn_none_shown" formatted="false">Aucune part choisie.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav montre ce qu\'il ferait, mais rien n\'est encore envoyé d\'ici. Une batterie domestique n\'est pilotée qu\'une fois le pilotage de la batterie activé dans les paramètres.</string>
+  <string name="card_house_now_hold" formatted="false">Garde sa charge</string>
+  <string name="card_house_now_discharge" formatted="false">Se décharge</string>
+  <string name="card_house_now_sun" formatted="false">Charge au soleil</string>
+  <string name="card_house_now_idle" formatted="false">Au repos</string>
+  <string name="card_house_now_own" formatted="false">Pilotage intégré</string>
+  <string name="card_house_legend_charge" formatted="false">Charge sur le réseau</string>
+  <string name="card_house_legend_sell" formatted="false">Vend au réseau</string>
+  <string name="card_house_sub_mode" formatted="false">mode {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Autoconsommation</string>
+  <string name="card_house_mode_balanced" formatted="false">Équilibré</string>
+  <string name="card_house_mode_max_profit" formatted="false">Gain max.</string>
+  <string name="card_house_loading" formatted="false">Lecture de la maison…</string>
+  <string name="card_house_failed" formatted="false">La maison n\'a pas pu être lue.</string>
+  <string name="card_house_saving_waiting" formatted="false">Le plan de la batterie n\'a pas encore tourné.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Pas de plan de batterie pour l\'instant ; les détails disent ce qui manque.</string>
+  <string name="card_house_compare_own" formatted="false">Pilotage intégré de la batterie</string>
+  <string name="card_house_plan_next" formatted="false">La batterie {act} jusqu\'à {time}, puis {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">La batterie {act} aussi loin que va le plan.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav {act} jusqu\'à {time}, puis {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav {act} aussi loin que va le plan.</string>
+  <string name="card_house_plan_who_own" formatted="false">La batterie se pilote elle-même ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Seulement en test</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">se charge sur le réseau</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">chargerait sur le réseau</string>
+  <string name="card_house_plan_act_hold" formatted="false">garde sa charge</string>
+  <string name="card_house_plan_inf_hold" formatted="false">garderait la charge</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">vend au réseau</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">vendrait au réseau</string>
+  <string name="card_house_plan_act_self" formatted="false">couvre la maison et stocke le soleil</string>
+  <string name="card_house_plan_inf_self" formatted="false">couvrirait la maison et stockerait le soleil</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">elle se charge sur le réseau</string>
+  <string name="card_house_plan_then_hold" formatted="false">elle garde sa charge</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">elle vend au réseau</string>
+  <string name="card_house_plan_then_self" formatted="false">elle couvre la maison et stocke le soleil</string>
+  <string name="card_house_now_tab_sun" formatted="false">Soleil auj.</string>
+  <string name="card_house_now_tab_grid" formatted="false">Acheté auj.</string>
+  <string name="card_house_now_tab_sold" formatted="false">vendu {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batterie</string>
+  <string name="card_house_now_tab_car" formatted="false">Voiture</string>
+  <string name="card_house_now_tab_heat" formatted="false">Chauffage auj.</string>
+  <string name="card_house_now_tab_house" formatted="false">Maison auj.</string>
+  <string name="card_house_now_tab_house_now" formatted="false">La maison maintenant</string>
+  <string name="card_house_now_tab_no_live" formatted="false">pas encore de valeurs en direct</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">Le soleil donne {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">Le soleil donne {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Achète {kw} au réseau</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Vend {kw} au réseau</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">La batterie donne {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">La batterie se charge à {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">La voiture donne {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">La voiture se charge à {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Chauffage {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">Le chauffage utilise {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">Aujourd\'hui : {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">la batterie a rapporté {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">la batterie a rapporté {amount} (pilotage propre)</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav a économisé {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} auj.</string>
+  <string name="card_house_now_tab_today" formatted="false">auj.</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">hors voiture</string>
+  <string name="card_house_learning_capped_while" formatted="false">Charge sur le réseau au plus à {kw} kW pendant l\'apprentissage des pointes de la maison ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Apprend les pointes de la maison, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Ne se charge pas sur le réseau d\'ici là.</string>
+  <string name="card_learning_days_left_one" formatted="false">encore {days} jour</string>
+  <string name="card_learning_days_left_other" formatted="false">encore {days} jours</string>
+  <string name="card_house_tabs" formatted="false">Vues de la maison</string>
+  <string name="card_house_tab_now" formatted="false">Maintenant</string>
+  <string name="card_house_tab_flow" formatted="false">Flux d\'énergie</string>
+  <string name="card_house_tab_graph" formatted="false">Graphique d\'énergie</string>
+  <string name="card_house_tab_price" formatted="false">Prix et batterie</string>
+  <string name="card_house_tab_price_only" formatted="false">Prix</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav peut seulement lire le chauffage ici.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav peut seulement lire le chauffage ici – choisissez un pilotage dans Paramètres → Chauffage → Pilotage.</string>
+  <string name="card_heat_none_value" formatted="false">Rien trouvé</string>
+  <string name="card_house_tab_earn" formatted="false">Gains</string>
+  <string name="card_house_tab_short_now" formatted="false">Direct</string>
+  <string name="card_house_tab_short_flow" formatted="false">Flux</string>
+  <string name="card_house_tab_short_graph" formatted="false">Courbe</string>
+  <string name="card_house_tab_short_earn" formatted="false">Gains</string>
+  <string name="card_house_tab_short_price" formatted="false">Prix</string>
+  <string name="card_house_picker_today" formatted="false">Aujourd\'hui</string>
+  <string name="card_house_picker_yesterday" formatted="false">Hier</string>
+  <string name="card_house_picker_through" formatted="false">{label} · jusqu\'à {time}</string>
+  <string name="card_hist_period_label" formatted="false">Période</string>
+  <string name="card_hist_period_day" formatted="false">Jour</string>
+  <string name="card_hist_period_month" formatted="false">Mois</string>
+  <string name="card_hist_period_year" formatted="false">Année</string>
+  <string name="card_hist_previous_day" formatted="false">Jour précédent</string>
+  <string name="card_hist_previous_month" formatted="false">Mois précédent</string>
+  <string name="card_hist_previous_year" formatted="false">Année précédente</string>
+  <string name="card_hist_next_day" formatted="false">Jour suivant</string>
+  <string name="card_hist_next_month" formatted="false">Mois suivant</string>
+  <string name="card_hist_next_year" formatted="false">Année suivante</string>
+  <string name="card_hist_pick_day" formatted="false">Choisir un jour</string>
+  <string name="card_hist_pick_month" formatted="false">Choisir un mois</string>
+  <string name="card_hist_pick_year" formatted="false">Choisir une année</string>
+  <string name="card_house_flow_solar" formatted="false">Soleil</string>
+  <string name="card_house_flow_battery" formatted="false">Batterie</string>
+  <string name="card_house_flow_grid" formatted="false">Réseau</string>
+  <string name="card_house_flow_house" formatted="false">Maison</string>
+  <string name="card_house_flow_car" formatted="false">Voiture</string>
+  <string name="card_house_flow_heat" formatted="false">Chauffage</string>
+  <string name="card_house_flow_soc_now" formatted="false">maintenant {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">fin {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">Le flux d’énergie du jour apparaît dès que les cinq premières minutes sont là.</string>
+  <string name="card_house_loads_title" formatted="false">Ce que la maison a consommé</string>
+  <string name="card_house_loads_title_heat" formatted="false">Ce que le chauffage a consommé</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Voir ce que la maison a consommé</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Voir ce que le chauffage a consommé</string>
+  <string name="card_house_loads_tap" formatted="false">Touchez Maison pour voir ce qui a consommé son énergie.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Touchez Maison ou Chauffage pour voir ce qui a consommé l\'énergie.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Autres mesurés</string>
+  <string name="card_house_loads_unknown" formatted="false">Inconnu</string>
+  <string name="card_house_loads_today" formatted="false">Aujourd\'hui jusqu\'ici</string>
+  <string name="card_house_loads_reading" formatted="false">Lecture des compteurs…</string>
+  <string name="card_house_loads_failed" formatted="false">Les compteurs n\'ont pas pu être lus pour l\'instant.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Cela demande une intégration SpotNav plus récente.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Il n\'y a pas de chiffre pour la maison sur cette période.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Autres mesurés: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">Les compteurs totalisent {kwh} de plus que la maison, donc Inconnu est affiché à 0.</string>
+  <string name="card_house_loads_none" formatted="false">Aucun compteur sur des appareils individuels pour l\'instant. Ajoutez-les dans le tableau de bord Énergie de Home Assistant, sous Appareils individuels, pour les voir ici.</string>
+  <string name="card_house_loads_car_heat" formatted="false">La voiture et le chauffage sont montrés à part dans le flux et ne sont pas compris ici.</string>
+  <string name="card_house_loads_car" formatted="false">La voiture est montrée à part dans le flux et n\'est pas comprise ici.</string>
+  <string name="card_house_loads_heat" formatted="false">Le chauffage est montré à part dans le flux et n\'est pas compris ici.</string>
+  <string name="card_house_loads_chart" formatted="false">L\'énergie de la maison : {list}</string>
+  <string name="card_house_loads_changed" formatted="false">modifié par vous</string>
+  <string name="card_house_loads_implausible" formatted="false">{name} : {hours} heures aux valeurs impossibles ne sont pas comptées (le compteur saute). Corrigez ses statistiques dans Home Assistant sous Outils de développement → Statistiques.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name} : aucune heure n\'avait de valeur possible, il est donc laissé de côté (le compteur saute). Corrigez ses statistiques dans Home Assistant sous Outils de développement → Statistiques.</string>
+  <string name="card_hist_loading" formatted="false">Lecture de l\'historique…</string>
+  <string name="card_hist_failed" formatted="false">L\'historique n\'a pas pu être lu. Réessayez dans un instant.</string>
+  <string name="card_hist_unsupported" formatted="false">L\'intégration ne propose pas encore cet historique : mettez SpotNav à jour.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Le tableau Énergie n\'a pas de compteur réseau, l\'énergie ne peut donc pas être montrée : ajoutez l\'import du réseau dans Paramètres → Tableaux de bord → Énergie.</string>
+  <string name="card_hist_house_no_energy" formatted="false">Aucune énergie mesurée sur cette période.</string>
+  <string name="card_house_tile_sun" formatted="false">Soleil</string>
+  <string name="card_house_tile_house" formatted="false">Maison</string>
+  <string name="card_house_tile_discharged" formatted="false">Déchargé</string>
+  <string name="card_house_tile_charged" formatted="false">Chargé</string>
+  <string name="card_house_tile_bought" formatted="false">Acheté</string>
+  <string name="card_house_tile_sold" formatted="false">Vendu</string>
+  <string name="card_house_tile_heat" formatted="false">Chauffage</string>
+  <string name="card_house_tile_car" formatted="false">Voiture</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Légende</string>
+  <string name="card_house_legend_house" formatted="false">Maison</string>
+  <string name="card_house_legend_heat" formatted="false">Chauffage</string>
+  <string name="card_house_legend_forecast" formatted="false">Prévision</string>
+  <string name="card_house_legend_sun" formatted="false">Soleil</string>
+  <string name="card_house_legend_sun_day" formatted="false">Soleil · points = service de prévision</string>
+  <string name="card_house_legend_battery" formatted="false">Niveau de batterie · pointillé = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Prix d\'achat</string>
+  <string name="card_house_legend_sell_price" formatted="false">Prix de vente</string>
+  <string name="card_house_legend_car" formatted="false">Voiture</string>
+  <string name="card_house_chart_label" formatted="false">Maison, soleil et batterie : 12 heures en arrière, 24 en avant</string>
+  <string name="card_house_chart_description" formatted="false">Barres : la consommation de la maison par heure, mesurée jusqu’à maintenant puis prévue (plus claire). Aire : le soleil. Petit trait au-dessus d’une barre passée : la prévision pour cette heure.</string>
+  <string name="card_house_chart_price_label" formatted="false">Prix et batterie : 12 heures en arrière, 24 en avant</string>
+  <string name="card_house_chart_price_description" formatted="false">Lignes : le prix d\'achat avec toutes les taxes et le prix de vente par heure. Ligne violette : le niveau de la batterie sur l\'axe de droite, en pointillé là où il est planifié. Teintes : le plan charge sur le réseau ou y vend.</string>
+  <string name="card_house_hint" formatted="false">Touchez le graphique pour les chiffres d\'une heure.</string>
+  <string name="card_house_hint_energy" formatted="false">Touchez une heure pour voir ses chiffres. Les barres claires sont des prévisions.</string>
+  <string name="card_house_readout_house" formatted="false">maison {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">maison {kw} prévu</string>
+  <string name="card_house_readout_heat" formatted="false">chauffage {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">chauffage {kw} prévu</string>
+  <string name="card_house_readout_house_both" formatted="false">maison {kw} (prévision {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">soleil {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">soleil {kwh} prévu</string>
+  <string name="card_house_readout_soc" formatted="false">batterie {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batterie {pct} prévue</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">charge sur le réseau</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">vend au réseau</string>
+  <string name="card_house_readout_action_hold" formatted="false">garde sa charge</string>
+  <string name="card_house_readout_price" formatted="false">achat {buy} · vente {sell}</string>
+  <string name="card_house_readout_car" formatted="false">voiture {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">achat {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">vente {sell}</string>
+  <string name="card_house_now" formatted="false">Maint.</string>
+  <string name="card_house_today_cost" formatted="false">Électricité {amount}</string>
+  <string name="card_house_today_sold" formatted="false">solaire vendu {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day} : la batterie a rapporté {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day} : la batterie a gagné {amount} (pilotage propre)</string>
+  <string name="card_house_today" formatted="false">La batterie a rapporté {amount} aujourd\'hui</string>
+  <string name="card_house_today_own" formatted="false">La batterie a gagné {amount} aujourd\'hui (pilotage propre)</string>
+  <string name="card_house_day_no_data" formatted="false">Rien n’a été mesuré ce jour-là.</string>
+  <string name="card_house_graph_label" formatted="false">Énergie utilisée et soleil, par période</string>
+  <string name="card_house_value_hour" formatted="false">la batterie a rapporté {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">la batterie a perdu {amount}</string>
+  <string name="card_house_flow_out" formatted="false">déchargé {kwh}, valant {worth}, moins {cost} que l\'énergie a coûté à charger = {net}</string>
+  <string name="card_house_flow_in" formatted="false">chargé {kwh} pour {cost} (compté lorsque l\'énergie est utilisée)</string>
+  <string name="card_hist_house_chart" formatted="false">Coût de la maison</string>
+  <string name="card_hist_house_hint" formatted="false">Touchez une barre pour ses chiffres.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when} : rien de mesuré</string>
+  <string name="card_battery_title" formatted="false">Batterie domestique</string>
+  <string name="card_battery_intro" formatted="false">SpotNav peut piloter la batterie : la mettre en pause pendant que la voiture charge sur le réseau, la charger quand l’électricité est bon marché et arrêter l’injection quand elle coûte de l’argent. Désactivé tant que vous ne l’activez pas.</string>
+  <string name="card_battery_mode_label" formatted="false">Mode</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">La batterie se charge avec le soleil et alimente la maison. Aucun échange avec le réseau.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend que quand c’est très rentable.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais vend au réseau dès que c’est rentable, usure comprise.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Tant que SpotNav ne pilote pas la batterie, le choix ne fait que déplacer la ligne marquée comme choisie dans la comparaison.</string>
+  <string name="card_battery_plan_costs" formatted="false">Usure comptée à {wear} dans chaque sens · Équilibré vend à partir de {margin} net</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Le plan de la batterie</string>
+  <string name="card_battery_switch" formatted="false">Pilotage de la batterie</string>
+  <string name="card_battery_line_off" formatted="false">Désactivé : SpotNav ne pilote encore rien et montre seulement ce qu’il ferait.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test : SpotNav ne pilote encore rien et consigne seulement ce qu’il ferait.</string>
+  <string name="card_battery_line_checking" formatted="false">Vérifie que la batterie obéit (environ 40 minutes).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Vérifie à nouveau la batterie après une mise à jour.</string>
+  <string name="card_battery_line_on" formatted="false">Activé : SpotNav pilote la batterie.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Ne pilote encore rien : la batterie reste en mode IA jusqu’à ce que vous acceptiez la prise de contrôle.</string>
+  <string name="card_battery_line_waiting" formatted="false">Attend un moment adapté pour la vérification.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Attend un moment adapté pour revérifier la batterie après une mise à jour.</string>
+  <string name="card_battery_line_failed" formatted="false">La vérification a échoué : « {mode} » n’a pas fonctionné. Désactivez puis réactivez pour vérifier à nouveau.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Abandon après cinq essais.</string>
+  <string name="card_battery_line_blocked" formatted="false">Arrêté : un événement inattendu s’est produit et la batterie a été rendue.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Arrêté pour aujourd’hui : les écritures du jour sont épuisées.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">Le micrologiciel de la batterie n’est pas encore lisible.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">Le prochain essai a lieu au moins une heure après le précédent.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">Les commandes de la batterie sont introuvables.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Après une mise à jour, elle attend un soir.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Elle attend que la voiture arrête de charger.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Elle attend que la batterie se décharge.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Elle attend un niveau de batterie entre 30 et 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Elle attend plus de marge sous le fusible principal.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Elle attend des mesures récentes.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Elle attend que le pilotage de la batterie soit libre.</string>
+  <string name="card_battery_mode_hold" formatted="false">Maintenir</string>
+  <string name="card_battery_mode_charge" formatted="false">Charger sur le réseau</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Alimenter la maison</string>
+  <string name="card_battery_mode_normal" formatted="false">Rendre la main</string>
+  <string name="card_battery_cap_line" formatted="false">Au plus {kw} kW depuis le réseau, pour que le fusible tienne même si Home Assistant s\'arrête ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Pas de charge depuis le réseau : la maison peut atteindre le fusible seule ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">La limite d\'import protège le fusible lors de la charge depuis le réseau.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">appris par phase</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">prudent jusqu\'à l\'apprentissage des premiers jours</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">pendant l\'apprentissage des pointes de la maison</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Pas de charge depuis le réseau pendant l\'apprentissage des pointes de la maison ({left}).</string>
+  <string name="card_battery_failed" formatted="false">Le pilotage de la batterie n’a pas pu être lu.</string>
+  <string name="card_battery_error_generic" formatted="false">Cela n’a pas marché. Réessayez.</string>
+  <string name="card_settings_value_on" formatted="false">Activé</string>
+  <string name="card_heat_settings_title" formatted="false">Chauffage</string>
+  <string name="card_heat_settings_steer" formatted="false">Piloter le chauffage</string>
+  <string name="card_heat_settings_indoor" formatted="false">Sondes intérieures</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} choisies</string>
+  <string name="card_heat_settings_none" formatted="false">Aucune</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Sonde extérieure</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatique</string>
+  <string name="card_heat_settings_meter" formatted="false">Compteur de la pompe à chaleur</string>
+  <string name="card_heat_settings_meter_help" formatted="false">La consommation électrique de la pompe à chaleur. Ses paliers distinguent le chauffage de l\'eau chaude.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Introuvable</string>
+  <string name="card_heat_settings_path" formatted="false">Pilotage</string>
+  <string name="card_heat_path_none" formatted="false">Aucun pour l\'instant</string>
+  <string name="card_heat_path_relay" formatted="false">Relais (baisse)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (deux contacts)</string>
+  <string name="card_heat_path_offset" formatted="false">Décalage de la courbe de chauffe</string>
+  <string name="card_heat_path_setpoint" formatted="false">Consigne</string>
+  <string name="card_heat_settings_control" formatted="false">Sortie de commande</string>
+  <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_settings_zones" formatted="false">Zones</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Aucune zone</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Décalage par rapport à la température de la maison, de −3 à +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">L\'objectif propre de la pièce par rapport à la température de la maison, de −3 à +3 °C. Un étage plus frais : −1,5. Une sonde qui indique un demi-degré de trop : +0,5. La pièce la plus froide est jugée par rapport à son propre objectif.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Pompe à chaleur air-air : SpotNav ne modifie que sa consigne, sans jamais l\'allumer ni l\'éteindre.</string>
+  <string name="card_heat_settings_night" formatted="false">Nuit plus fraîche</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Facultatif : quelques degrés de moins entre deux heures. Le plan en tient compte.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Degrés en moins</string>
+  <string name="card_heat_settings_night_start" formatted="false">De</string>
+  <string name="card_heat_settings_night_end" formatted="false">À</string>
+  <string name="card_heat_settings_away" formatted="false">Baisse en cas d\'absence</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">De combien de degrés la maison est maintenue plus fraîche pendant votre absence. Jamais en dessous de 16 °C. Le plan la réchauffe quand même avant votre retour.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Degrés en moins</string>
+  <string name="site_settings_in_home_assistant">L\'activation du pilotage et le choix des capteurs, du compteur et du mode de pilotage se modifient dans Home Assistant.</string>
+  <string name="site_settings_heat_failed">Les réglages du chauffage n\'ont pas pu être lus.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Le chauffage se configure dans Home Assistant : Paramètres → Chauffage sur la carte de la maison ou du chauffage.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Répondez dans Home Assistant : dans les réglages de la carte chauffage, en administrateur.</string>
+  <!-- House details and Intäkt (step A4) -->
+  <string name="card_house_earn_total" formatted="false">Gains {amount}</string>
+  <string name="card_house_earn_none" formatted="false">Aucune économie à afficher pour cette période pour l\'instant.</string>
+  <string name="card_house_earn_parts" formatted="false">Parts affichées</string>
+  <string name="card_house_earn_label" formatted="false">Gains par part</string>
+  <string name="card_house_earn_part_battery" formatted="false">Arbitrage (batterie)</string>
+  <string name="card_house_earn_part_own" formatted="false">Batterie, pilotage propre</string>
+  <string name="card_house_earn_part_would" formatted="false">SpotNav aurait économisé</string>
+  <string name="card_house_earn_part_heat" formatted="false">Chauffage</string>
+  <string name="card_house_earn_part_car" formatted="false">Voiture</string>
+  <string name="card_house_earn_bar_none" formatted="false">{when} : pas de chiffre</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Ce jour n\'a pas de valeurs horaires (elles sont conservées 40 jours).</string>
+  <string name="card_house_earn_note_would_day" formatted="false">Avec la batterie, SpotNav aurait économisé {amount} ce jour-là.</string>
+  <string name="card_house_earn_note_would_days" formatted="false">Ce que SpotNav aurait économisé est connu pour {reviewed} jours sur {days} ; les autres comptent tels quels.</string>
+  <string name="card_house_earn_note_would_tonight" formatted="false">Ce que SpotNav aurait économisé avec la batterie est calculé cette nuit.</string>
+  <string name="card_house_earn_note_would_none" formatted="false">Ce que SpotNav aurait économisé avec la batterie n\'est pas connu pour cette période.</string>
+  <string name="card_house_earn_note_car_hour" formatted="false">L\'économie de la voiture est dans l\'heure où la charge a commencé.</string>
+  <string name="card_house_earn_note_car_day" formatted="false">L\'économie de la voiture compte le jour où la charge a commencé.</string>
+  <string name="card_house_earn_note_heat_day" formatted="false">L\'économie du chauffage est une estimation pour la journée entière, sans barre horaire.</string>
+  <string name="card_house_earn_note_heat" formatted="false">L\'économie du chauffage est une estimation.</string>
+  <string name="card_hist_title_house" formatted="false">Historique de la maison</string>
+  <string name="card_hist_legend_cost" formatted="false">Coût</string>
+  <string name="card_hist_house_legend_saving" formatted="false">Économisé par la batterie</string>
+  <string name="card_hist_house_legend_extra" formatted="false">Plus cher avec la batterie</string>
+  <string name="card_hist_house_bar_money" formatted="false">{when} : coût {cost}, sans batterie {without}, économisé {saving}</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when} : coût {cost}, sans batterie {without}, la batterie l\'a rendu {extra} plus cher</string>
+  <string name="card_hist_house_bar_unreviewed" formatted="false">{when} : coût {cost}, non évalué</string>
+  <string name="card_hist_house_bar_hourly" formatted="false">{when} : coût {cost}, l\'économie est montrée par jour</string>
+  <string name="card_hist_house_bar_no_cost" formatted="false">{when} : {use} consommés, {bought} achetés</string>
+  <string name="card_hist_house_money" formatted="false">Argent</string>
+  <string name="card_hist_house_cost" formatted="false">Coût de l’électricité</string>
+  <string name="card_hist_house_cost_parts" formatted="false">{kwhIn} achetés pour {bought}, {kwhOut} vendus pour {sold}, aux prix avec les frais actuels.</string>
+  <string name="card_hist_house_saved_battery" formatted="false">La batterie a économisé</string>
+  <string name="card_hist_house_saved_sun" formatted="false">Le soleil a économisé</string>
+  <string name="card_hist_house_saved_both" formatted="false">Soleil et batterie ont économisé</string>
+  <string name="card_hist_house_saved_days_one" formatted="false">{figure} sur {days} jour</string>
+  <string name="card_hist_house_saved_days_other" formatted="false">{figure} sur {days} jours</string>
+  <string name="card_hist_house_spotnav" formatted="false">SpotNav a économisé</string>
+  <string name="card_hist_house_spotnav_total" formatted="false">Au total</string>
+  <string name="card_hist_house_spotnav_battery" formatted="false">Batterie</string>
+  <string name="card_hist_house_spotnav_car" formatted="false">Voiture</string>
+  <string name="card_hist_house_spotnav_heat" formatted="false">Chauffage (estimé)</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Chaque partie face à sa propre comparaison, voir « Comment c\'est calculé » plus bas. Une partie que SpotNav ne pilotait pas est laissée de côté.</string>
+  <string name="card_hist_house_no_price_source" formatted="false">Aucun prix de l\'électricité n\'est configuré pour ce site, donc pas de coût.</string>
+  <string name="card_hist_house_baselines_note" formatted="false">Par rapport aux mêmes jours sans batterie et sans soleil.</string>
+  <string name="card_hist_house_reviewed" formatted="false">L’économie est mesurée sur {days} des {total} jours de la période.</string>
+  <string name="card_hist_house_archived" formatted="false">{days} d\'entre eux viennent de l\'archive (jours exportés avec spotnav.export_day).</string>
+  <string name="card_hist_house_no_review" formatted="false">Aucun examen de la batterie pour cette période. Les examens de la nuit sont gardés 30 jours ; un jour plus ancien seulement s\'il a été exporté dans l\'archive.</string>
+  <string name="card_hist_house_modes" formatted="false">Les modes de la batterie face à l\'autoconsommation</string>
+  <string name="card_hist_house_modes_note" formatted="false">Chaque mode planifié sur la même charge et le même soleil mesurés, et ce que la batterie a vraiment fait, face à l\'autoconsommation simple ; cumulé sur les jours examinés.</string>
+  <string name="card_hist_house_days" formatted="false">Jour par jour</string>
+  <string name="card_hist_house_col_battery" formatted="false">Batterie</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
+  <string name="card_hist_house_col_own" formatted="false">Propre</string>
+  <string name="card_hist_house_col_share" formatted="false">Du parfait</string>
+  <string name="card_hist_house_share_partial" formatted="false">incomplète</string>
+  <string name="card_hist_house_share_small" formatted="false">trop faible</string>
+  <string name="card_hist_house_days_note" formatted="false">Batterie : face à l\'absence de batterie. Plan : le plan de SpotNav, propre : la façon de la batterie, tous deux face à l\'autoconsommation.</string>
+  <string name="card_hist_house_footnote" formatted="false">Les chiffres montrent ce qui a été mesuré et ce que les plans auraient fait.</string>
+  <string name="card_hist_house_how" formatted="false">Comment c\'est calculé</string>
+  <string name="card_hist_house_perfect_differs" formatted="false">{name} a économisé {own} ici, alors que « La batterie a économisé » sous Argent indique {battery}. Les deux se comparent à l\'absence de batterie, mais ici seuls les jours complets comptent ({days}), avec ce qui restait dans la batterie à minuit ; sous Argent, tous les jours mesurés comptent ({batteryDays}), sans ce qui restait.</string>
+  <string name="card_hist_forecast_heading" formatted="false">Erreurs de prévision</string>
+  <string name="card_hist_forecast_house" formatted="false">Charge de la maison</string>
+  <string name="card_hist_forecast_sun" formatted="false">Soleil</string>
+  <string name="card_hist_forecast_sun_corrected" formatted="false">Soleil, corrigé</string>
+  <string name="card_hist_forecast_soc" formatted="false">Niveau de la batterie</string>
+  <string name="card_hist_forecast_note" formatted="false">La moyenne de l\'erreur moyenne de chaque jour examiné (les examens sont gardés 30 jours).</string>
+  <string name="card_hist_forecast_none" formatted="false">Aucune prévision n\'a été examinée sur cette période (les examens sont gardés 30 jours).</string>
+  <string name="card_house_compare_in_force" formatted="false">choisi</string>
+  <string name="card_house_compare_none" formatted="false">pas de journée complète</string>
+  <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
+  <string name="card_house_days_date" formatted="false">Jour</string>
+  <string name="card_perfect_heading_period" formatted="false">Part du parfait</string>
+  <string name="card_perfect_headline" formatted="false">{own} {ownShare} du parfait · {plan} {planShare}</string>
+  <string name="card_perfect_headline_one" formatted="false">{name} {share} du parfait</string>
+  <string name="card_perfect_explain" formatted="false">Parfait : le meilleur possible après coup, avec les mêmes règles.</string>
+  <string name="card_perfect_explain_sell" formatted="false">Parfait : le meilleur possible après coup, vente permise (règles {mode}).</string>
+  <string name="card_perfect_explain_no_sell" formatted="false">Parfait : le meilleur possible après coup, sans vente (rien n\'est parti sur le réseau).</string>
+  <string name="card_perfect_midnight" formatted="false">Compté avec ce qui restait dans la batterie à minuit.</string>
+  <string name="card_perfect_provisional_one" formatted="false">Ce qui restait à minuit est compté au prix du jour même pour {days} des jours, jusqu\'à ce que les prix du jour suivant soient connus.</string>
+  <string name="card_perfect_provisional_other" formatted="false">Ce qui restait à minuit est compté au prix du jour même pour {days} des jours, jusqu\'à ce que les prix du jour suivant soient connus.</string>
+  <string name="card_perfect_provisional_day" formatted="false">Ce qui restait à minuit est compté au prix du jour même, jusqu\'à ce que les prix du jour suivant soient connus.</string>
+  <string name="card_perfect_clamped" formatted="false">{names} : hors de 0–100 %, affiché à la limite la plus proche (une perte comme 0 %).</string>
+  <string name="card_perfect_nothing" formatted="false">écart trop faible pour comparer</string>
+  <string name="card_perfect_partial_day" formatted="false">Journée incomplète : moins de 90 % de la journée mesurée, elle n\'est donc pas comparée.</string>
+  <string name="card_perfect_partial_one" formatted="false">{days} journée incomplète n\'est pas comptée.</string>
+  <string name="card_perfect_partial_other" formatted="false">{days} journées incomplètes ne sont pas comptées.</string>
+  <string name="card_perfect_partial_only_one" formatted="false">Seulement {days} journée incomplète : rien à comparer pour l\'instant.</string>
+  <string name="card_perfect_partial_only_other" formatted="false">Seulement {days} journées incomplètes : rien à comparer pour l\'instant.</string>
+  <string name="card_perfect_money_saved" formatted="false">Économisé</string>
+  <string name="card_perfect_money_perfect" formatted="false">Parfait</string>
+  <string name="card_perfect_money_note" formatted="false">Chaque façon face aux mêmes jours sans batterie. Ce qui restait dans la batterie à minuit compte au prix d\'achat moyen du jour suivant, moins les pertes de la batterie. Une part demande que le plan parfait économise au moins {amount} par jour.</string>
+  <string name="card_perfect_work_cycles" formatted="false">Cycles</string>
+  <string name="card_perfect_work_switches" formatted="false">Inversions</string>
+  <string name="card_perfect_work_from_grid" formatted="false">Du réseau</string>
+  <string name="card_perfect_work_to_grid" formatted="false">Vers le réseau</string>
+  <string name="card_perfect_work_note" formatted="false">Cycles : kWh déchargés divisés par la capacité de la batterie. Inversions : entre charge et décharge. Du et vers le réseau : kWh que la batterie a chargés depuis le réseau et lui a vendus.</string>
+  <string name="card_perfect_temperature_one" formatted="false">Cellules de la batterie : moyenne {mean}, maximum {max}, {minutes} min au-dessus de 30 °C ({days} jour).</string>
+  <string name="card_perfect_temperature_other" formatted="false">Cellules de la batterie : moyenne {mean}, maximum {max}, {minutes} min au-dessus de 30 °C ({days} jours).</string>
+  <string name="card_house_saving_details_head" formatted="false">Ce que SpotNav a économisé est comparé à :</string>
+  <string name="card_house_saving_details_battery" formatted="false">Batterie : ce qu\'elle a gagné pendant que SpotNav la pilotait.</string>
+  <string name="card_house_saving_details_battery_own" formatted="false">Batterie : elle fonctionnait sous son propre pilotage, ce qu\'elle a gagné lui revient et ne compte pas comme une économie de SpotNav.</string>
+  <string name="card_house_saving_details_car" formatted="false">Voiture : une charge immédiate au branchement, à la même puissance et avec tous les frais. Seuls les kWh de la voiture pris au réseau comptent ; une charge lancée par quelqu\'un compte pour 0.</string>
+  <string name="card_house_saving_details_car_since" formatted="false">La voiture est comptée à partir du {date}.</string>
+  <string name="card_house_saving_details_heat" formatted="false">Chauffage (estimé) : ce que les baisses de SpotNav ont retiré aux prix de leurs heures, moins la chaleur rachetée ensuite.</string>
+  <string name="card_house_flow_rule" formatted="false">Les compteurs ne disent pas quelle source a alimenté quoi : chaque heure, le soleil va d’abord à la maison, puis à la voiture, à la batterie et au réseau ; la batterie couvre la maison avant le réseau.</string>
+  <string name="card_house_flow_rule_quarter" formatted="false">Les compteurs ne disent pas quelle source a alimenté quoi : chaque quart d’heure, le soleil va d’abord à la maison, puis à la voiture, à la batterie et au réseau ; la batterie couvre la maison avant le réseau.</string>
+  <string name="card_house_flow_car_part" formatted="false">La voiture n’a pas pu être lue chaque heure ; ces heures-là, elle est comptée dans la maison.</string>
+  <string name="card_house_flow_heat_rule" formatted="false">Le chauffage est le compteur propre de la pompe à chaleur et les capteurs propres des zones de chauffage ; la maison est le reste.</string>
+  <string name="card_house_flow_heat_part" formatted="false">Le compteur de la pompe à chaleur n\'a pas pu être lu chaque heure ; ces heures-là, il compte dans la maison.</string>
+  <string name="card_house_sources_heading" formatted="false">Sources</string>
+  <string name="card_house_sources_weather" formatted="false">Météo : {name}</string>
+  <string name="card_house_sources_weather_no_forecast" formatted="false">Météo : {name}, sans prévision horaire</string>
+  <string name="card_house_sources_weather_none" formatted="false">Météo : aucune trouvée</string>
+  <string name="card_house_sources_outdoor_sensor" formatted="false">Température extérieure : {name}</string>
+  <string name="card_house_sources_outdoor_weather" formatted="false">Température extérieure : de la météo</string>
+  <string name="card_house_sources_outdoor_none" formatted="false">Température extérieure : aucune</string>
+  <string name="card_house_sources_holidays" formatted="false">Jours fériés : {name}</string>
+  <string name="card_house_sources_holidays_none" formatted="false">Jours fériés : semaine et week-end seulement</string>
+  <string name="card_house_sources_temperature_on" formatted="false">Température dans la prévision : oui</string>
+  <string name="card_house_sources_temperature_off" formatted="false">Température dans la prévision : non ({reason})</string>
+  <string name="card_house_temperature_too_few" formatted="false">encore trop peu d\'heures avec température</string>
+  <string name="card_house_temperature_too_little" formatted="false">elle explique trop peu la charge</string>
+  <string name="card_house_sources_solar" formatted="false">Prévision solaire : {names}</string>
+  <string name="card_house_sources_solar_learning" formatted="false">Prévision solaire : {names} · correction en apprentissage, {left}</string>
+  <string name="card_house_sources_heat_from_dashboard" formatted="false">Compteur de la pompe à chaleur : {name} (tableau de bord Énergie)</string>
+  <string name="card_house_sources_heat_from_integration" formatted="false">Compteur de la pompe à chaleur : {name} (intégration de la pompe)</string>
+  <string name="card_house_sources_heat_from_setting" formatted="false">Compteur de la pompe à chaleur : {name} (choisi dans les Paramètres)</string>
+  <string name="card_house_sources_heat_split" formatted="false">Prévision de la maison en chauffage plus le reste : {split} contre {whole} pour l\'ensemble ({hours} h, affichée seulement)</string>
+  <string name="card_house_sources_battery" formatted="false">Batterie : {name}</string>
+  <string name="card_house_sources_stored" formatted="false">Stocké maintenant : {kwh} à {cost} en moyenne</string>
+  <string name="card_house_sources_stored_estimated" formatted="false">Stocké maintenant : {kwh} à {cost} en moyenne (estimé au départ jusqu\'à ce que cette énergie soit utilisée)</string>
+  <string name="card_house_note_self_managed" formatted="false">La batterie suit son propre optimiseur. SpotNav planifie à côté seulement pour comparer et n\'y écrit rien.</string>
+  <string name="card_house_note_shadow" formatted="false">Test : SpotNav planifie la batterie mais ne la pilote pas encore.</string>
+  <string name="card_house_note_controlling" formatted="false">SpotNav pilote la batterie selon le plan.</string>
+  <string name="card_house_note_assumed" formatted="false">Supposé pour l\'instant : {list}.</string>
+  <string name="card_house_note_counts_battery" formatted="false">La charge de la maison est mesurée comme le réseau moins les bornes : quand la batterie couvre la maison, elle paraît plus faible.</string>
+  <string name="card_house_estimate_min_soc_assumed" formatted="false">le niveau minimal de la batterie</string>
+  <string name="card_house_estimate_round_trip_assumed" formatted="false">le rendement de la batterie</string>
+  <string name="card_house_estimate_solar_in_house_history" formatted="false">le soleil dans l\'historique de la maison</string>
+  <string name="card_house_estimate_battery_mode_unknown" formatted="false">le mode (inconnu, Équilibré utilisé)</string>
+  <string name="card_house_estimate_wear_currency_unknown" formatted="false">le coût d\'usure de la batterie</string>
+  <string name="card_house_estimate_no_solar_forecast" formatted="false">pas de soleil</string>
+  <string name="card_house_estimate_horizon_cut_by_forecast" formatted="false">un horizon raccourci par la prévision</string>
+  <string name="card_house_estimate_capacity_from_ah" formatted="false">la capacité (calculée à partir des ampères-heures)</string>
+  <string name="card_house_estimate_rated_from_current" formatted="false">la puissance nominale (calculée à partir des limites de courant)</string>
+  <string name="card_house_estimate_capacity_learned" formatted="false">la capacité (apprise à l\'usage)</string>
+  <string name="card_house_estimate_rated_learned" formatted="false">la puissance nominale (la plus élevée vue jusqu\'ici)</string>
+  <string name="card_history_savings_plug_in" formatted="false">SpotNav a économisé {amount} par rapport à une charge immédiate au branchement</string>
+  <string name="card_history_savings_plug_in_extra" formatted="false">{amount} de plus qu\'une charge immédiate au branchement</string>
+  <string name="card_history_savings_plug_in_note" formatted="false">SpotNav a économisé : les mêmes kWh du réseau si la voiture avait chargé dès le branchement, frais compris. Une charge lancée par quelqu\'un compte pour 0, et les kWh de la batterie domestique comptent pour la batterie. Le même chiffre que sur la carte de la maison.</string>
+  <string name="card_house_details_open" formatted="false">Détails</string>
+  <!-- Heat details cost bars (step A4) -->
+  <string name="card_hist_heat_chart" formatted="false">Coût de la pompe à chaleur</string>
+  <string name="card_hist_heat_legend_saving" formatted="false">Aurait économisé</string>
+  <string name="card_hist_heat_bar_saving" formatted="false">aurait économisé {saving}</string>
+  <string name="card_hist_heat_bar_zones" formatted="false">zones {kwh}</string>
+  <string name="card_hist_heat_bar_hot_water" formatted="false">eau chaude {kwh}</string>
+  <string name="card_hist_heat_bar_outdoor" formatted="false">dehors {temp}</string>
+  <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} degrés-jours</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Choisi</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready par l\'intégration (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activation</string>
+  <string name="card_heat_settings_untested" formatted="false">Cette façon de piloter n\'a pas encore été essayée sur une vraie pompe à chaleur. Surveillez les premiers jours.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Décalage de courbe non remis</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (était {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">Le décalage de la courbe de chauffe est à {value} ; il était à {home} avant SpotNav. Le remettre, ou garder {value} comme votre propre valeur ?</string>
+  <string name="card_heat_control_off" formatted="false">Désactivé : SpotNav montre seulement ce qu\'il ferait.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Vérifie que la pompe à chaleur répond au relais : attend un moment où elle chauffe.</string>
+  <string name="card_heat_control_verifying" formatted="false">Vérifie maintenant que la pompe à chaleur répond au relais.</string>
+  <string name="card_heat_control_lowered" formatted="false">Pilote : abaisse le chauffage jusqu\'à {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Pilote : abaisse le chauffage jusqu\'à {until}, trop chaud à l\'intérieur.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Pilote : abaisse le chauffage maintenant.</string>
+  <string name="card_heat_control_raised" formatted="false">Pilote : augmente le chauffage jusqu\'à {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Pilote : augmente le chauffage maintenant.</string>
+  <string name="card_heat_control_normal" formatted="false">Pilote : la pompe à chaleur suit sa courbe normale en ce moment.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Pilote : trop froid dehors pour abaisser.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Pilote : une pièce est sous la plage, pas d\'abaissement.</string>
+  <string name="card_heat_control_stale" formatted="false">Pilote : attend des valeurs récentes, pas d\'abaissement.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Pilote : le second contact SG Ready est actif, pas d\'abaissement.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Pilote : eau chaude supplémentaire en cours, pas d\'abaissement.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Pilote : l\'eau chaude est tiède, pas d\'abaissement.</string>
+  <string name="card_heat_control_waiting" formatted="false">En attente.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">En attente : désactivez l\'automatisation \'{name}\' pour que SpotNav puisse piloter le chauffage.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">En attente : un autre pilotage du chauffage commande la pompe à chaleur.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">En attente : le pilotage par prix propre à la pompe à chaleur est actif.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">En attente : le relais ne peut pas être lu.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">En attente : quelqu\'un d\'autre a fermé le relais.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">En attente : choisissez le relais sous Pilotage.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">En attente : choisissez le compteur de la pompe à chaleur pour que SpotNav voie que le relais agit.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">La pompe à chaleur n\'a pas répondu au relais. Vérifiez le câblage et réactivez.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">En attente : quelqu\'un d\'autre a changé le relais. SpotNav reprend demain.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">En attente : le relais n\'a pas répondu. SpotNav réessaie demain.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Vérifie que la pompe à chaleur répond : attend un moment où elle chauffe.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Vérifie maintenant que la pompe à chaleur répond.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">En attente : le réglage de la pompe à chaleur ne peut pas être lu.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">En attente : quelqu\'un d\'autre a déjà baissé ou augmenté le chauffage.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">En attente : choisissez sous Pilotage ce que SpotNav doit piloter.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">En attente : choisissez le compteur de la pompe à chaleur pour que SpotNav voie que le pilotage agit.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">La pompe à chaleur n\'a pas répondu. Vérifiez le réglage et réactivez.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">En attente : quelqu\'un d\'autre a changé le réglage. SpotNav reprend demain.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">En attente : la pompe à chaleur n\'a pas répondu. SpotNav réessaie demain.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Eau chaude maintenant</string>
+  <string name="card_heat_boost_starting" formatted="false">Démarrage…</string>
+  <string name="card_heat_boost_left" formatted="false">Eau chaude · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Eau chaude · {minutes} min restantes</string>
+  <string name="card_heat_boost_on" formatted="false">Eau chaude · en cours</string>
+  <string name="card_heat_boost_heating" formatted="false">Chauffe l’eau · environ {minutes} min restantes</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Chauffe l’eau</string>
+  <string name="card_heat_boost_stop" formatted="false">Annuler</string>
+  <string name="card_heat_boost_failed" formatted="false">Impossible de lancer l’eau chaude</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">L’eau chaude vient d’être lancée ; réessayez dans quelques minutes</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">Le disjoncteur principal est à pleine charge ; éteignez un appareil et réessayez</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Eau chaude {from}–{to} · {price}/kWh · prête pour {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Chaufferait l’eau {from}–{to} · {price}/kWh · prête pour {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Aurait chauffé l’eau à {time}</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">la pompe a tourné seule à {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">à l’énergie solaire</string>
+  <string name="card_heat_chart_peak" formatted="false">douche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blocage raccourci avant la douche de {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">raccourcirait le blocage avant la douche de {time}</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blocage raccourci pour que l\'eau chaude puisse se réchauffer</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">raccourcirait le blocage pour que l\'eau chaude puisse se réchauffer</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blocage raccourci pour la montée périodique de l\'eau chaude</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">raccourcirait le blocage pour la montée périodique de l\'eau chaude</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blocage déplacé pour l\'eau chaude</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">déplacerait le blocage pour l\'eau chaude</string>
+  <string name="card_heat_water_review" formatted="false">Eau chaude hier : {kwh} déplacés · {value} économisés</string>
+  <string name="card_heat_water_review_none" formatted="false">Eau chaude hier : rien à déplacer</string>
+  <string name="card_heat_water_shadow" formatted="false">(en observation)</string>
+  <string name="card_heat_water_peaks" formatted="false">Pics : {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} juste</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} pas de puisage</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} réchauffée après le boost</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} réchauffée tard après un blocage</string>
+  <string name="card_heat_water_gate" formatted="false">Eau chaude en observation : jour {days} sur {needed}, {hits} pics justes sur {peaks}</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} jours de la semaine sur 7</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Eau chaude : prête à être pilotée avec « Piloter le chauffage »</string>
+  <string name="card_heat_water_live" formatted="false">L’eau chaude est pilotée par SpotNav</string>
+  <string name="card_heat_water_backed_off" formatted="false">Eau chaude de retour en observation après trop de réchauffes</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blocages autour de l\'eau chaude en observation : jour {days} sur {needed}, {hits} pics sur {peaks} atteints</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blocages autour de l\'eau chaude : prêts à être pilotés avec « Piloter le chauffage »</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav tient ses blocages à l\'écart de l\'eau chaude</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blocages tenus plus loin de l\'eau chaude après trop de réchauffes tardives</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blocages hier : {hours} h raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blocages hier : {hours} h auraient été raccourcies pour l\'eau chaude · {risks} réchauffes tardives avant un pic</string>
 </resources>

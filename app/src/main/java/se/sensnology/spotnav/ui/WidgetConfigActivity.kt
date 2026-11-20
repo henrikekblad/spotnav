@@ -18,6 +18,12 @@ import se.sensnology.spotnav.push.PushWakeListener
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.prices.PricePublications
+import se.sensnology.spotnav.sites.SiteUpkeep
+import se.sensnology.spotnav.sites.MainSubject
+import se.sensnology.spotnav.sites.SiteProfileStore
+import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.ui.site.SiteScreen
+import se.sensnology.spotnav.widget.WidgetChargerResolver
 import se.sensnology.spotnav.ui.charging.ChargingScreen
 import se.sensnology.spotnav.ui.common.Palette
 import se.sensnology.spotnav.ui.history.HistoryScreen
@@ -116,6 +122,9 @@ class WidgetConfigActivity : Activity() {
         setContentView(shell.root)
         // This phone's own notification check: scheduled while it is on and something is paired.
         LocalNotifications.sync(this)
+        // Once per start: chargers paired before 3.0 move to their home's webhook, and a home's new chargers appear.
+        // Its own thread, so the screen's first reads never wait behind it.
+        SiteUpkeep.startOnce(this, { task -> Thread(task, "site-upkeep").start() })
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))
@@ -178,7 +187,12 @@ class WidgetConfigActivity : Activity() {
 
     /** The charging screen, drawn afresh; a new charger chosen on its card calls this to redraw in place. */
     private fun showCharging() {
-        ChargingScreen(shell) { showCharging() }.show()
+        // A home without a charger (Home Assistant 3.0) has its own main screen: the house and heat pages alone.
+        val resolved = WidgetChargerResolver.resolve(WidgetSettings.load(this, widgetId), ChargerProfileStore.forContext(this))
+        val sites = SiteProfileStore.forContext(this)
+        val site = MainSubject.site(resolved, ChargerProfileStore.forContext(this).listProfiles(), sites.list(), sites.activeSiteId())
+        if (site != null) SiteScreen(shell, site) { showCharging() }.show()
+        else ChargingScreen(shell) { showCharging() }.show()
         if (foreground) { dayRollover.arm(); liveRefresh.arm() }
     }
 
@@ -221,6 +235,7 @@ class WidgetConfigActivity : Activity() {
         if (resumedOnce) shell.onForeground?.invoke()
         resumedOnce = true
         foreground = true
+        shell.pages.foreground = true
         InAppQuestion.foreground = true
         if (currentScreen == Screen.MAIN) { dayRollover.arm(); liveRefresh.arm() }
         // A push wake-up while the app is in view reads the charging screen's charger at once (the
@@ -247,6 +262,8 @@ class WidgetConfigActivity : Activity() {
 
     override fun onStop() {
         foreground = false
+        // The house and heat pages read nothing while the app is out of view.
+        if (::shell.isInitialized) shell.pages.foreground = false
         InAppQuestion.foreground = false
         PushWakeListener.set(null)
         dayRollover.cancel()

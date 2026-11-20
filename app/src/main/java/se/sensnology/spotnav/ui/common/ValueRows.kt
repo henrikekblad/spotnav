@@ -166,6 +166,9 @@ internal fun ViewScope.settingRow(
         textSize = SETTING_TEXT_SP
         typeface = Typeface.DEFAULT_BOLD
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        // A long name wraps to two lines at most and is then cut with an ellipsis.
+        maxLines = 2
+        ellipsize = android.text.TextUtils.TruncateAt.END
     }
     val description = SettingRowWords.description(label, value, onTap != null) { l, v ->
         t(se.sensnology.spotnav.R.string.setting_row_changeable, l, v)
@@ -174,6 +177,8 @@ internal fun ViewScope.settingRow(
     row.label?.apply {
         textSize = SETTING_TEXT_SP
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        maxLines = 2
+        ellipsize = android.text.TextUtils.TruncateAt.END
     }
     row.view.contentDescription = description
     row.view.tag = target

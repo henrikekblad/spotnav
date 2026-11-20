@@ -159,7 +159,8 @@ internal data class ShownChart(
  * against is the frame without the line. The finger selects by tap or by a sideways scrub (see
  * [ChartScrub] and [onTouchEvent]); any other drag belongs to the page.
  */
-internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : ImageView(context, attrs) {
+internal class PlanChartView(context: Context, attrs: AttributeSet? = null) : ImageView(context, attrs),
+    se.sensnology.spotnav.ui.site.OwnsSidewaysDrag {
     /** What is on screen, selection line included. */
     private var lastRequest: ChartRequest? = null
     /** The frame on screen without the line: what a selection is made on. */

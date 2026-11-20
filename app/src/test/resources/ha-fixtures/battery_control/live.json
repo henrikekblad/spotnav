@@ -1,0 +1,99 @@
+{
+ "api_version": 1,
+ "ok": true,
+ "error": null,
+ "status": {
+  "battery_found": true,
+  "options": {
+   "battery_control_enabled": false,
+   "battery_control_shadow_only": true,
+   "battery_control_ai_takeover_ack": false,
+   "battery_control_import_limit_acts": false,
+   "battery_mode": "balanced"
+  },
+  "state": "off",
+  "line": "off",
+  "key": "V100R001C21SPC117 | sigen 2.0.3",
+  "report": null,
+  "allowed_actions": [],
+  "verification": null,
+  "waiting_for": null,
+  "needs": [
+   "control_disabled:remote_ems",
+   "control_disabled:control_mode",
+   "control_disabled:charge_limit",
+   "ai_takeover_ack"
+  ],
+  "device_id": "0f4c2b7e9a1d4c3e8b6a5f2d1c0e9b8a",
+  "enable_entities": null,
+  "notes": [],
+  "trial": null,
+  "grid_charge_cap": {
+   "cap_kw": 0.0,
+   "rule": "conservative",
+   "main_fuse_a": 20.0,
+   "cap_conservative_kw": 0.0,
+   "cap_learned_kw": 4.02,
+   "learned": {
+    "ready": false,
+    "raw_a": null,
+    "factor": 1.0,
+    "margin_a": 2.0,
+    "peaks_a": {
+     "L1": 5.5,
+     "L2": 4.5,
+     "L3": 12.2
+    },
+    "usable": false,
+    "extra_margin_a": null,
+    "days_counted": 0,
+    "days_min": 7,
+    "days_spread": 0,
+    "days_from_history": 0,
+    "days_from_history_dropped": 0,
+    "hours_from_history": 0,
+    "days_needed": 14,
+    "days_left": 14,
+    "hours": 3,
+    "minutes": 106,
+    "heat_peak_w": {
+     "L1": 136.0,
+     "L2": 0.0,
+     "L3": 2022.0
+    },
+    "exact_a": {
+     "L1": 3.5,
+     "L2": 2.5,
+     "L3": 10.2
+    },
+    "exact_days": 0,
+    "exact_minutes": 106,
+    "basis": "exact"
+   },
+   "import_limit": {
+    "value_kw": null,
+    "max_kw": 4.47,
+    "suggested_kw": 4.4,
+    "holds": false,
+    "why": null
+   }
+  },
+  "per_phase": {
+   "state": "pending",
+   "why": null,
+   "used": false,
+   "caps_kw": {
+    "L1": 0.16,
+    "L2": 0.16,
+    "L3": 0.16
+   },
+   "charging_kw": null
+  },
+  "plan_costs": {
+   "wear_minor_per_kwh": 15.0,
+   "balanced_margin_minor_per_kwh": 100.0,
+   "major_unit": "kr",
+   "minor_unit": "öre"
+  }
+ }
+}

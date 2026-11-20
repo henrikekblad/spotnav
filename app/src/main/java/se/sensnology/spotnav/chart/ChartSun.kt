@@ -100,6 +100,24 @@ internal object ChartSuns {
         }
         return runs
     }
+
+    /**
+     * The runs to draw: [runs] without the dark hours. A span at 0 kW is drawn only beside one with sun, so the line
+     * starts from and ends on the baseline at dawn and dusk; a night of zeros draws nothing.
+     */
+    fun litRuns(points: List<SunPoint>): List<List<SunPoint>> {
+        val out = ArrayList<List<SunPoint>>()
+        for (run in runs(points)) {
+            var current = ArrayList<SunPoint>()
+            run.forEachIndexed { index, point ->
+                val lit = point.kw > 0.0 || (run.getOrNull(index - 1)?.kw ?: 0.0) > 0.0 || (run.getOrNull(index + 1)?.kw ?: 0.0) > 0.0
+                if (lit) current += point
+                else if (current.isNotEmpty()) { out += current; current = ArrayList() }
+            }
+            if (current.isNotEmpty()) out += current
+        }
+        return out
+    }
 }
 
 /**

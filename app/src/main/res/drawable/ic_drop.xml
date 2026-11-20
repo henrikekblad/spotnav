@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The drop on the heat page's Boost button, the hot water's red as the card draws it (the card's DROP_PATH). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="14dp"
+    android:height="14dp"
+    android:viewportWidth="14"
+    android:viewportHeight="14">
+    <path
+        android:fillColor="#FFC62828"
+        android:pathData="M7,1 C8.5,4 12,6.5 12,9.5 A5,5 0 0,1 2,9.5 C2,6.5 5.5,4 7,1 Z" />
+</vector>

@@ -114,6 +114,12 @@
   <string name="instance_removed">De verbinding is verwijderd</string>
   <string name="instance_refreshing">Zoeken…</string>
   <string name="instance_connected">Verbonden met %1$s</string>
+  <string name="instance_connected_nothing">Verbonden, maar SpotNav in Home Assistant heeft nog geen laadpaal of huis. Voeg er een toe in Home Assistant, of werk SpotNav daar bij naar 3.0.</string>
+  <string name="site_home_title">Huis: %1$s</string>
+  <string name="site_home_chargers">Laadpalen: %1$s</string>
+  <string name="site_home_no_charger">Geen laadpaal: de huis- en verwarmingspagina\'s</string>
+  <string name="site_show">Tonen</string>
+  <string name="site_price_read_only">Een huis zonder laadpaal toont hier zijn stroomprijs en nettarief; ze worden gewijzigd in Home Assistant.</string>
   <string name="instance_stale">Niet meer in Home Assistant: %1$s</string>
   <string name="instance_unprovisioned">In Home Assistant maar niet gekoppeld aan deze app: %1$s</string>
   <string name="instance_pair_again">Opnieuw koppelen</string>
@@ -822,4 +828,733 @@
   <string name="card_grid_fee_high_fee" formatted="false">Tarief</string>
   <string name="card_grid_fee_high_remove" formatted="false">Piektarief verwijderen</string>
   <string name="card_grid_fee_high_needs_fee" formatted="false">Vul het tarief voor de piekuren in.</string>
+  <string name="card_house_title" formatted="false">Huis</string>
+  <string name="card_heat_title" formatted="false">Verwarming</string>
+  <string name="card_header_test" formatted="false">Test</string>
+  <string name="card_header_test_explain" formatted="false">SpotNav stuurt nog niets.</string>
+  <string name="card_heat_test_explain" formatted="false">SpotNav berekent wat het met de verwarming zou doen en laat dat hier zien. Er wordt nog niets naar de warmtepomp gestuurd.</string>
+  <string name="card_heat_loading" formatted="false">Verwarming wordt gelezen…</string>
+  <string name="card_heat_failed" formatted="false">De verwarming kon niet worden gelezen.</string>
+  <string name="card_heat_unsupported" formatted="false">De kaart heeft een nieuwere SpotNav nodig.</string>
+  <string name="card_heat_dial_label" formatted="false">Gewenste temperatuur</string>
+  <string name="card_heat_dial_lower" formatted="false">Halve graad lager</string>
+  <string name="card_heat_dial_raise" formatted="false">Halve graad hoger</string>
+  <string name="card_heat_dial_band" formatted="false">tussen {low} en {high} °C</string>
+  <string name="card_heat_measured" formatted="false">Binnen {value}</string>
+  <string name="card_heat_measured_coldest" formatted="false">Binnen {value} (koudst: {room})</string>
+  <string name="card_heat_no_sensor" formatted="false">Geen binnensensor gekozen</string>
+  <string name="card_heat_outdoor" formatted="false">Buiten {value}</string>
+  <string name="card_heat_mode_home" formatted="false">Thuis</string>
+  <string name="card_heat_mode_away" formatted="false">Weg</string>
+  <string name="card_heat_mode_away_until" formatted="false">Weg tot {when}</string>
+  <string name="card_heat_mode_change" formatted="false">Wijzigen</string>
+  <string name="card_heat_away_title" formatted="false">Weg tot</string>
+  <string name="card_heat_away_help" formatted="false">Zodra SpotNav de verwarming stuurt, blijft het huis 3 °C koeler, nooit onder 16 °C, en wordt het opgewarmd voordat je terug bent.</string>
+  <string name="card_heat_away_date" formatted="false">Datum</string>
+  <string name="card_heat_away_time" formatted="false">Tijd</string>
+  <string name="card_heat_pump_heating" formatted="false">Warmtepomp verwarmt · {kw}</string>
+  <string name="card_heat_pump_hot_water" formatted="false">Warmtepomp maakt warm water · {kw}</string>
+  <string name="card_heat_pump_idle" formatted="false">Warmtepomp rust · {kw}</string>
+  <string name="card_heat_pump_unknown" formatted="false">Warmtepomp: geen meting</string>
+  <string name="card_heat_would_lower" formatted="false">Zou tot {until} verlagen naar {temp}: dure uren</string>
+  <string name="card_heat_would_lower_tight" formatted="false">Zou tot {until} verlagen naar {temp}: maakt ruimte onder het afnamedoel en de zekering</string>
+  <string name="card_heat_would_lower_warm" formatted="false">Zou tot {until} verlagen naar {temp}: binnen te warm</string>
+  <string name="card_heat_would_preheat" formatted="false">Zou tot {until} voorverwarmen naar {temp}: goedkoop voor dure uren</string>
+  <string name="card_heat_would_raise" formatted="false">Zou de verwarming (SG Ready) verhogen naar {temp} tot {until}: goedkoop vóór dure uren</string>
+  <string name="card_heat_would_night" formatted="false">Zou het \'s nachts koeler houden, {temp} tot {until}</string>
+  <string name="card_heat_would_away" formatted="false">Zou {temp} houden tot {until} terwijl je weg bent</string>
+  <string name="card_heat_would_return" formatted="false">Zou opwarmen voor je thuiskomst: {temp} tot {until}</string>
+  <string name="card_heat_would_normal" formatted="false">Zou {temp} houden tot {until}</string>
+  <string name="card_heat_guard_no_prices" formatted="false">Nog geen prijzen: zou niets verlagen</string>
+  <string name="card_heat_guard_too_cold" formatted="false">Te koud buiten om te verlagen</string>
+  <string name="card_heat_guard_room_cold" formatted="false">De koudste kamer ligt onder de band: geen verlaging</string>
+  <string name="card_heat_relay_closed" formatted="false">Het relais verlaagt de verwarming sinds {since}</string>
+  <string name="card_heat_relay_closed_until" formatted="false">Het relais verlaagt de verwarming sinds {since}, gaat naar verwachting open om {until}</string>
+  <string name="card_heat_relay_next" formatted="false">Het relais verlaagt de verwarming naar verwachting {from}–{to}</string>
+  <string name="card_heat_shadow" formatted="false">SpotNav volgt de temperatuur en Thuis/Weg die je hier instelt, zodra het de verwarming gaat sturen.</string>
+  <string name="card_heat_today_label" formatted="false">Vandaag</string>
+  <string name="card_heat_today_heat" formatted="false">verwarming {kwh}</string>
+  <string name="card_heat_today_zones" formatted="false">waarvan zones {kwh}</string>
+  <string name="card_heat_today_water" formatted="false">warm water {kwh}</string>
+  <string name="card_heat_note_pump_price_control" formatted="false">{label} stuurt zelf op de stroomprijs. Zet het uit in de warmtepomp ({where}) als SpotNav moet sturen.</string>
+  <string name="card_heat_note_readings_disabled" formatted="false">Metingen die SpotNav nodig heeft staan uit in de integratie van de warmtepomp: {names}. Zet ze aan op het apparaat.</string>
+  <string name="card_heat_note_other_controller" formatted="false">{names} stuurt de warmtepomp; SpotNav telt hem als huisverbruik en kijkt alleen mee.</string>
+  <string name="card_heat_note_automation_relay" formatted="false">De automatisering \'{name}\' stuurt het relais: zet hem uit wanneer SpotNav de verwarming moet sturen.</string>
+  <string name="card_heat_note_automation_zone" formatted="false">De automatisering \'{name}\' stuurt ook {targets}: zet hem uit wanneer SpotNav moet sturen.</string>
+  <string name="card_heat_note_automation_blocks" formatted="false">Zet de automatisering \'{name}\' uit zodat SpotNav de verwarming kan sturen.</string>
+  <string name="card_heat_where_nibe_smart_price" formatted="false">Smart Price Adaption</string>
+  <string name="card_heat_where_ctc_smartgrid" formatted="false">SmartGrid</string>
+  <string name="card_heat_role_outdoor_temp" formatted="false">buitentemperatuur</string>
+  <string name="card_heat_role_supply_temp" formatted="false">aanvoertemperatuur</string>
+  <string name="card_heat_role_return_temp" formatted="false">retourtemperatuur</string>
+  <string name="card_heat_role_room_temp" formatted="false">kamertemperatuur</string>
+  <string name="card_heat_role_hot_water_temp" formatted="false">warmwatertemperatuur</string>
+  <string name="card_heat_role_degree_minutes" formatted="false">graadminuten</string>
+  <string name="card_heat_role_compressor_speed" formatted="false">compressortoerental</string>
+  <string name="card_heat_role_compressor_state" formatted="false">compressorstatus</string>
+  <string name="card_heat_role_immersion_power" formatted="false">vermogen elektrisch element</string>
+  <string name="card_heat_role_immersion_state" formatted="false">status elektrisch element</string>
+  <string name="card_heat_role_priority" formatted="false">prioriteit</string>
+  <string name="card_heat_error_generic" formatted="false">Opslaan mislukt.</string>
+  <string name="card_heat_error_conflict" formatted="false">Iemand anders wijzigde het tegelijk; het nieuwste wordt getoond.</string>
+  <string name="card_heat_error_not_admin" formatted="false">Alleen een beheerder kan dat wijzigen.</string>
+  <string name="card_heat_error_range" formatted="false">De waarde valt buiten wat is toegestaan.</string>
+  <string name="card_heat_error_step" formatted="false">Kies halve graden.</string>
+  <string name="card_heat_error_past" formatted="false">Kies een tijd in de toekomst.</string>
+  <string name="card_heat_error_far" formatted="false">Hoogstens 90 dagen vooruit.</string>
+  <string name="card_heat_now_heating" formatted="false">Verwarmt</string>
+  <string name="card_heat_now_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_now_idle" formatted="false">Rust</string>
+  <string name="card_heat_now_lowered" formatted="false">Verlaagd</string>
+  <string name="card_heat_now_lowered_until" formatted="false">Verlaagd tot {until}</string>
+  <string name="card_heat_now_raised" formatted="false">Verhoogd</string>
+  <string name="card_heat_now_raised_until" formatted="false">Verhoogd tot {until}</string>
+  <string name="card_heat_ahead_lead" formatted="false">Plan: {parts}</string>
+  <string name="card_heat_ahead_lower" formatted="false">verlaging {from}–{to}</string>
+  <string name="card_heat_ahead_preheat" formatted="false">voorverwarmen {from}–{to}</string>
+  <string name="card_heat_ahead_raise" formatted="false">verhoging {from}–{to}</string>
+  <string name="card_heat_ahead_night" formatted="false">koelere nacht {from}–{to}</string>
+  <string name="card_heat_ahead_away" formatted="false">weg {from}–{to}</string>
+  <string name="card_heat_ahead_water" formatted="false">warm water {time}</string>
+  <string name="card_heat_ahead_none" formatted="false">Geen verlaging gepland voor de komende 12 uur</string>
+  <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
+  <string name="card_heat_band_car" formatted="false">Auto laadt</string>
+  <string name="card_heat_band_executed" formatted="false">SpotNav verlaagde</string>
+  <string name="card_heat_band_executed_hour" formatted="false">SpotNav verlaagde {minutes} min</string>
+  <string name="card_heat_band_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_band_raised" formatted="false">SpotNav verhoogde</string>
+  <string name="card_heat_band_raised_hour" formatted="false">SpotNav verhoogde {minutes} min</string>
+  <string name="card_heat_band_relay" formatted="false">Relais verlaagde</string>
+  <string name="card_heat_band_relay_expected" formatted="false">Relais verlaagt naar verwachting</string>
+  <string name="card_heat_band_relay_hour" formatted="false">relais verlaagde {minutes} min</string>
+  <string name="card_heat_band_relay_hour_expected" formatted="false">relais verlaagt naar verwachting {minutes} min</string>
+  <string name="card_heat_chart_away" formatted="false">weg</string>
+  <string name="card_heat_chart_car" formatted="false">auto laadt</string>
+  <string name="card_heat_chart_coldest" formatted="false">koudst {room} {temp}</string>
+  <string name="card_heat_chart_hint" formatted="false">Tik of wijs in het diagram voor de cijfers van een tijdstip.</string>
+  <string name="card_heat_chart_hot_water" formatted="false">warm water</string>
+  <string name="card_heat_chart_label" formatted="false">De dag: binnentemperatuur, setpoint, verlaging door SpotNav, warm water en de auto</string>
+  <string name="card_heat_chart_mean" formatted="false">kamers {temp}</string>
+  <string name="card_heat_chart_night" formatted="false">nacht</string>
+  <string name="card_heat_chart_planned" formatted="false">Geplande verlaging</string>
+  <string name="card_heat_chart_planned_hour" formatted="false">geplande verlaging</string>
+  <string name="card_heat_chart_planned_raise" formatted="false">Geplande verhoging</string>
+  <string name="card_heat_chart_planned_raise_hour" formatted="false">geplande verhoging</string>
+  <string name="card_heat_chart_preheat" formatted="false">voorverwarmen</string>
+  <string name="card_heat_chart_room_warm" formatted="false">binnen te warm</string>
+  <string name="card_heat_chart_setpoint" formatted="false">setpoint {temp}</string>
+  <string name="card_heat_chart_would_raise" formatted="false">Zou verhogen</string>
+  <string name="card_heat_chart_would_raise_hour" formatted="false">zou verhogen</string>
+  <string name="card_heat_indoor_coldest" formatted="false">Koudste kamer</string>
+  <string name="card_heat_indoor_comfort" formatted="false">Comfortband {low}–{high} °C</string>
+  <string name="card_heat_indoor_mean" formatted="false">Kamers, gemiddeld</string>
+  <string name="card_heat_indoor_setpoint" formatted="false">Setpoint</string>
+  <string name="card_heat_indoor_setpoint_lowers" formatted="false">Setpoint (SpotNav verlaagt)</string>
+  <string name="card_heat_plan_none" formatted="false">Niets te tonen voor deze dag.</string>
+  <string name="card_heat_review_below" formatted="false">{minutes} min onder {low}</string>
+  <string name="card_heat_review_coldest" formatted="false">koudst {temp}</string>
+  <string name="card_heat_review_overlap" formatted="false">{hours} dezelfde als het relais</string>
+  <string name="card_heat_review_plan" formatted="false">SpotNavs plan {hours}: {value}</string>
+  <string name="card_heat_review_plan_none" formatted="false">SpotNavs plan verlaagde niet</string>
+  <string name="card_heat_review_relay" formatted="false">Gisteren verlaagde het relais {hours}: {value}</string>
+  <string name="card_heat_review_relay_none" formatted="false">Gisteren verlaagde het relais niet</string>
+  <string name="card_heat_tab_plan" formatted="false">Plan</string>
+  <string name="card_heat_tab_use" formatted="false">Verbruik</string>
+  <string name="card_heat_use_bar_none" formatted="false">{when}: niets te tonen</string>
+  <string name="card_heat_use_bar_saved" formatted="false">SpotNav bespaarde {amount}</string>
+  <string name="card_heat_use_label" formatted="false">Verbruik van de verwarming per onderdeel</string>
+  <string name="card_heat_use_part_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_use_part_other" formatted="false">Overige verwarming</string>
+  <string name="card_heat_use_part_pump" formatted="false">Warmtepomp</string>
+  <string name="card_heat_use_part_zone" formatted="false">Zone</string>
+  <string name="card_heat_use_saved" formatted="false">SpotNav bespaarde {amount} op de verwarming</string>
+  <string name="card_heat_use_total" formatted="false">Verwarming {amount}</string>
+  <string name="card_heat_use_unit" formatted="false">Eenheid</string>
+  <string name="card_heat_use_unit_money" formatted="false">Kosten in {unit}</string>
+  <string name="card_hist_days" formatted="false">{days} d</string>
+  <string name="card_hist_heat_bar_none" formatted="false">{when}: geen meterstand</string>
+  <string name="card_hist_heat_below" formatted="false">Uren onder {low}</string>
+  <string name="card_hist_heat_below_figure" formatted="false">{hours} van {total}</string>
+  <string name="card_hist_heat_cause_draw" formatted="false">na tappen</string>
+  <string name="card_hist_heat_cause_standby" formatted="false">stilstandsverlies</string>
+  <string name="card_hist_heat_cause_unknown" formatted="false">oorzaak onbekend</string>
+  <string name="card_hist_heat_coldest" formatted="false">Koudste kamer</string>
+  <string name="card_hist_heat_coldest_figure" formatted="false">gemiddeld {mean} · laagst {min}</string>
+  <string name="card_hist_heat_comfort" formatted="false">Comfort</string>
+  <string name="card_hist_heat_cost" formatted="false">Wat het kostte</string>
+  <string name="card_hist_heat_degree_days" formatted="false">Per graaddag</string>
+  <string name="card_hist_heat_degree_note" formatted="false">{sum} graaddagen onder {base} °C over {days} dagen. De hele energie van de meter (warm water inbegrepen) per graaddag: hetzelfde huis bij ander weer geeft hetzelfde cijfer, dus een nieuwe warmtepomp, isolatie of ramen tonen zich als een stap.</string>
+  <string name="card_hist_heat_footnote" formatted="false">Kosten berekend met de opgeslagen prijzen en de huidige toeslagen.</string>
+  <string name="card_hist_heat_from_forecast" formatted="false">De buitentemperatuur is die van het weer, uit de uren die de huisvoorspelling bewaarde (acht weken): kies een buitenvoeler in de verwarmingsinstellingen voor de hele geschiedenis.</string>
+  <string name="card_hist_heat_hint" formatted="false">Tik of wijs een staaf aan voor de cijfers.</string>
+  <string name="card_hist_heat_hot_water" formatted="false">Waarvan warm water</string>
+  <string name="card_hist_heat_immersion" formatted="false">Elektrisch element</string>
+  <string name="card_hist_heat_immersion_figure" formatted="false">{hours} u, {kwh}</string>
+  <string name="card_hist_heat_model" formatted="false">Huismodel</string>
+  <string name="card_hist_heat_model_error" formatted="false">Fout van de verwarmingsprognose</string>
+  <string name="card_hist_heat_model_none" formatted="false">Wordt getoond zodra het huismodel een dag met de warmtemeter heeft beoordeeld.</string>
+  <string name="card_hist_heat_model_note" formatted="false">Hoe ver de prognose van het huismodel voor de verwarming van de meter af lag, gemiddeld per uur over de beoordeelde dagen. Kleiner is beter.</string>
+  <string name="card_hist_heat_no_energy" formatted="false">De meter van de warmtepomp heeft in deze periode geen standen.</string>
+  <string name="card_hist_heat_no_meter" formatted="false">Er is geen warmtepompmeter gevonden of gekozen: kies er een in de verwarmingsinstellingen.</string>
+  <string name="card_hist_heat_no_outdoor" formatted="false">Geen buitentemperatuur met geschiedenis: kies een buitenvoeler in de verwarmingsinstellingen voor graaddagen.</string>
+  <string name="card_hist_heat_no_room_hours" formatted="false">De binnenvoelers hebben in deze periode geen geschiedenis.</string>
+  <string name="card_hist_heat_no_rooms" formatted="false">In de verwarmingsinstellingen is geen binnenvoeler gekozen.</string>
+  <string name="card_hist_heat_no_runs" formatted="false">Geen warmwaterbeurt gevonden op deze dag.</string>
+  <string name="card_hist_heat_no_split" formatted="false">Warm water wordt alleen apart getoond voor dagen die de geschiedenis van Home Assistant nog per 5 minuten heeft (ongeveer tien dagen).</string>
+  <string name="card_hist_heat_per_degree_day" formatted="false">Warmtepomp per graaddag</string>
+  <string name="card_hist_heat_per_degree_day_unit" formatted="false">kWh/graaddag</string>
+  <string name="card_hist_heat_review" formatted="false">Het relais en SpotNavs plan</string>
+  <string name="card_hist_heat_review_comfort" formatted="false">koudst {min}, {minutes} min onder de band</string>
+  <string name="card_hist_heat_review_no_rooms" formatted="false">geen kamersensoren</string>
+  <string name="card_hist_heat_review_note" formatted="false">Geld: de warmte die een verlaging wegneemt, min wat er daarna wordt teruggekocht. Koudst: de koudste kamer tijdens de verlaging en drie uur erna, ondergrens van de band {low}. SpotNavs uren tonen hun eigen effect alleen waar het relais ook verlaagde ({overlap}).</string>
+  <string name="card_hist_heat_review_plan" formatted="false">SpotNav zou {hours} hebben verlaagd</string>
+  <string name="card_hist_heat_review_relay" formatted="false">Het relais verlaagde {hours}</string>
+  <string name="card_hist_heat_runs" formatted="false">Warmwaterbeurten</string>
+  <string name="card_hist_heat_runs_note" formatted="false">Alleen uit de energie afgeleid (geen boilervoeler): een beurt duidelijk boven de gewone kleine is tappen, ongeveer even groot is de boiler die zonder tappen afkoelde.</string>
+  <string name="card_hist_heat_shadow" formatted="false">Wat SpotNav zou hebben gedaan</string>
+  <string name="card_hist_heat_shadow_learned" formatted="false">Geleerd uit {blocks} gemeten verlagingen van het relais.</string>
+  <string name="card_hist_heat_shadow_line" formatted="false">Zou {kwh} uit {hours} dure uren over {days} dagen hebben verschoven.</string>
+  <string name="card_hist_heat_shadow_none" formatted="false">Verschijnt zodra er minstens één hele dag met prijzen en meetwaarden is.</string>
+  <string name="card_hist_heat_shadow_note" formatted="false">SpotNavs plan zoals het uur voor uur werd gemaakt ({kept} van {days} dagen), anders opnieuw berekend met de prijzen van de dag en de huidige instellingen. Een verlaging neemt gerekend {share} van de warmte weg, en {rebound} daarvan wordt daarna teruggekocht; aangenomen wordt dat het huis binnen de band blijft.</string>
+  <string name="card_hist_heat_shadow_prior" formatted="false">Een voorzichtige aanname tot de verlagingen van het relais met de warmtemeter zijn gemeten.</string>
+  <string name="card_hist_heat_shadow_value" formatted="false">Zou hebben bespaard</string>
+  <string name="card_hist_heat_split_days" formatted="false">Warm water wordt apart getoond voor {days} van {total} dagen: de dagen die de geschiedenis van Home Assistant nog per 5 minuten heeft.</string>
+  <string name="card_hist_heat_too_few_line" formatted="false">Graaddagen verschijnen zodra er een paar koude dagen zijn om mee te rekenen.</string>
+  <string name="card_hist_heat_total" formatted="false">Warmtepomp, verwarming en warm water</string>
+  <string name="card_hist_heat_trend" formatted="false">kWh per graaddag, maand voor maand</string>
+  <string name="card_hist_heat_trend_bar" formatted="false">{month}: {value} kWh per graaddag ({dd} graaddagen)</string>
+  <string name="card_hist_heat_trend_hint" formatted="false">Tik op een maand voor het cijfer; een stap omlaag is het huis dat bij hetzelfde weer minder gebruikt.</string>
+  <string name="card_hist_heat_trend_none" formatted="false">{month}: geen cijfer (te weinig graaddagen of geen gegevens)</string>
+  <string name="card_hist_heat_use" formatted="false">Verbruik</string>
+  <string name="card_hist_heat_zones" formatted="false">Waarvan zones (vloerverwarming, lucht-lucht)</string>
+  <string name="card_hist_heat_zones_from" formatted="false">De warmte telt de eigen meters van de zones mee vanaf {date}: het verbruik gaat daar een stap omhoog. De graaddagen gelden alleen voor de warmtepomp.</string>
+  <string name="card_hist_house_cost_partial" formatted="false">Er zijn prijzen voor {share} van de periode; de rest telt niet mee in de kosten.</string>
+  <string name="card_hist_house_no_prices" formatted="false">Voor deze periode zijn geen prijzen bekend, dus geen kosten.</string>
+  <string name="card_hist_title_heat" formatted="false">Geschiedenis van de verwarming</string>
+  <string name="card_house_earn_none_shown" formatted="false">Geen onderdeel gekozen.</string>
+  <string name="card_house_test_explain" formatted="false">SpotNav laat zien wat het zou doen, maar vanaf hier wordt nog niets verstuurd. Een thuisbatterij wordt pas aangestuurd als je batterijsturing aanzet in de instellingen.</string>
+  <string name="card_house_now_hold" formatted="false">Houdt vast</string>
+  <string name="card_house_now_discharge" formatted="false">Ontlaadt</string>
+  <string name="card_house_now_sun" formatted="false">Laadt met zon</string>
+  <string name="card_house_now_idle" formatted="false">Rust</string>
+  <string name="card_house_now_own" formatted="false">Eigen sturing</string>
+  <string name="card_house_legend_charge" formatted="false">Laadt uit het net</string>
+  <string name="card_house_legend_sell" formatted="false">Verkoopt aan het net</string>
+  <string name="card_house_sub_mode" formatted="false">modus {mode}</string>
+  <string name="card_house_mode_self_consumption" formatted="false">Eigen verbruik</string>
+  <string name="card_house_mode_balanced" formatted="false">Gebalanceerd</string>
+  <string name="card_house_mode_max_profit" formatted="false">Max. opbrengst</string>
+  <string name="card_house_loading" formatted="false">Huis wordt gelezen…</string>
+  <string name="card_house_failed" formatted="false">Het huis kon niet worden gelezen.</string>
+  <string name="card_house_saving_waiting" formatted="false">Het batterijplan is nog niet uitgevoerd.</string>
+  <string name="card_house_saving_no_plan" formatted="false">Nu geen batterijplan; de details tonen wat ontbreekt.</string>
+  <string name="card_house_compare_own" formatted="false">Eigen sturing van de batterij</string>
+  <string name="card_house_plan_next" formatted="false">De batterij {act} tot {time}, daarna {then}.</string>
+  <string name="card_house_plan_whole" formatted="false">De batterij {act} zo ver als het plan reikt.</string>
+  <string name="card_house_plan_would_next" formatted="false">{who} · SpotNav zou tot {time} {act}, daarna {then}.</string>
+  <string name="card_house_plan_would_whole" formatted="false">{who} · SpotNav zou {act} zo ver als het plan reikt.</string>
+  <string name="card_house_plan_who_own" formatted="false">De batterij stuurt zichzelf ({name})</string>
+  <string name="card_house_plan_who_test" formatted="false">Nog alleen een test</string>
+  <string name="card_house_plan_act_grid_charge" formatted="false">laadt uit het net</string>
+  <string name="card_house_plan_inf_grid_charge" formatted="false">uit het net laden</string>
+  <string name="card_house_plan_act_hold" formatted="false">houdt de lading vast</string>
+  <string name="card_house_plan_inf_hold" formatted="false">de lading vasthouden</string>
+  <string name="card_house_plan_act_export_discharge" formatted="false">verkoopt aan het net</string>
+  <string name="card_house_plan_inf_export_discharge" formatted="false">aan het net verkopen</string>
+  <string name="card_house_plan_act_self" formatted="false">dekt het huis en slaat de zon op</string>
+  <string name="card_house_plan_inf_self" formatted="false">het huis dekken en de zon opslaan</string>
+  <string name="card_house_plan_then_grid_charge" formatted="false">laadt ze uit het net</string>
+  <string name="card_house_plan_then_hold" formatted="false">houdt ze de lading vast</string>
+  <string name="card_house_plan_then_export_discharge" formatted="false">verkoopt ze aan het net</string>
+  <string name="card_house_plan_then_self" formatted="false">dekt ze het huis en slaat de zon op</string>
+  <string name="card_house_now_tab_sun" formatted="false">Zon vandaag</string>
+  <string name="card_house_now_tab_grid" formatted="false">Gekocht vandaag</string>
+  <string name="card_house_now_tab_sold" formatted="false">verkocht {kwh}</string>
+  <string name="card_house_now_tab_battery" formatted="false">Batterij</string>
+  <string name="card_house_now_tab_car" formatted="false">Auto</string>
+  <string name="card_house_now_tab_heat" formatted="false">Warmte vandaag</string>
+  <string name="card_house_now_tab_house" formatted="false">Huis vandaag</string>
+  <string name="card_house_now_tab_house_now" formatted="false">Het huis nu</string>
+  <string name="card_house_now_tab_no_live" formatted="false">nog geen live-waarden</string>
+  <string name="card_house_now_tab_line_sun_in" formatted="false">De zon levert {kw}</string>
+  <string name="card_house_now_tab_line_sun_out" formatted="false">De zon levert {kw}</string>
+  <string name="card_house_now_tab_line_grid_in" formatted="false">Koopt {kw} uit het net</string>
+  <string name="card_house_now_tab_line_grid_out" formatted="false">Verkoopt {kw} aan het net</string>
+  <string name="card_house_now_tab_line_battery_in" formatted="false">De batterij levert {kw}</string>
+  <string name="card_house_now_tab_line_battery_out" formatted="false">De batterij laadt {kw}</string>
+  <string name="card_house_now_tab_line_car_in" formatted="false">De auto levert {kw}</string>
+  <string name="card_house_now_tab_line_car_out" formatted="false">De auto laadt {kw}</string>
+  <string name="card_house_now_tab_line_heat_in" formatted="false">Warmte {kw}</string>
+  <string name="card_house_now_tab_line_heat_out" formatted="false">De warmte gebruikt {kw}</string>
+  <string name="card_house_now_tab_money" formatted="false">Vandaag: {parts}</string>
+  <string name="card_house_now_tab_money_battery" formatted="false">de batterij verdiende {amount}</string>
+  <string name="card_house_now_tab_money_battery_own" formatted="false">de batterij verdiende {amount} (eigen sturing)</string>
+  <string name="card_house_now_tab_money_saved" formatted="false">SpotNav bespaarde {amount}</string>
+  <string name="card_house_now_tab_car_today" formatted="false">{kwh} vandaag</string>
+  <string name="card_house_now_tab_today" formatted="false">vandaag</string>
+  <string name="card_house_now_tab_house_no_car" formatted="false">zonder auto</string>
+  <string name="card_house_learning_capped_while" formatted="false">Laden uit het net hoogstens {kw} kW terwijl de pieken van het huis worden geleerd ({left}).</string>
+  <string name="card_house_learning_peaks_line" formatted="false">Leert de pieken van het huis, {left}.</string>
+  <string name="card_house_learning_no_grid_until" formatted="false">Laadt tot dan niet uit het net.</string>
+  <string name="card_learning_days_left_one" formatted="false">nog {days} dag</string>
+  <string name="card_learning_days_left_other" formatted="false">nog {days} dagen</string>
+  <string name="card_house_tabs" formatted="false">Weergaven van het huis</string>
+  <string name="card_house_tab_now" formatted="false">Nu</string>
+  <string name="card_house_tab_flow" formatted="false">Energiestroom</string>
+  <string name="card_house_tab_graph" formatted="false">Energiegrafiek</string>
+  <string name="card_house_tab_price" formatted="false">Prijs en batterij</string>
+  <string name="card_house_tab_price_only" formatted="false">Prijs</string>
+  <string name="card_heat_read_only" formatted="false">SpotNav kan de verwarming hier alleen uitlezen.</string>
+  <string name="card_heat_read_only_admin" formatted="false">SpotNav kan de verwarming hier alleen uitlezen – kies een sturing in Instellingen → Verwarming → Sturing.</string>
+  <string name="card_heat_none_value" formatted="false">Niets gevonden</string>
+  <string name="card_house_tab_earn" formatted="false">Opbrengst</string>
+  <string name="card_house_tab_short_now" formatted="false">Nu</string>
+  <string name="card_house_tab_short_flow" formatted="false">Stroom</string>
+  <string name="card_house_tab_short_graph" formatted="false">Grafiek</string>
+  <string name="card_house_tab_short_earn" formatted="false">Winst</string>
+  <string name="card_house_tab_short_price" formatted="false">Prijs</string>
+  <string name="card_house_picker_today" formatted="false">Vandaag</string>
+  <string name="card_house_picker_yesterday" formatted="false">Gisteren</string>
+  <string name="card_house_picker_through" formatted="false">{label} · tot {time}</string>
+  <string name="card_hist_period_label" formatted="false">Periode</string>
+  <string name="card_hist_period_day" formatted="false">Dag</string>
+  <string name="card_hist_period_month" formatted="false">Maand</string>
+  <string name="card_hist_period_year" formatted="false">Jaar</string>
+  <string name="card_hist_previous_day" formatted="false">Vorige dag</string>
+  <string name="card_hist_previous_month" formatted="false">Vorige maand</string>
+  <string name="card_hist_previous_year" formatted="false">Vorig jaar</string>
+  <string name="card_hist_next_day" formatted="false">Volgende dag</string>
+  <string name="card_hist_next_month" formatted="false">Volgende maand</string>
+  <string name="card_hist_next_year" formatted="false">Volgend jaar</string>
+  <string name="card_hist_pick_day" formatted="false">Kies een dag</string>
+  <string name="card_hist_pick_month" formatted="false">Kies een maand</string>
+  <string name="card_hist_pick_year" formatted="false">Kies een jaar</string>
+  <string name="card_house_flow_solar" formatted="false">Zon</string>
+  <string name="card_house_flow_battery" formatted="false">Batterij</string>
+  <string name="card_house_flow_grid" formatted="false">Net</string>
+  <string name="card_house_flow_house" formatted="false">Huis</string>
+  <string name="card_house_flow_car" formatted="false">Auto</string>
+  <string name="card_house_flow_heat" formatted="false">Warmte</string>
+  <string name="card_house_flow_soc_now" formatted="false">nu {pct}</string>
+  <string name="card_house_flow_soc_end" formatted="false">eind {pct}</string>
+  <string name="card_house_flow_waiting" formatted="false">De energiestroom van vandaag verschijnt zodra de eerste vijf minuten binnen zijn.</string>
+  <string name="card_house_loads_title" formatted="false">Wat het huis gebruikte</string>
+  <string name="card_house_loads_title_heat" formatted="false">Wat de warmte gebruikte</string>
+  <string name="card_house_loads_open" formatted="false">{figures}. Toon wat het huis gebruikte</string>
+  <string name="card_house_loads_open_heat" formatted="false">{figures}. Toon wat de warmte gebruikte</string>
+  <string name="card_house_loads_tap" formatted="false">Tik op Huis om te zien wat de energie gebruikte.</string>
+  <string name="card_house_loads_tap_heat" formatted="false">Tik op Huis of Warmte om te zien wat de energie gebruikte.</string>
+  <string name="card_house_loads_other_metered" formatted="false">Overig gemeten</string>
+  <string name="card_house_loads_unknown" formatted="false">Onbekend</string>
+  <string name="card_house_loads_today" formatted="false">Vandaag tot nu</string>
+  <string name="card_house_loads_reading" formatted="false">De meters worden gelezen…</string>
+  <string name="card_house_loads_failed" formatted="false">De meters konden nu niet gelezen worden.</string>
+  <string name="card_house_loads_unsupported" formatted="false">Hiervoor is een nieuwere SpotNav-integratie nodig.</string>
+  <string name="card_house_loads_no_flow" formatted="false">Er is geen cijfer voor het huis in deze periode.</string>
+  <string name="card_house_loads_other_holds" formatted="false">Overig gemeten: {list}.</string>
+  <string name="card_house_loads_over" formatted="false">De meters tellen op tot {kwh} meer dan het huis, dus Onbekend wordt als 0 getoond.</string>
+  <string name="card_house_loads_none" formatted="false">Nog geen meters op afzonderlijke apparaten. Voeg ze toe in het Energie-dashboard van Home Assistant onder Afzonderlijke apparaten om ze hier te zien.</string>
+  <string name="card_house_loads_car_heat" formatted="false">De auto en de warmte staan apart in de stroom en horen hier niet bij.</string>
+  <string name="card_house_loads_car" formatted="false">De auto staat apart in de stroom en hoort hier niet bij.</string>
+  <string name="card_house_loads_heat" formatted="false">De warmte staat apart in de stroom en hoort hier niet bij.</string>
+  <string name="card_house_loads_chart" formatted="false">De energie van het huis: {list}</string>
+  <string name="card_house_loads_changed" formatted="false">door jou gewijzigd</string>
+  <string name="card_house_loads_implausible" formatted="false">{name}: {hours} uur met onmogelijke waarden telt niet mee (de meter springt). Herstel de statistieken in Home Assistant onder Ontwikkelhulpmiddelen → Statistieken.</string>
+  <string name="card_house_loads_implausible_out" formatted="false">{name}: geen enkel uur had een mogelijke waarde, dus de meter is weggelaten (hij springt). Herstel de statistieken in Home Assistant onder Ontwikkelhulpmiddelen → Statistieken.</string>
+  <string name="card_hist_loading" formatted="false">Geschiedenis wordt gelezen…</string>
+  <string name="card_hist_failed" formatted="false">De geschiedenis kon niet worden gelezen. Probeer het zo opnieuw.</string>
+  <string name="card_hist_unsupported" formatted="false">De integratie biedt deze geschiedenis nog niet: werk SpotNav bij.</string>
+  <string name="card_hist_house_no_meters" formatted="false">Het energiedashboard heeft geen netmeter, dus de energie kan niet worden getoond: voeg de netafname toe onder Instellingen → Dashboards → Energie.</string>
+  <string name="card_hist_house_no_energy" formatted="false">In deze periode is geen energie gemeten.</string>
+  <string name="card_house_tile_sun" formatted="false">Zon</string>
+  <string name="card_house_tile_house" formatted="false">Huis</string>
+  <string name="card_house_tile_discharged" formatted="false">Ontladen</string>
+  <string name="card_house_tile_charged" formatted="false">Geladen</string>
+  <string name="card_house_tile_bought" formatted="false">Gekocht</string>
+  <string name="card_house_tile_sold" formatted="false">Verkocht</string>
+  <string name="card_house_tile_heat" formatted="false">Warmte</string>
+  <string name="card_house_tile_car" formatted="false">Auto</string>
+  <!-- House page: Graf and Pris och batteri -->
+  <string name="card_house_legend" formatted="false">Legenda</string>
+  <string name="card_house_legend_house" formatted="false">Huis</string>
+  <string name="card_house_legend_heat" formatted="false">Warmte</string>
+  <string name="card_house_legend_forecast" formatted="false">Prognose</string>
+  <string name="card_house_legend_sun" formatted="false">Zon</string>
+  <string name="card_house_legend_sun_day" formatted="false">Zon · stippen = voorspellingsdienst</string>
+  <string name="card_house_legend_battery" formatted="false">Batterijniveau · gestippeld = plan</string>
+  <string name="card_house_legend_buy" formatted="false">Inkoopprijs</string>
+  <string name="card_house_legend_sell_price" formatted="false">Verkoopprijs</string>
+  <string name="card_house_legend_car" formatted="false">Auto</string>
+  <string name="card_house_chart_label" formatted="false">Huis, zon en batterij: 12 uur terug, 24 vooruit</string>
+  <string name="card_house_chart_description" formatted="false">Staven: het verbruik van het huis per uur, gemeten tot nu en daarna voorspeld (lichter). Vlak: de zon. Kort streepje boven een eerdere staaf: wat er voor dat uur voorspeld was.</string>
+  <string name="card_house_chart_price_label" formatted="false">Prijzen en batterij: 12 uur terug, 24 vooruit</string>
+  <string name="card_house_chart_price_description" formatted="false">Lijnen: de inkoopprijs met alle heffingen en de verkoopprijs per uur. Paarse lijn: het laadniveau van de batterij op de rechteras, gestippeld waar gepland. Tinten: het plan laadt uit het net of verkoopt eraan.</string>
+  <string name="card_house_hint" formatted="false">Tik in de grafiek voor de cijfers van een uur.</string>
+  <string name="card_house_hint_energy" formatted="false">Tik op een uur voor de cijfers. Lichte staven zijn voorspeld.</string>
+  <string name="card_house_readout_house" formatted="false">huis {kw}</string>
+  <string name="card_house_readout_house_forecast" formatted="false">huis {kw} verwacht</string>
+  <string name="card_house_readout_heat" formatted="false">warmte {kw}</string>
+  <string name="card_house_readout_heat_forecast" formatted="false">warmte {kw} verwacht</string>
+  <string name="card_house_readout_house_both" formatted="false">huis {kw} (prognose {forecast})</string>
+  <string name="card_house_readout_sun" formatted="false">zon {kwh}</string>
+  <string name="card_house_readout_sun_forecast" formatted="false">zon {kwh} verwacht</string>
+  <string name="card_house_readout_soc" formatted="false">batterij {pct}</string>
+  <string name="card_house_readout_soc_plan" formatted="false">batterij {pct} gepland</string>
+  <string name="card_house_readout_action_grid_charge" formatted="false">laadt uit het net</string>
+  <string name="card_house_readout_action_export_discharge" formatted="false">verkoopt aan het net</string>
+  <string name="card_house_readout_action_hold" formatted="false">houdt de lading vast</string>
+  <string name="card_house_readout_price" formatted="false">inkoop {buy} · verkoop {sell}</string>
+  <string name="card_house_readout_car" formatted="false">auto {kw}</string>
+  <string name="card_house_readout_price_buy" formatted="false">inkoop {buy}</string>
+  <string name="card_house_readout_price_sell" formatted="false">verkoop {sell}</string>
+  <string name="card_house_now" formatted="false">Nu</string>
+  <string name="card_house_today_cost" formatted="false">Stroom {amount}</string>
+  <string name="card_house_today_sold" formatted="false">verkochte zonnestroom {amount}</string>
+  <string name="card_house_day_money" formatted="false">{day}: de batterij verdiende {amount}</string>
+  <string name="card_house_day_money_own" formatted="false">{day}: de batterij verdiende {amount} (eigen sturing)</string>
+  <string name="card_house_today" formatted="false">De batterij heeft vandaag {amount} verdiend</string>
+  <string name="card_house_today_own" formatted="false">De batterij heeft vandaag {amount} verdiend (eigen sturing)</string>
+  <string name="card_house_day_no_data" formatted="false">Op deze dag is niets gemeten.</string>
+  <string name="card_house_graph_label" formatted="false">Gebruikte energie en de zon, per periode</string>
+  <string name="card_house_value_hour" formatted="false">de batterij verdiende {amount}</string>
+  <string name="card_house_value_hour_cost" formatted="false">de batterij verloor {amount}</string>
+  <string name="card_house_flow_out" formatted="false">ontladen {kwh}, waard {worth}, min {cost} die de energie kostte om te laden = {net}</string>
+  <string name="card_house_flow_in" formatted="false">geladen {kwh} voor {cost} (geteld wanneer de energie wordt gebruikt)</string>
+  <string name="card_hist_house_chart" formatted="false">Kosten van het huis</string>
+  <string name="card_hist_house_hint" formatted="false">Tik op een staaf voor de cijfers.</string>
+  <string name="card_hist_house_bar_none" formatted="false">{when}: niets gemeten</string>
+  <string name="card_battery_title" formatted="false">Thuisbatterij</string>
+  <string name="card_battery_intro" formatted="false">SpotNav kan de batterij aansturen: stilzetten terwijl de auto uit het net laadt, laden als stroom goedkoop is en teruglevering stoppen als die geld kost. Uit tot je het aanzet.</string>
+  <string name="card_battery_mode_label" formatted="false">Modus</string>
+  <string name="card_battery_mode_help_self_consumption" formatted="false">De batterij laadt op met zonnestroom en voorziet het huis. Geen handel met het net.</string>
+  <string name="card_battery_mode_help_balanced" formatted="false">Laadt ook uit het net als het goedkoop is en wordt gebruikt als het duur is. Verkoopt alleen als het zeer winstgevend is.</string>
+  <string name="card_battery_mode_help_max_profit" formatted="false">Zoals Gebalanceerd, maar verkoopt aan het net zodra dat loont, slijtage meegerekend.</string>
+  <string name="card_battery_mode_shadow" formatted="false">Zolang SpotNav de batterij niet aanstuurt, verschuift de keuze alleen welke rij in de vergelijking als gekozen is gemarkeerd.</string>
+  <string name="card_battery_plan_costs" formatted="false">Slijtage wordt geteld als {wear} in elke richting · Gebalanceerd verkoopt vanaf {margin} netto</string>
+  <string name="card_battery_plan_costs_docs" formatted="false">Het batterijplan</string>
+  <string name="card_battery_switch" formatted="false">Batterijsturing</string>
+  <string name="card_battery_line_off" formatted="false">Uit: SpotNav stuurt nog niets en laat alleen zien wat het zou doen.</string>
+  <string name="card_battery_line_shadow_only" formatted="false">Test: SpotNav stuurt nog niets en logt alleen wat het zou doen.</string>
+  <string name="card_battery_line_checking" formatted="false">Controleert of de batterij gehoorzaamt (ongeveer 40 minuten).</string>
+  <string name="card_battery_line_checking_after_update" formatted="false">Controleert de batterij opnieuw na een update.</string>
+  <string name="card_battery_line_on" formatted="false">Aan: SpotNav stuurt de batterij aan.</string>
+  <string name="card_battery_line_watching_ai_mode" formatted="false">Stuurt nog niets: de batterij blijft in AI-modus tot je de overname accepteert.</string>
+  <string name="card_battery_line_waiting" formatted="false">Wacht op een geschikt moment voor de controle.</string>
+  <string name="card_battery_line_waiting_after_update" formatted="false">Wacht op een geschikt moment om de batterij na een update opnieuw te controleren.</string>
+  <string name="card_battery_line_failed" formatted="false">De controle is mislukt: ‘{mode}’ werkte niet. Zet uit en weer aan om opnieuw te controleren.</string>
+  <string name="card_battery_line_failed_attempts" formatted="false">Na vijf pogingen is het opgegeven.</string>
+  <string name="card_battery_line_blocked" formatted="false">Gestopt: er gebeurde iets onverwachts en de batterij is teruggegeven.</string>
+  <string name="card_battery_line_blocked_writes" formatted="false">Gestopt voor vandaag: de schrijfacties van vandaag zijn op.</string>
+  <string name="card_battery_waiting_firmware_unknown" formatted="false">De firmware van de batterij is nog niet leesbaar.</string>
+  <string name="card_battery_waiting_retry_gap" formatted="false">De volgende poging is op zijn vroegst een uur na de vorige.</string>
+  <string name="card_battery_waiting_no_battery_control" formatted="false">De besturing van de batterij is niet gevonden.</string>
+  <string name="card_battery_waiting_not_evening" formatted="false">Na een update wacht het tot een avond.</string>
+  <string name="card_battery_waiting_car_charging" formatted="false">Het wacht tot de auto klaar is met laden.</string>
+  <string name="card_battery_waiting_not_discharging" formatted="false">Het wacht tot de batterij ontlaadt.</string>
+  <string name="card_battery_waiting_soc_out_of_range" formatted="false">Het wacht op een batterijniveau tussen 30 en 80 %.</string>
+  <string name="card_battery_waiting_headroom" formatted="false">Het wacht op meer ruimte onder de hoofdzekering.</string>
+  <string name="card_battery_waiting_stale_data" formatted="false">Het wacht op verse metingen.</string>
+  <string name="card_battery_waiting_busy" formatted="false">Het wacht zolang de batterijsturing bezig is.</string>
+  <string name="card_battery_mode_hold" formatted="false">Vasthouden</string>
+  <string name="card_battery_mode_charge" formatted="false">Laden uit het net</string>
+  <string name="card_battery_mode_discharge_house" formatted="false">Het huis voeden</string>
+  <string name="card_battery_mode_normal" formatted="false">Teruggeven</string>
+  <string name="card_battery_cap_line" formatted="false">Maximaal {kw} kW uit het net, zodat de zekering het houdt, ook als Home Assistant stopt ({rule}).</string>
+  <string name="card_battery_cap_zero" formatted="false">Niet laden uit het net: het huis haalt de zekering zelf al ({rule}).</string>
+  <string name="card_battery_cap_import_limit" formatted="false">De importlimiet beschermt de zekering bij laden uit het net.</string>
+  <string name="card_battery_cap_rule_learned" formatted="false">per fase geleerd</string>
+  <string name="card_battery_cap_rule_conservative" formatted="false">voorzichtig tot de eerste dagen zijn geleerd</string>
+  <string name="card_battery_cap_rule_learning" formatted="false">terwijl de pieken van het huis worden geleerd</string>
+  <string name="card_battery_cap_zero_learning" formatted="false">Niet laden uit het net terwijl de pieken van het huis worden geleerd ({left}).</string>
+  <string name="card_battery_failed" formatted="false">De batterijsturing kon niet worden gelezen.</string>
+  <string name="card_battery_error_generic" formatted="false">Dat lukte niet. Probeer het opnieuw.</string>
+  <string name="card_settings_value_on" formatted="false">Aan</string>
+  <string name="card_heat_settings_title" formatted="false">Verwarming</string>
+  <string name="card_heat_settings_steer" formatted="false">Verwarming sturen</string>
+  <string name="card_heat_settings_indoor" formatted="false">Binnensensoren</string>
+  <string name="card_heat_settings_indoor_count" formatted="false">{count} gekozen</string>
+  <string name="card_heat_settings_none" formatted="false">Geen</string>
+  <string name="card_heat_settings_outdoor" formatted="false">Buitensensor</string>
+  <string name="card_heat_settings_outdoor_auto" formatted="false">Automatisch</string>
+  <string name="card_heat_settings_meter" formatted="false">Meter van de warmtepomp</string>
+  <string name="card_heat_settings_meter_help" formatted="false">Het stroomverbruik van de warmtepomp. De stappen erin onderscheiden verwarming van warm water.</string>
+  <string name="card_heat_settings_meter_none" formatted="false">Niet gevonden</string>
+  <string name="card_heat_settings_path" formatted="false">Sturing</string>
+  <string name="card_heat_path_none" formatted="false">Nog geen</string>
+  <string name="card_heat_path_relay" formatted="false">Relais (verlagen)</string>
+  <string name="card_heat_path_sg_ready" formatted="false">SG Ready (twee contacten)</string>
+  <string name="card_heat_path_offset" formatted="false">Stooklijnverschuiving</string>
+  <string name="card_heat_path_setpoint" formatted="false">Instelpunt</string>
+  <string name="card_heat_settings_control" formatted="false">Stuuruitgang</string>
+  <string name="card_heat_settings_control_b" formatted="false">Tweede contact</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_settings_zones" formatted="false">Zones</string>
+  <string name="card_heat_settings_zones_none" formatted="false">Geen zones</string>
+  <string name="card_heat_settings_offset_help" formatted="false">Verschuiving ten opzichte van de huistemperatuur, −3 tot +3 °C.</string>
+  <string name="card_heat_settings_sensor_offset_help" formatted="false">Het eigen doel van de kamer ten opzichte van de huistemperatuur, −3 tot +3 °C. Een koelere bovenverdieping: −1,5. Een sensor die een halve graad te warm meet: +0,5. De koudste kamer wordt aan zijn eigen doel gemeten.</string>
+  <string name="card_heat_settings_air_help" formatted="false">Lucht-luchtwarmtepomp: SpotNav past alleen het instelpunt aan en zet hem nooit aan of uit.</string>
+  <string name="card_heat_settings_night" formatted="false">Koelere nacht</string>
+  <string name="card_heat_settings_night_value" formatted="false">−{delta} {start}–{end}</string>
+  <string name="card_heat_settings_night_help" formatted="false">Optioneel: een paar graden koeler tussen twee tijden. Het plan rekent ermee.</string>
+  <string name="card_heat_settings_night_delta" formatted="false">Graden koeler</string>
+  <string name="card_heat_settings_night_start" formatted="false">Van</string>
+  <string name="card_heat_settings_night_end" formatted="false">Tot</string>
+  <string name="card_heat_settings_away" formatted="false">Verlaging bij afwezigheid</string>
+  <string name="card_heat_settings_away_value" formatted="false">−{delta}</string>
+  <string name="card_heat_settings_away_help" formatted="false">Hoeveel graden koeler het huis wordt gehouden terwijl u weg bent. Nooit onder 16 °C. Het plan verwarmt het huis toch weer voor uw terugkomst.</string>
+  <string name="card_heat_settings_away_delta" formatted="false">Graden koeler</string>
+  <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
+  <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
+  <string name="site_settings_heat_add_in_home_assistant">Verwarming stel je in Home Assistant in: Instellingen → Verwarming op de huis- of verwarmingskaart.</string>
+  <string name="site_settings_offset_home_in_home_assistant">Antwoord in Home Assistant: in de instellingen van de warmtekaart, als beheerder.</string>
+  <!-- House details and Intäkt (step A4) -->
+  <string name="card_house_earn_total" formatted="false">Opbrengst {amount}</string>
+  <string name="card_house_earn_none" formatted="false">Nog geen besparing om te tonen voor deze periode.</string>
+  <string name="card_house_earn_parts" formatted="false">Getoonde onderdelen</string>
+  <string name="card_house_earn_label" formatted="false">Opbrengst per onderdeel</string>
+  <string name="card_house_earn_part_battery" formatted="false">Arbitrage (batterij)</string>
+  <string name="card_house_earn_part_own" formatted="false">Batterij, eigen sturing</string>
+  <string name="card_house_earn_part_would" formatted="false">SpotNav zou hebben bespaard</string>
+  <string name="card_house_earn_part_heat" formatted="false">Warmte</string>
+  <string name="card_house_earn_part_car" formatted="false">Auto</string>
+  <string name="card_house_earn_bar_none" formatted="false">{when}: geen cijfer</string>
+  <string name="card_house_earn_note_no_hours" formatted="false">Deze dag heeft geen uurwaarden (ze worden 40 dagen bewaard).</string>
+  <string name="card_house_earn_note_would_day" formatted="false">Met de batterij zou SpotNav deze dag {amount} hebben bespaard.</string>
+  <string name="card_house_earn_note_would_days" formatted="false">Wat SpotNav zou hebben bespaard is bekend voor {reviewed} van {days} dagen; de overige tellen zoals ze gingen.</string>
+  <string name="card_house_earn_note_would_tonight" formatted="false">Wat SpotNav met de batterij zou hebben bespaard wordt vannacht berekend.</string>
+  <string name="card_house_earn_note_would_none" formatted="false">Wat SpotNav met de batterij zou hebben bespaard is voor deze periode niet bekend.</string>
+  <string name="card_house_earn_note_car_hour" formatted="false">De besparing van de auto staat in het uur waarin het laden begon.</string>
+  <string name="card_house_earn_note_car_day" formatted="false">De besparing van de auto telt op de dag waarop het laden begon.</string>
+  <string name="card_house_earn_note_heat_day" formatted="false">De besparing van de warmte is een schatting voor de hele dag en heeft geen uurstaaf.</string>
+  <string name="card_house_earn_note_heat" formatted="false">De besparing van de warmte is een schatting.</string>
+  <string name="card_hist_title_house" formatted="false">Geschiedenis van het huis</string>
+  <string name="card_hist_legend_cost" formatted="false">Kosten</string>
+  <string name="card_hist_house_legend_saving" formatted="false">Bespaard door de batterij</string>
+  <string name="card_hist_house_legend_extra" formatted="false">Duurder met de batterij</string>
+  <string name="card_hist_house_bar_money" formatted="false">{when}: kosten {cost}, zonder batterij {without}, bespaard {saving}</string>
+  <string name="card_hist_house_bar_worse" formatted="false">{when}: kosten {cost}, zonder batterij {without}, de batterij maakte het {extra} duurder</string>
+  <string name="card_hist_house_bar_unreviewed" formatted="false">{when}: kosten {cost}, niet beoordeeld</string>
+  <string name="card_hist_house_bar_hourly" formatted="false">{when}: kosten {cost}, de besparing wordt per dag getoond</string>
+  <string name="card_hist_house_bar_no_cost" formatted="false">{when}: {use} verbruikt, {bought} gekocht</string>
+  <string name="card_hist_house_money" formatted="false">Geld</string>
+  <string name="card_hist_house_cost" formatted="false">Stroomkosten</string>
+  <string name="card_hist_house_cost_parts" formatted="false">{kwhIn} gekocht voor {bought}, {kwhOut} verkocht voor {sold}, tegen de prijzen met de huidige toeslagen.</string>
+  <string name="card_hist_house_saved_battery" formatted="false">De batterij bespaarde</string>
+  <string name="card_hist_house_saved_sun" formatted="false">De zon bespaarde</string>
+  <string name="card_hist_house_saved_both" formatted="false">Zon en batterij bespaarden</string>
+  <string name="card_hist_house_saved_days_one" formatted="false">{figure} in {days} dag</string>
+  <string name="card_hist_house_saved_days_other" formatted="false">{figure} in {days} dagen</string>
+  <string name="card_hist_house_spotnav" formatted="false">SpotNav bespaarde</string>
+  <string name="card_hist_house_spotnav_total" formatted="false">Totaal</string>
+  <string name="card_hist_house_spotnav_battery" formatted="false">Batterij</string>
+  <string name="card_hist_house_spotnav_car" formatted="false">Auto</string>
+  <string name="card_hist_house_spotnav_heat" formatted="false">Warmte (geschat)</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Elk deel tegen een eigen vergelijking, zie Zo wordt het berekend hieronder. Een deel dat SpotNav niet stuurde, blijft buiten beschouwing.</string>
+  <string name="card_hist_house_no_price_source" formatted="false">Voor deze locatie is geen stroomprijs ingesteld, dus geen kosten.</string>
+  <string name="card_hist_house_baselines_note" formatted="false">Vergeleken met dezelfde dagen zonder batterij en zonder zon.</string>
+  <string name="card_hist_house_reviewed" formatted="false">De besparing is gemeten voor {days} van de {total} dagen van de periode.</string>
+  <string name="card_hist_house_archived" formatted="false">{days} daarvan uit het dagarchief (dagen geëxporteerd met spotnav.export_day).</string>
+  <string name="card_hist_house_no_review" formatted="false">Geen batterijbeoordeling voor deze periode. De nachtelijke beoordelingen blijven 30 dagen bewaard; een oudere dag alleen als die naar het dagarchief is geëxporteerd.</string>
+  <string name="card_hist_house_modes" formatted="false">De standen van de batterij tegen eigen verbruik</string>
+  <string name="card_hist_house_modes_note" formatted="false">Elke stand gepland op dezelfde gemeten last en zon, en wat de batterij echt deed, tegen puur eigen verbruik; opgeteld over de beoordeelde dagen.</string>
+  <string name="card_hist_house_days" formatted="false">Dag voor dag</string>
+  <string name="card_hist_house_col_battery" formatted="false">Batterij</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
+  <string name="card_hist_house_col_own" formatted="false">Eigen</string>
+  <string name="card_hist_house_col_share" formatted="false">Van perfect</string>
+  <string name="card_hist_house_share_partial" formatted="false">onvolledig</string>
+  <string name="card_hist_house_share_small" formatted="false">te klein</string>
+  <string name="card_hist_house_days_note" formatted="false">Batterij: tegen geen batterij. Plan: het plan van SpotNav, eigen: de eigen manier van de batterij, beide tegen eigen verbruik.</string>
+  <string name="card_hist_house_footnote" formatted="false">De cijfers tonen wat gemeten is en wat de plannen zouden hebben gedaan.</string>
+  <string name="card_hist_house_how" formatted="false">Zo wordt het berekend</string>
+  <string name="card_hist_house_perfect_differs" formatted="false">{name} bespaarde hier {own}, terwijl \'De batterij bespaarde\' onder Geld {battery} toont. Beide vergelijken met geen batterij, maar hier tellen alleen hele dagen ({days}) en wat om middernacht nog in de batterij zat; onder Geld tellen alle gemeten dagen ({batteryDays}) en niet wat er nog in zat.</string>
+  <string name="card_hist_forecast_heading" formatted="false">Voorspelfouten</string>
+  <string name="card_hist_forecast_house" formatted="false">Last van het huis</string>
+  <string name="card_hist_forecast_sun" formatted="false">Zon</string>
+  <string name="card_hist_forecast_sun_corrected" formatted="false">Zon, gecorrigeerd</string>
+  <string name="card_hist_forecast_soc" formatted="false">Batterijniveau</string>
+  <string name="card_hist_forecast_note" formatted="false">Het gemiddelde van de gemiddelde fout van elke beoordeelde dag (de beoordelingen blijven 30 dagen bewaard).</string>
+  <string name="card_hist_forecast_none" formatted="false">In deze periode is geen voorspelling beoordeeld (de beoordelingen blijven 30 dagen bewaard).</string>
+  <string name="card_house_compare_in_force" formatted="false">gekozen</string>
+  <string name="card_house_compare_none" formatted="false">nog geen volle dag</string>
+  <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
+  <string name="card_house_days_date" formatted="false">Dag</string>
+  <string name="card_perfect_heading_period" formatted="false">Aandeel van perfect</string>
+  <string name="card_perfect_headline" formatted="false">{own} {ownShare} van perfect · {plan} {planShare}</string>
+  <string name="card_perfect_headline_one" formatted="false">{name} {share} van perfect</string>
+  <string name="card_perfect_explain" formatted="false">Perfect: het best mogelijke achteraf, met dezelfde regels.</string>
+  <string name="card_perfect_explain_sell" formatted="false">Perfect: het best mogelijke achteraf, mag verkopen (regels van {mode}).</string>
+  <string name="card_perfect_explain_no_sell" formatted="false">Perfect: het best mogelijke achteraf, zonder verkoop (er ging niets naar het net).</string>
+  <string name="card_perfect_midnight" formatted="false">Gerekend met wat er om middernacht nog in de batterij zat.</string>
+  <string name="card_perfect_provisional_one" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
+  <string name="card_perfect_provisional_other" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
+  <string name="card_perfect_provisional_day" formatted="false">Wat er om middernacht over was, telt tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: buiten 0–100 %, getoond bij de dichtstbijzijnde grens (een verlies als 0 %).</string>
+  <string name="card_perfect_nothing" formatted="false">te klein verschil om te vergelijken</string>
+  <string name="card_perfect_partial_day" formatted="false">Onvolledige dag: minder dan 90 % van de dag gemeten, dus geen vergelijking.</string>
+  <string name="card_perfect_partial_one" formatted="false">{days} onvolledige dag telt niet mee.</string>
+  <string name="card_perfect_partial_other" formatted="false">{days} onvolledige dagen tellen niet mee.</string>
+  <string name="card_perfect_partial_only_one" formatted="false">Alleen {days} onvolledige dag: nog niets te vergelijken.</string>
+  <string name="card_perfect_partial_only_other" formatted="false">Alleen {days} onvolledige dagen: nog niets te vergelijken.</string>
+  <string name="card_perfect_money_saved" formatted="false">Bespaard</string>
+  <string name="card_perfect_money_perfect" formatted="false">Perfect</string>
+  <string name="card_perfect_money_note" formatted="false">Elke manier tegen dezelfde dagen zonder batterij. Wat om middernacht nog in de batterij zat, telt tegen de gemiddelde inkoopprijs van de volgende dag, min de verliezen van de batterij. Een aandeel vraagt dat het perfecte plan minstens {amount} per dag bespaart.</string>
+  <string name="card_perfect_work_cycles" formatted="false">Cycli</string>
+  <string name="card_perfect_work_switches" formatted="false">Wissels</string>
+  <string name="card_perfect_work_from_grid" formatted="false">Van het net</string>
+  <string name="card_perfect_work_to_grid" formatted="false">Naar het net</string>
+  <string name="card_perfect_work_note" formatted="false">Cycli: ontladen kWh gedeeld door de capaciteit van de batterij. Wissels: tussen laden en ontladen. Van en naar het net: kWh die de batterij uit het net laadde en eraan verkocht.</string>
+  <string name="card_perfect_temperature_one" formatted="false">Batterijcellen: gemiddeld {mean}, hoogst {max}, {minutes} min boven 30 °C ({days} dag).</string>
+  <string name="card_perfect_temperature_other" formatted="false">Batterijcellen: gemiddeld {mean}, hoogst {max}, {minutes} min boven 30 °C ({days} dagen).</string>
+  <string name="card_house_saving_details_head" formatted="false">Wat SpotNav bespaarde, wordt vergeleken met:</string>
+  <string name="card_house_saving_details_battery" formatted="false">Batterij: wat ze verdiende terwijl SpotNav haar stuurde.</string>
+  <string name="card_house_saving_details_battery_own" formatted="false">Batterij: ze liep op eigen sturing, dus wat ze verdiende is van haarzelf en telt niet als besparing van SpotNav.</string>
+  <string name="card_house_saving_details_car" formatted="false">Auto: meteen laden bij het inpluggen, met hetzelfde vermogen en alle heffingen. Alleen de kWh van de auto uit het net tellen; een laadbeurt die iemand zelf startte telt als 0.</string>
+  <string name="card_house_saving_details_car_since" formatted="false">De auto wordt geteld vanaf {date}.</string>
+  <string name="card_house_saving_details_heat" formatted="false">Warmte (geschat): wat de eigen verlagingen van SpotNav weghaalden tegen de prijs van die uren, min de warmte die daarna werd teruggekocht.</string>
+  <string name="card_house_flow_rule" formatted="false">De meters zeggen niet welke bron wat voedde: elk uur gaat de zon eerst naar het huis, dan naar de auto, de batterij en het net; de batterij dekt het huis vóór het net.</string>
+  <string name="card_house_flow_rule_quarter" formatted="false">De meters zeggen niet welke bron wat voedde: elk kwartier gaat de zon eerst naar het huis, dan naar de auto, de batterij en het net; de batterij dekt het huis vóór het net.</string>
+  <string name="card_house_flow_car_part" formatted="false">De auto kon niet elk uur gelezen worden; die uren telt hij mee in het huis.</string>
+  <string name="card_house_flow_heat_rule" formatted="false">Warmte is de eigen meter van de warmtepomp en de eigen sensoren van de verwarmingszones; het huis is wat overblijft.</string>
+  <string name="card_house_flow_heat_part" formatted="false">De meter van de warmtepomp kon niet elk uur gelezen worden; die uren telt hij mee in het huis.</string>
+  <string name="card_house_sources_heading" formatted="false">Bronnen</string>
+  <string name="card_house_sources_weather" formatted="false">Weer: {name}</string>
+  <string name="card_house_sources_weather_no_forecast" formatted="false">Weer: {name}, zonder uurvoorspelling</string>
+  <string name="card_house_sources_weather_none" formatted="false">Weer: niets gevonden</string>
+  <string name="card_house_sources_outdoor_sensor" formatted="false">Buitentemperatuur: {name}</string>
+  <string name="card_house_sources_outdoor_weather" formatted="false">Buitentemperatuur: uit het weer</string>
+  <string name="card_house_sources_outdoor_none" formatted="false">Buitentemperatuur: geen</string>
+  <string name="card_house_sources_holidays" formatted="false">Feestdagen: {name}</string>
+  <string name="card_house_sources_holidays_none" formatted="false">Feestdagen: alleen werkdag en weekend</string>
+  <string name="card_house_sources_temperature_on" formatted="false">Temperatuur in de voorspelling: aan</string>
+  <string name="card_house_sources_temperature_off" formatted="false">Temperatuur in de voorspelling: uit ({reason})</string>
+  <string name="card_house_temperature_too_few" formatted="false">nog te weinig uren met temperatuur</string>
+  <string name="card_house_temperature_too_little" formatted="false">ze verklaart te weinig van de last</string>
+  <string name="card_house_sources_solar" formatted="false">Zonnevoorspelling: {names}</string>
+  <string name="card_house_sources_solar_learning" formatted="false">Zonnevoorspelling: {names} · correctie leert, {left}</string>
+  <string name="card_house_sources_heat_from_dashboard" formatted="false">Warmtepompmeter: {name} (Energie-dashboard)</string>
+  <string name="card_house_sources_heat_from_integration" formatted="false">Warmtepompmeter: {name} (integratie van de warmtepomp)</string>
+  <string name="card_house_sources_heat_from_setting" formatted="false">Warmtepompmeter: {name} (gekozen bij Instellingen)</string>
+  <string name="card_house_sources_heat_split" formatted="false">Huisprognose als warmte plus de rest: {split} tegen {whole} voor het geheel ({hours} u, alleen getoond)</string>
+  <string name="card_house_sources_battery" formatted="false">Batterij: {name}</string>
+  <string name="card_house_sources_stored" formatted="false">Nu opgeslagen: {kwh} à gemiddeld {cost}</string>
+  <string name="card_house_sources_stored_estimated" formatted="false">Nu opgeslagen: {kwh} à gemiddeld {cost} (geschat vanaf de start tot die energie is gebruikt)</string>
+  <string name="card_house_note_self_managed" formatted="false">De batterij draait op haar eigen optimalisatie. SpotNav plant ernaast alleen om te vergelijken en schrijft niets naar haar.</string>
+  <string name="card_house_note_shadow" formatted="false">Test: SpotNav plant de batterij, maar stuurt die nog niet aan.</string>
+  <string name="card_house_note_controlling" formatted="false">SpotNav stuurt de batterij volgens het plan.</string>
+  <string name="card_house_note_assumed" formatted="false">Tot nu toe aangenomen: {list}.</string>
+  <string name="card_house_note_counts_battery" formatted="false">De last van het huis wordt gemeten als het net min de laders; dekt de batterij het huis, dan lijkt die kleiner.</string>
+  <string name="card_house_estimate_min_soc_assumed" formatted="false">het laagste niveau van de batterij</string>
+  <string name="card_house_estimate_round_trip_assumed" formatted="false">het rendement van de batterij</string>
+  <string name="card_house_estimate_solar_in_house_history" formatted="false">de zon in de geschiedenis van het huis</string>
+  <string name="card_house_estimate_battery_mode_unknown" formatted="false">de modus (onbekend, Gebalanceerd gebruikt)</string>
+  <string name="card_house_estimate_wear_currency_unknown" formatted="false">de slijtagekosten van de batterij</string>
+  <string name="card_house_estimate_no_solar_forecast" formatted="false">geen zon</string>
+  <string name="card_house_estimate_horizon_cut_by_forecast" formatted="false">een door de voorspelling ingekorte horizon</string>
+  <string name="card_house_estimate_capacity_from_ah" formatted="false">de grootte (berekend uit ampère-uren)</string>
+  <string name="card_house_estimate_rated_from_current" formatted="false">het nominale vermogen (berekend uit de stroomlimieten)</string>
+  <string name="card_house_estimate_capacity_learned" formatted="false">de grootte (geleerd uit gebruik)</string>
+  <string name="card_house_estimate_rated_learned" formatted="false">het nominale vermogen (het hoogste tot nu toe gezien)</string>
+  <string name="card_history_savings_plug_in" formatted="false">SpotNav bespaarde {amount} ten opzichte van meteen laden bij het inpluggen</string>
+  <string name="card_history_savings_plug_in_extra" formatted="false">{amount} meer dan meteen laden bij het inpluggen</string>
+  <string name="card_history_savings_plug_in_note" formatted="false">SpotNav bespaarde: dezelfde kWh uit het net als de auto meteen bij het inpluggen had geladen, met heffingen. Een laadbeurt die iemand zelf startte telt als 0, en kWh uit de thuisbatterij tellen voor de batterij. Hetzelfde getal als op de huiskaart.</string>
+  <string name="card_house_details_open" formatted="false">Details</string>
+  <!-- Heat details cost bars (step A4) -->
+  <string name="card_hist_heat_chart" formatted="false">Kosten van de warmtepomp</string>
+  <string name="card_hist_heat_legend_saving" formatted="false">Zou hebben bespaard</string>
+  <string name="card_hist_heat_bar_saving" formatted="false">zou {saving} hebben bespaard</string>
+  <string name="card_hist_heat_bar_zones" formatted="false">zones {kwh}</string>
+  <string name="card_hist_heat_bar_hot_water" formatted="false">warm water {kwh}</string>
+  <string name="card_hist_heat_bar_outdoor" formatted="false">buiten {temp}</string>
+  <string name="card_hist_heat_bar_degree_days" formatted="false">{dd} graaddagen</string>
+  <!-- Chosen without a name (step A4) -->
+  <string name="card_settings_status_chosen" formatted="false">Gekozen</string>
+  <!-- Heat control paths and the control's line (3.0) -->
+  <string name="card_heat_path_sg_ready_api" formatted="false">SG Ready via de integratie (NIBE S)</string>
+  <string name="card_heat_settings_control_api_switch" formatted="false">Activering</string>
+  <string name="card_heat_settings_untested" formatted="false">Deze manier van sturen is nog niet op een echte warmtepomp geprobeerd. Houd de eerste dagen in de gaten.</string>
+  <string name="card_heat_settings_offset_home" formatted="false">Stooklijnverschuiving niet teruggezet</string>
+  <string name="card_heat_settings_offset_home_value" formatted="false">{value} (was {home})</string>
+  <string name="card_heat_settings_offset_home_help" formatted="false">De stooklijnverschuiving staat op {value}; vóór SpotNav was die {home}. Terugzetten, of {value} houden als je eigen waarde?</string>
+  <string name="card_heat_control_off" formatted="false">Uit: SpotNav laat alleen zien wat het zou doen.</string>
+  <string name="card_heat_control_verifying_wait" formatted="false">Controleert of de warmtepomp op het relais reageert: wacht op een moment dat hij verwarmt.</string>
+  <string name="card_heat_control_verifying" formatted="false">Controleert nu of de warmtepomp op het relais reageert.</string>
+  <string name="card_heat_control_lowered" formatted="false">Stuurt: verlaagt de verwarming tot {until}.</string>
+  <string name="card_heat_control_lowered_warm" formatted="false">Stuurt: verlaagt de verwarming tot {until}, binnen te warm.</string>
+  <string name="card_heat_control_lowered_now" formatted="false">Stuurt: verlaagt de verwarming nu.</string>
+  <string name="card_heat_control_raised" formatted="false">Stuurt: verhoogt de verwarming tot {until}.</string>
+  <string name="card_heat_control_raised_now" formatted="false">Stuurt: verhoogt de verwarming nu.</string>
+  <string name="card_heat_control_normal" formatted="false">Stuurt: de warmtepomp draait nu op zijn normale stooklijn.</string>
+  <string name="card_heat_control_too_cold" formatted="false">Stuurt: te koud buiten om te verlagen.</string>
+  <string name="card_heat_control_room_cold" formatted="false">Stuurt: een kamer zit onder de band, geen verlaging.</string>
+  <string name="card_heat_control_stale" formatted="false">Stuurt: wacht op verse waarden, geen verlaging.</string>
+  <string name="card_heat_control_sg_ready_b" formatted="false">Stuurt: het tweede SG Ready-contact staat aan, geen verlaging.</string>
+  <string name="card_heat_control_hot_water" formatted="false">Stuurt: extra warm water staat aan, geen verlaging.</string>
+  <string name="card_heat_control_hot_water_low" formatted="false">Stuurt: het warme water is koel, geen verlaging.</string>
+  <string name="card_heat_control_waiting" formatted="false">Wacht.</string>
+  <string name="card_heat_control_wait_automation" formatted="false">Wacht: zet de automatisering \'{name}\' uit zodat SpotNav de verwarming kan sturen.</string>
+  <string name="card_heat_control_wait_other_controller" formatted="false">Wacht: een andere verwarmingssturing stuurt de warmtepomp.</string>
+  <string name="card_heat_control_wait_pump_price_control" formatted="false">Wacht: de eigen prijssturing van de warmtepomp staat aan.</string>
+  <string name="card_heat_control_wait_relay_unavailable" formatted="false">Wacht: het relais is niet te lezen.</string>
+  <string name="card_heat_control_wait_relay_closed" formatted="false">Wacht: iemand anders heeft het relais gesloten.</string>
+  <string name="card_heat_control_wait_no_relay" formatted="false">Wacht: kies het relais onder Sturing.</string>
+  <string name="card_heat_control_wait_no_signal" formatted="false">Wacht: kies de meter van de warmtepomp zodat SpotNav kan zien dat het relais werkt.</string>
+  <string name="card_heat_control_wait_check_failed" formatted="false">De warmtepomp reageerde niet op het relais. Controleer de bedrading en zet het weer aan.</string>
+  <string name="card_heat_control_wait_foreign_change" formatted="false">Wacht: iemand anders veranderde het relais. SpotNav stuurt morgen weer.</string>
+  <string name="card_heat_control_wait_no_read_back" formatted="false">Wacht: het relais reageerde niet. SpotNav probeert het morgen opnieuw.</string>
+  <string name="card_heat_control_path_verifying_wait" formatted="false">Controleert of de warmtepomp reageert: wacht op een moment dat hij verwarmt.</string>
+  <string name="card_heat_control_path_verifying" formatted="false">Controleert nu of de warmtepomp reageert.</string>
+  <string name="card_heat_control_path_wait_relay_unavailable" formatted="false">Wacht: de instelling van de warmtepomp is niet te lezen.</string>
+  <string name="card_heat_control_path_wait_relay_closed" formatted="false">Wacht: iemand anders heeft de verwarming al verlaagd of verhoogd.</string>
+  <string name="card_heat_control_path_wait_no_relay" formatted="false">Wacht: kies onder Sturing wat SpotNav moet sturen.</string>
+  <string name="card_heat_control_path_wait_no_signal" formatted="false">Wacht: kies de meter van de warmtepomp zodat SpotNav kan zien dat de sturing werkt.</string>
+  <string name="card_heat_control_path_wait_check_failed" formatted="false">De warmtepomp reageerde niet. Controleer de instelling en zet het weer aan.</string>
+  <string name="card_heat_control_path_wait_foreign_change" formatted="false">Wacht: iemand anders veranderde de instelling. SpotNav stuurt morgen weer.</string>
+  <string name="card_heat_control_path_wait_no_read_back" formatted="false">Wacht: de warmtepomp reageerde niet. SpotNav probeert het morgen opnieuw.</string>
+  <!-- The Boost button (3.0) -->
+  <string name="card_heat_boost_start" formatted="false">Warm water nu</string>
+  <string name="card_heat_boost_starting" formatted="false">Starten…</string>
+  <string name="card_heat_boost_left" formatted="false">Warm water · nog ongeveer {minutes} min</string>
+  <string name="card_heat_boost_left_exact" formatted="false">Warm water · nog {minutes} min</string>
+  <string name="card_heat_boost_on" formatted="false">Warm water · bezig</string>
+  <string name="card_heat_boost_heating" formatted="false">Verwarmt water · nog ongeveer {minutes} min</string>
+  <string name="card_heat_boost_heating_on" formatted="false">Verwarmt water</string>
+  <string name="card_heat_boost_stop" formatted="false">Annuleren</string>
+  <string name="card_heat_boost_failed" formatted="false">Kon het warme water niet starten</string>
+  <string name="card_heat_boost_rate_limited" formatted="false">Warm water is net gestart; probeer het over een paar minuten opnieuw</string>
+  <string name="card_heat_boost_no_headroom" formatted="false">De hoofdzekering is nu volledig belast; zet iets uit en probeer het opnieuw</string>
+  <!-- The hot water in the Plan box (3.0) -->
+  <string name="card_heat_chart_water" formatted="false">Warm water {from}–{to} · {price}/kWh · klaar om {peak}</string>
+  <string name="card_heat_chart_water_would" formatted="false">Zou water verwarmen {from}–{to} · {price}/kWh · klaar om {peak}</string>
+  <string name="card_heat_chart_water_would_past" formatted="false">Zou water om {time} hebben verwarmd</string>
+  <string name="card_heat_chart_water_pump_ran" formatted="false">de pomp draaide zelf om {time}</string>
+  <string name="card_heat_chart_water_sun" formatted="false">op zonnestroom</string>
+  <string name="card_heat_chart_peak" formatted="false">douche {time}</string>
+  <string name="card_heat_chart_cut_peak" formatted="false">blokkering ingekort vóór de douche van {time}</string>
+  <string name="card_heat_chart_cut_peak_would" formatted="false">zou de blokkering vóór de douche van {time} inkorten</string>
+  <string name="card_heat_chart_cut_day" formatted="false">blokkering ingekort zodat het warme water kan opwarmen</string>
+  <string name="card_heat_chart_cut_day_would" formatted="false">zou de blokkering inkorten zodat het warme water kan opwarmen</string>
+  <string name="card_heat_chart_cut_hygiene" formatted="false">blokkering ingekort voor de periodieke verhoging van het warme water</string>
+  <string name="card_heat_chart_cut_hygiene_would" formatted="false">zou de blokkering inkorten voor de periodieke verhoging van het warme water</string>
+  <string name="card_heat_chart_cut_moved" formatted="false">blokkering verschoven voor het warme water</string>
+  <string name="card_heat_chart_cut_moved_would" formatted="false">zou de blokkering verschuiven voor het warme water</string>
+  <string name="card_heat_water_review" formatted="false">Warm water gisteren: {kwh} verschoven · {value} bespaard</string>
+  <string name="card_heat_water_review_none" formatted="false">Warm water gisteren: niets te verschuiven</string>
+  <string name="card_heat_water_shadow" formatted="false">(schaduw)</string>
+  <string name="card_heat_water_peaks" formatted="false">Pieken: {list}</string>
+  <string name="card_heat_water_peak_hit" formatted="false">{peak} raak</string>
+  <string name="card_heat_water_peak_no_use" formatted="false">{peak} geen gebruik</string>
+  <string name="card_heat_water_peak_miss" formatted="false">{peak} na de boost opnieuw verwarmd</string>
+  <string name="card_heat_water_peak_cold" formatted="false">{peak} laat opgewarmd na een blokkering</string>
+  <string name="card_heat_water_gate" formatted="false">Warm water in schaduw: dag {days} van {needed}, {hits} van {peaks} pieken raak</string>
+  <string name="card_heat_water_gate_weekdays" formatted="false">{weekdays} van 7 weekdagen</string>
+  <string name="card_heat_water_gate_ready" formatted="false">Warm water: klaar om gestuurd te worden met ‘Verwarming sturen’</string>
+  <string name="card_heat_water_live" formatted="false">Warm water wordt door SpotNav gestuurd</string>
+  <string name="card_heat_water_backed_off" formatted="false">Warm water terug in schaduw na te vaak opnieuw verwarmen</string>
+  <string name="card_heat_water_blocking_gate" formatted="false">Blokkeringen rond het warme water in schaduw: dag {days} van {needed}, {hits} van {peaks} pieken geraakt</string>
+  <string name="card_heat_water_blocking_ready" formatted="false">Blokkeringen rond het warme water: klaar om te sturen met ‘Verwarming sturen’</string>
+  <string name="card_heat_water_blocking_live" formatted="false">SpotNav houdt zijn blokkeringen weg van het warme water</string>
+  <string name="card_heat_water_blocking_backed_off" formatted="false">Blokkeringen blijven verder weg van het warme water na te vaak laat opwarmen</string>
+  <string name="card_heat_water_blocking_review" formatted="false">Blokkeringen gisteren: {hours} u ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
+  <string name="card_heat_water_blocking_review_would" formatted="false">Blokkeringen gisteren: {hours} u zouden zijn ingekort voor het warme water · {risks} keer laat opgewarmd vóór een piek</string>
 </resources>

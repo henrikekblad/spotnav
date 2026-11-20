@@ -46,7 +46,6 @@ import se.sensnology.spotnav.ui.ScreenPart
 import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.settings.SettingsTarget
 import se.sensnology.spotnav.vehicles.VehicleEnergy
-import se.sensnology.spotnav.ui.common.addMainHeader
 import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.pairAgainNotice
 import se.sensnology.spotnav.ui.haSession
@@ -54,6 +53,12 @@ import se.sensnology.spotnav.ui.settings.AreaMoney
 import se.sensnology.spotnav.ui.settings.AreaMoneyFacts
 import se.sensnology.spotnav.ui.settings.EntsoeKeyDialog
 import se.sensnology.spotnav.ui.settings.StandalonePrice
+import se.sensnology.spotnav.ha.house.SiteRead
+import se.sensnology.spotnav.ui.site.HeatPage
+import se.sensnology.spotnav.ui.site.HousePage
+import se.sensnology.spotnav.ui.site.PageKind
+import se.sensnology.spotnav.ui.site.PageOffer
+import se.sensnology.spotnav.ui.site.SitePreferences
 import se.sensnology.spotnav.vehicles.PairedTarget
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetChargerResolver
@@ -166,9 +171,9 @@ internal class ChargingScreen(
     fun show() {
         beginScreen()
         generation = viewGeneration
-        // The page's own header, first, and *inside* the scroll body: it is what a tap on a widget
-        // lands on, and it has to scroll away with the rest.
-        addMainHeader(content) { showScreen(Screen.SETTINGS) }
+        // The top row, above the pages and still while they scroll: the mark, the page icons and the Settings gear.
+        // The page itself begins with its cards; the charger's name and status are its card's own heading.
+        shell.pages.showTop { showScreen(Screen.SETTINGS) }
         // Debug builds only, and only while test mode is on: the screen must never look like the
         // real thing while it is showing mocked chargers.
         TestMode.addBanner(context, content)
@@ -301,14 +306,61 @@ internal class ChargingScreen(
         }
         // In view, the paired dashboard is read again every minute, and just after a start-up Home
         // Assistant said would end sooner: a status line does not wait for a tap to move on.
-        shell.onLiveRefresh = { startDashboardFetch() }
+        // Only while the charger's page is the one in view; coming back to it reads at once.
+        shell.onLiveRefresh = { if (shell.pages.chargerInView) startDashboardFetch() }
+        shell.pages.onChargerInView = { startDashboardFetch() }
         shell.liveRefreshEnd = { pairedDashboard?.startingUpUntil }
         // A Start or Stop awaiting the charger's report is read every few seconds instead, so the
         // buttons return as soon as Home Assistant offers them again.
         shell.liveRefreshFast = { pendingRefresh() }
         // A running charge is read every half minute, as the Home Assistant card reads it.
         shell.liveRefreshCharging = { chargeBarShown() }
+        // The pages this charger's Home Assistant offered when it last answered, at once: a screen drawn again
+        // (back from Settings, another setting saved) keeps its pages and the one in view.
+        profileId?.let { shell.pages.knownFor(it) }?.let(::offerPages)
         startDashboardFetch()
+    }
+
+    /**
+     * The pages beside the charger's that Home Assistant serves for this charger's site: the house's where the
+     * dashboard states `capabilities.get_house`, the heat's where it states `capabilities.get_heat` and the heating
+     * has something to show (a meter, a pump, zones or sensors: asked once with `get_heat`, and remembered). Without
+     * the flags (any Home Assistant 2.x) there is the charger's page alone, and no row of icons.
+     */
+    private fun offerPages(dashboard: Dashboard) {
+        val house = dashboard.capabilities.getHouse
+        val id = profileId
+        if (!dashboard.capabilities.getHeat || id == null) {
+            offerPages(PageOffer.kinds(house = house, heat = false))
+            return
+        }
+        val memory = shell.pages.memory(id)
+        val seen = memory.heatShown
+        if (seen != null) {
+            offerPages(PageOffer.kinds(house = house, heat = seen))
+            return
+        }
+        // Not asked yet: the pages as last offered meanwhile, then the answer's.
+        shell.pages.knownFor(id)?.let { offerPages(it) } ?: offerPages(PageOffer.kinds(house = house, heat = false))
+        session?.heat { outcome ->
+            if (outcome is SiteRead.Read) {
+                memory.heat = outcome.value
+                memory.heatShown = outcome.value.hasSomething
+                offerPages(PageOffer.kinds(house = house, heat = outcome.value.hasSomething))
+            }
+        }
+    }
+
+    private fun offerPages(kinds: List<PageKind>) {
+        val id = profileId ?: return
+        val held = session ?: return
+        shell.pages.offer(id, kinds) { kind ->
+            when (kind) {
+                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
+                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
+                else -> error("no page for $kind")
+            }
+        }
     }
 
     /**
@@ -426,6 +478,8 @@ internal class ChargingScreen(
                     // Each answer (or failure) may have set or cleared the charger's pair-again mark.
                     refreshPairAgain()
                     pairedDashboard = dashboard
+                    // A failed read says nothing of the pages: they stay.
+                    dashboard?.let(::offerPages)
                     if (dashboard?.startingUpUntil != null) shell.liveRefreshReconsider?.invoke()
                     // A fresh answer is the record's own again: a pick that never became a write is
                     // dropped.

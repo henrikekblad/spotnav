@@ -226,6 +226,19 @@ class ChargerPairingApprovalTest {
             order += "forgetPush:$localId"
         }
 
+        val sites = mutableListOf<se.sensnology.spotnav.sites.SiteProfile>()
+        var activatedSite: String? = null
+
+        override fun upsertSite(site: se.sensnology.spotnav.sites.SiteProfile) {
+            sites += site
+            order += "site:${site.localId}"
+        }
+
+        override fun activateSite(localId: String) {
+            activatedSite = localId
+            order += "activateSite:$localId"
+        }
+
         override fun syncPush() {
             order += "syncPush"
         }
@@ -350,5 +363,73 @@ class ChargerPairingApprovalTest {
         )
 
         assertEquals(listOf("forget:local-a", "upsert:local-a", "repaint"), device.order)
+    }
+
+    // homes (Home Assistant 3.0)
+
+    private val fixture = PairingProtocol.poll(
+        se.sensnology.spotnav.testing.HaFixtures.root.resolve("pairing/approved_v1_sites.json").readText(),
+        { true }
+    ) as PairingPoll.Approved
+
+    @Test fun anApprovalWithHomesMakesASiteProfileEachAndPutsTheirChargersBehindThem() {
+        val applied = ChargerPairingApproval.apply(
+            PairingStop.Approved(fixture.baseUrl, fixture.chargers, fixture.sites), emptyList(), fixture.baseUrl,
+            WidgetChargerBinding(initialized = false, chargerProfileId = null), ids("c-1"), newSiteLocalId = ids("s-1", "s-2")
+        )!!
+        assertEquals(listOf("Home", "Cabin"), applied.sites.map { it.name })
+        assertEquals(listOf("site_garage", "site_cabin"), applied.sites.map { it.siteId })
+        val garage = applied.profiles.single()
+        // Its own webhook is kept, and the home's is the door.
+        assertEquals("9c41e07b2fd85a3e6b1d4c70a2e59f18", garage.webhookId)
+        assertEquals("<site_garage_webhook>", garage.siteWebhookId)
+        assertEquals("site_garage", garage.siteId)
+        assertEquals("c-1", applied.firstLocalId)
+        assertEquals("s-1", applied.firstSiteLocalId)
+        assertFalse(applied.empty)
+    }
+
+    @Test fun aHomeWithoutAChargerIsWhatAPhoneWithNothingActiveShows() {
+        val cabin = PairedSite("site_cabin", "Cabin", "cabin-hook", emptyList())
+        val applied = ChargerPairingApproval.apply(
+            PairingStop.Approved(instance, emptyList(), listOf(cabin)), emptyList(), instance,
+            WidgetChargerBinding(initialized = false, chargerProfileId = null), ids(), newSiteLocalId = ids("s-1")
+        )!!
+        assertNull(applied.firstLocalId)
+        val device = Recorder()
+        ChargerPairingApproval.commit(applied, device)
+        assertEquals("s-1", device.activatedSite)
+        assertNull(device.activated)
+        assertEquals(listOf("site:s-1", "activateSite:s-1", "repaint"), device.order.filterNot { it.startsWith("bind") })
+        // A phone that shows a charger keeps it.
+        val busy = Recorder(active = "held")
+        ChargerPairingApproval.commit(applied, busy)
+        assertNull(busy.activatedSite)
+    }
+
+    @Test fun aHomeListingAChargerTheApprovalDidNotHandOverAddsItBehindTheHome() {
+        val home = PairedSite("s", "Home", "home-hook", listOf(SiteCharger("entry_x", "Carport")))
+        val applied = ChargerPairingApproval.apply(
+            PairingStop.Approved(instance, emptyList(), listOf(home)), emptyList(), instance,
+            WidgetChargerBinding(initialized = false, chargerProfileId = null), ids("c-1"), newSiteLocalId = ids("s-1")
+        )!!
+        val carport = applied.profiles.single()
+        assertEquals("", carport.webhookId)
+        assertEquals("home-hook", carport.siteWebhookId)
+        assertEquals("c-1", applied.firstLocalId)
+    }
+
+    @Test fun pairingAgainMovesAHeldChargerBehindItsHomeAndTellsPushAgain() {
+        val held = profile("a", remoteChargerId = "entry_a")
+        val home = PairedSite("s", "Home", "home-hook", listOf(SiteCharger("entry_a", "Charger a")))
+        val applied = ChargerPairingApproval.apply(
+            PairingStop.Approved(instance, listOf(charger("entry_a", "Charger a", "wh-a")), listOf(home)), listOf(held), instance,
+            WidgetChargerBinding(initialized = true, chargerProfileId = "a"), ids(), newSiteLocalId = ids("s-1")
+        )!!
+        assertEquals("home-hook", applied.profiles.single().siteWebhookId)
+        assertEquals(listOf("a"), applied.newWebhooks)
+        // An approval with nothing in it says so.
+        assertTrue(ChargerPairingApproval.apply(PairingStop.Approved(instance, emptyList()), emptyList(), instance,
+            WidgetChargerBinding(false, null), ids())!!.empty)
     }
 }

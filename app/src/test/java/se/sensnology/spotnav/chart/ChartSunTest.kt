@@ -121,4 +121,11 @@ class ChartSunTest {
         assertFalse(plain == sunny)
         assertEquals(sunny, sunny.copy(sun = ChartSuns.series(block, ChartTimeAxis.WallClock, zone, today)))
     }
+
+    @Test fun aNightAtZeroDrawsNoLineAndTheLineMeetsTheBaselineAtDawnAndDusk() {
+        fun day(vararg kws: Double) = kws.mapIndexed { i, kw -> SunPoint(i * 60f, (i + 1) * 60f, kw, true) }
+        assertEquals(listOf(listOf(0.0, 0.4, 2.0, 1.0, 0.0)), ChartSuns.litRuns(day(0.0, 0.0, 0.4, 2.0, 1.0, 0.0, 0.0)).map { run -> run.map { it.kw } })
+        assertEquals(emptyList<List<SunPoint>>(), ChartSuns.litRuns(day(0.0, 0.0, 0.0)))
+        assertEquals(listOf(listOf(1.0, 0.0), listOf(0.0, 1.0)), ChartSuns.litRuns(day(1.0, 0.0, 0.0, 0.0, 1.0)).map { run -> run.map { it.kw } })
+    }
 }

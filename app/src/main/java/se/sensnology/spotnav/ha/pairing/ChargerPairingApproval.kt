@@ -2,6 +2,8 @@ package se.sensnology.spotnav.ha.pairing
 
 import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.sites.SiteProfile
+import se.sensnology.spotnav.sites.SiteSync
 import se.sensnology.spotnav.widget.WidgetChargerBinding
 import se.sensnology.spotnav.widget.WidgetChargerBindingStore
 import se.sensnology.spotnav.widget.WidgetChargerResolver
@@ -48,8 +50,15 @@ internal object ChargerPairingApproval {
          * The re-paired profiles whose webhook changed: Home Assistant is told this phone's push
          * reference again through the new one.
          */
-        val newWebhooks: List<String> = emptyList()
-    )
+        val newWebhooks: List<String> = emptyList(),
+        /** The homes the approval handed over (Home Assistant 3.0), each with its chargers reached through it. */
+        val sites: List<SiteProfile> = emptyList(),
+        /** The first home: what a device with no charger and nothing active shows. */
+        val firstSiteLocalId: String? = null
+    ) {
+        /** Whether the approval handed over nothing at all: no charger and no home. */
+        val empty: Boolean get() = profiles.isEmpty() && sites.isEmpty()
+    }
 
     /**
      * The approval's effect on [existing], or `null` when this was not a successful approval at
@@ -60,7 +69,9 @@ internal object ChargerPairingApproval {
         existing: List<ChargerProfile>,
         baseUrl: String,
         storedBinding: WidgetChargerBinding,
-        newLocalId: () -> String
+        newLocalId: () -> String,
+        existingSites: List<SiteProfile> = emptyList(),
+        newSiteLocalId: () -> String = newLocalId
     ): Applied? {
         if (outcome !is PairingStop.Approved) return null
         val profiles = mutableListOf<ChargerProfile>()
@@ -95,11 +106,27 @@ internal object ChargerPairingApproval {
             returnedLocalIds += profile.localId
             profiles += profile
         }
+        // The homes (Home Assistant 3.0): each becomes a site profile, and its chargers are reached through its
+        // webhook from now on -- the chargers just written, any held already, and any the home lists that the
+        // approval did not hand over on their own.
+        val sites = mutableListOf<SiteProfile>()
+        outcome.sites.forEach { site ->
+            val current = existing.filterNot { held -> profiles.any { it.localId == held.localId } } + profiles
+            val synced = SiteSync.apply(baseUrl, site.id, site.name, site.webhookId, site.chargers, existingSites, current, newSiteLocalId, newLocalId)
+            sites += synced.site
+            synced.chargers.forEach { changed ->
+                val index = profiles.indexOfFirst { it.localId == changed.localId }
+                if (index >= 0) profiles[index] = changed else profiles += changed
+                if (existing.any { it.localId == changed.localId } && changed.localId !in newWebhooks) newWebhooks += changed.localId
+            }
+        }
         return Applied(
             profiles = profiles,
-            firstLocalId = returnedLocalIds.firstOrNull(),
+            firstLocalId = returnedLocalIds.firstOrNull() ?: profiles.firstOrNull()?.localId,
             rePaired = rePaired,
             newWebhooks = newWebhooks,
+            sites = sites,
+            firstSiteLocalId = sites.firstOrNull()?.localId,
             binding = decide(
                 returnedLocalIds = returnedLocalIds,
                 storedBinding = storedBinding,
@@ -151,6 +178,15 @@ internal object ChargerPairingApproval {
         /** Bring every Home Assistant's push registration up to date, after the profiles are written. */
         fun syncPush() {}
 
+        /** Insert or replace one home. */
+        fun upsertSite(site: SiteProfile) {}
+
+        /** The home the main screen shows when it shows no charger. */
+        fun activeSiteId(): String? = null
+
+        /** Show this home on the main screen when no charger is shown. */
+        fun activateSite(localId: String) {}
+
         /** Repaint the screen. Every write above must already have happened. */
         fun repaint()
     }
@@ -158,11 +194,16 @@ internal object ChargerPairingApproval {
     fun commit(applied: Applied?, device: Device) {
         if (applied == null) return
         applied.rePaired.forEach { device.forgetCached(it) }
+        applied.sites.forEach { device.upsertSite(it) }
         applied.profiles.forEach { device.upsert(it) }
         applied.newWebhooks.forEach { device.forgetPushRegistration(it) }
         if (applied.newWebhooks.isNotEmpty()) device.syncPush()
         val active = device.activeProfileId()
         if (active == null && applied.firstLocalId != null) device.activate(applied.firstLocalId)
+        // A home without a charger, on a phone with no charger: the home is what the main screen shows.
+        if (active == null && applied.firstLocalId == null && applied.firstSiteLocalId != null && device.activeSiteId() == null) {
+            device.activateSite(applied.firstSiteLocalId)
+        }
         (applied.binding as? Binding.Bind)?.let { device.bind(it.localId) }
         device.repaint()
     }

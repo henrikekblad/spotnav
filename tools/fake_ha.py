@@ -93,6 +93,61 @@ site's peak; `&sun=none` leaves it out), the grid tariff's supplier markup and e
 (`supplier_fees`), and the departure calendar (`departure_calendar`: tomorrow 07:30 with a target of 80 % from the
 event's text; `&calendar=daily|date|unavailable|no_event|none` for the other states). `&power=1` makes it a charger
 given a power (`power_charger`: `current_range.kw_per_a`), shown in kW.
+
+The `house` scenario is Home Assistant 3.0's house over the charger's webhook: its dashboard states
+`capabilities.get_house`, so the app shows the row of page icons and the house page, and the webhook answers
+`get_house_now` (the live flows, moving a little from read to read so the 10 s polling shows) and `get_house` (the
+villa's day moved to now), both from the vendored fixtures (`ha-fixtures/house_now/`, `ha-fixtures/house/`). The Energy flow
+tab reads `get_house_history` (a day, month or year: the villa's, or for `flows=alone` a house with the grid alone)
+and, for the pie behind House and Heat, `get_house_loads` (`ha-fixtures/house_history/`, `ha-fixtures/house_loads/`);
+the answers are the fixtures with their period moved to the one asked for, a date after today is refused as
+`spotnav_invalid_date`.
+`GET /spotnav-mock/house?flows=now|export|car|alone|none&control=own|test|on` chooses the moment: buying a little,
+selling the sun, the car charging, a house with the grid alone, or no live answer at all (`none`: the reads are
+refused, as when the site is not loaded); and who runs the battery: its own optimiser, nobody yet (Test), or SpotNav.
+`get_house` with a `date` answers that past day (the villa's past day moved to it), and `get_house_history` the day,
+month or year asked for (the vendored `ha-fixtures/house_history/` villa documents moved to the period; a year of a
+house alone for `flows=alone`, a day or a month of one without battery, sun, heat or prices), so the Graf and Pris och
+batteri tabs and their period picker have something to show. The same answers carry what the Intäkt box and the details
+sheet read (SpotNav's saving per part, the battery's own earnings with what the plan would have earned beside them,
+the review with the shares of the perfect plan, the forecasts' errors; `control=on` turns the own earnings into
+SpotNav's own saving). The charge history (`sessions`, the integration's own month) has, for a charger in a site that
+reads it (`reads: ["plug_in_saving"]`), the saving against charging at once on plug-in beside each summary and session.
+The `heat` scenario adds the heating to that: its dashboard also states `capabilities.get_heat`, so the app shows the
+heat icon and the heat page's Now tab. The webhook answers `get_heat` (a fixture of `ha-fixtures/heat_card/` moved to
+now) and `update_heat` (`target_c`, `mode` and `away_until`, with the compare-and-set: a stale `expected` is
+`spotnav_conflict`, a target off the half degrees or outside 16 to 25 is `spotnav_invalid_value`, anything else
+`spotnav_not_permitted_over_webhook`), `get_heat_history` (the vendored `ha-fixtures/heat_history/` zones documents moved
+to the day, month or year asked for; with no heat meter, in `network_pump` and `empty`, none of the use), so the heat
+page's Plan and Förbrukning boxes and its details sheet have something to show, and the house as the `house` scenario does.
+`GET /spotnav-mock/heat?fixture=villa|controlled|network_pump|empty&reset=1` chooses what the site has: a villa with
+three rooms and a meter (Test), the same with SpotNav lowering, a heat pump seen over the network with the house away,
+or a heating with nothing to show (no heat page); `reset=1` sets the dial, Home/Away and the Boost button back to the
+fixture's. `heat_boost` presses the Boost button of a fixture that has one (`network_pump` idle, the villa's own run):
+a start reads "starting" for 10 s, then runs 30 minutes that Cancel ends; a second start within a minute is
+`spotnav_rate_limited` (HTTP 429).
+The `sitesettings` scenario is the same Home Assistant's battery and heat settings over the webhook: its dashboard states
+`capabilities.battery_control` and `capabilities.get_heat`, so the app's Settings screen shows the battery and heat
+cards. The webhook answers `battery_control` (the status from `ha-fixtures/battery_control/`, `battery_mode` the only
+write it takes) and `get_heat` / `update_heat` (the villa of `ha-fixtures/heat_card/`: `target_c`, `mode`, `away_until`,
+`night`, the stored zones' offsets and the stored indoor sensors' offsets; anything else is
+`spotnav_not_permitted_over_webhook`), judged and compared as Home Assistant judges them.
+`GET /spotnav-mock/sitesettings?bat=off|ai|test|on&refuse=none|conflict|forbid` chooses the battery's state (off, waiting for
+the AI-mode takeover, test, on) and makes the next writes answer a conflict or a refusal; `reset=1` puts the settings back.
+The homes (Home Assistant 3.0's site webhook, the app's single door) are served beside the chargers, each on its own
+webhook id `site-<home>`: `siteonly` ("Stugan"), a home without a charger (its webhook answers `get_site`, the house and
+heat actions, `battery_control` and `get_site_settings_view`; the app shows the house and heat pages and no charger page),
+and `siteonly_charger` ("Villan"), a home with the charger `sitecharger`. That charger's own webhook answers
+`get_site_access` with its home, so an app paired before 3.0 moves to the home's webhook; the home's webhook answers
+every charger action with `charger_id` (`spotnav_charger_required`, `spotnav_unknown_charger` and
+`spotnav_charger_not_in_site` as Home Assistant refuses them). The pairing hands over `sites` and each charger's
+`site_id`. `GET /spotnav-mock/sites?add=1|0&pairing=on|off&access=ok|unloaded|limited&unloaded=0|1` adds the second
+charger `sitecharger2` ("Carport") to Villan (it then appears in `get_site` with no new pairing), leaves `sites` out of
+the pairing (Home Assistant 2.5), makes `get_site_access` answer 503 `spotnav_site_unloaded` or 429
+`spotnav_rate_limited`, or makes every home's webhook answer 503 `spotnav_site_unloaded`. `ha25` is a charger of Home
+Assistant 2.5: `get_site_access` is an unknown action there (400 "Unsupported action"), as on every other scenario.
+Every other scenario is a Home Assistant before 3.0 in this respect: its dashboard states none of the site
+capabilities, so the app has the charger's page alone and no icon row.
 """
 
 from __future__ import annotations
@@ -130,8 +185,14 @@ DASHBOARD_BY_SCENARIO = {
     "oldwebhook": "cheapest_no_site.json",
     "demand": "cheapest_direct_site_admin.json",
     "gridfee": "cheapest_direct_site_admin.json",
+    "house": "hybrid_derived_site_with_forecast.json",
+    "heat": "hybrid_derived_site_with_forecast.json",
+    "sitesettings": "hybrid_derived_site_with_forecast.json",
     "guest": "target_soc_two_vehicles.json",
     "newer": "target_soc_two_vehicles.json",
+    "sitecharger": "hybrid_derived_site_with_forecast.json",
+    "sitecharger2": "hybrid_derived_site_with_forecast.json",
+    "ha25": "cheapest_no_site.json",
 }
 
 #: The `price_days` answer: a pinned fixture whose day files are moved to today and tomorrow.
@@ -646,6 +707,501 @@ def update_grid_fee(payload: dict) -> tuple[int, dict]:
     return 200, {**answer, "ok": True, "error": None, "grid_tariff": GRID_FEE}
 
 
+#: The `house` scenario's choices, set with `GET /spotnav-mock/house?flows=..&control=..`.
+HOUSE = {"flows": "now", "control": "own"}
+HOUSE_FLOWS = {"now": "villa_now.json", "export": "villa_export.json", "car": "villa_car.json", "alone": "house_alone_now.json"}
+HOUSE_CONTROLS = ("own", "test", "on")
+
+#: The `heat` scenario's state: which fixture, and the settings the dial and Home/Away have written since.
+HEAT = {"fixture": "villa", "target_c": None, "mode": None, "away_until": None, "boost_started": None, "boost_stopped": False}
+#: The Boost button in the `heat` scenario: a press reads "starting" this long, then runs this long; a second start
+#: within the rate limit is `spotnav_rate_limited` (HTTP 429).
+BOOST_STARTING_S = 10
+BOOST_RUN_S = 30 * 60
+BOOST_RATE_S = 60
+HEAT_FIXTURES = ("villa", "controlled", "network_pump", "empty")
+
+#: What Home Assistant 3.0's dashboard states of the charger's site over the webhook (`docs/api.md`, "The site over
+#: the webhook"); only the `house` scenario states any.
+SITE_CAPABILITIES = ("get_house", "get_heat", "battery_control", "get_site_settings_view")
+
+
+def _moved_to_now(value, hours: int, days: int):
+    """[value] with every instant in it moved [hours] hours on and every date [days] days: a fixture's moment
+    drawn as this one, its hours still starting on the hour."""
+    if isinstance(value, dict):
+        return {key: _moved_to_now(item, hours, days) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_moved_to_now(item, hours, days) for item in value]
+    if isinstance(value, str):
+        if _ISO_INSTANT.match(value):
+            try:
+                return (datetime.fromisoformat(value) + timedelta(hours=hours)).isoformat()
+            except ValueError:
+                return value
+        if _ISO_DATE.match(value):
+            return (date.fromisoformat(value) + timedelta(days=days)).isoformat()
+    return value
+
+
+def house_now_body() -> tuple[int, dict]:
+    """`get_house_now` in the `house` scenario: the chosen moment's live flows, a little different at each read."""
+    import math
+    action = "get_house_now"
+    name = HOUSE_FLOWS.get(HOUSE["flows"])
+    if name is None:
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_now" / name).read_text(encoding="utf-8"))
+    now = datetime.now(ZoneInfo("UTC"))
+    body["at"] = now.replace(microsecond=0).isoformat()
+    # The house's own use swings a few hundred watts over a minute and a half, and the grid carries the difference.
+    swing = round(0.3 * math.sin(now.timestamp() / 15.0), 1)
+    if body["house_kw"] is not None and body["grid_kw"] is not None:
+        body["house_kw"] = round(body["house_kw"] + swing, 1)
+        body["grid_kw"] = round(body["grid_kw"] + swing, 1)
+    return 200, {"ok": True, "action": action, **body}
+
+
+def house_body(payload: dict) -> tuple[int, dict]:
+    """`get_house` in the `house` scenario: the villa's day (a house alone for `flows=alone`) moved to now, with
+    the battery run by whoever the scenario is set to."""
+    action = "get_house"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    asked = payload.get("date")
+    if asked is not None:
+        try:
+            asked_day = date.fromisoformat(asked)
+        except (TypeError, ValueError):
+            return 400, {"ok": False, "error": "spotnav_invalid_value", "action": action}
+    name = "house_learning.json" if HOUSE["flows"] == "alone" else "villa_battery_sun.json"
+    if asked is not None and HOUSE["flows"] != "alone":
+        name = "villa_past_day.json"
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house" / name).read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["time_zone"])
+    now = datetime.now(zone)
+    made = datetime.fromisoformat(body["generated_at"])
+    if asked is not None and name == "villa_past_day.json":
+        # A past day: the fixture's day moved to the one asked for (whole days, so its hours stay on the hour).
+        days = (asked_day - date.fromisoformat(body["day"]["date"])).days
+        body = _moved_to_now(body, days * 24, days)
+    else:
+        hours = round((now - made).total_seconds() / 3600.0)
+        body = _moved_to_now(body, hours, (now.date() - made.astimezone(zone).date()).days)
+    battery = body.get("battery")
+    if battery is not None:
+        control = HOUSE["control"]
+        battery["management"] = "self_managed" if control == "own" else "free"
+        battery["control"] = "on" if control == "on" else "off"
+        if control == "on":
+            # SpotNav's own plan runs: the battery's saving is SpotNav's, and its control says what it does now.
+            battery["now"] = {"action": None, "power_kw": -1.5}
+            body["saving"].update({"battery": 1089.9, "battery_share": 1.0, "total": 2810.4})
+    return 200, {"ok": True, "action": action, **body}
+
+
+def _asked_period(payload: dict, action: str):
+    """The period a history or loads request asks for as (period, first day, first day after, today), or the refusal."""
+    period = payload.get("period", "day")
+    zone = ZoneInfo("Europe/Stockholm")
+    today = datetime.now(zone).date()
+    try:
+        day = date.fromisoformat(payload["date"]) if payload.get("date") else today
+    except ValueError:
+        day = None
+    if period not in ("day", "month", "year") or day is None or day > today:
+        return None, (400, {"ok": False, "error": "spotnav_invalid_date", "action": action})
+    if period == "day":
+        first, end = day, day + timedelta(days=1)
+    elif period == "month":
+        first = day.replace(day=1)
+        end = (first + timedelta(days=32)).replace(day=1)
+    else:
+        first, end = day.replace(month=1, day=1), day.replace(year=day.year + 1, month=1, day=1)
+    return (period, first, end, today), None
+
+
+def house_history_body(payload: dict) -> tuple[int, dict]:
+    """`get_house_history` in the `house` scenario: the villa's day, month or year moved to the period asked for."""
+    action = "get_house_history"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    period = payload.get("period")
+    if period not in ("day", "month", "year"):
+        return 400, {"ok": False, "error": "spotnav_invalid_value", "action": action}
+    alone = HOUSE["flows"] == "alone"
+    name = "house_alone_year.json" if alone and period == "year" else f"villa_{period}.json"
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_history" / name).read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["time_zone"])
+    today = datetime.now(zone).date()
+    try:
+        asked = date.fromisoformat(payload["date"]) if payload.get("date") else today
+    except (TypeError, ValueError):
+        return 400, {"ok": False, "error": "spotnav_invalid_date", "action": action}
+    first = {"day": asked, "month": asked.replace(day=1), "year": asked.replace(month=1, day=1)}[period]
+    fixture_first = date.fromisoformat(body["date"])
+    if period == "year":
+        # A year's buckets are months ("2026-07"): the fixture's year renamed.
+        text = json.dumps(body).replace(f'"{fixture_first.year}-', f'"{first.year}-')
+        body = json.loads(text)
+        days = 0
+        body["date"] = first.isoformat()
+        body["end"] = first.replace(year=first.year + 1).isoformat()
+    else:
+        days = (first - fixture_first).days
+        body = _moved_to_now(body, days * 24, days)
+    if HOUSE["control"] == "on" and body.get("own_control"):
+        # SpotNav controls the battery: what it earned is SpotNav's own saving (the Intäkt box's solid part), with no
+        # would-be figure beside it.
+        own = body["own_control"]
+        body["own_control"] = None
+        body["saving"] = {**body["saving"], "battery": own["earned"], "battery_days": own["days"], "total": body["saving"]["total"] + own["earned"]}
+        for bucket in body["buckets"]:
+            bucket["saving_battery"], bucket["own_battery"], bucket["would_battery"] = bucket["own_battery"], None, None
+    body["today"] = today.isoformat()
+    body["generated_at"] = datetime.now(zone).replace(microsecond=0).isoformat()
+    body["complete"] = (first.replace(year=first.year + 1) if period == "year" else
+                        (first.replace(month=first.month % 12 + 1, year=first.year + (first.month == 12)) if period == "month" else first + timedelta(days=1))) <= today
+    if alone and period != "year":
+        # A house with the grid alone: no battery, sun, heat or prices, and no Energy dashboard meter for the flow.
+        body["energy_flow"] = None
+        for bucket in body["buckets"]:
+            for key in ("arbitrage", "battery_flow", "heat", "solar", "buy", "sell", "battery_in", "battery_out", "cost",
+                        "saving", "saving_battery", "saving_car", "saving_heat", "own_battery", "would_battery", "battery_saving"):
+                bucket[key] = None
+        body["cost"] = None
+        # Nothing saved, no battery to review: the Intäkt box is left out, and the details have no review.
+        body["saving"] = None
+        body["own_control"] = None
+        body["review"] = None
+    return 200, {"ok": True, "action": action, **body}
+
+
+def sessions_body(key: str, payload: dict) -> tuple[int, dict]:
+    """`sessions` (the charge history): the integration's own month, and for a charger in a site that reads it
+    (`reads: ["plug_in_saving"]`) the saving against charging at once on plug-in beside each summary and session, as
+    Home Assistant 3.0 answers; a 2.x answer has no such key."""
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": "sessions"}
+    body = json.loads((DASHBOARD_FIXTURES.parent / "sessions" / "get_sessions.json").read_text(encoding="utf-8"))
+    if payload.get("format") == "csv":
+        csv_body = json.loads((DASHBOARD_FIXTURES.parent / "sessions" / "get_sessions_csv.json").read_text(encoding="utf-8"))
+        return 200, {"ok": True, "action": "sessions", **csv_body}
+    in_site = key in ("house", "heat") and "plug_in_saving" in (payload.get("reads") or [])
+    if in_site:
+        def plug_in(item: dict, factor: float) -> None:
+            # Against charging at once: a little more than the day-average comparison (null where it cannot be known).
+            saved = item.get("savings")
+            item["plug_in_saving"] = None if saved is None else round(saved * factor, 4)
+        for name in ("this_month", "last_month", "month_summary"):
+            plug_in(body[name], 1.3)
+        for name in ("months", "days", "month_days"):
+            for item in body.get(name, []):
+                plug_in(item, 1.3)
+        if "savings" in body.get("open", {}):
+            plug_in(body["open"], 1.3)
+        for name in ("month_sessions", "sessions"):
+            for index, item in enumerate(body.get(name, [])):
+                # One of them negative: a charge that cost more than charging at once.
+                plug_in(item, -0.4 if index == 2 else 1.3)
+    return 200, {"ok": True, "action": "sessions", **body}
+
+
+def house_loads_body(payload: dict) -> tuple[int, dict]:
+    """`get_house_loads` in the `house` scenario: what the house (or the heat) used by device, over the period asked for."""
+    action = "get_house_loads"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if HOUSE["flows"] == "none":
+        return 400, {"ok": False, "error": "spotnav_no_site", "action": action}
+    kind = payload.get("kind", "house")
+    if kind not in ("house", "heat"):
+        return 400, {"ok": False, "error": "spotnav_invalid_kind", "action": action}
+    asked, refusal = _asked_period(payload, action)
+    if refusal:
+        return refusal
+    period, first, end, today = asked
+    name = "heat_villa_day.json" if kind == "heat" else {"day": "villa_day.json", "month": "moved_and_implausible_month.json", "year": "no_devices.json"}[period]
+    body = json.loads((DASHBOARD_FIXTURES.parent / "house_loads" / name).read_text(encoding="utf-8"))
+    body.update({"period": period, "date": first.isoformat(), "end": end.isoformat()})
+    return 200, {"ok": True, "action": action, **body}
+
+
+def _heat_fixture() -> dict:
+    name = "villa" if HEAT["fixture"] == "empty" else HEAT["fixture"]
+    return json.loads((DASHBOARD_FIXTURES.parent / "heat_card" / f"{name}.json").read_text(encoding="utf-8"))
+
+
+def heat_body(payload: dict) -> tuple[int, dict]:
+    """`get_heat` in the `heat` scenario: the chosen fixture moved to now, with what the dial and Home/Away have
+    written; `empty` is a heating with no meter, pump, zones or sensors."""
+    action = "get_heat"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    body = _heat_fixture()
+    zone = ZoneInfo(body["time_zone"])
+    now = datetime.now(zone)
+    made = datetime.fromisoformat(body["now"])
+    hours = round((now - made).total_seconds() / 3600.0)
+    body = _moved_to_now(body, hours, (now.date() - made.astimezone(zone).date()).days)
+    body["now"] = now.astimezone(ZoneInfo("UTC")).replace(microsecond=0).isoformat()
+    config, comfort = body["config"], body["comfort"]
+    if HEAT["target_c"] is not None:
+        config["target_c"] = comfort["target_c"] = HEAT["target_c"]
+        comfort["low_c"], comfort["high_c"] = HEAT["target_c"] - 0.5, HEAT["target_c"] + 0.5
+    if HEAT["mode"] is not None:
+        config["mode"] = comfort["mode"] = HEAT["mode"]
+        config["away_until"] = comfort["away_until"] = HEAT["away_until"]
+    if body.get("hot_water") is not None and (HEAT["boost_started"] is not None or HEAT["boost_stopped"]):
+        body["hot_water"]["boost"] = _boost_state()
+    if HEAT["fixture"] == "empty":
+        for key in ("pump", "meter", "today", "relay", "review", "indoor_day"):
+            body[key] = None
+        body["zones"], body["notes"] = [], []
+        body["indoor"].update({"value_c": None, "coldest": None, "coldest_name": None, "sensors": [], "relative_c": None})
+        body["config"]["indoor_sensors"] = []
+        body["status"].update({"pump_state": None, "kw": None, "would": None})
+    return 200, {"ok": True, "action": action, **body}
+
+
+def _boost_state() -> dict:
+    """The Boost button's state after the presses so far: starting, then the household's own run that can be ended."""
+    idle = {"state": "idle", "source": None, "started": None, "ends": None, "ends_estimated": False, "stoppable": False}
+    started = HEAT["boost_started"]
+    if started is None:
+        return idle
+    now = datetime.now(ZoneInfo("UTC"))
+    ends = started + timedelta(seconds=BOOST_RUN_S)
+    if now >= ends:
+        return idle
+    stamp = lambda moment: moment.replace(microsecond=0).isoformat()
+    if (now - started).total_seconds() < BOOST_STARTING_S:
+        return {"state": "starting", "source": "user", "started": stamp(started), "ends": None, "ends_estimated": False, "stoppable": False}
+    return {"state": "running", "source": "user", "started": stamp(started), "ends": stamp(ends), "ends_estimated": True, "stoppable": True}
+
+
+def heat_boost_body(payload: dict) -> tuple[int, dict]:
+    """`heat_boost` in the `heat` scenario: "start" or "stop" as the integration answers them (429 for a start
+    within a minute of the last, 409 for a refusal, 400 for an unknown `boost_action`)."""
+    action = "heat_boost"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    if _heat_fixture().get("hot_water", {}) is None or (_heat_fixture().get("hot_water") or {}).get("boost") is None:
+        return 409, {"api_version": 1, "ok": False, "error": "spotnav_not_supported", "boost": None, "action": action}
+    asked = payload.get("boost_action")
+    now = datetime.now(ZoneInfo("UTC"))
+    if asked == "start":
+        started = HEAT["boost_started"]
+        if started is not None and (now - started).total_seconds() < BOOST_RATE_S:
+            return 429, {"api_version": 1, "ok": False, "error": "spotnav_rate_limited", "boost": _boost_state(), "action": action}
+        HEAT["boost_started"], HEAT["boost_stopped"] = now, False
+    elif asked == "stop":
+        if _boost_state()["state"] != "running":
+            return 409, {"api_version": 1, "ok": False, "error": "spotnav_not_own", "boost": _boost_state(), "action": action}
+        HEAT["boost_started"], HEAT["boost_stopped"] = None, True
+    else:
+        return 400, {"api_version": 1, "ok": False, "error": "spotnav_invalid_value", "boost": None, "action": action}
+    return 200, {"api_version": 1, "ok": True, "error": None, "boost": _boost_state(), "action": action}
+
+
+def heat_history_body(payload: dict) -> tuple[int, dict]:
+    """`get_heat_history` in the `heat` scenario: the villa's day, month or year (with its zones) moved to the period asked
+    for; for `network_pump` and `empty`, which have no heat meter, a history with no use to show."""
+    action = "get_heat_history"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    asked, refusal = _asked_period(payload, action)
+    if refusal:
+        return refusal
+    period, first, end, today = asked
+    body = json.loads((DASHBOARD_FIXTURES.parent / "heat_history" / f"zones_{period}.json").read_text(encoding="utf-8"))
+    zone = ZoneInfo(body["time_zone"])
+    fixture_first = date.fromisoformat(body["date"])
+    if period == "year":
+        # A year's buckets are months ("2026-07"): the fixture's year renamed.
+        body = json.loads(json.dumps(body).replace(f'"{fixture_first.year}-', f'"{first.year}-'))
+    else:
+        days = (first - fixture_first).days
+        body = _moved_to_now(body, days * 24, days)
+    body.update({"date": first.isoformat(), "end": end.isoformat(), "today": today.isoformat(),
+                 "generated_at": datetime.now(zone).replace(microsecond=0).isoformat(), "complete": end <= today})
+    if HEAT["fixture"] in ("network_pump", "empty"):
+        # No heat meter: the rooms (if any) are all there is.
+        body.update({"meter": None, "energy": None, "buckets": [], "parts": [], "saving": None, "model": None, "degree_days": None,
+                     "shadow": None, "immersion": None, "runs": [], "review": None})
+        if HEAT["fixture"] == "empty":
+            body.update({"comfort": None, "indoor_day": None})
+    return 200, {"ok": True, "action": action, **body}
+
+
+def update_heat_body(payload: dict) -> tuple[int, dict]:
+    """`update_heat` in the `heat` scenario, judged as the integration judges the dial and Home/Away."""
+    action = "update_heat"
+    changes, expected = payload.get("changes") or {}, payload.get("expected") or {}
+    _, current = heat_body({})
+    config = current["config"]
+
+    def answer(error, field_errors=(), status=200):
+        return status, {"api_version": 1, "ok": error is None, "error": error, "field_errors": list(field_errors),
+                        "config": config, "action": action}
+
+    if not changes or any(key not in ("target_c", "mode", "away_until") for key in changes):
+        return answer("spotnav_not_permitted_over_webhook", status=403)
+    if any(config.get(key) != value for key, value in expected.items()):
+        return answer("spotnav_conflict", status=409)
+    target = changes.get("target_c")
+    if target is not None and not (isinstance(target, (int, float)) and 16 <= target <= 25):
+        return answer("spotnav_invalid_value", [{"field": "target_c", "code": "out_of_range"}], 400)
+    if target is not None and (target * 2) != round(target * 2):
+        return answer("spotnav_invalid_value", [{"field": "target_c", "code": "not_a_step"}], 400)
+    mode = changes.get("mode")
+    if mode not in (None, "home", "away"):
+        return answer("spotnav_invalid_value", [{"field": "mode", "code": "invalid_value"}], 400)
+    until = changes.get("away_until")
+    if mode == "away":
+        try:
+            when = datetime.fromisoformat(str(until).replace("Z", "+00:00"))
+        except ValueError:
+            return answer("spotnav_invalid_value", [{"field": "away_until", "code": "away_until_required"}], 400)
+        if when <= datetime.now(ZoneInfo("UTC")):
+            return answer("spotnav_invalid_value", [{"field": "away_until", "code": "away_in_past"}], 400)
+        if when > datetime.now(ZoneInfo("UTC")) + timedelta(days=90):
+            return answer("spotnav_invalid_value", [{"field": "away_until", "code": "away_too_far"}], 400)
+    if target is not None:
+        HEAT["target_c"] = float(target)
+    if mode is not None:
+        HEAT["mode"], HEAT["away_until"] = mode, (until if mode == "away" else None)
+    _, current = heat_body({})
+    config = current["config"]
+    return answer(None)
+
+
+#: The `sitesettings` scenario's choices, set with `GET /spotnav-mock/sitesettings?bat=..&refuse=..`, and what the
+#: webhook's writes have left of the battery mode and the heat settings.
+SITE_SETTINGS = {"bat": "off", "refuse": "none"}
+SITE_BATTERY_MODE = {"mode": "balanced"}
+SITE_HEAT: dict = {}
+SITE_BATTERY_FILES = {"off": "live.json", "ai": "needs_ack.json", "test": "checking.json", "on": "checking.json"}
+BATTERY_MODES = ("self_consumption", "balanced", "max_profit")
+HEAT_WEBHOOK_FIELDS = ("target_c", "mode", "away_until", "night", "zones", "indoor_offsets", "away_delta_c")
+
+
+def _site_heat_fixture() -> dict:
+    return json.loads((DASHBOARD_FIXTURES.parent / "heat_card" / "controlled.json").read_text(encoding="utf-8"))
+
+
+def _site_heat_config() -> dict:
+    if not SITE_HEAT:
+        SITE_HEAT.update(_site_heat_fixture()["config"])
+    return SITE_HEAT
+
+
+def battery_control_body(payload: dict) -> tuple[int, dict]:
+    """`battery_control` in the `sitesettings` scenario: the status, after writing the mode when `changes` names it."""
+    action = "battery_control"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    changes = payload.get("changes")
+    if changes is not None:
+        if SITE_SETTINGS["refuse"] == "forbid" or set(changes) - {"battery_mode"}:
+            return 403, {"action": action, "api_version": 1, "error": "spotnav_not_permitted_over_webhook", "ok": False, "status": None}
+        mode = changes.get("battery_mode")
+        if mode not in BATTERY_MODES:
+            return 400, {"action": action, "api_version": 1, "error": "spotnav_invalid_value", "ok": False, "status": None}
+        SITE_BATTERY_MODE["mode"] = mode
+    body = json.loads((DASHBOARD_FIXTURES.parent / "battery_control" / SITE_BATTERY_FILES[SITE_SETTINGS["bat"]]).read_text(encoding="utf-8"))
+    status = body["status"]
+    status["options"]["battery_mode"] = SITE_BATTERY_MODE["mode"]
+    if SITE_SETTINGS["bat"] == "test":
+        status["options"]["battery_control_shadow_only"] = True
+        status["state"] = "shadow_only"
+        status["line"] = "shadow_only"
+        status["verification"] = None
+    if SITE_SETTINGS["bat"] in ("on", "test"):
+        status["allowed_actions"] = ["grid_charge", "hold"]
+    return 200, {**body, "action": action}
+
+
+def site_heat_body(payload: dict) -> tuple[int, dict]:
+    """`get_heat` in the `sitesettings` scenario: the villa with the settings as the writes left them, as the webhook
+    answers it (`writable` false, no `choices`)."""
+    action = "get_heat"
+    if payload.get("api_version", 1) != 1:
+        return 400, {"ok": False, "error": "spotnav_unsupported_api_version", "action": action}
+    body = _site_heat_fixture()
+    config = _site_heat_config()
+    body["config"] = json.loads(json.dumps(config))
+    for zone in body["zones"]:
+        zone["offset_c"] = next((item["offset_c"] for item in config["zones"] if item["entity_id"] == zone["entity_id"]), 0.0)
+    for sensor in body["indoor"]["sensors"]:
+        sensor["offset_c"] = next((item["offset_c"] for item in config["indoor_offsets"] if item["entity_id"] == sensor["entity_id"]), 0.0)
+    body["writable"] = False
+    body["choices"] = None
+    return 200, {"ok": True, "action": action, **body}
+
+
+def _half_steps(value) -> str | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return "invalid_value"
+    if not -3.0 <= float(value) <= 3.0:
+        return "out_of_range"
+    if abs(float(value) * 2 - round(float(value) * 2)) > 1e-9:
+        return "not_a_step"
+    return None
+
+
+def site_update_heat_body(payload: dict) -> tuple[int, dict]:
+    """`update_heat` in the `sitesettings` scenario, judged as Home Assistant judges the webhook's writes."""
+    action = "update_heat"
+
+    def answer(status: int, error: str | None, field_errors: list | None = None) -> tuple[int, dict]:
+        return status, {"action": action, "api_version": 1, "config": _site_heat_config(), "error": error,
+                        "field_errors": field_errors or [], "ok": error is None}
+
+    config = _site_heat_config()
+    changes, expected = payload.get("changes"), payload.get("expected") or {}
+    if not isinstance(changes, dict) or not changes or not isinstance(expected, dict):
+        return answer(400, "spotnav_invalid_value", [{"field": "changes", "code": "invalid_changes"}])
+    if SITE_SETTINGS["refuse"] == "forbid" or set(changes) - set(HEAT_WEBHOOK_FIELDS):
+        return answer(403, "spotnav_not_permitted_over_webhook")
+    zones = changes.get("zones")
+    if "zones" in changes and (not isinstance(zones, list) or [z.get("entity_id") for z in zones] != [z["entity_id"] for z in config["zones"]]):
+        return answer(403, "spotnav_not_permitted_over_webhook")
+    offsets = changes.get("indoor_offsets")
+    if isinstance(offsets, list) and any(item.get("entity_id") not in config["indoor_sensors"] for item in offsets):
+        return answer(403, "spotnav_not_permitted_over_webhook")
+    if SITE_SETTINGS["refuse"] == "conflict" or any(config.get(key) != value for key, value in expected.items()):
+        return answer(409, "spotnav_conflict")
+    errors = []
+    night = changes.get("night")
+    if isinstance(night, dict):
+        delta = night.get("delta_c", config["night"]["delta_c"])
+        if isinstance(delta, bool) or not isinstance(delta, (int, float)) or not 0.5 <= float(delta) <= 3.0:
+            errors.append({"field": "night", "code": "out_of_range"})
+        elif abs(float(delta) * 2 - round(float(delta) * 2)) > 1e-9:
+            errors.append({"field": "night", "code": "not_a_step"})
+    if "away_delta_c" in changes:
+        away = changes["away_delta_c"]
+        if isinstance(away, bool) or not isinstance(away, (int, float)) or not 1.0 <= float(away) <= 6.0:
+            errors.append({"field": "away_delta_c", "code": "out_of_range"})
+        elif abs(float(away) * 2 - round(float(away) * 2)) > 1e-9:
+            errors.append({"field": "away_delta_c", "code": "not_a_step"})
+    for key in ("zones", "indoor_offsets"):
+        for item in changes.get(key) or []:
+            code = _half_steps(item.get("offset_c"))
+            if code:
+                errors.append({"field": key, "code": code})
+    if errors:
+        return answer(400, "spotnav_invalid_value", errors)
+    for key, value in changes.items():
+        config[key] = {**config[key], **value} if key == "night" else value
+    return answer(200, None)
+
+
 def dashboard_body(scenario: str, reads: list | None = None) -> dict:
     name = DASHBOARD_BY_SCENARIO.get(scenario, "cheapest_no_site.json")
     body = json.loads((DASHBOARD_FIXTURES / name).read_text(encoding="utf-8"))
@@ -688,6 +1244,30 @@ def dashboard_body(scenario: str, reads: list | None = None) -> dict:
         _guest_body(body)
     if scenario == "newer":
         body = _newer_body(body, reads)
+    # The site over the webhook is Home Assistant 3.0's: only the `house` scenario states it, and of it the house.
+    for name in SITE_CAPABILITIES:
+        body["charger"]["capabilities"].pop(name, None)
+    if scenario in SITE_CHARGERS:
+        # A charger of a home: the house and heat over its webhook, and its entry id as the pairing names it.
+        body["charger"]["charger_id"] = scenario
+        body["charger"]["charger_name"] = SCENARIOS[scenario].name
+        body["chargers"] = [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers("siteonly_charger")]
+        body["charger"]["capabilities"].update({"get_house": True, "get_heat": True, "battery_control": True})
+    if scenario in ("house", "heat"):
+        today = datetime.now(ZoneInfo("Europe/Stockholm")).date()
+        body = _moved_to_today(body, (today - date.fromisoformat(body["prices"]["today"])).days)
+        # The fixture names its charger after itself; here it is the scenario's.
+        body["charger"]["charger_name"] = SCENARIOS[scenario].name
+        for row in body.get("chargers") or []:
+            if row.get("id") == body["charger"]["charger_id"]:
+                row["name"] = SCENARIOS["house"].name
+        body["charger"]["capabilities"].update({"get_house": True, "get_heat": scenario == "heat"})
+    if scenario == "sitesettings":
+        body["charger"]["charger_name"] = SCENARIOS["sitesettings"].name
+        for row in body.get("chargers") or []:
+            if row.get("id") == body["charger"]["charger_id"]:
+                row["name"] = SCENARIOS["sitesettings"].name
+        body["charger"]["capabilities"].update({"get_heat": True, "battery_control": True})
     if "guest" not in (reads or []):
         _without_guest(body)
     if "import_target_status" not in (reads or []):
@@ -812,11 +1392,136 @@ SCENARIOS: dict[str, Charger] = {
         "Garage",
         why="what app 2.4 reads of HA 2.5.3, 2.5.4 and 3.0: the status after the name, the direction hint, a learned battery size, the sun in the chart, the supplier's figures and the departure calendar; set at /spotnav-mock/newer",
     ),
+    "house": Charger(
+        "Villan",
+        why="the house over the webhook (HA 3.0): the row of page icons and the house page's Now and Energy flow tabs, its live flows moving; set at /spotnav-mock/house",
+    ),
+    "heat": Charger(
+        "Värmen",
+        why="the house and the heating over the webhook (HA 3.0): three page icons, the heat page's Now tab with its dial writing update_heat, its Plan and Förbrukning boxes and its details; set at /spotnav-mock/heat",
+    ),
+    "sitesettings": Charger(
+        "Hus och värme",
+        why="the battery and heat settings over the webhook (HA 3.0): the battery mode, the cooler night and the zones' and sensors' offsets in Settings; set at /spotnav-mock/sitesettings",
+    ),
+    "sitecharger": Charger(
+        "Garage hemma",
+        why="a charger of the home Villan (HA 3.0): get_site_access hands over the home's webhook, which then carries this charger's actions with charger_id",
+    ),
+    "sitecharger2": Charger(
+        "Carport",
+        why="the charger added to Villan later (GET /spotnav-mock/sites?add=1): it appears in get_site with no new pairing",
+    ),
+    "ha25": Charger(
+        "HA 2.5",
+        why="a charger of Home Assistant 2.5: get_site_access is an unknown action, so the app keeps this charger's own webhook",
+    ),
     "demand": Charger(
         "Effektmål",
         why="the demand charge and the import target (HA 2.4): its parts in the price, the target on the site, its status lines, Release tonight and the Power view",
     ),
 }
+
+#: The homes (Home Assistant 3.0): name and chargers; `sitecharger2` joins Villan with /spotnav-mock/sites?add=1.
+HOMES = {
+    "siteonly": {"name": "Stugan", "chargers": []},
+    "siteonly_charger": {"name": "Villan", "chargers": ["sitecharger"]},
+}
+#: The site scenarios' switches (see the module's text): the added charger, `sites` in the pairing, get_site_access's
+#: answer and whether the homes are loaded.
+SITES = {"added": False, "pairing": True, "access": "ok", "unloaded": False}
+SITE_CHARGERS = ("sitecharger", "sitecharger2")
+#: The actions a home answers itself; every other one is a charger's and needs `charger_id`.
+HOME_ACTIONS = (
+    "get_site", "get_house", "get_house_now", "get_house_history", "get_house_loads", "get_heat", "get_heat_history",
+    "update_heat", "heat_boost", "battery_control", "get_site_settings_view", "update_site_settings", "get_power_month",
+    "suggest_import_target",
+)
+#: Read-only on a home's webhook in the beta: the price and the grid tariff.
+HOME_REFUSED = ("choose_price_source", "answer_price_duplicate", "update_grid_tariff")
+
+
+def _home_chargers(home: str) -> list[str]:
+    chargers = list(HOMES[home]["chargers"])
+    if home == "siteonly_charger" and SITES["added"]:
+        chargers.append("sitecharger2")
+    return chargers
+
+
+def _home_of(charger: str) -> str | None:
+    return next((home for home in HOMES if charger in _home_chargers(home)), None)
+
+
+def site_webhook_id(home: str, generation: int | None = None) -> str:
+    """A home's webhook id now (or in [generation]), replaced with the chargers' by /spotnav-mock/rotate-webhooks."""
+    n = WEBHOOKS["generation"] if generation is None else generation
+    return f"site-{home}" if n == 0 else f"site-{home}-r{n}"
+
+
+def home_for_webhook(hook: str) -> str | None:
+    return next((home for home in HOMES if site_webhook_id(home) == hook), None)
+
+
+def paired_sites() -> list[dict]:
+    """The pairing's `sites`: every home with its chargers (Home Assistant 3.0)."""
+    return [
+        {"id": home, "name": spec["name"], "webhook": site_webhook_id(home),
+         "chargers": [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers(home)]}
+        for home, spec in HOMES.items()
+    ]
+
+
+def site_access_body(charger: str) -> tuple[int, dict]:
+    """`get_site_access` on a charger's own webhook: its home, or Home Assistant 2.5's unknown action."""
+    home = _home_of(charger)
+    if home is None:
+        return 400, {"ok": False, "error": "Unsupported action"}
+    if SITES["access"] == "limited":
+        return 429, {"ok": False, "error": "spotnav_rate_limited", "action": "get_site_access", "retry_after_s": 60}
+    if SITES["access"] == "unloaded" or SITES["unloaded"]:
+        return 503, {"ok": False, "error": "spotnav_site_unloaded", "action": "get_site_access"}
+    site = next(row for row in paired_sites() if row["id"] == home)
+    return 200, {"ok": True, "action": "get_site_access", "api_version": 1, "site": site}
+
+
+def get_site_body(home: str) -> dict:
+    return {
+        "ok": True, "action": "get_site", "api_version": 1, "site_id": home, "name": HOMES[home]["name"], "loaded": True,
+        "capabilities": {name: True for name in (
+            "get_house", "get_heat", "battery_control", "get_site_settings_view", "update_site_settings",
+            "get_power_month", "suggest_import_target")},
+        "chargers": [{"id": key, "name": SCENARIOS[key].name} for key in _home_chargers(home)],
+    }
+
+
+def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
+    """One of the home's own actions, answered as the `heat` and `sitesettings` scenarios answer them."""
+    if action == "get_site":
+        return 200, get_site_body(home)
+    if action == "get_house_now":
+        return house_now_body()
+    if action == "get_house":
+        return house_body(payload)
+    if action == "get_house_history":
+        return house_history_body(payload)
+    if action == "get_house_loads":
+        return house_loads_body(payload)
+    if action == "get_heat":
+        return heat_body(payload)
+    if action == "get_heat_history":
+        return heat_history_body(payload)
+    if action == "update_heat":
+        return update_heat_body(payload)
+    if action == "heat_boost":
+        return heat_boost_body(payload)
+    if action == "battery_control":
+        return battery_control_body(payload)
+    if action == "get_site_settings_view":
+        body = json.loads((DASHBOARD_FIXTURES.parent / "webhook/site_webhook_get_site_settings_view.json").read_text(encoding="utf-8"))
+        body.update({"site_id": home, "name": HOMES[home]["name"], "charger_ids": _home_chargers(home)})
+        return 200, body
+    return 400, {"ok": False, "error": "spotnav_not_supported_here", "action": action}
+
 
 _lock = threading.Lock()
 _PATH = re.compile(r"^/api/webhook/([^/?#]+)$")
@@ -892,10 +1597,16 @@ def paired_chargers() -> list[dict]:
     """What an approval hands over: every scenario, as the integration hands
     over every charger config entry -- `id`, `name` and that one's own webhook.
     """
-    return [
-        {"id": key, "name": charger.name, "webhook": webhook_id(key)}
-        for key, charger in SCENARIOS.items()
-    ]
+    chargers = []
+    for key, charger in SCENARIOS.items():
+        home = _home_of(key)
+        if key == "sitecharger2" and home is None:
+            continue
+        row = {"id": key, "name": charger.name, "webhook": webhook_id(key)}
+        if home is not None and SITES["pairing"]:
+            row["site_id"] = home
+        chargers.append(row)
+    return chargers
 
 
 #: How many times the webhook ids were replaced (`/spotnav-mock/rotate-webhooks`). Generation 0 is
@@ -915,8 +1626,10 @@ def scenario_for_webhook(hook: str) -> str | None:
 
 
 def retired_webhook(hook: str) -> bool:
-    """Whether [hook] was a scenario's webhook id before the last rotation."""
-    return any(webhook_id(key, n) == hook for key in SCENARIOS for n in range(WEBHOOKS["generation"]))
+    """Whether [hook] was a scenario's or a home's webhook id before the last rotation."""
+    generations = range(WEBHOOKS["generation"])
+    return any(webhook_id(key, n) == hook for key in SCENARIOS for n in generations) or \
+        any(site_webhook_id(home, n) == hook for home in HOMES for n in generations)
 
 # What a debug build broadcasts to find this, and what comes back. Deliberately
 # nothing like Home Assistant's own discovery: this announces a *mock*, and a
@@ -1063,6 +1776,44 @@ class Handler(BaseHTTPRequestHandler):
                 state = dict(NEWER)
             self._json(200, state)
             return
+        if path == "/spotnav-mock/house":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                flows = query.get("flows", HOUSE["flows"])
+                control = query.get("control", HOUSE["control"])
+                if flows in HOUSE_FLOWS or flows == "none":
+                    HOUSE["flows"] = flows
+                if control in HOUSE_CONTROLS:
+                    HOUSE["control"] = control
+                state = dict(HOUSE)
+            self._json(200, state)
+            return
+        if path == "/spotnav-mock/heat":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                if query.get("fixture") in HEAT_FIXTURES:
+                    HEAT["fixture"] = query["fixture"]
+                if query.get("reset") == "1":
+                    HEAT.update({"target_c": None, "mode": None, "away_until": None, "boost_started": None, "boost_stopped": False})
+                state = {key: value.isoformat() if isinstance(value, datetime) else value for key, value in HEAT.items()}
+            self._json(200, state)
+            return
+        if path == "/spotnav-mock/sitesettings":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                if query.get("bat") in SITE_BATTERY_FILES:
+                    SITE_SETTINGS["bat"] = query["bat"]
+                if query.get("refuse") in ("none", "conflict", "forbid"):
+                    SITE_SETTINGS["refuse"] = query["refuse"]
+                if query.get("reset") == "1":
+                    SITE_HEAT.clear()
+                    SITE_BATTERY_MODE["mode"] = "balanced"
+                state = dict(SITE_SETTINGS, mode=SITE_BATTERY_MODE["mode"])
+            self._json(200, state)
+            return
         if path == "/spotnav-mock/guest":
             from urllib.parse import parse_qs, urlsplit
             query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
@@ -1070,6 +1821,21 @@ class Handler(BaseHTTPRequestHandler):
                 GUEST["state"] = query.get("state", GUEST["state"])
                 GUEST["first"] = query.get("first") == "1"
                 state = dict(GUEST)
+            self._json(200, state)
+            return
+        if path == "/spotnav-mock/sites":
+            from urllib.parse import parse_qs, urlsplit
+            query = {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()}
+            with _lock:
+                if "add" in query:
+                    SITES["added"] = query["add"] == "1"
+                if query.get("pairing") in ("on", "off"):
+                    SITES["pairing"] = query["pairing"] == "on"
+                if query.get("access") in ("ok", "unloaded", "limited"):
+                    SITES["access"] = query["access"]
+                if "unloaded" in query:
+                    SITES["unloaded"] = query["unloaded"] == "1"
+                state = dict(SITES)
             self._json(200, state)
             return
         if path == "/spotnav-mock/rotate-webhooks":
@@ -1150,6 +1916,10 @@ class Handler(BaseHTTPRequestHandler):
         if match.group(1) == PAIRING_WEBHOOK_ID:
             self._pairing(self._body())
             return
+        home = home_for_webhook(match.group(1))
+        if home is not None:
+            self._home(home)
+            return
         key = scenario_for_webhook(match.group(1))
         if key is None and retired_webhook(match.group(1)):
             # A webhook id handed out before /spotnav-mock/rotate-webhooks: answered exactly as Home
@@ -1166,10 +1936,61 @@ class Handler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
-            if payload.get("version") != 1:
+        except ValueError as error:
+            self._json(400, {"ok": False, "error": str(error)})
+            return
+        self._charger(key, charger, payload)
+
+    def _home(self, home: str) -> None:
+        """A home's webhook: its own actions, and every charger action of its chargers with `charger_id`."""
+        try:
+            payload = self._body()
+            if not isinstance(payload, dict) or payload.get("version") != 1:
+                raise ValueError("Unsupported payload version")
+        except ValueError as error:
+            self._json(400, {"ok": False, "error": str(error)})
+            return
+        action = payload.get("action")
+        if SITES["unloaded"]:
+            self._json(503, {"ok": False, "error": "spotnav_site_unloaded", "action": action})
+            return
+        charger_id = payload.get("charger_id")
+        if charger_id is None:
+            if action in HOME_REFUSED:
+                self._json(403, {"ok": False, "error": "spotnav_not_permitted_over_webhook", "action": action})
+                return
+            if action not in HOME_ACTIONS:
+                self._json(400, {"ok": False, "error": "spotnav_charger_required", "action": action})
+                return
+            with _lock:
+                self._json(*home_action_body(home, action, payload))
+            return
+        if charger_id not in SCENARIOS:
+            self._json(404, {"ok": False, "error": "spotnav_unknown_charger", "action": action})
+            return
+        if charger_id not in _home_chargers(home):
+            self._json(403, {"ok": False, "error": "spotnav_charger_not_in_site", "action": action})
+            return
+        if action in HOME_ACTIONS:
+            with _lock:
+                self._json(*home_action_body(home, action, payload))
+            return
+        self._charger(charger_id, SCENARIOS[charger_id], payload)
+
+    def _charger(self, key: str, charger: "Charger", payload: dict) -> None:
+        """One charger's action, from its own webhook or its home's."""
+        action = None
+        try:
+            if not isinstance(payload, dict) or payload.get("version") != 1:
                 raise ValueError("Unsupported payload version")
             action = payload.get("action")
             with _lock:
+                if action == "get_site_access":
+                    self._json(*site_access_body(key))
+                    return
+                if key in SITE_CHARGERS and action in HOME_ACTIONS:
+                    self._json(*home_action_body(_home_of(key) or "siteonly_charger", action, payload))
+                    return
                 if action == "dashboard":
                     self._json(200, dashboard_body(key, payload.get("reads")))
                     return
@@ -1183,8 +2004,27 @@ class Handler(BaseHTTPRequestHandler):
                 if action in NEW_ACTIONS and key in NO_2_3_ACTIONS:
                     self._json(400, {"ok": False, "error": "Unsupported action"})
                     return
+                if action == "sessions":
+                    self._json(*sessions_body(key, payload))
+                    return
                 if action == "plan_preview":
                     self._json(200, plan_preview_body(payload))
+                    return
+                if key == "sitesettings" and action in ("battery_control", "get_heat", "update_heat"):
+                    handler = {"battery_control": battery_control_body, "get_heat": site_heat_body, "update_heat": site_update_heat_body}[action]
+                    self._json(*handler(payload))
+                    return
+                if action in ("get_heat", "update_heat", "get_heat_history", "heat_boost") and key == "heat":
+                    self._json(*{"get_heat": heat_body, "update_heat": update_heat_body, "get_heat_history": heat_history_body, "heat_boost": heat_boost_body}[action](payload))
+                    return
+                if action in ("get_house_now", "get_house", "get_house_history", "get_house_loads") and key in ("house", "heat"):
+                    handlers = {
+                        "get_house_now": lambda: house_now_body(),
+                        "get_house": lambda: house_body(payload),
+                        "get_house_history": lambda: house_history_body(payload),
+                        "get_house_loads": lambda: house_loads_body(payload),
+                    }
+                    self._json(*handlers[action]())
                     return
                 if action == "update_grid_tariff":
                     if key == "gridfee":
@@ -1288,11 +2128,10 @@ class Handler(BaseHTTPRequestHandler):
                 with _lock:
                     verdict = PAIRING.take(request_id)
                 if verdict == "approved":
-                    self._json(200, {
-                        "status": "approved",
-                        "url": self._base_url(),
-                        "chargers": paired_chargers(),
-                    })
+                    answer = {"status": "approved", "url": self._base_url(), "chargers": paired_chargers()}
+                    if SITES["pairing"]:
+                        answer["sites"] = paired_sites()
+                    self._json(200, answer)
                     return
                 self._json(200, {"status": verdict})
                 return
@@ -1309,6 +2148,8 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8099)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--list", action="store_true", help="print the scenarios and exit")
+    parser.add_argument("--quiet", action="store_true",
+                        help="no mDNS, no discovery and no request log: for the app's tests, which start it themselves")
     args = parser.parse_args()
 
     if args.list:
@@ -1317,6 +2158,11 @@ def main() -> None:
             print(f"{name:<{width}}  {charger.name} -- {charger.why}")
         return
 
+    if args.quiet:
+        Handler.log_message = lambda self, fmt, *a: None  # type: ignore[assignment]
+        print(f"Fake Home Assistant on http://{args.host}:{args.port}", flush=True)
+        ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
+        return
     print(f"Fake Home Assistant on http://{args.host}:{args.port}")
     print(f"Discovery listening on UDP {args.port}; catalogue at /spotnav-mock/scenarios")
     print(f"Pairing: approve requests at http://<this machine>:{args.port}/pairing")

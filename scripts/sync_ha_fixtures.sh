@@ -8,7 +8,7 @@
 # fixtures and the catalogue are taken from that commit of the integration's repository instead of its
 # working tree, so a branch can be vendored without checking it out. Only the
 # parts the app reads are copied (dashboard/, settings/v1/, site_settings/v1/, vehicle/v1/, sessions/, webhook/,
-# grid_tariff/, power_month/, codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
+# grid_tariff/, power_month/, house/, house_now/, house_history/, house_loads/, battery_control/, heat_card/, heat_history/, pairing/, codes/dashboard_codes.json); the VendoredHaFixturesTest fails when a copy differs from the source,
 # so run this after the HA side changes a fixture. The commit the copy was taken from is written to ha-fixtures/REF,
 # and the test compares only against a checkout at that commit. The integration's area catalogue
 # (custom_components/spotnav/pricing/areas.json) is copied to the app's assets as its bundled area list.
@@ -36,7 +36,7 @@ if [ ! -d "$src" ]; then
     exit 1
 fi
 
-rm -rf "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings" "$dst/site_settings" "$dst/vehicle" "$dst/sessions" "$dst/grid_tariff" "$dst/power_month"
+rm -rf "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings" "$dst/site_settings" "$dst/vehicle" "$dst/sessions" "$dst/grid_tariff" "$dst/power_month" "$dst/house" "$dst/house_now" "$dst/house_history" "$dst/house_loads" "$dst/battery_control" "$dst/heat_card" "$dst/heat_history" "$dst/pairing"
 mkdir -p "$dst/webhook" "$dst/dashboard" "$dst/codes" "$dst/settings/v1" "$dst/site_settings/v1" "$dst/vehicle/v1" "$dst/sessions"
 cp "$src"/webhook/*.json "$dst/webhook/"
 cp "$src"/dashboard/*.json "$dst/dashboard/"
@@ -55,6 +55,15 @@ if [ -d "$src/power_month" ]; then
     mkdir -p "$dst/power_month"
     cp "$src"/power_month/*.json "$dst/power_month/"
 fi
+# The house and heat pages' documents (since 3.0): the house (`get_house`), its live flows (`get_house_now`) and the
+# heating (`get_heat`, in heat_card/), as the WebSocket sends them; their webhook twins are in webhook/. The pairing's
+# approved answer with homes (pairing/, since 3.0).
+for part in house house_now house_history house_loads battery_control heat_card heat_history pairing; do
+    if [ -d "$src/$part" ]; then
+        mkdir -p "$dst/$part"
+        cp "$src/$part"/*.json "$dst/$part/"
+    fi
+done
 # The integration commit the copy was taken from: VendoredHaFixturesTest compares the copy with the integration's
 # checkout next to this repository only while that checkout is at this commit.
 if [ -n "$commit" ]; then

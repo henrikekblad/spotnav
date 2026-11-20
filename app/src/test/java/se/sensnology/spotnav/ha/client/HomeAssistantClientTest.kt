@@ -229,4 +229,20 @@ class HomeAssistantClientTest {
             HomeAssistantClient.updateSiteSettings(settings, SiteUpdate.priorityRequest(null, "car_first"))
         )
     }
+
+    @Test fun aChargerBehindItsHomesWebhookIsNamedInEveryRequest() {
+        val (_, write) = withServer("200 OK", webhookFixture("site_webhook_update_site_settings")) {
+            HomeAssistantClient.updateSiteSettings(it.copy(chargerId = "entry_a"), SiteUpdate.priorityRequest("car_first", "battery_first"))
+        }
+        assertEquals("entry_a", write.getString("charger_id"))
+        assertEquals("update_site_settings", write.getString("action"))
+        val (_, read) = withServer("200 OK", "{}") {
+            runCatching { HomeAssistantClient.dashboard(it.copy(chargerId = "entry_a")) }
+        }
+        assertEquals("entry_a", read.getString("charger_id"))
+        // A charger's own webhook, or the home's own actions: no charger named.
+        val (_, own) = withServer("200 OK", "{}") { HomeAssistantClient.updateSiteSettings(it, SiteUpdate.priorityRequest(null, "car_first")) }
+        assertFalse(own.has("charger_id"))
+        assertFalse(HomeAssistantSettings("https://ha", "secret", "c").toString().contains("secret"))
+    }
 }

@@ -242,7 +242,9 @@ internal class ChargerProfileStore(
                 pairAgain = json.optLongOrNull("pair_again_marked_at")?.let { markedAt ->
                     PairAgainMark(markedAt, json.optLongOrNull("pair_again_checked_at") ?: markedAt)
                 },
-                priceDays = if (json.has("price_days") && !json.isNull("price_days")) json.opt("price_days") as? Boolean else null
+                priceDays = if (json.has("price_days") && !json.isNull("price_days")) json.opt("price_days") as? Boolean else null,
+                siteId = json.optStringOrNull("site_id")?.takeIf { it.isNotBlank() },
+                siteWebhookId = json.optStringOrNull("site_webhook_id")?.takeIf { it.isNotBlank() }
             )
         }
 
@@ -266,6 +268,8 @@ internal class ChargerProfileStore(
                 put("pair_again_checked_at", it.checkedAt)
             }
             priceDays?.let { put("price_days", it) }
+            siteId?.let { put("site_id", it) }
+            siteWebhookId?.let { put("site_webhook_id", it) }
         }
     }
 }
