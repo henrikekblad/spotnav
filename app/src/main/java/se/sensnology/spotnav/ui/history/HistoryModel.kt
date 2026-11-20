@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.history
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.sessions.SessionDay
 import se.sensnology.spotnav.ha.sessions.SessionTotals
 import java.time.YearMonth
@@ -89,16 +90,16 @@ internal class HistoryFigures(private val locale: Locale, totals: SessionTotals,
     private val minor = totals.minorUnit
     private val prices = PriceFormat(priceUnit, totals.minorUnit, totals.majorUnit, locale)
 
-    fun energy(kwh: Double): String = String.format(locale, "%.1f kWh", kwh)
+    fun energy(kwh: Double): String = String.format(locale, "%.1f kWh", noMinusZero(kwh, 1))
 
     /** An amount in the major unit, `null` when there is none or no unit to name it in. */
     fun cost(amount: Double?): String? =
-        if (amount == null || major == null) null else String.format(locale, "%.2f %s", amount, major)
+        if (amount == null || major == null) null else String.format(locale, "%.2f %s", noMinusZero(amount, 2), major)
 
     /** A signed estimate: the minus sign is the real one. */
     fun saving(amount: Double?): String? {
         if (amount == null || major == null) return null
-        val sign = if (amount < 0.0) "−" else ""
+        val sign = if (noMinusZero(amount, 2) < 0.0) "−" else ""
         return "≈ " + sign + String.format(locale, "%.2f %s", Math.abs(amount), major)
     }
 

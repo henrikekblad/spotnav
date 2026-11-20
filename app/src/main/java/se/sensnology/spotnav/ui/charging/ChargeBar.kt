@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.charging
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.dashboard.ChargeProgressContract
 import se.sensnology.spotnav.ha.dashboard.ConnectionState
 import se.sensnology.spotnav.ha.dashboard.Dashboard
@@ -281,7 +282,7 @@ internal object ChargeBarText {
 
     /** A power in kW with one decimal in the screen's number locale, a whole number without ",0". */
     fun kw(powerKw: Double, locale: Locale): String =
-        DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale)).format(Math.round(powerKw * 10.0) / 10.0)
+        DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale)).format(noMinusZero(Math.round(powerKw * 10.0) / 10.0, 1))
 }
 
 /** What the card shows beside the bar. */

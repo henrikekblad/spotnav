@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.noMinusZero
 import android.app.AlertDialog
 import android.text.InputType
 import android.view.View
@@ -94,7 +95,7 @@ internal fun ViewScope.editHighLoad(
         maximumFractionDigits = 2
         minimumFractionDigits = 0
         isGroupingUsed = grouped
-    }.format(value)
+    }.format(noMinusZero(value, 2))
     help(words.say("gridFee.high.help"))
     body.addView(TextView(context).apply {
         // The card's label, its unit beside it in brackets as the card writes it.

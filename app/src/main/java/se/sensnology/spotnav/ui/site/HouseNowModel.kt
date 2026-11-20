@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.site
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ui.common.CardWords
@@ -71,7 +72,7 @@ internal sealed interface HouseStatus {
  * as the rest of the screen writes them.
  */
 internal class SiteText(val words: CardWords, val locale: Locale, private val numbers: Locale = locale) {
-    fun fixed(value: Double, digits: Int): String = String.format(numbers, "%.${digits}f", value)
+    fun fixed(value: Double, digits: Int): String = String.format(numbers, "%.${digits}f", noMinusZero(value, digits))
 
     /** At most one decimal, none for a whole figure ("1,4", "2"). */
     fun short(value: Double): String = fixed(value, 1).let { if (it.endsWith("0")) fixed(value, 0) else it }

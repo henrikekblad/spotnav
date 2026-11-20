@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
@@ -192,7 +193,7 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         return HeatNowModel.moment(SiteText(words, locale), settings.now ?: Instant.now(), zone, at)
     }
 
-    fun fixed(value: Double, decimals: Int): String = String.format(locale, "%.${decimals}f", value)
+    fun fixed(value: Double, decimals: Int): String = String.format(locale, "%.${decimals}f", noMinusZero(value, decimals))
 
     /** The sensor's name as a room: the word for temperature at its end left out ("Ovanvåning temperatur" is "Ovanvåning"). */
     fun roomName(name: String): String {

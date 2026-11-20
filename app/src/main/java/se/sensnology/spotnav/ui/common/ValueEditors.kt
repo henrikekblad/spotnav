@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.common
 
+import se.sensnology.spotnav.app.noMinusZero
 import android.app.AlertDialog
 import android.text.InputType
 import android.view.Gravity
@@ -44,7 +45,7 @@ internal data class NumberSpec(val min: Double, val max: Double, val decimals: I
         isGroupingUsed = false
         minimumFractionDigits = minDecimals
         maximumFractionDigits = decimals
-    }.format(value)
+    }.format(noMinusZero(value, decimals))
 }
 
 /** Advice an editor reads once it is open: the words while it is read, the button's word, and how it is read. */

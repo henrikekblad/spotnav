@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.dashboard.DashboardGridTariff
 import se.sensnology.spotnav.ha.dashboard.GridTariffFee
 import se.sensnology.spotnav.ha.dashboard.HighLoadWindow
@@ -46,7 +47,7 @@ internal class GridTariffText(private val words: CardWords, private val numbers:
         minimumFractionDigits = 0
         maximumFractionDigits = 2
         roundingMode = RoundingMode.HALF_UP
-    }.format(value)
+    }.format(noMinusZero(value, 2))
 
     /** A fee's value: included in the price, off, or its figure with its unit. */
     fun feeText(fee: GridTariffFee): String = when {

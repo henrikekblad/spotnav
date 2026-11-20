@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.dashboard.DemandBlock
 import se.sensnology.spotnav.ha.dashboard.DemandComponent
 import se.sensnology.spotnav.ha.dashboard.DemandMonth
@@ -44,7 +45,7 @@ internal class DemandText(
         minimumFractionDigits = min
         maximumFractionDigits = max
         roundingMode = RoundingMode.HALF_UP
-    }.format(value)
+    }.format(noMinusZero(value, max))
 
     /** The hours' words, as the grid tariff's high-load hours are worded. */
     private val hours = GridTariffText(words, numbers)

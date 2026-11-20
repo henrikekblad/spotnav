@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.settings.HaAreaOverrideComponent
 import se.sensnology.spotnav.ha.settings.HaFiscalValue
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -165,7 +166,7 @@ internal data class PriceOverview(
             val number = NumberFormat.getNumberInstance(locale).apply {
                 minimumFractionDigits = 0
                 maximumFractionDigits = 2
-            }.format(line.amount)
+            }.format(noMinusZero(line.amount, 2))
             return when {
                 line.unit.isEmpty() -> number
                 line.unit == "%" -> "$number %"
