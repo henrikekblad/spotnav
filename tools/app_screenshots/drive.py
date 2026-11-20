@@ -3,10 +3,12 @@
     drive.py [--langs en sv ...] [--docs-langs en ...] [-- shot-name ...]
 
 Environment: SERIAL (an emulator), ADB, APK, OUT (docs/images), STORE_OUT (fastlane/metadata/android),
-HA_PORT, APP_HA_PORT, and what ha_setup.mjs needs. Each run starts from a freshly wiped emulator: it
-installs the app, takes the unpaired picture, pairs with the demo Home Assistant (approving the request
-there through its config flow), confirms the suggested settings once, adds the widget, takes one pass
-per language, and ends with a new plug-in for the car identification pictures. English (and with --docs-langs more) writes docs/images/app-*.png; every
+HA_PORT, APP_HA_PORT, WORK, and what ha_setup.mjs needs. run.sh runs it in phases (--phase): `setup` on a freshly
+wiped emulator installs the app, takes the unpaired picture, pairs with the demo Home Assistant (approving the request
+there through its config flow), confirms the suggested settings once and adds the widget; `pictures` takes one pass
+per language (each only for the pictures asked for), the house and heat pages and, unless --no-identify, the car
+identification pictures; `identify` and `identify-shots` split the identification between emulators that take
+different languages (see run.sh). Without --phase (`all`) one emulator does all of it in turn. English (and with --docs-langs more) writes docs/images/app-*.png; every
 language writes the Play store set into fastlane's layout.
 """
 
@@ -357,46 +359,86 @@ def language_pass(lang: str, docs: bool) -> None:
     plan_title = exact(s["card_charging_plan_title"])
     if wait_for(planning_title(s), timeout=30) is None:
         raise RuntimeError("the main screen did not open")
+    # Only the steps whose pictures are asked for (all of them without names).
+    def need(*names: str) -> bool:
+        return any(wanted(n) for n in names)
+
     time.sleep(3)
     scroll_to_top()
     if docs:
         docs_full("app-main", lang)
     store_shot(1, "main", lang)
 
-    # The planning card's title just under the status bar, so no part of the card above shows cut off.
-    bring_card(planning_title(s), top=120)
-    if docs:
-        docs_full("app-planning", lang)
-    store_shot(2, "plan", lang)
-    if docs:
-        box = bring_card(plan_title, top=300)
-        docs_crop("app-plan-chart", lang, box)
-
-    step("price table")
-    tap(exact(s["table"]))
-    time.sleep(2.5)
-    if docs:
-        docs_full("app-price-table", lang)
-    store_shot(3, "price_table", lang)
-    back()
-
-    step("widget")
-    home()
-    redraw_widget()
-    box = widget_box()
-    if box is None:
-        failed.append(f"{lang}: no widget on the home screen")
-    else:
+    if need("app-planning", "store-plan", "app-plan-chart"):
+        # The planning card's title just under the status bar, so no part of the card above shows cut off.
+        bring_card(planning_title(s), top=120)
         if docs:
-            docs_crop("app-widget", lang, box, margin=40)
-        store_shot(4, "widget", lang)
+            docs_full("app-planning", lang)
+        store_shot(2, "plan", lang)
+        if docs and wanted("app-plan-chart"):
+            box = bring_card(plan_title, top=300)
+            docs_crop("app-plan-chart", lang, box)
 
-    step("settings")
-    launch(lang)
-    scroll_to_top()
-    tap(exact(s["settings"]))
-    time.sleep(3)
-    store_shot(5, "settings", lang)
+    if need("app-price-table", "store-price_table"):
+        step("price table")
+        tap(exact(s["table"]))
+        time.sleep(2.5)
+        if docs:
+            docs_full("app-price-table", lang)
+        store_shot(3, "price_table", lang)
+        back()
+
+    if need("app-widget", "store-widget"):
+        step("widget")
+        home()
+        redraw_widget()
+        box = widget_box()
+        if box is None:
+            failed.append(f"{lang}: no widget on the home screen")
+        else:
+            if docs:
+                docs_crop("app-widget", lang, box, margin=40)
+            store_shot(4, "widget", lang)
+
+    settings_names = ("store-settings", "app-camera-frame", "app-reference-picture",
+                      *(f"app-settings-{n}" for n in ("general", "display", "price", "vehicle", "charger", "site",
+                                                       "battery", "heat", "notifications", "home-assistant")))
+    if need(*settings_names):
+        step("settings")
+        launch(lang)
+        scroll_to_top()
+        tap(exact(s["settings"]))
+        time.sleep(3)
+        store_shot(5, "settings", lang)
+        settings_pictures(lang, s, docs)
+
+    if need("app-history", "store-history"):
+        step("charge history")
+        scroll_to_top()
+        tap(exact(s["history_row_label"]))
+        time.sleep(3)
+        # Early in a month the current month has only a few days to show: look at the month before then.
+        if time.localtime().tm_mday < 12:
+            tap(exact(s["history_previous_month"]), scroll=False)
+            time.sleep(3)
+        if docs:
+            docs_full("app-history", lang)
+        store_shot(6, "history", lang)
+        back()
+
+    if docs and wanted("app-planning-target"):
+        # The planning card with a target charge level instead of an amount, then back to kWh, which
+        # the other pictures show.
+        step("planning by target")
+        scroll_to_top()
+        bring_card(planning_title(s), top=230)
+        charge_by(s, "charge_by_target")
+        docs_crop("app-planning-target", lang, bring_card(planning_title(s), top=230))
+        charge_by(s, "charge_by_energy")
+
+
+def settings_pictures(lang: str, s: dict[str, str], docs: bool) -> None:
+    """The settings page's sections (cropped to their card) and the camera editors, then back from the page."""
     if docs:
         sections = [
             ("app-settings-general", exact(s["section_general"])),
@@ -423,29 +465,6 @@ def language_pass(lang: str, docs: bool) -> None:
                 failed.append(f"{lang} {name}: {error}")
         camera_editors(lang)
     back()
-
-    step("charge history")
-    scroll_to_top()
-    tap(exact(s["history_row_label"]))
-    time.sleep(3)
-    # Early in a month the current month has only a few days to show: look at the month before then.
-    if time.localtime().tm_mday < 12:
-        tap(exact(s["history_previous_month"]), scroll=False)
-        time.sleep(3)
-    if docs:
-        docs_full("app-history", lang)
-    store_shot(6, "history", lang)
-    back()
-
-    if docs and wanted("app-planning-target"):
-        # The planning card with a target charge level instead of an amount, then back to kWh, which
-        # the other pictures show.
-        step("planning by target")
-        scroll_to_top()
-        bring_card(planning_title(s), top=230)
-        charge_by(s, "charge_by_target")
-        docs_crop("app-planning-target", lang, bring_card(planning_title(s), top=230))
-        charge_by(s, "charge_by_energy")
 
 
 #: What the demo house does while the pictures are taken (kW, battery charge positive): the sun, the house without its
@@ -509,10 +528,13 @@ def site_pages(lang: str) -> None:
         flow = card_of(exact(s["card_house_tab_flow"]), dump())
         docs_crop("app-house-flow", lang, (flow[0], max(top - 10, 100), flow[2], flow[3]))
     if wanted("app-house-earnings"):
-        if find_scrolling(exact(s["card_house_tab_earn"])) is None:
+        # The box's heading carries the period's sum ("Earned 55 kr"), and is "Earnings" without one.
+        total = re.escape(s["card_house_earn_total"]).replace(re.escape("{amount}"), ".+")
+        earned = f"^(?:{re.escape(s['card_house_tab_earn'])}|{total})$"
+        if find_scrolling(earned) is None:
             failed.append("app-house-earnings: the page has no Earnings box")
         else:
-            docs_crop("app-house-earnings", lang, box_of(exact(s["card_house_tab_earn"])), margin=8)
+            docs_crop("app-house-earnings", lang, box_of(earned), margin=8)
 
     open_page(lang, "card_heat_title")
     docs_full("app-heat", lang)
@@ -571,27 +593,43 @@ def charger_screen(lang: str, pattern: str | None = None) -> None:
     time.sleep(2)
 
 
-def identification(langs: list[str], docs_langs: list[str]) -> None:
+def identification(langs: list[str], docs_langs: list[str], *, steps: bool = True, shots: bool = True) -> None:
     """Which car is plugged in: a plug-in being identified, a car decided by its charging cable, and the
-    question. One new plug-in serves every language; the question stays open for the store pictures."""
+    question. One new plug-in serves every language; the question stays open for the store pictures.
+    [steps]: take the Home Assistant steps (and the identifying and identified pictures); [shots]: take the
+    question's pictures for [langs] (a parallel worker's: it waits until another process has asked)."""
     if only and not only & {"app-identifying", "app-identified", "app-identify-question", "store-identify"}:
         return
-    step("which car is plugged in")
-    ha("unplug")
-    ha("plug-in")
-    for lang in docs_langs:
-        charger_screen(lang, re.escape(strings(lang)["identify_identifying"]))
-        docs_full("app-identifying", lang)
-    ha("city")
-    for lang in docs_langs:
-        charger_screen(lang, re.escape(strings(lang)["identify_by_plug_sensor"]))
-        docs_full("app-identified", lang)
-    ha("ask")
-    for lang in langs:
+    asked = Path(os.environ.get("WORK", ".")) / "ask_ready"
+    if steps:
+        step("which car is plugged in")
+        asked.unlink(missing_ok=True)
+        ha("unplug")
+        ha("plug-in")
+        for lang in docs_langs:
+            charger_screen(lang, re.escape(strings(lang)["identify_identifying"]))
+            docs_full("app-identifying", lang)
+        ha("city")
+        for lang in docs_langs:
+            charger_screen(lang, re.escape(strings(lang)["identify_by_plug_sensor"]))
+            docs_full("app-identified", lang)
+        ha("ask")
+        asked.write_text("asked\n")
+    else:
+        step("waiting for the question which car is plugged in")
+        deadline = time.time() + 900
+        while not asked.exists():
+            if time.time() > deadline:
+                raise RuntimeError("nobody asked which car is plugged in")
+            time.sleep(2)
+    if not shots:
+        return
+    for lang in dict.fromkeys([*langs, *[d for d in docs_langs if d not in langs]]):
         charger_screen(lang, exact(strings(lang)["identify_question"]))
         if lang in docs_langs:
             docs_full("app-identify-question", lang)
-        store_shot(7, "identify", lang)
+        if lang in langs:
+            store_shot(7, "identify", lang)
 
 
 def clear_store_sets(langs: list[str]) -> None:
@@ -604,39 +642,70 @@ def clear_store_sets(langs: list[str]) -> None:
                     old.unlink()
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--langs", nargs="+", default=list(STORE_LOCALES))
-    parser.add_argument("--docs-langs", nargs="+", default=["en"])
-    parser.add_argument("shots", nargs="*")
-    args = parser.parse_args()
-    only.update(args.shots)
-    if not only:
-        clear_store_sets(args.langs)
+def setup_phase() -> None:
+    """The app on a freshly wiped emulator: installed, the unpaired view, paired, the first-run suggestions
+    confirmed and the widget added."""
     prepare_device(os.environ["APK"])
     standalone()
     pair()
     confirm_suggestions()
     add_widget()
-    for lang in args.langs:
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--langs", nargs="+", default=list(STORE_LOCALES))
+    parser.add_argument("--docs-langs", nargs="+", default=["en"])
+    #: all: everything in turn on one emulator. setup: up to the widget. pictures: the language passes (and, unless
+    #: --no-site, the house and heat pages and, unless --no-identify, the identification). identify: the
+    #: identification's steps and pictures of this process's languages. identify-shots: only the question's
+    #: pictures of this process's languages, once another process has asked (a parallel worker's).
+    parser.add_argument("--phase", choices=["all", "setup", "pictures", "identify", "identify-shots"], default="all")
+    parser.add_argument("--no-site", action="store_true")
+    parser.add_argument("--no-identify", action="store_true")
+    parser.add_argument("shots", nargs="*")
+    args = parser.parse_args()
+    only.update(args.shots)
+    phase = args.phase
+    if phase == "setup":
+        setup_phase()
+        return 0
+    if phase == "all":
+        if not only:
+            clear_store_sets(args.langs)
+        setup_phase()
+    if phase in ("all", "pictures"):
+        if phase == "pictures":
+            if not only:
+                clear_store_sets(args.langs)
+            prepare_device(os.environ["APK"])
+        # Named pictures that are not in the language passes (the house and heat pages, the identification) need none.
+        passes = not only or any(not name.startswith(("app-house", "app-heat", "app-identif", "store-identify"))
+                                 for name in only)
+        for lang in args.langs if passes else []:
+            try:
+                language_pass(lang, docs=lang in args.docs_langs)
+            except Exception as error:  # noqa: BLE001
+                failed.append(f"{lang}: {error}")
+                print(f"   FAILED {lang}: {error}", flush=True)
+                back()
+                back()
+        if not args.no_site:
+            try:
+                site_pages("en")
+            except Exception as error:  # noqa: BLE001
+                failed.append(f"house and heat pages: {error}")
+                print(f"   FAILED house and heat pages: {error}", flush=True)
+                back()
+    if phase in ("all", "identify", "identify-shots") or (phase == "pictures" and not args.no_identify):
+        if phase in ("identify", "identify-shots"):
+            prepare_device(os.environ["APK"])
         try:
-            language_pass(lang, docs=lang in args.docs_langs)
+            identification(args.langs, args.docs_langs if phase != "identify-shots" else [],
+                           steps=phase != "identify-shots", shots=True)
         except Exception as error:  # noqa: BLE001
-            failed.append(f"{lang}: {error}")
-            print(f"   FAILED {lang}: {error}", flush=True)
-            back()
-            back()
-    try:
-        site_pages("en")
-    except Exception as error:  # noqa: BLE001
-        failed.append(f"house and heat pages: {error}")
-        print(f"   FAILED house and heat pages: {error}", flush=True)
-        back()
-    try:
-        identification(args.langs, args.docs_langs)
-    except Exception as error:  # noqa: BLE001
-        failed.append(f"identification: {error}")
-        print(f"   FAILED identification: {error}", flush=True)
+            failed.append(f"identification: {error}")
+            print(f"   FAILED identification: {error}", flush=True)
     print(f"\nwritten: {len(written)}  failed: {len(failed)}")
     for f in failed:
         print("FAILED " + f)

@@ -2,6 +2,8 @@
 //
 //   node ha_setup.mjs setup      onboard, add the demo devices, a SpotNav charger and a site; set up the camera
 //                                and let "Family car" be identified at the charger by its charging cable
+//   node ha_setup.mjs settle     wait until the new site has read (before an installation is kept)
+//   node ha_setup.mjs ready       an installation has started again (a kept one): top up its history, wait for the past days' prices
 //   node ha_setup.mjs scene '{"sun":1.8,...}'   pin the demo house's live power (kW) for a picture
 //   node ha_setup.mjs wait-prices [minutes]   wait for the past days' prices (the earnings need them)
 //   node ha_setup.mjs approve    approve the pairing request the app has just made
@@ -26,7 +28,9 @@ const log = (text) => console.log("== " + text);
 async function signedIn() {
   await ha.waitUp();
   await ha.onboard();
-  return new ha.Api(await ha.login());
+  const api = new ha.Api(await ha.login());
+  if (process.env.HA_ONBOARDED) await ha.waitRunning(api);
+  return api;
 }
 
 async function setup() {
@@ -49,20 +53,34 @@ async function scene(values) {
   log("scene " + JSON.stringify(values));
 }
 
-/** Wait until the month's past days have prices: the history is filled at a price refresh cycle (hourly, and at
- * midnight), and the earnings and the cost need it. At most `minutes` (default 90). */
-async function waitPrices(minutes = 90) {
+/** Wait until the month's past days have prices: the history is filled by the price backfill (quick in this demo, see
+ * the Home Assistant tool's demo_fast.py), and the earnings and the cost need it. At most `minutes` (default 10). */
+async function waitPrices(minutes = 10) {
   const api = await signedIn();
   const site = (await api.entries("spotnav")).find((e) => e.title === "Home")?.entry_id;
-  const deadline = Date.now() + minutes * 60_000;
-  while (Date.now() < deadline) {
-    const answer = await api.ws({ type: "spotnav/get_house_history", api_version: 1, site_id: site, period: "month" });
-    const priced = answer.cost?.priced ?? 0;
-    if (priced > 100) { log(`past prices are in (${priced} hours priced)`); return; }
-    log(`waiting for the past days' prices (${priced} hours priced)`);
-    await sleep(60_000);
-  }
-  throw new Error("the past days' prices did not arrive");
+  const v3 = await import(path.join(process.env.HA_DRIVER, "v3setup.mjs"));
+  await v3.waitPastPrices(api, site, minutes);
+}
+
+/** A new installation's site has read for a while and its past days are priced: what a kept copy starts from. */
+async function settle() {
+  const api = await signedIn();
+  const site = (await api.entries("spotnav")).find((e) => e.title === "Home")?.entry_id;
+  const v3 = await import(path.join(process.env.HA_DRIVER, "v3setup.mjs"));
+  await v3.settleSite(api, site);
+  log("site settled");
+}
+
+/** A kept installation has been started again: its weeks of history are imported once more, so the hours it was
+ * stopped for are not missing. */
+async function ready() {
+  const api = await signedIn();
+  const v3 = await import(path.join(process.env.HA_DRIVER, "v3setup.mjs"));
+  await v3.importHistory(api);
+  // The past days' prices are held in memory only: the backfill fills them again after every start.
+  const site = (await api.entries("spotnav")).find((e) => e.title === "Home")?.entry_id;
+  await v3.waitPastPrices(api, site, 10);
+  log("kept installation ready");
 }
 
 async function chargerId(api) {
@@ -109,7 +127,9 @@ async function approve() {
 
 const command = process.argv[2];
 if (command === "setup") await setup();
-else if (command === "wait-prices") await waitPrices(Number(process.argv[3] || 90))
+else if (command === "wait-prices") await waitPrices(Number(process.argv[3] || 10))
+else if (command === "settle") await settle();
+else if (command === "ready") await ready();
 else if (command === "scene") await scene(JSON.parse(process.argv[3] || "{}"));
 else if (command === "approve") await approve();
 else if (["unplug", "plug-in", "city", "ask"].includes(command)) await identification(command);
