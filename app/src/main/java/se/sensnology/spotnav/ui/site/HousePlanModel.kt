@@ -63,13 +63,21 @@ internal object HousePlanModel {
     data class Block(val index: Int, val layer: PlanLayer, val would: Boolean, /** A heat lane's level: below zero lowered, above pre-heated. */ val level: Double?)
 
     data class Lane(
+        /** The load's id: a car lane's is its charger's entry id. */
+        val id: String,
         val kind: String,
         val name: String,
         val would: Boolean,
         val blocks: List<Block>,
         val reason: String,
-        /** The car's "does not fit" line (the choices are the charger page's); `null` while it fits. */
-        val doesNotFit: String?
+        /** The car's "does not fit" line; `null` while it fits. */
+        val doesNotFit: String?,
+        /**
+         * The line's buttons, as the card's Plan tab offers them: "Later departure" only with a time that fits (its
+         * editor is the charger page's), "Allow the peak" asked again on the button ([acceptPeakAgain]).
+         */
+        val choices: List<DoesNotFitText.Button> = emptyList(),
+        val acceptPeakAgain: String = ""
     )
 
     data class Said(val span: String, val sentence: String, val would: Boolean, val kind: String)
@@ -313,8 +321,14 @@ internal object HousePlanModel {
             drawn?.let { Block(index, it, load.would, if (load.level != null) level else null) }
         }
         val zone = plan.zone
-        val fit = load.doesNotFit?.let { DoesNotFitText(text, zone, plan.money).line(it) }
-        return Lane(load.kind, loadName(text, load), load.would, blocks, laneReason(text, plan, load), fit)
+        val words = DoesNotFitText(text, zone, plan.money)
+        val block = load.doesNotFit
+        return Lane(
+            load.id, load.kind, loadName(text, load), load.would, blocks, laneReason(text, plan, load),
+            block?.let(words::line),
+            block?.let { words.buttons(it, releaseOffered = true).filter { button -> button.press != DoesNotFitText.Press.OPEN_DEPARTURE } }.orEmpty(),
+            words.acceptPeakAgain()
+        )
     }
 
     /** Every run of every load, by its start: the plan in words. */

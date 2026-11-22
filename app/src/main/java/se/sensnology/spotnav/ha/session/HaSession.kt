@@ -100,6 +100,18 @@ internal interface HaTransport {
     /** `take_what_fits` or `later_departure`: a "does not fit" choice for this departure; never throws. */
     fun doesNotFitChoice(action: String): DoesNotFitChoice.Outcome = DoesNotFitChoice.Outcome.Failed(null)
 
+    /**
+     * Whether every request already names a charger behind a home's webhook (`charger_id`); false for a charger's own
+     * webhook and for a home's own actions.
+     */
+    val namesCharger: Boolean get() = false
+
+    /** [doesNotFitChoice] for the charger [chargerId] behind a home's webhook (`null`: as this transport addresses). */
+    fun doesNotFitChoiceFor(action: String, chargerId: String?): DoesNotFitChoice.Outcome = doesNotFitChoice(action)
+
+    /** [releaseImportTarget] for the charger [chargerId] behind a home's webhook (`null`: as this transport addresses). */
+    fun releaseImportTargetFor(chargerId: String?): ReleaseImportTarget.Outcome = releaseImportTarget()
+
     /** `update_grid_tariff`: the grid tariff written with [body]; never throws. */
     fun updateGridTariff(expectedRevision: Int, body: JSONObject): GridTariffUpdate.Outcome = GridTariffUpdate.Outcome.Failed(null)
 
@@ -196,6 +208,14 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun releaseImportTarget() = HomeAssistantClient.releaseImportTarget(connection)
 
     override fun doesNotFitChoice(action: String) = HomeAssistantClient.doesNotFitChoice(connection, action)
+
+    override val namesCharger: Boolean get() = connection.chargerId != null
+
+    override fun doesNotFitChoiceFor(action: String, chargerId: String?) =
+        HomeAssistantClient.doesNotFitChoice(connection.copy(chargerId = chargerId ?: connection.chargerId), action)
+
+    override fun releaseImportTargetFor(chargerId: String?) =
+        HomeAssistantClient.releaseImportTarget(connection.copy(chargerId = chargerId ?: connection.chargerId))
 
     override fun plan() = HomeAssistantClient.plan(connection)
 
@@ -424,20 +444,23 @@ internal class HaSession(
     }
 
     /** `release_import_target` (never throws). */
-    fun releaseImportTarget(done: (ReleaseImportTarget.Outcome) -> Unit) {
+    fun releaseImportTarget(chargerId: String? = null, done: (ReleaseImportTarget.Outcome) -> Unit) {
         background.execute {
-            val outcome = transport.releaseImportTarget()
+            val outcome = if (chargerId == null) transport.releaseImportTarget() else transport.releaseImportTargetFor(chargerId)
             mainThread { done(outcome) }
         }
     }
 
     /** `take_what_fits` or `later_departure` (never throws). */
-    fun doesNotFitChoice(action: String, done: (DoesNotFitChoice.Outcome) -> Unit) {
+    fun doesNotFitChoice(action: String, chargerId: String? = null, done: (DoesNotFitChoice.Outcome) -> Unit) {
         background.execute {
-            val outcome = transport.doesNotFitChoice(action)
+            val outcome = if (chargerId == null) transport.doesNotFitChoice(action) else transport.doesNotFitChoiceFor(action, chargerId)
             mainThread { done(outcome) }
         }
     }
+
+    /** Whether every request already names a charger behind a home's webhook. */
+    val namesCharger: Boolean get() = transport.namesCharger
 
     /** `get_plan` (never throws). */
     fun plan(done: (SiteRead<Plan>) -> Unit) {

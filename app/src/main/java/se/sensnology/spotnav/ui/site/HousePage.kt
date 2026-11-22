@@ -45,7 +45,9 @@ internal class HousePage(
     private val memory: SiteMemory,
     private val preferences: SitePreferences,
     /** What the remembered choices are kept under until the house has said its site. */
-    private val profileId: String
+    private val profileId: String,
+    /** A charger page's own charger (its dashboard's id), for the Plan box's choices; `null` on a home's own screen. */
+    private val ownChargerId: (() -> String?)? = null
 ) : ViewScope(scope), SitePage {
     override val kind = PageKind.HOUSE
 
@@ -86,7 +88,9 @@ internal class HousePage(
     }
     private val loads = LoadsDialog(this, session, text, colours)
     /** The Plan box, under Now as the card's Plan tab follows Now; not driven by the period picker. */
-    private val planBox = HousePlanBox(this, session, memory, text, colours)
+    private val planBox = HousePlanBox(this, session, memory, text, colours) {
+        ownChargerId?.let { PlanChoiceScope.Charger(it(), session.namesCharger) } ?: PlanChoiceScope.Home
+    }
     private val flowStatus = line().apply { setTextColor(muted) }
     private val sankey = SankeyView(context, text).apply { onOpen = ::openLoads }
     private val tiles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
@@ -194,6 +198,7 @@ internal class HousePage(
     override fun setInView(inView: Boolean) {
         if (!inView) details.dismiss()
         schematic.running = inView
+        if (inView) planBox.cameIntoView()
         if (inView) polling.start() else polling.stop()
     }
 

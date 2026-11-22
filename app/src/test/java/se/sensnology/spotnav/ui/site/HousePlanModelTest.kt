@@ -160,13 +160,33 @@ class HousePlanModelTest {
 
     @Test fun theBoxIsLeftOutWhereThePlanIsNotServed() {
         val p = plan()
-        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(false, p, false, false))
-        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(null, null, false, false))
-        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(null, null, true, false))
-        assertEquals(PlanBoxState.Line("house.loading"), PlanBoxState.of(true, null, false, false))
-        assertEquals(PlanBoxState.Line("house.failed"), PlanBoxState.of(true, null, true, false))
-        assertEquals(PlanBoxState.Line("hist.unsupported"), PlanBoxState.of(null, null, false, true))
-        assertEquals(PlanBoxState.Shown(p), PlanBoxState.of(true, p, true, false))
+        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(false, false, p, false, false))
+        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(null, true, null, false, false))
+        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(null, false, null, false, false))
+        assertEquals(PlanBoxState.Hidden, PlanBoxState.of(null, false, null, true, false))
+        assertEquals(PlanBoxState.Line("house.loading"), PlanBoxState.of(true, false, null, false, false))
+        assertEquals(PlanBoxState.Line("house.failed"), PlanBoxState.of(true, false, null, true, false))
+        assertEquals(PlanBoxState.Line("hist.unsupported"), PlanBoxState.of(null, false, null, false, true))
+        assertEquals(PlanBoxState.Shown(p), PlanBoxState.of(true, false, p, true, false))
+    }
+
+    @Test fun aCarLaneThatDoesNotFitHasTheCardsButtons() {
+        val lane = HousePlanModel.content(text(), plan("get_plan_does_not_fit.json")).lanes.single()
+        assertEquals("<charger_id>", lane.id)
+        assertEquals(listOf("Ta det som ryms (≈ 7,1 kWh)", "Senare avresa (17:00)", "Tillåt toppen (≈ 12 kW)"), lane.choices.map { it.label })
+        assertEquals(
+            listOf(DoesNotFitText.Press.TAKE_WHAT_FITS, DoesNotFitText.Press.LATER_DEPARTURE, DoesNotFitText.Press.ACCEPT_PEAK),
+            lane.choices.map { it.press }
+        )
+        assertEquals("Ja, tillåt toppen", lane.acceptPeakAgain)
+        // Without a later hour that fits, no "Later departure" here: its editor is the charger page's.
+        val noLater = HousePlanModel.content(text(), plan("get_plan_does_not_fit.json") {
+            it.getJSONArray("loads").getJSONObject(0).getJSONObject("does_not_fit").getJSONArray("choices").getJSONObject(1).put("departure", JSONObject.NULL)
+        }).lanes.single()
+        assertEquals(listOf("takes_what_fits", "accept_peak"), noLater.choices.map { it.code })
+        // Chosen: only what is still open; a lane that fits has none.
+        assertEquals(listOf("later", "accept_peak"), HousePlanModel.content(text(), plan("get_plan_takes_what_fits.json")).lanes.single().choices.map { it.code })
+        assertTrue(HousePlanModel.content(text(), plan()).lanes.single().choices.isEmpty())
     }
 
     @Test fun everyWordIsInEveryLanguage() {

@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import se.sensnology.spotnav.R
+import se.sensnology.spotnav.ha.client.DoesNotFitChoice
+import se.sensnology.spotnav.ha.client.ReleaseImportTarget
 import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.PlanRead
 import se.sensnology.spotnav.ha.house.SiteRead
@@ -31,13 +33,13 @@ internal sealed interface PlanBoxState {
 
     companion object {
         /**
-         * The box's state: hidden where the webhook does not serve `get_plan` ([offered] false: `get_site` said so, or an
-         * older Home Assistant answered "Unsupported action"), and while that is not known yet with nothing read, so an
-         * older Home Assistant never shows an empty box. A plan held stays shown while the next read is on its way or
-         * fails.
+         * The box's state: hidden where the webhook does not serve `get_plan` ([offered] false: `get_site` said so; or
+         * [refused]: an older Home Assistant answered "Unsupported action" since), and while that is not known yet with
+         * nothing read, so an older Home Assistant never shows an empty box. A plan held stays shown while the next read
+         * is on its way or fails.
          */
-        fun of(offered: Boolean?, plan: Plan?, failed: Boolean, unsupported: Boolean): PlanBoxState = when {
-            offered == false -> Hidden
+        fun of(offered: Boolean?, refused: Boolean, plan: Plan?, failed: Boolean, unsupported: Boolean): PlanBoxState = when {
+            offered == false || refused -> Hidden
             plan != null -> Shown(plan)
             unsupported -> Line("hist.unsupported")
             offered == null -> Hidden
@@ -50,20 +52,25 @@ internal sealed interface PlanBoxState {
 /**
  * The house page's Plan box, under Now as the card's Plan tab follows Now (`frontend/src/house-plan.ts`; see
  * [HousePlanModel] for what it says). It reads `get_plan` when the page opens and then with the house, about once a
- * minute. Not a period box: the shared picker does not drive it. The car's "does not fit" line is said in its lane; the
- * choices are the charger page's.
+ * minute. Not a period box: the shared picker does not drive it. A car's "does not fit" line is said in its lane with
+ * the card's buttons: "Take what fits", "Later departure (14:00)" where a later hour fits (without one the departure's
+ * editor is the charger page's) and "Allow the peak", asked again on the button before it is sent, as the card's Plan
+ * tab asks. [choiceScope] says where a lane's choices go ([PlanChoiceScope]).
  */
 internal class HousePlanBox(
     scope: ViewScope,
     private val session: HaSession,
     private val memory: SiteMemory,
     private val text: SiteText,
-    colours: SiteColours
+    colours: SiteColours,
+    private val choiceScope: () -> PlanChoiceScope
 ) : ViewScope(scope) {
     private val planPalette = PlanPalette(colours)
     private var inFlight = false
     private var failed = false
     private var unsupported = false
+    /** The page came into view since the last read: a webhook that refused `get_plan` is asked again. */
+    private var cameIntoView = true
 
     private val title = cardTitle("")
     private val status = muted(14f)
@@ -82,22 +89,30 @@ internal class HousePlanBox(
         addView(content, wide())
     }
 
-    /** Read the plan, unless the webhook does not serve it or a read is on its way. */
+    /** The page came into view again: the next read asks a webhook that refused `get_plan` again. */
+    fun cameIntoView() {
+        cameIntoView = true
+    }
+
+    /** Read the plan, unless the webhook does not serve it ([PlanProbe] says when one that refused is asked again) or a read is on its way. */
     fun read() {
-        if (memory.planOffered == false || inFlight) return
+        if (inFlight) return
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (!PlanProbe.ask(memory.planOffered, memory.planRefusedAt, now, cameIntoView)) return
+        cameIntoView = false
         inFlight = true
         session.plan { outcome ->
             inFlight = false
             when (outcome) {
                 is SiteRead.Read -> {
                     memory.plan = outcome.value
-                    memory.planOffered = true
+                    memory.planRefusedAt = null
                     failed = false
                     unsupported = false
                 }
-                // An older Home Assistant: no Plan box, and it is not asked again on this page.
+                // An older Home Assistant: no Plan box until a later ask (PlanProbe) finds the plan served.
                 is SiteRead.Failed -> if (outcome.code == PlanRead.UNSUPPORTED_ACTION) {
-                    memory.planOffered = false
+                    memory.planRefusedAt = android.os.SystemClock.elapsedRealtime()
                     memory.plan = null
                 } else failed = true
                 SiteRead.Unsupported -> unsupported = true
@@ -108,7 +123,7 @@ internal class HousePlanBox(
 
     /** Draw the box; `false` when it is left out. */
     fun render(): Boolean {
-        val state = PlanBoxState.of(memory.planOffered, memory.plan, failed, unsupported)
+        val state = PlanBoxState.of(memory.planOffered, memory.planRefusedAt != null, memory.plan, failed, unsupported)
         panel.visibility = if (state == PlanBoxState.Hidden) View.GONE else View.VISIBLE
         when (state) {
             PlanBoxState.Hidden -> return false
@@ -212,7 +227,54 @@ internal class HousePlanBox(
             }, wide())
             addView(muted(12.5f, lane.reason), wide().apply { topMargin = dp(2) })
             lane.doesNotFit?.let { addView(TextView(context).apply { textSize = 13f; setTextColor(dark); text = it }, wide().apply { topMargin = dp(2) }) }
+            choices(lane)?.let { addView(it, wide()) }
         }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+    }
+
+    /** A car lane's buttons, one per choice still open, where its charger can be reached ([PlanChoiceScope]); else `null`. */
+    private fun choices(lane: HousePlanModel.Lane): View? {
+        if (lane.choices.isEmpty()) return null
+        val target = PlanChoiceScope.target(choiceScope(), lane.id) ?: return null
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        for (choice in lane.choices) {
+            val button = android.widget.Button(context).apply {
+                isAllCaps = false
+                text = choice.label
+                tag = choice.code
+            }
+            // "Allow the peak" asks again on the button ("Ja, tillåt toppen"), as the card's Plan tab: it has no undo.
+            var asked = choice.press != DoesNotFitText.Press.ACCEPT_PEAK
+            button.setOnClickListener {
+                if (!asked) {
+                    asked = true
+                    button.text = lane.acceptPeakAgain
+                    return@setOnClickListener
+                }
+                for (index in 0 until column.childCount) column.getChildAt(index).isEnabled = false
+                choose(choice.press, target)
+            }
+            column.addView(button, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+        return column
+    }
+
+    /** Send a lane's choice for its charger, then read the plan again whatever came of it; a real refusal is said once. */
+    private fun choose(press: DoesNotFitText.Press, target: PlanChoiceScope.Target) {
+        fun done(failed: Boolean) {
+            if (failed) android.widget.Toast.makeText(context, t(R.string.does_not_fit_failed), android.widget.Toast.LENGTH_LONG).show()
+            read()
+            render()
+        }
+        when (press) {
+            DoesNotFitText.Press.TAKE_WHAT_FITS -> session.doesNotFitChoice(DoesNotFitChoice.TAKE_WHAT_FITS, target.chargerId) {
+                done(it is DoesNotFitChoice.Outcome.Failed)
+            }
+            DoesNotFitText.Press.LATER_DEPARTURE -> session.doesNotFitChoice(DoesNotFitChoice.LATER_DEPARTURE, target.chargerId) {
+                done(it is DoesNotFitChoice.Outcome.Failed)
+            }
+            DoesNotFitText.Press.ACCEPT_PEAK -> session.releaseImportTarget(target.chargerId) { done(it is ReleaseImportTarget.Outcome.Failed) }
+            DoesNotFitText.Press.OPEN_DEPARTURE -> Unit
+        }
     }
 
     private fun said(said: HousePlanModel.Said, wouldTag: String) = LinearLayout(context).apply {

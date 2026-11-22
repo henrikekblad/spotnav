@@ -42,11 +42,21 @@ internal class SiteMemory {
     var heatShown: Boolean? = null
     /** The site's plan (`get_plan`), the Plan box's; kept while the next read is on its way. */
     var plan: Plan? = null
-    /**
-     * Whether the webhook serves `get_plan`: `get_site.capabilities.get_plan` on a home's webhook, else learnt from the
-     * first answer (an older Home Assistant answers "Unsupported action"); `null` while not known.
-     */
+    /** Whether the webhook serves `get_plan` as `get_site.capabilities.get_plan` says (a home's webhook); `null`: not said. */
     var planOffered: Boolean? = null
+    /**
+     * When `get_plan` last answered "Unsupported action" (elapsed ms), `null` for not since: the box is left out and the
+     * plan asked again only as [PlanProbe] allows. Cleared when the webhook's capabilities change ([capabilitiesSeen]).
+     */
+    var planRefusedAt: Long? = null
+
+    /** The capabilities the webhook last stated (`get_site`'s or the dashboard's): a change clears [planRefusedAt]. */
+    fun capabilitiesSeen(capabilities: Any) {
+        if (seenCapabilities != null && seenCapabilities != capabilities) planRefusedAt = null
+        seenCapabilities = capabilities
+    }
+
+    private var seenCapabilities: Any? = null
 }
 
 /** The platform's one-shot timer on the main thread. */
