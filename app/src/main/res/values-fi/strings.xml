@@ -820,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Ei ehdotusta: kohteessa ei ole laturia.</string>
   <string name="card_power_legend_peak" formatted="false">Kuukauden huippu {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Home Assistantin tilastoista</string>
-  <string name="card_power_imported_note" formatted="false">Home Assistantin tilastoista luetut tunnit ovat likimääräisiä: ne lasketaan kuukauden huippuihin, mutta ne eivät koskaan nosta tehotavoitetta.</string>
+  <string name="card_power_imported_note" formatted="false">Home Assistantin tilastoista luetut tunnit ovat likimääräisiä: ne lasketaan kuukauden huippuihin, mutta vain tämän kuukauden täydet tunnit (kaikki 5 minuutin arvot tallessa) nostavat tehotavoitetta.</string>
   <string name="card_power_peak" formatted="false">kuukauden huippu {kw}</string>
   <string name="card_power_imported" formatted="false">Home Assistantin tilastoista</string>
   <string name="card_release_confirm_title" formatted="false">Ohitetaanko tehotavoite\?</string>
@@ -1262,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Palautus</string>
   <string name="card_battery_cap_line" formatted="false">Enintään {kw} kW verkosta, jotta sulake kestää, vaikka Home Assistant pysähtyisi ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Ei latausta verkosta: talo yltää sulakkeeseen itsekin ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">Tuontiraja suojaa sulaketta verkosta ladattaessa.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Laitoksen oma tuontiraja suojaa sulaketta verkosta ladattaessa.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">opittu vaiheittain</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">varovainen, kunnes ensimmäiset vuorokaudet on opittu</string>
   <string name="card_battery_cap_rule_learning" formatted="false">kun talon huippuja opetellaan</string>
@@ -1288,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Asetusarvo</string>
   <string name="card_heat_settings_control" formatted="false">Ohjauslähtö</string>
   <string name="card_heat_settings_control_b" formatted="false">Toinen kosketin</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Käyttövesi</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Lisäkäyttövesi</string>
   <string name="card_heat_settings_zones" formatted="false">Vyöhykkeet</string>
   <string name="card_heat_settings_zones_none" formatted="false">Ei vyöhykkeitä</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Siirto talon lämpötilaan nähden, −3…+3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Huoneen oma tavoite talon lämpötilaan nähden, −3…+3 °C. Viileämpi yläkerta: −1,5. Anturi, joka näyttää puoli astetta liian lämmintä: +0,5. Kylmintä huonetta verrataan sen omaan tavoitteeseen.</string>
   <string name="card_heat_settings_air_help" formatted="false">Ilmalämpöpumppu: SpotNav muuttaa vain asetusarvoa, ei koskaan kytke sitä päälle tai pois.</string>
   <string name="card_heat_settings_night" formatted="false">Viileämpi yö</string>
@@ -1703,4 +1702,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Salli huippu (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Salli huippu (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Kyllä, salli huippu</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">Lämpöpumpun oma tulo yhdelle ylimääräiselle käyttöveden lämmitykselle (esimerkiksi NIBEn \"tilapäinen luksus\"): SpotNav kytkee sen päälle kahdeksi sekunniksi ja pumppu tekee yhden lämmityksen. Ei koskaan lämminvesivaraajan virtakytkin: se valitaan kohdassa Lämminvesivaraaja. Ei legionella-asetusta: lämpöpumppu hoitaa sen.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">Kytkin, joka syöttää virtaa sähköiseen lämminvesivaraajaan, jossa on oma termostaatti (rele tai kontaktori). Ei lämpöpumpun käyttövesituloa: se valitaan kohdassa Lisäkäyttövesi. SpotNav vain seuraa sitä, kunnes annat sen ohjata.</string>
 </resources>

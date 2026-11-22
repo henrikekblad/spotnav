@@ -39,7 +39,7 @@ class SiteSettingsTextTest {
             "Högst 3,2 kW från nätet, så säkringen klarar sig även om Home Assistant stannar (inlärt per fas).",
             text("sv").gridChargeCap(learned)
         )
-        assertEquals("The import limit protects the fuse when charging from the grid.", text().gridChargeCap(status("battery_control/needs_ack.json")))
+        assertEquals("The plant's own import limit protects the fuse when charging from the grid.", text().gridChargeCap(status("battery_control/needs_ack.json")))
         // Charging from the grid not allowed: no line.
         assertNull(text().gridChargeCap(status("battery_control/live.json")))
     }

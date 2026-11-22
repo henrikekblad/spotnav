@@ -820,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Ikke noe forslag: anlegget har ingen lader.</string>
   <string name="card_power_legend_peak" formatted="false">Månedens topp {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Fra Home Assistants statistikk</string>
-  <string name="card_power_imported_note" formatted="false">Timene fra Home Assistants statistikk er omtrentlige: de teller i månedens topper, men løfter aldri effektmålet.</string>
+  <string name="card_power_imported_note" formatted="false">Timene fra Home Assistants statistikk er omtrentlige: de teller i månedens topper, men bare denne månedens komplette timer (alle 5-minuttersverdier finnes) løfter effektmålet.</string>
   <string name="card_power_peak" formatted="false">månedens topp {kw}</string>
   <string name="card_power_imported" formatted="false">fra Home Assistants statistikk</string>
   <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
@@ -1262,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Gi tilbake</string>
   <string name="card_battery_cap_line" formatted="false">Høyst {kw} kW fra nettet, slik at sikringen holder selv om Home Assistant stopper ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Ingen lading fra nettet: huset kan nå sikringen selv ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">Importgrensen beskytter sikringen ved lading fra nettet.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Anleggets egen importgrense beskytter sikringen ved lading fra nettet.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">innlært per fase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">forsiktig til de første døgnene er innlært</string>
   <string name="card_battery_cap_rule_learning" formatted="false">mens husets topper læres inn</string>
@@ -1288,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Settpunkt</string>
   <string name="card_heat_settings_control" formatted="false">Styreutgang</string>
   <string name="card_heat_settings_control_b" formatted="false">Andre kontakt</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Varmtvann</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Ekstra varmtvann</string>
   <string name="card_heat_settings_zones" formatted="false">Soner</string>
   <string name="card_heat_settings_zones_none" formatted="false">Ingen soner</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Forskyvning mot husets temperatur, −3 til +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Rommets eget mål mot husets temperatur, −3 til +3 °C. En kjøligere overetasje: −1,5. En føler som viser en halv grad for varmt: +0,5. Det kaldeste rommet måles mot sitt eget mål.</string>
   <string name="card_heat_settings_air_help" formatted="false">Luft-til-luft-varmepumpe: SpotNav endrer bare settpunktet, slår den aldri av eller på.</string>
   <string name="card_heat_settings_night" formatted="false">Kjøligere natt</string>
@@ -1703,4 +1702,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Tillat toppen (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Tillat toppen (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, tillat toppen</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">Varmepumpens egen inngang for én ekstra varmtvannskjøring (for eksempel NIBEs \"midlertidig luksus\"): SpotNav slår den på i to sekunder, og pumpen gjør én kjøring. Aldri strømbryteren til en varmtvannsbereder: velg den under Varmtvannsbereder. Ingen legionellainnstilling: varmepumpen tar seg av det.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">Bryteren som gir strøm til en elektrisk varmtvannsbereder med egen termostat (et relé eller en kontaktor). Ikke varmepumpens varmtvannsinngang: den velges under Ekstra varmtvann. SpotNav bare overvåker den til du lar den styre.</string>
 </resources>

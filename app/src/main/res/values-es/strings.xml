@@ -828,7 +828,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Sin sugerencia: la instalación no tiene cargador.</string>
   <string name="card_power_legend_peak" formatted="false">Pico del mes {kw}</string>
   <string name="card_power_legend_imported" formatted="false">De las estadísticas de Home Assistant</string>
-  <string name="card_power_imported_note" formatted="false">Las horas de las estadísticas de Home Assistant son aproximadas: cuentan en los picos del mes pero nunca suben el objetivo de consumo.</string>
+  <string name="card_power_imported_note" formatted="false">Las horas de las estadísticas de Home Assistant son aproximadas: cuentan en los picos del mes, pero solo las horas completas de este mes (con todos los valores de 5 minutos) suben el objetivo de consumo.</string>
   <string name="card_power_peak" formatted="false">pico del mes {kw}</string>
   <string name="card_power_imported" formatted="false">de las estadísticas de Home Assistant</string>
   <string name="card_release_confirm_title" formatted="false">¿Dejar el objetivo de consumo\?</string>
@@ -1270,7 +1270,7 @@
   <string name="card_battery_mode_normal" formatted="false">Devolver</string>
   <string name="card_battery_cap_line" formatted="false">Como máximo {kw} kW de la red, para que el fusible aguante aunque Home Assistant se detenga ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Sin carga desde la red: la casa puede alcanzar el fusible por sí sola ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">El límite de importación protege el fusible al cargar desde la red.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">El límite de importación propio de la instalación protege el fusible al cargar desde la red.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">aprendido por fase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">prudente hasta aprender los primeros días</string>
   <string name="card_battery_cap_rule_learning" formatted="false">mientras se aprenden los picos de la casa</string>
@@ -1296,10 +1296,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Consigna</string>
   <string name="card_heat_settings_control" formatted="false">Salida de control</string>
   <string name="card_heat_settings_control_b" formatted="false">Segundo contacto</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Agua caliente</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Refuerzo de agua caliente</string>
   <string name="card_heat_settings_zones" formatted="false">Zonas</string>
   <string name="card_heat_settings_zones_none" formatted="false">Sin zonas</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Desplazamiento respecto a la temperatura de la casa, de −3 a +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">El objetivo propio de la habitación respecto a la temperatura de la casa, de −3 a +3 °C. Una planta alta más fresca: −1,5. Un sensor que marca medio grado de más: +0,5. La habitación más fría se mide con su propio objetivo.</string>
   <string name="card_heat_settings_air_help" formatted="false">Bomba de calor aire-aire: SpotNav solo ajusta su consigna, nunca la enciende ni la apaga.</string>
   <string name="card_heat_settings_night" formatted="false">Noche más fresca</string>
@@ -1711,4 +1710,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Permitir el pico (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Permitir el pico (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Sí, permitir el pico</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">La entrada propia de la bomba de calor para un ciclo extra de agua caliente (por ejemplo, el \"lujo temporal\" de NIBE): SpotNav la activa dos segundos y la bomba hace un ciclo. Nunca el interruptor de alimentación de un termo eléctrico: ese se elige en Termo eléctrico. Sin ajuste de legionela: la bomba de calor se encarga.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">El interruptor que alimenta un termo eléctrico con su propio termostato (un relé o un contactor). No la entrada de agua caliente de la bomba de calor: esa va en Refuerzo de agua caliente. SpotNav solo lo vigila hasta que le dejes controlarlo.</string>
 </resources>

@@ -820,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Kein Vorschlag: Die Anlage hat keine Wallbox.</string>
   <string name="card_power_legend_peak" formatted="false">Spitze des Monats {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Aus Home Assistants Statistik</string>
-  <string name="card_power_imported_note" formatted="false">Die Stunden aus Home Assistants Statistik sind Näherungen: Sie zählen in den Spitzen des Monats, heben das Bezugsziel aber nie an.</string>
+  <string name="card_power_imported_note" formatted="false">Die Stunden aus Home Assistants Statistik sind Näherungen: Sie zählen in den Spitzen des Monats, aber nur vollständige Stunden dieses Monats (alle 5-Minuten-Werte vorhanden) heben das Bezugsziel an.</string>
   <string name="card_power_peak" formatted="false">Spitze des Monats {kw}</string>
   <string name="card_power_imported" formatted="false">aus Home Assistants Statistik</string>
   <string name="card_release_confirm_title" formatted="false">Bezugsziel aussetzen\?</string>
@@ -1262,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Zurückgeben</string>
   <string name="card_battery_cap_line" formatted="false">Höchstens {kw} kW aus dem Netz, damit die Sicherung auch hält, wenn Home Assistant stoppt ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Kein Laden aus dem Netz: Das Haus kann die Sicherung allein erreichen ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">Das Importlimit schützt die Sicherung beim Laden aus dem Netz.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Das eigene Importlimit der Anlage schützt die Sicherung beim Laden aus dem Netz.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">pro Phase gelernt</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">vorsichtig, bis die ersten Tage gelernt sind</string>
   <string name="card_battery_cap_rule_learning" formatted="false">während die Spitzen des Hauses gelernt werden</string>
@@ -1288,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Sollwert</string>
   <string name="card_heat_settings_control" formatted="false">Steuerausgang</string>
   <string name="card_heat_settings_control_b" formatted="false">Zweiter Kontakt</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Warmwasser</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Warmwasser-Boost</string>
   <string name="card_heat_settings_zones" formatted="false">Zonen</string>
   <string name="card_heat_settings_zones_none" formatted="false">Keine Zonen</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Verschiebung gegenüber der Haustemperatur, −3 bis +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Das eigene Ziel des Raums gegenüber der Haustemperatur, −3 bis +3 °C. Ein kühleres Obergeschoss: −1,5. Ein Fühler, der ein halbes Grad zu warm misst: +0,5. Der kälteste Raum wird an seinem eigenen Ziel gemessen.</string>
   <string name="card_heat_settings_air_help" formatted="false">Luft-Luft-Wärmepumpe: SpotNav ändert nur den Sollwert und schaltet sie nie ein oder aus.</string>
   <string name="card_heat_settings_night" formatted="false">Kühlere Nacht</string>
@@ -1703,4 +1702,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Spitze zulassen (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Spitze zulassen (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, Spitze zulassen</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">Der eigene Eingang der Wärmepumpe für eine zusätzliche Warmwasserladung (zum Beispiel NIBEs „vorübergehender Luxus“): SpotNav schaltet ihn zwei Sekunden ein, und die Pumpe macht eine Ladung. Nie der Stromschalter eines Warmwasserspeichers: den wählst du unter Warmwasserspeicher. Keine Legionellen-Einstellung: Die Wärmepumpe kümmert sich darum.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">Der Schalter, der einen elektrischen Warmwasserspeicher mit eigenem Thermostat versorgt (ein Relais oder ein Schütz). Nicht der Warmwassereingang der Wärmepumpe: der gehört unter Warmwasser-Boost. SpotNav beobachtet ihn nur, bis du die Steuerung erlaubst.</string>
 </resources>

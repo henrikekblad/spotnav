@@ -239,7 +239,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         settingRow(body, words.say("heat.settings.path"), text.pathName(settings.controlPath))
         if (settings.controlPath != "none") settingRow(body, words.say("heat.settings.control"), settings.controlEntity?.let { named(settings, it) } ?: none)
         text.secondEntityLabel(settings.controlPath)?.let { label -> settingRow(body, label, settings.controlEntityB?.let { named(settings, it) } ?: none) }
-        settingRow(body, words.say("heat.settings.hotWater"), settings.hotWaterEntity?.let { named(settings, it) } ?: none)
+        settingRow(body, words.say("heat.settings.hotWater"), settings.hotWaterEntity?.let { named(settings, it) } ?: none, words.say("heat.settings.hotWaterHelp"))
         settingRow(
             body, words.say("heat.settings.zones"),
             if (settings.zones.isEmpty()) words.say("heat.settings.zonesNone") else settings.zones.size.toString()
@@ -256,7 +256,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         // The plain water heater: its switch, the opt-in (read only) with its line, and the optional tank sensor.
         val heater = settings.waterHeater
-        settingRow(body, words.say("heat.settings.waterHeater"), heater?.let { named(settings, it.entityId) } ?: none)
+        settingRow(body, words.say("heat.settings.waterHeater"), heater?.let { named(settings, it.entityId) } ?: none, words.say("heat.settings.waterHeaterHelp"))
         if (heater != null) {
             settingRow(
                 body, words.say("heat.settings.waterHeaterControl"), words.say(if (heater.control) "settings.value.on" else "settings.value.off"),

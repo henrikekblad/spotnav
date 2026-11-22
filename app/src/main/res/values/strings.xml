@@ -833,7 +833,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">No suggestion: the site has no charger.</string>
   <string name="card_power_legend_peak" formatted="false">The month\'s peak {kw}</string>
   <string name="card_power_legend_imported" formatted="false">From Home Assistant\'s statistics</string>
-  <string name="card_power_imported_note" formatted="false">The hours from Home Assistant\'s statistics are approximate: they count in the month\'s peaks but never lift the import target.</string>
+  <string name="card_power_imported_note" formatted="false">The hours from Home Assistant\'s statistics are approximate: they count in the month\'s peaks, but only this month\'s complete hours (every 5-minute reading there) lift the import target.</string>
   <string name="card_power_peak" formatted="false">the month\'s peak {kw}</string>
   <string name="card_power_imported" formatted="false">from Home Assistant\'s statistics</string>
   <string name="card_release_confirm_title" formatted="false">Release the import target\?</string>
@@ -1275,7 +1275,7 @@
   <string name="card_battery_mode_normal" formatted="false">Hand back</string>
   <string name="card_battery_cap_line" formatted="false">At most {kw} kW from the grid, so the fuse holds even if Home Assistant stops ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">No charging from the grid: the house can reach the fuse by itself ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">The import limit protects the fuse when charging from the grid.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">The plant\'s own import limit protects the fuse when charging from the grid.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">learned per phase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">cautious until the first days are learned</string>
   <string name="card_battery_cap_rule_learning" formatted="false">while the house\'s peaks are being learned</string>
@@ -1301,10 +1301,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Setpoint</string>
   <string name="card_heat_settings_control" formatted="false">Control output</string>
   <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Hot water boost</string>
   <string name="card_heat_settings_zones" formatted="false">Zones</string>
   <string name="card_heat_settings_zones_none" formatted="false">No zones</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Offset against the house temperature, −3 to +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">The room\'s own aim against the house temperature, −3 to +3 °C. A cooler upstairs: −1.5. A sensor that reads half a degree warm: +0.5. The coldest room is judged against its own aim.</string>
   <string name="card_heat_settings_air_help" formatted="false">Air-to-air heat pump: SpotNav only nudges its setpoint, never turns it on or off.</string>
   <string name="card_heat_settings_night" formatted="false">Cooler night</string>
@@ -1716,4 +1715,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Allow the peak (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Allow the peak (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Yes, allow the peak</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">The heat pump\'s own input for one extra hot-water run (NIBE\'s \"temporary lux\", for example): SpotNav pulses it on for two seconds and the pump makes one run. Never a water heater\'s power switch: pick that under Water heater. No legionella setting: the heat pump takes care of it.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">The switch that powers an electric water heater with its own thermostat (a relay or a contactor). Not the heat pump\'s hot-water input: that goes under Hot water boost. SpotNav only watches it until you let it control it.</string>
 </resources>

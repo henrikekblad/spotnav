@@ -820,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Intet forslag: anlægget har ingen lader.</string>
   <string name="card_power_legend_peak" formatted="false">Månedens top {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Fra Home Assistants statistik</string>
-  <string name="card_power_imported_note" formatted="false">Timerne fra Home Assistants statistik er omtrentlige: de tæller i månedens toppe, men løfter aldrig effektmålet.</string>
+  <string name="card_power_imported_note" formatted="false">Timerne fra Home Assistants statistik er omtrentlige: de tæller i månedens toppe, men kun denne måneds komplette timer (alle 5-minutters værdier findes) løfter effektmålet.</string>
   <string name="card_power_peak" formatted="false">månedens top {kw}</string>
   <string name="card_power_imported" formatted="false">fra Home Assistants statistik</string>
   <string name="card_release_confirm_title" formatted="false">Slippe effektmålet\?</string>
@@ -1262,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Give tilbage</string>
   <string name="card_battery_cap_line" formatted="false">Højst {kw} kW fra nettet, så sikringen holder, selv hvis Home Assistant stopper ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Ingen opladning fra nettet: huset kan nå sikringen selv ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">Importgrænsen beskytter sikringen ved opladning fra nettet.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Anlæggets egen importgrænse beskytter sikringen ved opladning fra nettet.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">indlært pr. fase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">forsigtigt, indtil de første døgn er indlært</string>
   <string name="card_battery_cap_rule_learning" formatted="false">mens husets toppe læres</string>
@@ -1288,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Sætpunkt</string>
   <string name="card_heat_settings_control" formatted="false">Styreudgang</string>
   <string name="card_heat_settings_control_b" formatted="false">Anden kontakt</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Varmt vand</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Ekstra varmt vand</string>
   <string name="card_heat_settings_zones" formatted="false">Zoner</string>
   <string name="card_heat_settings_zones_none" formatted="false">Ingen zoner</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Forskydning i forhold til husets temperatur, −3 til +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Rummets eget mål i forhold til husets temperatur, −3 til +3 °C. En køligere 1. sal: −1,5. En føler der viser en halv grad for varmt: +0,5. Det koldeste rum måles mod sit eget mål.</string>
   <string name="card_heat_settings_air_help" formatted="false">Luft-til-luft-varmepumpe: SpotNav ændrer kun sætpunktet og slår den aldrig til eller fra.</string>
   <string name="card_heat_settings_night" formatted="false">Køligere nat</string>
@@ -1703,4 +1702,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Tillad toppen (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Tillad toppen (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, tillad toppen</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">Varmepumpens egen indgang til én ekstra varmtvandskørsel (for eksempel NIBE\'s \"midlertidig luksus\"): SpotNav tænder den i to sekunder, og pumpen laver én kørsel. Aldrig afbryderen til en varmtvandsbeholder: vælg den under Varmtvandsbeholder. Ingen legionellaindstilling: varmepumpen sørger for det.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">Kontakten, der giver strøm til en elektrisk varmtvandsbeholder med egen termostat (et relæ eller en kontaktor). Ikke varmepumpens varmtvandsindgang: den vælges under Ekstra varmt vand. SpotNav overvåger den kun, til du lader den styre.</string>
 </resources>

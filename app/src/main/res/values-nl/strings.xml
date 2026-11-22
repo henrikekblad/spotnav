@@ -820,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Geen voorstel: de installatie heeft geen laadpaal.</string>
   <string name="card_power_legend_peak" formatted="false">Piek van de maand {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Uit de statistieken van Home Assistant</string>
-  <string name="card_power_imported_note" formatted="false">De uren uit de statistieken van Home Assistant zijn benaderingen: ze tellen mee in de pieken van de maand, maar verhogen het afnamedoel nooit.</string>
+  <string name="card_power_imported_note" formatted="false">De uren uit de statistieken van Home Assistant zijn benaderingen: ze tellen mee in de pieken van de maand, maar alleen volledige uren van deze maand (alle 5-minutenwaarden aanwezig) verhogen het afnamedoel.</string>
   <string name="card_power_peak" formatted="false">piek van de maand {kw}</string>
   <string name="card_power_imported" formatted="false">uit de statistieken van Home Assistant</string>
   <string name="card_release_confirm_title" formatted="false">Afnamedoel loslaten\?</string>
@@ -1262,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Teruggeven</string>
   <string name="card_battery_cap_line" formatted="false">Maximaal {kw} kW uit het net, zodat de zekering het houdt, ook als Home Assistant stopt ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Niet laden uit het net: het huis haalt de zekering zelf al ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">De importlimiet beschermt de zekering bij laden uit het net.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">De eigen importlimiet van de installatie beschermt de zekering bij laden uit het net.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">per fase geleerd</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">voorzichtig tot de eerste dagen zijn geleerd</string>
   <string name="card_battery_cap_rule_learning" formatted="false">terwijl de pieken van het huis worden geleerd</string>
@@ -1288,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Instelpunt</string>
   <string name="card_heat_settings_control" formatted="false">Stuuruitgang</string>
   <string name="card_heat_settings_control_b" formatted="false">Tweede contact</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Warm water</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Extra warm water</string>
   <string name="card_heat_settings_zones" formatted="false">Zones</string>
   <string name="card_heat_settings_zones_none" formatted="false">Geen zones</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Verschuiving ten opzichte van de huistemperatuur, −3 tot +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Het eigen doel van de kamer ten opzichte van de huistemperatuur, −3 tot +3 °C. Een koelere bovenverdieping: −1,5. Een sensor die een halve graad te warm meet: +0,5. De koudste kamer wordt aan zijn eigen doel gemeten.</string>
   <string name="card_heat_settings_air_help" formatted="false">Lucht-luchtwarmtepomp: SpotNav past alleen het instelpunt aan en zet hem nooit aan of uit.</string>
   <string name="card_heat_settings_night" formatted="false">Koelere nacht</string>
@@ -1703,4 +1702,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Piek toestaan (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Piek toestaan (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, piek toestaan</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">De eigen ingang van de warmtepomp voor één extra warmwaterbeurt (bijvoorbeeld NIBE\'s \"tijdelijke luxe\"): SpotNav zet hem twee seconden aan en de pomp maakt één beurt. Nooit de stroomschakelaar van een boiler: die kies je onder Boiler. Geen legionella-instelling: de warmtepomp regelt dat.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">De schakelaar die een elektrische boiler met eigen thermostaat van stroom voorziet (een relais of een magneetschakelaar). Niet de warmwateringang van de warmtepomp: die kies je onder Extra warm water. SpotNav bewaakt hem alleen tot je hem laat sturen.</string>
 </resources>

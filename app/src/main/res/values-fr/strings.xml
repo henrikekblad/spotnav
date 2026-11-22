@@ -828,7 +828,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Pas de suggestion : le site n\'a pas de borne.</string>
   <string name="card_power_legend_peak" formatted="false">Pic du mois {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Des statistiques de Home Assistant</string>
-  <string name="card_power_imported_note" formatted="false">Les heures issues des statistiques de Home Assistant sont approximatives : elles comptent dans les pics du mois mais ne relèvent jamais l\'objectif de soutirage.</string>
+  <string name="card_power_imported_note" formatted="false">Les heures issues des statistiques de Home Assistant sont approximatives : elles comptent dans les pics du mois, mais seules les heures complètes de ce mois (toutes les valeurs de 5 minutes présentes) relèvent l\'objectif de soutirage.</string>
   <string name="card_power_peak" formatted="false">pic du mois {kw}</string>
   <string name="card_power_imported" formatted="false">des statistiques de Home Assistant</string>
   <string name="card_release_confirm_title" formatted="false">Lever l\'objectif de soutirage \?</string>
@@ -1270,7 +1270,7 @@
   <string name="card_battery_mode_normal" formatted="false">Rendre la main</string>
   <string name="card_battery_cap_line" formatted="false">Au plus {kw} kW depuis le réseau, pour que le fusible tienne même si Home Assistant s\'arrête ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Pas de charge depuis le réseau : la maison peut atteindre le fusible seule ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">La limite d\'import protège le fusible lors de la charge depuis le réseau.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">La limite d\'import propre à l\'installation protège le fusible lors de la charge depuis le réseau.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">appris par phase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">prudent jusqu\'à l\'apprentissage des premiers jours</string>
   <string name="card_battery_cap_rule_learning" formatted="false">pendant l\'apprentissage des pointes de la maison</string>
@@ -1296,10 +1296,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Consigne</string>
   <string name="card_heat_settings_control" formatted="false">Sortie de commande</string>
   <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Eau chaude</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Appoint d\'eau chaude</string>
   <string name="card_heat_settings_zones" formatted="false">Zones</string>
   <string name="card_heat_settings_zones_none" formatted="false">Aucune zone</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Décalage par rapport à la température de la maison, de −3 à +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">L\'objectif propre de la pièce par rapport à la température de la maison, de −3 à +3 °C. Un étage plus frais : −1,5. Une sonde qui indique un demi-degré de trop : +0,5. La pièce la plus froide est jugée par rapport à son propre objectif.</string>
   <string name="card_heat_settings_air_help" formatted="false">Pompe à chaleur air-air : SpotNav ne modifie que sa consigne, sans jamais l\'allumer ni l\'éteindre.</string>
   <string name="card_heat_settings_night" formatted="false">Nuit plus fraîche</string>
@@ -1711,4 +1710,6 @@
   <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Autoriser la pointe (≈ {kw} kW)</string>
   <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Autoriser la pointe (≈ {kw} kW, ≈ {cost})</string>
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Oui, autoriser la pointe</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">L\'entrée propre à la pompe à chaleur pour une production d\'eau chaude supplémentaire (le « luxe temporaire » de NIBE, par exemple) : SpotNav l\'active deux secondes et la pompe fait une production. Jamais l\'interrupteur d\'alimentation d\'un chauffe-eau : choisissez-le sous Chauffe-eau. Pas de réglage légionelle : la pompe à chaleur s\'en charge.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">L\'interrupteur qui alimente un chauffe-eau électrique doté de son propre thermostat (un relais ou un contacteur). Pas l\'entrée d\'eau chaude de la pompe à chaleur : elle se choisit sous Appoint d\'eau chaude. SpotNav le surveille seulement jusqu\'à ce que vous le laissiez le piloter.</string>
 </resources>
