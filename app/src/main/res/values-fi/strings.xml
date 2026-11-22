@@ -1612,4 +1612,94 @@
   <string name="card_heat_settings_water_heater" formatted="false">Lämminvesivaraaja</string>
   <string name="card_heat_settings_water_heater_control" formatted="false">Ohjaa lämminvesivaraajaa</string>
   <string name="card_heat_settings_tank_sensor" formatted="false">Säiliön anturi</string>
+  <string name="card_heat_control_lowered_ceiling" formatted="false">Ohjaa: laskee lämmitystä katon vuoksi {until} asti.</string>
+  <string name="card_heat_water_heater_ceiling" formatted="false">Tauolla katon vuoksi klo {until} asti.</string>
+  <string name="card_heat_now_water_heater_ceiling" formatted="false">Lämminvesivaraaja tauolla katon vuoksi klo {until} asti</string>
+  <string name="card_house_tab_plan" formatted="false">Suunnitelma</string>
+  <string name="card_house_plan_title" formatted="false">Suunnitelma seuraaville {hours} tunnille</string>
+  <string name="card_house_plan_lede" formatted="false">Kaikki SpotNavin suunnitelmat yhdellä aika-akselilla: mitä talo ottaa verkosta kunakin tuntina kuormittain jaettuna, kattoa vasten. Aurinko ja taloa kattava kotiakku piirretään nollan alle.</string>
+  <string name="card_house_plan_cost" formatted="false">Arvioitu hinta</string>
+  <string name="card_house_plan_cost_note" formatted="false">verkosta, seuraavat {hours} tuntia</string>
+  <string name="card_house_plan_peak" formatted="false">Suurin tunti verkosta</string>
+  <string name="card_house_plan_peak_over" formatted="false">klo {at} · yli katon</string>
+  <string name="card_house_plan_peak_under" formatted="false">klo {at} · katon alla</string>
+  <string name="card_house_plan_peak_at" formatted="false">klo {at}</string>
+  <string name="card_house_plan_month_peak" formatted="false">Kuukauden huippu tähän asti</string>
+  <string name="card_house_plan_month_peak_note" formatted="false">{when} · siihen asti ei lisämaksua</string>
+  <string name="card_house_plan_tariff" formatted="false">Tehomaksu</string>
+  <string name="card_house_plan_no_tariff" formatted="false">ei sähkön hinnassa</string>
+  <string name="card_house_plan_no_prices" formatted="false">Näiden tuntien hintoja ei vielä tiedetä.</string>
+  <string name="card_house_plan_from_grid" formatted="false">Verkosta tunneittain</string>
+  <string name="card_house_plan_chart_label" formatted="false">Pinottu suunnitelma tunneittain kattoa vasten</string>
+  <string name="card_house_plan_price_strip" formatted="false">Hinta: vihreä halpa · keltainen keski · punainen kallis</string>
+  <string name="card_house_plan_layer_house" formatted="false">Talo</string>
+  <string name="card_house_plan_layer_heat" formatted="false">Lämmitys</string>
+  <string name="card_house_plan_layer_water_heater" formatted="false">Lämminvesivaraaja</string>
+  <string name="card_house_plan_layer_car" formatted="false">Auto</string>
+  <string name="card_house_plan_layer_battery_in" formatted="false">Kotiakku latautuu</string>
+  <string name="card_house_plan_layer_sun" formatted="false">Aurinko</string>
+  <string name="card_house_plan_layer_battery_out" formatted="false">Kotiakku kattaa</string>
+  <string name="card_house_plan_layer_net" formatted="false">Verkosta</string>
+  <string name="card_house_plan_ceiling_import_target" formatted="false">Tehotavoite {kw}</string>
+  <string name="card_house_plan_ceiling_power_level" formatted="false">Tehotaso {kw}</string>
+  <string name="card_house_plan_ceiling_power_tariff" formatted="false">Tehokatto {kw}</string>
+  <string name="card_house_plan_ceiling_fuse" formatted="false">Pääsulake ≈ {kw}</string>
+  <string name="card_house_plan_would_note" formatted="false">Haalea: mitä SpotNav tekisi kuormalle, jota se vain näyttää. Sitä kuormaa ei nyt ohjata.</string>
+  <string name="card_house_plan_per_load" formatted="false">Kuormittain</string>
+  <string name="card_house_plan_in_words" formatted="false">Sanoin</string>
+  <string name="card_house_plan_nothing" formatted="false">Seuraaville tunneille ei ole suunniteltu mitään.</string>
+  <string name="card_house_plan_rolling" formatted="false">liukuva vuorokausi nyt alkaen</string>
+  <string name="card_house_plan_would" formatted="false">tekisi</string>
+  <string name="card_house_plan_would_prefix" formatted="false">Tekisi:</string>
+  <string name="card_house_plan_load_car" formatted="false">Auto</string>
+  <string name="card_house_plan_load_home_battery" formatted="false">Kotiakku</string>
+  <string name="card_house_plan_load_heat" formatted="false">Lämmitys</string>
+  <string name="card_house_plan_load_heat_zone" formatted="false">Lattialämmitys</string>
+  <string name="card_house_plan_load_water_heater" formatted="false">Lämminvesivaraaja</string>
+  <string name="card_house_plan_lane_none" formatted="false">Ei suunnitelmaa</string>
+  <string name="card_house_plan_lane_car" formatted="false">{kwh}, {hours}</string>
+  <string name="card_house_plan_lane_battery_cover" formatted="false">Kattaa {kwh}</string>
+  <string name="card_house_plan_lane_battery_grid" formatted="false">kotiakun lataus verkosta {kwh}</string>
+  <string name="card_house_plan_lane_battery_charge" formatted="false">latautuu {kwh} auringosta</string>
+  <string name="card_house_plan_lane_heat" formatted="false">Laskettu {lowered} h, esilämmitetty {raised} h</string>
+  <string name="card_house_plan_lane_zone" formatted="false">Laskettu {lowered} h</string>
+  <string name="card_house_plan_lane_water_heater" formatted="false">Saa lämmittää {hours} h, halvat tunnit</string>
+  <string name="card_house_plan_run_car_charge" formatted="false">{name} lataa {kwh} teholla {kw}</string>
+  <string name="card_house_plan_run_home_battery_grid_charge" formatted="false">Kotiakun lataus verkosta, {kw}</string>
+  <string name="card_house_plan_run_home_battery_sun_charge" formatted="false">Kotiakku latautuu auringosta</string>
+  <string name="card_house_plan_run_home_battery_charge" formatted="false">Kotiakku latautuu, {kw}</string>
+  <string name="card_house_plan_run_home_battery_cover" formatted="false">Kotiakku kattaa talon</string>
+  <string name="card_house_plan_run_home_battery_sell" formatted="false">Kotiakku myy verkkoon</string>
+  <string name="card_house_plan_run_heat_lower" formatted="false">Lämmitystä lasketaan</string>
+  <string name="card_house_plan_run_heat_preheat" formatted="false">Lämmitys esilämmittää</string>
+  <string name="card_house_plan_run_heat_night" formatted="false">Yöpudotus</string>
+  <string name="card_house_plan_run_heat_away" formatted="false">Poissa</string>
+  <string name="card_house_plan_run_heat_zone_lower" formatted="false">{name} lasketaan</string>
+  <string name="card_house_plan_run_water_heater_on" formatted="false">Varaaja lämmittää</string>
+  <string name="card_house_plan_run_water_heater_paused" formatted="false">Varaaja tauolla</string>
+  <string name="card_house_plan_run_other" formatted="false">{name}</string>
+  <string name="card_house_plan_reason_dear_hour" formatted="false">kalliit tunnit</string>
+  <string name="card_house_plan_reason_tight_hour" formatted="false">pysyy katon alla</string>
+  <string name="card_house_plan_reason_ceiling" formatted="false">katon vuoksi</string>
+  <string name="card_house_plan_reason_cheap_before_dear" formatted="false">halpaa ennen kalliita tunteja</string>
+  <string name="card_house_plan_reason_room_warm" formatted="false">talo on lämmin</string>
+  <string name="card_house_plan_reason_cheap" formatted="false">halpa tunti</string>
+  <string name="card_house_plan_reason_full_heat" formatted="false">täysi lämmitys (legionella)</string>
+  <string name="card_house_plan_reason_max_off" formatted="false">ei saa olla pidempään pois päältä</string>
+  <string name="card_does_not_fit_line" formatted="false">Ei mahdu katon alle ({ceiling}): {need} klo {time} mennessä – {fits} ehtii.</string>
+  <string name="card_does_not_fit_short" formatted="false">Ei mahdu katon alle ({ceiling}): {kwh} puuttuu klo {time} mennessä.</string>
+  <string name="card_does_not_fit_short_no_time" formatted="false">Ei mahdu katon alle ({ceiling}): {kwh} puuttuu lähtöön mennessä.</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits" formatted="false">Auto ottaa sen, mikä mahtuu klo {time} mennessä ({kwh}).</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits_no_time" formatted="false">Auto ottaa sen, mikä mahtuu lähtöön mennessä.</string>
+  <string name="card_does_not_fit_chosen_accept_peak" formatted="false">Katto ({ceiling}) on ohitettu tämän latauksen ajaksi klo {time} asti.</string>
+  <string name="card_does_not_fit_chosen_accept_peak_unplug" formatted="false">Katto ({ceiling}) on ohitettu tämän latauksen ajaksi, kunnes auto irrotetaan.</string>
+  <string name="card_does_not_fit_peak_note" formatted="false">Huippu voi nousta noin {kw} kW:iin.</string>
+  <string name="card_does_not_fit_choice_takes_what_fits" formatted="false">Ota mikä mahtuu</string>
+  <string name="card_does_not_fit_choice_takes_what_fits_kwh" formatted="false">Ota mikä mahtuu (≈ {kwh})</string>
+  <string name="card_does_not_fit_choice_later" formatted="false">Myöhempi lähtö</string>
+  <string name="card_does_not_fit_choice_later_at" formatted="false">Myöhempi lähtö ({time})</string>
+  <string name="card_does_not_fit_choice_accept_peak" formatted="false">Salli huippu</string>
+  <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Salli huippu (≈ {kw} kW)</string>
+  <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Salli huippu (≈ {kw} kW, ≈ {cost})</string>
+  <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Kyllä, salli huippu</string>
 </resources>

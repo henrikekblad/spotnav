@@ -1620,4 +1620,94 @@
   <string name="card_heat_settings_water_heater" formatted="false">Chauffe-eau</string>
   <string name="card_heat_settings_water_heater_control" formatted="false">Piloter le chauffe-eau</string>
   <string name="card_heat_settings_tank_sensor" formatted="false">Sonde du ballon</string>
+  <string name="card_heat_control_lowered_ceiling" formatted="false">Pilote : abaisse le chauffage pour le plafond jusqu\'à {until}.</string>
+  <string name="card_heat_water_heater_ceiling" formatted="false">En pause pour le plafond jusqu\'à {until}.</string>
+  <string name="card_heat_now_water_heater_ceiling" formatted="false">Chauffe-eau en pause pour le plafond jusqu\'à {until}</string>
+  <string name="card_house_tab_plan" formatted="false">Plan</string>
+  <string name="card_house_plan_title" formatted="false">Plan pour les {hours} prochaines heures</string>
+  <string name="card_house_plan_lede" formatted="false">Tout ce que SpotNav planifie sur un seul axe : ce que la maison prend au réseau chaque heure, par charge, face au plafond. Le soleil et la batterie domestique qui alimentent la maison sont sous zéro.</string>
+  <string name="card_house_plan_cost" formatted="false">Coût estimé</string>
+  <string name="card_house_plan_cost_note" formatted="false">du réseau, les {hours} prochaines heures</string>
+  <string name="card_house_plan_peak" formatted="false">Heure la plus haute du réseau</string>
+  <string name="card_house_plan_peak_over" formatted="false">à {at} · au-dessus du plafond</string>
+  <string name="card_house_plan_peak_under" formatted="false">à {at} · sous le plafond</string>
+  <string name="card_house_plan_peak_at" formatted="false">à {at}</string>
+  <string name="card_house_plan_month_peak" formatted="false">Pic du mois à ce jour</string>
+  <string name="card_house_plan_month_peak_note" formatted="false">{when} · jusque-là sans surcoût</string>
+  <string name="card_house_plan_tariff" formatted="false">Tarif de puissance</string>
+  <string name="card_house_plan_no_tariff" formatted="false">aucun dans le prix de l\'électricité</string>
+  <string name="card_house_plan_no_prices" formatted="false">Les prix de ces heures ne sont pas encore connus.</string>
+  <string name="card_house_plan_from_grid" formatted="false">Du réseau par heure</string>
+  <string name="card_house_plan_chart_label" formatted="false">Plan empilé par heure face au plafond</string>
+  <string name="card_house_plan_price_strip" formatted="false">Prix : vert bon marché · jaune moyen · rouge cher</string>
+  <string name="card_house_plan_layer_house" formatted="false">Maison</string>
+  <string name="card_house_plan_layer_heat" formatted="false">Chauffage</string>
+  <string name="card_house_plan_layer_water_heater" formatted="false">Chauffe-eau</string>
+  <string name="card_house_plan_layer_car" formatted="false">Voiture</string>
+  <string name="card_house_plan_layer_battery_in" formatted="false">Batterie domestique en charge</string>
+  <string name="card_house_plan_layer_sun" formatted="false">Soleil</string>
+  <string name="card_house_plan_layer_battery_out" formatted="false">Batterie domestique alimente</string>
+  <string name="card_house_plan_layer_net" formatted="false">Du réseau</string>
+  <string name="card_house_plan_ceiling_import_target" formatted="false">Objectif de soutirage {kw}</string>
+  <string name="card_house_plan_ceiling_power_level" formatted="false">Niveau de puissance {kw}</string>
+  <string name="card_house_plan_ceiling_power_tariff" formatted="false">Plafond de puissance {kw}</string>
+  <string name="card_house_plan_ceiling_fuse" formatted="false">Disjoncteur principal ≈ {kw}</string>
+  <string name="card_house_plan_would_note" formatted="false">Estompé : ce que SpotNav ferait d\'une charge qu\'il ne fait qu\'afficher. Cette charge n\'est pas pilotée maintenant.</string>
+  <string name="card_house_plan_per_load" formatted="false">Par charge</string>
+  <string name="card_house_plan_in_words" formatted="false">En mots</string>
+  <string name="card_house_plan_nothing" formatted="false">Rien de prévu pour les prochaines heures.</string>
+  <string name="card_house_plan_rolling" formatted="false">une journée glissante à partir de maintenant</string>
+  <string name="card_house_plan_would" formatted="false">ferait</string>
+  <string name="card_house_plan_would_prefix" formatted="false">Ferait :</string>
+  <string name="card_house_plan_load_car" formatted="false">Voiture</string>
+  <string name="card_house_plan_load_home_battery" formatted="false">Batterie domestique</string>
+  <string name="card_house_plan_load_heat" formatted="false">Chauffage</string>
+  <string name="card_house_plan_load_heat_zone" formatted="false">Plancher chauffant</string>
+  <string name="card_house_plan_load_water_heater" formatted="false">Chauffe-eau</string>
+  <string name="card_house_plan_lane_none" formatted="false">Rien de prévu</string>
+  <string name="card_house_plan_lane_car" formatted="false">{kwh}, {hours}</string>
+  <string name="card_house_plan_lane_battery_cover" formatted="false">Alimente {kwh}</string>
+  <string name="card_house_plan_lane_battery_grid" formatted="false">charge de la batterie domestique sur le réseau {kwh}</string>
+  <string name="card_house_plan_lane_battery_charge" formatted="false">charge {kwh} grâce au soleil</string>
+  <string name="card_house_plan_lane_heat" formatted="false">Abaissé {lowered} h, préchauffé {raised} h</string>
+  <string name="card_house_plan_lane_zone" formatted="false">Abaissé {lowered} h</string>
+  <string name="card_house_plan_lane_water_heater" formatted="false">Peut chauffer {hours} h, heures bon marché</string>
+  <string name="card_house_plan_run_car_charge" formatted="false">{name} charge {kwh} à {kw}</string>
+  <string name="card_house_plan_run_home_battery_grid_charge" formatted="false">Charge de la batterie domestique sur le réseau, {kw}</string>
+  <string name="card_house_plan_run_home_battery_sun_charge" formatted="false">La batterie domestique se charge au soleil</string>
+  <string name="card_house_plan_run_home_battery_charge" formatted="false">La batterie domestique se charge, {kw}</string>
+  <string name="card_house_plan_run_home_battery_cover" formatted="false">La batterie domestique alimente la maison</string>
+  <string name="card_house_plan_run_home_battery_sell" formatted="false">La batterie domestique vend au réseau</string>
+  <string name="card_house_plan_run_heat_lower" formatted="false">Chauffage abaissé</string>
+  <string name="card_house_plan_run_heat_preheat" formatted="false">Chauffage en préchauffe</string>
+  <string name="card_house_plan_run_heat_night" formatted="false">Réduit de nuit</string>
+  <string name="card_house_plan_run_heat_away" formatted="false">Absence</string>
+  <string name="card_house_plan_run_heat_zone_lower" formatted="false">{name} abaissé</string>
+  <string name="card_house_plan_run_water_heater_on" formatted="false">Le chauffe-eau chauffe</string>
+  <string name="card_house_plan_run_water_heater_paused" formatted="false">Chauffe-eau en pause</string>
+  <string name="card_house_plan_run_other" formatted="false">{name}</string>
+  <string name="card_house_plan_reason_dear_hour" formatted="false">heures chères</string>
+  <string name="card_house_plan_reason_tight_hour" formatted="false">reste sous le plafond</string>
+  <string name="card_house_plan_reason_ceiling" formatted="false">pour le plafond</string>
+  <string name="card_house_plan_reason_cheap_before_dear" formatted="false">bon marché avant les heures chères</string>
+  <string name="card_house_plan_reason_room_warm" formatted="false">la maison est chaude</string>
+  <string name="card_house_plan_reason_cheap" formatted="false">heure bon marché</string>
+  <string name="card_house_plan_reason_full_heat" formatted="false">chauffe complète (légionelle)</string>
+  <string name="card_house_plan_reason_max_off" formatted="false">ne peut pas rester coupé plus longtemps</string>
+  <string name="card_does_not_fit_line" formatted="false">Ne tient pas sous le plafond ({ceiling}) : {need} pour {time} – {fits} passent à temps.</string>
+  <string name="card_does_not_fit_short" formatted="false">Ne tient pas sous le plafond ({ceiling}) : il manque {kwh} pour {time}.</string>
+  <string name="card_does_not_fit_short_no_time" formatted="false">Ne tient pas sous le plafond ({ceiling}) : il manque {kwh} pour le départ.</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits" formatted="false">La voiture prend ce qui tient d\'ici {time} ({kwh}).</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits_no_time" formatted="false">La voiture prend ce qui tient d\'ici le départ.</string>
+  <string name="card_does_not_fit_chosen_accept_peak" formatted="false">Le plafond ({ceiling}) est levé pour cette charge jusqu\'à {time}.</string>
+  <string name="card_does_not_fit_chosen_accept_peak_unplug" formatted="false">Le plafond ({ceiling}) est levé pour cette charge jusqu\'à ce que la voiture soit débranchée.</string>
+  <string name="card_does_not_fit_peak_note" formatted="false">La pointe peut atteindre environ {kw} kW.</string>
+  <string name="card_does_not_fit_choice_takes_what_fits" formatted="false">Prendre ce qui tient</string>
+  <string name="card_does_not_fit_choice_takes_what_fits_kwh" formatted="false">Prendre ce qui tient (≈ {kwh})</string>
+  <string name="card_does_not_fit_choice_later" formatted="false">Départ plus tard</string>
+  <string name="card_does_not_fit_choice_later_at" formatted="false">Départ plus tard ({time})</string>
+  <string name="card_does_not_fit_choice_accept_peak" formatted="false">Autoriser la pointe</string>
+  <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Autoriser la pointe (≈ {kw} kW)</string>
+  <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Autoriser la pointe (≈ {kw} kW, ≈ {cost})</string>
+  <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Oui, autoriser la pointe</string>
 </resources>
