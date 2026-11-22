@@ -7,8 +7,13 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
+import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import se.sensnology.spotnav.R
@@ -56,6 +61,11 @@ internal sealed interface PlanBoxState {
  * the card's buttons: "Take what fits", "Later departure (14:00)" where a later hour fits (without one the departure's
  * editor is the charger page's) and "Allow the peak", asked again on the button before it is sent, as the card's Plan
  * tab asks. [choiceScope] says where a lane's choices go ([PlanChoiceScope]).
+ *
+ * "Per load" and "In words" fold away under their headings, as on the card: folded until opened, the choice
+ * remembered per site in [preferences], and while folded the heading says what is inside ("Per last · 4", "I ord · 6
+ * rader"). A car lane that does not fit keeps "Per load" open under a plain heading, so its choices are never folded
+ * away.
  */
 internal class HousePlanBox(
     scope: ViewScope,
@@ -63,8 +73,11 @@ internal class HousePlanBox(
     private val memory: SiteMemory,
     private val text: SiteText,
     colours: SiteColours,
+    private val preferences: SitePreferences,
     private val choiceScope: () -> PlanChoiceScope
 ) : ViewScope(scope) {
+    /** The sections opened or folded since the page opened, so a choice holds across redraws where nothing can be stored. */
+    private val opened = mutableMapOf<String, Boolean>()
     private val planPalette = PlanPalette(colours)
     private var inFlight = false
     private var failed = false
@@ -153,14 +166,76 @@ internal class HousePlanBox(
         content.addView(legend(shown.legend), wide().apply { topMargin = dp(4) })
         shown.wouldNote?.let { content.addView(muted(13f, it), wide().apply { topMargin = dp(6) }) }
         shown.perLoad?.let { heading ->
-            content.addView(subheading(heading), wide().apply { topMargin = dp(12) })
-            for (lane in shown.lanes) content.addView(lane(lane, plan.hours.size), wide().apply { topMargin = dp(6) })
-            shown.rolling?.let { content.addView(muted(12f, it).apply { setPadding(dp(LANE_NAME_DP + 8), 0, 0, 0) }, wide().apply { topMargin = dp(4) }) }
+            val body = column()
+            for (lane in shown.lanes) body.addView(lane(lane, plan.hours.size), wide().apply { topMargin = dp(6) })
+            shown.rolling?.let { body.addView(muted(12f, it).apply { setPadding(dp(LANE_NAME_DP + 8), 0, 0, 0) }, wide().apply { topMargin = dp(4) }) }
+            section(plan.siteId, LANES, heading, shown.perLoadHint, shown.perLoadOpen, body)
         }
-        content.addView(subheading(shown.inWords), wide().apply { topMargin = dp(12) })
-        shown.nothing?.let { content.addView(muted(13f, it), wide().apply { topMargin = dp(4) }) }
-        for (said in shown.words) content.addView(said(said, shown.wouldTag), wide().apply { topMargin = dp(4) })
+        val words = column()
+        shown.nothing?.let { words.addView(muted(13f, it), wide().apply { topMargin = dp(4) }) }
+        for (said in shown.words) words.addView(said(said, shown.wouldTag), wide().apply { topMargin = dp(4) })
+        section(plan.siteId, WORDS, shown.inWords, shown.inWordsHint, false, words)
     }
+
+    /**
+     * A section under a heading that folds [body] away: a chevron, the heading and, while folded, " · [hint]"; read as
+     * a button that expands or collapses. With [forced] the section is open under a plain heading and does not fold.
+     */
+    private fun section(site: String, name: String, title: String, hint: String, forced: Boolean, body: LinearLayout) {
+        if (forced) {
+            content.addView(subheading(title), wide().apply { topMargin = dp(12) })
+            content.addView(body, wide())
+            return
+        }
+        val key = "$name.$site"
+        var open = opened[key] ?: preferences.flag(site, name, false)
+        val chevron = ImageView(context).apply {
+            setImageResource(R.drawable.ic_chevron)
+            imageTintList = ColorStateList.valueOf(dark)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        val hintView = muted(15f, " · $hint")
+        val heading = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            minimumHeight = dp(40)
+            isClickable = true
+            isFocusable = true
+            TypedValue().also { context.theme.resolveAttribute(android.R.attr.selectableItemBackground, it, true) }
+                .takeIf { it.resourceId != 0 }?.let { setBackgroundResource(it.resourceId) }
+            addView(chevron, LinearLayout.LayoutParams(dp(20), dp(20)).apply { marginEnd = dp(6) })
+            addView(subheading(title))
+            addView(hintView)
+        }
+        fun show() {
+            chevron.rotation = if (open) 0f else -90f
+            hintView.visibility = if (open) View.GONE else View.VISIBLE
+            body.visibility = if (open) View.VISIBLE else View.GONE
+        }
+        heading.accessibilityDelegate = object : View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.className = Button::class.java.name
+                info.addAction(if (open) AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE else AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND)
+            }
+
+            override fun performAccessibilityAction(host: View, action: Int, args: android.os.Bundle?): Boolean = when (action) {
+                AccessibilityNodeInfo.ACTION_EXPAND, AccessibilityNodeInfo.ACTION_COLLAPSE -> host.performClick()
+                else -> super.performAccessibilityAction(host, action, args)
+            }
+        }
+        heading.setOnClickListener {
+            open = !open
+            opened[key] = open
+            preferences.setFlag(site, name, open)
+            show()
+        }
+        show()
+        content.addView(heading, wide().apply { topMargin = dp(8) })
+        content.addView(body, wide())
+    }
+
+    private fun column() = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
     private fun stats(stats: List<HousePlanModel.Stat>) = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -310,6 +385,9 @@ internal class HousePlanBox(
 
     private companion object {
         const val LANE_NAME_DP = 84
+        /** The folding sections' names in [SitePreferences.flag], as the card's `spotnav-house-card.plan.<section>.<site>`. */
+        const val LANES = "house.plan.lanes"
+        const val WORDS = "house.plan.words"
         /** Under the ceiling: the card's `--success-color` fallback. */
         const val OK = 0xFF43A047.toInt()
     }

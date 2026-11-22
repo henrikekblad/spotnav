@@ -87,6 +87,18 @@ class HousePlanModelTest {
         assertTrue(c.rolling!!, c.rolling!!.startsWith("09:00 · 18:00 · 03:00 · 12:00 → ett rullande dygn från nu"))
     }
 
+    @Test fun theFoldedSectionsSayWhatIsInside() {
+        val c = HousePlanModel.content(text(), plan(edit = ::busy))
+        assertEquals("3", c.perLoadHint)
+        assertEquals("${c.words.size} rader", c.inWordsHint)
+        assertFalse("nothing to choose: Per last folds", c.perLoadOpen)
+        assertEquals("1 rad", HousePlanModel.content(text(), plan()).inWordsHint)
+        assertEquals("1 line", HousePlanModel.content(text("en"), plan()).inWordsHint)
+        // A car lane that does not fit keeps Per last open, its line and choices never folded away.
+        assertTrue(HousePlanModel.content(text(), plan("get_plan_does_not_fit.json")).perLoadOpen)
+        assertTrue(HousePlanModel.content(text(), plan("get_plan_takes_what_fits.json")).perLoadOpen)
+    }
+
     @Test fun theDoesNotFitLineIsSaidInTheCarsLane() {
         val lane = HousePlanModel.content(text(), plan("get_plan_does_not_fit.json")).lanes.single()
         assertEquals("Ryms inte under taket (Effektmål 6,0 kW): 16,2 kWh till 14:30 – 7,1 kWh hinner.", lane.doesNotFit)
@@ -194,7 +206,7 @@ class HousePlanModelTest {
         for (language in CardStringsXml.LANGUAGES) {
             for (shape in shapes) {
                 val c = HousePlanModel.content(text(language), shape)
-                val said = listOf(c.title, c.lede, c.fromGrid, c.inWords, c.wouldTag, c.chart.priceStrip, c.chart.description) +
+                val said = listOf(c.title, c.lede, c.fromGrid, c.inWords, c.inWordsHint, c.wouldTag, c.chart.priceStrip, c.chart.description) +
                     listOfNotNull(c.noPrices, c.wouldNote, c.perLoad, c.rolling, c.nothing, c.chart.ceilingLabel) +
                     c.stats.flatMap { listOf(it.label, it.note) } + c.legend.map { it.second } +
                     c.lanes.flatMap { listOfNotNull(it.name, it.reason, it.doesNotFit) } + c.words.map { it.sentence }

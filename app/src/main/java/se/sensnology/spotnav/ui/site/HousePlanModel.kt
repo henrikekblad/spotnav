@@ -92,9 +92,18 @@ internal object HousePlanModel {
         val legend: List<Pair<PlanLayer?, String>>,
         val wouldNote: String?,
         val perLoad: String?,
+        /** "Per load"'s hint while folded: the number of lanes ("4"). */
+        val perLoadHint: String,
+        /**
+         * A car lane says it does not fit: "Per load" is open under a plain heading and does not fold, so the line and
+         * its choices are never folded away (the card's Plan tab does the same).
+         */
+        val perLoadOpen: Boolean,
         val lanes: List<Lane>,
         val rolling: String?,
         val inWords: String,
+        /** "In words"' hint while folded: its number of lines ("6 rader"). */
+        val inWordsHint: String,
         val words: List<Said>,
         val nothing: String?,
         /** The word after a watched load's sentence ("skulle"). */
@@ -121,9 +130,15 @@ internal object HousePlanModel {
             legend = legend(text, plan),
             wouldNote = if (plan.would) words.say("house.plan.wouldNote") else null,
             perLoad = if (plan.loads.isNotEmpty()) words.say("house.plan.perLoad") else null,
+            perLoadHint = lanes.size.toString(),
+            perLoadOpen = lanes.any { it.doesNotFit != null },
             lanes = lanes,
             rolling = if (plan.loads.isNotEmpty()) "${marks.joinToString(" · ")} → ${words.say("house.plan.rolling")}" else null,
             inWords = words.say("house.plan.inWords"),
+            inWordsHint = words.say(
+                "house.plan.rows.${CountWords.form(text.locale.language.let { if (it == "no") "nb" else it }, said.size)}",
+                "count" to said.size.toString()
+            ),
             words = said,
             nothing = if (said.isEmpty()) words.say("house.plan.nothing") else null,
             wouldTag = words.say("house.plan.would")
