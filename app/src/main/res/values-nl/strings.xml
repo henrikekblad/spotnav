@@ -692,6 +692,7 @@
     <item quantity="other">Aan de slag: nog %1$d punten</item>
   </plurals>
   <string name="own_mode_fix_failed">De instelling van de lader kon niet worden gewijzigd. Wijzig haar in Home Assistant.</string>
+  <string name="does_not_fit_failed">De keuze kon niet naar Home Assistant worden gestuurd. De regel toont hoe het ervoor staat.</string>
   <string name="setup_dismiss_failed">Opslaan is mislukt. Probeer het opnieuw.</string>
   <string name="if_not_ready_title">Als de auto niet op tijd klaar kan zijn</string>
   <string name="if_not_ready_ask">Vragen</string>

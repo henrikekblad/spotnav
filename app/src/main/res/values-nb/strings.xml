@@ -692,6 +692,7 @@
     <item quantity="other">Kom i gang: %1$d ting igjen</item>
   </plurals>
   <string name="own_mode_fix_failed">Kunne ikke endre ladeboksens innstilling. Endre den i Home Assistant.</string>
+  <string name="does_not_fit_failed">Valget kunne ikke sendes til Home Assistant. Linjen viser hvordan det står til.</string>
   <string name="setup_dismiss_failed">Kunne ikke lagre det. Prøv igen.</string>
   <string name="if_not_ready_title">Hvis bilen ikke rekker å bli ferdig</string>
   <string name="if_not_ready_ask">Spør</string>

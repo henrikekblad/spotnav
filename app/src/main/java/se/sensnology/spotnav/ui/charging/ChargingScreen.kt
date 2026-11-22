@@ -494,6 +494,8 @@ internal class ChargingScreen(
                 override fun onVehiclePicked(vehicleId: String) = pickPairedVehicle(vehicleId)
 
                 override fun onOpenSetupRow(row: SetupRow, dashboard: Dashboard) = openSetupPlace(row, dashboard)
+
+                override fun onOpenDeparture() = planCard.openDeparture()
             }
         )
         // A charger whose webhook Home Assistant no longer has is asked only at the slow check's

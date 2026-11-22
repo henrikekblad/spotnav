@@ -692,6 +692,7 @@
     <item quantity="other">Aloitus: %1$d asiaa jäljellä</item>
   </plurals>
   <string name="own_mode_fix_failed">Laturin asetusta ei voitu muuttaa. Muuta se Home Assistantissa.</string>
+  <string name="does_not_fit_failed">Valintaa ei voitu lähettää Home Assistantiin. Rivi näyttää tilanteen.</string>
   <string name="setup_dismiss_failed">Tallennus epäonnistui. Yritä uudelleen.</string>
   <string name="if_not_ready_title">Jos auto ei ehdi valmiiksi</string>
   <string name="if_not_ready_ask">Kysy</string>

@@ -241,7 +241,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
         val departureValue = valueLabel()
         val departurePopoverValue = valueLabel()
         var departureDialog: AlertDialog? = null
-        valueRow(card.body, t(R.string.plan_card_departure_label), departureValue) {
+        val openDeparture = {
             departureDialog = showValuePopover(departureDialog, PopoverSpec(
                 eyebrow = t(R.string.popover_eyebrow_plan),
                 title = t(R.string.plan_card_departure_label),
@@ -250,6 +250,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 note = t(R.string.plan_card_departure_note)
             ))
         }
+        valueRow(card.body, t(R.string.plan_card_departure_label), departureValue) { openDeparture() }
         // What the charger's departure calendar (chosen in Home Assistant) makes of the departure above: said under
         // it, as the card's Plan dialog says it under the calendar. Hidden when there is nothing to say.
         val calendarNote = TextView(context).apply {
@@ -472,6 +473,7 @@ internal class PlanCardController(scope: ViewScope, private val shell: ScreenShe
                 refreshDepartureLabel()
             },
             refreshDepartureLabel = refreshDepartureLabel,
+            openDeparture = openDeparture,
             dailyRadio = dailyRadio,
             onDateRadio = onDateRadio,
             dateButton = dateButton,
@@ -731,6 +733,8 @@ internal class PlanCard(
     val departureMinute: () -> Int,
     val setDeparture: (Int, Int) -> Unit,
     val refreshDepartureLabel: () -> Unit,
+    /** The departure's popover opened, as its row does (the "does not fit" line's "Later departure" without a time). */
+    val openDeparture: () -> Unit,
     /** The departure's day: "Every day", "On a date", and the date's own button. */
     val dailyRadio: RadioButton,
     val onDateRadio: RadioButton,

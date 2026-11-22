@@ -10,6 +10,12 @@ import se.sensnology.spotnav.ha.client.CommandRefusal
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
 import se.sensnology.spotnav.ha.client.IdentifyVehicle
 import se.sensnology.spotnav.ha.client.OwnModeFix
+import se.sensnology.spotnav.ha.client.DoesNotFitChoice
+import se.sensnology.spotnav.ha.dashboard.DoesNotFit
+import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.chart.DashboardChart
+import se.sensnology.spotnav.ui.site.DoesNotFitText
+import se.sensnology.spotnav.ui.site.SiteText
 import se.sensnology.spotnav.ha.client.SetupDismiss
 import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.ha.dashboard.AutoControl
@@ -86,6 +92,9 @@ internal class ChargerDashboardController(
 
         /** A "Get started" row's button: the place where it is done (the screen knows the places). */
         fun onOpenSetupRow(row: SetupRow, dashboard: Dashboard)
+
+        /** The "does not fit" line's "Later departure" without a time that fits: the departure's editor, as today. */
+        fun onOpenDeparture()
 
         /** Home Assistant's dashboard each time one was read (`null` when the read failed). */
         fun onDashboard(dashboard: Dashboard?)
@@ -279,7 +288,7 @@ internal class ChargerDashboardController(
             // `blocking` is the existing error styling; `notice` and `normal` are neutral.
             val colour = if (held.status.tone == StatusTone.BLOCKING) ERROR_COLOUR else muted
             val parts = HaStatusText.parts(
-                held.status,
+                DoesNotFit.statusShown(held),
                 StatusFormat.of(
                     AppLanguageSettings.language(context), held.market, AppLanguageSettings.numberLocale(context),
                     charger = held.chargerName ?: held.chargerId
@@ -306,11 +315,63 @@ internal class ChargerDashboardController(
         val language = AppLanguageSettings.language(context)
         val action = OwnModeAction.of(held)
         chargerCard.attention.showOwnMode(action?.label(language)) { action?.let(::fixOwnMode) }
-        chargerCard.attention.showRelease(ImportTargetRelease.label(held, language)) { confirmRelease() }
+        showDoesNotFit(held)
+        // The "does not fit" line's "Allow the peak" stands in for the release button, as on the card.
+        chargerCard.attention.showRelease(ImportTargetRelease.label(held, language).takeIf { held?.doesNotFit == null }) { confirmRelease() }
         val rows = SetupChecklist.rows(held)
         chargerCard.attention.showSetup(
             if (rows.isEmpty()) null else tq(R.plurals.setup_line, rows.size, rows.size)
         ) { openSetup() }
+    }
+
+    /**
+     * The "does not fit" line (Home Assistant 3.0.0b3) and its choices, each for this departure only: "Take what fits"
+     * (`take_what_fits`), "Later departure (17:00)" (`later_departure`; without a time that fits it opens the departure's
+     * editor), "Allow the peak" (the release, confirmed first as everywhere). Hidden while the charge fits.
+     */
+    private fun showDoesNotFit(held: Dashboard?) {
+        val block = held?.doesNotFit
+        if (block == null) {
+            chargerCard.attention.showDoesNotFit(null, emptyList())
+            return
+        }
+        val fit = doesNotFitText(held)
+        val releaseOffered = ImportTargetRelease.offered(held)
+        val buttons = fit.buttons(block, releaseOffered).map { button ->
+            ChargerAttention.FitChoice(button.code, button.label) { _ ->
+                when (button.press) {
+                    DoesNotFitText.Press.TAKE_WHAT_FITS -> sendDoesNotFitChoice(DoesNotFitChoice.TAKE_WHAT_FITS)
+                    DoesNotFitText.Press.LATER_DEPARTURE -> sendDoesNotFitChoice(DoesNotFitChoice.LATER_DEPARTURE)
+                    DoesNotFitText.Press.OPEN_DEPARTURE -> listener.onOpenDeparture()
+                    DoesNotFitText.Press.ACCEPT_PEAK -> confirmRelease()
+                }
+            }
+        }
+        chargerCard.attention.showDoesNotFit(fit.line(block), buttons)
+    }
+
+    private fun doesNotFitText(held: Dashboard): DoesNotFitText {
+        val market = held.market
+        return DoesNotFitText(
+            SiteText(cardWords(), AppLanguageSettings.locale(context), AppLanguageSettings.numberLocale(context)),
+            DashboardChart.zone(held),
+            House.Money(market.currency, market.majorUnit, null)
+        )
+    }
+
+    /**
+     * `take_what_fits` or `later_departure`, then the dashboard read again whatever came of it (the line then says what
+     * was chosen). A refusal that only means the choice is gone is left to that read; any other is said once.
+     */
+    private fun sendDoesNotFitChoice(action: String) {
+        chargerCard.attention.setDoesNotFitEnabled(false)
+        session.doesNotFitChoice(action) { outcome ->
+            chargerCard.attention.setDoesNotFitEnabled(true)
+            if (outcome is DoesNotFitChoice.Outcome.Failed) {
+                Toast.makeText(context, t(R.string.does_not_fit_failed), Toast.LENGTH_LONG).show()
+            }
+            fetchDashboard()
+        }
     }
 
     /** `fix_own_mode`: write the one safe value back, then read the dashboard again whatever came of it. */
@@ -360,8 +421,10 @@ internal class ChargerDashboardController(
     /** `release_import_target`: the import target set aside for this charge, then the dashboard read again whatever came of it. */
     private fun releaseImportTarget() {
         chargerCard.attention.setReleaseEnabled(false)
+        chargerCard.attention.setDoesNotFitEnabled(false)
         session.releaseImportTarget { _ ->
             chargerCard.attention.setReleaseEnabled(true)
+            chargerCard.attention.setDoesNotFitEnabled(true)
             // As the card: not set aside, the line stays until the next read says otherwise; that read shows how it stands.
             fetchDashboard()
         }

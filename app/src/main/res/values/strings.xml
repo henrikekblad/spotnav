@@ -705,6 +705,7 @@
     <item quantity="other">Get started: %1$d things left</item>
   </plurals>
   <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
+  <string name="does_not_fit_failed">Could not send the choice to Home Assistant. The line shows how it stands.</string>
   <string name="setup_dismiss_failed">Could not save that. Try again.</string>
   <string name="if_not_ready_title">If the car cannot be ready in time</string>
   <string name="if_not_ready_ask">Ask</string>
