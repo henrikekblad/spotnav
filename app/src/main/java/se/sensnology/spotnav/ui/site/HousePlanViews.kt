@@ -72,6 +72,10 @@ internal class HousePlanChartView(context: Context, private val palette: PlanPal
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val label = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 10f * density }
     private val rect = RectF()
+    private val midnightDash = DashPathEffect(floatArrayOf(2f * density, 3f * density), 0f)
+    private val ceilingDash = DashPathEffect(floatArrayOf(5f * density, 4f * density), 0f)
+    private val ceiling = Path()
+    private val net = Path()
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         setMeasuredDimension(MeasureSpec.getSize(widthSpec), (HEIGHT * density).toInt())
@@ -129,7 +133,7 @@ internal class HousePlanChartView(context: Context, private val palette: PlanPal
             hour.dayCue?.let { cue ->
                 line.color = palette.muted
                 line.strokeWidth = density
-                line.pathEffect = DashPathEffect(floatArrayOf(2f * density, 3f * density), 0f)
+                line.pathEffect = midnightDash
                 canvas.drawLine(x(index), top, x(index), bottom + 4f * density, line)
                 label.textAlign = Paint.Align.LEFT
                 canvas.drawText(cue, x(index) + 3f * density, top - 6f * density, label)
@@ -145,7 +149,7 @@ internal class HousePlanChartView(context: Context, private val palette: PlanPal
         canvas.drawText(c.priceStrip, left, height - 6f * density, label)
 
         // The ceiling: a dashed step line where it is known and inside the chart, labelled once at its last hour.
-        val ceiling = Path()
+        ceiling.reset()
         var open = false
         c.hours.forEachIndexed { index, hour ->
             val at = hour.ceilingKw
@@ -159,7 +163,7 @@ internal class HousePlanChartView(context: Context, private val palette: PlanPal
         }
         line.color = PlanPalette.CEILING
         line.strokeWidth = 1.6f * density
-        line.pathEffect = DashPathEffect(floatArrayOf(5f * density, 4f * density), 0f)
+        line.pathEffect = ceilingDash
         canvas.drawPath(ceiling, line)
         val ceilingKw = c.ceilingLabelKw
         if (c.ceilingLabel != null && ceilingKw != null) {
@@ -169,7 +173,7 @@ internal class HousePlanChartView(context: Context, private val palette: PlanPal
         }
 
         // The net from the grid, and a dot where it goes over the ceiling.
-        val net = Path()
+        net.reset()
         var started = false
         c.hours.forEachIndexed { index, hour ->
             val value = hour.netKw ?: return@forEachIndexed
