@@ -176,7 +176,13 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
                 control.raised -> control.raiseUntil?.let { words.say("heat.control.raised", "until" to moment(settings, it)) }
                     ?: words.say("heat.control.raisedNow")
                 control.lowered -> control.until?.let {
-                    words.say(if (settings.wouldReason == "room_warm") "heat.control.loweredWarm" else "heat.control.lowered", "until" to moment(settings, it))
+                    // Lowered one step by the shed order under the ceiling where the plan alone would not.
+                    val key = when {
+                        reason == "ceiling" -> "heat.control.loweredCeiling"
+                        settings.wouldReason == "room_warm" -> "heat.control.loweredWarm"
+                        else -> "heat.control.lowered"
+                    }
+                    words.say(key, "until" to moment(settings, it))
                 } ?: words.say("heat.control.loweredNow")
                 reason in CONTROL_SAFETY -> words.say("heat.control.$reason")
                 else -> words.say("heat.control.normal")

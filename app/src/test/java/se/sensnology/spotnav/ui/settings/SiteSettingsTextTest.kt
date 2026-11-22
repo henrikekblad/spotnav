@@ -168,6 +168,7 @@ class SiteSettingsTextTest {
         val controlled = settings("controlled.json")
         assertEquals("Styr: sänker värmen till 19:00.", sv.controlLine(controlled))
         assertEquals("Styr: sänker värmen till 19:00, för varmt inne.", sv.controlLine(controlled.copy(wouldReason = "room_warm")))
+        assertEquals("Styr: sänker värmen för taket till 19:00.", sv.controlLine(controlled.with { copy(reason = "ceiling") }))
         assertEquals("Av: SpotNav visar bara vad den skulle göra.", sv.controlLine(controlled.with { copy(enabled = false, state = "off") }))
         // The safety reasons, the hot water's among them.
         assertEquals("Styr: extra varmvatten är på, ingen sänkning.", sv.controlLine(controlled.with { copy(lowered = false, reason = "hot_water") }))

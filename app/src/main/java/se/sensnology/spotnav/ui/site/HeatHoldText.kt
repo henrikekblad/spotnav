@@ -63,7 +63,10 @@ internal class HeatHoldText(private val text: SiteText, private val now: Instant
         val reason = heater.reason.orEmpty()
         if (heater.state == "running" || heater.state == "verifying") {
             val until = heater.until
-            if (heater.on == false && until != null) return words.say("heat.waterHeater.off", "until" to at(until))
+            // Paused by the shed order under the ceiling ("Pausad för taket till 18:00"), else off by the plan.
+            if (heater.on == false && until != null) {
+                return words.say(if (reason == "ceiling") "heat.waterHeater.ceiling" else "heat.waterHeater.off", "until" to at(until))
+            }
             if (heater.on == true && reason in HEATER_WHY) {
                 return words.say("heat.waterHeater.on", "why" to words.say("heat.waterHeater.why.$reason"))
             }
@@ -91,7 +94,8 @@ internal class HeatHoldText(private val text: SiteText, private val now: Instant
         if (heater != null) {
             val off = heater.until
             if (heater.live && heater.on == false && off != null) {
-                out += "waterHeater" to words.say("heat.now.waterHeaterOff", "until" to at(off))
+                val key = if (heater.reason == "ceiling") "heat.now.waterHeaterCeiling" else "heat.now.waterHeaterOff"
+                out += "waterHeater" to words.say(key, "until" to at(off))
             }
             // The windows within the strip's twelve hours.
             val horizon = now.plus(Duration.ofHours(HeatNowModel.AHEAD_HOURS.toLong()))
