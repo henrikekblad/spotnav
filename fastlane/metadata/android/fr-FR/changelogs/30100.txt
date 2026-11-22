@@ -1,0 +1,5 @@
+Nouveau dans la 3.1 :
+- Le plan de toute la maison sur la page maison : graphique, par charge et en mots
+- Quand la recharge ne tient pas sous l'objectif d'import : prendre ce qui tient, départ plus tard ou autoriser le pic
+- Zones de chauffage, chauffe-eau et niveau de puissance, comme dans la carte
+- Le plan nécessite SpotNav pour Home Assistant 3.0.0b3 ; le reste la bêta 3.0

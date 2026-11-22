@@ -1,0 +1,5 @@
+Novedades de la 3.1:
+- El plan de toda la casa en la página de la casa: gráfico, por carga y en palabras
+- Cuando la carga no cabe bajo el objetivo de importación: tomar lo que cabe, salida más tarde o permitir el pico
+- Zonas de calefacción, el termo y el nivel de potencia, como en la tarjeta
+- El plan requiere SpotNav para Home Assistant 3.0.0b3; el resto la beta 3.0

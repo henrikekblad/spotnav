@@ -1,0 +1,5 @@
+Neu in 3.1:
+- Der Plan für das ganze Zuhause auf der Hausseite: Diagramm, pro Verbraucher und in Worten
+- Wenn das Laden nicht unter das Bezugsziel passt: nehmen, was passt, spätere Abfahrt oder Spitze zulassen
+- Heizzonen, der Warmwasserspeicher und die Leistungsstufe, wie in der Karte
+- Der Plan braucht SpotNav für Home Assistant 3.0.0b3; der Rest die 3.0-Beta

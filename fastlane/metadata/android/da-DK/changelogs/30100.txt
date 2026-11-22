@@ -1,0 +1,5 @@
+Nyt i 3.1:
+- Planen for hele hjemmet på husvisningen: graf, pr. belastning og i ord
+- Når opladningen ikke kan nås under importmålet: tag det, der kan nås, senere afgang eller tillad toppen
+- Varmezoner, varmtvandsbeholderen og effektniveauet, som i kortet
+- Planen kræver SpotNav til Home Assistant 3.0.0b3; resten 3.0-beta

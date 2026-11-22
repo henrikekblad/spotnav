@@ -1,0 +1,5 @@
+Uutta versiossa 3.1:
+- Koko kodin suunnitelma talonäkymässä: kaavio, kuormittain ja sanoin
+- Kun lataus ei mahdu tuontitavoitteen alle: ota mikä mahtuu, myöhempi lähtö tai salli huippu
+- Lämmitysvyöhykkeet, lämminvesivaraaja ja tehotaso, kuten kortissa
+- Suunnitelma vaatii SpotNav for Home Assistant 3.0.0b3:n; muu 3.0-beetan

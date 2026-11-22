@@ -1,0 +1,5 @@
+New in 3.1:
+- The plan for the whole home on the house page: chart, per load and in words
+- When a charge does not fit under your import target: take what fits, a later departure or allow the peak
+- Heating zones, the water heater and the power level, as in the card
+- The plan needs SpotNav for Home Assistant 3.0.0b3; the rest 3.0 beta

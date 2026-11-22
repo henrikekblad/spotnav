@@ -1,0 +1,5 @@
+Nieuw in 3.1:
+- Het plan voor het hele huis op de huispagina: grafiek, per verbruiker en in woorden
+- Als het laden niet onder je importdoel past: neem wat past, later vertrek of sta de piek toe
+- Verwarmingszones, de boiler en het vermogensniveau, zoals in de kaart
+- Het plan vraagt SpotNav voor Home Assistant 3.0.0b3; de rest de 3.0-bèta
