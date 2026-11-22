@@ -1660,6 +1660,8 @@
   <string name="card_house_plan_would_note" formatted="false">Faded: what SpotNav would do with a load it only shows. That load is not controlled now.</string>
   <string name="card_house_plan_per_load" formatted="false">Per load</string>
   <string name="card_house_plan_in_words" formatted="false">In words</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} line</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} lines</string>
   <string name="card_house_plan_nothing" formatted="false">Nothing planned for the next hours.</string>
   <string name="card_house_plan_rolling" formatted="false">a rolling day from now</string>
   <string name="card_house_plan_would" formatted="false">would</string>

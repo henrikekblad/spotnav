@@ -1647,6 +1647,8 @@
   <string name="card_house_plan_would_note" formatted="false">Blekt: vad SpotNav skulle göra med en last som den bara visar. Den lasten styrs inte nu.</string>
   <string name="card_house_plan_per_load" formatted="false">Per last</string>
   <string name="card_house_plan_in_words" formatted="false">I ord</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} rad</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} rader</string>
   <string name="card_house_plan_nothing" formatted="false">Inget planerat de närmaste timmarna.</string>
   <string name="card_house_plan_rolling" formatted="false">ett rullande dygn från nu</string>
   <string name="card_house_plan_would" formatted="false">skulle</string>

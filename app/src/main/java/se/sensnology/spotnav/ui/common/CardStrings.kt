@@ -948,6 +948,8 @@ internal object CardStrings {
         "house.plan.wouldNote" to R.string.card_house_plan_would_note,
         "house.plan.perLoad" to R.string.card_house_plan_per_load,
         "house.plan.inWords" to R.string.card_house_plan_in_words,
+        "house.plan.rows.one" to R.string.card_house_plan_rows_one,
+        "house.plan.rows.other" to R.string.card_house_plan_rows_other,
         "house.plan.nothing" to R.string.card_house_plan_nothing,
         "house.plan.rolling" to R.string.card_house_plan_rolling,
         "house.plan.would" to R.string.card_house_plan_would,

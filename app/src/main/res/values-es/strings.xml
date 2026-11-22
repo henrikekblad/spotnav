@@ -1655,6 +1655,8 @@
   <string name="card_house_plan_would_note" formatted="false">Atenuado: lo que SpotNav haría con una carga que solo muestra. Esa carga no se controla ahora.</string>
   <string name="card_house_plan_per_load" formatted="false">Por carga</string>
   <string name="card_house_plan_in_words" formatted="false">En palabras</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} línea</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} líneas</string>
   <string name="card_house_plan_nothing" formatted="false">Nada previsto para las próximas horas.</string>
   <string name="card_house_plan_rolling" formatted="false">un día móvil desde ahora</string>
   <string name="card_house_plan_would" formatted="false">haría</string>
