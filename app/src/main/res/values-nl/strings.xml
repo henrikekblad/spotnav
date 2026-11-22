@@ -917,7 +917,7 @@
   <string name="card_heat_ahead_night" formatted="false">koelere nacht {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">weg {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">warm water {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">Geen verlaging gepland voor de komende 12 uur</string>
+  <string name="card_heat_ahead_none" formatted="false">Geen verlaging gepland voor de komende 24 uur</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Auto laadt</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav verlaagde</string>

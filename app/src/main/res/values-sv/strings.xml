@@ -917,7 +917,7 @@
   <string name="card_heat_ahead_night" formatted="false">svalare natt {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">borta {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">varmvatten {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">Ingen sänkning planerad de närmaste 12 timmarna</string>
+  <string name="card_heat_ahead_none" formatted="false">Ingen sänkning planerad de närmaste 24 timmarna</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Bilen laddar</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav sänkte</string>

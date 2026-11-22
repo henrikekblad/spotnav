@@ -930,7 +930,7 @@
   <string name="card_heat_ahead_night" formatted="false">cooler night {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">away {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">hot water {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 12 hours</string>
+  <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 24 hours</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Car charging</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav lowered</string>

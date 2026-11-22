@@ -16,7 +16,7 @@ class SiteDoorTest {
         assertEquals("<site_id>", read.site.siteId)
         assertEquals("Site", read.site.name)
         assertTrue(read.site.loaded)
-        assertEquals(SiteCapabilities(true, true, true, true, true, true, true), read.site.capabilities)
+        assertEquals(SiteCapabilities(true, true, true, true, true, true, true, getPlan = true), read.site.capabilities)
         assertEquals(listOf(SiteCharger("<charger_id>", "<charger_id>")), read.site.chargers)
         val none = SiteDoor.getSite(200, fixture("get_site_no_charger"), null) as SiteDoor.GetSite.Read
         assertEquals("Villa", none.site.name)

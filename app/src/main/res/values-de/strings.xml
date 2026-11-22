@@ -917,7 +917,7 @@
   <string name="card_heat_ahead_night" formatted="false">kühlere Nacht {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">abwesend {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">Warmwasser {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">Keine Absenkung in den nächsten 12 Stunden geplant</string>
+  <string name="card_heat_ahead_none" formatted="false">Keine Absenkung in den nächsten 24 Stunden geplant</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Auto lädt</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav hat abgesenkt</string>

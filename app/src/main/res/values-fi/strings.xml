@@ -917,7 +917,7 @@
   <string name="card_heat_ahead_night" formatted="false">viileämpi yö {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">poissa {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">käyttövesi {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">Ei suunniteltua laskua seuraavien 12 tunnin aikana</string>
+  <string name="card_heat_ahead_none" formatted="false">Ei suunniteltua laskua seuraavien 24 tunnin aikana</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Auto latautuu</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav laski</string>

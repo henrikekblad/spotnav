@@ -97,7 +97,7 @@ internal class HeatHoldText(private val text: SiteText, private val now: Instant
                 val key = if (heater.reason == "ceiling") "heat.now.waterHeaterCeiling" else "heat.now.waterHeaterOff"
                 out += "waterHeater" to words.say(key, "until" to at(off))
             }
-            // The windows within the strip's twelve hours.
+            // The windows within the strip's 24 hours.
             val horizon = now.plus(Duration.ofHours(HeatNowModel.AHEAD_HOURS.toLong()))
             val windows = windowsText(heater.windows.filter { it.start.isBefore(horizon) })
             if (windows.isNotEmpty()) {

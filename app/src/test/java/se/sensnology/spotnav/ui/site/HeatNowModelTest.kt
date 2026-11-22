@@ -94,13 +94,16 @@ class HeatNowModelTest {
         val line = HeatNowModel.aheadLine(text("en"), villa)!!
         assertTrue(line, line.startsWith("Plan: lowering "))
         val cells = HeatNowModel.aheadCells(villa)
-        assertEquals(12, cells.size)
+        assertEquals(24, cells.size)
         assertEquals("lower", cells[0]!!.action)
         // The hours the plan does not reach yet are open.
-        assertEquals(List(12 - villa.ahead.size) { null }, cells.drop(villa.ahead.size))
-        assertEquals(4, HeatNowModel.aheadAxis(text(), villa).size)
-        val none = heat("villa.json") { json -> val a = json.getJSONArray("ahead"); for (i in 0 until a.length()) a.getJSONObject(i).put("action", "normal") }
-        assertEquals("No lowering planned for the next 12 hours", HeatNowModel.aheadLine(text("en"), none))
+        assertEquals(List(24 - villa.ahead.size) { null }, cells.drop(villa.ahead.size))
+        assertEquals(8, HeatNowModel.aheadAxis(text(), villa).size)
+        val none = heat("villa.json") { json -> val a = json.getJSONArray("ahead"); for (i in 0 until a.length()) a.getJSONObject(i).put("action", "normal").put("hot_water", false)
+            // The 24 hours now reach the planned hot-water boost: none planned here.
+            json.optJSONObject("hot_water")?.put("planned", org.json.JSONArray())
+        }
+        assertEquals("No lowering planned for the next 24 hours", HeatNowModel.aheadLine(text("en"), none))
         val empty = heat("villa.json") { it.put("ahead", org.json.JSONArray()) }
         assertNull(HeatNowModel.aheadLine(text(), empty))
         assertTrue(HeatNowModel.aheadCells(empty).all { it == null })

@@ -91,7 +91,7 @@ internal class HeatDialView(context: Context, private val palette: Palette, priv
     }
 }
 
-/** The thin strip under the dial: a cell for each of the plan's next twelve hours, hot water as a dot, the clock under it. */
+/** The thin strip under the dial: a cell for each of the plan's next 24 hours, hot water as a dot, the clock under it. */
 @SuppressLint("ViewConstructor") // built in code with the screen's colours
 internal class AheadStripView(context: Context, private val palette: Palette, private val colours: SiteColours) : View(context) {
     private var cells: List<AheadCell?> = emptyList()
