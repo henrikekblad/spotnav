@@ -692,6 +692,7 @@
     <item quantity="other">Kom igång: %1$d saker kvar</item>
   </plurals>
   <string name="own_mode_fix_failed">Det gick inte att ändra laddboxens inställning. Ändra den i Home Assistant.</string>
+  <string name="does_not_fit_failed">Valet kunde inte skickas till Home Assistant. Raden visar hur det står till.</string>
   <string name="setup_dismiss_failed">Det gick inte att spara. Försök igen.</string>
   <string name="if_not_ready_title">Om bilen inte hinner bli klar</string>
   <string name="if_not_ready_ask">Fråga</string>
@@ -819,7 +820,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">Inget förslag: anläggningen har ingen laddare.</string>
   <string name="card_power_legend_peak" formatted="false">Månadens topp {kw}</string>
   <string name="card_power_legend_imported" formatted="false">Från Home Assistants statistik</string>
-  <string name="card_power_imported_note" formatted="false">Timmarna från Home Assistants statistik är ungefärliga: de räknas i månadens toppar men lyfter aldrig effektmålet.</string>
+  <string name="card_power_imported_note" formatted="false">Timmarna från Home Assistants statistik är ungefärliga: de räknas i månadens toppar, men bara den här månadens kompletta timmar (alla 5-minutersvärden finns) lyfter effektmålet.</string>
   <string name="card_power_peak" formatted="false">månadens topp {kw}</string>
   <string name="card_power_imported" formatted="false">från Home Assistants statistik</string>
   <string name="card_release_confirm_title" formatted="false">Släppa effektmålet\?</string>
@@ -916,7 +917,7 @@
   <string name="card_heat_ahead_night" formatted="false">svalare natt {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">borta {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">varmvatten {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">Ingen sänkning planerad de närmaste 12 timmarna</string>
+  <string name="card_heat_ahead_none" formatted="false">Ingen sänkning planerad de närmaste 24 timmarna</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Bilen laddar</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav sänkte</string>
@@ -1261,7 +1262,7 @@
   <string name="card_battery_mode_normal" formatted="false">Lämna tillbaka</string>
   <string name="card_battery_cap_line" formatted="false">Högst {kw} kW från nätet, så säkringen klarar sig även om Home Assistant stannar ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">Ingen laddning från nätet: huset kan nå säkringen själv ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">Importgränsen skyddar säkringen vid laddning från nätet.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">Anläggningens egen importgräns skyddar säkringen vid laddning från nätet.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">inlärt per fas</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">försiktigt tills de första dygnen är inlärda</string>
   <string name="card_battery_cap_rule_learning" formatted="false">medan husets toppar lärs in</string>
@@ -1287,10 +1288,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Börvärde</string>
   <string name="card_heat_settings_control" formatted="false">Styrutgång</string>
   <string name="card_heat_settings_control_b" formatted="false">Andra kontakten</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Varmvatten</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Extra varmvatten</string>
   <string name="card_heat_settings_zones" formatted="false">Zoner</string>
   <string name="card_heat_settings_zones_none" formatted="false">Inga zoner</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Förskjutning mot husets temperatur, −3 till +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">Rummets eget mål mot husets temperatur, −3 till +3 °C. En svalare övervåning: −1,5. En givare som visar en halv grad för varmt: +0,5. Kallaste rummet räknas mot sitt eget mål.</string>
   <string name="card_heat_settings_air_help" formatted="false">Luft-luftvärmepump: SpotNav ändrar bara börvärdet, slår aldrig av eller på.</string>
   <string name="card_heat_settings_night" formatted="false">Svalare natt</string>
@@ -1612,4 +1612,96 @@
   <string name="card_heat_settings_water_heater" formatted="false">Varmvattenberedare</string>
   <string name="card_heat_settings_water_heater_control" formatted="false">Styr varmvattenberedaren</string>
   <string name="card_heat_settings_tank_sensor" formatted="false">Tankgivare</string>
+  <string name="card_heat_control_lowered_ceiling" formatted="false">Styr: sänker värmen för taket till {until}.</string>
+  <string name="card_heat_water_heater_ceiling" formatted="false">Pausad för taket till {until}.</string>
+  <string name="card_heat_now_water_heater_ceiling" formatted="false">Varmvattenberedaren pausad för taket till {until}</string>
+  <string name="card_house_tab_plan" formatted="false">Plan</string>
+  <string name="card_house_plan_title" formatted="false">Plan för de närmaste {hours} timmarna</string>
+  <string name="card_house_plan_lede" formatted="false">Allt SpotNav planerar på en tidsaxel: vad huset tar från nätet varje timme, uppdelat per last, mot taket. Sol och husbatteri som täcker huset ritas under noll.</string>
+  <string name="card_house_plan_cost" formatted="false">Beräknad kostnad</string>
+  <string name="card_house_plan_cost_note" formatted="false">från nätet, de närmaste {hours} timmarna</string>
+  <string name="card_house_plan_peak" formatted="false">Högsta timme från nätet</string>
+  <string name="card_house_plan_peak_over" formatted="false">kl. {at} · över taket</string>
+  <string name="card_house_plan_peak_under" formatted="false">kl. {at} · under taket</string>
+  <string name="card_house_plan_peak_at" formatted="false">kl. {at}</string>
+  <string name="card_house_plan_month_peak" formatted="false">Månadens topp hittills</string>
+  <string name="card_house_plan_month_peak_note" formatted="false">{when} · upp till den är gratis</string>
+  <string name="card_house_plan_tariff" formatted="false">Effekttaxa</string>
+  <string name="card_house_plan_no_tariff" formatted="false">ingen i elpriset</string>
+  <string name="card_house_plan_no_prices" formatted="false">Priserna för de här timmarna är inte kända ännu.</string>
+  <string name="card_house_plan_from_grid" formatted="false">Från nätet per timme</string>
+  <string name="card_house_plan_chart_label" formatted="false">Staplad plan per timme mot taket</string>
+  <string name="card_house_plan_price_strip" formatted="false">Pris: grönt billigt · gult mellan · rött dyrt</string>
+  <string name="card_house_plan_layer_house" formatted="false">Hus</string>
+  <string name="card_house_plan_layer_heat" formatted="false">Värme</string>
+  <string name="card_house_plan_layer_water_heater" formatted="false">Beredare</string>
+  <string name="card_house_plan_layer_car" formatted="false">Bil</string>
+  <string name="card_house_plan_layer_battery_in" formatted="false">Husbatteri laddar</string>
+  <string name="card_house_plan_layer_sun" formatted="false">Sol</string>
+  <string name="card_house_plan_layer_battery_out" formatted="false">Husbatteri täcker</string>
+  <string name="card_house_plan_layer_net" formatted="false">Från nätet</string>
+  <string name="card_house_plan_ceiling_import_target" formatted="false">Effektmål {kw}</string>
+  <string name="card_house_plan_ceiling_power_level" formatted="false">Effektnivå {kw}</string>
+  <string name="card_house_plan_ceiling_power_tariff" formatted="false">Effekttak {kw}</string>
+  <string name="card_house_plan_ceiling_fuse" formatted="false">Huvudsäkring ≈ {kw}</string>
+  <string name="card_house_plan_would_note" formatted="false">Blekt: vad SpotNav skulle göra med en last som den bara visar. Den lasten styrs inte nu.</string>
+  <string name="card_house_plan_per_load" formatted="false">Per last</string>
+  <string name="card_house_plan_in_words" formatted="false">I ord</string>
+  <string name="card_house_plan_nothing" formatted="false">Inget planerat de närmaste timmarna.</string>
+  <string name="card_house_plan_rolling" formatted="false">ett rullande dygn från nu</string>
+  <string name="card_house_plan_would" formatted="false">skulle</string>
+  <string name="card_house_plan_would_prefix" formatted="false">Skulle:</string>
+  <string name="card_house_plan_load_car" formatted="false">Bil</string>
+  <string name="card_house_plan_load_home_battery" formatted="false">Husbatteri</string>
+  <string name="card_house_plan_load_heat" formatted="false">Värme</string>
+  <string name="card_house_plan_load_heat_zone" formatted="false">Golvvärme</string>
+  <string name="card_house_plan_load_water_heater" formatted="false">Beredare</string>
+  <string name="card_house_plan_lane_none" formatted="false">Inget planerat</string>
+  <string name="card_house_plan_lane_car" formatted="false">{kwh}, {hours}</string>
+  <string name="card_house_plan_lane_battery_cover" formatted="false">Täcker {kwh}</string>
+  <string name="card_house_plan_lane_battery_grid" formatted="false">nätladdning av husbatteriet {kwh}</string>
+  <string name="card_house_plan_lane_battery_charge" formatted="false">laddar {kwh} av solen</string>
+  <string name="card_house_plan_lane_heat" formatted="false">Sänkt {lowered} h, förvärmd {raised} h</string>
+  <string name="card_house_plan_lane_zone" formatted="false">Sänkt {lowered} h</string>
+  <string name="card_house_plan_lane_water_heater" formatted="false">Får värmas {hours} h, billiga timmar</string>
+  <string name="card_house_plan_run_car_charge" formatted="false">{name} laddar {kwh} med {kw}</string>
+  <string name="card_house_plan_run_home_battery_grid_charge" formatted="false">Nätladdning av husbatteriet, {kw}</string>
+  <string name="card_house_plan_run_home_battery_sun_charge" formatted="false">Husbatteriet laddar av solen</string>
+  <string name="card_house_plan_run_home_battery_charge" formatted="false">Husbatteriet laddar, {kw}</string>
+  <string name="card_house_plan_run_home_battery_cover" formatted="false">Husbatteriet täcker huset</string>
+  <string name="card_house_plan_run_home_battery_sell" formatted="false">Husbatteriet säljer till nätet</string>
+  <string name="card_house_plan_run_heat_lower" formatted="false">Värmen sänks</string>
+  <string name="card_house_plan_run_heat_preheat" formatted="false">Värmen förvärms</string>
+  <string name="card_house_plan_run_heat_night" formatted="false">Nattsänkning</string>
+  <string name="card_house_plan_run_heat_away" formatted="false">Bortaläge</string>
+  <string name="card_house_plan_run_heat_zone_lower" formatted="false">{name} sänks</string>
+  <string name="card_house_plan_run_water_heater_on" formatted="false">Beredaren värms</string>
+  <string name="card_house_plan_run_water_heater_paused" formatted="false">Beredaren pausad</string>
+  <string name="card_house_plan_run_other" formatted="false">{name}</string>
+  <string name="card_house_plan_reason_dear_hour" formatted="false">dyra timmar</string>
+  <string name="card_house_plan_reason_tight_hour" formatted="false">håller taket</string>
+  <string name="card_house_plan_reason_ceiling" formatted="false">för taket</string>
+  <string name="card_house_plan_reason_cheap_before_dear" formatted="false">billigt före dyra timmar</string>
+  <string name="card_house_plan_reason_room_warm" formatted="false">huset är varmt</string>
+  <string name="card_house_plan_reason_cheap" formatted="false">billig timme</string>
+  <string name="card_house_plan_reason_full_heat" formatted="false">full uppvärmning (legionella)</string>
+  <string name="card_house_plan_reason_max_off" formatted="false">får inte vara av längre</string>
+  <string name="card_does_not_fit_line" formatted="false">Ryms inte under taket ({ceiling}): {need} till {time} – {fits} hinner.</string>
+  <string name="card_does_not_fit_short" formatted="false">Ryms inte under taket ({ceiling}): {kwh} saknas till {time}.</string>
+  <string name="card_does_not_fit_short_no_time" formatted="false">Ryms inte under taket ({ceiling}): {kwh} saknas till avresan.</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits" formatted="false">Bilen tar det som ryms till {time} ({kwh}).</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits_no_time" formatted="false">Bilen tar det som ryms till avresan.</string>
+  <string name="card_does_not_fit_chosen_accept_peak" formatted="false">Taket ({ceiling}) är släppt för den här laddningen till {time}.</string>
+  <string name="card_does_not_fit_chosen_accept_peak_unplug" formatted="false">Taket ({ceiling}) är släppt för den här laddningen tills bilen kopplas ur.</string>
+  <string name="card_does_not_fit_peak_note" formatted="false">Toppen kan bli ungefär {kw} kW.</string>
+  <string name="card_does_not_fit_choice_takes_what_fits" formatted="false">Ta det som ryms</string>
+  <string name="card_does_not_fit_choice_takes_what_fits_kwh" formatted="false">Ta det som ryms (≈ {kwh})</string>
+  <string name="card_does_not_fit_choice_later" formatted="false">Senare avresa</string>
+  <string name="card_does_not_fit_choice_later_at" formatted="false">Senare avresa ({time})</string>
+  <string name="card_does_not_fit_choice_accept_peak" formatted="false">Tillåt toppen</string>
+  <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Tillåt toppen (≈ {kw} kW)</string>
+  <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Tillåt toppen (≈ {kw} kW, ≈ {cost})</string>
+  <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, tillåt toppen</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">Värmepumpens egen ingång för en extra varmvattenkörning (till exempel NIBE:s \"tillfällig lyx\"): SpotNav slår på den i två sekunder och pumpen gör en körning. Aldrig strömbrytaren till en varmvattenberedare: välj den under Varmvattenberedare. Ingen legionellainställning: värmepumpen sköter det.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">Brytaren som ger ström till en elektrisk varmvattenberedare med egen termostat (ett relä eller en kontaktor). Inte värmepumpens varmvatteningång: den väljs under Extra varmvatten. SpotNav bara bevakar den tills du låter den styra.</string>
 </resources>

@@ -97,7 +97,8 @@ internal class WebhookHttpStatusException(
  * settings field of the same name, which the app never sends back, so Home Assistant keeps it). The last is
  * `plug_in_saving`, the saving against charging at once on plug-in that the charge history's summaries and sessions
  * carry (read from the `sessions` answer only). `power_level`, the demand block's power level and its count of exceedances,
- * is the last. Every request the app sends names them.
+ * is next, and `does_not_fit` (3.0.0b3), the dashboard's block for a planned charge that does not fit under the ceiling
+ * by its departure, the last. Every request the app sends names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -106,7 +107,7 @@ internal object WebhookReads {
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
         "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
-        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level"
+        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level", "does_not_fit"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
@@ -340,6 +341,18 @@ object HomeAssistantClient {
     internal fun releaseImportTarget(settings: HomeAssistantSettings): ReleaseImportTarget.Outcome {
         val (status, body) = write(settings, ReleaseImportTarget.payload())
         return ReleaseImportTarget.answer(status, body)
+    }
+
+    /** A "does not fit" choice for this departure ([action] `take_what_fits` or `later_departure`). Never throws. */
+    internal fun doesNotFitChoice(settings: HomeAssistantSettings, action: String): DoesNotFitChoice.Outcome {
+        val (status, body) = write(settings, DoesNotFitChoice.payload(action))
+        return DoesNotFitChoice.answer(status, body)
+    }
+
+    /** The site's plan for every load on one time axis (webhook `get_plan`, Home Assistant 3.0.0b3). Never throws. */
+    internal fun plan(settings: HomeAssistantSettings): SiteRead<se.sensnology.spotnav.ha.house.Plan> {
+        val (status, body) = write(settings, se.sensnology.spotnav.ha.house.PlanRead.payload())
+        return se.sensnology.spotnav.ha.house.PlanRead.answer(status, body)
     }
 
     /** The grid tariff written with [body] on [expectedRevision] (webhook `update_grid_tariff`). Never throws. */

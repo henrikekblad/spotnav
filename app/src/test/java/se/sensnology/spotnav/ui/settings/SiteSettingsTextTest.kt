@@ -39,7 +39,7 @@ class SiteSettingsTextTest {
             "Högst 3,2 kW från nätet, så säkringen klarar sig även om Home Assistant stannar (inlärt per fas).",
             text("sv").gridChargeCap(learned)
         )
-        assertEquals("The import limit protects the fuse when charging from the grid.", text().gridChargeCap(status("battery_control/needs_ack.json")))
+        assertEquals("The plant's own import limit protects the fuse when charging from the grid.", text().gridChargeCap(status("battery_control/needs_ack.json")))
         // Charging from the grid not allowed: no line.
         assertNull(text().gridChargeCap(status("battery_control/live.json")))
     }
@@ -168,6 +168,7 @@ class SiteSettingsTextTest {
         val controlled = settings("controlled.json")
         assertEquals("Styr: sänker värmen till 19:00.", sv.controlLine(controlled))
         assertEquals("Styr: sänker värmen till 19:00, för varmt inne.", sv.controlLine(controlled.copy(wouldReason = "room_warm")))
+        assertEquals("Styr: sänker värmen för taket till 19:00.", sv.controlLine(controlled.with { copy(reason = "ceiling") }))
         assertEquals("Av: SpotNav visar bara vad den skulle göra.", sv.controlLine(controlled.with { copy(enabled = false, state = "off") }))
         // The safety reasons, the hot water's among them.
         assertEquals("Styr: extra varmvatten är på, ingen sänkning.", sv.controlLine(controlled.with { copy(lowered = false, reason = "hot_water") }))

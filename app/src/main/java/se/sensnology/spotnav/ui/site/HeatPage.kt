@@ -35,7 +35,7 @@ import java.time.ZonedDateTime
  * The heat page: the header ("Värme · Test · Värmer 1,1 kW") and the Now tab as the Home Assistant card has it: the
  * thermostat dial with its buttons (the target in half degrees, 16 to 25), Home or Away until a date, what the heat
  * pump does and what SpotNav would do, the Boost button (hot water now, where the pump has a boost that ends by
- * itself), the plan's next twelve hours, today's figures and the notes the household can act on.
+ * itself), the plan's next 24 hours, today's figures and the notes the household can act on.
  *
  * It reads only while in view with the app in the foreground: when it opens, then every minute, and at once after a
  * write ([SitePolling]). The dial's figure waits 0.7 s after the last press and is written then; a write carries what

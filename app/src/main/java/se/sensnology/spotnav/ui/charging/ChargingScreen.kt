@@ -330,6 +330,8 @@ internal class ChargingScreen(
     private fun offerPages(dashboard: Dashboard) {
         val house = dashboard.capabilities.getHouse
         val id = profileId
+        // A change of what Home Assistant serves (an update) asks the Plan box's plan again at once.
+        id?.let { shell.pages.memory(it).capabilitiesSeen(dashboard.capabilities) }
         if (!dashboard.capabilities.getHeat || id == null) {
             offerPages(PageOffer.kinds(house = house, heat = false))
             return
@@ -356,7 +358,7 @@ internal class ChargingScreen(
         val held = session ?: return
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
-                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
+                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id) { pairedDashboard?.chargerId }
                 PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
                 else -> error("no page for $kind")
             }
@@ -494,6 +496,8 @@ internal class ChargingScreen(
                 override fun onVehiclePicked(vehicleId: String) = pickPairedVehicle(vehicleId)
 
                 override fun onOpenSetupRow(row: SetupRow, dashboard: Dashboard) = openSetupPlace(row, dashboard)
+
+                override fun onOpenDeparture() = planCard.openDeparture()
             }
         )
         // A charger whose webhook Home Assistant no longer has is asked only at the slow check's

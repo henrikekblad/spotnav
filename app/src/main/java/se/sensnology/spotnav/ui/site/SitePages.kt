@@ -15,6 +15,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chart.DayRollover
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
@@ -39,6 +40,23 @@ internal class SiteMemory {
     var heat: Heat? = null
     /** Whether the heating has something to show, as the last read of `get_heat` said (`null`: not asked yet). */
     var heatShown: Boolean? = null
+    /** The site's plan (`get_plan`), the Plan box's; kept while the next read is on its way. */
+    var plan: Plan? = null
+    /** Whether the webhook serves `get_plan` as `get_site.capabilities.get_plan` says (a home's webhook); `null`: not said. */
+    var planOffered: Boolean? = null
+    /**
+     * When `get_plan` last answered "Unsupported action" (elapsed ms), `null` for not since: the box is left out and the
+     * plan asked again only as [PlanProbe] allows. Cleared when the webhook's capabilities change ([capabilitiesSeen]).
+     */
+    var planRefusedAt: Long? = null
+
+    /** The capabilities the webhook last stated (`get_site`'s or the dashboard's): a change clears [planRefusedAt]. */
+    fun capabilitiesSeen(capabilities: Any) {
+        if (seenCapabilities != null && seenCapabilities != capabilities) planRefusedAt = null
+        seenCapabilities = capabilities
+    }
+
+    private var seenCapabilities: Any? = null
 }
 
 /** The platform's one-shot timer on the main thread. */

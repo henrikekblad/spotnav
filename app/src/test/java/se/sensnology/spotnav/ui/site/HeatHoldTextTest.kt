@@ -135,6 +135,18 @@ class HeatHoldTextTest {
         assertTrue(line { put("meter_waiting", true) }!!.endsWith(" " + CardStringsXml.words("en").say("heat.waterHeater.meterWaiting")))
     }
 
+    @Test fun aWaterHeaterPausedForTheCeilingSaysSo() {
+        val h = heat { it.getJSONObject("water_heater").put("reason", "ceiling") }
+        val now = HeatNowModel.holdLines(text(), h).first { it.first == "waterHeater" }.second
+        assertTrue(now, now.startsWith("Varmvattenberedaren pausad för taket till ") && now.endsWith("01:00"))
+        val line = HeatHoldText.of(text(), h).waterHeaterLine(h.waterHeater!!, true)!!
+        assertTrue(line, line.startsWith("Pausad för taket till ") && line.endsWith("01:00."))
+        for (language in CardStringsXml.LANGUAGES) {
+            val said = HeatNowModel.holdLines(text(language), h).map { it.second } + HeatHoldText.of(text(language), h).waterHeaterLine(h.waterHeater!!, true)!!
+            for (one in said) assertFalse("$language: $one", KEY.containsMatchIn(one) || one.contains("{"))
+        }
+    }
+
     @Test fun theNoteForAWaterHeaterThatNeverGetsFull() {
         val noted = heat { it.put("notes", JSONArray().put(JSONObject().put("code", "water_heater_not_full").put("params", JSONObject().put("name", "Varmvattenberedare")))) }
         assertEquals(

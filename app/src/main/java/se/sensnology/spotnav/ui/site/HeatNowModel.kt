@@ -21,7 +21,7 @@ internal object HeatNowModel {
     const val TARGET_MIN = 16.0
     const val TARGET_MAX = 25.0
     const val TARGET_STEP = 0.5
-    const val AHEAD_HOURS = 12
+    const val AHEAD_HOURS = 24
     private const val NBSP = " "
     private val AHEAD_ACTIONS = listOf("lower", "preheat", "night", "away")
     private val PUMP_STATES = setOf("heating", "hot_water", "idle")
@@ -196,7 +196,7 @@ internal object HeatNowModel {
         return words.say("heat.relay.next", "from" to moment(text, heat, from), "to" to moment(text, heat, runEnd(hours, next)))
     }
 
-    /** The plan's next twelve hours in words: the first run of each thing it does; `null` without hours ahead. */
+    /** The plan's next 24 hours in words: the first run of each thing it does; `null` without hours ahead. */
     fun aheadLine(text: SiteText, heat: Heat): String? {
         val hours = heat.ahead
         if (hours.isEmpty()) return null
@@ -224,7 +224,7 @@ internal object HeatNowModel {
         return words.say("heat.ahead.lead", "parts" to parts.sortedBy { it.first }.joinToString(" · ") { it.second })
     }
 
-    /** The strip's twelve cells; the hours the plan does not reach yet are `null` (open). */
+    /** The strip's 24 cells; the hours the plan does not reach yet are `null` (open). */
     fun aheadCells(heat: Heat): List<AheadCell?> {
         val cells = heat.ahead.take(AHEAD_HOURS).map {
             AheadCell(if (it.action == "preheat" && raisable(heat)) "raise" else it.action, it.hotWater)

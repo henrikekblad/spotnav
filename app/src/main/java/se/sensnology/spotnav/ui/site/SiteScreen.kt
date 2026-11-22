@@ -83,6 +83,8 @@ internal class SiteScreen(shell: ScreenShell, private val site: SiteProfile, pri
     private fun offerFrom(answer: SiteDoor.GetSite.Read) {
         val flags = answer.site.capabilities
         val memory = shell.pages.memory(key)
+        memory.capabilitiesSeen(flags)
+        memory.planOffered = flags.getPlan
         if (!flags.getHeat) {
             offer(PageOffer.kinds(house = flags.getHouse, heat = false, charger = false))
             return

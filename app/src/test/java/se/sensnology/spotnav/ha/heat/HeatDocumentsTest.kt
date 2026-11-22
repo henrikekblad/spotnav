@@ -24,10 +24,10 @@ class HeatDocumentsTest {
     @Test fun everyHeatFixtureIsListedAndDecodes() {
         // name -> target, mode, shadow, measured, pump, meter, zones, something to show, hours ahead, notes
         val expected = mapOf(
-            "controlled.json" to listOf(21.0, "home", false, 20.6, false, true, 4, true, 7, 0),
-            "network_pump.json" to listOf(20.5, "away", true, null, true, false, 0, true, 7, 3),
-            "sg_api_pump.json" to listOf(21.0, "home", true, null, true, false, 0, true, 7, 0),
-            "villa.json" to listOf(21.0, "home", true, 20.6, false, true, 4, true, 7, 2)
+            "controlled.json" to listOf(21.0, "home", false, 20.6, false, true, 4, true, 24, 0),
+            "network_pump.json" to listOf(20.5, "away", true, null, true, false, 0, true, 24, 3),
+            "sg_api_pump.json" to listOf(21.0, "home", true, null, true, false, 0, true, 24, 0),
+            "villa.json" to listOf(21.0, "home", true, 20.6, false, true, 4, true, 24, 2)
         )
         assertEquals(expected.keys, HaFixtures.files("heat_card").map { it.name }.toSet())
         for ((name, row) in expected) {
@@ -56,7 +56,7 @@ class HeatDocumentsTest {
         val h = heat(HaFixtures.json("webhook/get_heat_success.json"))
         assertEquals("site_entry_a", h.siteId)
         assertEquals(21.0, h.comfort.targetC, 0.0)
-        assertEquals(12, h.ahead.size)
+        assertEquals(24, h.ahead.size)
         assertEquals(2, h.indoor.sensorsRead)
         // Two indoor sensors are something to show.
         assertTrue(h.hasSomething)

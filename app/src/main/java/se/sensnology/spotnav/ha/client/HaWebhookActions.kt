@@ -217,6 +217,49 @@ internal object ReleaseImportTarget {
 }
 
 /**
+ * The "does not fit" line's two writes of Home Assistant 3.0.0b3, each for this departure only (the plan's lasting
+ * `if_not_ready` is never changed): `take_what_fits` holds this departure as `hold` would, `later_departure` moves it to
+ * the `later` choice's departure. Any user may press them. Offered only where the dashboard's `does_not_fit` block lists
+ * the choice; an older Home Assistant answers "Unsupported action". The dashboard is read again afterwards either way.
+ */
+internal object DoesNotFitChoice {
+    const val TAKE_WHAT_FITS = "take_what_fits"
+    const val LATER_DEPARTURE = "later_departure"
+
+    fun payload(action: String): JSONObject = JSONObject().apply {
+        require(action == TAKE_WHAT_FITS || action == LATER_DEPARTURE) { action }
+        put("version", 1)
+        put("action", action)
+        WebhookReads.put(this)
+        put("api_version", 1)
+    }
+
+    sealed interface Outcome {
+        data object Done : Outcome
+
+        /**
+         * Nothing to do any more: no site, no import target, no departure ahead, or nothing later fits
+         * (`spotnav_no_site`, `spotnav_no_import_target`, `spotnav_no_departure`, `spotnav_no_later_departure`). The
+         * read after it shows how it stands.
+         */
+        data class NothingToDo(val code: String) : Outcome
+
+        /** Any other refusal ([code] Home Assistant's, or `null` without an answer). */
+        data class Failed(val code: String?) : Outcome
+    }
+
+    private val NOTHING = setOf("spotnav_no_site", "spotnav_no_import_target", "spotnav_no_departure", "spotnav_no_later_departure")
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        if (head.ok) return Outcome.Done
+        val code = head.error ?: return Outcome.Failed(null)
+        return if (code in NOTHING) Outcome.NothingToDo(code) else Outcome.Failed(code)
+    }
+}
+
+/**
  * `update_guest`: the guest amount a guest car's plan starts from (the Guest tab), 1 to 150 kWh, one for the whole
  * installation; the last change wins. The answer carries the dashboard's `guest` block after the write.
  */

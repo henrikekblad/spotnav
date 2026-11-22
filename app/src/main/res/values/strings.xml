@@ -705,6 +705,7 @@
     <item quantity="other">Get started: %1$d things left</item>
   </plurals>
   <string name="own_mode_fix_failed">Could not change the charger\'s setting. Change it in Home Assistant.</string>
+  <string name="does_not_fit_failed">Could not send the choice to Home Assistant. The line shows how it stands.</string>
   <string name="setup_dismiss_failed">Could not save that. Try again.</string>
   <string name="if_not_ready_title">If the car cannot be ready in time</string>
   <string name="if_not_ready_ask">Ask</string>
@@ -832,7 +833,7 @@
   <string name="card_target_suggest_none_no_chargers" formatted="false">No suggestion: the site has no charger.</string>
   <string name="card_power_legend_peak" formatted="false">The month\'s peak {kw}</string>
   <string name="card_power_legend_imported" formatted="false">From Home Assistant\'s statistics</string>
-  <string name="card_power_imported_note" formatted="false">The hours from Home Assistant\'s statistics are approximate: they count in the month\'s peaks but never lift the import target.</string>
+  <string name="card_power_imported_note" formatted="false">The hours from Home Assistant\'s statistics are approximate: they count in the month\'s peaks, but only this month\'s complete hours (every 5-minute reading there) lift the import target.</string>
   <string name="card_power_peak" formatted="false">the month\'s peak {kw}</string>
   <string name="card_power_imported" formatted="false">from Home Assistant\'s statistics</string>
   <string name="card_release_confirm_title" formatted="false">Release the import target\?</string>
@@ -929,7 +930,7 @@
   <string name="card_heat_ahead_night" formatted="false">cooler night {from}–{to}</string>
   <string name="card_heat_ahead_away" formatted="false">away {from}–{to}</string>
   <string name="card_heat_ahead_water" formatted="false">hot water {time}</string>
-  <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 12 hours</string>
+  <string name="card_heat_ahead_none" formatted="false">No lowering planned for the next 24 hours</string>
   <!-- Heat page: Plan, Förbrukning and the details sheet (A6) -->
   <string name="card_heat_band_car" formatted="false">Car charging</string>
   <string name="card_heat_band_executed" formatted="false">SpotNav lowered</string>
@@ -1274,7 +1275,7 @@
   <string name="card_battery_mode_normal" formatted="false">Hand back</string>
   <string name="card_battery_cap_line" formatted="false">At most {kw} kW from the grid, so the fuse holds even if Home Assistant stops ({rule}).</string>
   <string name="card_battery_cap_zero" formatted="false">No charging from the grid: the house can reach the fuse by itself ({rule}).</string>
-  <string name="card_battery_cap_import_limit" formatted="false">The import limit protects the fuse when charging from the grid.</string>
+  <string name="card_battery_cap_import_limit" formatted="false">The plant\'s own import limit protects the fuse when charging from the grid.</string>
   <string name="card_battery_cap_rule_learned" formatted="false">learned per phase</string>
   <string name="card_battery_cap_rule_conservative" formatted="false">cautious until the first days are learned</string>
   <string name="card_battery_cap_rule_learning" formatted="false">while the house\'s peaks are being learned</string>
@@ -1300,10 +1301,9 @@
   <string name="card_heat_path_setpoint" formatted="false">Setpoint</string>
   <string name="card_heat_settings_control" formatted="false">Control output</string>
   <string name="card_heat_settings_control_b" formatted="false">Second contact</string>
-  <string name="card_heat_settings_hot_water" formatted="false">Hot water</string>
+  <string name="card_heat_settings_hot_water" formatted="false">Hot water boost</string>
   <string name="card_heat_settings_zones" formatted="false">Zones</string>
   <string name="card_heat_settings_zones_none" formatted="false">No zones</string>
-  <string name="card_heat_settings_offset_help" formatted="false">Offset against the house temperature, −3 to +3 °C.</string>
   <string name="card_heat_settings_sensor_offset_help" formatted="false">The room\'s own aim against the house temperature, −3 to +3 °C. A cooler upstairs: −1.5. A sensor that reads half a degree warm: +0.5. The coldest room is judged against its own aim.</string>
   <string name="card_heat_settings_air_help" formatted="false">Air-to-air heat pump: SpotNav only nudges its setpoint, never turns it on or off.</string>
   <string name="card_heat_settings_night" formatted="false">Cooler night</string>
@@ -1625,4 +1625,96 @@
   <string name="card_heat_settings_water_heater" formatted="false">Water heater</string>
   <string name="card_heat_settings_water_heater_control" formatted="false">Control the water heater</string>
   <string name="card_heat_settings_tank_sensor" formatted="false">Tank sensor</string>
+  <string name="card_heat_control_lowered_ceiling" formatted="false">Controlling: lowering the heat for the ceiling until {until}.</string>
+  <string name="card_heat_water_heater_ceiling" formatted="false">Paused for the ceiling until {until}.</string>
+  <string name="card_heat_now_water_heater_ceiling" formatted="false">Water heater paused for the ceiling until {until}</string>
+  <string name="card_house_tab_plan" formatted="false">Plan</string>
+  <string name="card_house_plan_title" formatted="false">Plan for the next {hours} hours</string>
+  <string name="card_house_plan_lede" formatted="false">Everything SpotNav plans on one time axis: what the house takes from the grid each hour, split by load, against the ceiling. Sun and the home battery covering the house are drawn below zero.</string>
+  <string name="card_house_plan_cost" formatted="false">Estimated cost</string>
+  <string name="card_house_plan_cost_note" formatted="false">from the grid, the next {hours} hours</string>
+  <string name="card_house_plan_peak" formatted="false">Highest hour from the grid</string>
+  <string name="card_house_plan_peak_over" formatted="false">at {at} · over the ceiling</string>
+  <string name="card_house_plan_peak_under" formatted="false">at {at} · under the ceiling</string>
+  <string name="card_house_plan_peak_at" formatted="false">at {at}</string>
+  <string name="card_house_plan_month_peak" formatted="false">Month\'s peak so far</string>
+  <string name="card_house_plan_month_peak_note" formatted="false">{when} · up to it costs nothing extra</string>
+  <string name="card_house_plan_tariff" formatted="false">Power tariff</string>
+  <string name="card_house_plan_no_tariff" formatted="false">none in the electricity price</string>
+  <string name="card_house_plan_no_prices" formatted="false">The prices for these hours are not known yet.</string>
+  <string name="card_house_plan_from_grid" formatted="false">From the grid per hour</string>
+  <string name="card_house_plan_chart_label" formatted="false">Stacked plan per hour against the ceiling</string>
+  <string name="card_house_plan_price_strip" formatted="false">Price: green cheap · yellow middle · red expensive</string>
+  <string name="card_house_plan_layer_house" formatted="false">House</string>
+  <string name="card_house_plan_layer_heat" formatted="false">Heating</string>
+  <string name="card_house_plan_layer_water_heater" formatted="false">Water heater</string>
+  <string name="card_house_plan_layer_car" formatted="false">Car</string>
+  <string name="card_house_plan_layer_battery_in" formatted="false">Home battery charging</string>
+  <string name="card_house_plan_layer_sun" formatted="false">Sun</string>
+  <string name="card_house_plan_layer_battery_out" formatted="false">Home battery covering</string>
+  <string name="card_house_plan_layer_net" formatted="false">From the grid</string>
+  <string name="card_house_plan_ceiling_import_target" formatted="false">Import target {kw}</string>
+  <string name="card_house_plan_ceiling_power_level" formatted="false">Power level {kw}</string>
+  <string name="card_house_plan_ceiling_power_tariff" formatted="false">Power ceiling {kw}</string>
+  <string name="card_house_plan_ceiling_fuse" formatted="false">Main fuse ≈ {kw}</string>
+  <string name="card_house_plan_would_note" formatted="false">Faded: what SpotNav would do with a load it only shows. That load is not controlled now.</string>
+  <string name="card_house_plan_per_load" formatted="false">Per load</string>
+  <string name="card_house_plan_in_words" formatted="false">In words</string>
+  <string name="card_house_plan_nothing" formatted="false">Nothing planned for the next hours.</string>
+  <string name="card_house_plan_rolling" formatted="false">a rolling day from now</string>
+  <string name="card_house_plan_would" formatted="false">would</string>
+  <string name="card_house_plan_would_prefix" formatted="false">Would:</string>
+  <string name="card_house_plan_load_car" formatted="false">Car</string>
+  <string name="card_house_plan_load_home_battery" formatted="false">Home battery</string>
+  <string name="card_house_plan_load_heat" formatted="false">Heating</string>
+  <string name="card_house_plan_load_heat_zone" formatted="false">Floor heating</string>
+  <string name="card_house_plan_load_water_heater" formatted="false">Water heater</string>
+  <string name="card_house_plan_lane_none" formatted="false">Nothing planned</string>
+  <string name="card_house_plan_lane_car" formatted="false">{kwh}, {hours}</string>
+  <string name="card_house_plan_lane_battery_cover" formatted="false">Covers {kwh}</string>
+  <string name="card_house_plan_lane_battery_grid" formatted="false">grid charging of the home battery {kwh}</string>
+  <string name="card_house_plan_lane_battery_charge" formatted="false">charges {kwh} from the sun</string>
+  <string name="card_house_plan_lane_heat" formatted="false">Lowered {lowered} h, pre-heated {raised} h</string>
+  <string name="card_house_plan_lane_zone" formatted="false">Lowered {lowered} h</string>
+  <string name="card_house_plan_lane_water_heater" formatted="false">May heat {hours} h, cheap hours</string>
+  <string name="card_house_plan_run_car_charge" formatted="false">{name} charges {kwh} at {kw}</string>
+  <string name="card_house_plan_run_home_battery_grid_charge" formatted="false">Grid charging of the home battery, {kw}</string>
+  <string name="card_house_plan_run_home_battery_sun_charge" formatted="false">The home battery charges from the sun</string>
+  <string name="card_house_plan_run_home_battery_charge" formatted="false">The home battery charges, {kw}</string>
+  <string name="card_house_plan_run_home_battery_cover" formatted="false">The home battery covers the house</string>
+  <string name="card_house_plan_run_home_battery_sell" formatted="false">The home battery sells to the grid</string>
+  <string name="card_house_plan_run_heat_lower" formatted="false">Heating lowered</string>
+  <string name="card_house_plan_run_heat_preheat" formatted="false">Heating pre-heats</string>
+  <string name="card_house_plan_run_heat_night" formatted="false">Night setback</string>
+  <string name="card_house_plan_run_heat_away" formatted="false">Away</string>
+  <string name="card_house_plan_run_heat_zone_lower" formatted="false">{name} lowered</string>
+  <string name="card_house_plan_run_water_heater_on" formatted="false">Water heater heats</string>
+  <string name="card_house_plan_run_water_heater_paused" formatted="false">Water heater paused</string>
+  <string name="card_house_plan_run_other" formatted="false">{name}</string>
+  <string name="card_house_plan_reason_dear_hour" formatted="false">expensive hours</string>
+  <string name="card_house_plan_reason_tight_hour" formatted="false">keeps under the ceiling</string>
+  <string name="card_house_plan_reason_ceiling" formatted="false">for the ceiling</string>
+  <string name="card_house_plan_reason_cheap_before_dear" formatted="false">cheap before expensive hours</string>
+  <string name="card_house_plan_reason_room_warm" formatted="false">the house is warm</string>
+  <string name="card_house_plan_reason_cheap" formatted="false">cheap hour</string>
+  <string name="card_house_plan_reason_full_heat" formatted="false">full heat (legionella)</string>
+  <string name="card_house_plan_reason_max_off" formatted="false">may not stay off longer</string>
+  <string name="card_does_not_fit_line" formatted="false">Does not fit under the ceiling ({ceiling}): {need} by {time} – {fits} fit in time.</string>
+  <string name="card_does_not_fit_short" formatted="false">Does not fit under the ceiling ({ceiling}): {kwh} short by {time}.</string>
+  <string name="card_does_not_fit_short_no_time" formatted="false">Does not fit under the ceiling ({ceiling}): {kwh} short by the departure.</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits" formatted="false">The car takes what fits by {time} ({kwh}).</string>
+  <string name="card_does_not_fit_chosen_takes_what_fits_no_time" formatted="false">The car takes what fits by the departure.</string>
+  <string name="card_does_not_fit_chosen_accept_peak" formatted="false">The ceiling ({ceiling}) is set aside for this charge until {time}.</string>
+  <string name="card_does_not_fit_chosen_accept_peak_unplug" formatted="false">The ceiling ({ceiling}) is set aside for this charge until the car is unplugged.</string>
+  <string name="card_does_not_fit_peak_note" formatted="false">The peak may reach about {kw} kW.</string>
+  <string name="card_does_not_fit_choice_takes_what_fits" formatted="false">Take what fits</string>
+  <string name="card_does_not_fit_choice_takes_what_fits_kwh" formatted="false">Take what fits (≈ {kwh})</string>
+  <string name="card_does_not_fit_choice_later" formatted="false">Later departure</string>
+  <string name="card_does_not_fit_choice_later_at" formatted="false">Later departure ({time})</string>
+  <string name="card_does_not_fit_choice_accept_peak" formatted="false">Allow the peak</string>
+  <string name="card_does_not_fit_choice_accept_peak_kw" formatted="false">Allow the peak (≈ {kw} kW)</string>
+  <string name="card_does_not_fit_choice_accept_peak_cost" formatted="false">Allow the peak (≈ {kw} kW, ≈ {cost})</string>
+  <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Yes, allow the peak</string>
+  <string name="card_heat_settings_hot_water_help" formatted="false">The heat pump\'s own input for one extra hot-water run (NIBE\'s \"temporary lux\", for example): SpotNav pulses it on for two seconds and the pump makes one run. Never a water heater\'s power switch: pick that under Water heater. No legionella setting: the heat pump takes care of it.</string>
+  <string name="card_heat_settings_water_heater_help" formatted="false">The switch that powers an electric water heater with its own thermostat (a relay or a contactor). Not the heat pump\'s hot-water input: that goes under Hot water boost. SpotNav only watches it until you let it control it.</string>
 </resources>
