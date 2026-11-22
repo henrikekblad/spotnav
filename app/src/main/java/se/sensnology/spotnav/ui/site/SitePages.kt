@@ -15,6 +15,7 @@ import se.sensnology.spotnav.R
 import se.sensnology.spotnav.chart.DayRollover
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.HouseNow
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
@@ -39,6 +40,13 @@ internal class SiteMemory {
     var heat: Heat? = null
     /** Whether the heating has something to show, as the last read of `get_heat` said (`null`: not asked yet). */
     var heatShown: Boolean? = null
+    /** The site's plan (`get_plan`), the Plan box's; kept while the next read is on its way. */
+    var plan: Plan? = null
+    /**
+     * Whether the webhook serves `get_plan`: `get_site.capabilities.get_plan` on a home's webhook, else learnt from the
+     * first answer (an older Home Assistant answers "Unsupported action"); `null` while not known.
+     */
+    var planOffered: Boolean? = null
 }
 
 /** The platform's one-shot timer on the main thread. */

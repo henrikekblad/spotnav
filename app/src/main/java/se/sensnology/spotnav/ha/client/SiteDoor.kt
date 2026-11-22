@@ -15,7 +15,9 @@ data class SiteCapabilities(
     val getSiteSettingsView: Boolean = false,
     val updateSiteSettings: Boolean = false,
     val getPowerMonth: Boolean = false,
-    val suggestImportTarget: Boolean = false
+    val suggestImportTarget: Boolean = false,
+    /** `get_plan` (3.0.0b3): the house page's Plan box and the "does not fit" writes. */
+    val getPlan: Boolean = false
 )
 
 /** A home as its own webhook states it (`get_site`, Home Assistant 3.0). */
@@ -108,7 +110,8 @@ internal object SiteDoor {
                 capabilities = SiteCapabilities(
                     getHouse = flag("get_house"), getHeat = flag("get_heat"), batteryControl = flag("battery_control"),
                     getSiteSettingsView = flag("get_site_settings_view"), updateSiteSettings = flag("update_site_settings"),
-                    getPowerMonth = flag("get_power_month"), suggestImportTarget = flag("suggest_import_target")
+                    getPowerMonth = flag("get_power_month"), suggestImportTarget = flag("suggest_import_target"),
+                    getPlan = flag("get_plan")
                 ),
                 chargers = PairingProtocol.siteChargers(json.opt("chargers"))
             )

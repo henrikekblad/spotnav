@@ -455,7 +455,12 @@ internal data class Dashboard(
      * The departure calendar (`departure_calendar`, see [DashboardDepartureCalendar], Home Assistant 3.0): `null`
      * where Home Assistant has no calendar, from an older one, or for a block this app cannot read.
      */
-    val departureCalendar: DashboardDepartureCalendar? = null
+    val departureCalendar: DashboardDepartureCalendar? = null,
+    /**
+     * The planned charge does not fit under the ceiling by its departure (`does_not_fit`, see [DoesNotFit], Home
+     * Assistant 3.0.0b3): the line and the person's choices. `null` while it fits, from an older one, or unreadable.
+     */
+    val doesNotFit: DoesNotFit? = null
 ) {
     /** Whether the charge switch is on: the dashboard's `live.charging`. */
     val chargingEnabled: Boolean get() = live.charging
@@ -564,7 +569,8 @@ internal data class Dashboard(
                 gridTariff = DashboardGridTariff.parse(json.opt("grid_tariff")),
                 guest = DashboardGuest.parse(json.opt("guest")),
                 sun = DashboardSun.parse(json.opt("sun")),
-                departureCalendar = DashboardDepartureCalendar.parse(json.opt("departure_calendar"))
+                departureCalendar = DashboardDepartureCalendar.parse(json.opt("departure_calendar")),
+                doesNotFit = DoesNotFit.parse(json.opt("does_not_fit"))
             )
         }
 
