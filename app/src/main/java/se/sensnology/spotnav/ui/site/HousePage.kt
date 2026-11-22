@@ -88,7 +88,7 @@ internal class HousePage(
     }
     private val loads = LoadsDialog(this, session, text, colours)
     /** The Plan box, under Now as the card's Plan tab follows Now; not driven by the period picker. */
-    private val planBox = HousePlanBox(this, session, memory, text, colours) {
+    private val planBox = HousePlanBox(this, session, memory, text, colours, preferences) {
         ownChargerId?.let { PlanChoiceScope.Charger(it(), session.namesCharger) } ?: PlanChoiceScope.Home
     }
     private val flowStatus = line().apply { setTextColor(muted) }

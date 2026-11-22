@@ -1647,6 +1647,8 @@
   <string name="card_house_plan_would_note" formatted="false">Haalea: mitä SpotNav tekisi kuormalle, jota se vain näyttää. Sitä kuormaa ei nyt ohjata.</string>
   <string name="card_house_plan_per_load" formatted="false">Kuormittain</string>
   <string name="card_house_plan_in_words" formatted="false">Sanoin</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} rivi</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} riviä</string>
   <string name="card_house_plan_nothing" formatted="false">Seuraaville tunneille ei ole suunniteltu mitään.</string>
   <string name="card_house_plan_rolling" formatted="false">liukuva vuorokausi nyt alkaen</string>
   <string name="card_house_plan_would" formatted="false">tekisi</string>

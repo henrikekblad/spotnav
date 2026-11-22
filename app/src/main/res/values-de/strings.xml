@@ -1647,6 +1647,8 @@
   <string name="card_house_plan_would_note" formatted="false">Blass: was SpotNav mit einer Last täte, die es nur anzeigt. Diese Last wird jetzt nicht gesteuert.</string>
   <string name="card_house_plan_per_load" formatted="false">Je Last</string>
   <string name="card_house_plan_in_words" formatted="false">In Worten</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} Zeile</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} Zeilen</string>
   <string name="card_house_plan_nothing" formatted="false">Für die nächsten Stunden ist nichts geplant.</string>
   <string name="card_house_plan_rolling" formatted="false">ein rollender Tag ab jetzt</string>
   <string name="card_house_plan_would" formatted="false">würde</string>

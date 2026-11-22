@@ -1647,6 +1647,8 @@
   <string name="card_house_plan_would_note" formatted="false">Bleg: hvad SpotNav ville gøre med en last, den kun viser. Den last styres ikke nu.</string>
   <string name="card_house_plan_per_load" formatted="false">Pr. last</string>
   <string name="card_house_plan_in_words" formatted="false">I ord</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} linje</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} linjer</string>
   <string name="card_house_plan_nothing" formatted="false">Intet planlagt de næste timer.</string>
   <string name="card_house_plan_rolling" formatted="false">et rullende døgn fra nu</string>
   <string name="card_house_plan_would" formatted="false">ville</string>

@@ -1647,6 +1647,8 @@
   <string name="card_house_plan_would_note" formatted="false">Vaag: wat SpotNav zou doen met een last die het alleen toont. Die last wordt nu niet aangestuurd.</string>
   <string name="card_house_plan_per_load" formatted="false">Per last</string>
   <string name="card_house_plan_in_words" formatted="false">In woorden</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} regel</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} regels</string>
   <string name="card_house_plan_nothing" formatted="false">Niets gepland voor de komende uren.</string>
   <string name="card_house_plan_rolling" formatted="false">een rollende dag vanaf nu</string>
   <string name="card_house_plan_would" formatted="false">zou</string>

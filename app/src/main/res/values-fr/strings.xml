@@ -1655,6 +1655,8 @@
   <string name="card_house_plan_would_note" formatted="false">Estompé : ce que SpotNav ferait d\'une charge qu\'il ne fait qu\'afficher. Cette charge n\'est pas pilotée maintenant.</string>
   <string name="card_house_plan_per_load" formatted="false">Par charge</string>
   <string name="card_house_plan_in_words" formatted="false">En mots</string>
+  <string name="card_house_plan_rows_one" formatted="false">{count} ligne</string>
+  <string name="card_house_plan_rows_other" formatted="false">{count} lignes</string>
   <string name="card_house_plan_nothing" formatted="false">Rien de prévu pour les prochaines heures.</string>
   <string name="card_house_plan_rolling" formatted="false">une journée glissante à partir de maintenant</string>
   <string name="card_house_plan_would" formatted="false">ferait</string>
