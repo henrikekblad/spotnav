@@ -107,7 +107,8 @@ internal object WebhookReads {
         "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source",
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
         "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
-        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level", "does_not_fit"
+        "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level", "does_not_fit",
+        "charging_after_departure"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))

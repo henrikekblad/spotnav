@@ -172,7 +172,7 @@ internal object NotificationRules {
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "waiting_for_vehicle_update",
         "car_ended_waiting", "load_balancing_limited", "balancing_paused", "sun_past_target",
         // The car ends a charge to its own limit itself: one that stops there is full, not a fault.
-        "charging_to_vehicle_limit", "topping_off"
+        "charging_to_vehicle_limit", "topping_off", "not_reached_after_departure"
     )
 
     private val CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")

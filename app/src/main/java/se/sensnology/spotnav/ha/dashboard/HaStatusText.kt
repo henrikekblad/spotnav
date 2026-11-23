@@ -183,6 +183,31 @@ internal object HaStatusText {
                 if (until == null || zone == null) say("status.toppingOffOpen")
                 else say("status.toppingOff", mapOf("time" to clock(until)))
             }
+            "charging_after_departure" -> {
+                // The target was missed and SpotNav charges on: the car's level of its target, else the energy.
+                val until = instant(p["until"])
+                val time = if (until == null || zone == null) null else clock(until)
+                val shown = catchUpFigures(format.locale, p)
+                when {
+                    shown == null -> say("status.chargingAfterDepartureOpen")
+                    shown.first -> say(
+                        if (time == null) "status.chargingAfterDepartureKwhNoTime" else "status.chargingAfterDepartureKwh",
+                        if (time == null) shown.second else shown.second + ("time" to time)
+                    )
+                    else -> say(
+                        if (time == null) "status.chargingAfterDepartureNoTime" else "status.chargingAfterDeparture",
+                        if (time == null) shown.second else shown.second + ("time" to time)
+                    )
+                }
+            }
+            "not_reached_after_departure" -> {
+                val shown = catchUpFigures(format.locale, p)
+                when {
+                    shown == null -> say("status.notReachedAfterDepartureOpen")
+                    shown.first -> say("status.notReachedAfterDepartureKwh", shown.second)
+                    else -> say("status.notReachedAfterDeparture", shown.second)
+                }
+            }
             "waiting_for_publication" -> {
                 val at = instant(p["publication_at"])
                 if (at == null || zone == null) say("status.waitingForPublicationNoTime")
@@ -380,6 +405,7 @@ internal object HaStatusText {
                     say(if (automatic) "status.importTargetReleasedAuto" else key, mapOf("time" to moment(departure)))
                 }
             }
+            "charger_circuit_limited" -> say(key, mapOf("limit" to number(format.locale, num(p["limit_a"]) ?: 0.0, 0)))
             "load_balancing_limited" -> {
                 val limit = num(p["limit_a"])
                 // The cause names who shares the fuse; an unknown (or absent) cause is the plain sentence.
@@ -615,6 +641,26 @@ internal object HaStatusText {
 
     private fun instant(value: Any?): Instant? =
         (value as? String)?.let { runCatching { OffsetDateTime.parse(it).toInstant() }.getOrNull() }
+
+    /**
+     * The figures of a charge after a missed departure: the car's level of its target (whole percent, rounded
+     * down), else the energy delivered of the energy asked for; null when neither is known. `first` is true for kWh.
+     */
+    private fun catchUpFigures(locale: Locale, p: Map<String, Any?>): Pair<Boolean, Map<String, String>>? {
+        val target = num(p["target"])
+        val level = num(p["level"])
+        if (target != null && level != null) {
+            return false to mapOf(
+                "level" to number(locale, Math.floor(level), 0), "target" to number(locale, target, 0)
+            )
+        }
+        val kwh = num(p["kwh"])
+        val requested = num(p["requested_kwh"])
+        if (target == null && kwh != null && requested != null) {
+            return true to mapOf("kwh" to number(locale, kwh, 1), "requested" to number(locale, requested, 1))
+        }
+        return null
+    }
 
     private fun num(value: Any?): Double? = (value as? Double)?.takeIf { it.isFinite() }
 

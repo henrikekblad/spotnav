@@ -592,6 +592,68 @@ class HaStatusTextTest {
         }
     }
 
+    @Test fun chargingAfterAMissedDepartureNamesTheLevelOfTheTargetAndTheLatestTime() {
+        val line = StatusLine(
+            "charging_after_departure",
+            mapOf("target" to 80.0, "level" to 63.7, "until" to "2026-09-22T05:40:00+00:00")
+        )
+        assertEquals(
+            "Charging after the departure: the target was not reached (63 % of 80 %, at most until 07:40).",
+            HaStatusText.line(line, format("en"), now)
+        )
+        assertEquals(
+            "Laddar efter avresan: målet nåddes inte (63 % av 80 %, som längst till 07:40).",
+            HaStatusText.line(line, format("sv"), now)
+        )
+        for (language in listOf("da", "nb", "fi", "de", "nl", "es", "fr")) {
+            assertFalse(HaStatusText.line(line, format(language), now).contains("{"))
+        }
+        assertEquals(
+            "Laddar efter avresan: målet nåddes inte (63 % av 80 %).",
+            HaStatusText.line(StatusLine("charging_after_departure", line.params - "until"), format("sv"), now)
+        )
+    }
+
+    @Test fun chargingAfterAMissedDepartureForAnEnergyNeedNamesTheEnergy() {
+        val line = StatusLine(
+            "charging_after_departure",
+            mapOf("target" to null, "level" to null, "kwh" to 6.24, "requested_kwh" to 10.0, "until" to "2026-09-22T05:40:00+00:00")
+        )
+        assertEquals(
+            "Charging after the departure: the target was not reached (6.2 of 10 kWh, at most until 07:40).",
+            HaStatusText.line(line, format("en"), now)
+        )
+        assertEquals(
+            "Charging after the departure: the target was not reached (6.2 of 10 kWh).",
+            HaStatusText.line(StatusLine("charging_after_departure", line.params - "until"), format("en"), now)
+        )
+        assertEquals(
+            "Charging after the departure: the target was not reached.",
+            HaStatusText.line(StatusLine("charging_after_departure", emptyMap()), format("en"), now)
+        )
+    }
+
+    @Test fun aChargeAfterAMissedDepartureThatEndedShortSaysWhereItEnded() {
+        val level = StatusLine("not_reached_after_departure", mapOf("target" to 80.0, "level" to 71.2))
+        assertEquals(
+            "The target was not reached: charging after the departure ended at 71 % of 80 %.",
+            HaStatusText.line(level, format("en"), now)
+        )
+        assertEquals(
+            "Målet nåddes inte: laddningen efter avresan slutade vid 71 % av 80 %.",
+            HaStatusText.line(level, format("sv"), now)
+        )
+        val energy = StatusLine("not_reached_after_departure", mapOf("kwh" to 6.24, "requested_kwh" to 10.0))
+        assertEquals(
+            "The target was not reached: charging after the departure ended at 6.2 of 10 kWh.",
+            HaStatusText.line(energy, format("en"), now)
+        )
+        assertEquals(
+            "The target was not reached: charging after the departure has ended.",
+            HaStatusText.line(StatusLine("not_reached_after_departure", emptyMap()), format("en"), now)
+        )
+    }
+
     @Test fun aCarFinishingPastTheLastWindowChargesUntilItIsFullAtMostUntilATime() {
         val topOff = StatusLine("topping_off", mapOf("until" to "2026-09-22T05:40:00+00:00"))
         assertEquals(
