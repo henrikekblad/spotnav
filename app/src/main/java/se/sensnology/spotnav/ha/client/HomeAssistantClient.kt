@@ -479,6 +479,15 @@ object HomeAssistantClient {
         return SiteDoor.access(status, body, failure)
     }
 
+    /**
+     * This phone's own notification entry (webhook `phone_notifications`, SpotNav 3.0): read, or written by [body]'s
+     * `set`. The body carries the app's secret id: never logged here or by the request. Never throws.
+     */
+    internal fun phoneNotifications(settings: HomeAssistantSettings, body: JSONObject): PhoneNotificationsCall.Outcome {
+        val (status, answer) = write(settings, body)
+        return PhoneNotificationsCall.answer(status, answer)
+    }
+
     /** Hand Home Assistant this phone's push reference and chosen events (webhook `push_register`). */
     internal fun registerPush(settings: HomeAssistantSettings, pushRef: String?, events: List<String>): Boolean {
         val (status, body) = write(settings, PushRegister.payload(pushRef, events))
