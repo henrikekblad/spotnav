@@ -25,6 +25,7 @@ import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.PlanRead
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
+import se.sensnology.spotnav.notify.NotReadyNotifications
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardHeading
 import se.sensnology.spotnav.ui.common.cardTitle
@@ -163,7 +164,15 @@ internal class HousePlanBox(
         content.addView(muted(13f, shown.lede), wide().apply { topMargin = dp(6) })
         content.addView(stats(shown.stats), wide().apply { topMargin = dp(10) })
         // What will not be ready in time across the site: first, as the phones' notice opens it.
-        plan.notReady?.takeIf { it.items.isNotEmpty() }?.let { content.addView(notReadySheet(plan, it), wide().apply { topMargin = dp(10) }) }
+        plan.notReady?.takeIf { it.items.isNotEmpty() }?.let { block ->
+            val sheet = notReadySheet(plan, block)
+            content.addView(sheet, wide().apply { topMargin = dp(10) })
+            // Opened from the phone's "Not ready in time" notice: the sheet is brought into view once.
+            if (NotReadyNotifications.openSheet) {
+                NotReadyNotifications.openSheet = false
+                sheet.post { sheet.requestRectangleOnScreen(android.graphics.Rect(0, 0, sheet.width, sheet.height), false) }
+            }
+        }
         shown.noPrices?.let { content.addView(muted(13f, it), wide().apply { topMargin = dp(6) }) }
         content.addView(subheading(shown.fromGrid), wide().apply { topMargin = dp(12) })
         content.addView(HousePlanChartView(context, planPalette).apply { chart = shown.chart }, wide().apply { topMargin = dp(4) })
