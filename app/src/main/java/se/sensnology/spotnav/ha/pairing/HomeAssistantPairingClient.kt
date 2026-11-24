@@ -11,9 +11,9 @@ internal object HomeAssistantPairingClient {
      * refused or answered something unreadable. The address is checked first: it also decides where
      * the webhook ids in an approval would be sent.
      */
-    fun request(baseUrl: String, device: String, code: String, appId: String? = null): String? {
+    fun request(baseUrl: String, device: String, code: String, appId: String? = null, model: String? = null): String? {
         if (!HomeAssistantSettings.isAllowedBaseUrl(baseUrl)) return null
-        val body = PairingProtocol.requestPayload(device, code, appId)
+        val body = PairingProtocol.requestPayload(device, code, appId, model)
         return PairingProtocol.requestId(post(baseUrl, body).orEmpty())
     }
 

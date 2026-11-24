@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
-import android.os.Build
 import android.text.InputType
 import android.text.SpannableString
 import android.text.Spanned
@@ -30,6 +29,7 @@ import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.notify.AppIdentity
+import se.sensnology.spotnav.notify.PhoneName
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.push.PushStore
 import se.sensnology.spotnav.ha.pairing.ChargerPairingApproval
@@ -268,9 +268,11 @@ internal class HomeAssistantSection(
                 var requestId: String? = null
                 // This app's secret id beside the device's name: Home Assistant 3.0 knows this phone by it.
                 val appId = AppIdentity.forContext(applicationContext).appId()
+                // The phone's own name (what the approval in Home Assistant shows) and its model beside it.
+                val deviceName = PhoneName.of(applicationContext)
                 for (candidate in listOf(baseUrl) + alternatives) {
                     if (cancelled.get()) return@execute
-                    requestId = HomeAssistantPairingClient.request(candidate, Build.MODEL, shown, appId)
+                    requestId = HomeAssistantPairingClient.request(candidate, deviceName, shown, appId, PhoneName.model)
                     if (requestId != null) { target = candidate; break }
                 }
                 if (requestId == null) {
