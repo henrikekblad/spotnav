@@ -1745,6 +1745,7 @@
   <string name="card_heat_load_control_why_lock_unreadable" formatted="false">die Sperre kann nicht gelesen werden, startet nicht</string>
   <string name="card_heat_load_control_why_pump_not_ours" formatted="false">die Wärmepumpe wird nicht von SpotNav gesteuert und von ihrem eigenen Strömungswächter geschützt; schalte Poolwärmepumpe steuern ein, damit die Umwälzung ihr folgt</string>
   <string name="card_heat_load_control_why_restore_waits" formatted="false">deine Einstellung Heizen wird zurückgeschrieben, sobald die Umwälzung läuft</string>
+  <string name="card_heat_load_control_why_stale_plan" formatted="false">der Plan wird gerade nicht erstellt, nichts wird geändert</string>
   <string name="card_heat_tab_pool" formatted="false">Pool</string>
   <string name="card_heat_tab_spa" formatted="false">Whirlpool</string>
   <string name="card_heat_tab_sauna" formatted="false">Sauna</string>

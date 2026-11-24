@@ -1745,6 +1745,7 @@
   <string name="card_heat_load_control_why_lock_unreadable" formatted="false">låset går inte att läsa, startar inte</string>
   <string name="card_heat_load_control_why_pump_not_ours" formatted="false">värmepumpen styrs inte av SpotNav och skyddas av sin egen flödesvakt; slå på Styr poolens värmepump för att cirkulationen ska följa den</string>
   <string name="card_heat_load_control_why_restore_waits" formatted="false">din inställning Värme skrivs tillbaka när cirkulationen går</string>
+  <string name="card_heat_load_control_why_stale_plan" formatted="false">planen görs inte just nu, inget ändras</string>
   <string name="card_heat_tab_pool" formatted="false">Pool</string>
   <string name="card_heat_tab_spa" formatted="false">Spa</string>
   <string name="card_heat_tab_sauna" formatted="false">Bastu</string>
