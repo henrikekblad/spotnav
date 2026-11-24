@@ -485,6 +485,8 @@
   <string name="notify_stopped_held">La programmation propre à la borne retient la charge planifiée.</string>
   <string name="notify_stopped_disabled">La borne est désactivée, la charge planifiée ne peut donc pas démarrer.</string>
   <string name="notify_stopped_ignores_stop">La borne continue de charger bien qu\'elle ait été arrêtée. Arrêtez-la sur la borne ou débranchez la voiture.</string>
+  <string name="notify_stopped_car_refuses">La voiture n\'accepte pas de courant alors que l\'objectif n\'est pas atteint. Lancez la charge dans l\'application de la voiture.</string>
+  <string name="notify_stopped_car_refuses_level">La voiture n\'accepte pas de courant à %1$s alors que l\'objectif est %2$s. Lancez la charge dans l\'application de la voiture.</string>
   <string name="notify_at_risk">La charge ne sera pas prête pour le départ.</string>
   <string name="notify_at_risk_time">La charge ne sera pas prête pour le départ à %1$s.</string>
   <string name="notify_complete_target">Charge terminée : l\'objectif de %1$s a été atteint.</string>

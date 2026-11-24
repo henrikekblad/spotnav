@@ -236,6 +236,29 @@ class NotificationRulesTest {
         assertEquals(emptyList<LocalEvent>(), events(quiet, ignored, chosen = setOf(NotificationEvent.CHARGE_STARTED)))
     }
 
+    @Test fun aCarThatTakesNoCurrentIsToldOnceWithItsLevelAndTarget() {
+        val zone = ZoneId.of("UTC")
+        val quiet = NotificationRules.snapshot(Dashboard.parse(startIdle()), Instant.parse("2026-09-22T06:00:00Z"), zone)
+        val refuses = NotificationRules.snapshot(
+            idleWith("car_refuses", JSONObject().put("soc_percent", 65.0).put("target", 80.0)),
+            Instant.parse("2026-09-22T06:05:00Z"),
+            zone
+        )
+        assertEquals(NotificationRules.CAR_REFUSES, refuses.stopReason)
+        val told = listOf(LocalEvent(NotificationEvent.PLAN_STOPPED, reason = "car_refuses", level = 65.0, percent = 80.0))
+        assertEquals(told, events(quiet, refuses))
+        // While it lasts nothing more is told; a plain stop reason before it does not hide it.
+        assertEquals(emptyList<LocalEvent>(), events(refuses, refuses.copy(at = later.plus(Duration.ofHours(1)))))
+        assertEquals(told, events(refuses.copy(stopReason = "vehicle_not_requesting"), refuses))
+        // Kept across checks with its facts.
+        val kept = NotificationSnapshot.fromJson(refuses.toJson())
+        assertEquals(65.0, kept?.carRefusesLevel)
+        assertEquals(80.0, kept?.carRefusesTarget)
+        // SpotNav starting the charge in the car is no notice.
+        val started = NotificationRules.snapshot(idleWith("car_start_made"), Instant.parse("2026-09-22T06:05:00Z"), zone)
+        assertTrue(started.stopReason != NotificationRules.CAR_REFUSES)
+    }
+
     @Test fun aPersonsManualStopPauseIsNeverAStoppedUnexpectedly() {
         val json = startIdle()
         val manual = HaFixtures.json("dashboard/manual_stop.json")

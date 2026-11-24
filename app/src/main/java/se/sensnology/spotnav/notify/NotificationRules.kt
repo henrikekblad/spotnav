@@ -68,7 +68,13 @@ internal data class NotificationSnapshot(
     /** The dashboard shows the charger not ready (`charger_unavailable`, or its connection in error): no baseline for the target. */
     val notReady: Boolean = false,
     /** A completion was told for this charge and the car has not been unplugged nor a new charge started since. */
-    val completeTold: Boolean = false
+    val completeTold: Boolean = false,
+    /**
+     * The car takes no current below its target and SpotNav could not start the charge in the car (`car_refuses`):
+     * the car's level and the target it was told with, `null` when not known or not said.
+     */
+    val carRefusesLevel: Double? = null,
+    val carRefusesTarget: Double? = null
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -93,6 +99,8 @@ internal data class NotificationSnapshot(
         put("person_paused", personPaused)
         put("not_ready", notReady)
         put("complete_told", completeTold)
+        put("car_refuses_level", carRefusesLevel ?: JSONObject.NULL)
+        put("car_refuses_target", carRefusesTarget ?: JSONObject.NULL)
     }
 
     companion object {
@@ -123,7 +131,9 @@ internal data class NotificationSnapshot(
                 planNotice = (json.opt("plan_notice") as? Number)?.toLong(),
                 personPaused = json.opt("person_paused") as? Boolean ?: false,
                 notReady = json.opt("not_ready") as? Boolean ?: false,
-                completeTold = json.opt("complete_told") as? Boolean ?: false
+                completeTold = json.opt("complete_told") as? Boolean ?: false,
+                carRefusesLevel = number("car_refuses_level"),
+                carRefusesTarget = number("car_refuses_target")
             )
         }.getOrNull()
     }
@@ -167,6 +177,15 @@ internal object NotificationRules {
     /** `plan_stopped`'s reason when the charger keeps charging under a person's Stop. */
     const val IGNORES_STOP = "charger_ignores_stop"
 
+    /**
+     * `plan_stopped`'s reason when the car takes no current the charger offers below its target and SpotNav could not
+     * start the charge in the car (the status line `car_refuses`, until the car draws or is unplugged).
+     */
+    const val CAR_REFUSES = "car_refuses"
+
+    /** The reasons told whatever the plan says, and when they begin, whatever reason stood before. */
+    private val OWN_REASONS = setOf(IGNORES_STOP, CAR_REFUSES)
+
     /** Lines under which a charge that is not running is no fault (`docs/notifications.md`). */
     private val EXCUSED = setOf(
         "paused", "target_reached", "hybrid_satisfied", "nothing_to_charge", "waiting_for_vehicle_update",
@@ -195,6 +214,7 @@ internal object NotificationRules {
         val codes = dashboard.status.lines.map { it.code }.toSet()
         val targetLine = dashboard.status.lines.firstOrNull { it.code == "target_reached" }?.params
         val carEnded = dashboard.status.lines.firstOrNull { it.code == "car_ended_waiting" }?.params
+        val carRefuses = dashboard.status.lines.firstOrNull { it.code == "car_refuses" }?.params
         val remaining = dashboard.plan.remainingKwh
         val expected = open != null &&
             Duration.between(open.first, now) >= GRACE &&
@@ -205,6 +225,8 @@ internal object NotificationRules {
         val stopReason = when {
             // SpotNav gave up stopping a charger under a person's Stop: told whatever the plan says.
             "charger_ignores_stop" in codes -> IGNORES_STOP
+            // The car refuses the offered current in any charge SpotNav runs: told whatever the plan says.
+            carRefuses != null -> CAR_REFUSES
             !expected -> null
             "charger_unavailable" in codes -> "charger_unavailable"
             "held_by_charger" in codes -> "held_by_charger"
@@ -235,7 +257,9 @@ internal object NotificationRules {
             plannedKwh = dashboard.plan.proposal?.plannedKwh,
             planNotice = dashboard.planNotice,
             personPaused = "paused" in codes,
-            notReady = "charger_unavailable" in codes || connection == ConnectionState.ERROR
+            notReady = "charger_unavailable" in codes || connection == ConnectionState.ERROR,
+            carRefusesLevel = carRefuses?.get("soc_percent") as? Double,
+            carRefusesTarget = carRefuses?.get("target") as? Double
         )
     }
 
@@ -270,10 +294,18 @@ internal object NotificationRules {
 
     /** Every event the change from [before] to [now] is, chosen or not, in the contract's order. */
     private fun changes(before: NotificationSnapshot, now: NotificationSnapshot): List<LocalEvent> = buildList {
-        val ignoresStop = now.stopReason == IGNORES_STOP && before.stopReason != IGNORES_STOP
-        if (ignoresStop || (now.stopReason != null && now.stopReason != IGNORES_STOP && before.stopReason == null)) {
+        val own = now.stopReason in OWN_REASONS && before.stopReason != now.stopReason
+        if (own || (now.stopReason != null && now.stopReason !in OWN_REASONS && before.stopReason == null)) {
             val reason = if (now.stopReason == "not_started" && before.charging) "stopped" else now.stopReason
-            add(LocalEvent(NotificationEvent.PLAN_STOPPED, reason = reason))
+            if (reason == CAR_REFUSES) {
+                add(
+                    LocalEvent(
+                        NotificationEvent.PLAN_STOPPED, reason = reason, level = now.carRefusesLevel, percent = now.carRefusesTarget
+                    )
+                )
+            } else {
+                add(LocalEvent(NotificationEvent.PLAN_STOPPED, reason = reason))
+            }
         }
         if (now.atRisk && !before.atRisk) add(LocalEvent(NotificationEvent.PLAN_AT_RISK, time = now.departure))
         complete(before, now)?.let(::add)

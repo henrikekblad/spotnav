@@ -303,8 +303,18 @@ internal object LocalNotifications {
             minimumFractionDigits = 0
             maximumFractionDigits = digits
         }.format(value)
+        fun percent(value: Double) = number(value, 1) + if (AppLanguageSettings.language(context) == "en") "%" else " %"
         return when (event.event) {
-            NotificationEvent.PLAN_STOPPED -> t(
+            NotificationEvent.PLAN_STOPPED -> if (event.reason == NotificationRules.CAR_REFUSES) {
+                // Home Assistant's own words: the car's level and the target, whole percents, and what to do.
+                val level = event.level
+                val target = event.percent
+                if (level == null || target == null) {
+                    t(R.string.notify_stopped_car_refuses)
+                } else {
+                    t(R.string.notify_stopped_car_refuses_level, percent(Math.round(level).toDouble()), percent(Math.round(target).toDouble()))
+                }
+            } else t(
                 when (event.reason) {
                     "stopped" -> R.string.notify_stopped_stopped
                     "charger_unavailable" -> R.string.notify_stopped_unavailable
@@ -321,8 +331,6 @@ internal object LocalNotifications {
                 event.reason == "target" && event.percent != null -> {
                     // Home Assistant's own choice: never "the target is reached" on an estimate, nor for a level
                     // read below it; an estimate's level is a whole percent.
-                    fun percent(value: Double) =
-                        number(value, 1) + if (AppLanguageSettings.language(context) == "en") "%" else " %"
                     val target = percent(event.percent)
                     val level = event.level
                     when {

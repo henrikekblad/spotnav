@@ -485,6 +485,8 @@
   <string name="notify_stopped_held">La programación propia del cargador está reteniendo la carga planificada.</string>
   <string name="notify_stopped_disabled">El cargador está desactivado, así que la carga planificada no puede empezar.</string>
   <string name="notify_stopped_ignores_stop">El cargador sigue cargando aunque se ha detenido. Detenlo en el cargador o desenchufa el coche.</string>
+  <string name="notify_stopped_car_refuses">El coche no acepta corriente aunque no ha llegado al objetivo. Inicia la carga en la app del coche.</string>
+  <string name="notify_stopped_car_refuses_level">El coche no acepta corriente al %1$s aunque el objetivo es %2$s. Inicia la carga en la app del coche.</string>
   <string name="notify_at_risk">La carga no estará lista para la salida.</string>
   <string name="notify_at_risk_time">La carga no estará lista para la salida de las %1$s.</string>
   <string name="notify_complete_target">Carga completada: se ha alcanzado el objetivo del %1$s.</string>
