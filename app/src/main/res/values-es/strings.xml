@@ -440,6 +440,17 @@
   <string name="notify_event_plugged_in">Coche enchufado</string>
   <string name="notify_event_unplugged">Coche desenchufado</string>
   <string name="notify_event_plan_installed">Nuevo plan</string>
+  <string name="notify_phone_send">Enviar a este teléfono</string>
+  <string name="notify_phone_chargers">Sigue a los cargadores</string>
+  <string name="notify_group_charging">Carga</string>
+  <string name="notify_group_pool">Piscina</string>
+  <string name="notify_group_spa">Spa</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Temporada de piscina</string>
+  <string name="notify_at_risk_help">También un baño de spa o una sesión de sauna que no estará lista a tiempo.</string>
+  <string name="notify_pool_season_title">SpotNav · Piscina</string>
+  <string name="notify_pool_season_message">El agua lleva tres días en torno a 10 °C: ¿hora de cerrar la temporada de piscina?</string>
+  <string name="notify_pool_season_close">Cerrar la temporada</string>
   <string name="notify_app_title">A través de la app SpotNav</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d de %2$d evento</item>

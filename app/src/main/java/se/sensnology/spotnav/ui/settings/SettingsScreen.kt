@@ -239,7 +239,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         // Opened from a "Get started" row: at that row, once it is drawn, marked for a moment.
         shell.settingsTarget?.let { target -> shell.settingsTarget = null; seekRow(target) }
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
-        val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content) }
+        val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content, baseUrl = it.baseUrl) }
         val settingsGeneration = viewGeneration
         val homeAssistantCard = card(content, t(R.string.home_assistant), R.drawable.ic_card_charger)
         HomeAssistantSection(

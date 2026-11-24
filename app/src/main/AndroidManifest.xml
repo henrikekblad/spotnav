@@ -69,6 +69,9 @@
             android:name=".notify.NotReadyAnswerReceiver"
             android:exported="false" />
         <receiver
+            android:name=".notify.PoolSeasonReceiver"
+            android:exported="false" />
+        <receiver
             android:name=".widget.PriceWidgetProvider"
             android:exported="true">
             <intent-filter>

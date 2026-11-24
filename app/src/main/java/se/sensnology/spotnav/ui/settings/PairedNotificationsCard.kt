@@ -11,10 +11,15 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import se.sensnology.spotnav.R
+import se.sensnology.spotnav.ha.client.PhoneNotifications
+import se.sensnology.spotnav.ha.client.PhoneNotificationsCall
 import se.sensnology.spotnav.ha.settings.HaNotificationSettings
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.notify.PhoneDoor
+import se.sensnology.spotnav.notify.PhoneNotificationsStore
+import se.sensnology.spotnav.notify.PhoneNotificationsSync
 import se.sensnology.spotnav.push.PushNotifications
 import se.sensnology.spotnav.push.PushRegistration
 import se.sensnology.spotnav.ui.common.ValueCue
@@ -37,15 +42,26 @@ internal object NotificationPhones {
 }
 
 /**
- * A paired charger's notifications, after the paired cards: a summary of the two routes, named by
- * the app that shows the notification, and one dialog that changes both. Via the Home Assistant app
- * is the Home Assistant card's own choice of phones and events (shown only when Home Assistant
- * states it); via the SpotNav app is this phone's own check (off by default, see
+ * A paired charger's notifications, after the paired cards.
+ *
+ * Where its Home Assistant answers `phone_notifications` (SpotNav 3.0): one box for this phone, as Home Assistant holds
+ * it for the whole installation: on or off, its events grouped as the installation has them, the chargers it follows
+ * (only with more than one), and instant notifications where the build and phone offer them. Which app shows a notice
+ * is Home Assistant's routing, never said here.
+ *
+ * Where it does not (2.x, 3.0.0b4), as before: a summary of the two routes, named by the app that shows the
+ * notification. Via the Home Assistant app is the Home Assistant card's own choice of phones and events (shown only
+ * when Home Assistant states it); via the SpotNav app is this phone's own check (off by default, see
  * [LocalNotifications]), at once with instant notifications where the build and phone offer them.
  */
-internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) : ViewScope(scope) {
+internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout, baseUrl: String) : ViewScope(scope) {
     private val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val local = LocalNotificationStore.forContext(context)
+    private val doorKey = PhoneDoor.key(baseUrl)
+    private val phoneStore = PhoneNotificationsStore.forContext(context)
+    // Home Assistant's answer for this phone; `null` for an older Home Assistant, or while none was read.
+    private var phones: PhoneNotifications? = phoneStore.current(doorKey)
+    private var phonesAsked = false
     private var record: HaNotificationSettings? = null
     private var writable = false
     // Whether the record states identification, so its event is offered (see NotificationEvent.offered).
@@ -74,7 +90,29 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         record = notifications
         this.writable = writable
         this.identifies = identifies
+        if (!phonesAsked) {
+            phonesAsked = true
+            readPhones()
+        }
         repaint()
+    }
+
+    private fun door(): PhoneDoor? = PhoneNotificationsSync.doors(context).firstOrNull { it.key == doorKey }
+
+    /** Ask Home Assistant for this phone (an older one is asked again only after a while), then paint what it said. */
+    private fun readPhones() {
+        val door = door() ?: return
+        worker.execute {
+            val sync = PhoneNotificationsSync.forContext(context)
+            if (sync.due(door)) sync.read(door)
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                phones = phoneStore.current(doorKey)
+                // The check follows the answer's switch from now on.
+                LocalNotifications.sync(context)
+                repaint()
+            }
+        }
     }
 
     /** The permission prompt was answered: say what it means for the summary. */
@@ -116,6 +154,7 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
 
     private fun repaint() {
         container.removeAllViews()
+        phones?.let { return paintPhone(it) }
         val card = card(container, t(R.string.notify_section), R.drawable.ic_bell)
         val body = card.body
         record?.let { settings ->
@@ -126,6 +165,115 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
         settingRow(body, t(R.string.notify_app_title), NotificationsOverview.spotNav(local.enabled, local.events, instantOn(), texts, identifies == true),
             onTap = { openSpotNav() })
         if (local.enabled && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
+    }
+
+    // --- This phone, as Home Assistant holds it ----------------------------------------------------
+
+    private fun paintPhone(value: PhoneNotifications) {
+        val card = card(container, t(R.string.notify_section), R.drawable.ic_bell)
+        val body = card.body
+        settingRow(body, value.name.ifBlank { t(R.string.notify_section) }, NotificationsOverview.phone(value, instantOn(), texts),
+            onTap = { openPhone() }, target = SettingsTarget.PHONES.tag)
+        if (value.on && !LocalNotifications.allowed(context)) body.addView(muted(t(R.string.notify_local_denied), bottom = 4))
+    }
+
+    private fun phoneEventName(event: String): String? = when (event) {
+        PhoneNotificationsCall.POOL_SEASON -> t(R.string.notify_event_pool_season)
+        else -> NotificationEvent.of(event)?.let { eventName(it) }
+    }
+
+    private fun groupName(group: PhoneNotificationsEdit.Group) = t(
+        when (group) {
+            PhoneNotificationsEdit.Group.CHARGING -> R.string.notify_group_charging
+            PhoneNotificationsEdit.Group.POOL -> R.string.notify_group_pool
+            PhoneNotificationsEdit.Group.SPA -> R.string.notify_group_spa
+            PhoneNotificationsEdit.Group.SAUNA -> R.string.notify_group_sauna
+        }
+    )
+
+    /** This phone's editor: on or off, instant or every 15 minutes, its events by group and the chargers it follows. */
+    private fun openPhone() {
+        val value = phones ?: return
+        val door = door() ?: return
+        val body = editorBody()
+        val on = switch(t(R.string.notify_phone_send), value.on).also { body.addView(it) }
+        val instant = if (instantOffered()) {
+            switch(t(R.string.notify_push_toggle), PushNotifications.enabled(context)).also { body.addView(it) }
+        } else null
+        val help = muted("", top = 2).also { body.addView(it) }
+        val eventBoxes = mutableListOf<Pair<String, CheckBox>>()
+        for (group in PhoneNotificationsEdit.groups(value.loads)) {
+            body.addView(heading(groupName(group.group), top = 10))
+            for (event in group.events) {
+                val name = phoneEventName(event) ?: continue
+                eventBoxes += event to checkbox(name, event in value.events).also { body.addView(it) }
+                if (PhoneNotificationsEdit.atRiskHelp(value.loads, event)) body.addView(muted(t(R.string.notify_at_risk_help), bottom = 4))
+            }
+        }
+        val chargerBoxes = if (PhoneNotificationsEdit.asksChargers(value)) {
+            body.addView(heading(t(R.string.notify_phone_chargers), top = 10))
+            value.installationChargers.map { charger -> charger.id to checkbox(charger.name, value.follows(charger.id)).also { body.addView(it) } }
+        } else emptyList()
+        val error = errorView().also { body.addView(it) }
+        fun follow() {
+            instant?.isEnabled = on.isChecked
+            eventBoxes.forEach { it.second.isEnabled = on.isChecked }
+            chargerBoxes.forEach { it.second.isEnabled = on.isChecked }
+            help.text = t(NotificationsOverview.spotNavHelp(instant?.isChecked == true))
+        }
+        on.setOnCheckedChangeListener { _, _ -> follow() }
+        instant?.setOnCheckedChangeListener { _, _ -> follow() }
+        follow()
+        openEditor(value.name.ifBlank { t(R.string.notify_section) }, body, error) { done ->
+            val change = PhoneNotificationsEdit.change(
+                value,
+                on = on.isChecked,
+                events = eventBoxes.filter { it.second.isChecked }.map { it.first },
+                chargers = chargerBoxes.filter { it.second.isChecked }.map { it.first }
+            )
+            // The instant switch can only change while this phone's notifications are on.
+            val pushWrite = instantOffered() && on.isChecked && instant != null && instant.isChecked != PushNotifications.enabled(context)
+            val turnedOn = on.isChecked && !value.on
+            fun pushThen() {
+                if (!pushWrite) {
+                    repaint()
+                    return done(null)
+                }
+                PushNotifications.setEnabled(context, instant!!.isChecked) { result ->
+                    runOnUiThread {
+                        if (isDestroyed) return@runOnUiThread
+                        repaint()
+                        val failure = NotificationsOverview.pushFailure(result)
+                        // A failed turn-on leaves instant notifications off: the switch says so.
+                        if (failure != null) instant.isChecked = false
+                        done(failure?.let { t(it) })
+                    }
+                }
+            }
+            if (turnedOn && LocalNotifications.needsPermission(context)) requestPermission()
+            if (change == null) return@openEditor pushThen()
+            worker.execute {
+                val result = PhoneNotificationsSync.forContext(context).read(door, change = change)
+                runOnUiThread {
+                    if (isDestroyed) return@runOnUiThread
+                    when (result) {
+                        is PhoneNotificationsSync.Result.Current -> {
+                            phones = result.value
+                            LocalNotifications.sync(context)
+                            pushThen()
+                        }
+                        PhoneNotificationsSync.Result.Refused -> done(t(R.string.paired_error_invalid))
+                        PhoneNotificationsSync.Result.Legacy -> {
+                            // Home Assistant went back to a version without it: the routes as before.
+                            phones = null
+                            repaint()
+                            done(t(R.string.paired_error_version))
+                        }
+                        is PhoneNotificationsSync.Result.Failed -> done(t(R.string.paired_error_generic))
+                    }
+                }
+            }
+        }
     }
 
     // --- The dialog -------------------------------------------------------------------------------
@@ -263,5 +411,8 @@ internal class PairedNotificationsCard(scope: ViewScope, parent: LinearLayout) :
 
     private companion object {
         const val ERROR_COLOUR = 0xFFD65C5C.toInt()
+
+        /** Where this phone's notifications are read and written, off the main thread. */
+        val worker: java.util.concurrent.ExecutorService = java.util.concurrent.Executors.newSingleThreadExecutor()
     }
 }

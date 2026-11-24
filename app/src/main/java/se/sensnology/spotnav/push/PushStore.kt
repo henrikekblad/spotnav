@@ -37,6 +37,22 @@ internal class PushStore(private val store: KeyValueStore) {
         }
     }
 
+    /**
+     * What one Home Assistant that answers `phone_notifications` was last told of the wake-up reference ([key]: its
+     * address), or `null` when it was never told.
+     */
+    fun doorSent(key: String): PushRegistration.DoorSent? {
+        val raw = store.getString(DOOR + key) ?: return null
+        return runCatching { PushRegistration.DoorSent(JSONObject(raw).opt("ref") as? String) }.getOrNull()
+    }
+
+    fun rememberDoor(key: String, sent: PushRegistration.DoorSent?) {
+        if (sent == null) store.remove(DOOR + key) else store.putString(DOOR + key, JSONObject().put("ref", sent.ref ?: JSONObject.NULL).toString())
+    }
+
+    /** The Home Assistants told something through `phone_notifications`. */
+    fun doorsTold(): Set<String> = store.keys().filter { it.startsWith(DOOR) }.map { it.removePrefix(DOOR) }.toSet()
+
     /** The profiles that were told something, so a profile unpaired since is forgotten too. */
     var known: Set<String>
         get() = store.getString(KNOWN)?.let { raw ->
@@ -50,6 +66,7 @@ internal class PushStore(private val store: KeyValueStore) {
         private const val REF = "push_ref"
         private const val SENT = "sent."
         private const val KNOWN = "known"
+        private const val DOOR = "door."
 
         fun forContext(context: Context): PushStore = PushStore(SharedPreferencesKeyValueStore(context.applicationContext, PREFS))
     }

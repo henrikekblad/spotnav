@@ -434,6 +434,17 @@
   <string name="notify_event_plugged_in">Auto angeschlossen</string>
   <string name="notify_event_unplugged">Auto abgesteckt</string>
   <string name="notify_event_plan_installed">Neuer Ladeplan</string>
+  <string name="notify_phone_send">An dieses Telefon senden</string>
+  <string name="notify_phone_chargers">Folgt den Wallboxen</string>
+  <string name="notify_group_charging">Laden</string>
+  <string name="notify_group_pool">Pool</string>
+  <string name="notify_group_spa">Whirlpool</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Poolsaison</string>
+  <string name="notify_at_risk_help">Auch ein Whirlpool-Bad oder ein Saunagang, der nicht rechtzeitig fertig wird.</string>
+  <string name="notify_pool_season_title">SpotNav · Pool</string>
+  <string name="notify_pool_season_message">Das Wasser liegt seit drei Tagen bei etwa 10 °C – Zeit, die Poolsaison zu schließen?</string>
+  <string name="notify_pool_season_close">Saison schließen</string>
   <string name="notify_app_title">Über die SpotNav-App</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d von %2$d Ereignis</item>

@@ -101,11 +101,15 @@ object PairingProtocol {
     /** How long to keep asking before giving up and saying so. */
     const val POLL_TIMEOUT_MS = 5 * 60 * 1_000L
 
-    /** The `request` body: who is asking, and the code they are showing. */
-    fun requestPayload(device: String, code: String): String = JSONObject().apply {
+    /**
+     * The `request` body: who is asking, the code they are showing and, beside the device's name, this app's secret
+     * [appId] (SpotNav 3.0: Home Assistant links the pairing to its phone by it; an older one does not read it).
+     */
+    fun requestPayload(device: String, code: String, appId: String? = null): String = JSONObject().apply {
         put("version", 1)
         put("action", "request")
         put("device", device)
+        if (appId != null) put("app_id", appId)
         put("code", code)
     }.toString()
 

@@ -1,6 +1,7 @@
 package se.sensnology.spotnav.ui.settings
 
 import se.sensnology.spotnav.R
+import se.sensnology.spotnav.ha.client.PhoneNotifications
 import se.sensnology.spotnav.ha.settings.HaNotificationSettings
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.notify.LocalNotificationStore
@@ -46,6 +47,17 @@ internal object NotificationsOverview {
         val mode = texts.text(if (instant) R.string.notify_app_instant else R.string.notify_app_periodic)
         val offered = NotificationEvent.localOffered(identifies)
         return mode + JOIN + events(events.count { it in offered }, offered.size, texts)
+    }
+
+    /**
+     * This phone's row where Home Assistant holds its choice: off, or every 15 minutes or instant with how many of the
+     * events the installation offers are on.
+     */
+    fun phone(value: PhoneNotifications, instant: Boolean, texts: NotificationTexts): String {
+        if (!value.on) return texts.text(R.string.notify_app_off)
+        val mode = texts.text(if (instant) R.string.notify_app_instant else R.string.notify_app_periodic)
+        val (count, total) = PhoneNotificationsEdit.count(value)
+        return mode + JOIN + events(count, total, texts)
     }
 
     /** The dialog's help under the SpotNav switches follows the instant switch. */
