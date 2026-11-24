@@ -1,0 +1,6 @@
+Nouveautés de la 3.2 :
+- Piscine, spa et sauna sur la page chauffage, comme dans la carte
+- Un seul choix et une seule notification quand voitures, bain ou séance de sauna ne seront pas prêts à temps
+- Notifications par téléphone, une seule fois même avec l'app Home Assistant
+- La liste de priorités, et piscine, spa et sauna dans le plan et le graphique chauffage
+- Piscine, spa et sauna nécessitent SpotNav pour Home Assistant 3.0.0b5

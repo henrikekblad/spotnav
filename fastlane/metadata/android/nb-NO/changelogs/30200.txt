@@ -1,0 +1,6 @@
+Nytt i 3.2:
+- Basseng, spa og badstue på varmesiden, som i kortet
+- Ett valg og ett varsel når biler, bad eller badstuøkter ikke blir klare i tide
+- Varsler per telefon, bare én gang også med Home Assistant-appen
+- Prioritetslisten, og basseng, spa og badstue i planen og varmediagrammet
+- Basseng, spa og badstue krever SpotNav for Home Assistant 3.0.0b5

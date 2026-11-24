@@ -1,0 +1,6 @@
+Nieuw in 3.2:
+- Zwembad, spa en sauna op de warmtepagina, zoals in de kaart
+- Eén keuze en één melding als auto's, een bad of een saunasessie niet op tijd klaar zijn
+- Meldingen per telefoon, maar één keer, ook met de Home Assistant-app
+- De prioriteitenlijst, en zwembad, spa en sauna in het plan en de warmtegrafiek
+- Zwembad, spa en sauna vereisen SpotNav voor Home Assistant 3.0.0b5

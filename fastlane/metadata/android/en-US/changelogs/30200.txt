@@ -1,0 +1,6 @@
+New in 3.2:
+- Pool, spa and sauna on the heat page, as in the card
+- One sheet and one notice when cars, a bath or a sauna session will not be ready in time
+- Notifications per phone, told once even with Home Assistant's app
+- The priority list, and pool, spa and sauna in the plan and the heat pie
+- Pool, spa and sauna need SpotNav for Home Assistant 3.0.0b5

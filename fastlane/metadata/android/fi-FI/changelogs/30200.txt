@@ -1,0 +1,6 @@
+Uutta versiossa 3.2:
+- Uima-allas, poreallas ja sauna lämpösivulla, kuten kortissa
+- Yksi valinta ja yksi ilmoitus, kun autot, kylpy tai saunavuoro eivät ehdi valmiiksi
+- Ilmoitukset puhelinkohtaisesti, vain kerran myös Home Assistant -sovelluksen kanssa
+- Prioriteettilista sekä allas, poreallas ja sauna suunnitelmassa ja lämpökaaviossa
+- Allas, poreallas ja sauna vaativat SpotNav for Home Assistant 3.0.0b5:n

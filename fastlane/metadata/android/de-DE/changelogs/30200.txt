@@ -1,0 +1,6 @@
+Neu in 3.2:
+- Pool, Whirlpool und Sauna auf der Wärmeseite, wie in der Karte
+- Eine Auswahl und eine Benachrichtigung, wenn Autos, Bad oder Saunagang nicht rechtzeitig fertig werden
+- Benachrichtigungen pro Telefon, nur einmal auch mit der Home-Assistant-App
+- Die Prioritätenliste sowie Pool, Whirlpool und Sauna im Plan und im Wärmediagramm
+- Pool, Whirlpool und Sauna brauchen SpotNav für Home Assistant 3.0.0b5

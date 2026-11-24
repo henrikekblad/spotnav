@@ -1,0 +1,6 @@
+Nyt i 3.2:
+- Pool, spa og sauna på varmesiden, som i kortet
+- Ét valg og én besked når biler, bad eller saunature ikke bliver klar i tide
+- Beskeder pr. telefon, kun én gang også med Home Assistant-appen
+- Prioritetslisten, og pool, spa og sauna i planen og varmediagrammet
+- Pool, spa og sauna kræver SpotNav for Home Assistant 3.0.0b5

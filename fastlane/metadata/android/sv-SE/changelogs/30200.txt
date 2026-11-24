@@ -1,0 +1,6 @@
+Nytt i 3.2:
+- Pool, spa och bastu på värmesidan, som i kortet
+- Ett val och en avisering när bilar, bad eller bastupass inte blir klara i tid
+- Aviseringar per telefon, en gång även med Home Assistant-appen
+- Prioritetslistan, och pool, spa och bastu i planen och värmepajen
+- Pool, spa och bastu kräver SpotNav för Home Assistant 3.0.0b5
