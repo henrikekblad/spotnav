@@ -293,6 +293,12 @@ object HomeAssistantClient {
         return CameraCommands.answer(request, status, body)
     }
 
+    /** Change this charger's priority on its site (webhook `update_charger_priority`). */
+    internal fun updateChargerPriority(settings: HomeAssistantSettings, expected: String, priority: String): ChargerPriorityUpdate.Outcome {
+        val (status, body) = write(settings, ChargerPriorityUpdate.payload(expected, priority))
+        return ChargerPriorityUpdate.answer(status, body)
+    }
+
     /** Point this charger (or its site) at another electricity price entry (webhook `choose_price_source`). */
     internal fun choosePriceSource(settings: HomeAssistantSettings, priceEntryId: String): PriceSourceUpdate.Outcome {
         val (status, body) = write(settings, PriceSourceUpdate.choosePayload(priceEntryId))

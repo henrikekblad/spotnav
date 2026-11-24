@@ -4,6 +4,7 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.authority.DashboardAdmission
 import se.sensnology.spotnav.ha.client.CameraCommands
 import se.sensnology.spotnav.ha.client.CameraPicture
+import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.FetchedDashboard
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantCommand
@@ -65,6 +66,9 @@ internal interface HaTransport {
     fun updateSettings(expectedRevision: Int, replacement: HaPlanningSettings): SettingsUpdate.Outcome
 
     fun updateSite(request: SiteUpdate.Request): SiteUpdate.Outcome
+
+    fun updateChargerPriority(expected: String, priority: String): ChargerPriorityUpdate.Outcome =
+        ChargerPriorityUpdate.Outcome.Failed(null)
 
     /** `identify_vehicle`: which car is plugged in; never throws. */
     fun identifyVehicle(vehicleId: String): IdentifyVehicle.Outcome = IdentifyVehicle.Outcome.Failed(null)
@@ -187,6 +191,9 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
         HomeAssistantClient.updateSettings(connection, expectedRevision, replacement)
 
     override fun updateSite(request: SiteUpdate.Request) = HomeAssistantClient.updateSiteSettings(connection, request)
+
+    override fun updateChargerPriority(expected: String, priority: String) =
+        HomeAssistantClient.updateChargerPriority(connection, expected, priority)
 
     override fun identifyVehicle(vehicleId: String) = HomeAssistantClient.identifyVehicle(connection, vehicleId)
 
@@ -404,6 +411,14 @@ internal class HaSession(
     fun updateSite(request: SiteUpdate.Request, done: (SiteUpdate.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.updateSite(request)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `update_charger_priority` (never throws). */
+    fun updateChargerPriority(expected: String, priority: String, done: (ChargerPriorityUpdate.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.updateChargerPriority(expected, priority)
             mainThread { done(outcome) }
         }
     }

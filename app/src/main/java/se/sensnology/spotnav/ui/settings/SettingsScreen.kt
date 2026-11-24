@@ -382,6 +382,12 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                         if (PairedVehicles.feedback(outcome).reload) loadPaired()
                     }
                 },
+                priority = { expected, chosen, done ->
+                    session.updateChargerPriority(expected, chosen) { outcome ->
+                        done(outcome)
+                        if (PairedVehicles.feedback(outcome).reload) loadPaired()
+                    }
+                },
                 phaseSwitching = { expected, enabled, done ->
                     session.updatePhaseSwitching(expected, enabled) { outcome ->
                         done(outcome)

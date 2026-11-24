@@ -2,6 +2,7 @@ package se.sensnology.spotnav.ha.client
 
 import org.json.JSONArray
 import org.json.JSONObject
+import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardForecastChoice
 import se.sensnology.spotnav.ha.dashboard.DashboardIdentification
@@ -340,9 +341,8 @@ internal object IdentifyVehicle {
 }
 
 /**
- * `update_site_settings` at `api_version` 1: the solar forecast sources and the import target of the charger's site,
- * under compare-and-set. Car or battery first (`solar_priority`) is no longer written: since 3.0 it is the battery's
- * row in the site's priority list, which is set in Home Assistant.
+ * `update_site_settings` at `api_version` 1: solar priority and the solar forecast sources of the
+ * charger's site, under compare-and-set.
  */
 internal object SiteUpdate {
     const val API_VERSION = 1
@@ -360,12 +360,14 @@ internal object SiteUpdate {
      * set.
      */
     data class Request(
+        val expectedPriority: String? = null,
+        val priority: String? = null,
         val expectedForecast: List<String>? = null,
         val forecast: List<String>? = null,
         val importTarget: ImportTarget? = null
     ) {
         init {
-            require(forecast != null || importTarget != null) { "a site write names at least one field" }
+            require(priority != null || forecast != null || importTarget != null) { "a site write names at least one field" }
         }
 
         fun payload(): JSONObject = JSONObject().apply {
@@ -375,6 +377,10 @@ internal object SiteUpdate {
             put("api_version", API_VERSION)
             val expected = JSONObject()
             val changes = JSONObject()
+            if (priority != null) {
+                expectedPriority?.let { expected.put("solar_priority", it) }
+                changes.put("solar_priority", priority)
+            }
             if (forecast != null) {
                 expectedForecast?.let { expected.put("solar_forecast", JSONArray(it)) }
                 changes.put("solar_forecast", JSONArray(forecast))
@@ -386,6 +392,28 @@ internal object SiteUpdate {
             put("expected", expected)
             put("changes", changes)
         }
+    }
+
+    /** Solar priority alone: `expected` is the value the screen shows. */
+    fun priorityRequest(shown: String?, chosen: String) = Request(expectedPriority = shown, priority = chosen)
+
+    /**
+     * The solar dialog's Save: the priority and the forecast sources that differ from what [site]
+     * shows, in one request -- or `null` when nothing differs. [chosenForecast] is a set; the list
+     * sent keeps the choices' own order.
+     */
+    fun solarRequest(site: DashboardSite, chosenPriority: String, chosenForecast: Set<String>): Request? {
+        val ordered = site.solarForecastChoices.map { it.id }.filter { it in chosenForecast } +
+            site.solarForecastSelected.filter { it in chosenForecast && site.solarForecastChoices.none { c -> c.id == it } }
+        val priorityChanged = chosenPriority != site.solarPriority
+        val forecastChanged = ordered != site.solarForecastSelected
+        if (!priorityChanged && !forecastChanged) return null
+        return Request(
+            expectedPriority = site.solarPriority.takeIf { priorityChanged },
+            priority = chosenPriority.takeIf { priorityChanged },
+            expectedForecast = site.solarForecastSelected.takeIf { forecastChanged },
+            forecast = ordered.takeIf { forecastChanged }
+        )
     }
 
     /** The site's import target alone: [chosen] kW (`null` clears it), against the value [shown]. */
@@ -439,6 +467,54 @@ internal object SiteUpdate {
             WriteEnvelope.INVALID_VALUE -> Outcome.Refused(site)
             WriteEnvelope.NOT_PERMITTED_OVER_WEBHOOK -> Outcome.NotPermitted(site)
             WriteEnvelope.NO_SITE, WriteEnvelope.SITE_UNAVAILABLE -> Outcome.Unavailable
+            WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
+            else -> Outcome.Failed(head.error)
+        }
+    }
+}
+
+/**
+ * `update_charger_priority` at `api_version` 1: this charger's priority on its site (First, Normal
+ * or Last), under compare-and-set against the value the screen showed.
+ */
+internal object ChargerPriorityUpdate {
+    const val API_VERSION = 1
+
+    fun payload(expected: String, priority: String): JSONObject = JSONObject().apply {
+        put("version", 1)
+        put("action", "update_charger_priority")
+        put("api_version", API_VERSION)
+        put("expected", expected)
+        put("priority", priority)
+    }
+
+    sealed interface Outcome {
+        data class Updated(val priority: ChargerPriority) : Outcome
+
+        /** Changed elsewhere first: adopt [priority] (when it came back). Nothing was written. */
+        data class Conflict(val priority: ChargerPriority?) : Outcome
+
+        data class Refused(val priority: ChargerPriority?) : Outcome
+
+        /** The charger is on no site (any more). */
+        data object NoSite : Outcome
+
+        data object NotSupported : Outcome
+
+        data class Failed(val code: String?) : Outcome
+    }
+
+    fun answer(status: Int?, body: String?): Outcome {
+        if (status == null) return Outcome.Failed(null)
+        val head = WriteEnvelope.head(body) ?: return Outcome.Failed(null)
+        val priority = ChargerPriority.parse(head.json.opt("charger_priority"))
+        if (head.ok) {
+            return if (head.error == null && priority != null) Outcome.Updated(priority) else Outcome.Failed(head.error)
+        }
+        return when (head.error) {
+            WriteEnvelope.CONFLICT -> Outcome.Conflict(priority)
+            WriteEnvelope.INVALID_VALUE -> Outcome.Refused(priority)
+            WriteEnvelope.NO_SITE -> Outcome.NoSite
             WriteEnvelope.UNSUPPORTED_VERSION -> Outcome.NotSupported
             else -> Outcome.Failed(head.error)
         }

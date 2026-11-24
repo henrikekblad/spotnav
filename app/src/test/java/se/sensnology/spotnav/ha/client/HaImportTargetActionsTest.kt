@@ -171,7 +171,7 @@ class SiteImportTargetWriteTest {
         assertTrue(cleared.getJSONObject("changes").has("import_target_kw"))
         assertTrue(cleared.getJSONObject("changes").isNull("import_target_kw"))
         // A solar write names no target, so the stored one is kept.
-        assertFalse(SiteUpdate.forecastRequest(listOf("a"), listOf("b")).payload().getJSONObject("changes").has("import_target_kw"))
+        assertFalse(SiteUpdate.priorityRequest("car_first", "battery_first").payload().getJSONObject("changes").has("import_target_kw"))
     }
 
     @Test fun theAnswersAreTheSiteWritesOwn() {

@@ -312,6 +312,14 @@ internal object SiteSettingsShown {
     fun importTarget(demand: DemandBlock): Boolean =
         demand.importTargetKw != null || demand.available || demand.reason != DEMAND_NEEDS_TOTAL_GRID_POWER
 
+    /**
+     * Car or battery first chooses between two solar sinks: shown only with a home battery and where the site follows
+     * solar (Sol and Hybrid both offered), as the card has it.
+     */
+    fun solarPriority(dashboard: Dashboard, setup: DashboardSummary.Site?): Boolean =
+        setup?.batteryName != null &&
+            HaSettingsStrategy.SOLAR in dashboard.strategyOptions && HaSettingsStrategy.HYBRID in dashboard.strategyOptions
+
     /** The Solar card holds the forecast source only: left out where there is none to choose and none chosen. */
     fun solarCard(site: DashboardSite): Boolean =
         site.solarForecastChoices.isNotEmpty() || site.solarForecastSelected.isNotEmpty()
