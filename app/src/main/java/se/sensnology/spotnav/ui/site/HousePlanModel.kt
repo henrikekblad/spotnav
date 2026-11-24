@@ -229,6 +229,14 @@ internal object HousePlanModel {
             )
             load.kind == "heat_zone" -> words.say("house.plan.lane.zone", "lowered" to whole(num("lowered_hours")))
             load.kind == "water_heater" -> words.say("house.plan.lane.waterHeater", "hours" to text.fixed(num("on_hours"), 0))
+            load.kind == "pool_circulation" -> words.say(
+                "house.plan.lane.poolCirculation", "hours" to text.fixed(num("planned_h"), 0), "need" to text.upTo(num("need_h"), 2)
+            )
+            load.kind == "pool_heat" -> words.say("house.plan.lane.poolHeat", "hours" to text.fixed(num("planned_h"), 0))
+            load.kind == "spa" || load.kind == "sauna" -> load.summaryText["ready_at"]
+                ?.let { runCatching { java.time.OffsetDateTime.parse(it).toInstant() }.getOrNull() }
+                ?.let { ready -> words.say("house.plan.lane.deadlineReady", "temp" to text.upTo(num("target_c"), 1), "time" to text.clock(ready, plan.zone)) }
+                ?: words.say("house.plan.lane.none")
             // A kind this app does not know yet: its runs are in the words below.
             else -> load.runs.joinToString(" · ") { runWords(text, load, it) }
         }
