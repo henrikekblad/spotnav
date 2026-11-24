@@ -1758,6 +1758,7 @@
   <string name="card_heat_load_control_why_lock_unreadable" formatted="false">the lock cannot be read, not starting</string>
   <string name="card_heat_load_control_why_pump_not_ours" formatted="false">the heat pump is not SpotNav\'s and is protected by its own flow switch; turn on Control the pool heat pump for the circulation to follow it</string>
   <string name="card_heat_load_control_why_restore_waits" formatted="false">your Heat setting is written back once the circulation runs</string>
+  <string name="card_heat_load_control_why_stale_plan" formatted="false">the plan is not being made just now, nothing is changed</string>
   <string name="card_heat_tab_pool" formatted="false">Pool</string>
   <string name="card_heat_tab_spa" formatted="false">Spa</string>
   <string name="card_heat_tab_sauna" formatted="false">Sauna</string>

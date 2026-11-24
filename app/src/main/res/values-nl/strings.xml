@@ -1745,6 +1745,7 @@
   <string name="card_heat_load_control_why_lock_unreadable" formatted="false">het slot kan niet worden gelezen, start niet</string>
   <string name="card_heat_load_control_why_pump_not_ours" formatted="false">de warmtepomp wordt niet door SpotNav gestuurd en wordt beschermd door zijn eigen stromingsschakelaar; zet Zwembadwarmtepomp aansturen aan zodat de circulatie hem volgt</string>
   <string name="card_heat_load_control_why_restore_waits" formatted="false">je instelling Verwarmen wordt teruggeschreven zodra de circulatie loopt</string>
+  <string name="card_heat_load_control_why_stale_plan" formatted="false">het plan wordt nu niet gemaakt, er wordt niets gewijzigd</string>
   <string name="card_heat_tab_pool" formatted="false">Zwembad</string>
   <string name="card_heat_tab_spa" formatted="false">Spa</string>
   <string name="card_heat_tab_sauna" formatted="false">Sauna</string>

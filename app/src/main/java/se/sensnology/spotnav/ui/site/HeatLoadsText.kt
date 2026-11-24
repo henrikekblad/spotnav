@@ -262,7 +262,7 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
         private val CAUSES = setOf("rate", "import_target", "power_level", "fuse")
         private val CONTROL_WHY = setOf(
             "no_read_back", "write_cap", "starts_cap", "fault", "automation", "unavailable", "foreign_mode", "own_scheduler",
-            "unsupported", "interlock", "run_on", "floor", "lock", "max_on", "lock_unreadable", "pump_not_ours", "restore_waits",
+            "unsupported", "interlock", "run_on", "floor", "lock", "max_on", "lock_unreadable", "pump_not_ours", "restore_waits", "stale_plan",
         )
 
         fun of(text: SiteText, heat: Heat) = HeatLoadsText(text, heat.now, heat.zone)

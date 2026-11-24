@@ -1044,6 +1044,7 @@ internal object CardStrings {
         "heat.loadControl.why.lock_unreadable" to R.string.card_heat_load_control_why_lock_unreadable,
         "heat.loadControl.why.pump_not_ours" to R.string.card_heat_load_control_why_pump_not_ours,
         "heat.loadControl.why.restore_waits" to R.string.card_heat_load_control_why_restore_waits,
+        "heat.loadControl.why.stale_plan" to R.string.card_heat_load_control_why_stale_plan,
         "heat.tab.pool" to R.string.card_heat_tab_pool,
         "heat.tab.spa" to R.string.card_heat_tab_spa,
         "heat.tab.sauna" to R.string.card_heat_tab_sauna,
