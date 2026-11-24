@@ -17,6 +17,8 @@ class HouseHistoryDocumentTest {
         // name -> period, buckets, buckets with something measured
         val expected = mapOf(
             "house_alone_year.json" to listOf(HistoryKind.YEAR, 12),
+            "solar_alone_day.json" to listOf(HistoryKind.DAY, 24),
+            "solar_alone_month.json" to listOf(HistoryKind.MONTH, 30),
             "villa_day.json" to listOf(HistoryKind.DAY, 24),
             "villa_month.json" to listOf(HistoryKind.MONTH, 30),
             "villa_year.json" to listOf(HistoryKind.YEAR, 12)
