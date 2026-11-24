@@ -80,6 +80,12 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
     fun setNotReadyPosted(site: String, key: String?) =
         if (key == null) store.remove(NOT_READY + site) else store.putString(NOT_READY + site, key)
 
+    /** Whether this phone shows the pool season notice of one Home Assistant ([door], its address). */
+    fun poolSeasonPosted(door: String): Boolean = store.getString(POOL_SEASON + door) == "true"
+
+    fun setPoolSeasonPosted(door: String, posted: Boolean) =
+        if (posted) store.putString(POOL_SEASON + door, "true") else store.remove(POOL_SEASON + door)
+
     fun snapshot(localId: String): NotificationSnapshot? =
         store.getString(SNAPSHOT + localId)?.let { raw -> runCatching { NotificationSnapshot.fromJson(JSONObject(raw)) }.getOrNull() }
 
@@ -119,6 +125,7 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
         private const val IDENTIFIES = "identifies."
         private const val POSTED = "identify_posted."
         private const val NOT_READY = "not_ready_posted."
+        private const val POOL_SEASON = "pool_season_posted."
         private const val EVENT_SET = "event_set"
         /** Set once the question which car is plugged in was first offered (see [observeIdentifies]). */
         private const val IDENTIFY_OFFERED = "identify_offered"

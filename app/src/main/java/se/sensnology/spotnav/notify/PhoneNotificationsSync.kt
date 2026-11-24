@@ -195,10 +195,12 @@ internal class PhoneNotificationsSync(
         const val RECHECK_MS = 6 * 60 * 60 * 1000L
 
         /**
-         * What this app shows itself: the charger's eight events, and a spa's or a sauna's "not ready in time" (the
-         * site's notice, [NotReadyNotifications]).
+         * What this app shows itself: the charger's eight events, the pool's season with its "Close the season"
+         * ([PoolSeasonNotifications]), and a spa's or a sauna's "not ready in time" (the site's notice,
+         * [NotReadyNotifications]).
          */
-        val SHOWS: List<String> = NotificationEvent.entries.map { it.wire } + PhoneNotificationsCall.HEAT_AT_RISK
+        val SHOWS: List<String> =
+            NotificationEvent.entries.map { it.wire } + PhoneNotificationsCall.POOL_SEASON + PhoneNotificationsCall.HEAT_AT_RISK
 
         /**
          * The write that carries this phone's own choice ([on], [events]) into [value]: its charger events replaced,

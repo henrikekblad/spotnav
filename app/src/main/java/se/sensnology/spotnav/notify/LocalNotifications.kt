@@ -22,6 +22,7 @@ import se.sensnology.spotnav.chargers.ChargerProfile
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.client.PhoneNotificationsCall
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.NotificationEvent
@@ -29,6 +30,7 @@ import se.sensnology.spotnav.push.PushNotifications
 import se.sensnology.spotnav.vehicles.VehicleIdentification
 import java.text.NumberFormat
 import java.time.Instant
+import java.time.ZoneId
 import java.util.concurrent.Executors
 
 /**
@@ -69,7 +71,7 @@ internal object LocalNotifications {
     private fun schedule(context: Context) {
         val app = context.applicationContext
         val scheduler = app.getSystemService(JobScheduler::class.java) ?: return
-        val wanted = pairedProfiles(app).isNotEmpty() && wanted(app)
+        val wanted = wanted(app)
         if (!wanted) {
             if (scheduler.getPendingJob(JOB_ID) != null) scheduler.cancel(JOB_ID)
             return
@@ -196,10 +198,10 @@ internal object LocalNotifications {
         val phoneSync = PhoneNotificationsSync.forContext(app)
         val phones = PhoneNotificationsStore.forContext(app)
         val doors = PhoneNotificationsSync.doors(app)
-        if (profiles.isNotEmpty()) doors.filter { phoneSync.due(it) }.forEach { phoneSync.read(it) }
+        doors.filter { phoneSync.due(it) }.forEach { phoneSync.read(it) }
         val answers = doors.associate { it.key to phones.current(it.key) }
         fun answerOf(profile: ChargerProfile) = answers[PhoneDoor.key(profile.baseUrl)]
-        if (profiles.isEmpty() || doors.none { PhoneChoice.wanted(answers[it.key], store.enabled) }) {
+        if (doors.none { PhoneChoice.wanted(answers[it.key], store.enabled) }) {
             sync(app)
             return
         }
@@ -235,6 +237,15 @@ internal object LocalNotifications {
             }
             if (derivation.events.isEmpty() || !allowed(app)) continue
             derivation.events.forEach { post(app, profile.localId, name, it) }
+        }
+        // The pool's season (Home Assistant's choice for this phone), read through each Home Assistant's door.
+        for (door in doors) {
+            val answer = answers[door.key]
+            val chosen = answer != null && answer.loads.pool && answer.wants(PhoneNotificationsCall.POOL_SEASON)
+            val heat = if (chosen) (HomeAssistantClient.heat(door.settings) as? SiteRead.Read)?.value else null
+            // An unread heat page keeps what is shown until the next check.
+            if (chosen && heat == null) continue
+            PoolSeasonNotifications.follow(app, store, door, heat?.pool, chosen, heat?.zone ?: ZoneId.systemDefault(), now)
         }
         if (identifyingChanged) PushNotifications.sync(app)
     }
