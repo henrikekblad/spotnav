@@ -434,6 +434,17 @@
   <string name="notify_event_plugged_in">Auto aangesloten</string>
   <string name="notify_event_unplugged">Auto losgekoppeld</string>
   <string name="notify_event_plan_installed">Nieuw plan</string>
+  <string name="notify_phone_send">Naar deze telefoon sturen</string>
+  <string name="notify_phone_chargers">Volgt de laadpalen</string>
+  <string name="notify_group_charging">Laden</string>
+  <string name="notify_group_pool">Zwembad</string>
+  <string name="notify_group_spa">Spa</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Zwembadseizoen</string>
+  <string name="notify_at_risk_help">Ook een spabad of saunasessie die niet op tijd klaar is.</string>
+  <string name="notify_pool_season_title">SpotNav · Zwembad</string>
+  <string name="notify_pool_season_message">Het water is al drie dagen rond 10 °C – tijd om het zwembadseizoen te sluiten?</string>
+  <string name="notify_pool_season_close">Seizoen sluiten</string>
   <string name="notify_app_title">Via de SpotNav-app</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d van %2$d gebeurtenis</item>

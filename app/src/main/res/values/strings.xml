@@ -446,6 +446,17 @@
   <string name="notify_event_plugged_in">Car plugged in</string>
   <string name="notify_event_unplugged">Car unplugged</string>
   <string name="notify_event_plan_installed">New plan</string>
+  <string name="notify_phone_send">Send to this phone</string>
+  <string name="notify_phone_chargers">Follows the chargers</string>
+  <string name="notify_group_charging">Charging</string>
+  <string name="notify_group_pool">Pool</string>
+  <string name="notify_group_spa">Spa</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Pool season</string>
+  <string name="notify_at_risk_help">Also a spa bath or a sauna session that will not be ready by its time.</string>
+  <string name="notify_pool_season_title">SpotNav · Pool</string>
+  <string name="notify_pool_season_message">The water has been around 10 °C for three days: time to close the pool season?</string>
+  <string name="notify_pool_season_close">Close the season</string>
   <string name="notify_app_title">Via the SpotNav app</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d of %2$d event</item>

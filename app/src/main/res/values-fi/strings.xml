@@ -434,6 +434,17 @@
   <string name="notify_event_plugged_in">Auto kytketty</string>
   <string name="notify_event_unplugged">Auto irrotettu</string>
   <string name="notify_event_plan_installed">Uusi suunnitelma</string>
+  <string name="notify_phone_send">Lähetä tähän puhelimeen</string>
+  <string name="notify_phone_chargers">Seuraa latausasemia</string>
+  <string name="notify_group_charging">Lataus</string>
+  <string name="notify_group_pool">Allas</string>
+  <string name="notify_group_spa">Poreallas</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Allaskausi</string>
+  <string name="notify_at_risk_help">Myös poreallas tai saunavuoro, joka ei ehdi valmiiksi ajallaan.</string>
+  <string name="notify_pool_season_title">SpotNav · Allas</string>
+  <string name="notify_pool_season_message">Vesi on ollut noin 10 °C kolme päivää – aika sulkea allaskausi?</string>
+  <string name="notify_pool_season_close">Sulje kausi</string>
   <string name="notify_app_title">SpotNav-sovelluksen kautta</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d/%2$d tapahtuma</item>

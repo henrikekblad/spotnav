@@ -434,6 +434,17 @@
   <string name="notify_event_plugged_in">Bilen tilsluttet</string>
   <string name="notify_event_unplugged">Bilen frakoblet</string>
   <string name="notify_event_plan_installed">Ny plan</string>
+  <string name="notify_phone_send">Send til denne telefon</string>
+  <string name="notify_phone_chargers">Følger laderne</string>
+  <string name="notify_group_charging">Opladning</string>
+  <string name="notify_group_pool">Pool</string>
+  <string name="notify_group_spa">Spa</string>
+  <string name="notify_group_sauna">Sauna</string>
+  <string name="notify_event_pool_season">Poolsæsonen</string>
+  <string name="notify_at_risk_help">Også et spabad eller et saunabad, der ikke bliver klar til tiden.</string>
+  <string name="notify_pool_season_title">SpotNav · Pool</string>
+  <string name="notify_pool_season_message">Vandet har ligget omkring 10 °C i tre dage – tid til at lukke poolsæsonen?</string>
+  <string name="notify_pool_season_close">Luk sæsonen</string>
   <string name="notify_app_title">Via SpotNav-appen</string>
   <plurals name="notify_events_count">
     <item quantity="one">%1$d af %2$d hændelse</item>
