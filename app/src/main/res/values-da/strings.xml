@@ -1316,6 +1316,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grader køligere</string>
   <string name="site_settings_in_home_assistant">Til og fra for styringen og valget af sensorer, måler og styringsvej ændres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeindstillingerne kunne ikke læses.</string>
+  <string name="site_settings_loads_in_home_assistant">Disse indstillinger ændres af en administrator i Home Assistant: varmekortets indstillinger.</string>
   <string name="site_settings_heat_add_in_home_assistant">Varme sættes op i Home Assistant: Indstillinger → Varme på hus- eller varmekortet.</string>
   <string name="site_settings_offset_home_in_home_assistant">Svar i Home Assistant: varmekortets indstillinger, som administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1916,4 +1917,30 @@
   <string name="card_heat_spa_remove_time" formatted="false">Fjern</string>
   <string name="card_heat_spa_times_invalid" formatted="false">Hver tid skal have et klokkeslæt og mindst én ugedag, og datoen en dag og et klokkeslæt.</string>
   <string name="card_settings_save" formatted="false">Gem</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Pool</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Poolens varmepumpe</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Poolens cirkulationspumpe</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Poolens vandføler</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Kun varmepumpens egen</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtrering pr. døgn</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Efter vandtemperaturen</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Poolvarmepumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Cirkulationspumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Styr cirkulationen</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Styr poolens varmepumpe</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, angivet</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, lært</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, typisk værdi indtil den er lært</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Ikke angivet</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Spavarmerens effekt</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Styr spaen</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Saunaaggregatets effekt</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Aggregatets egen sikkerhedsanordning</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, den findes</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Nej, eller ved ikke</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Styr saunaen</string>
 </resources>

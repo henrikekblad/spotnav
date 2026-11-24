@@ -1329,6 +1329,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Degrees colder</string>
   <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
   <string name="site_settings_heat_failed">The heat settings could not be read.</string>
+  <string name="site_settings_loads_in_home_assistant">These settings are changed by an administrator in Home Assistant: the heat card\'s settings.</string>
   <string name="site_settings_heat_add_in_home_assistant">Heating is set up in Home Assistant: Settings → Heating on the house or heat card.</string>
   <string name="site_settings_offset_home_in_home_assistant">Answer in Home Assistant: the heat card\'s settings, as an administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1929,4 +1930,30 @@
   <string name="card_heat_spa_remove_time" formatted="false">Remove</string>
   <string name="card_heat_spa_times_invalid" formatted="false">Each time needs a time and at least one weekday, and the date a day and a time.</string>
   <string name="card_settings_save" formatted="false">Save</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Pool</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Pool heat pump</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Pool circulation pump</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Pool water sensor</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Only the heat pump\'s own</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtering per day</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">By the water temperature</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Pool heat pump\'s power</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Circulation pump\'s power</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Control the circulation</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Control the pool heat pump</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, entered</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, learned</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, typical until learned</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Not given</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Spa heater\'s power</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Control the spa</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Sauna heater\'s power</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Heater\'s own safety measure</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Yes, it has one</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">No, or I do not know</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Control the sauna</string>
 </resources>

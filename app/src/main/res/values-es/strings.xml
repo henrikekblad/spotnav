@@ -1324,6 +1324,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grados menos</string>
   <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
   <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
+  <string name="site_settings_loads_in_home_assistant">Estas opciones las cambia un administrador en Home Assistant: los ajustes de la tarjeta de calor.</string>
   <string name="site_settings_heat_add_in_home_assistant">La calefacción se configura en Home Assistant: Ajustes → Calefacción en la tarjeta de la casa o de la calefacción.</string>
   <string name="site_settings_offset_home_in_home_assistant">Responde en Home Assistant: en los ajustes de la tarjeta de calor, como administrador.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1924,4 +1925,30 @@
   <string name="card_heat_spa_remove_time" formatted="false">Quitar</string>
   <string name="card_heat_spa_times_invalid" formatted="false">Cada horario necesita una hora y al menos un día de la semana, y la fecha un día y una hora.</string>
   <string name="card_settings_save" formatted="false">Guardar</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Piscina</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Bomba de calor de la piscina</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Bomba de circulación de la piscina</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Sensor de agua de la piscina</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Solo la de la bomba de calor</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtrado por día</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Según la temperatura del agua</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Potencia de la bomba de calor de la piscina</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Potencia de la bomba de circulación</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Controlar la circulación</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Controlar la bomba de calor de la piscina</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, indicada</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, aprendida</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, valor típico hasta aprenderla</string>
+  <string name="card_heat_settings_kw_none" formatted="false">No indicada</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Potencia del calentador del spa</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Controlar el spa</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Potencia de la estufa de la sauna</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Protección propia de la estufa</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Sí, la tiene</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">No, o no lo sé</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Controlar la sauna</string>
 </resources>

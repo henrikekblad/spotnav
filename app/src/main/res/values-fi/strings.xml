@@ -1316,6 +1316,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Astetta viileämpää</string>
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
+  <string name="site_settings_loads_in_home_assistant">Näitä asetuksia muuttaa ylläpitäjä Home Assistantissa: lämpökortin asetuksista.</string>
   <string name="site_settings_heat_add_in_home_assistant">Lämmitys otetaan käyttöön Home Assistantissa: Asetukset → Lämmitys talo- tai lämmityskortilla.</string>
   <string name="site_settings_offset_home_in_home_assistant">Vastaa Home Assistantissa: lämpökortin asetuksissa, ylläpitäjänä.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1916,4 +1917,30 @@
   <string name="card_heat_spa_remove_time" formatted="false">Poista</string>
   <string name="card_heat_spa_times_invalid" formatted="false">Jokainen aika tarvitsee kellonajan ja vähintään yhden viikonpäivän, ja päivämäärä päivän ja kellonajan.</string>
   <string name="card_settings_save" formatted="false">Tallenna</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Allas</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Altaan lämpöpumppu</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Altaan kiertovesipumppu</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Altaan vesianturi</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Vain lämpöpumpun oma</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Suodatus vuorokaudessa</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Veden lämpötilan mukaan</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Altaan lämpöpumpun teho</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Kiertovesipumpun teho</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Ohjaa kiertoa</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Ohjaa altaan lämpöpumppua</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, annettu</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, opittu</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, tyypillinen arvo kunnes opittu</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Ei annettu</string>
+  <string name="card_heat_settings_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Porealtaan lämmittimen teho</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Ohjaa porealtaa</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Kiukaan teho</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Kiukaan oma turvalaite</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Kyllä, on</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Ei, tai en tiedä</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Ohjaa saunaa</string>
 </resources>

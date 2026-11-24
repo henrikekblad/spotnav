@@ -129,6 +129,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         // The battery card only where the site has a battery: its own section in Home Assistant adds one.
         if (offered.batteryControl && battery?.let(SiteSettingsShown::batteryCard) == true) addBatteryCard()
         if (offered.getHeat && heat != null) addHeatCard()
+        if (offered.getHeat) (heat as? SiteRead.Read)?.value?.let(::addLoadCards)
         priority?.takeIf { offered.getHouse && it.rows.isNotEmpty() }?.let(::addPriorityCard)
     }
 
@@ -325,6 +326,19 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         body.addView(muted(t(R.string.site_settings_in_home_assistant), top = 2))
         notice?.let { body.addView(muted(it, top = 4)) }
+    }
+
+    /**
+     * The Pool, Spa and Bastu cards, each only where the load is set up, with the card's rows: an administrator's
+     * settings in Home Assistant, so read only, with the line under them on what SpotNav would do.
+     */
+    private fun addLoadCards(settings: HeatSettings) {
+        for (section in LoadSettingsRows(cardWords(), AppLanguageSettings.numberLocale(activity)).sections(settings)) {
+            val card = card(container, section.title, R.drawable.ic_now_heat)
+            section.rows.forEach { settingRow(card.body, it.label, it.value) }
+            section.help?.let { card.body.addView(muted(it, top = 2, bottom = 2)) }
+            card.body.addView(muted(t(R.string.site_settings_loads_in_home_assistant), top = 2))
+        }
     }
 
     /** The name Home Assistant gave an entity; never its id: without a name, the generic word "Vald". */

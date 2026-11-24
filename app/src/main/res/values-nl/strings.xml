@@ -1316,6 +1316,7 @@
   <string name="card_heat_settings_away_delta" formatted="false">Graden koeler</string>
   <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
   <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
+  <string name="site_settings_loads_in_home_assistant">Deze instellingen wijzigt een beheerder in Home Assistant: de instellingen van de warmtekaart.</string>
   <string name="site_settings_heat_add_in_home_assistant">Verwarming stel je in Home Assistant in: Instellingen → Verwarming op de huis- of verwarmingskaart.</string>
   <string name="site_settings_offset_home_in_home_assistant">Antwoord in Home Assistant: in de instellingen van de warmtekaart, als beheerder.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1916,4 +1917,30 @@
   <string name="card_heat_spa_remove_time" formatted="false">Verwijderen</string>
   <string name="card_heat_spa_times_invalid" formatted="false">Elke tijd heeft een tijdstip en minstens één weekdag nodig, en de datum een dag en een tijdstip.</string>
   <string name="card_settings_save" formatted="false">Opslaan</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Zwembad</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Zwembadwarmtepomp</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Circulatiepomp van het zwembad</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Watersensor van het zwembad</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Alleen die van de warmtepomp</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filteren per dag</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Naar de watertemperatuur</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Vermogen van de zwembadwarmtepomp</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Vermogen van de circulatiepomp</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Circulatie aansturen</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Zwembadwarmtepomp aansturen</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, opgegeven</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, geleerd</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, gangbare waarde tot geleerd</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Niet opgegeven</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Vermogen van de spaverwarming</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Spa aansturen</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Vermogen van de saunakachel</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Eigen veiligheidsvoorziening van de kachel</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, aanwezig</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Nee, of weet ik niet</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Sauna aansturen</string>
 </resources>
