@@ -2,6 +2,7 @@ package se.sensnology.spotnav.ui.settings
 
 import se.sensnology.spotnav.app.noMinusZero
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.site.SitePriority
 import se.sensnology.spotnav.ha.dashboard.DashboardSite
 import se.sensnology.spotnav.ha.dashboard.DashboardSummary
 import se.sensnology.spotnav.ha.dashboard.DemandBlock
@@ -311,6 +312,13 @@ internal object SiteSettingsShown {
      */
     fun importTarget(demand: DemandBlock): Boolean =
         demand.importTargetKw != null || demand.available || demand.reason != DEMAND_NEEDS_TOTAL_GRID_POWER
+
+    /**
+     * The old priority controls (car or battery first, the charger's priority) are a Home Assistant 2.x's: shown while
+     * `get_site_settings_view` states no priority list ([list] `null`: no `priority` block, a 2.x view, or not read).
+     * Where it states one (3.0), the list is shown read-only in their place and they are left out.
+     */
+    fun oldPriorityControls(list: SitePriority?): Boolean = list == null
 
     /**
      * Car or battery first chooses between two solar sinks: shown only with a home battery and where the site follows

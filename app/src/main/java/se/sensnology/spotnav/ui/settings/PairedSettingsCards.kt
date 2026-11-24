@@ -27,6 +27,7 @@ import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.ChargerPriority
+import se.sensnology.spotnav.ha.site.SitePriority
 import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardGuest
@@ -95,6 +96,8 @@ internal class PairedSettingsCards(
     private var solarNotice: String? = null
     private var adoptedPriority: ChargerPriority? = null
     private var priorityNotice: String? = null
+    /** The site's priority list as `get_site_settings_view` states it; `null` while none is stated (a 2.x Home Assistant). */
+    private var priorityList: SitePriority? = null
 
     private var writeVehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(VehicleUpdate.Outcome.Failed(null)) }
@@ -215,6 +218,13 @@ internal class PairedSettingsCards(
     /** Where the charge periods are written (`done` gets the refusal in words, or `null`). */
     fun attachChargePeriods(write: (Int?, (String?) -> Unit) -> Unit) {
         writeChargePeriods = write
+    }
+
+    /** The site's priority list was read: where there is one, the old priority controls give way to it. */
+    fun setPriorityList(list: SitePriority?) {
+        if (list == priorityList) return
+        priorityList = list
+        repaint()
     }
 
     fun setChargePeriodsWritable(writable: Boolean) {
@@ -581,7 +591,7 @@ internal class PairedSettingsCards(
             })
         }
         // The priority is this charger's own setting (its place among the site's chargers), as in the card.
-        addPriority(card.body)
+        if (SiteSettingsShown.oldPriorityControls(priorityList)) addPriority(card.body)
         addPhaseSwitching(card.body)
         addChargePeriods(card.body, dash)
         addIdentification(card.body, dash)
@@ -849,7 +859,7 @@ internal class PairedSettingsCards(
         // the main fuse and what the import target counts, not only the sun's surplus.
         // Shown only with a home battery and a site that follows solar.
         val solar = PairedOverview.solar(site)
-        if (held != null && SiteSettingsShown.solarPriority(held, summary.setup)) {
+        if (held != null && SiteSettingsShown.oldPriorityControls(priorityList) && SiteSettingsShown.solarPriority(held, summary.setup)) {
             valueRow(card.body, t(R.string.site_solar_priority), priorityText(solar.priority), onTap = if (solar.editable) ({
                 chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
                     SiteFacts.PRIORITIES.indexOf(site.solarPriority), intro = t(R.string.site_solar_priority_help)) { index, done ->

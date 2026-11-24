@@ -400,7 +400,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 heatRead = { done -> session.heatSettings(done) },
                 heatWrite = { request, done -> session.updateHeat(request, done) },
                 priorityRead = { done -> session.sitePriority(done) },
-                homeAssistant = settingsProfile.baseUrl
+                homeAssistant = settingsProfile.baseUrl,
+                // A 3.0 list in place of the old priority controls; without one they stay.
+                onPriority = { pairedCards.setPriorityList(it) }
             )
             pairedCards.attachGuest { amountKwh, done ->
                 session.updateGuest(amountKwh) { outcome ->

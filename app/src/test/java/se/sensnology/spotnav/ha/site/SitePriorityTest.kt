@@ -2,6 +2,7 @@ package se.sensnology.spotnav.ha.site
 
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -40,5 +41,17 @@ class SitePriorityTest {
         assertNull(read(JSONObject("""{"priority": null}""")))
         assertTrue(SitePriorityRead.decode(JSONObject("""{"priority": {"order": [{"id": 3}], "writable": false}}""")) is SiteRead.Failed)
         assertTrue(SitePriorityRead.answer(400, """{"ok": false, "error": "spotnav_no_site"}""") is SiteRead.Failed)
+    }
+
+    @Test fun anOlderHomeAssistantKeepsTheOldControlsAndThreeZeroShowsTheListInstead() {
+        val view = HaFixtures.json("webhook/get_site_settings_view_success.json")
+        // 2.x: the view has no priority block (or the read never came): car or battery first and the charger's priority stay.
+        val older = read(JSONObject(view.toString()).also { it.remove("priority") })
+        assertTrue(se.sensnology.spotnav.ui.settings.SiteSettingsShown.oldPriorityControls(older))
+        assertTrue(se.sensnology.spotnav.ui.settings.SiteSettingsShown.oldPriorityControls(null))
+        // 3.0: the list is shown read-only and the old controls are left out.
+        val list = read(view)
+        assertTrue(list!!.rows.isNotEmpty())
+        assertFalse(se.sensnology.spotnav.ui.settings.SiteSettingsShown.oldPriorityControls(list))
     }
 }

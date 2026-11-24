@@ -49,6 +49,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     private var heat: SiteRead<HeatSettings>? = null
     private var priority: SitePriority? = null
     private var homeAssistantUrl: String? = null
+    private var priorityHeard: (SitePriority?) -> Unit = {}
     private var notice: String? = null
     private val text get() = SiteSettingsText(cardWords(), AppLanguageSettings.numberLocale(activity))
 
@@ -68,8 +69,10 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         heatRead: ((SiteRead<HeatSettings>) -> Unit) -> Unit,
         heatWrite: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit,
         priorityRead: ((SiteRead<SitePriority?>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) },
-        homeAssistant: String? = null
+        homeAssistant: String? = null,
+        onPriority: (SitePriority?) -> Unit = {}
     ) {
+        priorityHeard = onPriority
         readBattery = battery
         readHeat = heatRead
         writeHeat = heatWrite
@@ -94,7 +97,10 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         readPriority { outcome ->
             if (isDestroyed) return@readPriority
             // A failed read keeps the list shown; none read leaves the card out.
-            if (outcome is SiteRead.Read) priority = outcome.value
+            if (outcome is SiteRead.Read) {
+                priority = outcome.value
+                priorityHeard(outcome.value)
+            }
             repaint()
         }
     }
