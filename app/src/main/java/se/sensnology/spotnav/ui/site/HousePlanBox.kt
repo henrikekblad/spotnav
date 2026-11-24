@@ -19,6 +19,8 @@ import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.ha.client.DoesNotFitChoice
 import se.sensnology.spotnav.ha.client.ReleaseImportTarget
+import se.sensnology.spotnav.ha.heat.HeatLoadPress
+import se.sensnology.spotnav.ha.house.NotReady
 import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.PlanRead
 import se.sensnology.spotnav.ha.house.SiteRead
@@ -160,6 +162,8 @@ internal class HousePlanBox(
         content.removeAllViews()
         content.addView(muted(13f, shown.lede), wide().apply { topMargin = dp(6) })
         content.addView(stats(shown.stats), wide().apply { topMargin = dp(10) })
+        // What will not be ready in time across the site: first, as the phones' notice opens it.
+        plan.notReady?.takeIf { it.items.isNotEmpty() }?.let { content.addView(notReadySheet(plan, it), wide().apply { topMargin = dp(10) }) }
         shown.noPrices?.let { content.addView(muted(13f, it), wide().apply { topMargin = dp(6) }) }
         content.addView(subheading(shown.fromGrid), wide().apply { topMargin = dp(12) })
         content.addView(HousePlanChartView(context, planPalette).apply { chart = shown.chart }, wide().apply { topMargin = dp(4) })
@@ -352,6 +356,81 @@ internal class HousePlanBox(
         }
     }
 
+    /**
+     * The choice sheet of what will not be ready in time (the card's `notReadySheet`): its heading, a line per load and
+     * every choice as a button, the most freed first ("Allow the peak" asked again before it is sent). A car's choice
+     * goes to its charger where this page reaches it ([PlanChoiceScope]); a bath's or a session's to the spa or the sauna.
+     */
+    private fun notReadySheet(plan: Plan, block: NotReady): View {
+        val said = NotReadyText(text, plan.zone, plan.money)
+        val sheet = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(10), dp(8), dp(10), dp(8))
+            background = GradientDrawable().apply {
+                setColor(0)
+                setStroke(dp(1), WARNING)
+                cornerRadius = dp(8).toFloat()
+            }
+        }
+        sheet.addView(subheading(said.title()), wide())
+        for (item in block.items) sheet.addView(TextView(context).apply { textSize = 13.5f; setTextColor(dark); text = "• ${said.line(item)}" }, wide().apply { topMargin = dp(2) })
+        val scope = choiceScope()
+        val buttons = said.buttons(block).mapNotNull { button ->
+            // A car this page cannot reach is left out of the press (and a press with none left, out of the sheet).
+            val loads = button.press.loads.filter { it.kind != "car" || PlanChoiceScope.target(scope, it.id) != null }
+            if (loads.isEmpty()) null else button.copy(press = button.press.copy(loads = loads))
+        }
+        if (buttons.isEmpty()) return sheet
+        sheet.addView(muted(12.5f, said.lede()), wide().apply { topMargin = dp(6) })
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        for (choice in buttons) {
+            val button = Button(context).apply {
+                isAllCaps = false
+                text = choice.label
+                tag = choice.press.code
+            }
+            var asked = choice.press.code != NotReady.ACCEPT_PEAK
+            button.setOnClickListener {
+                if (!asked) {
+                    asked = true
+                    button.text = said.acceptPeakAgain()
+                    return@setOnClickListener
+                }
+                for (index in 0 until column.childCount) column.getChildAt(index).isEnabled = false
+                chooseNotReady(choice.press, scope)
+            }
+            column.addView(button, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+        sheet.addView(column, wide())
+        return sheet
+    }
+
+    /** Send a sheet's choice for each of its loads in turn, then read the plan again whatever came of it. */
+    private fun chooseNotReady(press: NotReadyText.Press, scope: PlanChoiceScope) {
+        var failed = false
+        fun next(loads: List<NotReadyText.Load>) {
+            val load = loads.firstOrNull() ?: run {
+                if (failed) android.widget.Toast.makeText(context, t(R.string.does_not_fit_failed), android.widget.Toast.LENGTH_LONG).show()
+                read()
+                render()
+                return
+            }
+            val rest = loads.drop(1)
+            val action = NotReadyText.action(press.code, load)
+            if (load.kind == "car") {
+                val target = PlanChoiceScope.target(scope, load.id) ?: return next(rest)
+                if (action == "release_import_target") {
+                    session.releaseImportTarget(target.chargerId) { failed = failed || it is ReleaseImportTarget.Outcome.Failed; next(rest) }
+                } else {
+                    session.doesNotFitChoice(action, target.chargerId) { failed = failed || it is DoesNotFitChoice.Outcome.Failed; next(rest) }
+                }
+            } else {
+                session.heatLoadPress(HeatLoadPress.deadline(load.kind, action)) { failed = failed || it !is HeatLoadPress.Outcome.Done; next(rest) }
+            }
+        }
+        next(press.loads)
+    }
+
     private fun said(said: HousePlanModel.Said, wouldTag: String) = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         addView(muted(13.5f, said.span), LinearLayout.LayoutParams(dp(LANE_NAME_DP), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(8) })
@@ -388,6 +467,8 @@ internal class HousePlanBox(
         /** The folding sections' names in [SitePreferences.flag], as the card's `spotnav-house-card.plan.<section>.<site>`. */
         const val LANES = "house.plan.lanes"
         const val WORDS = "house.plan.words"
+        /** The sheet's frame: the card's `--warning-color` fallback. */
+        const val WARNING = 0xFFFFA600.toInt()
         /** Under the ceiling: the card's `--success-color` fallback. */
         const val OK = 0xFF43A047.toInt()
     }
