@@ -1898,4 +1898,22 @@
   <string name="card_heat_spa_idle_help" formatted="false">Die Temperatur, bei der der Whirlpool zwischen den Bädern ruht, 10 bis 40 °C. Niedriger spart Energie; das Wasser fällt nie unter 10 °C (Frostschutz).</string>
   <string name="card_house_plan_load_spa" formatted="false">Whirlpool</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Pooltemperatur senken</string>
+  <string name="card_heat_pool_raise" formatted="false">Pooltemperatur erhöhen</string>
+  <string name="card_heat_spa_lower" formatted="false">Badetemperatur senken</string>
+  <string name="card_heat_spa_raise" formatted="false">Badetemperatur erhöhen</string>
+  <string name="card_heat_sauna_lower" formatted="false">Saunatemperatur senken</string>
+  <string name="card_heat_sauna_raise" formatted="false">Saunatemperatur erhöhen</string>
+  <string name="card_heat_spa_times_help" formatted="false">Die Zeiten, zu denen der Whirlpool Badetemperatur haben soll, wie die Abfahrten des Autos: jede an ihren Wochentagen, dazu ein Datum. SpotNav heizt in den günstigsten oder sonnigsten Stunden davor.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Die Zeiten, zu denen die Sauna fertig sein soll: jede an ihren Wochentagen, dazu ein Datum. SpotNav startet die Sauna nie für etwas anderes als einen gebuchten Saunagang oder einen Druck auf Jetzt heizen.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Badezeit hinzufügen</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Saunagang hinzufügen</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Wöchentliche Badezeit</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Wöchentlicher Saunagang</string>
+  <string name="card_heat_spa_once_label" formatted="false">Ein Bad an einem Datum</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Ein Saunagang an einem Datum</string>
+  <string name="card_heat_spa_time" formatted="false">Uhrzeit</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Entfernen</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Jede Zeit braucht eine Uhrzeit und mindestens einen Wochentag, das Datum einen Tag und eine Uhrzeit.</string>
+  <string name="card_settings_save" formatted="false">Speichern</string>
 </resources>

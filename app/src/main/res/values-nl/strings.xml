@@ -1898,4 +1898,22 @@
   <string name="card_heat_spa_idle_help" formatted="false">De temperatuur waarop de spa tussen het baden rust, 10 tot 40 °C. Lager bespaart energie; het water zakt nooit onder 10 °C (vorstbescherming).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Zwembadtemperatuur verlagen</string>
+  <string name="card_heat_pool_raise" formatted="false">Zwembadtemperatuur verhogen</string>
+  <string name="card_heat_spa_lower" formatted="false">Badtemperatuur verlagen</string>
+  <string name="card_heat_spa_raise" formatted="false">Badtemperatuur verhogen</string>
+  <string name="card_heat_sauna_lower" formatted="false">Saunatemperatuur verlagen</string>
+  <string name="card_heat_sauna_raise" formatted="false">Saunatemperatuur verhogen</string>
+  <string name="card_heat_spa_times_help" formatted="false">De tijden waarop de spa op badtemperatuur moet zijn, zoals de vertrektijden van de auto: elk op zijn weekdagen, plus één datum. SpotNav verwarmt in de goedkoopste of zonnigste uren ervoor.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">De tijden waarop de sauna klaar moet zijn: elk op zijn weekdagen, plus één datum. SpotNav start de sauna nooit voor iets anders dan een geboekte sessie of een druk op Nu verwarmen.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Badtijd toevoegen</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Sessie toevoegen</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Wekelijkse badtijd</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Wekelijkse sessie</string>
+  <string name="card_heat_spa_once_label" formatted="false">Eén bad op een datum</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Eén sessie op een datum</string>
+  <string name="card_heat_spa_time" formatted="false">Tijd</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Verwijderen</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Elke tijd heeft een tijdstip en minstens één weekdag nodig, en de datum een dag en een tijdstip.</string>
+  <string name="card_settings_save" formatted="false">Opslaan</string>
 </resources>

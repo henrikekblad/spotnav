@@ -1911,4 +1911,22 @@
   <string name="card_heat_spa_idle_help" formatted="false">The temperature the spa rests at between baths, 10 to 40 °C. Lower saves energy; the water is never let below 10 °C (frost care).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Lower the pool\'s temperature</string>
+  <string name="card_heat_pool_raise" formatted="false">Raise the pool\'s temperature</string>
+  <string name="card_heat_spa_lower" formatted="false">Lower the bathing temperature</string>
+  <string name="card_heat_spa_raise" formatted="false">Raise the bathing temperature</string>
+  <string name="card_heat_sauna_lower" formatted="false">Lower the sauna\'s temperature</string>
+  <string name="card_heat_sauna_raise" formatted="false">Raise the sauna\'s temperature</string>
+  <string name="card_heat_spa_times_help" formatted="false">The times the spa should be at its bathing temperature, like a car\'s departures: each on its weekdays, and one date. SpotNav heats in the cheapest or sunniest hours before.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">The times the sauna should be ready: each on its weekdays, and one date. SpotNav never starts the sauna for anything but a booked session or a press of Heat now.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Add a bath time</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Add a session</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Weekly bath time</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Weekly session</string>
+  <string name="card_heat_spa_once_label" formatted="false">One bath on a date</string>
+  <string name="card_heat_sauna_once_label" formatted="false">One session on a date</string>
+  <string name="card_heat_spa_time" formatted="false">Time</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Remove</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Each time needs a time and at least one weekday, and the date a day and a time.</string>
+  <string name="card_settings_save" formatted="false">Save</string>
 </resources>

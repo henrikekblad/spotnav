@@ -35,6 +35,9 @@ internal class HeatLoadBoxes(
     private var busy: String? = null
     private var shown: Heat? = null
     private val errors = mutableMapOf<String, String>()
+    /** The temperatures stepped to and not yet written, by load. */
+    private val pending = mutableMapOf<String, Double>()
+    private val settles = mutableMapOf<String, Runnable>()
     /** The "Allow the peak" buttons pressed once: the second press sends it. */
     private val askedPeak = mutableSetOf<String>()
 
@@ -65,7 +68,7 @@ internal class HeatLoadBoxes(
     private fun pool(box: LinearLayout, said: HeatLoadsText, pool: HeatLoads.Pool) {
         val kind = "pool"
         box.addView(cardHeading(R.drawable.ic_now_heat, cardTitle(words.say("heat.tab.pool"))), wide())
-        box.addView(line("${words.say("heat.pool.dial")}: ${said.target(pool.targetC)}"), wide(top = 8))
+        box.addView(targetRow(kind, words.say("heat.pool.dial"), pool.targetC, said), wide(top = 8))
         box.addView(note(said.poolWater(pool)), wide(top = 2))
         said.poolSource(pool)?.let { box.addView(note(it), wide(top = 0)) }
         // The season: open (SpotNav plans the pool) or closed (it touches nothing).
@@ -105,7 +108,7 @@ internal class HeatLoadBoxes(
     private fun deadline(box: LinearLayout, said: HeatLoadsText, load: HeatLoads.Deadline) {
         val kind = load.kind
         box.addView(cardHeading(R.drawable.ic_now_heat, cardTitle(words.say("heat.tab.$kind"))), wide())
-        box.addView(line("${words.say("heat.$kind.dial")}: ${said.target(load.targetC)}"), wide(top = 8))
+        box.addView(targetRow(kind, words.say("heat.$kind.dial"), load.targetC, said), wide(top = 8))
         box.addView(note(said.deadlineTemp(load)), wide(top = 2))
         box.addView(line(said.deadlineStatus(load)), wide(top = 10))
         if (load.locked == true) box.addView(line(words.say("heat.sauna.locked")), wide(top = 2))
@@ -135,21 +138,107 @@ internal class HeatLoadBoxes(
             box.addView(row(button(words.say("heat.spa.cancelNow")) { press(kind, HeatLoadPress.deadline(kind, "cancel_now")) }), wide(top = 2))
         }
         box.addView(line(said.times(load)), wide(top = 8))
+        box.addView(row(button(words.say("heat.mode.change")) { editTimes(load) }.apply {
+            contentDescription = "${words.say("heat.$kind.times")}: ${words.say("heat.mode.change")}"
+        }), wide(top = 2))
         said.deadlinePlan(load)?.let { box.addView(note(it), wide(top = 8)) }
         val control = said.deadlineControl(load)
         if (load.control.controlling) box.addView(note(control), wide(top = 6)) else watched(box, control)
         errorLine(box, kind)
     }
 
+    // --- the temperature dial ---------------------------------------------------------------------
+
+    /**
+     * The load's temperature with − and + beside it, as the card's dial steps it: each press moves the figure, and
+     * the last one is written [SETTLE_MS] after it (`pool_action: target`, `bath_c`, `target_c`).
+     */
+    private fun targetRow(kind: String, label: String, stored: Double, said: HeatLoadsText): View {
+        val shownValue = pending[kind] ?: stored
+        val figure = line("$label: ${said.target(shownValue)}").apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            addView(stepButton("−", words.say("heat.$kind.lower")) { step(kind, stored, up = false) }, LinearLayout.LayoutParams(dp(44), dp(44)))
+            addView(figure, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dp(10); marginEnd = dp(10) })
+            addView(stepButton("+", words.say("heat.$kind.raise")) { step(kind, stored, up = true) }, LinearLayout.LayoutParams(dp(44), dp(44)))
+        }
+    }
+
+    private fun step(kind: String, stored: Double, up: Boolean) {
+        val next = LoadTimes.stepped(kind, pending[kind] ?: stored, up)
+        pending[kind] = next
+        errors.remove(kind)
+        render(shown)
+        settles.remove(kind)?.let(poolBox::removeCallbacks)
+        val run = object : Runnable {
+            override fun run() {
+                settles.remove(kind)
+                val wanted = pending[kind]
+                if (wanted == null || wanted == storedTarget(kind)) {
+                    pending.remove(kind)
+                    render(shown)
+                    return
+                }
+                // Another press on its way: this one is written once it has answered.
+                if (busy != null) {
+                    settles[kind] = this
+                    poolBox.postDelayed(this, SETTLE_MS)
+                    return
+                }
+                val body = if (kind == "pool") HeatLoadPress.poolTarget(wanted) else HeatLoadPress.deadlineTarget(kind, wanted)
+                press(kind, body) { pending.remove(kind) }
+            }
+        }
+        settles[kind] = run
+        poolBox.postDelayed(run, SETTLE_MS)
+    }
+
+    private fun storedTarget(kind: String): Double? = when (kind) {
+        "pool" -> shown?.pool?.targetC
+        "spa" -> shown?.spa?.targetC
+        else -> shown?.sauna?.targetC
+    }
+
+    /** A press waiting to be written is written at once (the page leaves view). */
+    fun flush() {
+        settles.values.toList().forEach { poolBox.removeCallbacks(it); it.run() }
+    }
+
+    // --- the times editor --------------------------------------------------------------------------
+
+    /** The spa's bath times or the sauna's sessions in an editor of their own, as the card's (any user's). */
+    private fun editTimes(load: HeatLoads.Deadline) {
+        val heat = shown ?: return
+        LoadTimesEditor(this, words, load, heat.now, heat.zone, text.locale) { bodies, done ->
+            sendAll(load.kind, bodies, done)
+        }.open()
+    }
+
+    /** Send [bodies] one after the other, stopping at the first refusal; [done] gets its words, or `null`. */
+    private fun sendAll(kind: String, bodies: List<org.json.JSONObject>, done: (String?) -> Unit) {
+        if (bodies.isEmpty()) { done(null); return }
+        session.heatLoadPress(bodies.first()) { outcome ->
+            val error = HeatLoadsText.pressError(outcome, t(R.string.load_press_failed), t(R.string.load_press_rate_limited))
+            if (error != null || bodies.size == 1) {
+                done(error)
+                reread()
+            } else {
+                sendAll(kind, bodies.drop(1), done)
+            }
+        }
+    }
+
     // --- presses ------------------------------------------------------------------------------------
 
-    private fun press(kind: String, body: org.json.JSONObject) {
+    private fun press(kind: String, body: org.json.JSONObject, after: () -> Unit = {}) {
         if (busy != null) return
         busy = kind
         errors.remove(kind)
         render(shown)
         session.heatLoadPress(body) { outcome ->
             busy = null
+            after()
             HeatLoadsText.pressError(outcome, t(R.string.load_press_failed), t(R.string.load_press_rate_limited))?.let { errors[kind] = it }
             render(shown)
             // Whatever came of it, what Home Assistant holds is read at once.
@@ -191,6 +280,21 @@ internal class HeatLoadBoxes(
         setOnClickListener { onTap() }
     }
 
+    /** A round − or + beside the temperature, as the heat page's dial has. */
+    private fun stepButton(label: String, description: String, onTap: () -> Unit) = Button(context).apply {
+        text = label
+        textSize = 20f
+        isAllCaps = false
+        stateListAnimator = null
+        minWidth = dp(44)
+        minHeight = dp(44)
+        setPadding(0, 0, 0, 0)
+        setTextColor(dark)
+        contentDescription = description
+        background = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(0); setStroke(dp(1), muted) }
+        setOnClickListener { onTap() }
+    }
+
     /** A choice between two states, the chosen one marked. */
     private fun pill(label: String, chosen: Boolean, onTap: () -> Unit) = button(label, onTap).apply {
         isSelected = chosen
@@ -224,5 +328,7 @@ internal class HeatLoadBoxes(
 
     private companion object {
         const val ERROR = 0xFFD64541.toInt()
+        /** The figure is written this long after the last press (the card's `DIAL_SETTLE_MS`, the heat page's). */
+        const val SETTLE_MS = 700L
     }
 }

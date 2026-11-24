@@ -1906,4 +1906,22 @@
   <string name="card_heat_spa_idle_help" formatted="false">La température de repos du spa entre les bains, de 10 à 40 °C. Plus basse, elle économise de l’énergie ; l’eau ne descend jamais sous 10 °C (hors-gel).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Baisser la température de la piscine</string>
+  <string name="card_heat_pool_raise" formatted="false">Augmenter la température de la piscine</string>
+  <string name="card_heat_spa_lower" formatted="false">Baisser la température du bain</string>
+  <string name="card_heat_spa_raise" formatted="false">Augmenter la température du bain</string>
+  <string name="card_heat_sauna_lower" formatted="false">Baisser la température du sauna</string>
+  <string name="card_heat_sauna_raise" formatted="false">Augmenter la température du sauna</string>
+  <string name="card_heat_spa_times_help" formatted="false">Les heures où le spa doit être à température de bain, comme les départs de la voiture : chacune ses jours, plus une date. SpotNav chauffe pendant les heures les moins chères ou les plus ensoleillées avant.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Les heures où le sauna doit être prêt : chacune ses jours, plus une date. SpotNav ne démarre jamais le sauna pour autre chose qu’une séance réservée ou un appui sur Chauffer maintenant.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Ajouter une heure de bain</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Ajouter une séance</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Heure de bain hebdomadaire</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Séance hebdomadaire</string>
+  <string name="card_heat_spa_once_label" formatted="false">Un bain à une date</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Une séance à une date</string>
+  <string name="card_heat_spa_time" formatted="false">Heure</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Supprimer</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Chaque horaire demande une heure et au moins un jour, et la date un jour et une heure.</string>
+  <string name="card_settings_save" formatted="false">Enregistrer</string>
 </resources>

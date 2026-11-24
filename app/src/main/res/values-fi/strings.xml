@@ -1898,4 +1898,22 @@
   <string name="card_heat_spa_idle_help" formatted="false">Lämpötila, jossa poreallas lepää kylpyjen välillä, 10–40 °C. Alempi säästää energiaa; vesi ei koskaan laske alle 10 °C (jäätymissuoja).</string>
   <string name="card_house_plan_load_spa" formatted="false">Poreallas</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Laske altaan lämpötilaa</string>
+  <string name="card_heat_pool_raise" formatted="false">Nosta altaan lämpötilaa</string>
+  <string name="card_heat_spa_lower" formatted="false">Laske kylpylämpötilaa</string>
+  <string name="card_heat_spa_raise" formatted="false">Nosta kylpylämpötilaa</string>
+  <string name="card_heat_sauna_lower" formatted="false">Laske saunan lämpötilaa</string>
+  <string name="card_heat_sauna_raise" formatted="false">Nosta saunan lämpötilaa</string>
+  <string name="card_heat_spa_times_help" formatted="false">Ajat, jolloin porealtaan pitää olla kylpylämpöinen, kuin auton lähdöt: kukin omina viikonpäivinään, sekä yksi päivämäärä. SpotNav lämmittää halvimpina tai aurinkoisimpina tunteina ennen.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Ajat, jolloin saunan pitää olla valmis: kukin omina viikonpäivinään, sekä yksi päivämäärä. SpotNav ei koskaan käynnistä saunaa muuten kuin varattua vuoroa tai Lämmitä nyt -painallusta varten.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Lisää kylpyaika</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Lisää saunavuoro</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Viikoittainen kylpyaika</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Viikoittainen saunavuoro</string>
+  <string name="card_heat_spa_once_label" formatted="false">Yksi kylpy päivämääränä</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Yksi saunavuoro päivämääränä</string>
+  <string name="card_heat_spa_time" formatted="false">Aika</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Poista</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Jokainen aika tarvitsee kellonajan ja vähintään yhden viikonpäivän, ja päivämäärä päivän ja kellonajan.</string>
+  <string name="card_settings_save" formatted="false">Tallenna</string>
 </resources>

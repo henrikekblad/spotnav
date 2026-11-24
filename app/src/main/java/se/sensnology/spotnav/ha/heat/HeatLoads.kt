@@ -1,9 +1,12 @@
 package se.sensnology.spotnav.ha.heat
 
+import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.client.WriteEnvelope
 import se.sensnology.spotnav.ha.house.StrictJson
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /**
  * The pool, the spa and the sauna as `get_heat` states them (Home Assistant 3.0, `pool/runtime.py` and
@@ -244,6 +247,28 @@ internal object HeatLoadPress {
         put("${kind}_action", action)
         if (value != null) put("value", value)
     }
+
+    /** The pool's target water temperature (`target`, 18 to 40 °C in half degrees). */
+    fun poolTarget(targetC: Double): JSONObject = pool("target", mapOf("target_c" to targetC))
+
+    /** The spa's bath temperature (`bath_c`, half degrees) or the sauna's session temperature (`target_c`, whole degrees). */
+    fun deadlineTarget(kind: String, targetC: Double): JSONObject =
+        if (kind == "spa") deadline(kind, "bath_c", targetC) else deadline(kind, "target_c", Math.round(targetC).toInt())
+
+    /** The weekly bath times (`baths`) or sessions (`sessions`), up to four; an empty list clears them. */
+    fun weekly(kind: String, times: List<HeatLoads.Session>): JSONObject = deadline(
+        kind,
+        if (kind == "spa") "baths" else "sessions",
+        JSONArray().apply { times.forEach { put(JSONObject().put("weekdays", JSONArray(it.weekdays)).put("time", it.time)) } }
+    )
+
+    /** The one-off bath (`bath_once`) or session (`session_once`) at [at], said in the site's [zone] with its offset; `null` clears it. */
+    fun once(kind: String, at: Instant?, zone: ZoneId): JSONObject =
+        deadline(kind, if (kind == "spa") "bath_once" else "session_once").apply {
+            put("value", at?.atZone(zone)?.format(OFFSET_INSTANT) ?: JSONObject.NULL)
+        }
+
+    private val OFFSET_INSTANT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
 
     sealed interface Outcome {
         data object Done : Outcome

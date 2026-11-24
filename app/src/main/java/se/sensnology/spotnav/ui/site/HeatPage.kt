@@ -223,6 +223,7 @@ internal class HeatPage(
             boostPoll = null
             // A press waiting to be written is written at once rather than lost.
             settle?.let { main.removeCallbacks(it); it.run() }
+            loadBoxes.flush()
         }
     }
 
