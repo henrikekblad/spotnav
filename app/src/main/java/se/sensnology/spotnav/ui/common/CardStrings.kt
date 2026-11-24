@@ -1051,6 +1051,8 @@ internal object CardStrings {
         "heat.pool.water" to R.string.card_heat_pool_water,
         "heat.pool.waterNone" to R.string.card_heat_pool_water_none,
         "heat.pool.waterWait" to R.string.card_heat_pool_water_wait,
+        "heat.pool.source.heat_pump" to R.string.card_heat_pool_source_heat_pump,
+        "heat.pool.source.sensor" to R.string.card_heat_pool_source_sensor,
         "heat.pool.closed" to R.string.card_heat_pool_closed,
         "heat.pool.heatingTo" to R.string.card_heat_pool_heating_to,
         "heat.pool.heating" to R.string.card_heat_pool_heating,

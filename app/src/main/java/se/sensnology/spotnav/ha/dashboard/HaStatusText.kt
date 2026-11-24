@@ -108,6 +108,7 @@ internal object HaStatusText {
         "amps" to "status.missing.amps",
         "vehicle" to "status.missing.vehicle",
         "target_percent" to "status.missing.target_percent",
+        "capacity" to "status.missing.capacity",
     )
 
     /**
@@ -426,11 +427,12 @@ internal object HaStatusText {
             "settings_incomplete" -> {
                 // Setup, not a fault: name what is still needed when every field is a known word.
                 val missing = (p["missing"] as? List<*>) ?: emptyList<Any?>()
-                val names = missing.map { (it as? String)?.let { field -> MISSING_FIELDS[field] } }
+                // A field this build has no words for is left out, as on the card.
+                val names = missing.mapNotNull { (it as? String)?.let { field -> MISSING_FIELDS[field] } }
                 when {
-                    names.isEmpty() || names.any { it == null } -> say(key)
-                    missing.size == 1 && missing[0] == "area" -> say("status.finishSetupArea")
-                    else -> say("status.finishSetup", mapOf("fields" to names.joinToString(", ") { say(it!!) }))
+                    names.isEmpty() -> say(key)
+                    names == listOf("status.missing.area") -> say("status.finishSetupArea")
+                    else -> say("status.finishSetup", mapOf("fields" to names.joinToString(", ") { say(it) }))
                 }
             }
             "car_ended_waiting" -> {
@@ -442,6 +444,38 @@ internal object HaStatusText {
                     p["estimated"] == true ->
                         say("status.carEndedWaitingEstimate", mapOf("soc" to number(format.locale, soc, 0)))
                     else -> say(key, mapOf("soc" to number(format.locale, soc, 0)))
+                }
+            }
+            "soc_unreadable" -> {
+                // Why the car's level cannot be read, and what the target was planned from (the card's socUnreadableText).
+                val integration = (p["integration"] as? String)?.takeIf { it.isNotEmpty() }
+                val cause = when {
+                    integration != null && p["problem"] == "reauth" ->
+                        say("status.socUnreadable.reauth", mapOf("integration" to integration))
+                    integration != null && p["problem"] == "setup_error" ->
+                        say("status.socUnreadable.setupError", mapOf("integration" to integration))
+                    else -> say("status.socUnreadable.cause")
+                }
+                val percent = num(p["soc_percent"])?.let { number(format.locale, it, 0) }
+                val plain = say("status.socUnreadable.plain", mapOf("cause" to cause))
+                when (p["basis"]) {
+                    "estimate" ->
+                        if (percent == null) plain
+                        else say("status.socUnreadable.estimate", mapOf("cause" to cause, "soc" to percent))
+                    "last_known" -> {
+                        val readAt = instant(p["read_at"])
+                        when {
+                            percent == null -> plain
+                            readAt == null || zone == null ->
+                                say("status.socUnreadable.lastKnownNoTime", mapOf("cause" to cause, "soc" to percent))
+                            else -> say(
+                                "status.socUnreadable.lastKnown",
+                                mapOf("cause" to cause, "soc" to percent, "time" to moment(readAt))
+                            )
+                        }
+                    }
+                    "full_charge" -> say("status.socUnreadable.fullCharge", mapOf("cause" to cause))
+                    else -> plain
                 }
             }
             "target_reached" -> {

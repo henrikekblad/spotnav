@@ -139,6 +139,23 @@ class HaStatusTextTest {
         }
     }
 
+    @Test fun unreadableCarLevelNamesTheCauseAndWhatTheTargetIsPlannedFrom() {
+        fun say(params: Map<String, Any?>) = HaStatusText.line(StatusLine("soc_unreadable", params), format("en"), now)
+        assertEquals("The car's charge level can't be read.", say(mapOf("basis" to null)))
+        assertEquals(
+            "Kia needs you to sign in again, so the car's charge level can't be read; planning from the estimated 42 %.",
+            say(mapOf("basis" to "estimate", "soc_percent" to 42.0, "integration" to "Kia", "problem" to "reauth"))
+        )
+        assertEquals(
+            "The car's charge level can't be read; planning a full charge to the target.",
+            say(mapOf("basis" to "full_charge"))
+        )
+        assertEquals(
+            "The car's charge level can't be read; planning from the last known 55 %.",
+            say(mapOf("basis" to "last_known", "soc_percent" to 55.0, "read_at" to null))
+        )
+    }
+
     @Test fun unfinishedSettingsNameWhatIsMissingAndSuggestedOnesPointToSettings() {
         fun say(code: String, params: Map<String, Any?>) = HaStatusText.line(StatusLine(code, params), format("en"), now)
         assertEquals("Finish setting up: choose a price area in Settings.", say("settings_incomplete", mapOf("missing" to listOf("area"))))
@@ -147,8 +164,16 @@ class HaStatusTextTest {
             say("settings_incomplete", mapOf("missing" to listOf("area", "phases")))
         )
         assertEquals(
-            "Finish setting up: some settings are still missing. Open Settings.",
+            "Finish setting up: choose a price area in Settings.",
             say("settings_incomplete", mapOf("missing" to listOf("area", "something_new")))
+        )
+        assertEquals(
+            "Finish setting up: some settings are still missing. Open Settings.",
+            say("settings_incomplete", mapOf("missing" to listOf("something_new")))
+        )
+        assertEquals(
+            "Finish setting up in Settings: vehicle, battery size.",
+            say("settings_incomplete", mapOf("missing" to listOf("vehicle", "capacity")))
         )
         assertTrue(say("settings_suggested", mapOf("fields" to listOf("area", "amps"))).endsWith("check Settings."))
         assertEquals(HaStatusWording.text("en", HaStatusWording.UNKNOWN_CODE), say("some_future_code", emptyMap()))

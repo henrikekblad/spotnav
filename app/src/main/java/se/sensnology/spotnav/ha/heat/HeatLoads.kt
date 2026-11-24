@@ -46,6 +46,8 @@ internal object HeatLoads {
         val seasonOpen: Boolean,
         val waterC: Double?,
         val waterSource: String?,
+        /** When the water was read ([waterSource] says by what), or `null` while none has. */
+        val waterAt: Instant?,
         val targetC: Double,
         val heatPump: PoolPart?,
         val circulation: PoolPart?,
@@ -141,6 +143,7 @@ internal object HeatLoads {
             seasonOpen = flag(pool.opt("season_open"), "pool.season_open"),
             waterC = numberOrNull(pool.opt("water_c"), "pool.water_c"),
             waterSource = textOrNull(pool.opt("water_source"), "pool.water_source"),
+            waterAt = instantOrNull(pool.opt("water_at") ?: JSONObject.NULL, "pool.water_at"),
             targetC = number(pool.opt("target_c"), "pool.target_c"),
             heatPump = part(pool.opt("heat_pump"), "pool.heat_pump", heatPump = true),
             circulation = part(pool.opt("circulation"), "pool.circulation", heatPump = false),

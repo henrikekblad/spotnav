@@ -1760,6 +1760,8 @@
   <string name="card_heat_pool_water" formatted="false">Agua {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Sin sensor de agua</string>
   <string name="card_heat_pool_water_wait" formatted="false">Agua: se lee pronto</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">De la bomba de calor, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">Del sensor de la piscina, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Temporada cerrada: SpotNav no toca la piscina.</string>
   <string name="card_heat_pool_heating_to" formatted="false">La bomba de calor calienta hacia {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Calentando, {value} → {target}</string>

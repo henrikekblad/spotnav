@@ -1760,6 +1760,8 @@
   <string name="card_heat_pool_water" formatted="false">Eau {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Pas de sonde d’eau</string>
   <string name="card_heat_pool_water_wait" formatted="false">Eau : lue bientôt</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">De la pompe à chaleur, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">De la sonde de piscine, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Saison fermée : SpotNav ne touche pas à la piscine.</string>
   <string name="card_heat_pool_heating_to" formatted="false">La pompe à chaleur chauffe vers {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Chauffe, {value} → {target}</string>

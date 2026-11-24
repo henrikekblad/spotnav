@@ -1752,6 +1752,8 @@
   <string name="card_heat_pool_water" formatted="false">Vesi {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Ei vesianturia</string>
   <string name="card_heat_pool_water_wait" formatted="false">Vesi: luetaan pian</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">Lämpöpumpulta, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">Allasanturilta, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Kausi on suljettu: SpotNav ei koske altaaseen.</string>
   <string name="card_heat_pool_heating_to" formatted="false">Lämpöpumppu lämmittää kohti {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Lämmittää, {value} → {target}</string>
