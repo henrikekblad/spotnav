@@ -419,7 +419,7 @@
   <string name="notify_no_phones">Kein Telefon mit der Home-Assistant-App ist bei diesem Home Assistant angemeldet.</string>
   <string name="notify_missing">%1$s (nicht gefunden)</string>
   <string name="notify_event_plan_stopped">Laden gestoppt oder nicht wie geplant gestartet</string>
-  <string name="notify_event_plan_at_risk">Das Laden wird bis zur Abfahrt nicht fertig</string>
+  <string name="notify_event_plan_at_risk">Nicht rechtzeitig fertig</string>
   <string name="notify_event_charge_complete">Laden abgeschlossen</string>
   <string name="notify_event_charge_started">Laden gestartet</string>
   <string name="notify_event_plugged_in">Auto angeschlossen</string>
@@ -1697,4 +1697,172 @@
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, Spitze zulassen</string>
   <string name="card_heat_settings_hot_water_help" formatted="false">Der eigene Eingang der Wärmepumpe für eine zusätzliche Warmwasserladung (zum Beispiel NIBEs „vorübergehender Luxus“): SpotNav schaltet ihn zwei Sekunden ein, und die Pumpe macht eine Ladung. Nie der Stromschalter eines Warmwasserspeichers: den wählst du unter Warmwasserspeicher. Keine Legionellen-Einstellung: Die Wärmepumpe kümmert sich darum.</string>
   <string name="card_heat_settings_water_heater_help" formatted="false">Der Schalter, der einen elektrischen Warmwasserspeicher mit eigenem Thermostat versorgt (ein Relais oder ein Schütz). Nicht der Warmwassereingang der Wärmepumpe: der gehört unter Warmwasser-Boost. SpotNav beobachtet ihn nur, bis du die Steuerung erlaubst.</string>
+  <string name="card_site_priority_title" formatted="false">Priorität</string>
+  <string name="card_site_priority_intro" formatted="false">Oben bekommt zuerst Energie und gibt zuletzt nach.</string>
+  <string name="card_site_priority_row_heat" formatted="false">Hausheizung</string>
+  <string name="card_site_priority_row_charger" formatted="false">Ladegerät</string>
+  <string name="card_site_priority_row_spa" formatted="false">Spa, gebuchtes Bad</string>
+  <string name="card_site_priority_row_sauna" formatted="false">Sauna</string>
+  <string name="card_site_priority_row_cooling" formatted="false">Hauskühlung</string>
+  <string name="card_site_priority_row_water_heater" formatted="false">Warmwasserbereiter</string>
+  <string name="card_site_priority_row_battery" formatted="false">Hausbatterie</string>
+  <string name="card_site_priority_row_spa_idle" formatted="false">Spa zwischen den Bädern</string>
+  <string name="card_site_priority_row_pool_circulation" formatted="false">Poolumwälzung</string>
+  <string name="card_site_priority_row_pool_heat" formatted="false">Poolwärmepumpe</string>
+  <string name="card_heat_load_control_controlled" formatted="false">Von SpotNav gesteuert.</string>
+  <string name="card_heat_load_control_controlled_why" formatted="false">Von SpotNav gesteuert: {why}.</string>
+  <string name="card_heat_load_control_cloud" formatted="false">Von SpotNav über die Cloud gesteuert: nur langsame, geplante Änderungen.</string>
+  <string name="card_heat_load_control_paused" formatted="false">Pausiert bis {until}: {why}.</string>
+  <string name="card_heat_load_control_paused_now" formatted="false">Pausiert: {why}.</string>
+  <string name="card_heat_load_control_handed_back" formatted="false">Bis {until} dir zurückgegeben: jemand anderes hat es geändert, und SpotNav ändert es nicht zurück.</string>
+  <string name="card_heat_load_control_failures" formatted="false">Nicht zurückgelesene Änderungen: {count}.</string>
+  <string name="card_heat_load_control_part" formatted="false">{name}: {text}</string>
+  <string name="card_heat_pool_part_heat_pump" formatted="false">Wärmepumpe</string>
+  <string name="card_heat_pool_part_circulation" formatted="false">Umwälzung</string>
+  <string name="card_heat_load_control_why_no_read_back" formatted="false">eine Änderung wurde nicht zurückgelesen</string>
+  <string name="card_heat_load_control_why_write_cap" formatted="false">die Änderungen des Tages sind aufgebraucht</string>
+  <string name="card_heat_load_control_why_starts_cap" formatted="false">die Starts des Tages sind aufgebraucht</string>
+  <string name="card_heat_load_control_why_fault" formatted="false">die Wärmepumpe meldet einen Fehler</string>
+  <string name="card_heat_load_control_why_automation" formatted="false">eine Automation steuert es</string>
+  <string name="card_heat_load_control_why_unavailable" formatted="false">es kann nicht gelesen werden</string>
+  <string name="card_heat_load_control_why_foreign_mode" formatted="false">es steht in einem Modus, den SpotNav nicht ändert</string>
+  <string name="card_heat_load_control_why_own_scheduler" formatted="false">der eigene Zeitplan des Whirlpools ist aktiv</string>
+  <string name="card_heat_load_control_why_unsupported" formatted="false">SpotNav kann dieses Gerät nicht steuern</string>
+  <string name="card_heat_load_control_why_interlock" formatted="false">wartet, bis die Umwälzung läuft</string>
+  <string name="card_heat_load_control_why_run_on" formatted="false">läuft nach der Wärmepumpe nach</string>
+  <string name="card_heat_load_control_why_floor" formatted="false">unter der niedrigsten Temperatur, heizt</string>
+  <string name="card_heat_load_control_why_lock" formatted="false">gesperrt, startet nicht</string>
+  <string name="card_heat_load_control_why_max_on" formatted="false">die längste Laufzeit ist erreicht</string>
+  <string name="card_heat_tab_pool" formatted="false">Pool</string>
+  <string name="card_heat_tab_spa" formatted="false">Whirlpool</string>
+  <string name="card_heat_tab_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_water" formatted="false">Wasser {value}</string>
+  <string name="card_heat_pool_water_none" formatted="false">Kein Wasserfühler</string>
+  <string name="card_heat_pool_water_wait" formatted="false">Wasser: bald gelesen</string>
+  <string name="card_heat_pool_closed" formatted="false">Saison geschlossen: SpotNav lässt den Pool in Ruhe.</string>
+  <string name="card_heat_pool_heating_to" formatted="false">Die Wärmepumpe heizt auf {target}</string>
+  <string name="card_heat_pool_heating" formatted="false">Heizt, {value} → {target}</string>
+  <string name="card_heat_pool_filtering" formatted="false">Die Umwälzung läuft</string>
+  <string name="card_heat_pool_still" formatted="false">Umwälzung und Wärmepumpe stehen still</string>
+  <string name="card_heat_pool_would_heat" formatted="false">Würde bis {until} heizen</string>
+  <string name="card_heat_pool_would_heat_now" formatted="false">Würde jetzt heizen</string>
+  <string name="card_heat_pool_would_filter" formatted="false">Würde bis {until} filtern</string>
+  <string name="card_heat_pool_would_filter_now" formatted="false">Würde jetzt filtern</string>
+  <string name="card_heat_pool_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_pool_would_met" formatted="false">Würde ruhen: die heutige Filterung ist erledigt</string>
+  <string name="card_heat_pool_would_no_prices" formatted="false">Würde ruhen: noch keine Preise</string>
+  <string name="card_heat_pool_would_off_now" formatted="false">Würde ruhen</string>
+  <string name="card_heat_pool_would_off" formatted="false">Würde bis {until} ruhen</string>
+  <string name="card_heat_pool_why_sun" formatted="false">Solarüberschuss</string>
+  <string name="card_heat_pool_why_cheap" formatted="false">günstige Stunde</string>
+  <string name="card_heat_pool_why_need" formatted="false">die Filterung des Tages</string>
+  <string name="card_heat_pool_why_extra" formatted="false">Extrafilterung</string>
+  <string name="card_heat_pool_today" formatted="false">Filterung heute: {done} erledigt, {planned} geplant</string>
+  <string name="card_heat_pool_today_need" formatted="false">Filterung heute: {done} erledigt, {planned} geplant von {need}</string>
+  <string name="card_heat_pool_today_need_set" formatted="false">Filterung heute: {done} erledigt, {planned} geplant von {need} (eingestellt)</string>
+  <string name="card_heat_pool_today_heat" formatted="false">Wärmepumpe: {hours} geplant</string>
+  <string name="card_heat_pool_plan_filter" formatted="false">Filtert {runs}</string>
+  <string name="card_heat_pool_plan_heat" formatted="false">Heizt {runs}</string>
+  <string name="card_heat_pool_plan_extra" formatted="false">Extrafilterung {runs}</string>
+  <string name="card_heat_pool_plan_none" formatted="false">In den nächsten 24 Stunden nichts geplant</string>
+  <string name="card_heat_pool_extra_label" formatted="false">Extrafilterung</string>
+  <string name="card_heat_pool_extra_add" formatted="false">+{hours} h</string>
+  <string name="card_heat_pool_extra_cancel" formatted="false">Abbrechen</string>
+  <string name="card_heat_pool_extra_waiting" formatted="false">Extrafilterung {hours} h vor {until}</string>
+  <string name="card_heat_pool_extra_when" formatted="false">Extrafilterung {hours} h: {runs}</string>
+  <string name="card_heat_pool_season" formatted="false">Poolsaison</string>
+  <string name="card_heat_pool_season_open" formatted="false">Saison offen</string>
+  <string name="card_heat_pool_season_closed" formatted="false">Geschlossen</string>
+  <string name="card_heat_pool_season_hint" formatted="false">Das Wasser liegt seit drei Tagen bei etwa 10 °C – Zeit, die Poolsaison zu schließen?</string>
+  <string name="card_heat_pool_watched" formatted="false">SpotNav beobachtet den Pool nur: es sagt, was es tun würde. Schalte die Steuerung unter Einstellungen → Heizung ein.</string>
+  <string name="card_heat_spa_temp" formatted="false">Wasser {value}</string>
+  <string name="card_heat_spa_temp_none" formatted="false">Wasser: nicht gelesen</string>
+  <string name="card_heat_sauna_temp" formatted="false">Jetzt {value}</string>
+  <string name="card_heat_sauna_temp_none" formatted="false">Nicht gelesen</string>
+  <string name="card_heat_spa_every_day" formatted="false">täglich</string>
+  <string name="card_heat_spa_once" formatted="false">einmal {when}</string>
+  <string name="card_heat_spa_no_baths" formatted="false">Keine Badezeiten</string>
+  <string name="card_heat_sauna_no_sessions" formatted="false">Keine Saunagänge</string>
+  <string name="card_heat_spa_ready_rate" formatted="false">Fertig {time}, heizt {rate} °C/h</string>
+  <string name="card_heat_spa_ready_at" formatted="false">Fertig gegen {time}</string>
+  <string name="card_heat_spa_ready" formatted="false">Bereit zum Baden</string>
+  <string name="card_heat_spa_ready_now" formatted="false">Bereit zum Baden, {value}</string>
+  <string name="card_heat_sauna_ready" formatted="false">Sauna bereit</string>
+  <string name="card_heat_sauna_ready_now" formatted="false">Sauna bereit, {value}</string>
+  <string name="card_heat_spa_idle" formatted="false">Ruht bei {idle}, kein Bad gebucht</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Ruht bei {idle}, nächstes Bad {when}</string>
+  <string name="card_heat_sauna_off" formatted="false">Aus, kein Saunagang gebucht</string>
+  <string name="card_heat_sauna_off_next" formatted="false">Aus, nächster Saunagang {when}</string>
+  <string name="card_heat_spa_would_heat" formatted="false">Würde bis {until} heizen</string>
+  <string name="card_heat_spa_would_heat_now" formatted="false">Würde jetzt heizen</string>
+  <string name="card_heat_spa_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_spa_why_sun" formatted="false">Solarüberschuss</string>
+  <string name="card_heat_spa_why_cheap" formatted="false">günstige Stunden</string>
+  <string name="card_heat_spa_why_bath" formatted="false">um rechtzeitig fertig zu sein</string>
+  <string name="card_heat_spa_why_now" formatted="false">jetzt gestartet</string>
+  <string name="card_heat_spa_why_floor" formatted="false">das Wasser ist nahe seinem Minimum</string>
+  <string name="card_heat_spa_would_hold" formatted="false">Würde {target} bis {until} halten</string>
+  <string name="card_heat_spa_would_hold_now" formatted="false">Würde {target} halten</string>
+  <string name="card_heat_spa_would_idle" formatted="false">Würde bei {idle} ruhen</string>
+  <string name="card_heat_spa_would_floor" formatted="false">Würde heizen: das Wasser ist nahe am Minimum von {floor}</string>
+  <string name="card_heat_spa_would_off" formatted="false">Würde nicht heizen</string>
+  <string name="card_heat_sauna_would_off" formatted="false">Würde aus bleiben</string>
+  <string name="card_heat_sauna_would_blocked" formatted="false">Würde nicht starten: Tür oder Sicherheitssperre verhindert es</string>
+  <string name="card_heat_sauna_would_by_hand" formatted="false">Jetzt von Hand starten, um {when} fertig zu sein: SpotNav sagt nur, wann</string>
+  <string name="card_heat_sauna_would_by_hand_now" formatted="false">Jetzt von Hand starten: SpotNav sagt nur, wann</string>
+  <string name="card_heat_sauna_locked" formatted="false">Gesperrt: Tür oder Sicherheitsschalter verhindern den Start der Sauna.</string>
+  <string name="card_heat_spa_cause_rate" formatted="false">Er heizt zu langsam.</string>
+  <string name="card_heat_spa_cause_import_target" formatted="false">Das Importziel lässt zu wenig Raum.</string>
+  <string name="card_heat_spa_cause_power_level" formatted="false">Die Leistungsstufe lässt zu wenig Raum.</string>
+  <string name="card_heat_spa_cause_fuse" formatted="false">Die Sicherung lässt zu wenig Raum.</string>
+  <string name="card_heat_spa_not_ready" formatted="false">Das Bad um {when} wird nicht rechtzeitig fertig: es erreicht {reach}.</string>
+  <string name="card_heat_sauna_not_ready" formatted="false">Der Saunagang um {when} wird nicht rechtzeitig fertig: er erreicht {reach}.</string>
+  <string name="card_heat_spa_choice_fits" formatted="false">Nehmen, was passt ({reach})</string>
+  <string name="card_heat_spa_choice_later" formatted="false">Spätere Badezeit ({time})</string>
+  <string name="card_heat_sauna_choice_later" formatted="false">Späterer Saunagang ({time})</string>
+  <string name="card_heat_spa_choice_peak" formatted="false">Spitze zulassen</string>
+  <string name="card_heat_spa_now" formatted="false">Jetzt baden</string>
+  <string name="card_heat_sauna_now" formatted="false">Jetzt heizen</string>
+  <string name="card_heat_spa_now_until" formatted="false">Jetzt baden: würde heizen und bis {until} halten</string>
+  <string name="card_heat_sauna_now_until" formatted="false">Jetzt heizen: würde heizen und bis {until} halten</string>
+  <string name="card_heat_spa_cancel_now" formatted="false">Abbrechen</string>
+  <string name="card_heat_spa_times" formatted="false">Badezeiten</string>
+  <string name="card_heat_sauna_times" formatted="false">Saunagänge</string>
+  <string name="card_heat_spa_idle_label" formatted="false">Zwischen den Bädern</string>
+  <string name="card_heat_spa_plan_heat" formatted="false">Heizt {runs}</string>
+  <string name="card_heat_spa_plan_hold" formatted="false">Bis {until} warm gehalten</string>
+  <string name="card_heat_sauna_plan_heat" formatted="false">Heizt {runs}</string>
+  <string name="card_heat_sauna_plan_hold" formatted="false">Bereit bis {until}</string>
+  <string name="card_heat_spa_cloud" formatted="false">Über einen Cloud-Dienst gelesen: SpotNav würde nur langsame, geplante Änderungen vornehmen.</string>
+  <string name="card_heat_spa_watch_only" formatted="false">SpotNav kann diesen Whirlpool nur beobachten: Es sagt, was es tun würde.</string>
+  <string name="card_heat_sauna_watch_only" formatted="false">SpotNav kann diese Sauna nur beobachten: Es sagt, was es tun würde.</string>
+  <string name="card_heat_spa_watched" formatted="false">SpotNav beobachtet den Whirlpool nur: es sagt, was es tun würde. Schalte die Steuerung unter Einstellungen → Heizung ein.</string>
+  <string name="card_heat_sauna_watched" formatted="false">SpotNav beobachtet die Sauna nur: es sagt, was es tun würde. Schalte die Steuerung unter Einstellungen → Heizung ein.</string>
+  <string name="card_heat_sauna_no_safety" formatted="false">SpotNav startet nie einen Ofen am Relais ohne eigene Sicherheitseinrichtung: Gib sie in den Einstellungen an oder starte die Sauna von Hand, wenn SpotNav es sagt.</string>
+  <string name="card_heat_use_part_pool" formatted="false">Pool</string>
+  <string name="card_heat_use_part_spa" formatted="false">Whirlpool</string>
+  <string name="card_heat_use_part_sauna" formatted="false">Sauna</string>
+  <string name="card_not_ready_title" formatted="false">Nicht rechtzeitig fertig</string>
+  <string name="card_not_ready_lede" formatted="false">Was am meisten freigibt, steht zuerst.</string>
+  <string name="card_not_ready_car" formatted="false">Das Auto</string>
+  <string name="card_not_ready_line_car" formatted="false">{name} {time}: es fehlen {kwh}</string>
+  <string name="card_not_ready_line_heat" formatted="false">{name} {time}: erreicht {reach}</string>
+  <string name="card_not_ready_line_chosen" formatted="false">{name} {time}: nimmt, was passt</string>
+  <string name="card_not_ready_peak_all" formatted="false">Spitze für alle zulassen</string>
+  <string name="card_not_ready_button" formatted="false">{load}: {choice}</string>
+  <string name="card_house_plan_load_pool_circulation" formatted="false">Poolumwälzung</string>
+  <string name="card_house_plan_load_pool_heat" formatted="false">Poolwärmepumpe</string>
+  <string name="card_house_plan_lane_pool_circulation" formatted="false">Filtert {hours} h von {need} h am Tag</string>
+  <string name="card_house_plan_lane_pool_heat" formatted="false">Heizt {hours} h</string>
+  <string name="card_house_plan_run_pool_circulation_filter" formatted="false">Pool filtert</string>
+  <string name="card_house_plan_run_pool_circulation_extra" formatted="false">Pool filtert extra</string>
+  <string name="card_house_plan_run_pool_heat_heat" formatted="false">Poolwärmepumpe heizt</string>
+  <string name="card_house_plan_lane_deadline_ready" formatted="false">{temp} °C um {time}</string>
+  <string name="card_house_plan_run_spa_heat" formatted="false">Whirlpool heizt auf</string>
+  <string name="card_house_plan_run_spa_hold" formatted="false">Whirlpool bleibt warm für das Bad</string>
+  <string name="card_house_plan_run_sauna_heat" formatted="false">Sauna heizt auf</string>
+  <string name="card_house_plan_run_sauna_hold" formatted="false">Sauna bereit</string>
+  <string name="site_set_in_home_assistant">In Home Assistant einstellen</string>
+  <string name="load_press_failed">Das hat nicht geklappt. Versuche es gleich noch einmal.</string>
+  <string name="load_press_rate_limited">Gerade erst gedrückt: versuche es in zehn Minuten noch einmal.</string>
 </resources>

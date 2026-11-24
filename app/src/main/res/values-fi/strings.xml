@@ -419,7 +419,7 @@
   <string name="notify_no_phones">Yksikään puhelin, jossa on Home Assistant -sovellus, ei ole kirjautunut tähän Home Assistantiin.</string>
   <string name="notify_missing">%1$s (ei löydy)</string>
   <string name="notify_event_plan_stopped">Lataus pysähtyi tai ei alkanut suunnitellusti</string>
-  <string name="notify_event_plan_at_risk">Lataus ei valmistu lähtöön mennessä</string>
+  <string name="notify_event_plan_at_risk">Ei valmistu ajoissa</string>
   <string name="notify_event_charge_complete">Lataus on valmis</string>
   <string name="notify_event_charge_started">Lataus alkoi</string>
   <string name="notify_event_plugged_in">Auto kytketty</string>
@@ -1697,4 +1697,172 @@
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Kyllä, salli huippu</string>
   <string name="card_heat_settings_hot_water_help" formatted="false">Lämpöpumpun oma tulo yhdelle ylimääräiselle käyttöveden lämmitykselle (esimerkiksi NIBEn \"tilapäinen luksus\"): SpotNav kytkee sen päälle kahdeksi sekunniksi ja pumppu tekee yhden lämmityksen. Ei koskaan lämminvesivaraajan virtakytkin: se valitaan kohdassa Lämminvesivaraaja. Ei legionella-asetusta: lämpöpumppu hoitaa sen.</string>
   <string name="card_heat_settings_water_heater_help" formatted="false">Kytkin, joka syöttää virtaa sähköiseen lämminvesivaraajaan, jossa on oma termostaatti (rele tai kontaktori). Ei lämpöpumpun käyttövesituloa: se valitaan kohdassa Lisäkäyttövesi. SpotNav vain seuraa sitä, kunnes annat sen ohjata.</string>
+  <string name="card_site_priority_title" formatted="false">Etusijajärjestys</string>
+  <string name="card_site_priority_intro" formatted="false">Ylin saa energiaa ensin ja joustaa viimeisenä.</string>
+  <string name="card_site_priority_row_heat" formatted="false">Talon lämmitys</string>
+  <string name="card_site_priority_row_charger" formatted="false">Laturi</string>
+  <string name="card_site_priority_row_spa" formatted="false">Spa, varattu kylpy</string>
+  <string name="card_site_priority_row_sauna" formatted="false">Sauna</string>
+  <string name="card_site_priority_row_cooling" formatted="false">Talon jäähdytys</string>
+  <string name="card_site_priority_row_water_heater" formatted="false">Lämminvesivaraaja</string>
+  <string name="card_site_priority_row_battery" formatted="false">Kotiakku</string>
+  <string name="card_site_priority_row_spa_idle" formatted="false">Spa kylpyjen välillä</string>
+  <string name="card_site_priority_row_pool_circulation" formatted="false">Altaan kierrätys</string>
+  <string name="card_site_priority_row_pool_heat" formatted="false">Altaan lämpöpumppu</string>
+  <string name="card_heat_load_control_controlled" formatted="false">SpotNav ohjaa.</string>
+  <string name="card_heat_load_control_controlled_why" formatted="false">SpotNav ohjaa: {why}.</string>
+  <string name="card_heat_load_control_cloud" formatted="false">SpotNav ohjaa pilven kautta: vain hitaita, suunniteltuja muutoksia.</string>
+  <string name="card_heat_load_control_paused" formatted="false">Tauolla {until} asti: {why}.</string>
+  <string name="card_heat_load_control_paused_now" formatted="false">Tauolla: {why}.</string>
+  <string name="card_heat_load_control_handed_back" formatted="false">Palautettu sinulle {until} asti: joku muu muutti sitä, eikä SpotNav muuta sitä takaisin.</string>
+  <string name="card_heat_load_control_failures" formatted="false">Muutokset, joita ei luettu takaisin: {count}.</string>
+  <string name="card_heat_load_control_part" formatted="false">{name}: {text}</string>
+  <string name="card_heat_pool_part_heat_pump" formatted="false">Lämpöpumppu</string>
+  <string name="card_heat_pool_part_circulation" formatted="false">Kierto</string>
+  <string name="card_heat_load_control_why_no_read_back" formatted="false">muutosta ei luettu takaisin</string>
+  <string name="card_heat_load_control_why_write_cap" formatted="false">päivän muutokset on käytetty</string>
+  <string name="card_heat_load_control_why_starts_cap" formatted="false">päivän käynnistykset on käytetty</string>
+  <string name="card_heat_load_control_why_fault" formatted="false">lämpöpumppu näyttää vikaa</string>
+  <string name="card_heat_load_control_why_automation" formatted="false">automaatio ohjaa sitä</string>
+  <string name="card_heat_load_control_why_unavailable" formatted="false">sitä ei voi lukea</string>
+  <string name="card_heat_load_control_why_foreign_mode" formatted="false">se on tilassa, jota SpotNav ei muuta</string>
+  <string name="card_heat_load_control_why_own_scheduler" formatted="false">altaan oma aikataulu on päällä</string>
+  <string name="card_heat_load_control_why_unsupported" formatted="false">SpotNav ei voi ohjata tätä laitetta</string>
+  <string name="card_heat_load_control_why_interlock" formatted="false">odottaa, että kierto käy</string>
+  <string name="card_heat_load_control_why_run_on" formatted="false">käy vielä lämpöpumpun jälkeen</string>
+  <string name="card_heat_load_control_why_floor" formatted="false">alimman lämpötilan alla, lämmittää</string>
+  <string name="card_heat_load_control_why_lock" formatted="false">lukittu, ei käynnisty</string>
+  <string name="card_heat_load_control_why_max_on" formatted="false">pisin aika on saavutettu</string>
+  <string name="card_heat_tab_pool" formatted="false">Allas</string>
+  <string name="card_heat_tab_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_tab_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_water" formatted="false">Vesi {value}</string>
+  <string name="card_heat_pool_water_none" formatted="false">Ei vesianturia</string>
+  <string name="card_heat_pool_water_wait" formatted="false">Vesi: luetaan pian</string>
+  <string name="card_heat_pool_closed" formatted="false">Kausi on suljettu: SpotNav ei koske altaaseen.</string>
+  <string name="card_heat_pool_heating_to" formatted="false">Lämpöpumppu lämmittää kohti {target}</string>
+  <string name="card_heat_pool_heating" formatted="false">Lämmittää, {value} → {target}</string>
+  <string name="card_heat_pool_filtering" formatted="false">Kierto on käynnissä</string>
+  <string name="card_heat_pool_still" formatted="false">Kierto ja lämpöpumppu ovat pysähdyksissä</string>
+  <string name="card_heat_pool_would_heat" formatted="false">Lämmittäisi klo {until} asti</string>
+  <string name="card_heat_pool_would_heat_now" formatted="false">Lämmittäisi nyt</string>
+  <string name="card_heat_pool_would_filter" formatted="false">Suodattaisi klo {until} asti</string>
+  <string name="card_heat_pool_would_filter_now" formatted="false">Suodattaisi nyt</string>
+  <string name="card_heat_pool_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_pool_would_met" formatted="false">Olisi pysähdyksissä: päivän suodatus on tehty</string>
+  <string name="card_heat_pool_would_no_prices" formatted="false">Olisi pysähdyksissä: ei vielä hintoja</string>
+  <string name="card_heat_pool_would_off_now" formatted="false">Olisi pysähdyksissä</string>
+  <string name="card_heat_pool_would_off" formatted="false">Olisi pysähdyksissä klo {until} asti</string>
+  <string name="card_heat_pool_why_sun" formatted="false">aurinkoylijäämä</string>
+  <string name="card_heat_pool_why_cheap" formatted="false">halpa tunti</string>
+  <string name="card_heat_pool_why_need" formatted="false">päivän suodatus</string>
+  <string name="card_heat_pool_why_extra" formatted="false">lisäsuodatus</string>
+  <string name="card_heat_pool_today" formatted="false">Suodatus tänään: {done} tehty, {planned} suunniteltu</string>
+  <string name="card_heat_pool_today_need" formatted="false">Suodatus tänään: {done} tehty, {planned} suunniteltu / {need}</string>
+  <string name="card_heat_pool_today_need_set" formatted="false">Suodatus tänään: {done} tehty, {planned} suunniteltu / {need} (asetettu)</string>
+  <string name="card_heat_pool_today_heat" formatted="false">Lämpöpumppu: {hours} suunniteltu</string>
+  <string name="card_heat_pool_plan_filter" formatted="false">Suodattaa {runs}</string>
+  <string name="card_heat_pool_plan_heat" formatted="false">Lämmittää {runs}</string>
+  <string name="card_heat_pool_plan_extra" formatted="false">Lisäsuodatus {runs}</string>
+  <string name="card_heat_pool_plan_none" formatted="false">Ei mitään suunniteltu seuraavalle 24 tunnille</string>
+  <string name="card_heat_pool_extra_label" formatted="false">Lisäsuodatus</string>
+  <string name="card_heat_pool_extra_add" formatted="false">+{hours} h</string>
+  <string name="card_heat_pool_extra_cancel" formatted="false">Peru</string>
+  <string name="card_heat_pool_extra_waiting" formatted="false">Lisäsuodatus {hours} h ennen {until}</string>
+  <string name="card_heat_pool_extra_when" formatted="false">Lisäsuodatus {hours} h: {runs}</string>
+  <string name="card_heat_pool_season" formatted="false">Allaskausi</string>
+  <string name="card_heat_pool_season_open" formatted="false">Kausi auki</string>
+  <string name="card_heat_pool_season_closed" formatted="false">Suljettu</string>
+  <string name="card_heat_pool_season_hint" formatted="false">Vesi on ollut noin 10 °C kolme päivää – aika sulkea allaskausi?</string>
+  <string name="card_heat_pool_watched" formatted="false">SpotNav vain seuraa allasta: se kertoo, mitä tekisi. Kytke ohjaus päälle kohdassa Asetukset → Lämmitys.</string>
+  <string name="card_heat_spa_temp" formatted="false">Vesi {value}</string>
+  <string name="card_heat_spa_temp_none" formatted="false">Vesi: ei luettu</string>
+  <string name="card_heat_sauna_temp" formatted="false">Nyt {value}</string>
+  <string name="card_heat_sauna_temp_none" formatted="false">Ei luettu</string>
+  <string name="card_heat_spa_every_day" formatted="false">joka päivä</string>
+  <string name="card_heat_spa_once" formatted="false">kerran {when}</string>
+  <string name="card_heat_spa_no_baths" formatted="false">Ei kylpyaikoja</string>
+  <string name="card_heat_sauna_no_sessions" formatted="false">Ei saunavuoroja</string>
+  <string name="card_heat_spa_ready_rate" formatted="false">Valmis {time}, lämpenee {rate} °C/h</string>
+  <string name="card_heat_spa_ready_at" formatted="false">Valmis noin {time}</string>
+  <string name="card_heat_spa_ready" formatted="false">Valmis kylpyyn</string>
+  <string name="card_heat_spa_ready_now" formatted="false">Valmis kylpyyn, {value}</string>
+  <string name="card_heat_sauna_ready" formatted="false">Sauna on valmis</string>
+  <string name="card_heat_sauna_ready_now" formatted="false">Sauna on valmis, {value}</string>
+  <string name="card_heat_spa_idle" formatted="false">Lepää {idle}, ei varattua kylpyä</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Lepää {idle}, seuraava kylpy {when}</string>
+  <string name="card_heat_sauna_off" formatted="false">Pois, ei varattua saunavuoroa</string>
+  <string name="card_heat_sauna_off_next" formatted="false">Pois, seuraava saunavuoro {when}</string>
+  <string name="card_heat_spa_would_heat" formatted="false">Lämmittäisi klo {until} asti</string>
+  <string name="card_heat_spa_would_heat_now" formatted="false">Lämmittäisi nyt</string>
+  <string name="card_heat_spa_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_spa_why_sun" formatted="false">aurinkoylijäämä</string>
+  <string name="card_heat_spa_why_cheap" formatted="false">halvat tunnit</string>
+  <string name="card_heat_spa_why_bath" formatted="false">ehtiäkseen ajoissa</string>
+  <string name="card_heat_spa_why_now" formatted="false">käynnistetty nyt</string>
+  <string name="card_heat_spa_why_floor" formatted="false">vesi on lähellä alarajaansa</string>
+  <string name="card_heat_spa_would_hold" formatted="false">Pitäisi {target} klo {until} asti</string>
+  <string name="card_heat_spa_would_hold_now" formatted="false">Pitäisi {target}</string>
+  <string name="card_heat_spa_would_idle" formatted="false">Lepäisi {idle}</string>
+  <string name="card_heat_spa_would_floor" formatted="false">Lämmittäisi: vesi on lähellä alarajaa {floor}</string>
+  <string name="card_heat_spa_would_off" formatted="false">Ei lämmittäisi</string>
+  <string name="card_heat_sauna_would_off" formatted="false">Olisi pois päältä</string>
+  <string name="card_heat_sauna_would_blocked" formatted="false">Ei käynnistyisi: ovi tai turvalukko estää</string>
+  <string name="card_heat_sauna_would_by_hand" formatted="false">Käynnistä käsin nyt, niin se on valmis {when}: SpotNav vain kertoo milloin</string>
+  <string name="card_heat_sauna_would_by_hand_now" formatted="false">Käynnistä käsin nyt: SpotNav vain kertoo milloin</string>
+  <string name="card_heat_sauna_locked" formatted="false">Lukittu: ovi tai turvakytkin estää saunan käynnistymisen.</string>
+  <string name="card_heat_spa_cause_rate" formatted="false">Se lämpenee liian hitaasti.</string>
+  <string name="card_heat_spa_cause_import_target" formatted="false">Tuontitavoite jättää liian vähän tilaa.</string>
+  <string name="card_heat_spa_cause_power_level" formatted="false">Tehotaso jättää liian vähän tilaa.</string>
+  <string name="card_heat_spa_cause_fuse" formatted="false">Sulake jättää liian vähän tilaa.</string>
+  <string name="card_heat_spa_not_ready" formatted="false">Kylpy {when} ei valmistu ajoissa: se saavuttaa {reach}.</string>
+  <string name="card_heat_sauna_not_ready" formatted="false">Saunavuoro {when} ei valmistu ajoissa: se saavuttaa {reach}.</string>
+  <string name="card_heat_spa_choice_fits" formatted="false">Ota mikä mahtuu ({reach})</string>
+  <string name="card_heat_spa_choice_later" formatted="false">Myöhempi kylpyaika ({time})</string>
+  <string name="card_heat_sauna_choice_later" formatted="false">Myöhempi saunavuoro ({time})</string>
+  <string name="card_heat_spa_choice_peak" formatted="false">Salli huippu</string>
+  <string name="card_heat_spa_now" formatted="false">Kylpy nyt</string>
+  <string name="card_heat_sauna_now" formatted="false">Lämmitä nyt</string>
+  <string name="card_heat_spa_now_until" formatted="false">Kylpy nyt: lämmittäisi ja pitäisi klo {until} asti</string>
+  <string name="card_heat_sauna_now_until" formatted="false">Lämmitä nyt: lämmittäisi ja pitäisi klo {until} asti</string>
+  <string name="card_heat_spa_cancel_now" formatted="false">Peru</string>
+  <string name="card_heat_spa_times" formatted="false">Kylpyajat</string>
+  <string name="card_heat_sauna_times" formatted="false">Saunavuorot</string>
+  <string name="card_heat_spa_idle_label" formatted="false">Kylpyjen välillä</string>
+  <string name="card_heat_spa_plan_heat" formatted="false">Lämpenee {runs}</string>
+  <string name="card_heat_spa_plan_hold" formatted="false">Pidetään lämpimänä klo {until} asti</string>
+  <string name="card_heat_sauna_plan_heat" formatted="false">Lämpenee {runs}</string>
+  <string name="card_heat_sauna_plan_hold" formatted="false">Valmis klo {until} asti</string>
+  <string name="card_heat_spa_cloud" formatted="false">Luetaan pilvipalvelun kautta: SpotNav tekisi vain hitaita, suunniteltuja muutoksia.</string>
+  <string name="card_heat_spa_watch_only" formatted="false">SpotNav voi vain seurata tätä porealtaata: se kertoo, mitä tekisi.</string>
+  <string name="card_heat_sauna_watch_only" formatted="false">SpotNav voi vain seurata tätä saunaa: se kertoo, mitä tekisi.</string>
+  <string name="card_heat_spa_watched" formatted="false">SpotNav vain seuraa porealtaata: se kertoo, mitä tekisi. Kytke ohjaus päälle kohdassa Asetukset → Lämmitys.</string>
+  <string name="card_heat_sauna_watched" formatted="false">SpotNav vain seuraa saunaa: se kertoo, mitä tekisi. Kytke ohjaus päälle kohdassa Asetukset → Lämmitys.</string>
+  <string name="card_heat_sauna_no_safety" formatted="false">SpotNav ei koskaan käynnistä releellä ohjattua kiuasta ilman omaa turvalaitetta: ilmoita se asetuksissa tai käynnistä sauna käsin, kun SpotNav kertoo.</string>
+  <string name="card_heat_use_part_pool" formatted="false">Uima-allas</string>
+  <string name="card_heat_use_part_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_use_part_sauna" formatted="false">Sauna</string>
+  <string name="card_not_ready_title" formatted="false">Ei valmistu ajoissa</string>
+  <string name="card_not_ready_lede" formatted="false">Eniten vapauttava ensin.</string>
+  <string name="card_not_ready_car" formatted="false">Auto</string>
+  <string name="card_not_ready_line_car" formatted="false">{name} {time}: {kwh} puuttuu</string>
+  <string name="card_not_ready_line_heat" formatted="false">{name} {time}: saavuttaa {reach}</string>
+  <string name="card_not_ready_line_chosen" formatted="false">{name} {time}: ottaa mikä mahtuu</string>
+  <string name="card_not_ready_peak_all" formatted="false">Salli huippu kaikille</string>
+  <string name="card_not_ready_button" formatted="false">{load}: {choice}</string>
+  <string name="card_house_plan_load_pool_circulation" formatted="false">Altaan kierto</string>
+  <string name="card_house_plan_load_pool_heat" formatted="false">Altaan lämpöpumppu</string>
+  <string name="card_house_plan_lane_pool_circulation" formatted="false">Suodattaa {hours} h / {need} h vuorokaudessa</string>
+  <string name="card_house_plan_lane_pool_heat" formatted="false">Lämmittää {hours} h</string>
+  <string name="card_house_plan_run_pool_circulation_filter" formatted="false">Allas suodattaa</string>
+  <string name="card_house_plan_run_pool_circulation_extra" formatted="false">Allas lisäsuodattaa</string>
+  <string name="card_house_plan_run_pool_heat_heat" formatted="false">Altaan lämpöpumppu lämmittää</string>
+  <string name="card_house_plan_lane_deadline_ready" formatted="false">{temp} °C klo {time}</string>
+  <string name="card_house_plan_run_spa_heat" formatted="false">Poreallas lämpenee</string>
+  <string name="card_house_plan_run_spa_hold" formatted="false">Poreallas pidetään lämpimänä</string>
+  <string name="card_house_plan_run_sauna_heat" formatted="false">Sauna lämpenee</string>
+  <string name="card_house_plan_run_sauna_hold" formatted="false">Sauna on valmis</string>
+  <string name="site_set_in_home_assistant">Määritä Home Assistantissa</string>
+  <string name="load_press_failed">Se ei mennyt perille. Yritä hetken päästä uudelleen.</string>
+  <string name="load_press_rate_limited">Painettu hetki sitten: yritä uudelleen kymmenen minuutin päästä.</string>
 </resources>

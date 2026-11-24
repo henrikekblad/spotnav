@@ -419,7 +419,7 @@
   <string name="notify_no_phones">Er is geen telefoon met de Home Assistant-app aangemeld bij deze Home Assistant.</string>
   <string name="notify_missing">%1$s (niet gevonden)</string>
   <string name="notify_event_plan_stopped">Laden gestopt of niet gestart zoals gepland</string>
-  <string name="notify_event_plan_at_risk">Het laden is niet klaar voor vertrek</string>
+  <string name="notify_event_plan_at_risk">Niet op tijd klaar</string>
   <string name="notify_event_charge_complete">Laden voltooid</string>
   <string name="notify_event_charge_started">Laden gestart</string>
   <string name="notify_event_plugged_in">Auto aangesloten</string>
@@ -1697,4 +1697,172 @@
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, piek toestaan</string>
   <string name="card_heat_settings_hot_water_help" formatted="false">De eigen ingang van de warmtepomp voor één extra warmwaterbeurt (bijvoorbeeld NIBE\'s \"tijdelijke luxe\"): SpotNav zet hem twee seconden aan en de pomp maakt één beurt. Nooit de stroomschakelaar van een boiler: die kies je onder Boiler. Geen legionella-instelling: de warmtepomp regelt dat.</string>
   <string name="card_heat_settings_water_heater_help" formatted="false">De schakelaar die een elektrische boiler met eigen thermostaat van stroom voorziet (een relais of een magneetschakelaar). Niet de warmwateringang van de warmtepomp: die kies je onder Extra warm water. SpotNav bewaakt hem alleen tot je hem laat sturen.</string>
+  <string name="card_site_priority_title" formatted="false">Prioriteit</string>
+  <string name="card_site_priority_intro" formatted="false">Bovenaan krijgt als eerste energie en geeft als laatste toe.</string>
+  <string name="card_site_priority_row_heat" formatted="false">Verwarming van het huis</string>
+  <string name="card_site_priority_row_charger" formatted="false">Lader</string>
+  <string name="card_site_priority_row_spa" formatted="false">Spa, geboekt bad</string>
+  <string name="card_site_priority_row_sauna" formatted="false">Sauna</string>
+  <string name="card_site_priority_row_cooling" formatted="false">Koeling van het huis</string>
+  <string name="card_site_priority_row_water_heater" formatted="false">Boiler</string>
+  <string name="card_site_priority_row_battery" formatted="false">Thuisbatterij</string>
+  <string name="card_site_priority_row_spa_idle" formatted="false">Spa tussen de baden</string>
+  <string name="card_site_priority_row_pool_circulation" formatted="false">Zwembadcirculatie</string>
+  <string name="card_site_priority_row_pool_heat" formatted="false">Zwembadwarmtepomp</string>
+  <string name="card_heat_load_control_controlled" formatted="false">Gestuurd door SpotNav.</string>
+  <string name="card_heat_load_control_controlled_why" formatted="false">Gestuurd door SpotNav: {why}.</string>
+  <string name="card_heat_load_control_cloud" formatted="false">Gestuurd door SpotNav via de cloud: alleen langzame, geplande wijzigingen.</string>
+  <string name="card_heat_load_control_paused" formatted="false">Gepauzeerd tot {until}: {why}.</string>
+  <string name="card_heat_load_control_paused_now" formatted="false">Gepauzeerd: {why}.</string>
+  <string name="card_heat_load_control_handed_back" formatted="false">Aan jou teruggegeven tot {until}: iemand anders heeft het gewijzigd, en SpotNav zet het niet terug.</string>
+  <string name="card_heat_load_control_failures" formatted="false">Wijzigingen die niet werden teruggelezen: {count}.</string>
+  <string name="card_heat_load_control_part" formatted="false">{name}: {text}</string>
+  <string name="card_heat_pool_part_heat_pump" formatted="false">Warmtepomp</string>
+  <string name="card_heat_pool_part_circulation" formatted="false">Circulatie</string>
+  <string name="card_heat_load_control_why_no_read_back" formatted="false">een wijziging werd niet teruggelezen</string>
+  <string name="card_heat_load_control_why_write_cap" formatted="false">de wijzigingen van vandaag zijn op</string>
+  <string name="card_heat_load_control_why_starts_cap" formatted="false">de starts van vandaag zijn op</string>
+  <string name="card_heat_load_control_why_fault" formatted="false">de warmtepomp meldt een storing</string>
+  <string name="card_heat_load_control_why_automation" formatted="false">een automatisering stuurt het</string>
+  <string name="card_heat_load_control_why_unavailable" formatted="false">het kan niet worden gelezen</string>
+  <string name="card_heat_load_control_why_foreign_mode" formatted="false">het staat in een stand die SpotNav niet wijzigt</string>
+  <string name="card_heat_load_control_why_own_scheduler" formatted="false">het eigen schema van de spa staat aan</string>
+  <string name="card_heat_load_control_why_unsupported" formatted="false">SpotNav kan dit apparaat niet aansturen</string>
+  <string name="card_heat_load_control_why_interlock" formatted="false">wacht tot de circulatie loopt</string>
+  <string name="card_heat_load_control_why_run_on" formatted="false">loopt na de warmtepomp nog even door</string>
+  <string name="card_heat_load_control_why_floor" formatted="false">onder de laagste temperatuur, warmt op</string>
+  <string name="card_heat_load_control_why_lock" formatted="false">vergrendeld, start niet</string>
+  <string name="card_heat_load_control_why_max_on" formatted="false">de langste looptijd is bereikt</string>
+  <string name="card_heat_tab_pool" formatted="false">Zwembad</string>
+  <string name="card_heat_tab_spa" formatted="false">Spa</string>
+  <string name="card_heat_tab_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_water" formatted="false">Water {value}</string>
+  <string name="card_heat_pool_water_none" formatted="false">Geen watersensor</string>
+  <string name="card_heat_pool_water_wait" formatted="false">Water: wordt zo gelezen</string>
+  <string name="card_heat_pool_closed" formatted="false">Seizoen gesloten: SpotNav laat het zwembad met rust.</string>
+  <string name="card_heat_pool_heating_to" formatted="false">De warmtepomp verwarmt naar {target}</string>
+  <string name="card_heat_pool_heating" formatted="false">Verwarmt, {value} → {target}</string>
+  <string name="card_heat_pool_filtering" formatted="false">De circulatie draait</string>
+  <string name="card_heat_pool_still" formatted="false">Circulatie en warmtepomp staan stil</string>
+  <string name="card_heat_pool_would_heat" formatted="false">Zou verwarmen tot {until}</string>
+  <string name="card_heat_pool_would_heat_now" formatted="false">Zou nu verwarmen</string>
+  <string name="card_heat_pool_would_filter" formatted="false">Zou filteren tot {until}</string>
+  <string name="card_heat_pool_would_filter_now" formatted="false">Zou nu filteren</string>
+  <string name="card_heat_pool_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_pool_would_met" formatted="false">Zou stilstaan: het filteren van vandaag is klaar</string>
+  <string name="card_heat_pool_would_no_prices" formatted="false">Zou stilstaan: nog geen prijzen</string>
+  <string name="card_heat_pool_would_off_now" formatted="false">Zou stilstaan</string>
+  <string name="card_heat_pool_would_off" formatted="false">Zou stilstaan tot {until}</string>
+  <string name="card_heat_pool_why_sun" formatted="false">zonne-overschot</string>
+  <string name="card_heat_pool_why_cheap" formatted="false">goedkoop uur</string>
+  <string name="card_heat_pool_why_need" formatted="false">het filteren van de dag</string>
+  <string name="card_heat_pool_why_extra" formatted="false">extra filteren</string>
+  <string name="card_heat_pool_today" formatted="false">Filteren vandaag: {done} klaar, {planned} gepland</string>
+  <string name="card_heat_pool_today_need" formatted="false">Filteren vandaag: {done} klaar, {planned} gepland van {need}</string>
+  <string name="card_heat_pool_today_need_set" formatted="false">Filteren vandaag: {done} klaar, {planned} gepland van {need} (ingesteld)</string>
+  <string name="card_heat_pool_today_heat" formatted="false">Warmtepomp: {hours} gepland</string>
+  <string name="card_heat_pool_plan_filter" formatted="false">Filtert {runs}</string>
+  <string name="card_heat_pool_plan_heat" formatted="false">Verwarmt {runs}</string>
+  <string name="card_heat_pool_plan_extra" formatted="false">Extra filteren {runs}</string>
+  <string name="card_heat_pool_plan_none" formatted="false">Niets gepland in de komende 24 uur</string>
+  <string name="card_heat_pool_extra_label" formatted="false">Extra filteren</string>
+  <string name="card_heat_pool_extra_add" formatted="false">+{hours} u</string>
+  <string name="card_heat_pool_extra_cancel" formatted="false">Annuleren</string>
+  <string name="card_heat_pool_extra_waiting" formatted="false">Extra filteren {hours} u vóór {until}</string>
+  <string name="card_heat_pool_extra_when" formatted="false">Extra filteren {hours} u: {runs}</string>
+  <string name="card_heat_pool_season" formatted="false">Zwembadseizoen</string>
+  <string name="card_heat_pool_season_open" formatted="false">Seizoen open</string>
+  <string name="card_heat_pool_season_closed" formatted="false">Gesloten</string>
+  <string name="card_heat_pool_season_hint" formatted="false">Het water is al drie dagen rond 10 °C – tijd om het zwembadseizoen te sluiten?</string>
+  <string name="card_heat_pool_watched" formatted="false">SpotNav houdt het zwembad alleen in de gaten: het zegt wat het zou doen. Zet de sturing aan onder Instellingen → Verwarming.</string>
+  <string name="card_heat_spa_temp" formatted="false">Water {value}</string>
+  <string name="card_heat_spa_temp_none" formatted="false">Water: niet gelezen</string>
+  <string name="card_heat_sauna_temp" formatted="false">Nu {value}</string>
+  <string name="card_heat_sauna_temp_none" formatted="false">Niet gelezen</string>
+  <string name="card_heat_spa_every_day" formatted="false">elke dag</string>
+  <string name="card_heat_spa_once" formatted="false">eenmalig {when}</string>
+  <string name="card_heat_spa_no_baths" formatted="false">Geen badtijden</string>
+  <string name="card_heat_sauna_no_sessions" formatted="false">Geen saunasessies</string>
+  <string name="card_heat_spa_ready_rate" formatted="false">Klaar {time}, verwarmt {rate} °C/u</string>
+  <string name="card_heat_spa_ready_at" formatted="false">Klaar rond {time}</string>
+  <string name="card_heat_spa_ready" formatted="false">Klaar om te baden</string>
+  <string name="card_heat_spa_ready_now" formatted="false">Klaar om te baden, {value}</string>
+  <string name="card_heat_sauna_ready" formatted="false">Sauna klaar</string>
+  <string name="card_heat_sauna_ready_now" formatted="false">Sauna klaar, {value}</string>
+  <string name="card_heat_spa_idle" formatted="false">Rust op {idle}, geen bad geboekt</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Rust op {idle}, volgend bad {when}</string>
+  <string name="card_heat_sauna_off" formatted="false">Uit, geen sessie geboekt</string>
+  <string name="card_heat_sauna_off_next" formatted="false">Uit, volgende sessie {when}</string>
+  <string name="card_heat_spa_would_heat" formatted="false">Zou verwarmen tot {until}</string>
+  <string name="card_heat_spa_would_heat_now" formatted="false">Zou nu verwarmen</string>
+  <string name="card_heat_spa_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_spa_why_sun" formatted="false">zonne-overschot</string>
+  <string name="card_heat_spa_why_cheap" formatted="false">goedkope uren</string>
+  <string name="card_heat_spa_why_bath" formatted="false">om op tijd klaar te zijn</string>
+  <string name="card_heat_spa_why_now" formatted="false">nu gestart</string>
+  <string name="card_heat_spa_why_floor" formatted="false">het water is bijna op zijn laagste</string>
+  <string name="card_heat_spa_would_hold" formatted="false">Zou {target} vasthouden tot {until}</string>
+  <string name="card_heat_spa_would_hold_now" formatted="false">Zou {target} vasthouden</string>
+  <string name="card_heat_spa_would_idle" formatted="false">Zou rusten op {idle}</string>
+  <string name="card_heat_spa_would_floor" formatted="false">Zou verwarmen: het water is bijna op het minimum van {floor}</string>
+  <string name="card_heat_spa_would_off" formatted="false">Zou niet verwarmen</string>
+  <string name="card_heat_sauna_would_off" formatted="false">Zou uit blijven</string>
+  <string name="card_heat_sauna_would_blocked" formatted="false">Zou niet starten: de deur of het veiligheidsslot houdt het tegen</string>
+  <string name="card_heat_sauna_would_by_hand" formatted="false">Start nu met de hand om {when} klaar te zijn: SpotNav zegt alleen wanneer</string>
+  <string name="card_heat_sauna_would_by_hand_now" formatted="false">Start nu met de hand: SpotNav zegt alleen wanneer</string>
+  <string name="card_heat_sauna_locked" formatted="false">Vergrendeld: de deur of de veiligheidsschakelaar houdt de sauna tegen.</string>
+  <string name="card_heat_spa_cause_rate" formatted="false">Hij verwarmt te langzaam.</string>
+  <string name="card_heat_spa_cause_import_target" formatted="false">Het importdoel laat te weinig ruimte.</string>
+  <string name="card_heat_spa_cause_power_level" formatted="false">Het vermogensniveau laat te weinig ruimte.</string>
+  <string name="card_heat_spa_cause_fuse" formatted="false">De zekering laat te weinig ruimte.</string>
+  <string name="card_heat_spa_not_ready" formatted="false">Het bad om {when} is niet op tijd klaar: het haalt {reach}.</string>
+  <string name="card_heat_sauna_not_ready" formatted="false">De sessie om {when} is niet op tijd klaar: hij haalt {reach}.</string>
+  <string name="card_heat_spa_choice_fits" formatted="false">Neem wat past ({reach})</string>
+  <string name="card_heat_spa_choice_later" formatted="false">Later badtijdstip ({time})</string>
+  <string name="card_heat_sauna_choice_later" formatted="false">Latere sessie ({time})</string>
+  <string name="card_heat_spa_choice_peak" formatted="false">Piek toestaan</string>
+  <string name="card_heat_spa_now" formatted="false">Nu baden</string>
+  <string name="card_heat_sauna_now" formatted="false">Nu verwarmen</string>
+  <string name="card_heat_spa_now_until" formatted="false">Nu baden: zou verwarmen en vasthouden tot {until}</string>
+  <string name="card_heat_sauna_now_until" formatted="false">Nu verwarmen: zou verwarmen en vasthouden tot {until}</string>
+  <string name="card_heat_spa_cancel_now" formatted="false">Annuleren</string>
+  <string name="card_heat_spa_times" formatted="false">Badtijden</string>
+  <string name="card_heat_sauna_times" formatted="false">Saunasessies</string>
+  <string name="card_heat_spa_idle_label" formatted="false">Tussen het baden</string>
+  <string name="card_heat_spa_plan_heat" formatted="false">Verwarmt {runs}</string>
+  <string name="card_heat_spa_plan_hold" formatted="false">Warm gehouden tot {until}</string>
+  <string name="card_heat_sauna_plan_heat" formatted="false">Verwarmt {runs}</string>
+  <string name="card_heat_sauna_plan_hold" formatted="false">Klaar tot {until}</string>
+  <string name="card_heat_spa_cloud" formatted="false">Gelezen via een clouddienst: SpotNav zou alleen trage, geplande wijzigingen doen.</string>
+  <string name="card_heat_spa_watch_only" formatted="false">SpotNav kan deze spa alleen bewaken: het zegt wat het zou doen.</string>
+  <string name="card_heat_sauna_watch_only" formatted="false">SpotNav kan deze sauna alleen bewaken: het zegt wat het zou doen.</string>
+  <string name="card_heat_spa_watched" formatted="false">SpotNav houdt de spa alleen in de gaten: het zegt wat het zou doen. Zet de sturing aan onder Instellingen → Verwarming.</string>
+  <string name="card_heat_sauna_watched" formatted="false">SpotNav houdt de sauna alleen in de gaten: het zegt wat het zou doen. Zet de sturing aan onder Instellingen → Verwarming.</string>
+  <string name="card_heat_sauna_no_safety" formatted="false">SpotNav start nooit een kachel op een relais zonder eigen veiligheidsvoorziening: geef die op in de instellingen, of start de sauna met de hand als SpotNav het zegt.</string>
+  <string name="card_heat_use_part_pool" formatted="false">Zwembad</string>
+  <string name="card_heat_use_part_spa" formatted="false">Spa</string>
+  <string name="card_heat_use_part_sauna" formatted="false">Sauna</string>
+  <string name="card_not_ready_title" formatted="false">Niet op tijd klaar</string>
+  <string name="card_not_ready_lede" formatted="false">Wat het meest vrijmaakt, staat eerst.</string>
+  <string name="card_not_ready_car" formatted="false">De auto</string>
+  <string name="card_not_ready_line_car" formatted="false">{name} {time}: er ontbreekt {kwh}</string>
+  <string name="card_not_ready_line_heat" formatted="false">{name} {time}: bereikt {reach}</string>
+  <string name="card_not_ready_line_chosen" formatted="false">{name} {time}: neemt wat past</string>
+  <string name="card_not_ready_peak_all" formatted="false">Piek toestaan voor allemaal</string>
+  <string name="card_not_ready_button" formatted="false">{load}: {choice}</string>
+  <string name="card_house_plan_load_pool_circulation" formatted="false">Zwembadcirculatie</string>
+  <string name="card_house_plan_load_pool_heat" formatted="false">Zwembadwarmtepomp</string>
+  <string name="card_house_plan_lane_pool_circulation" formatted="false">Filtert {hours} u van {need} u per dag</string>
+  <string name="card_house_plan_lane_pool_heat" formatted="false">Verwarmt {hours} u</string>
+  <string name="card_house_plan_run_pool_circulation_filter" formatted="false">Zwembad filtert</string>
+  <string name="card_house_plan_run_pool_circulation_extra" formatted="false">Zwembad filtert extra</string>
+  <string name="card_house_plan_run_pool_heat_heat" formatted="false">Zwembadwarmtepomp verwarmt</string>
+  <string name="card_house_plan_lane_deadline_ready" formatted="false">{temp} °C om {time}</string>
+  <string name="card_house_plan_run_spa_heat" formatted="false">Spa warmt op</string>
+  <string name="card_house_plan_run_spa_hold" formatted="false">Spa blijft warm voor het bad</string>
+  <string name="card_house_plan_run_sauna_heat" formatted="false">Sauna warmt op</string>
+  <string name="card_house_plan_run_sauna_hold" formatted="false">Sauna klaar</string>
+  <string name="site_set_in_home_assistant">Instellen in Home Assistant</string>
+  <string name="load_press_failed">Dat is niet gelukt. Probeer het zo nog eens.</string>
+  <string name="load_press_rate_limited">Net al ingedrukt: probeer het over tien minuten nog eens.</string>
 </resources>
