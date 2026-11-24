@@ -266,6 +266,9 @@ class NotificationRulesTest {
         assertEquals("2026-09-22T06:04:00+00:00", gone.snapshot?.carRefusesTold)
         val back = NotificationRules.derive(gone.snapshot, first.copy(at = Instant.parse("2026-09-22T06:40:00Z")), all, emptyMap())
         assertEquals(emptyList<LocalEvent>(), back.events)
+        // Held back (the event not chosen): not marked told, so it is told when it comes back and is chosen.
+        val unchosen = NotificationRules.derive(quiet, first, setOf(NotificationEvent.CHARGE_STARTED), emptyMap())
+        assertNull(unchosen.snapshot?.carRefusesTold)
         // A new plug-in's notice has a new `since`.
         val next = first.copy(at = Instant.parse("2026-09-22T07:40:00Z"), carRefusesSince = "2026-09-22T07:39:00+00:00")
         assertEquals(1, NotificationRules.derive(back.snapshot, next, all, emptyMap()).events.size)

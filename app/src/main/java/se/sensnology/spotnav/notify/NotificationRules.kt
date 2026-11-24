@@ -78,8 +78,9 @@ internal data class NotificationSnapshot(
     /** When Home Assistant told it (`car_refuses`' `since`), the same across a Home Assistant restart. */
     val carRefusesSince: String? = null,
     /**
-     * The last `since` seen, carried from check to check (also over a baseline and a check without the line): the
-     * notice is told once per `since`, so a line that leaves and comes back after a restart is not told again.
+     * The `since` of the last notice this check actually posted, carried from check to check (also over a baseline
+     * and a check without the line): the notice is told once per `since`, so a line that leaves and comes back after
+     * a restart is not told again, while one held back (not chosen, the repeat limit, another reason first) still is.
      */
     val carRefusesTold: String? = null
 ) {
@@ -289,16 +290,14 @@ internal object NotificationRules {
             return Derivation(
                 emptyList(),
                 lastSent,
-                current.copy(
-                    completeTold = previous?.completeTold ?: false,
-                    carRefusesTold = current.carRefusesSince ?: previous?.carRefusesTold
-                )
+                current.copy(completeTold = previous?.completeTold ?: false, carRefusesTold = previous?.carRefusesTold)
             )
         }
         val found = changes(previous, current)
         val sent = lastSent.toMutableMap()
         // A completion is told once per charge: again only after the car was unplugged or a new charge started.
         var told = previous.completeTold && current.connected != false && !(current.charging && !previous.charging)
+        var refusesTold = previous.carRefusesTold
         val events = found.filter { event ->
             if (event.event == NotificationEvent.CHARGE_COMPLETE && told) return@filter false
             val last = sent[event.event]
@@ -306,12 +305,15 @@ internal object NotificationRules {
             (event.event in chosen && !quiet).also {
                 if (it) sent[event.event] = current.at
                 if (it && event.event == NotificationEvent.CHARGE_COMPLETE) told = true
+                if (it && event.event == NotificationEvent.PLAN_STOPPED && event.reason == CAR_REFUSES) {
+                    refusesTold = current.carRefusesSince ?: refusesTold
+                }
             }
         }
         return Derivation(
             events,
             sent,
-            current.copy(completeTold = told, carRefusesTold = current.carRefusesSince ?: previous.carRefusesTold)
+            current.copy(completeTold = told, carRefusesTold = refusesTold)
         )
     }
 
