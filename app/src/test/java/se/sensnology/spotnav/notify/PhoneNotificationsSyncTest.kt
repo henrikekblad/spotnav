@@ -60,6 +60,23 @@ class PhoneNotificationsSyncTest {
     }
 
     @Test
+    fun theFirstContactCarriesTheReferenceSoAnOlderAppsEntryIsAdopted() {
+        val bodies = mutableListOf<JSONObject>()
+        val sync = PhoneNotificationsSync(
+            store = PhoneNotificationsStore(FakeKeyValueStore()),
+            appId = { appId },
+            deviceName = "Pixel 8",
+            call = { _, body -> bodies += body; PhoneNotificationsCall.Outcome.Read(answer) },
+            ownChoice = { null },
+            pushRef = { "ref_1234567890abcdef" }
+        )
+        sync.read(door)
+        assertEquals("ref_1234567890abcdef", bodies[0].getString("push_ref"))
+        sync.read(door)
+        assertFalse(bodies[1].has("push_ref"))
+    }
+
+    @Test
     fun anOlderHomeAssistantIsMarkedAndAskedAgainLater() {
         val harness = Harness(PhoneNotificationsCall.Outcome.NotSupported)
         assertEquals(PhoneNotificationsSync.Result.Legacy, harness.sync.read(door))

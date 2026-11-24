@@ -13,6 +13,7 @@ import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.PhoneNotifications
 import se.sensnology.spotnav.ha.client.PhoneNotificationsCall
 import se.sensnology.spotnav.ha.settings.NotificationEvent
+import se.sensnology.spotnav.push.PushStore
 import se.sensnology.spotnav.sites.SiteProfile
 import se.sensnology.spotnav.sites.SiteProfileStore
 
@@ -127,7 +128,9 @@ internal class PhoneNotificationsSync(
     private val call: (HomeAssistantSettings, JSONObject) -> PhoneNotificationsCall.Outcome,
     /** This phone's own choice from before (on, events); `null` when a person never made one (nothing is carried). */
     private val ownChoice: () -> Pair<Boolean, Set<NotificationEvent>>?,
-    private val now: () -> Long = System::currentTimeMillis
+    private val now: () -> Long = System::currentTimeMillis,
+    /** The wake-up reference while instant notifications are on: sent with the first contact (see [read]). */
+    private val pushRef: () -> String? = { null }
 ) {
     sealed interface Result {
         data class Current(val value: PhoneNotifications) : Result
@@ -146,14 +149,20 @@ internal class PhoneNotificationsSync(
     fun due(door: PhoneDoor): Boolean =
         store.mode(door.key) != PhoneNotificationsStore.Mode.LEGACY || now() - store.legacyAt(door.key) >= RECHECK_MS
 
+    /**
+     * Ask [door], handing over [ref] and [change] when given. The first contact always carries the wake-up reference
+     * this phone has (when instant notifications are on): Home Assistant adopts the entry an older app registered with
+     * it rather than making a second one.
+     */
     fun read(door: PhoneDoor, ref: PhoneNotificationsCall.Ref = PhoneNotificationsCall.Ref.Keep, change: PhoneNotificationsCall.Change? = null): Result {
         val first = store.current(door.key) == null
+        val sentRef = if (ref == PhoneNotificationsCall.Ref.Keep && first) pushRef()?.let { PhoneNotificationsCall.Ref.Set(it) } ?: ref else ref
         val shows = SHOWS.joinToString(",")
         val sendShows = store.sentShows(door.key) != shows
         val body = PhoneNotificationsCall.payload(
             appId(),
             name = deviceName.trim().takeIf { first && it.isNotEmpty() },
-            ref = ref,
+            ref = sentRef,
             shows = SHOWS.takeIf { sendShows },
             change = change
         )
@@ -215,7 +224,8 @@ internal class PhoneNotificationsSync(
                 appId = { AppIdentity.forContext(app).appId() },
                 deviceName = Build.MODEL.orEmpty(),
                 call = HomeAssistantClient::phoneNotifications,
-                ownChoice = { if (local.chosen) local.enabled to local.events else null }
+                ownChoice = { if (local.chosen) local.enabled to local.events else null },
+                pushRef = { PushStore.forContext(app).let { push -> push.pushRef?.takeIf { push.enabled } } }
             )
         }
 

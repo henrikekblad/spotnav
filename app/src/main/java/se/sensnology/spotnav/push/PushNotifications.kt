@@ -6,8 +6,10 @@ import se.sensnology.spotnav.BuildConfig
 import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
+import se.sensnology.spotnav.ha.client.PhoneNotificationsCall
 import se.sensnology.spotnav.notify.LocalNotificationStore
 import se.sensnology.spotnav.notify.LocalNotifications
+import se.sensnology.spotnav.notify.PhoneNotificationsSync
 import java.util.concurrent.Executors
 
 /**
@@ -42,9 +44,26 @@ internal object PushNotifications {
             },
             local = {
                 val profiles = ChargerProfileStore.forContext(app).listProfiles().filter { it.configured }.map { it.localId }
-                PushRegistration.Local.of(LocalNotificationStore.forContext(app), profiles)
-            }
+                val doors = PhoneNotificationsSync.doors(app).associate { it.key to it.localIds }
+                PushRegistration.Local.of(LocalNotificationStore.forContext(app), profiles, doors)
+            },
+            phones = { key, ref -> phones(app, key, ref) }
         )
+    }
+
+    /**
+     * One Home Assistant told the reference through `phone_notifications`; [PushRegistration.Phones.LEGACY] for an
+     * older one (known as such and not yet due to be asked again, or answering "Unsupported action" now).
+     */
+    private fun phones(app: Context, key: String, ref: String?): PushRegistration.Phones {
+        val door = PhoneNotificationsSync.doors(app).firstOrNull { it.key == key } ?: return PushRegistration.Phones.FAILED
+        val sync = PhoneNotificationsSync.forContext(app)
+        if (!sync.due(door)) return PushRegistration.Phones.LEGACY
+        return when (sync.read(door, PhoneNotificationsCall.Ref.Set(ref))) {
+            is PhoneNotificationsSync.Result.Current -> PushRegistration.Phones.ACCEPTED
+            PhoneNotificationsSync.Result.Legacy -> PushRegistration.Phones.LEGACY
+            else -> PushRegistration.Phones.FAILED
+        }
     }
 
     private fun background(name: String, block: () -> Unit) {
@@ -77,7 +96,7 @@ internal object PushNotifications {
         val app = context.applicationContext
         // Nothing to tell when it was never turned on and no Home Assistant holds a reference.
         val store = PushStore.forContext(app)
-        if (!store.enabled && store.known.isEmpty()) return
+        if (!store.enabled && store.known.isEmpty() && store.doorsTold().none { store.doorSent(it)?.ref != null }) return
         background("Updating instant notifications") { registration(app).sync() }
     }
 
