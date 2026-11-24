@@ -216,7 +216,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             siteCards.attach(
                 battery = { mode, done -> siteSession.batteryControl(mode, done) },
                 heatRead = { done -> siteSession.heatSettings(done) },
-                heatWrite = { request, done -> siteSession.updateHeat(request, done) }
+                heatWrite = { request, done -> siteSession.updateHeat(request, done) },
+                priorityRead = { done -> siteSession.sitePriority(done) },
+                homeAssistant = shownSite.baseUrl
             )
             val shownGeneration = viewGeneration
             ioExecutor.execute {
@@ -226,7 +228,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 runOnUiThread {
                     if (isDestroyed || viewGeneration != shownGeneration) return@runOnUiThread
                     val flags = (site as? SiteDoor.GetSite.Read)?.site?.capabilities
-                    siteCards.show(flags?.let { ChargerCapabilities(batteryControl = it.batteryControl, getHeat = it.getHeat) })
+                    siteCards.show(flags?.let { ChargerCapabilities(batteryControl = it.batteryControl, getHeat = it.getHeat, getHouse = it.getSiteSettingsView) })
                     homePrice?.show(price)
                 }
             }
@@ -396,7 +398,11 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
             siteCards?.attach(
                 battery = { mode, done -> session.batteryControl(mode, done) },
                 heatRead = { done -> session.heatSettings(done) },
-                heatWrite = { request, done -> session.updateHeat(request, done) }
+                heatWrite = { request, done -> session.updateHeat(request, done) },
+                priorityRead = { done -> session.sitePriority(done) },
+                homeAssistant = settingsProfile.baseUrl,
+                // A 3.0 list in place of the old priority controls; without one they stay.
+                onPriority = { pairedCards.setPriorityList(it) }
             )
             pairedCards.attachGuest { amountKwh, done ->
                 session.updateGuest(amountKwh) { outcome ->

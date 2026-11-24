@@ -5,6 +5,7 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatLoadPress
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatHistoryRead
 import se.sensnology.spotnav.ha.heat.HeatRead
@@ -20,6 +21,8 @@ import se.sensnology.spotnav.ha.house.HouseRead
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.SitePriority
+import se.sensnology.spotnav.ha.site.SitePriorityRead
 import se.sensnology.spotnav.ha.site.HeatSettingsRead
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -419,10 +422,22 @@ object HomeAssistantClient {
         return HeatBoostWrite.answer(status, body)
     }
 
+    /** A press on the pool, the spa or the sauna (webhook `pool`, `spa`, `sauna`; [body] from [HeatLoadPress]). Never throws. */
+    internal fun heatLoadPress(settings: HomeAssistantSettings, body: JSONObject): HeatLoadPress.Outcome {
+        val (status, answer) = write(settings, body)
+        return HeatLoadPress.answer(status, answer)
+    }
+
     /** The site's battery control status (webhook `battery_control`); with [mode] it writes the battery mode first. Never throws. */
     internal fun batteryControl(settings: HomeAssistantSettings, mode: String?): BatteryControlRead.Outcome {
         val (status, body) = write(settings, BatteryControlRead.payload(mode))
         return BatteryControlRead.answer(status, body)
+    }
+
+    /** The site's priority list (webhook `get_site_settings_view`'s `priority`), shown read-only. Never throws. */
+    internal fun sitePriority(settings: HomeAssistantSettings): SiteRead<SitePriority?> {
+        val (status, body) = write(settings, SitePriorityRead.payload())
+        return SitePriorityRead.answer(status, body)
     }
 
     /** The site's heat settings (webhook `get_heat`), as the Settings screen reads them. Never throws. */

@@ -70,6 +70,12 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
     fun setIdentifyPosted(localId: String, key: String?) =
         if (key == null) store.remove(POSTED + localId) else store.putString(POSTED + localId, key)
 
+    /** The "not ready in time" notice this phone shows for a site (its key, see [NotReadyNotice]), or `null` with none. */
+    fun notReadyPosted(site: String): String? = store.getString(NOT_READY + site)
+
+    fun setNotReadyPosted(site: String, key: String?) =
+        if (key == null) store.remove(NOT_READY + site) else store.putString(NOT_READY + site, key)
+
     fun snapshot(localId: String): NotificationSnapshot? =
         store.getString(SNAPSHOT + localId)?.let { raw -> runCatching { NotificationSnapshot.fromJson(JSONObject(raw)) }.getOrNull() }
 
@@ -108,6 +114,7 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
         private const val SENT = "sent."
         private const val IDENTIFIES = "identifies."
         private const val POSTED = "identify_posted."
+        private const val NOT_READY = "not_ready_posted."
         private const val EVENT_SET = "event_set"
         /** Set once the question which car is plugged in was first offered (see [observeIdentifies]). */
         private const val IDENTIFY_OFFERED = "identify_offered"

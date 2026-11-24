@@ -73,7 +73,7 @@ internal data class HeatHistory(
 
     data class BucketPart(val key: String, val kwh: Double, val cost: Double?)
 
-    /** [kind] is `pump`, `hot_water`, `zone` or `other`; a zone's [name] is the household's. */
+    /** [kind] is `pump`, `hot_water`, `zone`, `other`, or `pool`, `spa` and `sauna` (since 3.0); a zone's [name] is the household's. */
     data class Part(val key: String, val kind: String, val name: String?, val kwh: Double, val cost: Double?)
 
     data class TrendMonth(val month: String, val days: Int, val kwh: Double?, val degreeDays: Double?, val kwhPerDegreeDay: Double?)
@@ -115,7 +115,7 @@ internal data class HeatHistory(
 
 internal object HeatHistoryRead {
     const val API_VERSION = 1
-    private val PART_KINDS = setOf("pump", "hot_water", "zone", "other")
+    private val PART_KINDS = setOf("pump", "hot_water", "zone", "other", "pool", "spa", "sauna")
 
     fun payload(period: HistoryKind, date: LocalDate? = null): JSONObject = JSONObject().apply {
         put("version", 1)

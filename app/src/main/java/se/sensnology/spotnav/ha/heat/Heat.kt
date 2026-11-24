@@ -58,7 +58,11 @@ internal data class Heat(
     /** The heat zones with SpotNav's control of each; empty from a Home Assistant before it controls zones. */
     val zoneList: List<HeatZone> = emptyList(),
     /** A plain water heater on a switch; `null` without one, and from a Home Assistant before it. */
-    val waterHeater: HeatWaterHeater? = null
+    val waterHeater: HeatWaterHeater? = null,
+    /** The pool, the spa and the sauna (since 3.0); `null` without each. */
+    val pool: HeatLoads.Pool? = null,
+    val spa: HeatLoads.Deadline? = null,
+    val sauna: HeatLoads.Deadline? = null
 ) {
     /** What the dial and Home/Away are written against. The raw text of `away_until` is what the compare-and-set sends back. */
     data class Config(
@@ -104,8 +108,9 @@ internal data class Heat(
 
     data class Note(val code: String, val params: Map<String, Any?>)
 
-    /** Whether the heat page has anything to show: a meter, a pump, heat zones or indoor sensors. */
-    val hasSomething: Boolean get() = hasMeter || hasPump || zones > 0 || indoor.sensorsRead > 0 || indoor.valueC != null
+    /** Whether the heat page has anything to show: a meter, a pump, heat zones, indoor sensors, a pool, a spa or a sauna. */
+    val hasSomething: Boolean get() = hasMeter || hasPump || zones > 0 || indoor.sensorsRead > 0 || indoor.valueC != null ||
+        pool != null || spa != null || sauna != null
 }
 
 /** The card's `heatSteers()` (`frontend/src/heat-model.ts`): SpotNav steers the heating on these paths, or while its steering is on. */
@@ -239,7 +244,10 @@ internal object HeatRead {
             hotWater = additive(json, "hot_water", null) { objOrNull(it, "hot_water")?.let(HeatHotWaterRead::hotWater) },
             writable = additive(json, "writable", false) { flag(it, "writable") },
             zoneList = HeatZonesRead.zones(json.opt("zones")),
-            waterHeater = additive(json, "water_heater", null) { HeatZonesRead.waterHeater(it) }
+            waterHeater = additive(json, "water_heater", null) { HeatZonesRead.waterHeater(it) },
+            pool = additive(json, "pool", null) { HeatLoads.pool(it) },
+            spa = additive(json, "spa", null) { HeatLoads.deadline(it, "spa") },
+            sauna = additive(json, "sauna", null) { HeatLoads.deadline(it, "sauna") }
         )
     }
 

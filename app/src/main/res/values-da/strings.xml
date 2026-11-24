@@ -428,7 +428,7 @@
   <string name="notify_no_phones">Ingen telefon med Home Assistant-appen er logget ind i denne Home Assistant.</string>
   <string name="notify_missing">%1$s (ikke fundet)</string>
   <string name="notify_event_plan_stopped">Opladningen stoppede eller startede ikke som planlagt</string>
-  <string name="notify_event_plan_at_risk">Opladningen bliver ikke færdig til afgangen</string>
+  <string name="notify_event_plan_at_risk">Bliver ikke klar i tide</string>
   <string name="notify_event_charge_complete">Opladningen er færdig</string>
   <string name="notify_event_charge_started">Opladningen er startet</string>
   <string name="notify_event_plugged_in">Bilen tilsluttet</string>
@@ -1706,4 +1706,176 @@
   <string name="card_does_not_fit_choice_accept_peak_again" formatted="false">Ja, tillad toppen</string>
   <string name="card_heat_settings_hot_water_help" formatted="false">Varmepumpens egen indgang til én ekstra varmtvandskørsel (for eksempel NIBE\'s \"midlertidig luksus\"): SpotNav tænder den i to sekunder, og pumpen laver én kørsel. Aldrig afbryderen til en varmtvandsbeholder: vælg den under Varmtvandsbeholder. Ingen legionellaindstilling: varmepumpen sørger for det.</string>
   <string name="card_heat_settings_water_heater_help" formatted="false">Kontakten, der giver strøm til en elektrisk varmtvandsbeholder med egen termostat (et relæ eller en kontaktor). Ikke varmepumpens varmtvandsindgang: den vælges under Ekstra varmt vand. SpotNav overvåger den kun, til du lader den styre.</string>
+  <string name="card_site_priority_title" formatted="false">Prioritet</string>
+  <string name="card_site_priority_intro" formatted="false">Øverst får strøm først og viger sidst.</string>
+  <string name="card_site_priority_row_heat" formatted="false">Husets varme</string>
+  <string name="card_site_priority_row_charger" formatted="false">Lader</string>
+  <string name="card_site_priority_row_spa" formatted="false">Spa, booket bad</string>
+  <string name="card_site_priority_row_sauna" formatted="false">Sauna</string>
+  <string name="card_site_priority_row_cooling" formatted="false">Husets køling</string>
+  <string name="card_site_priority_row_water_heater" formatted="false">Varmtvandsbeholder</string>
+  <string name="card_site_priority_row_battery" formatted="false">Hjemmebatteri</string>
+  <string name="card_site_priority_row_spa_idle" formatted="false">Spa mellem badene</string>
+  <string name="card_site_priority_row_pool_circulation" formatted="false">Poolens cirkulation</string>
+  <string name="card_site_priority_row_pool_heat" formatted="false">Poolens varmepumpe</string>
+  <string name="card_heat_load_control_controlled" formatted="false">Styres af SpotNav.</string>
+  <string name="card_heat_load_control_controlled_why" formatted="false">Styres af SpotNav: {why}.</string>
+  <string name="card_heat_load_control_cloud" formatted="false">Styres af SpotNav via skyen: kun langsomme, planlagte ændringer.</string>
+  <string name="card_heat_load_control_paused" formatted="false">Sat på pause til {until}: {why}.</string>
+  <string name="card_heat_load_control_paused_now" formatted="false">Sat på pause: {why}.</string>
+  <string name="card_heat_load_control_handed_back" formatted="false">Givet tilbage til dig til {until}: en anden ændrede den, og SpotNav ændrer den ikke tilbage.</string>
+  <string name="card_heat_load_control_failures" formatted="false">Ændringer, der ikke kunne læses tilbage: {count}.</string>
+  <string name="card_heat_load_control_part" formatted="false">{name}: {text}</string>
+  <string name="card_heat_pool_part_heat_pump" formatted="false">Varmepumpen</string>
+  <string name="card_heat_pool_part_circulation" formatted="false">Cirkulationen</string>
+  <string name="card_heat_load_control_why_no_read_back" formatted="false">en ændring kunne ikke læses tilbage</string>
+  <string name="card_heat_load_control_why_write_cap" formatted="false">dagens ændringer er brugt</string>
+  <string name="card_heat_load_control_why_starts_cap" formatted="false">dagens starter er brugt</string>
+  <string name="card_heat_load_control_why_fault" formatted="false">varmepumpen viser en fejl</string>
+  <string name="card_heat_load_control_why_automation" formatted="false">en automatisering styrer den</string>
+  <string name="card_heat_load_control_why_unavailable" formatted="false">den kan ikke læses</string>
+  <string name="card_heat_load_control_why_foreign_mode" formatted="false">den står i en tilstand, SpotNav ikke ændrer</string>
+  <string name="card_heat_load_control_why_own_scheduler" formatted="false">spaens eget skema er slået til</string>
+  <string name="card_heat_load_control_why_unsupported" formatted="false">SpotNav kan ikke styre denne enhed</string>
+  <string name="card_heat_load_control_why_interlock" formatted="false">venter på, at cirkulationen kører</string>
+  <string name="card_heat_load_control_why_run_on" formatted="false">kører videre efter varmepumpen</string>
+  <string name="card_heat_load_control_why_floor" formatted="false">under den laveste temperatur, varmer</string>
+  <string name="card_heat_load_control_why_lock" formatted="false">låst, starter ikke</string>
+  <string name="card_heat_load_control_why_max_on" formatted="false">den længste tid er nået</string>
+  <string name="card_heat_tab_pool" formatted="false">Pool</string>
+  <string name="card_heat_tab_spa" formatted="false">Spa</string>
+  <string name="card_heat_tab_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_water" formatted="false">Vandet {value}</string>
+  <string name="card_heat_pool_water_none" formatted="false">Ingen vandføler</string>
+  <string name="card_heat_pool_water_wait" formatted="false">Vandet: læses snart</string>
+  <string name="card_heat_pool_closed" formatted="false">Sæsonen er lukket: SpotNav rører ikke poolen.</string>
+  <string name="card_heat_pool_heating_to" formatted="false">Varmepumpen varmer mod {target}</string>
+  <string name="card_heat_pool_heating" formatted="false">Varmer, {value} → {target}</string>
+  <string name="card_heat_pool_filtering" formatted="false">Cirkulationen kører</string>
+  <string name="card_heat_pool_still" formatted="false">Cirkulation og varmepumpe står stille</string>
+  <string name="card_heat_pool_would_heat" formatted="false">Ville varme til {until}</string>
+  <string name="card_heat_pool_would_heat_now" formatted="false">Ville varme nu</string>
+  <string name="card_heat_pool_would_filter" formatted="false">Ville filtrere til {until}</string>
+  <string name="card_heat_pool_would_filter_now" formatted="false">Ville filtrere nu</string>
+  <string name="card_heat_pool_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_pool_would_met" formatted="false">Ville stå stille: dagens filtrering er færdig</string>
+  <string name="card_heat_pool_would_no_prices" formatted="false">Ville stå stille: ingen priser endnu</string>
+  <string name="card_heat_pool_would_off_now" formatted="false">Ville stå stille</string>
+  <string name="card_heat_pool_would_off" formatted="false">Ville stå stille til {until}</string>
+  <string name="card_heat_pool_why_sun" formatted="false">soloverskud</string>
+  <string name="card_heat_pool_why_cheap" formatted="false">billig time</string>
+  <string name="card_heat_pool_why_need" formatted="false">dagens filtrering</string>
+  <string name="card_heat_pool_why_extra" formatted="false">ekstra filtrering</string>
+  <string name="card_heat_pool_today" formatted="false">Filtrering i dag: {done} færdig, {planned} planlagt</string>
+  <string name="card_heat_pool_today_need" formatted="false">Filtrering i dag: {done} færdig, {planned} planlagt af {need}</string>
+  <string name="card_heat_pool_today_need_set" formatted="false">Filtrering i dag: {done} færdig, {planned} planlagt af {need} (indstillet)</string>
+  <string name="card_heat_pool_today_heat" formatted="false">Varmepumpen: {hours} planlagt</string>
+  <string name="card_heat_pool_plan_filter" formatted="false">Filtrerer {runs}</string>
+  <string name="card_heat_pool_plan_heat" formatted="false">Varmer {runs}</string>
+  <string name="card_heat_pool_plan_extra" formatted="false">Ekstra filtrering {runs}</string>
+  <string name="card_heat_pool_plan_none" formatted="false">Intet planlagt de næste 24 timer</string>
+  <string name="card_heat_pool_extra_label" formatted="false">Ekstra filtrering</string>
+  <string name="card_heat_pool_extra_add" formatted="false">+{hours} t</string>
+  <string name="card_heat_pool_extra_cancel" formatted="false">Annuller</string>
+  <string name="card_heat_pool_extra_waiting" formatted="false">Ekstra filtrering {hours} t før {until}</string>
+  <string name="card_heat_pool_extra_when" formatted="false">Ekstra filtrering {hours} t: {runs}</string>
+  <string name="card_heat_pool_season" formatted="false">Poolsæson</string>
+  <string name="card_heat_pool_season_open" formatted="false">Sæson åben</string>
+  <string name="card_heat_pool_season_closed" formatted="false">Lukket</string>
+  <string name="card_heat_pool_season_hint" formatted="false">Vandet har ligget omkring 10 °C i tre dage – tid til at lukke poolsæsonen?</string>
+  <string name="card_heat_pool_watched" formatted="false">SpotNav overvåger kun poolen: den siger, hvad den ville gøre. Slå styringen til under Indstillinger → Varme.</string>
+  <string name="card_heat_spa_temp" formatted="false">Vandet {value}</string>
+  <string name="card_heat_spa_temp_none" formatted="false">Vandet: læses ikke</string>
+  <string name="card_heat_sauna_temp" formatted="false">Nu {value}</string>
+  <string name="card_heat_sauna_temp_none" formatted="false">Læses ikke</string>
+  <string name="card_heat_spa_every_day" formatted="false">hver dag</string>
+  <string name="card_heat_spa_once" formatted="false">én gang {when}</string>
+  <string name="card_heat_spa_no_baths" formatted="false">Ingen badetider</string>
+  <string name="card_heat_sauna_no_sessions" formatted="false">Ingen saunaseancer</string>
+  <string name="card_heat_spa_ready_rate" formatted="false">Klar {time}, varmer {rate} °C/t</string>
+  <string name="card_heat_spa_ready_at" formatted="false">Klar cirka {time}</string>
+  <string name="card_heat_spa_ready" formatted="false">Klar til bad</string>
+  <string name="card_heat_spa_ready_now" formatted="false">Klar til bad, {value}</string>
+  <string name="card_heat_sauna_ready" formatted="false">Saunaen er klar</string>
+  <string name="card_heat_sauna_ready_now" formatted="false">Saunaen er klar, {value}</string>
+  <string name="card_heat_spa_idle" formatted="false">Hviler på {idle}, intet bad booket</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Hviler på {idle}, næste bad {when}</string>
+  <string name="card_heat_sauna_off" formatted="false">Slukket, ingen seance booket</string>
+  <string name="card_heat_sauna_off_next" formatted="false">Slukket, næste seance {when}</string>
+  <string name="card_heat_spa_would_heat" formatted="false">Ville varme til {until}</string>
+  <string name="card_heat_spa_would_heat_now" formatted="false">Ville varme nu</string>
+  <string name="card_heat_spa_would_with" formatted="false">{text}: {why}</string>
+  <string name="card_heat_spa_why_sun" formatted="false">soloverskud</string>
+  <string name="card_heat_spa_why_cheap" formatted="false">billige timer</string>
+  <string name="card_heat_spa_why_bath" formatted="false">for at nå det i tide</string>
+  <string name="card_heat_spa_why_now" formatted="false">startet nu</string>
+  <string name="card_heat_spa_why_floor" formatted="false">vandet er tæt på sit laveste</string>
+  <string name="card_heat_spa_would_hold" formatted="false">Ville holde {target} til {until}</string>
+  <string name="card_heat_spa_would_hold_now" formatted="false">Ville holde {target}</string>
+  <string name="card_heat_spa_would_idle" formatted="false">Ville hvile på {idle}</string>
+  <string name="card_heat_spa_would_floor" formatted="false">Ville varme: vandet er tæt på laveste niveau {floor}</string>
+  <string name="card_heat_spa_would_off" formatted="false">Ville ikke varme</string>
+  <string name="card_heat_sauna_would_off" formatted="false">Ville være slukket</string>
+  <string name="card_heat_sauna_would_blocked" formatted="false">Ville ikke starte: døren eller sikkerhedslåsen forhindrer det</string>
+  <string name="card_heat_sauna_would_by_hand" formatted="false">Start i hånden nu for at være klar {when}: SpotNav siger kun hvornår</string>
+  <string name="card_heat_sauna_would_by_hand_now" formatted="false">Start i hånden nu: SpotNav siger kun hvornår</string>
+  <string name="card_heat_sauna_locked" formatted="false">Låst: døren eller sikkerhedsafbryderen forhindrer saunaen i at starte.</string>
+  <string name="card_heat_spa_cause_rate" formatted="false">Den varmer for langsomt.</string>
+  <string name="card_heat_spa_cause_import_target" formatted="false">Importmålet giver for lidt plads.</string>
+  <string name="card_heat_spa_cause_power_level" formatted="false">Effektniveauet giver for lidt plads.</string>
+  <string name="card_heat_spa_cause_fuse" formatted="false">Sikringen giver for lidt plads.</string>
+  <string name="card_heat_spa_not_ready" formatted="false">Badet {when} bliver ikke klar i tide: det når {reach}.</string>
+  <string name="card_heat_sauna_not_ready" formatted="false">Seancen {when} bliver ikke klar i tide: den når {reach}.</string>
+  <string name="card_heat_spa_choice_fits" formatted="false">Tag det, der er plads til ({reach})</string>
+  <string name="card_heat_spa_choice_later" formatted="false">Senere badetid ({time})</string>
+  <string name="card_heat_sauna_choice_later" formatted="false">Senere seance ({time})</string>
+  <string name="card_heat_spa_choice_peak" formatted="false">Tillad toppen</string>
+  <string name="card_heat_spa_now" formatted="false">Bad nu</string>
+  <string name="card_heat_sauna_now" formatted="false">Varm nu</string>
+  <string name="card_heat_spa_now_until" formatted="false">Bad nu: ville varme og holde til {until}</string>
+  <string name="card_heat_sauna_now_until" formatted="false">Varm nu: ville varme og holde til {until}</string>
+  <string name="card_heat_spa_cancel_now" formatted="false">Annuller</string>
+  <string name="card_heat_spa_times" formatted="false">Badetider</string>
+  <string name="card_heat_sauna_times" formatted="false">Saunaseancer</string>
+  <string name="card_heat_spa_idle_label" formatted="false">Mellem badene</string>
+  <string name="card_heat_spa_plan_heat" formatted="false">Varmes {runs}</string>
+  <string name="card_heat_spa_plan_hold" formatted="false">Holdes varmt til {until}</string>
+  <string name="card_heat_sauna_plan_heat" formatted="false">Varmes {runs}</string>
+  <string name="card_heat_sauna_plan_hold" formatted="false">Klar til {until}</string>
+  <string name="card_heat_spa_cloud" formatted="false">Læses via en skytjeneste: SpotNav ville kun lave langsomme, planlagte ændringer.</string>
+  <string name="card_heat_spa_watch_only" formatted="false">SpotNav kan kun overvåge denne spa: den siger, hvad den ville gøre.</string>
+  <string name="card_heat_sauna_watch_only" formatted="false">SpotNav kan kun overvåge denne sauna: den siger, hvad den ville gøre.</string>
+  <string name="card_heat_spa_watched" formatted="false">SpotNav overvåger kun spaen: den siger, hvad den ville gøre. Slå styringen til under Indstillinger → Varme.</string>
+  <string name="card_heat_sauna_watched" formatted="false">SpotNav overvåger kun saunaen: den siger, hvad den ville gøre. Slå styringen til under Indstillinger → Varme.</string>
+  <string name="card_heat_sauna_no_safety" formatted="false">SpotNav starter aldrig et aggregat på relæ uden egen sikkerhedsanordning: angiv den i indstillingerne, eller start saunaen i hånden, når SpotNav siger til.</string>
+  <string name="card_heat_use_part_pool" formatted="false">Pool</string>
+  <string name="card_heat_use_part_spa" formatted="false">Spa</string>
+  <string name="card_heat_use_part_sauna" formatted="false">Sauna</string>
+  <string name="card_not_ready_title" formatted="false">Bliver ikke klar i tide</string>
+  <string name="card_not_ready_lede" formatted="false">Det, der frigør mest, står først.</string>
+  <string name="card_not_ready_car" formatted="false">Bilen</string>
+  <string name="card_not_ready_line_car" formatted="false">{name} {time}: der mangler {kwh}</string>
+  <string name="card_not_ready_line_heat" formatted="false">{name} {time}: når {reach}</string>
+  <string name="card_not_ready_line_chosen" formatted="false">{name} {time}: tager det, der er plads til</string>
+  <string name="card_not_ready_peak_all" formatted="false">Tillad toppen for alle</string>
+  <string name="card_not_ready_button" formatted="false">{load}: {choice}</string>
+  <string name="card_house_plan_load_pool_circulation" formatted="false">Poolcirkulation</string>
+  <string name="card_house_plan_load_pool_heat" formatted="false">Poolens varmepumpe</string>
+  <string name="card_house_plan_lane_pool_circulation" formatted="false">Filtrerer {hours} t af {need} t i døgnet</string>
+  <string name="card_house_plan_lane_pool_heat" formatted="false">Varmer {hours} t</string>
+  <string name="card_house_plan_run_pool_circulation_filter" formatted="false">Poolen filtrerer</string>
+  <string name="card_house_plan_run_pool_circulation_extra" formatted="false">Poolen ekstrafiltrerer</string>
+  <string name="card_house_plan_run_pool_heat_heat" formatted="false">Poolens varmepumpe varmer</string>
+  <string name="card_house_plan_lane_deadline_ready" formatted="false">{temp} °C kl. {time}</string>
+  <string name="card_house_plan_run_spa_heat" formatted="false">Spaen varmes op</string>
+  <string name="card_house_plan_run_spa_hold" formatted="false">Spaen holdes varm til badet</string>
+  <string name="card_house_plan_run_sauna_heat" formatted="false">Saunaen varmes op</string>
+  <string name="card_house_plan_run_sauna_hold" formatted="false">Saunaen er klar</string>
+  <string name="site_set_in_home_assistant">Indstil i Home Assistant</string>
+  <string name="load_press_failed">Det gik ikke igennem. Prøv igen om lidt.</string>
+  <string name="load_press_rate_limited">Trykket for lidt siden: prøv igen om ti minutter.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Pool, spa og sauna regnes ud fra, hvornår de kørte, og deres effekt.</string>
+  <string name="card_heat_pool_dial" formatted="false">Mål for poolvandet</string>
+  <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Saunatemperatur</string>
 </resources>

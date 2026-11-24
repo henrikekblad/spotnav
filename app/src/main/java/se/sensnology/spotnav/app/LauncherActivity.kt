@@ -14,8 +14,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import se.sensnology.spotnav.R
+import se.sensnology.spotnav.notify.NotReadyNotifications
 import se.sensnology.spotnav.prices.AreaCatalogue
 import se.sensnology.spotnav.ui.WidgetConfigActivity
+import se.sensnology.spotnav.ui.site.PageKind
+import se.sensnology.spotnav.ui.site.SitePreferences
 import se.sensnology.spotnav.widget.PriceWidgetProvider
 import se.sensnology.spotnav.widget.WidgetSettings
 
@@ -26,6 +29,11 @@ class LauncherActivity : Activity() {
         // exist before anything asks a widget's area for prices.
         AreaCatalogue.load(this)
         super.onCreate(savedInstanceState)
+        // Opened from the "Not ready in time" notice: at the house page, its plan box's sheet in view.
+        intent?.getStringExtra(NotReadyNotifications.EXTRA_OPEN_HOUSE)?.let { profile ->
+            SitePreferences.of(this).setPage(profile, PageKind.HOUSE.name)
+            NotReadyNotifications.openSheet = true
+        }
         val manager = AppWidgetManager.getInstance(this)
         val ids = manager.getAppWidgetIds(ComponentName(this, PriceWidgetProvider::class.java))
             .filter { WidgetSettings.isConfigured(this, it) }

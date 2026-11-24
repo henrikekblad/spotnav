@@ -26,6 +26,7 @@ import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatLoadPress
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
@@ -36,6 +37,7 @@ import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.SitePriority
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -127,6 +129,9 @@ internal interface HaTransport {
     /** `get_heat`: the site's heat settings; never throws. */
     fun heatSettings(): SiteRead<HeatSettings> = SiteRead.Failed(null)
 
+    /** `get_site_settings_view`'s priority list; never throws. */
+    fun sitePriority(): SiteRead<SitePriority?> = SiteRead.Failed(null)
+
 
     /** `get_house_now`: the site's live flows. */
     fun houseNow(): SiteRead<HouseNow> = SiteRead.Failed(null)
@@ -154,6 +159,9 @@ internal interface HaTransport {
 
     /** `heat_boost`: the Boost button's "start" or "stop"; never throws. */
     fun heatBoost(action: String): HeatBoostWrite.Outcome = HeatBoostWrite.Outcome.Failed(null)
+
+    /** `pool`, `spa` or `sauna`: a press on one of them ([body] from [HeatLoadPress]); never throws. */
+    fun heatLoadPress(body: JSONObject): HeatLoadPress.Outcome = HeatLoadPress.Outcome.Failed(null)
 
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
@@ -230,6 +238,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
 
     override fun heatSettings() = HomeAssistantClient.heatSettings(connection)
 
+    override fun sitePriority() = HomeAssistantClient.sitePriority(connection)
+
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
     override fun house(date: LocalDate?) = HomeAssistantClient.house(connection, date)
@@ -245,6 +255,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
 
     override fun heatBoost(action: String) = HomeAssistantClient.heatBoost(connection, action)
+
+    override fun heatLoadPress(body: JSONObject) = HomeAssistantClient.heatLoadPress(connection, body)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -527,6 +539,13 @@ internal class HaSession(
     }
 
     /** `get_heat` for the Settings screen (never throws). */
+    fun sitePriority(done: (SiteRead<SitePriority?>) -> Unit) {
+        background.execute {
+            val outcome = transport.sitePriority()
+            mainThread { done(outcome) }
+        }
+    }
+
     fun heatSettings(done: (SiteRead<HeatSettings>) -> Unit) {
         background.execute {
             val outcome = transport.heatSettings()
@@ -562,6 +581,14 @@ internal class HaSession(
     fun heatBoost(action: String, done: (HeatBoostWrite.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.heatBoost(action)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** A press on the pool, the spa or the sauna (never throws). */
+    fun heatLoadPress(body: JSONObject, done: (HeatLoadPress.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.heatLoadPress(body)
             mainThread { done(outcome) }
         }
     }

@@ -24,6 +24,8 @@ class HouseFlowDocumentsTest {
         // name -> period, first day, end, running, energy flow nodes
         val expected = mapOf(
             "house_alone_year.json" to listOf("year", "2026-01-01", "2027-01-01", true, 4),
+            "solar_alone_day.json" to listOf("day", "2026-11-15", "2026-11-16", false, 6),
+            "solar_alone_month.json" to listOf("month", "2026-11-01", "2026-12-01", true, 6),
             "villa_day.json" to listOf("day", "2026-11-15", "2026-11-16", false, 8),
             "villa_month.json" to listOf("month", "2026-11-01", "2026-12-01", true, 8),
             "villa_year.json" to listOf("year", "2026-01-01", "2027-01-01", true, 8)

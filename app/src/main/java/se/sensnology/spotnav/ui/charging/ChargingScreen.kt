@@ -359,7 +359,7 @@ internal class ChargingScreen(
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
                 PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id) { pairedDashboard?.chargerId }
-                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id)
+                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id, resolvedChargerProfile?.baseUrl)
                 else -> error("no page for $kind")
             }
         }

@@ -23,6 +23,7 @@ import se.sensnology.spotnav.chargers.ChargerProfileStore
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.push.PushNotifications
 import se.sensnology.spotnav.vehicles.VehicleIdentification
@@ -162,6 +163,9 @@ internal object LocalNotifications {
         val chosen = store.events
         var identifyingChanged = false
         val profileStore = ChargerProfileStore.forContext(app)
+        // Each site's plan is read once, through the first of its chargers that answers for it.
+        val plansRead = HashSet<String>()
+        val sitesTold = HashSet<String>()
         for (profile in profiles) {
             // A charger waiting to be paired again is asked only when its slow check is due.
             if (!profileStore.claimRead(profile.localId)) continue
@@ -178,6 +182,13 @@ internal object LocalNotifications {
             val name = dashboard.chargerName?.trim()?.takeIf { it.isNotEmpty() }
                 ?: profile.label(AppLanguageSettings.text(app, R.string.section_charger))
             IdentifyNotifications.follow(app, store, profile.localId, name, dashboard, NotificationEvent.VEHICLE_IDENTIFY in chosen)
+            // What will not be ready in time across the site (3.0's plan): one notice per site, as "Not ready in time".
+            if (dashboard.capabilities.getHouse && plansRead.add(profile.baseUrl + "|" + (dashboard.site?.name ?: profile.localId))) {
+                val plan = (HomeAssistantClient.plan(profile.toHomeAssistantSettings()) as? SiteRead.Read)?.value
+                if (plan != null && sitesTold.add(plan.siteId)) {
+                    NotReadyNotifications.follow(app, store, profile, plan, NotificationEvent.PLAN_AT_RISK in chosen, now)
+                }
+            }
             if (derivation.events.isEmpty() || !allowed(app)) continue
             derivation.events.forEach { post(app, profile.localId, name, it) }
         }

@@ -74,6 +74,14 @@ internal sealed interface HouseStatus {
 internal class SiteText(val words: CardWords, val locale: Locale, private val numbers: Locale = locale) {
     fun fixed(value: Double, digits: Int): String = String.format(numbers, "%.${digits}f", noMinusZero(value, digits))
 
+    /** At most [digits] decimals, without trailing zeros (the card's `formatNumber`: "8,25", "8,3", "8"). */
+    fun upTo(value: Double, digits: Int): String {
+        var shown = fixed(value, digits)
+        val point = String.format(numbers, "%.1f", 0.5)[1]
+        if (point in shown) shown = shown.trimEnd('0').trimEnd(point)
+        return shown
+    }
+
     /** At most one decimal, none for a whole figure ("1,4", "2"). */
     fun short(value: Double): String = fixed(value, 1).let { if (it.endsWith("0")) fixed(value, 0) else it }
 

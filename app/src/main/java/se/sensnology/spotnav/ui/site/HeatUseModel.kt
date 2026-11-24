@@ -23,7 +23,13 @@ internal sealed interface HeatUseContent {
  */
 internal object HeatUseModel {
     /** The series key a part is drawn and toggled by (the part's own key, which is what the remembered choice holds). */
-    private val KIND_WORDS = mapOf("pump" to "heat.use.part.pump", "hot_water" to "heat.use.part.hotWater", "other" to "heat.use.part.other")
+    /** The parts SpotNav counts itself (when they ran, at their power). */
+    private val COUNTED = setOf("pool", "spa", "sauna")
+
+    private val KIND_WORDS = mapOf(
+        "pump" to "heat.use.part.pump", "hot_water" to "heat.use.part.hotWater", "other" to "heat.use.part.other",
+        "pool" to "heat.use.part.pool", "spa" to "heat.use.part.spa", "sauna" to "heat.use.part.sauna"
+    )
 
     fun content(answer: HeatHistory): HeatUseContent = when {
         answer.meter == null -> HeatUseContent.NoMeter
@@ -82,6 +88,8 @@ internal object HeatUseModel {
             )
         }
         if (inMoney(answer, wantMoney)) add(text.words.say("hist.heat.footnote"))
+        // The pool's, the spa's and the sauna's energy is SpotNav's count from when they ran, not a meter's.
+        if (answer.parts.any { it.kind in COUNTED }) add(text.words.say("heat.use.loadsNote"))
     }
 
     /** The legend: a toggle per part with its swatch colour and its sum in the unit shown. */

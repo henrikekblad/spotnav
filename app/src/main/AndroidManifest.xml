@@ -66,6 +66,9 @@
             android:name=".notify.IdentifyAnswerReceiver"
             android:exported="false" />
         <receiver
+            android:name=".notify.NotReadyAnswerReceiver"
+            android:exported="false" />
+        <receiver
             android:name=".widget.PriceWidgetProvider"
             android:exported="true">
             <intent-filter>

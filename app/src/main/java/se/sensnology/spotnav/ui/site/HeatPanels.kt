@@ -294,6 +294,9 @@ internal class HeatUsePanel(
         "zone-1" -> 0xFF8E6BBF.toInt()
         "zone-2" -> 0xFF4C9F70.toInt()
         "zone-3" -> 0xFFC06C9A.toInt()
+        "pool" -> 0xFF2FA39A.toInt()
+        "spa" -> 0xFFC4703F.toInt()
+        "sauna" -> 0xFF8C5A3A.toInt()
         else -> SiteColours.mix(scope.muted, scope.cardBackground, 0.7f)
     }
 

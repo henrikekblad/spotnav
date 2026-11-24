@@ -27,7 +27,9 @@ internal data class Plan(
     val monthPeak: MonthPeak?,
     val summary: Summary,
     /** The sun is inside the house's figure (the sun is then not drawn below zero). */
-    val sunInHouse: Boolean
+    val sunInHouse: Boolean,
+    /** What will not be ready in time across the site's deadlines (since 3.0); `null` when all fits or unreadable. */
+    val notReady: NotReady? = null
 ) {
     data class Hour(
         val start: Instant,
@@ -58,7 +60,9 @@ internal data class Plan(
         val runs: List<Run>,
         /** The kind's own figures (car `kwh`, battery `cover_kwh`, heat `lowered_hours`, ...): numbers only. */
         val summary: Map<String, Double>,
-        val doesNotFit: DoesNotFit?
+        val doesNotFit: DoesNotFit?,
+        /** The kind's own texts (a spa's or a sauna's `ready_at`). */
+        val summaryText: Map<String, String> = emptyMap()
     )
 
     data class MonthPeak(val kw: Double, val start: Instant)
@@ -143,7 +147,8 @@ internal object PlanRead {
                 peakCeiling = ceiling(summary.opt("peak_ceiling"), "summary.peak_ceiling"),
                 over = flag(summary.opt("over"), "summary.over")
             ),
-            sunInHouse = flag(house.opt("sun_in_house"), "house.sun_in_house")
+            sunInHouse = flag(house.opt("sun_in_house"), "house.sun_in_house"),
+            notReady = NotReadyRead.orNull(json.opt("not_ready"))
         )
     }
 
@@ -174,7 +179,8 @@ internal object PlanRead {
             },
             // Only the figures: a departure or another text in the summary is not drawn from here.
             summary = summary.keys().asSequence().mapNotNull { key -> (summary.opt(key) as? Number)?.toDouble()?.takeIf { it.isFinite() }?.let { key to it } }.toMap(),
-            doesNotFit = DoesNotFit.parse(load.opt("does_not_fit"))
+            doesNotFit = DoesNotFit.parse(load.opt("does_not_fit")),
+            summaryText = summary.keys().asSequence().mapNotNull { key -> (summary.opt(key) as? String)?.let { key to it } }.toMap()
         )
     }
 }
