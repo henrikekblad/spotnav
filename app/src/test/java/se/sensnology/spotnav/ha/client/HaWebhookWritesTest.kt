@@ -154,14 +154,11 @@ class HaWebhookWritesTest {
 
     // update_site_settings
 
-    @Test fun solarPriorityRequestIsExpectedAndChangedAndNamesNoOtherField() {
-        val body = SiteUpdate.priorityRequest("car_first", "battery_first").payload()
-        assertEquals("update_site_settings", body.getString("action"))
-        assertEquals(1, body.getInt("api_version"))
-        assertEquals("car_first", body.getJSONObject("expected").getString("solar_priority"))
-        assertEquals("battery_first", body.getJSONObject("changes").getString("solar_priority"))
-        assertEquals(setOf("solar_priority"), body.getJSONObject("changes").keys().asSequence().toSet())
-        assertFalse(body.toString().contains("active_control"))
+    @Test fun noSiteWriteNamesSolarPriorityAnyMore() {
+        // Since 3.0 car or battery first is the battery's row in the site's priority list, set in Home Assistant.
+        val body = SiteUpdate.forecastRequest(listOf("a"), listOf("b")).payload()
+        assertFalse(body.getJSONObject("changes").has("solar_priority"))
+        assertFalse(body.getJSONObject("expected").has("solar_priority"))
         assertFalse(body.has("charger_id"))
     }
 
@@ -176,43 +173,11 @@ class HaWebhookWritesTest {
     @Test fun aSiteWriteNamesAtLeastOneField() {
         assertThrows(IllegalArgumentException::class.java) { SiteUpdate.Request() }
         val both = SiteUpdate.Request(
-            expectedPriority = "car_first", priority = "battery_first",
-            expectedForecast = listOf("a"), forecast = listOf("a", "b")
+            expectedForecast = listOf("a"), forecast = listOf("a", "b"),
+            importTarget = SiteUpdate.ImportTarget(null, 6.0)
         ).payload()
-        assertEquals(setOf("solar_priority", "solar_forecast"), both.getJSONObject("changes").keys().asSequence().toSet())
-        assertEquals(setOf("solar_priority", "solar_forecast"), both.getJSONObject("expected").keys().asSequence().toSet())
-    }
-
-    private fun site(priority: String? = "car_first", selected: List<String> = listOf("b")) = DashboardSite(
-        name = "Home", writable = true, chargerCount = 1, solarPriority = priority, solarForecastSelected = selected,
-        solarForecastChoices = listOf(DashboardForecastChoice("a", "A"), DashboardForecastChoice("b", "B"), DashboardForecastChoice("c", "C")),
-        activeControlEnabled = false, activeControlAvailable = false, activeControlWritable = false, activeControlReason = null
-    )
-
-    @Test fun theSolarDialogSendsBothChangedFieldsInOneRequestInTheChoicesOrder() {
-        val body = SiteUpdate.solarRequest(site(), SiteUpdate.BATTERY_FIRST, setOf("c", "a"))!!.payload()
-        assertEquals("update_site_settings", body.getString("action"))
-        val changes = body.getJSONObject("changes")
-        assertEquals("battery_first", changes.getString("solar_priority"))
-        assertEquals(listOf("a", "c"), (0 until 2).map { changes.getJSONArray("solar_forecast").getString(it) })
-        val expected = body.getJSONObject("expected")
-        assertEquals("car_first", expected.getString("solar_priority"))
-        assertEquals("b", expected.getJSONArray("solar_forecast").getString(0))
-        assertFalse(body.toString().contains("active_control"))
-    }
-
-    @Test fun theSolarDialogSendsOnlyWhatDiffersAndNothingWhenNothingDoes() {
-        val priorityOnly = SiteUpdate.solarRequest(site(), SiteUpdate.BATTERY_FIRST, setOf("b"))!!.payload()
-        assertEquals(setOf("solar_priority"), priorityOnly.getJSONObject("changes").keys().asSequence().toSet())
-        val forecastOnly = SiteUpdate.solarRequest(site(), SiteUpdate.CAR_FIRST, emptySet())!!.payload()
-        assertEquals(setOf("solar_forecast"), forecastOnly.getJSONObject("changes").keys().asSequence().toSet())
-        assertEquals(0, forecastOnly.getJSONObject("changes").getJSONArray("solar_forecast").length())
-        assertNull(SiteUpdate.solarRequest(site(), SiteUpdate.CAR_FIRST, setOf("b")))
-    }
-
-    @Test fun aSelectedSourceTheChoicesDoNotNameSurvivesTheSolarDialog() {
-        val kept = SiteUpdate.solarRequest(site(selected = listOf("gone")), SiteUpdate.BATTERY_FIRST, setOf("gone", "a"))!!.payload()
-        assertEquals(listOf("a", "gone"), (0 until 2).map { kept.getJSONObject("changes").getJSONArray("solar_forecast").getString(it) })
+        assertEquals(setOf("import_target_kw", "solar_forecast"), both.getJSONObject("changes").keys().asSequence().toSet())
+        assertEquals(setOf("import_target_kw", "solar_forecast"), both.getJSONObject("expected").keys().asSequence().toSet())
     }
 
     // The vehicle dialog's Save
@@ -318,7 +283,7 @@ class HaWebhookWritesTest {
     @Test fun everyWriteAsksForTheWithheldDepartureFields() {
         val reads = listOf(
             VehicleUpdate.payload("v", VehicleField.CAPACITY, 60.0, null),
-            SiteUpdate.priorityRequest("car_first", "battery_first").payload()
+            SiteUpdate.forecastRequest(listOf("a"), listOf("b")).payload()
         ).map { body -> List(body.getJSONArray("reads").length()) { body.getJSONArray("reads").getString(it) } }
         reads.forEach { assertEquals(listOf("departure_date", "departure_weekdays", "fiscal_included", "notifications", "fill_to_limit", "vehicle_ids", "identify_mode", "identify_camera", "identification_status", "solar_no_car_status", "min_soc", "auto_periods", "balancing_paused", "car_ended_waiting", "wake_for_reading", "solar_one_phase", "price_source", "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup", "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen", "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level", "does_not_fit", "charging_after_departure"), it) }
     }

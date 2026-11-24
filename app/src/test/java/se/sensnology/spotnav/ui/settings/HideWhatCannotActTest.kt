@@ -174,24 +174,7 @@ class HideWhatCannotActTest {
         assertTrue(view.isNull("reason"))
     }
 
-    // ---- 8: car or battery first, and the Solar card
-
-    @Test fun carOrBatteryFirstNeedsAHomeBatteryAndASiteThatFollowsSolar() {
-        val solar = DashboardFixtures.dashboard("hybrid_derived_site_with_forecast.json")
-        assertFalse("no battery", SiteSettingsShown.solarPriority(solar, solar.summary?.site))
-        val withBattery = DashboardFixtures.dashboard("hybrid_derived_site_with_forecast.json") {
-            getJSONObject("summary").getJSONObject("site").put("battery_name", "Sigen")
-        }
-        assertTrue(SiteSettingsShown.solarPriority(withBattery, withBattery.summary?.site))
-        // A battery on a site without solar: left out.
-        val cheapest = DashboardFixtures.dashboard("cheapest_direct_site_admin.json") {
-            optJSONObject("summary")?.optJSONObject("site")?.put("battery_name", "Sigen")
-        }
-        assertEquals(setOf(HaSettingsStrategy.CHEAPEST), cheapest.strategyOptions)
-        assertFalse(SiteSettingsShown.solarPriority(cheapest, cheapest.summary?.site))
-        // No summary (an older Home Assistant): nothing says there is a battery.
-        assertFalse(SiteSettingsShown.solarPriority(withBattery, null))
-    }
+    // ---- 8: the Solar card
 
     @Test fun theSolarCardIsLeftOutWithNoForecastToChoose() {
         val site = DashboardFixtures.dashboard("hybrid_derived_site_with_forecast.json").site!!

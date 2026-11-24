@@ -213,10 +213,10 @@ class HomeAssistantClientTest {
 
     @Test fun updateSiteSettingsSendsTheRequestAndReadsThe403OfAWebhookRefusal() {
         val (outcome, sent) = withServer("403 Forbidden", webhookFixture("update_site_settings_not_permitted")) {
-            HomeAssistantClient.updateSiteSettings(it, SiteUpdate.priorityRequest("car_first", "battery_first"))
+            HomeAssistantClient.updateSiteSettings(it, SiteUpdate.forecastRequest(listOf("a"), listOf("b")))
         }
         assertEquals("update_site_settings", sent.getString("action"))
-        assertEquals("battery_first", sent.getJSONObject("changes").getString("solar_priority"))
+        assertEquals("b", sent.getJSONObject("changes").getJSONArray("solar_forecast").getString(0))
         assertTrue(outcome is SiteUpdate.Outcome.NotPermitted)
     }
 
@@ -226,13 +226,13 @@ class HomeAssistantClientTest {
         assertEquals(VehicleUpdate.Outcome.Failed(null), HomeAssistantClient.updateVehicle(settings, "v", listOf(VehicleUpdate.FieldChange(VehicleField.CAPACITY, 1.0, null))))
         assertEquals(
             SiteUpdate.Outcome.Failed(null),
-            HomeAssistantClient.updateSiteSettings(settings, SiteUpdate.priorityRequest(null, "car_first"))
+            HomeAssistantClient.updateSiteSettings(settings, SiteUpdate.forecastRequest(emptyList(), listOf("a")))
         )
     }
 
     @Test fun aChargerBehindItsHomesWebhookIsNamedInEveryRequest() {
         val (_, write) = withServer("200 OK", webhookFixture("site_webhook_update_site_settings")) {
-            HomeAssistantClient.updateSiteSettings(it.copy(chargerId = "entry_a"), SiteUpdate.priorityRequest("car_first", "battery_first"))
+            HomeAssistantClient.updateSiteSettings(it.copy(chargerId = "entry_a"), SiteUpdate.forecastRequest(listOf("a"), listOf("b")))
         }
         assertEquals("entry_a", write.getString("charger_id"))
         assertEquals("update_site_settings", write.getString("action"))
@@ -241,7 +241,7 @@ class HomeAssistantClientTest {
         }
         assertEquals("entry_a", read.getString("charger_id"))
         // A charger's own webhook, or the home's own actions: no charger named.
-        val (_, own) = withServer("200 OK", "{}") { HomeAssistantClient.updateSiteSettings(it, SiteUpdate.priorityRequest(null, "car_first")) }
+        val (_, own) = withServer("200 OK", "{}") { HomeAssistantClient.updateSiteSettings(it, SiteUpdate.forecastRequest(emptyList(), listOf("a"))) }
         assertFalse(own.has("charger_id"))
         assertFalse(HomeAssistantSettings("https://ha", "secret", "c").toString().contains("secret"))
     }

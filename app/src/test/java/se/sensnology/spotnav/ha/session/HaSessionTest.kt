@@ -253,7 +253,7 @@ class HaSessionTest {
         var vehicle: VehicleUpdate.Outcome? = null
         var site: SiteUpdate.Outcome? = null
         rig.session.updateVehicle("car", listOf(VehicleUpdate.FieldChange(VehicleField.CAPACITY, 50.0, null))) { vehicle = it }
-        rig.session.updateSite(SiteUpdate.priorityRequest(null, SiteUpdate.CAR_FIRST)) { site = it }
+        rig.session.updateSite(SiteUpdate.forecastRequest(emptyList(), listOf("a"))) { site = it }
         assertEquals(listOf("vehicle:car", "site"), rig.transport.calls)
         assertNotNull(vehicle)
         assertNotNull(site)

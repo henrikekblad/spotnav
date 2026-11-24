@@ -17,7 +17,6 @@ import android.widget.TextView
 import se.sensnology.spotnav.R
 import se.sensnology.spotnav.app.AppLanguageSettings
 import se.sensnology.spotnav.ha.client.CameraCommands
-import se.sensnology.spotnav.ha.client.ChargerPriorityUpdate
 import se.sensnology.spotnav.ha.client.GuestUpdate
 import se.sensnology.spotnav.ha.client.PhaseSwitchingUpdate
 import se.sensnology.spotnav.ha.client.SiteFacts
@@ -26,7 +25,6 @@ import se.sensnology.spotnav.ha.client.SuggestImportTarget
 import se.sensnology.spotnav.ha.client.VehicleField
 import se.sensnology.spotnav.ha.client.VehicleFieldIssue
 import se.sensnology.spotnav.ha.client.VehicleUpdate
-import se.sensnology.spotnav.ha.dashboard.ChargerPriority
 import se.sensnology.spotnav.ha.dashboard.PhaseSwitching
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.dashboard.DashboardGuest
@@ -93,16 +91,11 @@ internal class PairedSettingsCards(
     private var adoptedSite: DashboardSite? = null
     private val vehicleNotices = mutableMapOf<String, String>()
     private var solarNotice: String? = null
-    private var adoptedPriority: ChargerPriority? = null
-    private var priorityNotice: String? = null
 
     private var writeVehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit =
         { _, _, done -> done(VehicleUpdate.Outcome.Failed(null)) }
     private var writeSite: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit =
         { _, done -> done(SiteUpdate.Outcome.Failed(null)) }
-
-    private var writePriority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
-        { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) }
 
     // Phase switching for solar: written through its own webhook action; what a write answered is shown until the
     // next dashboard.
@@ -193,14 +186,11 @@ internal class PairedSettingsCards(
     fun attachWrites(
         vehicle: (String, List<VehicleUpdate.FieldChange>, (VehicleUpdate.Outcome) -> Unit) -> Unit,
         site: (SiteUpdate.Request, (SiteUpdate.Outcome) -> Unit) -> Unit,
-        priority: (String, String, (ChargerPriorityUpdate.Outcome) -> Unit) -> Unit =
-            { _, _, done -> done(ChargerPriorityUpdate.Outcome.Failed(null)) },
         phaseSwitching: (Boolean, Boolean, (PhaseSwitchingUpdate.Outcome) -> Unit) -> Unit =
             { _, _, done -> done(PhaseSwitchingUpdate.Outcome.Failed(null)) }
     ) {
         writeVehicle = vehicle
         writeSite = site
-        writePriority = priority
         writePhaseSwitching = phaseSwitching
     }
 
@@ -234,7 +224,6 @@ internal class PairedSettingsCards(
         if (fresh != null && fresh !== dashboard) {
             adoptedVehicles.clear()
             adoptedSite = null
-            adoptedPriority = null
             adoptedPhaseSwitching = null
             adoptedGuest = null
             adoptedIdentification = null
@@ -580,8 +569,6 @@ internal class PairedSettingsCards(
                 PairedOverview.EnergyMeter.NotSpecified -> t(R.string.value_none)
             })
         }
-        // The priority is this charger's own setting (its place among the site's chargers), as in the card.
-        addPriority(card.body)
         addPhaseSwitching(card.body)
         addChargePeriods(card.body, dash)
         addIdentification(card.body, dash)
@@ -845,18 +832,6 @@ internal class PairedSettingsCards(
             }
             readRow(card.body, t(R.string.site_battery_label), t(if (setup.batteryName != null) R.string.setup_present else R.string.value_none))
         }
-        // Car or home battery first sits beside the home battery, as in the card: it also decides who goes first at
-        // the main fuse and what the import target counts, not only the sun's surplus.
-        // Shown only with a home battery and a site that follows solar.
-        val solar = PairedOverview.solar(site)
-        if (held != null && SiteSettingsShown.solarPriority(held, summary.setup)) {
-            valueRow(card.body, t(R.string.site_solar_priority), priorityText(solar.priority), onTap = if (solar.editable) ({
-                chooseOne(t(R.string.site_solar_priority), SiteFacts.PRIORITIES.map { priorityText(it) },
-                    SiteFacts.PRIORITIES.indexOf(site.solarPriority), intro = t(R.string.site_solar_priority_help)) { index, done ->
-                    writeSolar(SiteUpdate.priorityRequest(site.solarPriority, SiteFacts.PRIORITIES[index]), done)
-                }
-            }) else null)
-        }
         readRow(card.body, t(R.string.site_active_title), t(if (summary.activeControlOn) R.string.site_on else R.string.site_off))
         val reason = when (summary.reason) {
             SiteFacts.Reason.NONE -> null
@@ -872,15 +847,7 @@ internal class PairedSettingsCards(
         card.body.addView(muted(listOfNotNull(reason, t(R.string.site_active_note)).joinToString(" "), top = 6))
     }
 
-    // --- Charger priority -----------------------------------------------------------------------
-
-    private fun priorityName(value: String) = t(
-        when (value) {
-            ChargerPriority.FIRST -> R.string.priority_first
-            ChargerPriority.LAST -> R.string.priority_last
-            else -> R.string.priority_normal
-        }
-    )
+    // --- Write notices -------------------------------------------------------------------------
 
     private fun priorityNoticeText(notice: PairedVehicles.PriorityNotice) = t(
         when (notice) {
@@ -892,32 +859,6 @@ internal class PairedSettingsCards(
             PairedVehicles.PriorityNotice.FAILED -> R.string.paired_error_generic
         }
     )
-
-    /** The charger's priority on its site: absent from an older Home Assistant, so then nothing is shown. */
-    private fun addPriority(body: LinearLayout) {
-        val priority = adoptedPriority ?: dashboard?.chargerPriority ?: return
-        valueRow(body, t(R.string.priority_label), priorityName(priority.value),
-            onTap = if (priority.writable) ({
-                chooseOne(t(R.string.priority_label), priority.choices.map { priorityName(it) },
-                    priority.choices.indexOf(priority.value), intro = t(R.string.priority_help)) { index, done ->
-                    val current = adoptedPriority ?: dashboard?.chargerPriority ?: return@chooseOne done(null)
-                    writePriority(current.value, current.choices[index]) { outcome ->
-                        val feedback = PairedVehicles.feedback(outcome)
-                        feedback.adopted?.let { adoptedPriority = it }
-                        val message = feedback.notice?.let { priorityNoticeText(it) }
-                        if (feedback.notice == null || feedback.reload) {
-                            priorityNotice = message
-                            done(null)
-                            repaint()
-                        } else {
-                            done(message)
-                        }
-                    }
-                }
-            }) else null)
-        if (!priority.writable) body.addView(muted(t(R.string.site_read_only), top = 4))
-        priorityNotice?.let { body.addView(muted(it, top = 4)) }
-    }
 
     // --- Phase switching for solar ------------------------------------------------------------------
 
@@ -955,12 +896,6 @@ internal class PairedSettingsCards(
     }
 
     // --- Solar ----------------------------------------------------------------------------------
-
-    private fun priorityText(value: String?) = when (value) {
-        SiteUpdate.CAR_FIRST -> t(R.string.site_car_first)
-        SiteUpdate.BATTERY_FIRST -> t(R.string.site_battery_first)
-        else -> t(R.string.paired_value_unset)
-    }
 
     private fun addSolarCard(site: DashboardSite) {
         val summary = PairedOverview.solar(site)
