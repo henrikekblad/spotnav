@@ -1255,7 +1255,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Also charges from the grid when it is cheap and is used when it is expensive. Sells only when it is highly profitable.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Like Balanced, but sells to the grid whenever it pays, wear counted in.</string>
   <string name="card_battery_mode_shadow" formatted="false">While SpotNav does not control the battery, the choice only moves which row is marked as chosen in the comparison.</string>
-  <string name="card_battery_plan_costs" formatted="false">Wear counted as {wear} each way · Balanced sells at {margin} net or more</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Battery plan</string>
   <string name="card_battery_switch" formatted="false">Battery control</string>
   <string name="card_battery_line_off" formatted="false">Off: SpotNav controls nothing yet and only shows what it would do.</string>
@@ -1330,6 +1329,7 @@
   <string name="site_settings_in_home_assistant">The control switches and the choice of sensors, meter and control path are changed in Home Assistant.</string>
   <string name="site_settings_heat_failed">The heat settings could not be read.</string>
   <string name="site_settings_loads_in_home_assistant">These settings are changed by an administrator in Home Assistant: the heat card\'s settings.</string>
+  <string name="site_admin_in_home_assistant">An administrator changes it in Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Heating is set up in Home Assistant: Settings → Heating on the house or heat card.</string>
   <string name="site_settings_offset_home_in_home_assistant">Answer in Home Assistant: the heat card\'s settings, as an administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1956,4 +1956,15 @@
   <string name="card_heat_settings_sauna_safety_yes" formatted="false">Yes, it has one</string>
   <string name="card_heat_settings_sauna_safety_no" formatted="false">No, or I do not know</string>
   <string name="card_heat_settings_sauna_control" formatted="false">Control the sauna</string>
+  <string name="card_battery_plan_margin" formatted="false">Balanced sells at {margin} net or more</string>
+  <string name="card_battery_wear_label" formatted="false">Wear ({unit} each way)</string>
+  <string name="card_battery_wear_help" formatted="false">What it costs in wear to charge and discharge one kWh. Default {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Default</string>
+  <string name="card_battery_preheat_off" formatted="false">The battery\'s cells are cold ({temp} °C) and its preheating is off, so it takes less charge in the cheap hours. Turn on “{name}” on the battery\'s device in Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">The battery\'s cells are cold ({temp} °C). Its preheating switch “{name}” is disabled in Home Assistant, so SpotNav cannot see whether it is on. Enable it on the battery\'s device.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">The battery\'s size is in a disabled sensor in {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">The battery\'s lowest level is in a disabled entity in {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">The battery\'s size and lowest level are in disabled entities in {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">The battery\'s rated charge and discharge power is in disabled entities in {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">What the battery plan needs from the battery is in disabled entities in {integration}.</string>
 </resources>

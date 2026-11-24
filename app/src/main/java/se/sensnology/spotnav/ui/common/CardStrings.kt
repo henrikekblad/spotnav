@@ -534,7 +534,6 @@ internal object CardStrings {
         "battery.modeHelp.balanced" to R.string.card_battery_mode_help_balanced,
         "battery.modeHelp.max_profit" to R.string.card_battery_mode_help_max_profit,
         "battery.modeShadow" to R.string.card_battery_mode_shadow,
-        "battery.planCosts" to R.string.card_battery_plan_costs,
         "battery.planCostsDocs" to R.string.card_battery_plan_costs_docs,
         "battery.switch" to R.string.card_battery_switch,
         "battery.line.off" to R.string.card_battery_line_off,
@@ -1227,6 +1226,17 @@ internal object CardStrings {
         "heat.settings.saunaSafetyYes" to R.string.card_heat_settings_sauna_safety_yes,
         "heat.settings.saunaSafetyNo" to R.string.card_heat_settings_sauna_safety_no,
         "heat.settings.saunaControl" to R.string.card_heat_settings_sauna_control,
+        "battery.planMargin" to R.string.card_battery_plan_margin,
+        "battery.wear.label" to R.string.card_battery_wear_label,
+        "battery.wear.help" to R.string.card_battery_wear_help,
+        "battery.wear.default" to R.string.card_battery_wear_default,
+        "battery.preheat.off" to R.string.card_battery_preheat_off,
+        "battery.preheat.disabled" to R.string.card_battery_preheat_disabled,
+        "battery.enableFacts.size" to R.string.card_battery_enable_facts_size,
+        "battery.enableFacts.floor" to R.string.card_battery_enable_facts_floor,
+        "battery.enableFacts.both" to R.string.card_battery_enable_facts_both,
+        "battery.enableFacts.rating" to R.string.card_battery_enable_facts_rating,
+        "battery.enableFacts.several" to R.string.card_battery_enable_facts_several,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

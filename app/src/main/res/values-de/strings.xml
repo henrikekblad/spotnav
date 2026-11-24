@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Lädt auch aus dem Netz, wenn es günstig ist, und wird genutzt, wenn es teuer ist. Verkauft nur, wenn es sich sehr lohnt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Wie Ausgewogen, verkauft aber ins Netz, sobald es sich lohnt, Verschleiß eingerechnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Solange SpotNav den Speicher nicht steuert, verschiebt die Wahl nur, welche Zeile im Vergleich als gewählt markiert ist.</string>
-  <string name="card_battery_plan_costs" formatted="false">Verschleiß wird mit {wear} je Richtung gerechnet · Ausgewogen verkauft ab mindestens {margin} netto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Der Speicherplan</string>
   <string name="card_battery_switch" formatted="false">Speichersteuerung</string>
   <string name="card_battery_line_off" formatted="false">Aus: SpotNav steuert noch nichts und zeigt nur, was es tun würde.</string>
@@ -1317,6 +1316,7 @@
   <string name="site_settings_in_home_assistant">Das Ein- und Ausschalten der Steuerung sowie die Wahl von Sensoren, Zähler und Steuerweg ändern Sie in Home Assistant.</string>
   <string name="site_settings_heat_failed">Die Heizungseinstellungen konnten nicht gelesen werden.</string>
   <string name="site_settings_loads_in_home_assistant">Diese Einstellungen ändert ein Administrator in Home Assistant: in den Einstellungen der Wärmekarte.</string>
+  <string name="site_admin_in_home_assistant">Wird von einem Administrator in Home Assistant geändert.</string>
   <string name="site_settings_heat_add_in_home_assistant">Die Heizung wird in Home Assistant eingerichtet: Einstellungen → Heizung auf der Haus- oder Heizungskarte.</string>
   <string name="site_settings_offset_home_in_home_assistant">Antworte in Home Assistant: in den Einstellungen der Wärmekarte, als Administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1943,4 +1943,15 @@
   <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, vorhanden</string>
   <string name="card_heat_settings_sauna_safety_no" formatted="false">Nein, oder weiß nicht</string>
   <string name="card_heat_settings_sauna_control" formatted="false">Sauna steuern</string>
+  <string name="card_battery_plan_margin" formatted="false">Ausgewogen verkauft ab mindestens {margin} netto</string>
+  <string name="card_battery_wear_label" formatted="false">Verschleiß ({unit} je Richtung)</string>
+  <string name="card_battery_wear_help" formatted="false">Was es an Verschleiß kostet, eine kWh zu laden und zu entladen. Standard {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Standard</string>
+  <string name="card_battery_preheat_off" formatted="false">Die Zellen des Speichers sind kalt ({temp} °C) und die Vorwärmung ist aus, daher nimmt er in den günstigen Stunden weniger Ladung auf. Schalte „{name}“ am Gerät des Speichers in Home Assistant ein.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Die Zellen des Speichers sind kalt ({temp} °C). Der Schalter für die Vorwärmung „{name}“ ist in Home Assistant deaktiviert, daher sieht SpotNav nicht, ob sie an ist. Aktiviere ihn am Gerät des Speichers.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Die Größe der Batterie steht in einem deaktivierten Sensor in {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Der niedrigste Ladestand der Batterie steht in einer deaktivierten Entität in {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Größe und niedrigster Ladestand der Batterie stehen in deaktivierten Entitäten in {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Die Lade- und Entladeleistung der Batterie steckt in deaktivierten Entitäten in {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Was der Batterieplan über die Batterie wissen muss, steckt in deaktivierten Entitäten in {integration}.</string>
 </resources>

@@ -1250,7 +1250,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">También se carga de la red cuando es barato y se usa cuando es caro. Solo vende cuando es muy rentable.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Como Equilibrado, pero vende a la red siempre que compensa, con el desgaste incluido.</string>
   <string name="card_battery_mode_shadow" formatted="false">Mientras SpotNav no controle la batería, la elección solo cambia qué fila está marcada como elegida en la comparación.</string>
-  <string name="card_battery_plan_costs" formatted="false">Desgaste contado como {wear} en cada sentido · Equilibrado vende a partir de {margin} neto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">El plan de la batería</string>
   <string name="card_battery_switch" formatted="false">Control de la batería</string>
   <string name="card_battery_line_off" formatted="false">Desactivado: SpotNav aún no controla nada y solo muestra lo que haría.</string>
@@ -1325,6 +1324,7 @@
   <string name="site_settings_in_home_assistant">El encendido y apagado del control y la elección de sensores, contador y vía de control se cambian en Home Assistant.</string>
   <string name="site_settings_heat_failed">No se pudieron leer los ajustes de calefacción.</string>
   <string name="site_settings_loads_in_home_assistant">Estas opciones las cambia un administrador en Home Assistant: los ajustes de la tarjeta de calor.</string>
+  <string name="site_admin_in_home_assistant">Lo cambia un administrador en Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">La calefacción se configura en Home Assistant: Ajustes → Calefacción en la tarjeta de la casa o de la calefacción.</string>
   <string name="site_settings_offset_home_in_home_assistant">Responde en Home Assistant: en los ajustes de la tarjeta de calor, como administrador.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1951,4 +1951,15 @@
   <string name="card_heat_settings_sauna_safety_yes" formatted="false">Sí, la tiene</string>
   <string name="card_heat_settings_sauna_safety_no" formatted="false">No, o no lo sé</string>
   <string name="card_heat_settings_sauna_control" formatted="false">Controlar la sauna</string>
+  <string name="card_battery_plan_margin" formatted="false">Equilibrado vende a partir de {margin} neto</string>
+  <string name="card_battery_wear_label" formatted="false">Desgaste ({unit} en cada sentido)</string>
+  <string name="card_battery_wear_help" formatted="false">Lo que cuesta en desgaste cargar y descargar un kWh. Por defecto {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Por defecto</string>
+  <string name="card_battery_preheat_off" formatted="false">Las celdas de la batería están frías ({temp} °C) y el precalentamiento está apagado, así que la batería admite menos carga en las horas baratas. Activa «{name}» en el dispositivo de la batería en Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Las celdas de la batería están frías ({temp} °C). El interruptor de precalentamiento «{name}» está deshabilitado en Home Assistant, así que SpotNav no ve si está encendido. Habilítalo en el dispositivo de la batería.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">El tamaño de la batería está en un sensor desactivado de {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">El nivel mínimo de la batería está en una entidad desactivada de {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">El tamaño y el nivel mínimo de la batería están en entidades desactivadas de {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">La potencia de carga y descarga de la batería está en entidades desactivadas en {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Lo que el plan de la batería necesita saber de la batería está en entidades desactivadas en {integration}.</string>
 </resources>

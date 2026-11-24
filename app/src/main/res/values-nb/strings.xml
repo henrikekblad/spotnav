@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Lader også fra nettet når det er billig og brukes når det er dyrt. Selger bare når det er svært lønnsomt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Som Balansert, men selger til nettet så snart det lønner seg, med slitasjen medregnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Så lenge SpotNav ikke styrer batteriet, flytter valget bare hvilken rad som er markert som valgt i sammenligningen.</string>
-  <string name="card_battery_plan_costs" formatted="false">Slitasje regnes som {wear} hver vei · Balansert selger ved minst {margin} netto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Batteriplanen</string>
   <string name="card_battery_switch" formatted="false">Batteristyring</string>
   <string name="card_battery_line_off" formatted="false">Av: SpotNav styrer ingenting ennå og viser bare hva den ville gjort.</string>
@@ -1317,6 +1316,7 @@
   <string name="site_settings_in_home_assistant">Av og på for styringen og valget av sensorer, måler og styringsvei endres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeinnstillingene kunne ikke leses.</string>
   <string name="site_settings_loads_in_home_assistant">Disse innstillingene endres av en administrator i Home Assistant: varmekortets innstillinger.</string>
+  <string name="site_admin_in_home_assistant">Endres av en administrator i Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Varme settes opp i Home Assistant: Innstillinger → Varme på hus- eller varmekortet.</string>
   <string name="site_settings_offset_home_in_home_assistant">Svar i Home Assistant: varmekortets innstillinger, som administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1943,4 +1943,15 @@
   <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, det finnes</string>
   <string name="card_heat_settings_sauna_safety_no" formatted="false">Nei, eller vet ikke</string>
   <string name="card_heat_settings_sauna_control" formatted="false">Styr badstuen</string>
+  <string name="card_battery_plan_margin" formatted="false">Balansert selger ved minst {margin} netto</string>
+  <string name="card_battery_wear_label" formatted="false">Slitasje ({unit} hver vei)</string>
+  <string name="card_battery_wear_help" formatted="false">Hva det koster i slitasje å lade og lade ut én kWh. Standard {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Standard</string>
+  <string name="card_battery_preheat_off" formatted="false">Batteriets celler er kalde ({temp} °C) og forvarmingen er av, så batteriet tar imot mindre lading i de billige timene. Slå på «{name}» på batteriets enhet i Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Batteriets celler er kalde ({temp} °C). Bryteren for forvarming «{name}» er deaktivert i Home Assistant, så SpotNav ser ikke om den er på. Aktiver den på batteriets enhet.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Batteriets størrelse ligger i en deaktivert sensor i {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Batteriets laveste nivå ligger i en deaktivert entitet i {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Batteriets størrelse og laveste nivå ligger i deaktiverte entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Batteriets lade- og utladeeffekt finnes i avslåtte entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Det batteriplanen trenger å vite om batteriet, finnes i avslåtte entiteter i {integration}.</string>
 </resources>

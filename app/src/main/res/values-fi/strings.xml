@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Latautuu myös verkosta, kun sähkö on halpaa, ja sitä käytetään, kun se on kallista. Myy vain, kun se on erittäin kannattavaa.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Kuten Tasapainoinen, mutta myy verkkoon aina kun se kannattaa, kulumisen huomioiden.</string>
   <string name="card_battery_mode_shadow" formatted="false">Kun SpotNav ei ohjaa akkua, valinta vain vaihtaa, mikä vertailun rivi on merkitty valituksi.</string>
-  <string name="card_battery_plan_costs" formatted="false">Kulumisena lasketaan {wear} kumpaankin suuntaan · Tasapainoinen myy vähintään {margin} nettona</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Akkusuunnitelma</string>
   <string name="card_battery_switch" formatted="false">Akun ohjaus</string>
   <string name="card_battery_line_off" formatted="false">Pois: SpotNav ei vielä ohjaa mitään ja näyttää vain, mitä se tekisi.</string>
@@ -1317,6 +1316,7 @@
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
   <string name="site_settings_loads_in_home_assistant">Näitä asetuksia muuttaa ylläpitäjä Home Assistantissa: lämpökortin asetuksista.</string>
+  <string name="site_admin_in_home_assistant">Ylläpitäjä muuttaa tämän Home Assistantissa.</string>
   <string name="site_settings_heat_add_in_home_assistant">Lämmitys otetaan käyttöön Home Assistantissa: Asetukset → Lämmitys talo- tai lämmityskortilla.</string>
   <string name="site_settings_offset_home_in_home_assistant">Vastaa Home Assistantissa: lämpökortin asetuksissa, ylläpitäjänä.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1943,4 +1943,15 @@
   <string name="card_heat_settings_sauna_safety_yes" formatted="false">Kyllä, on</string>
   <string name="card_heat_settings_sauna_safety_no" formatted="false">Ei, tai en tiedä</string>
   <string name="card_heat_settings_sauna_control" formatted="false">Ohjaa saunaa</string>
+  <string name="card_battery_plan_margin" formatted="false">Tasapainoinen myy vähintään {margin} nettona</string>
+  <string name="card_battery_wear_label" formatted="false">Kuluminen ({unit} kumpaankin suuntaan)</string>
+  <string name="card_battery_wear_help" formatted="false">Mitä yhden kWh:n lataaminen ja purkaminen maksaa kulumisena. Oletus {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Oletus</string>
+  <string name="card_battery_preheat_off" formatted="false">Akun kennot ovat kylmiä ({temp} °C) ja esilämmitys on pois päältä, joten akku ottaa halvoilla tunneilla vähemmän latausta. Kytke ”{name}” päälle akun laitteessa Home Assistantissa.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Akun kennot ovat kylmiä ({temp} °C). Esilämmityksen kytkin ”{name}” on poistettu käytöstä Home Assistantissa, joten SpotNav ei näe, onko se päällä. Ota se käyttöön akun laitteessa.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Akun koko on käytöstä poistetussa anturissa kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Akun alin taso on käytöstä poistetussa entiteetissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Akun koko ja alin taso ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Akun lataus- ja purkutehon tiedot ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Akkusuunnitelman tarvitsemat akun tiedot ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
 </resources>
