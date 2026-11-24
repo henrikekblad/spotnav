@@ -196,17 +196,43 @@ class PhoneNotificationsSyncTest {
         assertEquals(PhoneChoice(true, own), PhoneChoice.of(null, "entry_a", true, own))
         assertEquals(PhoneChoice(false, emptySet()), PhoneChoice.of(null, "entry_a", false, own))
         // Home Assistant's answer: its events, never the own ones.
-        val chosen = PhoneChoice.of(answer, "entry_a", false, own)
+        val appOnly = answer.copy(companionName = null, companionFound = false)
+        val chosen = PhoneChoice.of(appOnly, "entry_a", false, own)
         assertTrue(chosen.enabled)
         assertEquals(setOf(NotificationEvent.PLAN_STOPPED, NotificationEvent.PLAN_AT_RISK, NotificationEvent.CHARGE_COMPLETE, NotificationEvent.VEHICLE_IDENTIFY), chosen.events)
         // Nothing for a charger the phone does not follow, nothing at all while it is off.
         assertEquals(PhoneChoice(false, emptySet()), PhoneChoice.of(answer.copy(chargers = listOf("entry_b")), "entry_a", true, own))
         assertEquals(PhoneChoice(false, emptySet()), PhoneChoice.of(answer.copy(on = false), "entry_a", true, own))
         assertFalse(PhoneChoice.siteAtRisk(answer.copy(on = false), true, setOf(NotificationEvent.PLAN_AT_RISK)))
-        assertTrue(PhoneChoice.siteAtRisk(answer, false, emptySet()))
+        assertTrue(PhoneChoice.siteAtRisk(appOnly, false, emptySet()))
         assertTrue(PhoneChoice.siteAtRisk(null, true, setOf(NotificationEvent.PLAN_AT_RISK)))
         assertFalse(PhoneChoice.wanted(answer.copy(on = false), true))
         assertTrue(PhoneChoice.wanted(null, true))
+    }
+
+    @Test
+    fun aPhoneWithBothAppsAndInstantOffIsToldOnlyByHomeAssistantsApp() {
+        val own = setOf(NotificationEvent.PLUGGED_IN)
+        // Companion found, instant off: Home Assistant delivers it, the local check posts nothing.
+        assertTrue(answer.companionFound && !answer.instant)
+        assertEquals(PhoneChoice(false, emptySet()), PhoneChoice.of(answer, "entry_a", true, own))
+        assertFalse(PhoneChoice.siteAtRisk(answer, true, own + NotificationEvent.PLAN_AT_RISK))
+        assertFalse(PhoneChoice.wanted(answer, true))
+        // Instant on: the wake-up path, so the local check stands as before.
+        val instant = answer.copy(instant = true)
+        assertTrue(PhoneChoice.of(instant, "entry_a", false, own).enabled)
+        assertTrue(PhoneChoice.wanted(instant, false))
+        // The Companion service gone: the app posts again.
+        val gone = answer.copy(companionFound = false)
+        assertTrue(PhoneChoice.of(gone, "entry_a", false, own).enabled)
+        assertTrue(PhoneChoice.wanted(gone, false))
+    }
+
+    @Test
+    fun theFirstContactCarriesTheOwnOnOffInItsSet() {
+        val harness = Harness(PhoneNotificationsCall.Outcome.Read(answer), own = false to setOf(NotificationEvent.PLUGGED_IN))
+        harness.sync.read(door)
+        assertFalse(harness.bodies.first().getJSONObject("set").getBoolean("on"))
     }
 
     @Test

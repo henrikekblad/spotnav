@@ -16,6 +16,8 @@ internal data class PhoneNotifications(
     val chargers: List<String>?,
     /** The Home Assistant app on the same phone, by its name; `null` with none. */
     val companionName: String?,
+    /** The Home Assistant app's notify service still exists (`false` with none or a gone one). */
+    val companionFound: Boolean,
     /** Home Assistant holds a wake-up reference for this phone. */
     val instant: Boolean,
     val installationChargers: List<Charger>,
@@ -28,6 +30,12 @@ internal data class PhoneNotifications(
 
     /** Whether this phone follows the charger [chargerId] (Home Assistant's entry id); one not known by id is followed. */
     fun follows(chargerId: String?): Boolean = chargers == null || chargerId == null || chargerId in chargers
+
+    /**
+     * Home Assistant delivers this phone's notices through its Home Assistant app: that app is found and instant
+     * notifications (the wake-up reference) are off. The app's own check posts nothing then, or each notice comes twice.
+     */
+    val deliveredByCompanion: Boolean get() = companionName != null && companionFound && !instant
 
     fun wants(event: String): Boolean = on && event in events
 }
@@ -128,7 +136,7 @@ internal object PhoneNotificationsCall {
 
     private val ANSWER_KEYS = setOf("ok", "action", "api_version", "phone", "chargers", "loads", "events")
     private val PHONE_KEYS = setOf("id", "name", "on", "events", "chargers", "companion", "instant")
-    private val COMPANION_KEYS = setOf("name")
+    private val COMPANION_KEYS = setOf("name", "found")
     private val CHARGER_KEYS = setOf("id", "name")
     private val LOADS_KEYS = setOf("chargers", "pool", "spa", "sauna")
 
@@ -165,8 +173,12 @@ internal object PhoneNotificationsCall {
         if (json.opt("ok") != true || json.opt("action") != ACTION) bad()
         if (count(json.opt("api_version")) != API_VERSION) bad()
         val phone = exact(obj(json.opt("phone")), PHONE_KEYS)
+        var found = false
         val companion = phone.opt("companion").let { raw ->
-            if (raw === JSONObject.NULL) null else text(exact(obj(raw), COMPANION_KEYS).opt("name"))
+            if (raw === JSONObject.NULL) null else exact(obj(raw), COMPANION_KEYS).let { block ->
+                found = flag(block.opt("found"))
+                text(block.opt("name"))
+            }
         }
         val chargers = phone.opt("chargers").let { raw -> if (raw === JSONObject.NULL) null else texts(raw) }
         val list = (json.opt("chargers") as? JSONArray ?: bad()).let { array ->
@@ -183,6 +195,7 @@ internal object PhoneNotificationsCall {
             events = texts(phone.opt("events")),
             chargers = chargers,
             companionName = companion,
+            companionFound = found,
             instant = flag(phone.opt("instant")),
             installationChargers = list,
             loads = PhoneNotifications.Loads(
@@ -208,7 +221,7 @@ internal object PhoneNotificationsCall {
             put("on", value.on)
             put("events", JSONArray(value.events))
             put("chargers", value.chargers?.let { JSONArray(it) } ?: JSONObject.NULL)
-            put("companion", value.companionName?.let { JSONObject().put("name", it) } ?: JSONObject.NULL)
+            put("companion", value.companionName?.let { JSONObject().put("name", it).put("found", value.companionFound) } ?: JSONObject.NULL)
             put("instant", value.instant)
         })
         put("chargers", JSONArray().apply { value.installationChargers.forEach { put(JSONObject().put("id", it.id).put("name", it.name)) } })

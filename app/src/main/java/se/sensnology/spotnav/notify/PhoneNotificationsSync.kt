@@ -163,13 +163,15 @@ internal class PhoneNotificationsSync(
         val sentRef = if (ref == PhoneNotificationsCall.Ref.Keep && first) pushRef()?.let { PhoneNotificationsCall.Ref.Set(it) } ?: ref else ref
         val shows = SHOWS.joinToString(",")
         val sendShows = store.sentShows(door.key) != shows
+        // The first plain contact carries the app's own on/off, which Home Assistant merges rather than turning its Companion on.
+        val firstSet = if (first && change == null) ownChoice()?.let { PhoneNotificationsCall.Change(on = it.first) } else null
         val body = PhoneNotificationsCall.payload(
             appId(),
             name = deviceName.trim().takeIf { introduce && it.isNotEmpty() },
             model = deviceModel.trim().takeIf { introduce && it.isNotEmpty() },
             ref = sentRef,
             shows = SHOWS.takeIf { sendShows },
-            change = change
+            change = change ?: firstSet
         )
         return when (val outcome = call(door.settings, body)) {
             is PhoneNotificationsCall.Outcome.Read -> {
@@ -254,15 +256,15 @@ internal data class PhoneChoice(val enabled: Boolean, val events: Set<Notificati
     companion object {
         fun of(answer: PhoneNotifications?, chargerId: String?, ownEnabled: Boolean, ownEvents: Set<NotificationEvent>): PhoneChoice {
             if (answer == null) return PhoneChoice(ownEnabled, if (ownEnabled) ownEvents else emptySet())
-            val enabled = answer.on && answer.follows(chargerId)
+            val enabled = answer.on && answer.follows(chargerId) && !answer.deliveredByCompanion
             return PhoneChoice(enabled, if (enabled) answer.events.mapNotNull { NotificationEvent.of(it) }.toSet() else emptySet())
         }
 
         /** Whether the site's "not ready in time" is told: Home Assistant's choice of the event, else this phone's own. */
         fun siteAtRisk(answer: PhoneNotifications?, ownEnabled: Boolean, ownEvents: Set<NotificationEvent>): Boolean =
-            answer?.wants(NotificationEvent.PLAN_AT_RISK.wire) ?: (ownEnabled && NotificationEvent.PLAN_AT_RISK in ownEvents)
+            answer?.let { it.wants(NotificationEvent.PLAN_AT_RISK.wire) && !it.deliveredByCompanion } ?: (ownEnabled && NotificationEvent.PLAN_AT_RISK in ownEvents)
 
         /** Whether anything is to be checked for a Home Assistant: its answer's switch, else this phone's own. */
-        fun wanted(answer: PhoneNotifications?, ownEnabled: Boolean): Boolean = answer?.on ?: ownEnabled
+        fun wanted(answer: PhoneNotifications?, ownEnabled: Boolean): Boolean = answer?.let { it.on && !it.deliveredByCompanion } ?: ownEnabled
     }
 }
