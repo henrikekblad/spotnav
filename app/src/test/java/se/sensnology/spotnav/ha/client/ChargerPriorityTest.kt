@@ -49,18 +49,18 @@ class ChargerPriorityTest {
 
     @Test fun aSuccessAdoptsTheBlockTheAnswerCarries() {
         val outcome = ChargerPriorityUpdate.answer(200, webhook("update_charger_priority_success"))
-        // Since 3.0 the block is derived from the site's priority list (here the charger's only row): "normal".
-        assertEquals("normal", (outcome as ChargerPriorityUpdate.Outcome.Updated).priority.value)
+        // Since 3.0 the block is derived from the site's priority list, and an older app's write reads back as written.
+        assertEquals("first", (outcome as ChargerPriorityUpdate.Outcome.Updated).priority.value)
         assertEquals(PairedVehicles.PriorityFeedback(outcome.priority, null, true), PairedVehicles.feedback(outcome))
     }
 
     @Test fun aConflictShowsTheStoredValueAndReloads() {
         val outcome = ChargerPriorityUpdate.answer(409, webhook("update_charger_priority_conflict"))
-        assertEquals("normal", (outcome as ChargerPriorityUpdate.Outcome.Conflict).priority!!.value)
+        assertEquals("first", (outcome as ChargerPriorityUpdate.Outcome.Conflict).priority!!.value)
         val feedback = PairedVehicles.feedback(outcome)
         assertEquals(PairedVehicles.PriorityNotice.CONFLICT, feedback.notice)
         assertTrue(feedback.reload)
-        assertEquals("normal", feedback.adopted!!.value)
+        assertEquals("first", feedback.adopted!!.value)
     }
 
     @Test fun invalidNoSiteAndUnsupportedAreTheirOwnOutcomes() {
