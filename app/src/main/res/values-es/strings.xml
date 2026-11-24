@@ -1750,6 +1750,9 @@
   <string name="card_heat_load_control_why_floor" formatted="false">por debajo de su temperatura mínima, calentando</string>
   <string name="card_heat_load_control_why_lock" formatted="false">bloqueada, no arranca</string>
   <string name="card_heat_load_control_why_max_on" formatted="false">se alcanzó su tiempo máximo</string>
+  <string name="card_heat_load_control_why_lock_unreadable" formatted="false">no se puede leer el bloqueo, no arranca</string>
+  <string name="card_heat_load_control_why_pump_not_ours" formatted="false">la bomba de calor no la controla SpotNav y la protege su propio detector de caudal; activa Controlar la bomba de calor de la piscina para que la circulación la siga</string>
+  <string name="card_heat_load_control_why_restore_waits" formatted="false">tu ajuste Calor se vuelve a escribir cuando funcione la circulación</string>
   <string name="card_heat_tab_pool" formatted="false">Piscina</string>
   <string name="card_heat_tab_spa" formatted="false">Spa</string>
   <string name="card_heat_tab_sauna" formatted="false">Sauna</string>

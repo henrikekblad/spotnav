@@ -62,6 +62,7 @@ internal object HeatLoads {
     /** A bath or a session that will not be ready: why, what it reaches, and the earliest later hour that fits. */
     data class NotReadyAt(val at: Instant, val cause: String, val reachC: Double, val shortC: Double, val shortKwh: Double, val later: Instant?)
 
+    /** A weekly time: on [weekdays] (Monday 1 to Sunday 7, as a car's departures) at the local [time]. */
     data class Session(val weekdays: List<Int>, val time: String)
 
     /** The spa ([kind] `spa`) or the sauna (`sauna`, no idle temperature): heated by the times booked. */
@@ -214,6 +215,8 @@ internal object HeatLoadPress {
     const val RATE_LIMITED = "spotnav_rate_limited"
     const val NOT_SUPPORTED = "spotnav_not_supported"
     const val NO_LATER = "spotnav_no_later_bath"
+    /** The sauna's refusal when no later session fits (the spa's is [NO_LATER]). */
+    const val NO_LATER_SESSION = "spotnav_no_later_session"
 
     /** A pool press: [fields] are `open`, `hours` or `target_c` as the action takes them. */
     fun pool(action: String, fields: Map<String, Any> = emptyMap()): JSONObject = JSONObject().apply {

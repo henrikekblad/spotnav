@@ -1750,6 +1750,9 @@
   <string name="card_heat_load_control_why_floor" formatted="false">sous sa température la plus basse, chauffe</string>
   <string name="card_heat_load_control_why_lock" formatted="false">verrouillé, ne démarre pas</string>
   <string name="card_heat_load_control_why_max_on" formatted="false">sa durée maximale est atteinte</string>
+  <string name="card_heat_load_control_why_lock_unreadable" formatted="false">le verrou ne peut pas être lu, ne démarre pas</string>
+  <string name="card_heat_load_control_why_pump_not_ours" formatted="false">la pompe à chaleur n\'est pas pilotée par SpotNav et son propre contrôleur de débit la protège ; activez Piloter la pompe à chaleur de la piscine pour que la circulation la suive</string>
+  <string name="card_heat_load_control_why_restore_waits" formatted="false">votre réglage Chauffage est réécrit dès que la circulation tourne</string>
   <string name="card_heat_tab_pool" formatted="false">Piscine</string>
   <string name="card_heat_tab_spa" formatted="false">Spa</string>
   <string name="card_heat_tab_sauna" formatted="false">Sauna</string>

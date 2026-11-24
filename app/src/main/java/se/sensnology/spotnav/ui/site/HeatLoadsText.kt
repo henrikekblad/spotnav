@@ -189,11 +189,11 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
         return "${words.say("heat.${load.kind}.times")}: $said"
     }
 
-    /** Weekdays (Monday 0 to Sunday 6), runs of three or more joined ("mån–fre", "lör, sön"); all seven "varje dag". */
+    /** Weekdays (Monday 1 to Sunday 7, as a car's departures), runs of three or more joined ("mån–fre", "lör, sön"); all seven "varje dag". */
     fun weekdays(days: List<Int>): String {
-        val sorted = days.filter { it in 0..6 }.distinct().sorted()
+        val sorted = days.filter { it in 1..7 }.distinct().sorted()
         if (sorted.size == 7) return words.say("heat.spa.everyDay")
-        fun short(day: Int) = DayOfWeek.of(day + 1).getDisplayName(TextStyle.SHORT, text.locale).trimEnd('.')
+        fun short(day: Int) = DayOfWeek.of(day).getDisplayName(TextStyle.SHORT, text.locale).trimEnd('.')
         val parts = mutableListOf<String>()
         var index = 0
         while (index < sorted.size) {
@@ -262,7 +262,7 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
         private val CAUSES = setOf("rate", "import_target", "power_level", "fuse")
         private val CONTROL_WHY = setOf(
             "no_read_back", "write_cap", "starts_cap", "fault", "automation", "unavailable", "foreign_mode", "own_scheduler",
-            "unsupported", "interlock", "run_on", "floor", "lock", "max_on"
+            "unsupported", "interlock", "run_on", "floor", "lock", "max_on", "lock_unreadable", "pump_not_ours", "restore_waits",
         )
 
         fun of(text: SiteText, heat: Heat) = HeatLoadsText(text, heat.now, heat.zone)

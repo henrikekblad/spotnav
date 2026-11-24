@@ -22,6 +22,17 @@ class SitePriorityTest {
         assertEquals("get_site_settings_view", SitePriorityRead.payload().getString("action"))
     }
 
+    @Test fun aSiteWithEveryKindOfLoadShowsEachRowInItsOrder() {
+        val answer = SitePriorityRead.answer(200, HaFixtures.json("webhook/get_site_settings_view_priority.json").toString())
+        val list = (answer as SiteRead.Read).value!!
+        assertEquals(
+            listOf("heat", "charger:ca", "charger:cb", "water_heater", "battery", "pool_circulation", "pool_heat"),
+            list.rows.map { it.id },
+        )
+        assertEquals(listOf("Charger a", "Charger b"), list.rows.filter { it.kind == "charger" }.map { it.name })
+        assertEquals(7, SitePriorityText.lines(CardStringsXml.words("sv"), list).size)
+    }
+
     @Test fun aRowOfAnUnknownIdIsSkippedAndTheRestKeepTheirOrder() {
         val view = JSONObject(
             """{"priority": {"writable": false, "order": [
