@@ -18,6 +18,7 @@ import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.SitePriority
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.ViewScope
@@ -46,11 +47,14 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     private var capabilities: ChargerCapabilities? = null
     private var battery: BatteryControlRead.Outcome? = null
     private var heat: SiteRead<HeatSettings>? = null
+    private var priority: SitePriority? = null
+    private var homeAssistantUrl: String? = null
     private var notice: String? = null
     private val text get() = SiteSettingsText(cardWords(), AppLanguageSettings.numberLocale(activity))
 
     private var readBattery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit = { _, done -> done(BatteryControlRead.Outcome.Failed(null)) }
     private var readHeat: ((SiteRead<HeatSettings>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
+    private var readPriority: ((SiteRead<SitePriority?>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
     private var writeHeat: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit =
         { _, done -> done(HeatWrite.Outcome.Failed(null)) }
 
@@ -62,11 +66,15 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     fun attach(
         battery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit,
         heatRead: ((SiteRead<HeatSettings>) -> Unit) -> Unit,
-        heatWrite: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit
+        heatWrite: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit,
+        priorityRead: ((SiteRead<SitePriority?>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) },
+        homeAssistant: String? = null
     ) {
         readBattery = battery
         readHeat = heatRead
         writeHeat = heatWrite
+        readPriority = priorityRead
+        homeAssistantUrl = homeAssistant
     }
 
     /** Draw the cards the charger's capabilities offer, and read what they show. */
@@ -78,6 +86,17 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         if (offered.batteryControl) loadBattery(null)
         if (offered.getHeat) loadHeat()
+        // The site's priority list comes with 3.0's site actions (the house page among them).
+        if (offered.getHouse) loadPriority()
+    }
+
+    private fun loadPriority() {
+        readPriority { outcome ->
+            if (isDestroyed) return@readPriority
+            // A failed read keeps the list shown; none read leaves the card out.
+            if (outcome is SiteRead.Read) priority = outcome.value
+            repaint()
+        }
     }
 
     private fun loadBattery(mode: String?, then: ((BatteryControlRead.Outcome) -> Unit)? = null) {
@@ -104,6 +123,27 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         // The battery card only where the site has a battery: its own section in Home Assistant adds one.
         if (offered.batteryControl && battery?.let(SiteSettingsShown::batteryCard) == true) addBatteryCard()
         if (offered.getHeat && heat != null) addHeatCard()
+        priority?.takeIf { offered.getHouse && it.rows.isNotEmpty() }?.let(::addPriorityCard)
+    }
+
+    // --- the priority list ------------------------------------------------------------------------
+
+    /** The site's priority list, read-only as the card shows it to someone who is no administrator: set in Home Assistant. */
+    private fun addPriorityCard(list: SitePriority) {
+        val words = cardWords()
+        val card = card(container, words.say("site.priority.title"), R.drawable.ic_now_house)
+        card.body.addView(muted(words.say("site.priority.intro"), top = 4, bottom = 4))
+        SitePriorityText.lines(words, list).forEach { line ->
+            card.body.addView(TextView(context).apply { text = line; textSize = 15f; setTextColor(dark); setPadding(0, dp(3), 0, dp(3)) })
+        }
+        val address = homeAssistantUrl?.trim()?.trimEnd('/')?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
+        if (address != null) {
+            card.body.addView(android.widget.Button(context).apply {
+                text = t(R.string.site_set_in_home_assistant)
+                isAllCaps = false
+                setOnClickListener { runCatching { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(address))) } }
+            }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(4) })
+        }
     }
 
     private fun muted(text: String, top: Int = 0, bottom: Int = 0) = TextView(context).apply {

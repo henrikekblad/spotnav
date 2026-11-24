@@ -35,6 +35,7 @@ import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.SitePriority
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
 import se.sensnology.spotnav.ha.settings.SettingsUpdate
 import se.sensnology.spotnav.vehicles.ChargeLimit
@@ -122,6 +123,9 @@ internal interface HaTransport {
 
     /** `get_heat`: the site's heat settings; never throws. */
     fun heatSettings(): SiteRead<HeatSettings> = SiteRead.Failed(null)
+
+    /** `get_site_settings_view`'s priority list; never throws. */
+    fun sitePriority(): SiteRead<SitePriority?> = SiteRead.Failed(null)
 
 
     /** `get_house_now`: the site's live flows. */
@@ -222,6 +226,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun batteryControl(mode: String?) = HomeAssistantClient.batteryControl(connection, mode)
 
     override fun heatSettings() = HomeAssistantClient.heatSettings(connection)
+
+    override fun sitePriority() = HomeAssistantClient.sitePriority(connection)
 
     override fun houseNow() = HomeAssistantClient.houseNow(connection)
 
@@ -512,6 +518,13 @@ internal class HaSession(
     }
 
     /** `get_heat` for the Settings screen (never throws). */
+    fun sitePriority(done: (SiteRead<SitePriority?>) -> Unit) {
+        background.execute {
+            val outcome = transport.sitePriority()
+            mainThread { done(outcome) }
+        }
+    }
+
     fun heatSettings(done: (SiteRead<HeatSettings>) -> Unit) {
         background.execute {
             val outcome = transport.heatSettings()
