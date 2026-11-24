@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">Still inn i Home Assistant</string>
   <string name="load_press_failed">Det gikk ikke gjennom. Prøv igjen om litt.</string>
   <string name="load_press_rate_limited">Trykket for litt siden: prøv igjen om ti minutter.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Basseng, boblebad og badstue regnes ut fra når de gikk og effekten deres.</string>
+  <string name="card_heat_pool_dial" formatted="false">Mål for bassengvannet</string>
+  <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Badstuetemperatur</string>
 </resources>

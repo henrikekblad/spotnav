@@ -1873,4 +1873,8 @@
   <string name="site_set_in_home_assistant">Régler dans Home Assistant</string>
   <string name="load_press_failed">Cela n\'a pas abouti. Réessayez dans un moment.</string>
   <string name="load_press_rate_limited">Appuyé il y a un instant : réessayez dans dix minutes.</string>
+  <string name="card_heat_use_loads_note" formatted="false">La piscine, le spa et le sauna sont comptés d’après leurs heures de marche et leur puissance.</string>
+  <string name="card_heat_pool_dial" formatted="false">Objectif de l’eau de la piscine</string>
+  <string name="card_heat_spa_dial" formatted="false">Température du bain</string>
+  <string name="card_heat_sauna_dial" formatted="false">Température du sauna</string>
 </resources>

@@ -5,6 +5,7 @@ import org.json.JSONObject
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatLoadPress
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatHistoryRead
 import se.sensnology.spotnav.ha.heat.HeatRead
@@ -413,6 +414,12 @@ object HomeAssistantClient {
     internal fun heatBoost(settings: HomeAssistantSettings, action: String): HeatBoostWrite.Outcome {
         val (status, body) = write(settings, HeatBoostWrite.payload(action))
         return HeatBoostWrite.answer(status, body)
+    }
+
+    /** A press on the pool, the spa or the sauna (webhook `pool`, `spa`, `sauna`; [body] from [HeatLoadPress]). Never throws. */
+    internal fun heatLoadPress(settings: HomeAssistantSettings, body: JSONObject): HeatLoadPress.Outcome {
+        val (status, answer) = write(settings, body)
+        return HeatLoadPress.answer(status, answer)
     }
 
     /** The site's battery control status (webhook `battery_control`); with [mode] it writes the battery mode first. Never throws. */

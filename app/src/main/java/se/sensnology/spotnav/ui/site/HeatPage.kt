@@ -48,7 +48,9 @@ internal class HeatPage(
     private val memory: SiteMemory,
     private val preferences: SitePreferences,
     /** What the remembered choices are kept under until the heating has said its site. */
-    private val profileId: String
+    private val profileId: String,
+    /** Home Assistant's address, for "Ställ in i Home Assistant" under a load SpotNav only watches. */
+    homeAssistantUrl: String? = null
 ) : ViewScope(scope), SitePage {
     override val kind = PageKind.HEAT
 
@@ -71,6 +73,8 @@ internal class HeatPage(
     private val planBox = HeatPlanPanel(this, store, text)
     private val useBox = HeatUsePanel(this, store, preferences, text, locale, ::siteKey)
     private val details = HeatDetailsDialog(this, session, text, colours, locale, ::todayDate)
+    // The pool, the spa and the sauna under them, as the card's last tabs.
+    private val loadBoxes = HeatLoadBoxes(this, session, text, homeAssistantUrl) { inFlight = false; read() }
     private var boxesOpen = false
     private fun changePeriod(next: PeriodChoice) {
         store.choice = next
@@ -181,6 +185,7 @@ internal class HeatPage(
             addView(periodRow, wide().apply { bottomMargin = dp(6) })
             addView(planBox.panel, wide().apply { bottomMargin = dp(14) })
             addView(useBox.panel, wide().apply { bottomMargin = dp(14) })
+            loadBoxes.panels.forEach { addView(it, wide().apply { bottomMargin = dp(14) }) }
         })
     }
 
@@ -386,6 +391,7 @@ internal class HeatPage(
             info.visibility = View.GONE
             planBox.panel.visibility = View.GONE
             useBox.panel.visibility = View.GONE
+            loadBoxes.render(null)
             return
         }
         state.visibility = View.GONE
@@ -426,6 +432,7 @@ internal class HeatPage(
         say(today, HeatNowModel.todayLine(text, heat))
         say(notes, HeatNowModel.noteLines(text, heat).joinToString("\n") { it.second }.ifEmpty { null })
         renderBoxes(heat)
+        loadBoxes.render(heat)
     }
 
     /** Plan and Förbrukning under the shared picker; a box with nothing to show is left out, and the picker with them. */

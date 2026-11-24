@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">In Home Assistant einstellen</string>
   <string name="load_press_failed">Das hat nicht geklappt. Versuche es gleich noch einmal.</string>
   <string name="load_press_rate_limited">Gerade erst gedrückt: versuche es in zehn Minuten noch einmal.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Pool, Whirlpool und Sauna werden aus ihren Laufzeiten und ihrer Leistung berechnet.</string>
+  <string name="card_heat_pool_dial" formatted="false">Ziel für das Poolwasser</string>
+  <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Saunatemperatur</string>
 </resources>

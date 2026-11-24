@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">Indstil i Home Assistant</string>
   <string name="load_press_failed">Det gik ikke igennem. Prøv igen om lidt.</string>
   <string name="load_press_rate_limited">Trykket for lidt siden: prøv igen om ti minutter.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Pool, spa og sauna regnes ud fra, hvornår de kørte, og deres effekt.</string>
+  <string name="card_heat_pool_dial" formatted="false">Mål for poolvandet</string>
+  <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Saunatemperatur</string>
 </resources>

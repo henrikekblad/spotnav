@@ -1873,4 +1873,8 @@
   <string name="site_set_in_home_assistant">Configurar en Home Assistant</string>
   <string name="load_press_failed">No se ha podido. Inténtalo de nuevo dentro de un rato.</string>
   <string name="load_press_rate_limited">Pulsado hace un momento: inténtalo de nuevo en diez minutos.</string>
+  <string name="card_heat_use_loads_note" formatted="false">La piscina, el spa y la sauna se cuentan según cuándo funcionaron y su potencia.</string>
+  <string name="card_heat_pool_dial" formatted="false">Objetivo del agua de la piscina</string>
+  <string name="card_heat_spa_dial" formatted="false">Temperatura de baño</string>
+  <string name="card_heat_sauna_dial" formatted="false">Temperatura de la sauna</string>
 </resources>

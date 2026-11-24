@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">Määritä Home Assistantissa</string>
   <string name="load_press_failed">Se ei mennyt perille. Yritä hetken päästä uudelleen.</string>
   <string name="load_press_rate_limited">Painettu hetki sitten: yritä uudelleen kymmenen minuutin päästä.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Uima-allas, poreallas ja sauna lasketaan käyntiajoista ja tehosta.</string>
+  <string name="card_heat_pool_dial" formatted="false">Altaan veden tavoite</string>
+  <string name="card_heat_spa_dial" formatted="false">Kylpylämpötila</string>
+  <string name="card_heat_sauna_dial" formatted="false">Saunan lämpötila</string>
 </resources>

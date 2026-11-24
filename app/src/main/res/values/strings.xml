@@ -1878,4 +1878,8 @@
   <string name="site_set_in_home_assistant">Set up in Home Assistant</string>
   <string name="load_press_failed">That did not go through. Try again in a while.</string>
   <string name="load_press_rate_limited">Pressed a moment ago: try again in ten minutes.</string>
+  <string name="card_heat_use_loads_note" formatted="false">The pool, spa and sauna are counted from when they ran and their power.</string>
+  <string name="card_heat_pool_dial" formatted="false">Pool water target</string>
+  <string name="card_heat_spa_dial" formatted="false">Bathing temperature</string>
+  <string name="card_heat_sauna_dial" formatted="false">Sauna temperature</string>
 </resources>

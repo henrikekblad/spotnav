@@ -25,6 +25,7 @@ import se.sensnology.spotnav.ha.client.VehicleUpdate
 import se.sensnology.spotnav.ha.dashboard.Dashboard
 import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatBoostWrite
+import se.sensnology.spotnav.ha.heat.HeatLoadPress
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.House
@@ -155,6 +156,9 @@ internal interface HaTransport {
     /** `heat_boost`: the Boost button's "start" or "stop"; never throws. */
     fun heatBoost(action: String): HeatBoostWrite.Outcome = HeatBoostWrite.Outcome.Failed(null)
 
+    /** `pool`, `spa` or `sauna`: a press on one of them ([body] from [HeatLoadPress]); never throws. */
+    fun heatLoadPress(body: JSONObject): HeatLoadPress.Outcome = HeatLoadPress.Outcome.Failed(null)
+
     /** One month of charge history (`null`: the current month); never throws. */
     fun sessionsMonth(month: YearMonth?): SessionsOutcome<SessionsMonth> = SessionsOutcome.Failed
 
@@ -244,6 +248,8 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun updateHeat(request: HeatWrite.Request) = HomeAssistantClient.updateHeat(connection, request)
 
     override fun heatBoost(action: String) = HomeAssistantClient.heatBoost(connection, action)
+
+    override fun heatLoadPress(body: JSONObject) = HomeAssistantClient.heatLoadPress(connection, body)
 
     override fun sessionsMonth(month: YearMonth?) = HomeAssistantClient.sessionsMonth(connection, month)
 
@@ -560,6 +566,14 @@ internal class HaSession(
     fun heatBoost(action: String, done: (HeatBoostWrite.Outcome) -> Unit) {
         background.execute {
             val outcome = transport.heatBoost(action)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** A press on the pool, the spa or the sauna (never throws). */
+    fun heatLoadPress(body: JSONObject, done: (HeatLoadPress.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.heatLoadPress(body)
             mainThread { done(outcome) }
         }
     }

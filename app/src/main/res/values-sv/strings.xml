@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">Ställ in i Home Assistant</string>
   <string name="load_press_failed">Det gick inte fram. Försök igen om en stund.</string>
   <string name="load_press_rate_limited">Tryckt nyss: försök igen om tio minuter.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Pool, spa och bastu räknas från när de gick och deras effekt.</string>
+  <string name="card_heat_pool_dial" formatted="false">Poolvattnets mål</string>
+  <string name="card_heat_spa_dial" formatted="false">Badtemperatur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Bastutemperatur</string>
 </resources>

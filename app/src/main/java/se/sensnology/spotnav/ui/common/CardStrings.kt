@@ -1170,6 +1170,10 @@ internal object CardStrings {
         "house.plan.run.spa.hold" to R.string.card_house_plan_run_spa_hold,
         "house.plan.run.sauna.heat" to R.string.card_house_plan_run_sauna_heat,
         "house.plan.run.sauna.hold" to R.string.card_house_plan_run_sauna_hold,
+        "heat.use.loadsNote" to R.string.card_heat_use_loads_note,
+        "heat.pool.dial" to R.string.card_heat_pool_dial,
+        "heat.spa.dial" to R.string.card_heat_spa_dial,
+        "heat.sauna.dial" to R.string.card_heat_sauna_dial,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

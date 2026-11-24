@@ -1865,4 +1865,8 @@
   <string name="site_set_in_home_assistant">Instellen in Home Assistant</string>
   <string name="load_press_failed">Dat is niet gelukt. Probeer het zo nog eens.</string>
   <string name="load_press_rate_limited">Net al ingedrukt: probeer het over tien minuten nog eens.</string>
+  <string name="card_heat_use_loads_note" formatted="false">Zwembad, spa en sauna worden berekend uit wanneer ze liepen en hun vermogen.</string>
+  <string name="card_heat_pool_dial" formatted="false">Doel voor het zwembadwater</string>
+  <string name="card_heat_spa_dial" formatted="false">Badtemperatuur</string>
+  <string name="card_heat_sauna_dial" formatted="false">Saunatemperatuur</string>
 </resources>
