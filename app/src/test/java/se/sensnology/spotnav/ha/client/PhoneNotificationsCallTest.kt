@@ -79,7 +79,7 @@ class PhoneNotificationsCallTest {
     fun theKeptCopyReadsBackTheSame() {
         val value = (PhoneNotificationsCall.answer(200, success().toString()) as PhoneNotificationsCall.Outcome.Read).value
         assertEquals(value, PhoneNotificationsCall.decode(PhoneNotificationsCall.encode(value)))
-        val narrowed = value.copy(chargers = listOf("entry_b"), companionName = null, on = false)
+        val narrowed = value.copy(chargers = listOf("entry_b"), companionName = null, companionFound = false, on = false)
         assertEquals(narrowed, PhoneNotificationsCall.decode(PhoneNotificationsCall.encode(narrowed)))
         assertFalse(narrowed.follows("entry_a"))
         assertFalse(narrowed.wants("plan_stopped"))
