@@ -23,79 +23,51 @@ class SiteSettingsTextTest {
 
     private fun status(path: String) = (BatteryControlRead.answer(200, HaFixtures.json(path).toString()) as BatteryControlRead.Outcome.Status).status
 
-    @Test fun theGridChargeCapSaysWhatItRestsOn() {
-        val learned = status("battery_control/checking.json").let { it.copy(allowedActions = listOf("grid_charge", "hold")) }
-        assertEquals(
-            "At most 3.2 kW from the grid, so the fuse holds even if Home Assistant stops (learned per phase).",
-            text().gridChargeCap(learned)
-        )
-        val cautious = status("battery_control/live.json").let { it.copy(allowedActions = listOf("grid_charge")) }
-        assertEquals(
-            "No charging from the grid: the house can reach the fuse by itself (cautious until the first days are learned, 7 days left).",
-            text().gridChargeCap(cautious)
-        )
-        // Swedish, on the card's own wording.
-        assertEquals(
-            "Högst 3,2 kW från nätet, så säkringen klarar sig även om Home Assistant stannar (inlärt per fas).",
-            text("sv").gridChargeCap(learned)
-        )
-        assertEquals("The plant's own import limit protects the fuse when charging from the grid.", text().gridChargeCap(status("battery_control/needs_ack.json")))
-        // Charging from the grid not allowed: no line.
-        assertNull(text().gridChargeCap(status("battery_control/live.json")))
-    }
-
-    @Test fun thePlansFixedCostsAreSaidInTheSitesMoney() {
+    @Test fun theModeDialogSaysTheMarginAndTheWearInTheSitesMoney() {
         val live = status("battery_control/live.json")
-        assertEquals("Wear counted as 15 öre/kWh each way · Balanced sells at 1 kr/kWh net or more", text().planCosts(live))
-        assertEquals("Slitage räknas som 15 öre/kWh åt varje håll · Balanserad säljer vid minst 1 kr/kWh netto", text("sv").planCosts(live))
-        val euro = BatteryStatus.PlanCosts(1.4, 10.0, "EUR", "cent")
+        assertEquals("Balanced sells at 1 kr/kWh net or more", text().planMargin(live))
+        assertEquals("Balanserad säljer vid minst 1 kr/kWh netto", text("sv").planMargin(live))
+        assertEquals("Slitage (öre/kWh åt varje håll)", text("sv").wearLabel(live.planCosts!!))
+        // No wear of the site's own: the currency's default.
+        assertEquals("Standard", text("sv").wearValue(live))
+        assertEquals("Vad det kostar i slitage att ladda och ladda ur en kWh. Standard 15 öre.", text("sv").wearHelp(live))
+        assertEquals("20,5 öre/kWh", text("sv").wearValue(live.copy(wearOwnMinorPerKwh = 20.5)))
+        val euro = BatteryStatus.PlanCosts(1.4, 10.0, "EUR", "cent", wearDefaultMinorPerKwh = 1.4)
+        assertEquals("1.4 cent", text().planMinor(1.4, euro))
+        assertEquals("1.25 cent", text().planMinor(1.25, euro))
+        assertEquals("540 cent", text().planMinor(540.0, euro))
         assertEquals("1.4 cent", text().planMoney(1.4, euro))
         assertEquals("1.40 EUR", text().planMoney(140.0, euro))
         assertEquals("0 EUR", text().planMoney(0.0, euro))
         assertEquals("25 EUR", text().planMoney(2500.0, euro))
-        // Without the block (an older Home Assistant, or no price area): no line.
-        assertNull(text().planCosts(status("battery_control/checking.json")))
+        // Without the block (an older Home Assistant, or no price area): no margin and no wear row.
+        val older = status("battery_control/checking.json")
+        assertNull(text().planMargin(older))
+        assertNull(text().wearValue(older))
+        // A Home Assistant that cannot take a wear of the site's own: no wear row.
+        assertNull(text().wearValue(live.copy(planCosts = live.planCosts!!.copy(wearDefaultMinorPerKwh = null))))
         for (language in listOf("en", "sv", "da", "de", "nb", "fi", "fr", "nl", "es")) {
-            val line = text(language).planCosts(live)
-            assertTrue(language, line != null && "15" in line && "{" !in line)
+            val line = text(language).planMargin(live)
+            assertTrue(language, line != null && "1" in line && "{" !in line)
+            assertTrue(language, text(language).wearHelp(live)!!.let { "15" in it && "{" !in it })
         }
     }
 
-    @Test fun learningThatLeavesNoChargeGivesOneReasonNotTwo() {
-        val learning = status("battery_control/checking.json").let {
-            it.copy(
-                allowedActions = listOf("grid_charge"),
-                gridChargeCap = it.gridChargeCap.copy(rule = "learning", capKw = 0.0, capLearnedKw = 3.0, daysLeft = 1)
-            )
-        }
-        assertEquals("No charging from the grid while the house's peaks are being learned (1 day left).", text().gridChargeCap(learning))
-        val none = learning.copy(gridChargeCap = learning.gridChargeCap.copy(capLearnedKw = 0.0))
+    @Test fun aColdBatterysPreheatingAndTheDisabledFactsAreOneLineEachOnlyWhenTheySaySomething() {
+        val live = status("battery_control/live.json")
+        assertNull(text().preheatLine(live))
+        assertNull(text().factsLine(live))
+        val cold = live.copy(preheat = BatteryStatus.Preheat("off", 2.4, "switch.ess_preheating_enable"))
         assertEquals(
-            "No charging from the grid: the house can reach the fuse by itself (learned per phase).",
-            text().gridChargeCap(none)
+            "The battery's cells are cold (2.4 °C) and its preheating is off, so it takes less charge in the cheap hours. Turn on “ESS Preheating Enable” on the battery's device in Home Assistant.",
+            text().preheatLine(cold)
         )
-    }
-
-    @Test fun theOneLineUnderTheSwitchIsWordedFromItsCode() {
-        val en = text()
-        assertEquals("Off: SpotNav controls nothing yet and only shows what it would do.", en.batteryLine("off"))
-        assertEquals("On: SpotNav runs the battery.", en.batteryLine("on"))
-        assertEquals(
-            "Waiting for a suitable moment for the check. It waits until the car stops charging.",
-            en.batteryLine("waiting:car_charging")
-        )
-        assertEquals(
-            "The check failed: “Charge from the grid” did not work. Turn the switch off and on to check again. It gave up after five tries.",
-            en.batteryLine("failed:charge:attempts")
-        )
-        assertEquals("Stopped for today: the day's writes are used up.", en.batteryLine("blocked:daily_write_cap"))
-        // A code from a newer Home Assistant is shown as it is rather than hidden.
-        assertEquals("brand_new:thing", en.batteryLine("brand_new:thing"))
-    }
-
-    @Test fun theControlWordIsOnOffOrTest() {
-        assertEquals(listOf("Off", "Test", "On"), BatteryStatus.Control.entries.map { text().controlWord(it) })
-        assertEquals("Test", text("sv").controlWord(BatteryStatus.Control.TEST))
+        assertTrue(text("sv").preheatLine(cold.copy(preheat = BatteryStatus.Preheat("disabled", null, null)))!!.contains("(– °C)"))
+        assertNull(text().preheatLine(cold.copy(preheat = BatteryStatus.Preheat("brand_new", 1.0, null))))
+        val facts = live.copy(enableFacts = BatteryStatus.EnableFacts("Sigenergy", 2, listOf("size", "floor")))
+        assertEquals("Batteriets storlek och lägsta nivå finns i avstängda entiteter i Sigenergy.", text("sv").factsLine(facts))
+        assertTrue(text().factsLine(facts.copy(enableFacts = BatteryStatus.EnableFacts("Sigenergy", 1, listOf("rating"))))!!.contains("charge and discharge"))
+        assertNull(text().factsLine(facts.copy(enableFacts = BatteryStatus.EnableFacts("Sigenergy", 0, listOf("size")))))
     }
 
     @Test fun degreesAndTheNightAreWordedAsTheCardWordsThem() {
@@ -215,8 +187,8 @@ class SiteSettingsTextTest {
 
     @Test fun everyWordIsInAllNineLanguages() {
         val keys = listOf(
-            "battery.title", "battery.modeLabel", "battery.modeShadow", "battery.switch", "battery.line.off", "battery.line.on",
-            "battery.cap.line", "battery.cap.zero", "battery.failed", "battery.error.generic", "settings.value.on",
+            "battery.title", "battery.modeLabel", "battery.modeShadow", "battery.intro", "battery.planMargin", "battery.wear.label",
+            "battery.wear.help", "battery.wear.default", "battery.preheat.off", "battery.enableFacts.both", "battery.failed", "battery.error.generic", "settings.value.on",
             "heat.settings.title", "heat.settings.night", "heat.settings.nightValue", "heat.settings.zones", "heat.error.conflict",
             "heat.error.step", "heat.path.sg_ready", "heat.settings.sensorOffsetHelp", "battery.modeHelp.max_profit"
         )

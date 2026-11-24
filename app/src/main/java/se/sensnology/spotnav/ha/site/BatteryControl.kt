@@ -24,7 +24,13 @@ internal data class BatteryStatus(
     /** The plan's two fixed figures; `null` from a Home Assistant without them or a site with no price area. */
     val planCosts: PlanCosts? = null,
     /** Whether the site's battery facts name a battery (`status.battery_found`); `true` from a Home Assistant without the field. */
-    val batteryFound: Boolean = true
+    val batteryFound: Boolean = true,
+    /** The site's own wear per kWh each way (`options.battery_wear_minor_per_kwh`); `null`: the currency's default. */
+    val wearOwnMinorPerKwh: Double? = null,
+    /** A cold battery's own heater off or its switch disabled (`status.preheat`); `null` when none shows. */
+    val preheat: Preheat? = null,
+    /** Facts the battery plan needs (size, floor, rating) in disabled entities (`status.enable_facts`); `null` for none. */
+    val enableFacts: EnableFacts? = null
 ) {
     /** What the status row says: the switch's position, and "test" while control is on paper only. */
     enum class Control { OFF, TEST, ON }
@@ -47,12 +53,20 @@ internal data class BatteryStatus(
         val daysLeft: Int?
     )
 
+    /** [code] `off` or `disabled` (or a newer word), the cells' temperature and the switch's entity. */
+    data class Preheat(val code: String, val cellC: Double?, val entityId: String?)
+
+    /** The integration holding the disabled entities, how many there are, and which facts (`size`, `floor`, `rating`). */
+    data class EnableFacts(val integration: String, val entities: Int, val needs: List<String>)
+
     /** The battery plan's wear per kWh each way and Balanced's selling margin per kWh, in the area's minor unit. */
     data class PlanCosts(
         val wearMinorPerKwh: Double,
         val balancedMarginMinorPerKwh: Double,
         val majorUnit: String,
-        val minorUnit: String
+        val minorUnit: String,
+        /** The currency's default wear; `null` from a Home Assistant that cannot take a wear of the site's own. */
+        val wearDefaultMinorPerKwh: Double? = null
     )
 
     companion object {
@@ -127,7 +141,26 @@ internal object BatteryControlRead {
                 daysLeft = learned?.let { count(it.opt("days_left"), "days_left") }
             ),
             planCosts = planCosts(status.opt("plan_costs")),
-            batteryFound = additive(status, "battery_found", true) { flag(it, "battery_found") }
+            batteryFound = additive(status, "battery_found", true) { flag(it, "battery_found") },
+            wearOwnMinorPerKwh = additive(options, "battery_wear_minor_per_kwh", null) { numberOrNull(it, "battery_wear_minor_per_kwh") },
+            preheat = additive(status, "preheat", null) { raw ->
+                objOrNull(raw, "preheat")?.let {
+                    BatteryStatus.Preheat(
+                        code = text(it.opt("code"), "preheat.code"),
+                        cellC = numberOrNull(it.opt("cell_c"), "preheat.cell_c"),
+                        entityId = textOrNull(it.opt("entity_id"), "preheat.entity_id")
+                    )
+                }
+            },
+            enableFacts = additive(status, "enable_facts", null) { raw ->
+                objOrNull(raw, "enable_facts")?.let {
+                    BatteryStatus.EnableFacts(
+                        integration = text(it.opt("integration"), "enable_facts.integration"),
+                        entities = list(it.opt("entities"), "enable_facts.entities").size,
+                        needs = list(it.opt("needs"), "enable_facts.needs").map { need -> text(need, "enable_facts.needs") }
+                    )
+                }
+            }
         )
     }
 
@@ -139,7 +172,8 @@ internal object BatteryControlRead {
                     wearMinorPerKwh = number(it.opt("wear_minor_per_kwh"), "wear_minor_per_kwh"),
                     balancedMarginMinorPerKwh = number(it.opt("balanced_margin_minor_per_kwh"), "balanced_margin_minor_per_kwh"),
                     majorUnit = text(it.opt("major_unit"), "major_unit"),
-                    minorUnit = text(it.opt("minor_unit"), "minor_unit")
+                    minorUnit = text(it.opt("minor_unit"), "minor_unit"),
+                    wearDefaultMinorPerKwh = additive(it, "wear_default_minor_per_kwh", null) { raw -> numberOrNull(raw, "wear_default_minor_per_kwh") }
                 )
             }
         }

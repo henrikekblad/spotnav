@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Latautuu myös verkosta, kun sähkö on halpaa, ja sitä käytetään, kun se on kallista. Myy vain, kun se on erittäin kannattavaa.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Kuten Tasapainoinen, mutta myy verkkoon aina kun se kannattaa, kulumisen huomioiden.</string>
   <string name="card_battery_mode_shadow" formatted="false">Kun SpotNav ei ohjaa akkua, valinta vain vaihtaa, mikä vertailun rivi on merkitty valituksi.</string>
-  <string name="card_battery_plan_costs" formatted="false">Kulumisena lasketaan {wear} kumpaankin suuntaan · Tasapainoinen myy vähintään {margin} nettona</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Akkusuunnitelma</string>
   <string name="card_battery_switch" formatted="false">Akun ohjaus</string>
   <string name="card_battery_line_off" formatted="false">Pois: SpotNav ei vielä ohjaa mitään ja näyttää vain, mitä se tekisi.</string>
@@ -1316,6 +1315,8 @@
   <string name="card_heat_settings_away_delta" formatted="false">Astetta viileämpää</string>
   <string name="site_settings_in_home_assistant">Ohjauksen päälle- ja poiskytkentä sekä anturien, mittarin ja ohjaustavan valinta muutetaan Home Assistantissa.</string>
   <string name="site_settings_heat_failed">Lämmön asetuksia ei voitu lukea.</string>
+  <string name="site_settings_loads_in_home_assistant">Näitä asetuksia muuttaa ylläpitäjä Home Assistantissa: lämpökortin asetuksista.</string>
+  <string name="site_admin_in_home_assistant">Ylläpitäjä muuttaa tämän Home Assistantissa.</string>
   <string name="site_settings_heat_add_in_home_assistant">Lämmitys otetaan käyttöön Home Assistantissa: Asetukset → Lämmitys talo- tai lämmityskortilla.</string>
   <string name="site_settings_offset_home_in_home_assistant">Vastaa Home Assistantissa: lämpökortin asetuksissa, ylläpitäjänä.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1898,4 +1899,59 @@
   <string name="card_heat_spa_idle_help" formatted="false">Lämpötila, jossa poreallas lepää kylpyjen välillä, 10–40 °C. Alempi säästää energiaa; vesi ei koskaan laske alle 10 °C (jäätymissuoja).</string>
   <string name="card_house_plan_load_spa" formatted="false">Poreallas</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Laske altaan lämpötilaa</string>
+  <string name="card_heat_pool_raise" formatted="false">Nosta altaan lämpötilaa</string>
+  <string name="card_heat_spa_lower" formatted="false">Laske kylpylämpötilaa</string>
+  <string name="card_heat_spa_raise" formatted="false">Nosta kylpylämpötilaa</string>
+  <string name="card_heat_sauna_lower" formatted="false">Laske saunan lämpötilaa</string>
+  <string name="card_heat_sauna_raise" formatted="false">Nosta saunan lämpötilaa</string>
+  <string name="card_heat_spa_times_help" formatted="false">Ajat, jolloin porealtaan pitää olla kylpylämpöinen, kuin auton lähdöt: kukin omina viikonpäivinään, sekä yksi päivämäärä. SpotNav lämmittää halvimpina tai aurinkoisimpina tunteina ennen.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Ajat, jolloin saunan pitää olla valmis: kukin omina viikonpäivinään, sekä yksi päivämäärä. SpotNav ei koskaan käynnistä saunaa muuten kuin varattua vuoroa tai Lämmitä nyt -painallusta varten.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Lisää kylpyaika</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Lisää saunavuoro</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Viikoittainen kylpyaika</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Viikoittainen saunavuoro</string>
+  <string name="card_heat_spa_once_label" formatted="false">Yksi kylpy päivämääränä</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Yksi saunavuoro päivämääränä</string>
+  <string name="card_heat_spa_time" formatted="false">Aika</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Poista</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Jokainen aika tarvitsee kellonajan ja vähintään yhden viikonpäivän, ja päivämäärä päivän ja kellonajan.</string>
+  <string name="card_settings_save" formatted="false">Tallenna</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Allas</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Altaan lämpöpumppu</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Altaan kiertovesipumppu</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Altaan vesianturi</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Vain lämpöpumpun oma</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Suodatus vuorokaudessa</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Veden lämpötilan mukaan</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Altaan lämpöpumpun teho</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Kiertovesipumpun teho</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Ohjaa kiertoa</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Ohjaa altaan lämpöpumppua</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, annettu</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, opittu</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, tyypillinen arvo kunnes opittu</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Ei annettu</string>
+  <string name="card_heat_settings_spa" formatted="false">Poreallas</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Porealtaan lämmittimen teho</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Ohjaa porealtaa</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Kiukaan teho</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Kiukaan oma turvalaite</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Kyllä, on</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Ei, tai en tiedä</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Ohjaa saunaa</string>
+  <string name="card_battery_plan_margin" formatted="false">Tasapainoinen myy vähintään {margin} nettona</string>
+  <string name="card_battery_wear_label" formatted="false">Kuluminen ({unit} kumpaankin suuntaan)</string>
+  <string name="card_battery_wear_help" formatted="false">Mitä yhden kWh:n lataaminen ja purkaminen maksaa kulumisena. Oletus {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Oletus</string>
+  <string name="card_battery_preheat_off" formatted="false">Akun kennot ovat kylmiä ({temp} °C) ja esilämmitys on pois päältä, joten akku ottaa halvoilla tunneilla vähemmän latausta. Kytke ”{name}” päälle akun laitteessa Home Assistantissa.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Akun kennot ovat kylmiä ({temp} °C). Esilämmityksen kytkin ”{name}” on poistettu käytöstä Home Assistantissa, joten SpotNav ei näe, onko se päällä. Ota se käyttöön akun laitteessa.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Akun koko on käytöstä poistetussa anturissa kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Akun alin taso on käytöstä poistetussa entiteetissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Akun koko ja alin taso ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Akun lataus- ja purkutehon tiedot ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Akkusuunnitelman tarvitsemat akun tiedot ovat käytöstä poistetuissa entiteeteissä kohteessa {integration}.</string>
 </resources>

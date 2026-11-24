@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Lader også fra nettet, når det er billigt, og bruges, når det er dyrt. Sælger kun, når det er meget rentabelt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Som Balanceret, men sælger til nettet, så snart det kan betale sig, med slidtagen medregnet.</string>
   <string name="card_battery_mode_shadow" formatted="false">Så længe SpotNav ikke styrer batteriet, flytter valget kun, hvilken række der er markeret som valgt i sammenligningen.</string>
-  <string name="card_battery_plan_costs" formatted="false">Slid regnes som {wear} hver vej · Balanceret sælger ved mindst {margin} netto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Batteriplanen</string>
   <string name="card_battery_switch" formatted="false">Batteristyring</string>
   <string name="card_battery_line_off" formatted="false">Fra: SpotNav styrer ikke noget endnu og viser kun, hvad den ville gøre.</string>
@@ -1316,6 +1315,8 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grader køligere</string>
   <string name="site_settings_in_home_assistant">Til og fra for styringen og valget af sensorer, måler og styringsvej ændres i Home Assistant.</string>
   <string name="site_settings_heat_failed">Varmeindstillingerne kunne ikke læses.</string>
+  <string name="site_settings_loads_in_home_assistant">Disse indstillinger ændres af en administrator i Home Assistant: varmekortets indstillinger.</string>
+  <string name="site_admin_in_home_assistant">Ændres af en administrator i Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Varme sættes op i Home Assistant: Indstillinger → Varme på hus- eller varmekortet.</string>
   <string name="site_settings_offset_home_in_home_assistant">Svar i Home Assistant: varmekortets indstillinger, som administrator.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1898,4 +1899,59 @@
   <string name="card_heat_spa_idle_help" formatted="false">Temperaturen spaen hviler på mellem badene, 10 til 40 °C. Lavere sparer energi; vandet går aldrig under 10 °C (frostbeskyttelse).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Sænk poolens temperatur</string>
+  <string name="card_heat_pool_raise" formatted="false">Hæv poolens temperatur</string>
+  <string name="card_heat_spa_lower" formatted="false">Sænk badetemperaturen</string>
+  <string name="card_heat_spa_raise" formatted="false">Hæv badetemperaturen</string>
+  <string name="card_heat_sauna_lower" formatted="false">Sænk saunaens temperatur</string>
+  <string name="card_heat_sauna_raise" formatted="false">Hæv saunaens temperatur</string>
+  <string name="card_heat_spa_times_help" formatted="false">Tiderne, hvor spaen skal have badetemperatur, som bilens afgange: hver på sine ugedage, og én dato. SpotNav varmer i de billigste eller mest solrige timer før.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Tiderne, hvor saunaen skal være klar: hver på sine ugedage, og én dato. SpotNav starter aldrig saunaen for andet end en booket seance eller et tryk på Varm nu.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Tilføj badetid</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Tilføj seance</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Ugentlig badetid</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Ugentlig seance</string>
+  <string name="card_heat_spa_once_label" formatted="false">Ét bad på en dato</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Én seance på en dato</string>
+  <string name="card_heat_spa_time" formatted="false">Tid</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Fjern</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Hver tid skal have et klokkeslæt og mindst én ugedag, og datoen en dag og et klokkeslæt.</string>
+  <string name="card_settings_save" formatted="false">Gem</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Pool</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Poolens varmepumpe</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Poolens cirkulationspumpe</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Poolens vandføler</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Kun varmepumpens egen</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtrering pr. døgn</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Efter vandtemperaturen</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Poolvarmepumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Cirkulationspumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Styr cirkulationen</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Styr poolens varmepumpe</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, angivet</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, lært</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, typisk værdi indtil den er lært</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Ikke angivet</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Spavarmerens effekt</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Styr spaen</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Saunaaggregatets effekt</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Aggregatets egen sikkerhedsanordning</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, den findes</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Nej, eller ved ikke</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Styr saunaen</string>
+  <string name="card_battery_plan_margin" formatted="false">Balanceret sælger ved mindst {margin} netto</string>
+  <string name="card_battery_wear_label" formatted="false">Slid ({unit} hver vej)</string>
+  <string name="card_battery_wear_help" formatted="false">Hvad det koster i slid at oplade og aflade én kWh. Standard {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Standard</string>
+  <string name="card_battery_preheat_off" formatted="false">Batteriets celler er kolde ({temp} °C), og forvarmningen er slået fra, så batteriet tager mindre opladning i de billige timer. Slå “{name}” til på batteriets enhed i Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Batteriets celler er kolde ({temp} °C). Kontakten til forvarmning “{name}” er deaktiveret i Home Assistant, så SpotNav kan ikke se, om den er slået til. Aktivér den på batteriets enhed.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Batteriets størrelse ligger i en deaktiveret sensor i {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Batteriets laveste niveau ligger i en deaktiveret entitet i {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Batteriets størrelse og laveste niveau ligger i deaktiverede entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Batteriets lade- og afladeeffekt findes i deaktiverede entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Det, batteriplanen skal vide om batteriet, findes i deaktiverede entiteter i {integration}.</string>
 </resources>

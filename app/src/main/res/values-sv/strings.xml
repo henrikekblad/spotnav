@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Laddar också från nätet när det är billigt och används när det är dyrt. Säljer bara när det är mycket lönsamt.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Som Balanserad, men säljer till nätet så fort det lönar sig, med slitaget inräknat.</string>
   <string name="card_battery_mode_shadow" formatted="false">Medan SpotNav inte styr batteriet flyttar valet bara vilken rad som är markerad som vald i jämförelsen.</string>
-  <string name="card_battery_plan_costs" formatted="false">Slitage räknas som {wear} åt varje håll · Balanserad säljer vid minst {margin} netto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Batteriplanen</string>
   <string name="card_battery_switch" formatted="false">Batteristyrning</string>
   <string name="card_battery_line_off" formatted="false">Av: SpotNav styr inget än och visar bara vad den skulle göra.</string>
@@ -1316,6 +1315,8 @@
   <string name="card_heat_settings_away_delta" formatted="false">Grader svalare</string>
   <string name="site_settings_in_home_assistant">Styrningens av och på och valet av sensorer, mätare och styrväg ändras i Home Assistant.</string>
   <string name="site_settings_heat_failed">Värmeinställningarna kunde inte läsas.</string>
+  <string name="site_settings_loads_in_home_assistant">De här inställningarna ändras av en administratör i Home Assistant: värmekortets inställningar.</string>
+  <string name="site_admin_in_home_assistant">Ändras av en administratör i Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Värme ställs in i Home Assistant: Inställningar → Värme på hus- eller värmekortet.</string>
   <string name="site_settings_offset_home_in_home_assistant">Svara i Home Assistant: värmekortets inställningar, som administratör.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1898,4 +1899,59 @@
   <string name="card_heat_spa_idle_help" formatted="false">Temperaturen spat vilar på mellan baden, 10 till 40 °C. Lägre sparar energi; vattnet får aldrig gå under 10 °C (frostskydd).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Bastu</string>
+  <string name="card_heat_pool_lower" formatted="false">Sänk poolens temperatur</string>
+  <string name="card_heat_pool_raise" formatted="false">Höj poolens temperatur</string>
+  <string name="card_heat_spa_lower" formatted="false">Sänk badtemperaturen</string>
+  <string name="card_heat_spa_raise" formatted="false">Höj badtemperaturen</string>
+  <string name="card_heat_sauna_lower" formatted="false">Sänk bastuns temperatur</string>
+  <string name="card_heat_sauna_raise" formatted="false">Höj bastuns temperatur</string>
+  <string name="card_heat_spa_times_help" formatted="false">Tiderna spat ska ha badtemperatur, som bilens avresor: var och en på sina veckodagar, och ett datum. SpotNav värmer under de billigaste eller soligaste timmarna före.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Tiderna bastun ska vara klar: var och en på sina veckodagar, och ett datum. SpotNav startar aldrig bastun för annat än ett bokat bastupass eller ett tryck på Värm nu.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Lägg till badtid</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Lägg till bastupass</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Badtid varje vecka</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Bastupass varje vecka</string>
+  <string name="card_heat_spa_once_label" formatted="false">Ett bad på ett datum</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Ett bastupass på ett datum</string>
+  <string name="card_heat_spa_time" formatted="false">Tid</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Ta bort</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Varje tid behöver ett klockslag och minst en veckodag, och datumet en dag och ett klockslag.</string>
+  <string name="card_settings_save" formatted="false">Spara</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Pool</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Bastu</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Poolens värmepump</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Poolens cirkulationspump</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Poolens vattengivare</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Bara värmepumpens egen</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtrering per dygn</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Efter vattentemperaturen</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Poolvärmepumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Cirkulationspumpens effekt</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Styr cirkulationen</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Styr poolens värmepump</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, angiven</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, inlärd</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, vanligt värde tills den är inlärd</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Inte angiven</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Spavärmarens effekt</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Styr spat</string>
+  <string name="card_heat_settings_sauna" formatted="false">Bastu</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Bastuaggregatets effekt</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Aggregatets eget säkerhetsskydd</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, det finns</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Nej, eller vet inte</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Styr bastun</string>
+  <string name="card_battery_plan_margin" formatted="false">Balanserad säljer vid minst {margin} netto</string>
+  <string name="card_battery_wear_label" formatted="false">Slitage ({unit} åt varje håll)</string>
+  <string name="card_battery_wear_help" formatted="false">Vad det kostar i slitage att ladda och ladda ur en kWh. Standard {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Standard</string>
+  <string name="card_battery_preheat_off" formatted="false">Batteriets celler är kalla ({temp} °C) och förvärmningen är avstängd, så batteriet tar emot mindre laddning under de billiga timmarna. Slå på ”{name}” på batteriets enhet i Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Batteriets celler är kalla ({temp} °C). Brytaren för förvärmning ”{name}” är inaktiverad i Home Assistant, så SpotNav ser inte om den är på. Aktivera den på batteriets enhet.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">Batteriets storlek finns i en avstängd sensor i {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Batteriets lägsta nivå finns i en avstängd entitet i {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">Batteriets storlek och lägsta nivå finns i avstängda entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Batteriets laddnings- och urladdningseffekt finns i avstängda entiteter i {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Det batteriplanen behöver veta om batteriet finns i avstängda entiteter i {integration}.</string>
 </resources>

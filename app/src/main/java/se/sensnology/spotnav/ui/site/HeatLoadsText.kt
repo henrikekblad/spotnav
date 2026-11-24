@@ -168,10 +168,11 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
      * The would-line where it adds something, as the card shows it: not under a controlled, paused or handed-back load
      * (its control line says what it does), and never a "would stand still" that repeats the status.
      */
-    fun deadlineWouldShown(load: HeatLoads.Deadline): String? {
+    fun deadlineWouldShown(load: HeatLoads.Deadline, withStatus: Boolean = true): String? {
         if (load.control.state in CONTROL_STATES) return null
         val would = load.would
-        if (would != null && would.action !in WOULD_ACTIVE) {
+        // [withStatus] false where no status line is beside it (the settings' help line under the section).
+        if (withStatus && would != null && would.action !in WOULD_ACTIVE) {
             val statusActive = load.state == "ready" || (load.state == "heating" && load.readyAt != null)
             if (!statusActive) return null
         }
@@ -179,10 +180,10 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
     }
 
     /** The pool's would-line, as [deadlineWouldShown]: not with either part controlled, paused or handed back, nor a plain "stand still" while it stands still. */
-    fun poolWouldShown(pool: HeatLoads.Pool): String? {
+    fun poolWouldShown(pool: HeatLoads.Pool, withStatus: Boolean = true): String? {
         if (listOfNotNull(pool.heatPump, pool.circulation).any { it.control.state in CONTROL_STATES }) return null
         val would = pool.would
-        if (would != null && would.action != "heat" && would.action != "filter" && would.reason != "need_met" && would.reason != "no_prices") {
+        if (withStatus && would != null && would.action != "heat" && would.action != "filter" && would.reason != "need_met" && would.reason != "no_prices") {
             val still = pool.heatPump?.heating != true && pool.circulation?.on != true
             if (still) return null
         }

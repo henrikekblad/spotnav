@@ -1242,7 +1242,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Laadt ook uit het net als het goedkoop is en wordt gebruikt als het duur is. Verkoopt alleen als het zeer winstgevend is.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Zoals Gebalanceerd, maar verkoopt aan het net zodra dat loont, slijtage meegerekend.</string>
   <string name="card_battery_mode_shadow" formatted="false">Zolang SpotNav de batterij niet aanstuurt, verschuift de keuze alleen welke rij in de vergelijking als gekozen is gemarkeerd.</string>
-  <string name="card_battery_plan_costs" formatted="false">Slijtage wordt geteld als {wear} in elke richting · Gebalanceerd verkoopt vanaf {margin} netto</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Het batterijplan</string>
   <string name="card_battery_switch" formatted="false">Batterijsturing</string>
   <string name="card_battery_line_off" formatted="false">Uit: SpotNav stuurt nog niets en laat alleen zien wat het zou doen.</string>
@@ -1316,6 +1315,8 @@
   <string name="card_heat_settings_away_delta" formatted="false">Graden koeler</string>
   <string name="site_settings_in_home_assistant">Het aan- en uitzetten van de sturing en de keuze van sensoren, meter en stuurweg wijzig je in Home Assistant.</string>
   <string name="site_settings_heat_failed">De verwarmingsinstellingen konden niet worden gelezen.</string>
+  <string name="site_settings_loads_in_home_assistant">Deze instellingen wijzigt een beheerder in Home Assistant: de instellingen van de warmtekaart.</string>
+  <string name="site_admin_in_home_assistant">Een beheerder wijzigt dit in Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Verwarming stel je in Home Assistant in: Instellingen → Verwarming op de huis- of verwarmingskaart.</string>
   <string name="site_settings_offset_home_in_home_assistant">Antwoord in Home Assistant: in de instellingen van de warmtekaart, als beheerder.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1898,4 +1899,59 @@
   <string name="card_heat_spa_idle_help" formatted="false">De temperatuur waarop de spa tussen het baden rust, 10 tot 40 °C. Lager bespaart energie; het water zakt nooit onder 10 °C (vorstbescherming).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Zwembadtemperatuur verlagen</string>
+  <string name="card_heat_pool_raise" formatted="false">Zwembadtemperatuur verhogen</string>
+  <string name="card_heat_spa_lower" formatted="false">Badtemperatuur verlagen</string>
+  <string name="card_heat_spa_raise" formatted="false">Badtemperatuur verhogen</string>
+  <string name="card_heat_sauna_lower" formatted="false">Saunatemperatuur verlagen</string>
+  <string name="card_heat_sauna_raise" formatted="false">Saunatemperatuur verhogen</string>
+  <string name="card_heat_spa_times_help" formatted="false">De tijden waarop de spa op badtemperatuur moet zijn, zoals de vertrektijden van de auto: elk op zijn weekdagen, plus één datum. SpotNav verwarmt in de goedkoopste of zonnigste uren ervoor.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">De tijden waarop de sauna klaar moet zijn: elk op zijn weekdagen, plus één datum. SpotNav start de sauna nooit voor iets anders dan een geboekte sessie of een druk op Nu verwarmen.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Badtijd toevoegen</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Sessie toevoegen</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Wekelijkse badtijd</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Wekelijkse sessie</string>
+  <string name="card_heat_spa_once_label" formatted="false">Eén bad op een datum</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Eén sessie op een datum</string>
+  <string name="card_heat_spa_time" formatted="false">Tijd</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Verwijderen</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Elke tijd heeft een tijdstip en minstens één weekdag nodig, en de datum een dag en een tijdstip.</string>
+  <string name="card_settings_save" formatted="false">Opslaan</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Zwembad</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Zwembadwarmtepomp</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Circulatiepomp van het zwembad</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Watersensor van het zwembad</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Alleen die van de warmtepomp</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filteren per dag</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Naar de watertemperatuur</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Vermogen van de zwembadwarmtepomp</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Vermogen van de circulatiepomp</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Circulatie aansturen</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Zwembadwarmtepomp aansturen</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, opgegeven</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, geleerd</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, gangbare waarde tot geleerd</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Niet opgegeven</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Vermogen van de spaverwarming</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Spa aansturen</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Vermogen van de saunakachel</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Eigen veiligheidsvoorziening van de kachel</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Ja, aanwezig</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Nee, of weet ik niet</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Sauna aansturen</string>
+  <string name="card_battery_plan_margin" formatted="false">Gebalanceerd verkoopt vanaf {margin} netto</string>
+  <string name="card_battery_wear_label" formatted="false">Slijtage ({unit} in elke richting)</string>
+  <string name="card_battery_wear_help" formatted="false">Wat het aan slijtage kost om één kWh te laden en te ontladen. Standaard {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Standaard</string>
+  <string name="card_battery_preheat_off" formatted="false">De cellen van de batterij zijn koud ({temp} °C) en het voorverwarmen staat uit, dus de batterij neemt in de goedkope uren minder lading op. Zet ‘{name}’ aan op het apparaat van de batterij in Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">De cellen van de batterij zijn koud ({temp} °C). De schakelaar voor voorverwarmen ‘{name}’ is uitgeschakeld in Home Assistant, dus SpotNav ziet niet of die aan staat. Schakel hem in op het apparaat van de batterij.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">De grootte van de batterij staat in een uitgeschakelde sensor in {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Het laagste niveau van de batterij staat in een uitgeschakelde entiteit in {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">De grootte en het laagste niveau van de batterij staan in uitgeschakelde entiteiten in {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">Het laad- en ontlaadvermogen van de batterij staat in uitgeschakelde entiteiten in {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Wat het batterijplan over de batterij moet weten, staat in uitgeschakelde entiteiten in {integration}.</string>
 </resources>

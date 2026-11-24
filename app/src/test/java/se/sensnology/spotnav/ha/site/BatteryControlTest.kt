@@ -46,6 +46,36 @@ class BatteryControlTest {
         }
     }
 
+    @Test fun theWearThePreheatingAndTheDisabledFactsAreReadAsTheWebhookStatesThem() {
+        val off = status("webhook/battery_control_success.json")
+        assertEquals(15.0, off.planCosts!!.wearDefaultMinorPerKwh!!, 0.0)
+        assertNull(off.wearOwnMinorPerKwh)
+        assertNull(off.preheat)
+        assertNull(off.enableFacts)
+        val doc = HaFixtures.json("webhook/battery_control_success.json")
+        val block = doc.getJSONObject("status")
+        block.getJSONObject("options").put("battery_wear_minor_per_kwh", 22.5)
+        block.put("preheat", JSONObject("""{"code": "off", "cell_c": 2.4, "entity_id": "switch.ess_preheating_enable", "device_id": "abc"}"""))
+        block.put("enable_facts", JSONObject("""{"integration": "Sigenergy", "entities": [{"entity_id": "sensor.rated", "name": "Rated"}], "needs": ["size"]}"""))
+        val read = (BatteryControlRead.answer(200, doc.toString()) as BatteryControlRead.Outcome.Status).status
+        assertEquals(22.5, read.wearOwnMinorPerKwh!!, 0.0)
+        assertEquals(BatteryStatus.Preheat("off", 2.4, "switch.ess_preheating_enable"), read.preheat)
+        assertEquals(BatteryStatus.EnableFacts("Sigenergy", 1, listOf("size")), read.enableFacts)
+        // An older Home Assistant without the keys: none of them, still a status.
+        val older = HaFixtures.json("webhook/battery_control_success.json").also {
+            it.getJSONObject("status").remove("preheat")
+            it.getJSONObject("status").remove("enable_facts")
+            it.getJSONObject("status").getJSONObject("options").remove("battery_wear_minor_per_kwh")
+            it.getJSONObject("status").getJSONObject("plan_costs").remove("wear_default_minor_per_kwh")
+        }
+        val old = (BatteryControlRead.answer(200, older.toString()) as BatteryControlRead.Outcome.Status).status
+        assertNull(old.preheat)
+        assertNull(old.planCosts!!.wearDefaultMinorPerKwh)
+        // A mistyped block is no document (strict, as every other key).
+        val bad = HaFixtures.json("webhook/battery_control_success.json").also { it.getJSONObject("status").put("preheat", "cold") }
+        assertTrue(BatteryControlRead.answer(200, bad.toString()) is BatteryControlRead.Outcome.Failed)
+    }
+
     @Test fun theRicherStatusesSayOnOffOrTest() {
         // Off while shadow only is the switch's own default: off, not test.
         assertEquals(BatteryStatus.Control.OFF, status("battery_control/live.json").control)

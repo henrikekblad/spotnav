@@ -3,6 +3,7 @@ package se.sensnology.spotnav.ha.site
 import org.json.JSONArray
 import org.json.JSONObject
 import se.sensnology.spotnav.ha.client.WriteEnvelope
+import se.sensnology.spotnav.ha.heat.HeatLoads
 import se.sensnology.spotnav.ha.heat.HeatWaterHeater
 import se.sensnology.spotnav.ha.heat.HeatZone
 import se.sensnology.spotnav.ha.heat.HeatZonesRead
@@ -93,7 +94,15 @@ internal data class HeatSettings(
      * or to choose), or settings already made (a control path, indoor sensors, a heat meter). Without it the heat
      * settings card is one "Nothing found" row.
      */
-    val found: Boolean = true
+    val found: Boolean = true,
+    /** The pool's, the spa's and the sauna's stored settings; `null` without the load set up (read only here). */
+    val pool: HeatLoadSettings.Pool? = null,
+    val spa: HeatLoadSettings.Spa? = null,
+    val sauna: HeatLoadSettings.Sauna? = null,
+    /** The three loads as the answer reads them now (their power, what SpotNav would do); `null` without the load. */
+    val poolStatus: HeatLoads.Pool? = null,
+    val spaStatus: HeatLoads.Deadline? = null,
+    val saunaStatus: HeatLoads.Deadline? = null
 ) {
     /** The friendly name the answer carries for [entityId]; `null` where it carries none (the id is never shown instead). */
     fun nameOf(entityId: String): String? = names[entityId]
@@ -206,7 +215,14 @@ internal object HeatSettingsRead {
             wouldReason = additive(json, "status", null) { raw ->
                 objOrNull(raw, "status")?.let { status -> objOrNull(status.opt("would"), "status.would")?.let { text(it.opt("reason"), "would.reason") } }
             },
-            found = found(json, config)
+            found = found(json, config),
+            pool = additive(config, "pool", null) { HeatLoadSettings.pool(it) },
+            spa = additive(config, "spa", null) { HeatLoadSettings.spa(it) },
+            sauna = additive(config, "sauna", null) { HeatLoadSettings.sauna(it) },
+            // The loads' live blocks only add the power and the would-line under the sections: one the app cannot read leaves those out.
+            poolStatus = runCatching { HeatLoads.pool(json.opt("pool") ?: JSONObject.NULL) }.getOrNull(),
+            spaStatus = runCatching { HeatLoads.deadline(json.opt("spa") ?: JSONObject.NULL, "spa") }.getOrNull(),
+            saunaStatus = runCatching { HeatLoads.deadline(json.opt("sauna") ?: JSONObject.NULL, "sauna") }.getOrNull()
         )
     }
 

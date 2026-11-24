@@ -24,7 +24,6 @@ import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.card
-import se.sensnology.spotnav.ui.common.chooseOne
 import se.sensnology.spotnav.ui.common.editNumber
 import se.sensnology.spotnav.ui.common.editorBody
 import se.sensnology.spotnav.ui.common.errorLine
@@ -33,7 +32,7 @@ import se.sensnology.spotnav.ui.common.settingRow
 import se.sensnology.spotnav.ui.common.weight
 
 /** The docs page that explains the plan's wear and Balanced's margin. */
-private const val PLAN_DOCS_URL = "https://github.com/henrikekblad/spotnav-home-assistant/blob/main/docs/battery-plan.md#the-wear-cost"
+private const val PLAN_DOCS_URL = "https://spotnav.sensnology.se/docs/home-assistant/battery-plan#the-wear-cost"
 
 /**
  * The battery and heat cards of a paired charger's Settings, drawn only where the charger's Home Assistant offers them
@@ -129,6 +128,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         // The battery card only where the site has a battery: its own section in Home Assistant adds one.
         if (offered.batteryControl && battery?.let(SiteSettingsShown::batteryCard) == true) addBatteryCard()
         if (offered.getHeat && heat != null) addHeatCard()
+        if (offered.getHeat) (heat as? SiteRead.Read)?.value?.let(::addLoadCards)
         priority?.takeIf { offered.getHouse && it.rows.isNotEmpty() }?.let(::addPriorityCard)
     }
 
@@ -168,6 +168,10 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
 
     // --- the battery ----------------------------------------------------------------------------
 
+    /**
+     * The battery card as the card's redesigned section: the mode row alone (written over the webhook), and under it
+     * only a line that has something to say: a fact the plan needs in a disabled entity, a cold battery's preheating.
+     */
     private fun addBatteryCard() {
         val words = cardWords()
         val card = card(container, words.say("battery.title"), R.drawable.ic_now_battery)
@@ -177,34 +181,64 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
             return
         }
         val modeLabel = words.say("battery.modeLabel")
-        settingRow(card.body, modeLabel, text.modeName(status.mode), text.modeHelp(status.mode), onTap = {
-            val modes = BatteryStatus.MODES
-            chooseOne(
-                modeLabel,
-                modes.map { text.modeName(it) },
-                modes.indexOf(status.mode),
-                helps = modes.map { text.modeHelp(it) }
-            ) { index, done -> writeMode(modes[index], done) }
-        })
-        text.planCosts(status)?.let { addPlanCosts(card.body, it, words.say("battery.planCostsDocs")) }
-        // The mode counts even when nothing is controlled: it moves the comparison's marked row.
-        if (status.control != BatteryStatus.Control.ON) card.body.addView(muted(words.say("battery.modeShadow"), bottom = 4))
-        // The control switch is Home Assistant's alone: shown, with the one line under it that says what it does.
-        settingRow(card.body, words.say("battery.switch"), text.controlWord(status.control), text.batteryLine(status.line))
-        text.gridChargeCap(status)?.let { card.body.addView(muted(it, bottom = 4)) }
-        card.body.addView(muted(t(R.string.site_settings_in_home_assistant), top = 2))
+        settingRow(card.body, modeLabel, text.modeName(status.mode), onTap = { openBatteryMode(modeLabel, status) })
+        text.factsLine(status)?.let { card.body.addView(muted("$it ${t(R.string.site_admin_in_home_assistant)}", top = 2, bottom = 4)) }
+        text.preheatLine(status)?.let { card.body.addView(muted(it, top = 2, bottom = 4)) }
         notice?.let { card.body.addView(muted(it, top = 4)) }
     }
 
-    /** The two fixed figures of the plan, with the docs page's name as a link after them. */
-    private fun addPlanCosts(body: LinearLayout, line: String, docs: String) {
-        val view = muted("$line $docs", top = 2, bottom = 4)
-        view.text = android.text.SpannableString("$line $docs").apply {
+    /**
+     * The mode dialog, as the card's: what SpotNav can do with the battery, the three modes each with its help, the
+     * wear the plan counts (an administrator's in Home Assistant, so read only here), Balanced's margin with the
+     * battery plan's page, and while SpotNav does not control the battery what the choice does meanwhile. Save
+     * writes the mode.
+     */
+    private fun openBatteryMode(title: String, status: BatteryStatus) {
+        val words = cardWords()
+        val modes = BatteryStatus.MODES
+        val body = editorBody()
+        body.addView(muted(words.say("battery.intro"), bottom = 6))
+        val group = android.widget.RadioGroup(context).apply { orientation = LinearLayout.VERTICAL }
+        val radios = modes.map { mode ->
+            android.widget.RadioButton(context).apply {
+                id = View.generateViewId(); text = this@SiteSettingsCards.text.modeName(mode); textSize = 16f; isChecked = mode == status.mode
+            }.also { radio ->
+                group.addView(radio)
+                group.addView(muted(text.modeHelp(mode), bottom = 4).apply { setPadding(dp(32), 0, 0, dp(4)) })
+            }
+        }
+        body.addView(group)
+        val costs = status.planCosts
+        val wear = text.wearValue(status)
+        if (costs != null && wear != null) {
+            body.addView(LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(0, dp(8), 0, 0)
+                addView(TextView(context).apply { text = this@SiteSettingsCards.text.wearLabel(costs); textSize = 15f; setTextColor(dark) }, weight())
+                addView(TextView(context).apply { text = wear; textSize = 15f; setTextColor(dark); typeface = android.graphics.Typeface.DEFAULT_BOLD })
+            })
+            text.wearHelp(status)?.let { body.addView(muted("$it ${t(R.string.site_admin_in_home_assistant)}", bottom = 4)) }
+        }
+        addPlanCosts(body, text.planMargin(status), words.say("battery.planCostsDocs"))
+        // The mode counts even when nothing is controlled: it moves the comparison's marked row.
+        if (status.state != "on") body.addView(muted(words.say("battery.modeShadow"), bottom = 4))
+        val error = errorLine().also { body.addView(it) }
+        openEditor(title, body, error, positive = words.say("settings.save")) { done ->
+            val chosen = radios.indexOfFirst { it.isChecked }
+            if (chosen < 0 || modes[chosen] == status.mode) done(null) else writeMode(modes[chosen], done)
+        }
+    }
+
+    /** Balanced's margin (when the plan has it) with the docs page's name as a link after it. */
+    private fun addPlanCosts(body: LinearLayout, line: String?, docs: String) {
+        val head = if (line == null) "" else "$line "
+        val view = muted("$head$docs", top = 2, bottom = 4)
+        view.text = android.text.SpannableString("$head$docs").apply {
             setSpan(object : android.text.style.ClickableSpan() {
                 override fun onClick(widget: View) {
                     runCatching { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(PLAN_DOCS_URL))) }
                 }
-            }, line.length + 1, line.length + 1 + docs.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }, head.length, head.length + docs.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         view.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         body.addView(view)
@@ -325,6 +359,19 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         body.addView(muted(t(R.string.site_settings_in_home_assistant), top = 2))
         notice?.let { body.addView(muted(it, top = 4)) }
+    }
+
+    /**
+     * The Pool, Spa and Bastu cards, each only where the load is set up, with the card's rows: an administrator's
+     * settings in Home Assistant, so read only, with the line under them on what SpotNav would do.
+     */
+    private fun addLoadCards(settings: HeatSettings) {
+        for (section in LoadSettingsRows(cardWords(), AppLanguageSettings.numberLocale(activity)).sections(settings)) {
+            val card = card(container, section.title, R.drawable.ic_now_heat)
+            section.rows.forEach { settingRow(card.body, it.label, it.value) }
+            section.help?.let { card.body.addView(muted(it, top = 2, bottom = 2)) }
+            card.body.addView(muted(t(R.string.site_settings_loads_in_home_assistant), top = 2))
+        }
     }
 
     /** The name Home Assistant gave an entity; never its id: without a name, the generic word "Vald". */

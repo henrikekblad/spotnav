@@ -1250,7 +1250,6 @@
   <string name="card_battery_mode_help_balanced" formatted="false">Se charge aussi sur le réseau quand l’électricité est bon marché et sert quand elle est chère. Ne vend que quand c’est très rentable.</string>
   <string name="card_battery_mode_help_max_profit" formatted="false">Comme Équilibré, mais vend au réseau dès que c’est rentable, usure comprise.</string>
   <string name="card_battery_mode_shadow" formatted="false">Tant que SpotNav ne pilote pas la batterie, le choix ne fait que déplacer la ligne marquée comme choisie dans la comparaison.</string>
-  <string name="card_battery_plan_costs" formatted="false">Usure comptée à {wear} dans chaque sens · Équilibré vend à partir de {margin} net</string>
   <string name="card_battery_plan_costs_docs" formatted="false">Le plan de la batterie</string>
   <string name="card_battery_switch" formatted="false">Pilotage de la batterie</string>
   <string name="card_battery_line_off" formatted="false">Désactivé : SpotNav ne pilote encore rien et montre seulement ce qu’il ferait.</string>
@@ -1324,6 +1323,8 @@
   <string name="card_heat_settings_away_delta" formatted="false">Degrés en moins</string>
   <string name="site_settings_in_home_assistant">L\'activation du pilotage et le choix des capteurs, du compteur et du mode de pilotage se modifient dans Home Assistant.</string>
   <string name="site_settings_heat_failed">Les réglages du chauffage n\'ont pas pu être lus.</string>
+  <string name="site_settings_loads_in_home_assistant">Ces réglages sont modifiés par un administrateur dans Home Assistant : les réglages de la carte chaleur.</string>
+  <string name="site_admin_in_home_assistant">Un administrateur le modifie dans Home Assistant.</string>
   <string name="site_settings_heat_add_in_home_assistant">Le chauffage se configure dans Home Assistant : Paramètres → Chauffage sur la carte de la maison ou du chauffage.</string>
   <string name="site_settings_offset_home_in_home_assistant">Répondez dans Home Assistant : dans les réglages de la carte chauffage, en administrateur.</string>
   <!-- House details and Intäkt (step A4) -->
@@ -1906,4 +1907,59 @@
   <string name="card_heat_spa_idle_help" formatted="false">La température de repos du spa entre les bains, de 10 à 40 °C. Plus basse, elle économise de l’énergie ; l’eau ne descend jamais sous 10 °C (hors-gel).</string>
   <string name="card_house_plan_load_spa" formatted="false">Spa</string>
   <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_pool_lower" formatted="false">Baisser la température de la piscine</string>
+  <string name="card_heat_pool_raise" formatted="false">Augmenter la température de la piscine</string>
+  <string name="card_heat_spa_lower" formatted="false">Baisser la température du bain</string>
+  <string name="card_heat_spa_raise" formatted="false">Augmenter la température du bain</string>
+  <string name="card_heat_sauna_lower" formatted="false">Baisser la température du sauna</string>
+  <string name="card_heat_sauna_raise" formatted="false">Augmenter la température du sauna</string>
+  <string name="card_heat_spa_times_help" formatted="false">Les heures où le spa doit être à température de bain, comme les départs de la voiture : chacune ses jours, plus une date. SpotNav chauffe pendant les heures les moins chères ou les plus ensoleillées avant.</string>
+  <string name="card_heat_sauna_times_help" formatted="false">Les heures où le sauna doit être prêt : chacune ses jours, plus une date. SpotNav ne démarre jamais le sauna pour autre chose qu’une séance réservée ou un appui sur Chauffer maintenant.</string>
+  <string name="card_heat_spa_add_time" formatted="false">Ajouter une heure de bain</string>
+  <string name="card_heat_sauna_add_time" formatted="false">Ajouter une séance</string>
+  <string name="card_heat_spa_weekly_time" formatted="false">Heure de bain hebdomadaire</string>
+  <string name="card_heat_sauna_weekly_time" formatted="false">Séance hebdomadaire</string>
+  <string name="card_heat_spa_once_label" formatted="false">Un bain à une date</string>
+  <string name="card_heat_sauna_once_label" formatted="false">Une séance à une date</string>
+  <string name="card_heat_spa_time" formatted="false">Heure</string>
+  <string name="card_heat_spa_remove_time" formatted="false">Supprimer</string>
+  <string name="card_heat_spa_times_invalid" formatted="false">Chaque horaire demande une heure et au moins un jour, et la date un jour et une heure.</string>
+  <string name="card_settings_save" formatted="false">Enregistrer</string>
+  <string name="card_heat_settings_section_pool" formatted="false">Piscine</string>
+  <string name="card_heat_settings_section_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_section_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_pool_heat_pump" formatted="false">Pompe à chaleur de la piscine</string>
+  <string name="card_heat_settings_pool_circulation" formatted="false">Pompe de filtration de la piscine</string>
+  <string name="card_heat_settings_pool_sensor" formatted="false">Sonde d’eau de la piscine</string>
+  <string name="card_heat_settings_pool_sensor_pump" formatted="false">Seulement celle de la pompe à chaleur</string>
+  <string name="card_heat_settings_pool_filter_hours" formatted="false">Filtration par jour</string>
+  <string name="card_heat_settings_pool_filter_auto" formatted="false">Selon la température de l’eau</string>
+  <string name="card_heat_settings_pool_heat_pump_kw" formatted="false">Puissance de la pompe à chaleur de la piscine</string>
+  <string name="card_heat_settings_pool_circulation_kw" formatted="false">Puissance de la pompe de filtration</string>
+  <string name="card_heat_settings_pool_circulation_control" formatted="false">Piloter la circulation</string>
+  <string name="card_heat_settings_pool_heat_pump_control" formatted="false">Piloter la pompe à chaleur de la piscine</string>
+  <string name="card_heat_settings_kw_entered" formatted="false">{kw}, indiquée</string>
+  <string name="card_heat_settings_kw_learned" formatted="false">{kw}, apprise</string>
+  <string name="card_heat_settings_kw_typical" formatted="false">{kw}, valeur typique jusqu’à l’apprentissage</string>
+  <string name="card_heat_settings_kw_none" formatted="false">Non indiquée</string>
+  <string name="card_heat_settings_spa" formatted="false">Spa</string>
+  <string name="card_heat_settings_spa_kw" formatted="false">Puissance du réchauffeur du spa</string>
+  <string name="card_heat_settings_spa_control" formatted="false">Piloter le spa</string>
+  <string name="card_heat_settings_sauna" formatted="false">Sauna</string>
+  <string name="card_heat_settings_sauna_kw" formatted="false">Puissance du poêle du sauna</string>
+  <string name="card_heat_settings_sauna_safety" formatted="false">Sécurité propre au poêle</string>
+  <string name="card_heat_settings_sauna_safety_yes" formatted="false">Oui, il en a une</string>
+  <string name="card_heat_settings_sauna_safety_no" formatted="false">Non, ou je ne sais pas</string>
+  <string name="card_heat_settings_sauna_control" formatted="false">Piloter le sauna</string>
+  <string name="card_battery_plan_margin" formatted="false">Équilibré vend à partir de {margin} net</string>
+  <string name="card_battery_wear_label" formatted="false">Usure ({unit} dans chaque sens)</string>
+  <string name="card_battery_wear_help" formatted="false">Ce que coûte en usure la charge et la décharge d\'un kWh. Par défaut {default}.</string>
+  <string name="card_battery_wear_default" formatted="false">Par défaut</string>
+  <string name="card_battery_preheat_off" formatted="false">Les cellules de la batterie sont froides ({temp} °C) et le préchauffage est désactivé : elle prend donc moins de charge pendant les heures bon marché. Activez « {name} » sur l’appareil de la batterie dans Home Assistant.</string>
+  <string name="card_battery_preheat_disabled" formatted="false">Les cellules de la batterie sont froides ({temp} °C). L’interrupteur de préchauffage « {name} » est désactivé dans Home Assistant : SpotNav ne voit donc pas s’il est allumé. Activez-le sur l’appareil de la batterie.</string>
+  <string name="card_battery_enable_facts_size" formatted="false">La taille de la batterie se trouve dans un capteur désactivé de {integration}.</string>
+  <string name="card_battery_enable_facts_floor" formatted="false">Le niveau minimal de la batterie se trouve dans une entité désactivée de {integration}.</string>
+  <string name="card_battery_enable_facts_both" formatted="false">La taille et le niveau minimal de la batterie se trouvent dans des entités désactivées de {integration}.</string>
+  <string name="card_battery_enable_facts_rating" formatted="false">La puissance de charge et de décharge de la batterie se trouve dans des entités désactivées dans {integration}.</string>
+  <string name="card_battery_enable_facts_several" formatted="false">Ce que le plan de batterie doit savoir de la batterie se trouve dans des entités désactivées dans {integration}.</string>
 </resources>

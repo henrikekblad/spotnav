@@ -33,82 +33,56 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
 
     private fun knownMode(mode: String) = if (mode in BatteryStatus.MODES) mode else "balanced"
 
-    /** The control's state in a word: On, Off, or Test while it runs on paper only. */
-    fun controlWord(control: BatteryStatus.Control): String = when (control) {
-        BatteryStatus.Control.ON -> words.say("settings.value.on")
-        BatteryStatus.Control.OFF -> words.say("settings.value.off")
-        BatteryStatus.Control.TEST -> words.say("header.test")
-    }
-
-    /** The one line under the switch (`status.line`) in words. */
-    fun batteryLine(line: String): String {
-        LINE_KEYS[line]?.let { return words.say(it) }
-        val parts = line.split(":")
-        val kind = parts[0]
-        val first = parts.getOrNull(1)
-        val second = parts.getOrNull(2)
-        return when (kind) {
-            "waiting", "waiting_after_update" -> {
-                val base = words.say(if (kind == "waiting") "battery.line.waiting" else "battery.line.waitingAfterUpdate")
-                first?.let { WAITING_KEYS[it] }?.let { "$base ${words.say(it)}" } ?: base
-            }
-            "failed" -> words.say(
-                "battery.line.failed",
-                "mode" to modeNameOfCheck(if (first == null || first == "not_judgeable") "hold" else first)
-            ) + if (second == "attempts") " ${words.say("battery.line.failedAttempts")}" else ""
-            "blocked" -> words.say(if (first == "daily_write_cap") "battery.line.blockedWrites" else "battery.line.blocked")
-            else -> line
-        }
-    }
-
-    private fun modeNameOfCheck(mode: String): String =
-        CHECK_MODE_KEYS[mode]?.let { words.say(it) } ?: mode.replace('_', ' ')
-
-    /**
-     * The one line under what SpotNav may do: the grid charge cap and what it rests on; `null` when charging from the
-     * grid is not allowed or the cap could not be worked out.
-     */
-    fun gridChargeCap(status: BatteryStatus): String? {
-        val cap = status.gridChargeCap
-        if ("grid_charge" !in status.allowedActions) return null
-        val kw = cap.capKw
-        if (kw == null) return if (cap.rule == "import_limit") words.say("battery.cap.importLimit") else null
-        if (cap.rule != "learned" && cap.rule != "learning" && cap.rule != "conservative") return null
-        val ruleWords = words.say("battery.cap.rule.${cap.rule}")
-        // How long it still takes: while cautious, until the first days are learned; while learning, until the
-        // further margin is gone.
-        val days = when {
-            cap.daysMin == null || cap.daysSpread == null || cap.daysLeft == null -> 0
-            cap.rule == "conservative" -> maxOf(cap.daysMin - cap.daysSpread, 1)
-            cap.rule == "learning" -> cap.daysLeft
-            else -> 0
-        }
-        val left = days.takeIf { it > 0 }
-        if (cap.rule == "learning" && kw == 0.0) {
-            // One reason, not two: the learning's further margin where the learned peaks alone would leave a charge,
-            // the house itself where they would not.
-            return if ((cap.capLearnedKw ?: 0.0) > 0 && left != null) {
-                words.say("battery.cap.zeroLearning", "left" to daysLeft(left))
-            } else {
-                words.say("battery.cap.zero", "rule" to words.say("battery.cap.rule.learned"))
-            }
-        }
-        val rule = if (left == null) ruleWords else "$ruleWords, ${daysLeft(left)}"
-        return if (kw == 0.0) words.say("battery.cap.zero", "rule" to rule)
-        else words.say("battery.cap.line", "kw" to fixed(kw, 1), "rule" to rule)
-    }
-
-    /**
-     * The muted line under the battery's mode: the wear the plan counts and Balanced's selling margin, fixed figures
-     * (the card's `planCostsLine`); `null` without them.
-     */
-    fun planCosts(status: BatteryStatus): String? {
+    /** Balanced's selling margin as the mode dialog says it; `null` without the plan's figures. A fixed figure, not a setting. */
+    fun planMargin(status: BatteryStatus): String? {
         val costs = status.planCosts ?: return null
-        return words.say(
-            "battery.planCosts",
-            "wear" to "${planMoney(costs.wearMinorPerKwh, costs)}/kWh",
-            "margin" to "${planMoney(costs.balancedMarginMinorPerKwh, costs)}/kWh"
-        )
+        return words.say("battery.planMargin", "margin" to "${planMoney(costs.balancedMarginMinorPerKwh, costs)}/kWh")
+    }
+
+    /** A per-kWh figure in the area's minor unit whatever its size ("15 öre", "1,4 cent"): whole when it is, else up to two decimals. */
+    fun planMinor(minor: Double, costs: BatteryStatus.PlanCosts): String {
+        val shown = if (minor % 1.0 == 0.0) fixed(minor, 0) else fixed(minor, 2).trimEnd('0')
+        return "$shown ${costs.minorUnit}"
+    }
+
+    /** The wear row's label, in the area's minor unit ("Slitage (öre/kWh åt varje håll)"). */
+    fun wearLabel(costs: BatteryStatus.PlanCosts): String = words.say("battery.wear.label", "unit" to "${costs.minorUnit}/kWh")
+
+    /** The wear the plan counts: the site's own ("20 öre/kWh"), or Default; `null` from a Home Assistant without a wear of the site's own. */
+    fun wearValue(status: BatteryStatus): String? {
+        val costs = status.planCosts ?: return null
+        if (costs.wearDefaultMinorPerKwh == null) return null
+        return status.wearOwnMinorPerKwh?.let { "${planMinor(it, costs)}/kWh" } ?: words.say("battery.wear.default")
+    }
+
+    /** The wear's help line with the currency's default ("… Standard 15 öre."); `null` as [wearValue]. */
+    fun wearHelp(status: BatteryStatus): String? {
+        val costs = status.planCosts ?: return null
+        val fallback = costs.wearDefaultMinorPerKwh ?: return null
+        return words.say("battery.wear.help", "default" to planMinor(fallback, costs))
+    }
+
+    /** A cold battery's preheating off or its switch disabled (the card's `preheatLine`); `null` for none or a newer code. */
+    fun preheatLine(status: BatteryStatus): String? {
+        val block = status.preheat ?: return null
+        if (block.code != "off" && block.code != "disabled") return null
+        val temp = block.cellC?.let { fixed(it, 1) } ?: "–"
+        return words.say("battery.preheat.${block.code}", "temp" to temp, "name" to PREHEAT_SWITCH_NAME)
+    }
+
+    /** Facts the plan needs in disabled entities, in one line (the card's facts notice); `null` with none. */
+    fun factsLine(status: BatteryStatus): String? {
+        val found = status.enableFacts ?: return null
+        if (found.entities == 0) return null
+        val size = "size" in found.needs
+        val floor = "floor" in found.needs
+        val which = when {
+            "rating" in found.needs -> if (size || floor) "several" else "rating"
+            size && floor -> "both"
+            size -> "size"
+            else -> "floor"
+        }
+        return words.say("battery.enableFacts.$which", "integration" to found.integration)
     }
 
     /** The minor unit below one major unit ("15 öre"), the major one from there, whole when it is or from 10 up ("1 kr"). */
@@ -119,9 +93,6 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         val major = minor / 100
         return "${fixed(major, if (major % 1.0 == 0.0 || Math.abs(major) >= 10) 0 else 2)} ${costs.majorUnit}"
     }
-
-    private fun daysLeft(days: Int): String =
-        words.say("learning.daysLeft.${if (days == 1) "one" else "other"}", "days" to days.toString())
 
     // ---- the heat
 
@@ -251,32 +222,8 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
     }
 
     private companion object {
-        val LINE_KEYS = mapOf(
-            "off" to "battery.line.off",
-            "shadow_only" to "battery.line.shadowOnly",
-            "checking" to "battery.line.checking",
-            "checking_after_update" to "battery.line.checkingAfterUpdate",
-            "on" to "battery.line.on",
-            "watching:ai_mode" to "battery.line.watchingAiMode"
-        )
-        val WAITING_KEYS = mapOf(
-            "firmware_unknown" to "battery.waiting.firmwareUnknown",
-            "retry_gap" to "battery.waiting.retryGap",
-            "no_battery_control" to "battery.waiting.noBatteryControl",
-            "not_evening" to "battery.waiting.notEvening",
-            "car_charging" to "battery.waiting.carCharging",
-            "battery_not_discharging" to "battery.waiting.notDischarging",
-            "soc_out_of_range" to "battery.waiting.socOutOfRange",
-            "headroom_too_small" to "battery.waiting.headroom",
-            "stale_data" to "battery.waiting.staleData",
-            "executor_busy" to "battery.waiting.busy"
-        )
-        val CHECK_MODE_KEYS = mapOf(
-            "hold" to "battery.mode.hold",
-            "charge" to "battery.mode.charge",
-            "discharge_house" to "battery.mode.dischargeHouse",
-            "normal" to "battery.mode.normal"
-        )
+        /** The name a preheating switch goes by (the card's fallback when Home Assistant gives none). */
+        const val PREHEAT_SWITCH_NAME = "ESS Preheating Enable"
         val PATHS = setOf("none", "relay", "sg_ready", "sg_ready_api", "offset", "setpoint")
         /** The paths whose control line names the relay (the card's `isRelayPath`). */
         val RELAY_WORD_PATHS = setOf("none", "relay", "sg_ready")
