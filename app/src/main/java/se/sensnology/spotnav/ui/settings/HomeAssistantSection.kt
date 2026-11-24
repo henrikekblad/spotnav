@@ -29,6 +29,7 @@ import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.HomeAssistantSettings
 import se.sensnology.spotnav.ha.client.WebhookGone
 import se.sensnology.spotnav.chargers.toHomeAssistantSettings
+import se.sensnology.spotnav.notify.AppIdentity
 import se.sensnology.spotnav.notify.LocalNotifications
 import se.sensnology.spotnav.push.PushStore
 import se.sensnology.spotnav.ha.pairing.ChargerPairingApproval
@@ -265,9 +266,11 @@ internal class HomeAssistantSection(
             ioExecutor.execute {
                 var target = baseUrl
                 var requestId: String? = null
+                // This app's secret id beside the device's name: Home Assistant 3.0 knows this phone by it.
+                val appId = AppIdentity.forContext(applicationContext).appId()
                 for (candidate in listOf(baseUrl) + alternatives) {
                     if (cancelled.get()) return@execute
-                    requestId = HomeAssistantPairingClient.request(candidate, Build.MODEL, shown)
+                    requestId = HomeAssistantPairingClient.request(candidate, Build.MODEL, shown, appId)
                     if (requestId != null) { target = candidate; break }
                 }
                 if (requestId == null) {

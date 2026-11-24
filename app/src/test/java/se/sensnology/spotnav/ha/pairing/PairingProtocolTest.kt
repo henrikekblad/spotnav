@@ -40,6 +40,14 @@ class PairingProtocolTest {
         assertEquals("123456", body.getString("code"))
     }
 
+    @Test fun theRequestBodyCarriesTheAppsIdBesideTheDevice() {
+        val body = JSONObject(PairingProtocol.requestPayload("Pixel 8", "123456", "a".repeat(43)))
+
+        assertEquals("Pixel 8", body.getString("device"))
+        assertEquals("a".repeat(43), body.getString("app_id"))
+        assertTrue(!JSONObject(PairingProtocol.requestPayload("Pixel 8", "123456")).has("app_id"))
+    }
+
     @Test fun thePollBodyCarriesOnlyTheRequestId() {
         val body = JSONObject(PairingProtocol.pollPayload("opaque-id"))
 
