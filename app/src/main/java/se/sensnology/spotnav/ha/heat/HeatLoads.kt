@@ -215,6 +215,8 @@ internal object HeatLoadPress {
     const val RATE_LIMITED = "spotnav_rate_limited"
     const val NOT_SUPPORTED = "spotnav_not_supported"
     const val NO_LATER = "spotnav_no_later_bath"
+    /** The sauna's refusal when no later session fits (the spa's is [NO_LATER]). */
+    const val NO_LATER_SESSION = "spotnav_no_later_session"
 
     /** A pool press: [fields] are `open`, `hours` or `target_c` as the action takes them. */
     fun pool(action: String, fields: Map<String, Any> = emptyMap()): JSONObject = JSONObject().apply {
