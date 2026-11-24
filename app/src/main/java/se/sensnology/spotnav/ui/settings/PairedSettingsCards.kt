@@ -68,7 +68,7 @@ import java.util.Locale
  * The cards of a paired charger's settings, in the order the Home Assistant card has them after the
  * price card: one card per vehicle, the charger, the site and solar.
  *
- * Every value is a row; one the webhook lets the app change (a car's figures, the charger's priority
+ * Every value is a row; one the webhook lets the app change (a car's figures, the charger's phase switching
  * and identification, the site's solar settings) opens its own editor and writes that one value.
  */
 internal class PairedSettingsCards(
