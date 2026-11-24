@@ -1,7 +1,6 @@
 package se.sensnology.spotnav.notify
 
 import android.content.Context
-import android.os.Build
 import org.json.JSONObject
 import se.sensnology.spotnav.app.KeyValueStore
 import se.sensnology.spotnav.app.SharedPreferencesKeyValueStore
@@ -125,6 +124,8 @@ internal class PhoneNotificationsSync(
     private val store: PhoneNotificationsStore,
     private val appId: () -> String,
     private val deviceName: String,
+    /** The phone's model: Home Assistant finds this phone's Home Assistant app by it (sent with the name). */
+    private val deviceModel: String = "",
     private val call: (HomeAssistantSettings, JSONObject) -> PhoneNotificationsCall.Outcome,
     /** This phone's own choice from before (on, events); `null` when a person never made one (nothing is carried). */
     private val ownChoice: () -> Pair<Boolean, Set<NotificationEvent>>?,
@@ -156,12 +157,16 @@ internal class PhoneNotificationsSync(
      */
     fun read(door: PhoneDoor, ref: PhoneNotificationsCall.Ref = PhoneNotificationsCall.Ref.Keep, change: PhoneNotificationsCall.Change? = null): Result {
         val first = store.current(door.key) == null
+        // The name and model go with the first contact and while this phone has no Home Assistant app beside it:
+        // Home Assistant links the two as soon as it finds that app.
+        val introduce = first || store.current(door.key)?.companionName == null
         val sentRef = if (ref == PhoneNotificationsCall.Ref.Keep && first) pushRef()?.let { PhoneNotificationsCall.Ref.Set(it) } ?: ref else ref
         val shows = SHOWS.joinToString(",")
         val sendShows = store.sentShows(door.key) != shows
         val body = PhoneNotificationsCall.payload(
             appId(),
-            name = deviceName.trim().takeIf { first && it.isNotEmpty() },
+            name = deviceName.trim().takeIf { introduce && it.isNotEmpty() },
+            model = deviceModel.trim().takeIf { introduce && it.isNotEmpty() },
             ref = sentRef,
             shows = SHOWS.takeIf { sendShows },
             change = change
@@ -224,7 +229,8 @@ internal class PhoneNotificationsSync(
             return PhoneNotificationsSync(
                 store = PhoneNotificationsStore.forContext(app),
                 appId = { AppIdentity.forContext(app).appId() },
-                deviceName = Build.MODEL.orEmpty(),
+                deviceName = PhoneName.of(app),
+                deviceModel = PhoneName.model,
                 call = HomeAssistantClient::phoneNotifications,
                 ownChoice = { if (local.chosen) local.enabled to local.events else null },
                 pushRef = { PushStore.forContext(app).let { push -> push.pushRef?.takeIf { push.enabled } } }

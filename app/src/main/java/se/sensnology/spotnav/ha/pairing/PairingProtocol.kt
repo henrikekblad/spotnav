@@ -105,10 +105,11 @@ object PairingProtocol {
      * The `request` body: who is asking, the code they are showing and, beside the device's name, this app's secret
      * [appId] (SpotNav 3.0: Home Assistant links the pairing to its phone by it; an older one does not read it).
      */
-    fun requestPayload(device: String, code: String, appId: String? = null): String = JSONObject().apply {
+    fun requestPayload(device: String, code: String, appId: String? = null, model: String? = null): String = JSONObject().apply {
         put("version", 1)
         put("action", "request")
         put("device", device)
+        if (!model.isNullOrBlank()) put("model", model)
         if (appId != null) put("app_id", appId)
         put("code", code)
     }.toString()

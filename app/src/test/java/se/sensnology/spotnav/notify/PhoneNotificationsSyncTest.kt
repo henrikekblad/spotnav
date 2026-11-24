@@ -31,6 +31,7 @@ class PhoneNotificationsSyncTest {
             store = store,
             appId = { "S".repeat(43) },
             deviceName = "Pixel 8",
+            deviceModel = "GKWS6",
             call = { _, body -> bodies += body; outcome },
             ownChoice = { own },
             now = { clock }
@@ -45,6 +46,7 @@ class PhoneNotificationsSyncTest {
         val body = harness.bodies.single()
         assertEquals(appId, body.getString("app_id"))
         assertEquals("Pixel 8", body.getString("name"))
+        assertEquals("GKWS6", body.getString("model"))
         assertFalse(body.has("push_ref"))
         assertFalse(body.has("set"))
         val shows = body.getJSONArray("shows").let { list -> (0 until list.length()).map { list.getString(it) } }
@@ -53,10 +55,34 @@ class PhoneNotificationsSyncTest {
         assertTrue("heat_at_risk" in shows)
         assertEquals(answer, harness.store.current(door.key))
 
-        // Once told, neither the name nor what it shows is sent again.
+        // Once joined to its Home Assistant app, neither the name, the model nor what it shows is sent again.
         harness.sync.read(door)
         assertFalse(harness.bodies.last().has("name"))
+        assertFalse(harness.bodies.last().has("model"))
         assertFalse(harness.bodies.last().has("shows"))
+    }
+
+    @Test
+    fun anAppOnlyPhoneKeepsNamingItselfSoHomeAssistantCanFindItsHomeAssistantApp() {
+        val harness = Harness(PhoneNotificationsCall.Outcome.Read(answer.copy(companionName = null)))
+        harness.sync.read(door)
+        harness.sync.read(door)
+        assertEquals("Pixel 8", harness.bodies.last().getString("name"))
+        assertEquals("GKWS6", harness.bodies.last().getString("model"))
+        assertFalse(harness.bodies.last().has("shows"))
+        // Joined now: no longer.
+        harness.outcome = PhoneNotificationsCall.Outcome.Read(answer)
+        harness.sync.read(door)
+        harness.sync.read(door)
+        assertFalse(harness.bodies.last().has("name"))
+        assertFalse(harness.bodies.last().has("model"))
+    }
+
+    @Test
+    fun thePhonesOwnNameComesFirstAndTheModelOtherwise() {
+        assertEquals("Henrik N6", PhoneName.choose(" Henrik N6 ", "CPH2765"))
+        assertEquals("CPH2765", PhoneName.choose("  ", "CPH2765"))
+        assertEquals("CPH2765", PhoneName.choose(null, "CPH2765"))
     }
 
     @Test

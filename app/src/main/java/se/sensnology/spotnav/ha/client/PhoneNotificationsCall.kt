@@ -69,13 +69,21 @@ internal object PhoneNotificationsCall {
         val empty: Boolean get() = on == null && events == null && chargers == null
     }
 
-    fun payload(appId: String, name: String? = null, ref: Ref = Ref.Keep, shows: List<String>? = null, change: Change? = null): JSONObject =
+    fun payload(
+        appId: String,
+        name: String? = null,
+        ref: Ref = Ref.Keep,
+        shows: List<String>? = null,
+        change: Change? = null,
+        model: String? = null
+    ): JSONObject =
         JSONObject().apply {
             put("version", 1)
             put("action", ACTION)
             put("api_version", API_VERSION)
             put("app_id", appId)
             if (name != null) put("name", name)
+            if (model != null) put("model", model)
             if (ref is Ref.Set) put("push_ref", ref.ref ?: JSONObject.NULL)
             if (shows != null) put("shows", JSONArray(shows))
             if (change != null && !change.empty) {
