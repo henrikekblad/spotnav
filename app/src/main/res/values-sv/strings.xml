@@ -1815,8 +1815,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Klart för bad, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Bastun är klar</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Bastun är klar, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Vilar på {idle}, inget bad bokat</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Vilar på {idle}, nästa bad {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Vilar på {idle} mellan baden, inget bad bokat</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Vilar på {idle} mellan baden, nästa bad {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Av, inget bastupass bokat</string>
   <string name="card_heat_sauna_off_next" formatted="false">Av, nästa bastupass {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Skulle värma till {until}</string>
@@ -1895,4 +1895,7 @@
   <string name="card_heat_pool_dial" formatted="false">Poolvattnets mål</string>
   <string name="card_heat_spa_dial" formatted="false">Badtemperatur</string>
   <string name="card_heat_sauna_dial" formatted="false">Bastutemperatur</string>
+  <string name="card_heat_spa_idle_help" formatted="false">Temperaturen spat vilar på mellan baden, 10 till 40 °C. Lägre sparar energi; vattnet får aldrig gå under 10 °C (frostskydd).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Spa</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Bastu</string>
 </resources>

@@ -20,6 +20,10 @@ internal class PlanPalette(private val colours: SiteColours) {
         PlanLayer.HEAT -> colours.of(Tone.HEAT)
         PlanLayer.WATER_HEATER -> WATER_HEATER
         PlanLayer.CAR -> colours.of(Tone.CAR)
+        PlanLayer.POOL_HEAT -> 0xFF2B6CB0.toInt()
+        PlanLayer.POOL_CIRCULATION -> 0xFF63A4E0.toInt()
+        PlanLayer.SPA -> 0xFF6F8F2F.toInt()
+        PlanLayer.SAUNA -> 0xFFA8693F.toInt()
         PlanLayer.BATTERY_IN -> colours.of(Tone.BATTERY)
         PlanLayer.SUN -> colours.of(Tone.SUN)
         PlanLayer.BATTERY_OUT -> SiteColours.mix(colours.of(Tone.BATTERY), colours.card, 0.55f)

@@ -1823,8 +1823,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Prêt pour le bain, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Sauna prêt</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Sauna prêt, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Au repos à {idle}, aucun bain réservé</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Au repos à {idle}, prochain bain {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Au repos à {idle} entre les bains, aucun bain réservé</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Au repos à {idle} entre les bains, prochain bain {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Éteint, aucune séance réservée</string>
   <string name="card_heat_sauna_off_next" formatted="false">Éteint, prochaine séance {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Chaufferait jusqu’à {until}</string>
@@ -1903,4 +1903,7 @@
   <string name="card_heat_pool_dial" formatted="false">Objectif de l’eau de la piscine</string>
   <string name="card_heat_spa_dial" formatted="false">Température du bain</string>
   <string name="card_heat_sauna_dial" formatted="false">Température du sauna</string>
+  <string name="card_heat_spa_idle_help" formatted="false">La température de repos du spa entre les bains, de 10 à 40 °C. Plus basse, elle économise de l’énergie ; l’eau ne descend jamais sous 10 °C (hors-gel).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Spa</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>

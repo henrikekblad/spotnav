@@ -1815,8 +1815,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Bereit zum Baden, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Sauna bereit</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Sauna bereit, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Ruht bei {idle}, kein Bad gebucht</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Ruht bei {idle}, nächstes Bad {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Ruht zwischen den Bädern bei {idle}, kein Bad gebucht</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Ruht zwischen den Bädern bei {idle}, nächstes Bad {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Aus, kein Saunagang gebucht</string>
   <string name="card_heat_sauna_off_next" formatted="false">Aus, nächster Saunagang {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Würde bis {until} heizen</string>
@@ -1895,4 +1895,7 @@
   <string name="card_heat_pool_dial" formatted="false">Ziel für das Poolwasser</string>
   <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
   <string name="card_heat_sauna_dial" formatted="false">Saunatemperatur</string>
+  <string name="card_heat_spa_idle_help" formatted="false">Die Temperatur, bei der der Whirlpool zwischen den Bädern ruht, 10 bis 40 °C. Niedriger spart Energie; das Wasser fällt nie unter 10 °C (Frostschutz).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Whirlpool</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>

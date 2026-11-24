@@ -15,6 +15,10 @@ internal enum class PlanLayer(val word: String) {
     HEAT("house.plan.layer.heat"),
     WATER_HEATER("house.plan.layer.waterHeater"),
     CAR("house.plan.layer.car"),
+    POOL_HEAT("house.plan.load.pool_heat"),
+    POOL_CIRCULATION("house.plan.load.pool_circulation"),
+    SPA("house.plan.load.spa"),
+    SAUNA("house.plan.load.sauna"),
     BATTERY_IN("house.plan.layer.batteryIn"),
     SUN("house.plan.layer.sun"),
     BATTERY_OUT("house.plan.layer.batteryOut")
@@ -249,6 +253,10 @@ internal object HousePlanModel {
         "car" -> PlanLayer.CAR
         "heat" -> PlanLayer.HEAT
         "water_heater" -> PlanLayer.WATER_HEATER
+        "pool_heat" -> PlanLayer.POOL_HEAT
+        "pool_circulation" -> PlanLayer.POOL_CIRCULATION
+        "spa" -> PlanLayer.SPA
+        "sauna" -> PlanLayer.SAUNA
         else -> null
     }
 
@@ -322,6 +330,10 @@ internal object HousePlanModel {
             if ("heat" in kinds) add(PlanLayer.HEAT)
             if ("water_heater" in kinds) add(PlanLayer.WATER_HEATER)
             if ("car" in kinds) add(PlanLayer.CAR)
+            if ("pool_heat" in kinds) add(PlanLayer.POOL_HEAT)
+            if ("pool_circulation" in kinds) add(PlanLayer.POOL_CIRCULATION)
+            if ("spa" in kinds) add(PlanLayer.SPA)
+            if ("sauna" in kinds) add(PlanLayer.SAUNA)
             if ("home_battery" in kinds) add(PlanLayer.BATTERY_IN)
             if (plan.hours.any { it.sunKw != null } && !plan.sunInHouse) add(PlanLayer.SUN)
             if ("home_battery" in kinds) add(PlanLayer.BATTERY_OUT)

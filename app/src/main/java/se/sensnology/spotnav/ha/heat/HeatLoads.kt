@@ -30,7 +30,7 @@ internal object HeatLoads {
     data class Run(val start: Instant, val end: Instant, val what: String, val reason: String)
 
     /** One of the pool's two parts: the heat pump ([heating] read) or the circulation. */
-    data class PoolPart(val on: Boolean?, val heating: Boolean?, val kw: Double?, val live: Boolean, val control: Control)
+    data class PoolPart(val on: Boolean?, val heating: Boolean?, val kw: Double?, val live: Boolean, val control: Control, /** `entered`, `learned` or `typical`: where [kw] comes from (`null` from a backend that did not say). */ val kwSource: String? = null)
 
     data class PoolToday(
         val needH: Double?,
@@ -72,7 +72,10 @@ internal object HeatLoads {
         val kind: String,
         val family: String,
         val heating: Boolean?,
+        /** The power that counts: the entered kW, else the learned one, else a typical one; never `null` on a current backend. */
         val kw: Double?,
+        /** `entered`, `learned` or `typical` ([kw]'s source); `null` from a backend that did not say. */
+        val kwSource: String? = null,
         val rateCH: Double,
         val rateLearned: Boolean,
         /** `idle`, `heating`, `ready` or `late`. */
@@ -131,7 +134,8 @@ internal object HeatLoads {
             heating = if (heatPump) boolOrNull(part.opt("heating"), "$what.heating") else null,
             kw = numberOrNull(part.opt("kw"), "$what.kw"),
             live = flag(part.opt("live"), "$what.live"),
-            control = control(part, what)
+            control = control(part, what),
+            kwSource = textOrNull(part.opt("kw_source"), "$what.kw_source")
         )
     }
 
@@ -173,6 +177,7 @@ internal object HeatLoads {
             family = text(load.opt("family"), "$kind.family"),
             heating = boolOrNull(load.opt("heating"), "$kind.heating"),
             kw = numberOrNull(load.opt("kw"), "$kind.kw"),
+            kwSource = textOrNull(load.opt("kw_source"), "$kind.kw_source"),
             rateCH = number(load.opt("rate_c_h"), "$kind.rate_c_h"),
             rateLearned = flag(load.opt("rate_learned"), "$kind.rate_learned"),
             state = textOrNull(load.opt("state"), "$kind.state"),

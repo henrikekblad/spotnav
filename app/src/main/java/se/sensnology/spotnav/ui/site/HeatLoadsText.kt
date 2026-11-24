@@ -164,6 +164,31 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
         }
     }
 
+    /**
+     * The would-line where it adds something, as the card shows it: not under a controlled, paused or handed-back load
+     * (its control line says what it does), and never a "would stand still" that repeats the status.
+     */
+    fun deadlineWouldShown(load: HeatLoads.Deadline): String? {
+        if (load.control.state in CONTROL_STATES) return null
+        val would = load.would
+        if (would != null && would.action !in WOULD_ACTIVE) {
+            val statusActive = load.state == "ready" || (load.state == "heating" && load.readyAt != null)
+            if (!statusActive) return null
+        }
+        return deadlineWould(load)
+    }
+
+    /** The pool's would-line, as [deadlineWouldShown]: not with either part controlled, paused or handed back, nor a plain "stand still" while it stands still. */
+    fun poolWouldShown(pool: HeatLoads.Pool): String? {
+        if (listOfNotNull(pool.heatPump, pool.circulation).any { it.control.state in CONTROL_STATES }) return null
+        val would = pool.would
+        if (would != null && would.action != "heat" && would.action != "filter" && would.reason != "need_met" && would.reason != "no_prices") {
+            val still = pool.heatPump?.heating != true && pool.circulation?.on != true
+            if (still) return null
+        }
+        return poolWould(pool)
+    }
+
     /** A bath or a session that will not be ready ("Badet 19:00 blir inte klart i tid: det når 35 °C. Säkringen …"). */
     fun notReadyLine(load: HeatLoads.Deadline, notReady: HeatLoads.NotReadyAt): String {
         val said = words.say("heat.${load.kind}.notReady", "when" to whenLabel(notReady.at), "reach" to degrees(notReady.reachC))
@@ -213,7 +238,6 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
     }
 
     /** "Mellan baden: 30,0 °C" (the spa only). */
-    fun idle(load: HeatLoads.Deadline): String? = load.idleC?.let { "${words.say("heat.spa.idleLabel")}: ${degrees(it)}" }
 
     /** The heat-up and the hold in words ("Värms 16:00–17:45 · Hålls varmt till 20:00"); `null` with nothing planned. */
     fun deadlinePlan(load: HeatLoads.Deadline): String? {
@@ -266,6 +290,8 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
 
         private val POOL_WHY = setOf("sun", "cheap", "need", "extra")
         private val DEADLINE_WHY = setOf("sun", "cheap", "bath", "now", "floor")
+        private val WOULD_ACTIVE = setOf("heat", "hold", "floor", "blocked", "start_by_hand")
+        private val CONTROL_STATES = setOf("controlled", "paused", "handed_back")
         private val CAUSES = setOf("rate", "import_target", "power_level", "fuse")
         private val CONTROL_WHY = setOf(
             "no_read_back", "write_cap", "starts_cap", "fault", "automation", "unavailable", "foreign_mode", "own_scheduler",

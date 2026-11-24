@@ -1815,8 +1815,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Klar til bad, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Saunaen er klar</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Saunaen er klar, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Hviler på {idle}, intet bad booket</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Hviler på {idle}, næste bad {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Hviler på {idle} mellem badene, intet bad booket</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Hviler på {idle} mellem badene, næste bad {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Slukket, ingen seance booket</string>
   <string name="card_heat_sauna_off_next" formatted="false">Slukket, næste seance {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Ville varme til {until}</string>
@@ -1895,4 +1895,7 @@
   <string name="card_heat_pool_dial" formatted="false">Mål for poolvandet</string>
   <string name="card_heat_spa_dial" formatted="false">Badetemperatur</string>
   <string name="card_heat_sauna_dial" formatted="false">Saunatemperatur</string>
+  <string name="card_heat_spa_idle_help" formatted="false">Temperaturen spaen hviler på mellem badene, 10 til 40 °C. Lavere sparer energi; vandet går aldrig under 10 °C (frostbeskyttelse).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Spa</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>

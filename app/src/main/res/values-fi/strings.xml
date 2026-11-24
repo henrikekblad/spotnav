@@ -1815,8 +1815,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Valmis kylpyyn, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Sauna on valmis</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Sauna on valmis, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Lepää {idle}, ei varattua kylpyä</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Lepää {idle}, seuraava kylpy {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Lepää kylpyjen välillä {idle}, ei varattua kylpyä</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Lepää kylpyjen välillä {idle}, seuraava kylpy {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Pois, ei varattua saunavuoroa</string>
   <string name="card_heat_sauna_off_next" formatted="false">Pois, seuraava saunavuoro {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Lämmittäisi klo {until} asti</string>
@@ -1895,4 +1895,7 @@
   <string name="card_heat_pool_dial" formatted="false">Altaan veden tavoite</string>
   <string name="card_heat_spa_dial" formatted="false">Kylpylämpötila</string>
   <string name="card_heat_sauna_dial" formatted="false">Saunan lämpötila</string>
+  <string name="card_heat_spa_idle_help" formatted="false">Lämpötila, jossa poreallas lepää kylpyjen välillä, 10–40 °C. Alempi säästää energiaa; vesi ei koskaan laske alle 10 °C (jäätymissuoja).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Poreallas</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>
