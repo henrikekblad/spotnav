@@ -17,6 +17,10 @@ internal class LocalNotificationStore(private val store: KeyValueStore) {
         get() = store.getString(ENABLED) == "true"
         set(value) = store.putString(ENABLED, value.toString())
 
+    /** Whether a person ever turned this phone's own notifications on or off (an untouched phone has the defaults). */
+    val chosen: Boolean
+        get() = store.getString(ENABLED) != null
+
     /**
      * The chosen events; the defaults (stopped, at risk, complete, which car) until a person changes
      * them. A choice stored before the question which car is plugged in existed has it on, as Home
