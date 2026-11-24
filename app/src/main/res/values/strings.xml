@@ -1765,6 +1765,8 @@
   <string name="card_heat_pool_water" formatted="false">Water {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">No water sensor</string>
   <string name="card_heat_pool_water_wait" formatted="false">Water: read soon</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">From the heat pump, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">From the pool sensor, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Season closed: SpotNav leaves the pool alone.</string>
   <string name="card_heat_pool_heating_to" formatted="false">The heat pump heats towards {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Heating, {value} → {target}</string>

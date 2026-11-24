@@ -1752,6 +1752,8 @@
   <string name="card_heat_pool_water" formatted="false">Wasser {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Kein Wasserfühler</string>
   <string name="card_heat_pool_water_wait" formatted="false">Wasser: bald gelesen</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">Von der Wärmepumpe, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">Vom Poolfühler, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Saison geschlossen: SpotNav lässt den Pool in Ruhe.</string>
   <string name="card_heat_pool_heating_to" formatted="false">Die Wärmepumpe heizt auf {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Heizt, {value} → {target}</string>

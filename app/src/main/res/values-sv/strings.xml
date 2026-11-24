@@ -1752,6 +1752,8 @@
   <string name="card_heat_pool_water" formatted="false">Vattnet {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Ingen vattengivare</string>
   <string name="card_heat_pool_water_wait" formatted="false">Vattnet: läses snart</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">Från värmepumpen, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">Från poolgivaren, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Säsongen är stängd: SpotNav rör inte poolen.</string>
   <string name="card_heat_pool_heating_to" formatted="false">Värmepumpen värmer mot {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Värmer, {value} → {target}</string>

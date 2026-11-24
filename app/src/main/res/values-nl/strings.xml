@@ -1752,6 +1752,8 @@
   <string name="card_heat_pool_water" formatted="false">Water {value}</string>
   <string name="card_heat_pool_water_none" formatted="false">Geen watersensor</string>
   <string name="card_heat_pool_water_wait" formatted="false">Water: wordt zo gelezen</string>
+  <string name="card_heat_pool_source_heat_pump" formatted="false">Van de warmtepomp, {time}</string>
+  <string name="card_heat_pool_source_sensor" formatted="false">Van de zwembadsensor, {time}</string>
   <string name="card_heat_pool_closed" formatted="false">Seizoen gesloten: SpotNav laat het zwembad met rust.</string>
   <string name="card_heat_pool_heating_to" formatted="false">De warmtepomp verwarmt naar {target}</string>
   <string name="card_heat_pool_heating" formatted="false">Verwarmt, {value} → {target}</string>

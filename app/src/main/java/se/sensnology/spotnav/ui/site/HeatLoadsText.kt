@@ -37,6 +37,13 @@ internal class HeatLoadsText(private val text: SiteText, private val now: Instan
     fun poolWater(pool: HeatLoads.Pool): String = pool.waterC?.let { words.say("heat.pool.water", "value" to degrees(it)) }
         ?: words.say(if (pool.heatPump == null) "heat.pool.waterNone" else "heat.pool.waterWait")
 
+    /** Where the water was read and when ("Från värmepumpen, 12:40"), or `null` while none has read. */
+    fun poolSource(pool: HeatLoads.Pool): String? {
+        val at = pool.waterAt ?: return null
+        if (pool.waterC == null || (pool.waterSource != "heat_pump" && pool.waterSource != "sensor")) return null
+        return words.say("heat.pool.source.${pool.waterSource}", "time" to whenLabel(at))
+    }
+
     /** The target as the box's figure says it ("Mål 27,0 °C" is the card's dial; here the value alone). */
     fun target(value: Double): String = degrees(value)
 

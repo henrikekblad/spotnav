@@ -67,6 +67,7 @@ internal class HeatLoadBoxes(
         box.addView(cardHeading(R.drawable.ic_now_heat, cardTitle(words.say("heat.tab.pool"))), wide())
         box.addView(line("${words.say("heat.pool.dial")}: ${said.target(pool.targetC)}"), wide(top = 8))
         box.addView(note(said.poolWater(pool)), wide(top = 2))
+        said.poolSource(pool)?.let { box.addView(note(it), wide(top = 0)) }
         // The season: open (SpotNav plans the pool) or closed (it touches nothing).
         box.addView(note(words.say("heat.pool.season")), wide(top = 10))
         box.addView(row(
