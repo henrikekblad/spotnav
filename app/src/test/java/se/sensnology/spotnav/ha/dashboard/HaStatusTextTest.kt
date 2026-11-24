@@ -114,6 +114,20 @@ class HaStatusTextTest {
         )
     }
 
+    @Test fun aCarThatTakesNoCurrentSaysItsLevelTheTargetAndWhatToDo() {
+        fun worded(language: String, code: String, params: Map<String, Any?> = emptyMap()) =
+            HaStatusText.line(StatusLine(code, params), format(language), now)
+        assertEquals("Bilen tog inte emot ström; SpotNav startade laddningen i bilen", worded("sv", "car_start_made"))
+        assertEquals(
+            "Bilen tar inte emot ström vid 65 % fast målet är 80 %. Starta laddningen i bilens app.",
+            worded("sv", "car_refuses", mapOf("soc_percent" to 65.0, "target" to 80.0))
+        )
+        assertEquals(
+            "The car is not taking current though the target is not reached. Start the charge in the car's app.",
+            worded("en", "car_refuses", mapOf("soc_percent" to null, "target" to 80.0))
+        )
+    }
+
     @Test fun anInstantIsNotWrittenWithoutAZone() {
         val noZone = StatusFormat("en", null, null, null)
         assertEquals("Charging is scheduled · 34.5 kWh · 62.55 SEK · 173 km",

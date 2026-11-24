@@ -477,6 +477,8 @@
   <string name="notify_stopped_held">Der eigene Zeitplan der Ladestation hält den geplanten Ladevorgang zurück.</string>
   <string name="notify_stopped_disabled">Die Ladestation ist deaktiviert, daher kann der geplante Ladevorgang nicht beginnen.</string>
   <string name="notify_stopped_ignores_stop">Die Ladestation lädt weiter, obwohl sie gestoppt wurde. Stoppe sie an der Ladestation oder ziehe das Kabel ab.</string>
+  <string name="notify_stopped_car_refuses">Das Auto nimmt keinen Strom an, obwohl das Ziel nicht erreicht ist. Starte das Laden in der App des Autos.</string>
+  <string name="notify_stopped_car_refuses_level">Das Auto nimmt bei %1$s keinen Strom an, obwohl das Ziel %2$s ist. Starte das Laden in der App des Autos.</string>
   <string name="notify_at_risk">Das Laden wird bis zur Abfahrt nicht fertig.</string>
   <string name="notify_at_risk_time">Das Laden wird bis zur Abfahrt um %1$s nicht fertig.</string>
   <string name="notify_complete_target">Laden abgeschlossen: Das Ladeziel von %1$s ist erreicht.</string>

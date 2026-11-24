@@ -489,6 +489,8 @@
   <string name="notify_stopped_held">The charger\'s own schedule is holding back the planned charge.</string>
   <string name="notify_stopped_disabled">The charger is disabled, so the planned charge cannot start.</string>
   <string name="notify_stopped_ignores_stop">The charger keeps charging although it was stopped. Stop it at the charger or unplug the car.</string>
+  <string name="notify_stopped_car_refuses">The car is not taking current though the target is not reached. Start the charge in the car\'s app.</string>
+  <string name="notify_stopped_car_refuses_level">The car is not taking current at %1$s though the target is %2$s. Start the charge in the car\'s app.</string>
   <string name="notify_at_risk">The charge will not be ready by the departure.</string>
   <string name="notify_at_risk_time">The charge will not be ready by the departure at %1$s.</string>
   <string name="notify_complete_target">Charging complete: the target %1$s was reached.</string>

@@ -435,6 +435,17 @@ internal object HaStatusText {
                     else -> say("status.finishSetup", mapOf("fields" to names.joinToString(", ") { say(it) }))
                 }
             }
+            "car_refuses" -> {
+                // The car takes no current the charger offers below its target, and SpotNav could not start the
+                // charge in the car: its level and the target (capped by the car's own limit), whole percents.
+                val soc = num(p["soc_percent"])
+                val target = num(p["target"])
+                if (soc == null || target == null) {
+                    say("issue.carRefusesNoLevel")
+                } else {
+                    say(key, mapOf("soc" to number(format.locale, soc, 0), "target" to number(format.locale, target, 0)))
+                }
+            }
             "car_ended_waiting" -> {
                 // The car ended the plan's charge short of the target: at the level it ended at, "~" and "estimated"
                 // when that came from the delivered energy, and the plan waits for the car's own level.

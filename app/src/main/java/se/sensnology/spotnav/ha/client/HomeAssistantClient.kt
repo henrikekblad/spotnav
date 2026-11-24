@@ -101,7 +101,9 @@ internal class WebhookHttpStatusException(
  * `plug_in_saving`, the saving against charging at once on plug-in that the charge history's summaries and sessions
  * carry (read from the `sessions` answer only). `power_level`, the demand block's power level and its count of exceedances,
  * is next, and `does_not_fit` (3.0.0b3), the dashboard's block for a planned charge that does not fit under the ceiling
- * by its departure, the last. Every request the app sends names them.
+ * by its departure, and `car_start` (3.0), the status lines of a car that takes no current the charger offers (SpotNav
+ * started the charge in the car, or the person is to start it in the car's app), the last. Every request the app sends
+ * names them.
  */
 internal object WebhookReads {
     val FIELDS: List<String> = listOf(
@@ -111,7 +113,7 @@ internal object WebhookReads {
         "phase_switching", "price_provider", "plan_facts", "own_mode_status", "sun_past_target", "setup",
         "import_target_status", "grid_tariff", "if_not_ready", "effective_target", "guest", "stop_unplug_unseen",
         "sun", "power_charger", "supplier_fees", "departure_calendar", "plug_in_saving", "power_level", "does_not_fit",
-        "charging_after_departure"
+        "charging_after_departure", "car_start"
     )
 
     fun put(body: JSONObject): JSONObject = body.put("reads", JSONArray(FIELDS))
