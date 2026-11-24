@@ -36,7 +36,7 @@ class HeatLoadsTest {
         val spa = h.spa!!
         assertEquals(38.0, spa.targetC, 0.0)
         assertEquals(30.0, spa.idleC!!, 0.0)
-        assertEquals(listOf(HeatLoads.Session(listOf(4, 5), "19:00")), spa.weekly)
+        assertEquals(listOf(HeatLoads.Session(listOf(5, 6), "19:00")), spa.weekly)
         assertEquals(listOf("heat", "hold"), spa.planned.map { it.what })
         val sauna = h.sauna!!
         assertNull(sauna.idleC)
@@ -108,8 +108,8 @@ class HeatLoadsTest {
         // The fuse is never set aside: no "Allow the peak".
         assertEquals(listOf("take_what_fits", "later_session"), words.notReadyChoices(sauna, sauna.notReady!!).map { it.action })
         assertEquals("Senare bastupass (tis 17 nov. 18:00)", words.notReadyChoices(sauna, sauna.notReady!!)[1].label)
-        assertEquals("mån–fre", words.weekdays(listOf(0, 1, 2, 3, 4)))
-        assertEquals("varje dag", words.weekdays((0..6).toList()))
+        assertEquals("mån–fre", words.weekdays(listOf(1, 2, 3, 4, 5)))
+        assertEquals("varje dag", words.weekdays((1..7).toList()))
         assertEquals("Bada nu", words.nowLabel(spa))
         assertEquals("bath_now", words.nowAction(spa))
         assertEquals("session_now", words.nowAction(sauna))

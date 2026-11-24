@@ -62,6 +62,7 @@ internal object HeatLoads {
     /** A bath or a session that will not be ready: why, what it reaches, and the earliest later hour that fits. */
     data class NotReadyAt(val at: Instant, val cause: String, val reachC: Double, val shortC: Double, val shortKwh: Double, val later: Instant?)
 
+    /** A weekly time: on [weekdays] (Monday 1 to Sunday 7, as a car's departures) at the local [time]. */
     data class Session(val weekdays: List<Int>, val time: String)
 
     /** The spa ([kind] `spa`) or the sauna (`sauna`, no idle temperature): heated by the times booked. */
