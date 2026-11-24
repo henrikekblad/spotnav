@@ -75,7 +75,7 @@ internal class HeatLoadBoxes(
             pill(words.say("heat.pool.seasonClosed"), !pool.seasonOpen) { if (pool.seasonOpen) press(kind, HeatLoadPress.pool("season", mapOf("open" to false))) }
         ), wide(top = 4))
         box.addView(line(said.poolStatus(pool)), wide(top = 10))
-        said.poolWould(pool)?.let { box.addView(line(it), wide(top = 2)) }
+        said.poolWouldShown(pool)?.let { box.addView(line(it), wide(top = 2)) }
         if (pool.seasonHint) box.addView(note(words.say("heat.pool.seasonHint")), wide(top = 6))
         // Extra filtrering: only with a circulation pump and the season open.
         if (pool.seasonOpen && pool.circulation != null) {
@@ -109,7 +109,7 @@ internal class HeatLoadBoxes(
         box.addView(note(said.deadlineTemp(load)), wide(top = 2))
         box.addView(line(said.deadlineStatus(load)), wide(top = 10))
         if (load.locked == true) box.addView(line(words.say("heat.sauna.locked")), wide(top = 2))
-        said.deadlineWould(load)?.let { box.addView(line(it), wide(top = 2)) }
+        said.deadlineWouldShown(load)?.let { box.addView(line(it), wide(top = 2)) }
         // A bath or a session that will not be ready: its words and the choices that answer it.
         load.notReady?.let { notReady ->
             box.addView(line(said.notReadyLine(load, notReady)), wide(top = 10))
@@ -135,7 +135,6 @@ internal class HeatLoadBoxes(
             box.addView(row(button(words.say("heat.spa.cancelNow")) { press(kind, HeatLoadPress.deadline(kind, "cancel_now")) }), wide(top = 2))
         }
         box.addView(line(said.times(load)), wide(top = 8))
-        said.idle(load)?.let { box.addView(line(it), wide(top = 2)) }
         said.deadlinePlan(load)?.let { box.addView(note(it), wide(top = 8)) }
         val control = said.deadlineControl(load)
         if (load.control.controlling) box.addView(note(control), wide(top = 6)) else watched(box, control)

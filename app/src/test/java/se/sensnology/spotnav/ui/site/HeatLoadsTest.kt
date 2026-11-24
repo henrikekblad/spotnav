@@ -95,7 +95,6 @@ class HeatLoadsTest {
         val spa = h.spa!!
         assertEquals("Klar 18:40, värmer 2 °C/h", words.deadlineStatus(spa))
         assertEquals("Badtider: fre, lör 19:00", words.times(spa))
-        assertEquals("Mellan baden: 30,0 °C", words.idle(spa))
         assertEquals("Skulle värma till 18:45: billiga timmar", words.deadlineWould(spa))
         assertTrue(words.deadlineControl(spa).startsWith("SpotNav bevakar bara spat"))
         val sauna = h.sauna!!

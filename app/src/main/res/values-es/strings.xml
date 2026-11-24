@@ -1823,8 +1823,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Listo para el baño, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Sauna lista</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Sauna lista, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">En reposo a {idle}, sin baño reservado</string>
-  <string name="card_heat_spa_idle_next" formatted="false">En reposo a {idle}, próximo baño {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">En reposo a {idle} entre baños, sin baño reservado</string>
+  <string name="card_heat_spa_idle_next" formatted="false">En reposo a {idle} entre baños, próximo baño {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Apagada, sin sesión reservada</string>
   <string name="card_heat_sauna_off_next" formatted="false">Apagada, próxima sesión {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Calentaría hasta las {until}</string>
@@ -1903,4 +1903,7 @@
   <string name="card_heat_pool_dial" formatted="false">Objetivo del agua de la piscina</string>
   <string name="card_heat_spa_dial" formatted="false">Temperatura de baño</string>
   <string name="card_heat_sauna_dial" formatted="false">Temperatura de la sauna</string>
+  <string name="card_heat_spa_idle_help" formatted="false">La temperatura de reposo del spa entre baños, de 10 a 40 °C. Más baja ahorra energía; el agua nunca baja de 10 °C (antihielo).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Spa</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>

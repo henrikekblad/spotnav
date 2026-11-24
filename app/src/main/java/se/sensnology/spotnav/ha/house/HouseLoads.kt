@@ -66,7 +66,7 @@ internal object HouseLoadsRead {
 
     private val PERIODS = setOf("day", "month", "year")
     private val BELONGS = setOf("heat", "car", "none")
-    private val SOURCES = setOf("meter", "heat_pump", "zone")
+    private val SOURCES = setOf("meter", "heat_pump", "zone", "pool_heat", "pool_circulation", "spa", "sauna")
 
     private fun document(json: JSONObject): HouseLoads = with(StrictJson) {
         val period = text(json.opt("period"), "period")

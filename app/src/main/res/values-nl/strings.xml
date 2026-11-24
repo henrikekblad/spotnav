@@ -1815,8 +1815,8 @@
   <string name="card_heat_spa_ready_now" formatted="false">Klaar om te baden, {value}</string>
   <string name="card_heat_sauna_ready" formatted="false">Sauna klaar</string>
   <string name="card_heat_sauna_ready_now" formatted="false">Sauna klaar, {value}</string>
-  <string name="card_heat_spa_idle" formatted="false">Rust op {idle}, geen bad geboekt</string>
-  <string name="card_heat_spa_idle_next" formatted="false">Rust op {idle}, volgend bad {when}</string>
+  <string name="card_heat_spa_idle" formatted="false">Rust tussen het baden op {idle}, geen bad geboekt</string>
+  <string name="card_heat_spa_idle_next" formatted="false">Rust tussen het baden op {idle}, volgend bad {when}</string>
   <string name="card_heat_sauna_off" formatted="false">Uit, geen sessie geboekt</string>
   <string name="card_heat_sauna_off_next" formatted="false">Uit, volgende sessie {when}</string>
   <string name="card_heat_spa_would_heat" formatted="false">Zou verwarmen tot {until}</string>
@@ -1895,4 +1895,7 @@
   <string name="card_heat_pool_dial" formatted="false">Doel voor het zwembadwater</string>
   <string name="card_heat_spa_dial" formatted="false">Badtemperatuur</string>
   <string name="card_heat_sauna_dial" formatted="false">Saunatemperatuur</string>
+  <string name="card_heat_spa_idle_help" formatted="false">De temperatuur waarop de spa tussen het baden rust, 10 tot 40 °C. Lager bespaart energie; het water zakt nooit onder 10 °C (vorstbescherming).</string>
+  <string name="card_house_plan_load_spa" formatted="false">Spa</string>
+  <string name="card_house_plan_load_sauna" formatted="false">Sauna</string>
 </resources>
