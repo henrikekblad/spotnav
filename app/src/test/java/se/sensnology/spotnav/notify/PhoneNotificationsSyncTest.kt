@@ -80,7 +80,7 @@ class PhoneNotificationsSyncTest {
 
     @Test
     fun thePhonesOwnNameComesFirstAndTheModelOtherwise() {
-        assertEquals("Henrik N6", PhoneName.choose(" Henrik N6 ", "CPH2765"))
+        assertEquals("Alex N6", PhoneName.choose(" Alex N6 ", "CPH2765"))
         assertEquals("CPH2765", PhoneName.choose("  ", "CPH2765"))
         assertEquals("CPH2765", PhoneName.choose(null, "CPH2765"))
     }
