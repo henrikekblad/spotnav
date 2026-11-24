@@ -74,7 +74,14 @@ internal data class NotificationSnapshot(
      * the car's level and the target it was told with, `null` when not known or not said.
      */
     val carRefusesLevel: Double? = null,
-    val carRefusesTarget: Double? = null
+    val carRefusesTarget: Double? = null,
+    /** When Home Assistant told it (`car_refuses`' `since`), the same across a Home Assistant restart. */
+    val carRefusesSince: String? = null,
+    /**
+     * The last `since` seen, carried from check to check (also over a baseline and a check without the line): the
+     * notice is told once per `since`, so a line that leaves and comes back after a restart is not told again.
+     */
+    val carRefusesTold: String? = null
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
@@ -101,6 +108,8 @@ internal data class NotificationSnapshot(
         put("complete_told", completeTold)
         put("car_refuses_level", carRefusesLevel ?: JSONObject.NULL)
         put("car_refuses_target", carRefusesTarget ?: JSONObject.NULL)
+        put("car_refuses_since", carRefusesSince ?: JSONObject.NULL)
+        put("car_refuses_told", carRefusesTold ?: JSONObject.NULL)
     }
 
     companion object {
@@ -133,7 +142,9 @@ internal data class NotificationSnapshot(
                 notReady = json.opt("not_ready") as? Boolean ?: false,
                 completeTold = json.opt("complete_told") as? Boolean ?: false,
                 carRefusesLevel = number("car_refuses_level"),
-                carRefusesTarget = number("car_refuses_target")
+                carRefusesTarget = number("car_refuses_target"),
+                carRefusesSince = text("car_refuses_since"),
+                carRefusesTold = text("car_refuses_told")
             )
         }.getOrNull()
     }
@@ -259,7 +270,8 @@ internal object NotificationRules {
             personPaused = "paused" in codes,
             notReady = "charger_unavailable" in codes || connection == ConnectionState.ERROR,
             carRefusesLevel = carRefuses?.get("soc_percent") as? Double,
-            carRefusesTarget = carRefuses?.get("target") as? Double
+            carRefusesTarget = carRefuses?.get("target") as? Double,
+            carRefusesSince = carRefuses?.get("since") as? String
         )
     }
 
@@ -274,7 +286,14 @@ internal object NotificationRules {
         lastSent: Map<NotificationEvent, Instant>
     ): Derivation {
         if (previous == null || Duration.between(previous.at, current.at) > STALE || current.at.isBefore(previous.at)) {
-            return Derivation(emptyList(), lastSent, current.copy(completeTold = previous?.completeTold ?: false))
+            return Derivation(
+                emptyList(),
+                lastSent,
+                current.copy(
+                    completeTold = previous?.completeTold ?: false,
+                    carRefusesTold = current.carRefusesSince ?: previous?.carRefusesTold
+                )
+            )
         }
         val found = changes(previous, current)
         val sent = lastSent.toMutableMap()
@@ -289,12 +308,22 @@ internal object NotificationRules {
                 if (it && event.event == NotificationEvent.CHARGE_COMPLETE) told = true
             }
         }
-        return Derivation(events, sent, current.copy(completeTold = told))
+        return Derivation(
+            events,
+            sent,
+            current.copy(completeTold = told, carRefusesTold = current.carRefusesSince ?: previous.carRefusesTold)
+        )
     }
 
     /** Every event the change from [before] to [now] is, chosen or not, in the contract's order. */
     private fun changes(before: NotificationSnapshot, now: NotificationSnapshot): List<LocalEvent> = buildList {
-        val own = now.stopReason in OWN_REASONS && before.stopReason != now.stopReason
+        // The car refusing is told once per `since` (Home Assistant keeps it across its restart); without one, when
+        // the line comes.
+        val since = now.carRefusesSince
+        val refusesNew = if (since != null) since != before.carRefusesTold && since != before.carRefusesSince
+            else before.stopReason != CAR_REFUSES
+        val own = if (now.stopReason == CAR_REFUSES) refusesNew
+            else now.stopReason in OWN_REASONS && before.stopReason != now.stopReason
         if (own || (now.stopReason != null && now.stopReason !in OWN_REASONS && before.stopReason == null)) {
             val reason = if (now.stopReason == "not_started" && before.charging) "stopped" else now.stopReason
             if (reason == CAR_REFUSES) {

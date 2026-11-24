@@ -254,6 +254,21 @@ class NotificationRulesTest {
         val kept = NotificationSnapshot.fromJson(refuses.toJson())
         assertEquals(65.0, kept?.carRefusesLevel)
         assertEquals(80.0, kept?.carRefusesTarget)
+        // Told once per `since`: after a Home Assistant restart the line may leave and come back, never told again.
+        val first = NotificationRules.snapshot(
+            idleWith("car_refuses", JSONObject().put("soc_percent", 65.0).put("target", 80.0).put("since", "2026-09-22T06:04:00+00:00")),
+            Instant.parse("2026-09-22T06:05:00Z"),
+            zone
+        )
+        val told1 = NotificationRules.derive(quiet, first, all, emptyMap())
+        assertEquals(1, told1.events.size)
+        val gone = NotificationRules.derive(told1.snapshot, quiet.copy(at = Instant.parse("2026-09-22T06:20:00Z")), all, emptyMap())
+        assertEquals("2026-09-22T06:04:00+00:00", gone.snapshot?.carRefusesTold)
+        val back = NotificationRules.derive(gone.snapshot, first.copy(at = Instant.parse("2026-09-22T06:40:00Z")), all, emptyMap())
+        assertEquals(emptyList<LocalEvent>(), back.events)
+        // A new plug-in's notice has a new `since`.
+        val next = first.copy(at = Instant.parse("2026-09-22T07:40:00Z"), carRefusesSince = "2026-09-22T07:39:00+00:00")
+        assertEquals(1, NotificationRules.derive(back.snapshot, next, all, emptyMap()).events.size)
         // SpotNav starting the charge in the car is no notice.
         val started = NotificationRules.snapshot(idleWith("car_start_made"), Instant.parse("2026-09-22T06:05:00Z"), zone)
         assertTrue(started.stopReason != NotificationRules.CAR_REFUSES)
