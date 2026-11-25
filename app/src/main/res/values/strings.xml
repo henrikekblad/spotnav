@@ -1993,4 +1993,14 @@
   <string name="card_house_loads_inverter" formatted="false">The inverter (losses and standby)</string>
   <string name="card_house_loads_estimated" formatted="false">(estimated)</string>
   <string name="card_house_loads_clamped" formatted="false">Estimated parts limited to what was measured: {kwh} of their estimate stays in the house.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Read through Remote Home-Assistant: read only. SpotNav plans with this battery but never controls it.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Become a tester</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Signed up</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Result sent</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code entered</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav can read this battery. Control of {brand} is being tested together with users: become a tester and you get instructions by e-mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Run the hardware test under Support → Hardware test. Press Start once: it runs by itself in waking hours, and its result is sent by itself.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">The result has been sent. You get an answer by e-mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">The control code is entered: SpotNav may control this battery.</string>
 </resources>

@@ -1261,6 +1261,16 @@ internal object CardStrings {
         "house.loads.inverter" to R.string.card_house_loads_inverter,
         "house.loads.estimated" to R.string.card_house_loads_estimated,
         "house.loads.clamped" to R.string.card_house_loads_clamped,
+        "battery.need.mirroredReadOnly" to R.string.card_battery_need_mirrored_read_only,
+        "battery.tester.label" to R.string.card_battery_tester_label,
+        "battery.tester.value.none" to R.string.card_battery_tester_value_none,
+        "battery.tester.value.asked" to R.string.card_battery_tester_value_asked,
+        "battery.tester.value.tested" to R.string.card_battery_tester_value_tested,
+        "battery.tester.value.control_code" to R.string.card_battery_tester_value_control_code,
+        "battery.tester.help.none" to R.string.card_battery_tester_help_none,
+        "battery.tester.help.asked" to R.string.card_battery_tester_help_asked,
+        "battery.tester.help.tested" to R.string.card_battery_tester_help_tested,
+        "battery.tester.help.control_code" to R.string.card_battery_tester_help_control_code,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

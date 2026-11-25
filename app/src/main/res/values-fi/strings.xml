@@ -1980,4 +1980,14 @@
   <string name="card_house_loads_inverter" formatted="false">Invertteri (häviöt ja valmiustila)</string>
   <string name="card_house_loads_estimated" formatted="false">(arvio)</string>
   <string name="card_house_loads_clamped" formatted="false">Arvioidut osat rajattu mitattuun: {kwh} arviosta jää taloon.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Luetaan Remote Home-Assistantin kautta: vain luku. SpotNav suunnittelee akun kanssa mutta ei koskaan ohjaa sitä.</string>
+  <string name="card_battery_tester_label" formatted="false">Testaaja</string>
+  <string name="card_battery_tester_value_none" formatted="false">Ryhdy testaajaksi</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Ilmoittauduttu</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Tulos lähetetty</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Koodi syötetty</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav pystyy lukemaan tätä akkua. Merkin {brand} ohjausta testataan yhdessä käyttäjien kanssa: ryhdy testaajaksi, niin saat ohjeet sähköpostilla.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Aja laitteistotesti kohdasta Tuki → Laitteistotesti. Paina Aloita kerran: testi ajetaan itsestään päiväsaikaan, ja sen tulos lähetetään itsestään.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Tulos on lähetetty. Saat vastauksen sähköpostilla.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Ohjauskoodi on syötetty: SpotNav saa ohjata tätä akkua.</string>
 </resources>

@@ -1980,4 +1980,14 @@
   <string name="card_house_loads_inverter" formatted="false">Växelriktaren (förluster och tomgång)</string>
   <string name="card_house_loads_estimated" formatted="false">(uppskattat)</string>
   <string name="card_house_loads_clamped" formatted="false">Uppskattade delar begränsade till det som mättes: {kwh} av uppskattningen ligger kvar i huset.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Läses via Remote Home-Assistant: endast läsning. SpotNav planerar med batteriet men styr det aldrig.</string>
+  <string name="card_battery_tester_label" formatted="false">Testare</string>
+  <string name="card_battery_tester_value_none" formatted="false">Bli testare</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Anmäld</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Resultat skickat</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Kod inskriven</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kan läsa det här batteriet. Styrningen av {brand} testas tillsammans med användare: bli testare så får du instruktioner via e-post.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Kör hårdvarutestet under Support → Hårdvarutest. Tryck på Start en gång: det körs av sig självt på dagtid, och resultatet skickas av sig självt.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Resultatet har skickats. Du får svar via e-post.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Kontrollkoden är inskriven: SpotNav får styra det här batteriet.</string>
 </resources>

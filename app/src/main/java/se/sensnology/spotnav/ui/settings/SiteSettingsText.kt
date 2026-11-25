@@ -70,6 +70,26 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         return words.say("battery.preheat.${block.code}", "temp" to temp, "name" to PREHEAT_SWITCH_NAME)
     }
 
+    /** A battery mirrored from another Home Assistant: read only, planned with but never controlled; `null` otherwise. */
+    fun readOnlyLine(status: BatteryStatus): String? = status.batteryReadOnly?.let { words.say("battery.need.mirroredReadOnly") }
+
+    /** The tester row of a brand whose control is still being tested (the card's `testerRow`), read only here: label, value and help. */
+    fun testerRow(status: BatteryStatus): Triple<String, String, String>? {
+        val tester = status.tester ?: return null
+        val stage = if (tester.stage in TESTER_STAGES) tester.stage else "none"
+        return Triple(
+            words.say("battery.tester.label"),
+            words.say("battery.tester.value.$stage"),
+            words.say("battery.tester.help.$stage", "brand" to brandName(tester.brand))
+        )
+    }
+
+    /** Whether the tester's next step (the sign-up, the hardware test) is an administrator's in Home Assistant. */
+    fun testerSignup(status: BatteryStatus): Boolean {
+        val stage = status.tester?.stage ?: return false
+        return stage !in TESTER_STAGES || stage == "none" || stage == "asked"
+    }
+
     /** Facts the plan needs in disabled entities, in one line (the card's facts notice); `null` with none. */
     fun factsLine(status: BatteryStatus): String? {
         val found = status.enableFacts ?: return null
@@ -221,9 +241,17 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         else -> null
     }
 
-    private companion object {
+    internal companion object {
         /** The name a preheating switch goes by (the card's fallback when Home Assistant gives none). */
         const val PREHEAT_SWITCH_NAME = "ESS Preheating Enable"
+
+        /** The tester stages the card has words for (`BatteryControl.tester_view`); another reads as `none`. */
+        val TESTER_STAGES = setOf("none", "asked", "tested", "control_code")
+
+        private val BRAND_NAMES = mapOf("foxess" to "FoxESS", "ecoflow" to "EcoFlow", "marstek" to "Marstek", "solis" to "Solis")
+
+        /** A recipe's brand id as people write it (`foxess` is FoxESS); an unknown one capitalised (the card's `brandName`). */
+        fun brandName(brand: String): String = BRAND_NAMES[brand] ?: brand.replaceFirstChar { it.uppercase() }
         val PATHS = setOf("none", "relay", "sg_ready", "sg_ready_api", "offset", "setpoint")
         /** The paths whose control line names the relay (the card's `isRelayPath`). */
         val RELAY_WORD_PATHS = setOf("none", "relay", "sg_ready")

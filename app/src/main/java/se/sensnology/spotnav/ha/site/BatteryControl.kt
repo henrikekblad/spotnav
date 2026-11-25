@@ -30,8 +30,15 @@ internal data class BatteryStatus(
     /** A cold battery's own heater off or its switch disabled (`status.preheat`); `null` when none shows. */
     val preheat: Preheat? = null,
     /** Facts the battery plan needs (size, floor, rating) in disabled entities (`status.enable_facts`); `null` for none. */
-    val enableFacts: EnableFacts? = null
+    val enableFacts: EnableFacts? = null,
+    /** Set when SpotNav may only read the battery (`remote_homeassistant`: mirrored from another Home Assistant). */
+    val batteryReadOnly: String? = null,
+    /** The tester stage for a battery brand whose control is still being tested (`status.tester`); `null` otherwise. */
+    val tester: Tester? = null
 ) {
+    /** [stage] `none`, `asked`, `tested`, `control_code` or a newer word; [brand] the recipe's brand id (`solis`). */
+    data class Tester(val stage: String, val brand: String, val testPassed: Boolean)
+
     /** What the status row says: the switch's position, and "test" while control is on paper only. */
     enum class Control { OFF, TEST, ON }
 
@@ -149,6 +156,15 @@ internal object BatteryControlRead {
                         code = text(it.opt("code"), "preheat.code"),
                         cellC = numberOrNull(it.opt("cell_c"), "preheat.cell_c"),
                         entityId = textOrNull(it.opt("entity_id"), "preheat.entity_id")
+                    )
+                }
+            },
+            batteryReadOnly = additive(status, "battery_read_only", null) { textOrNull(it, "battery_read_only") },
+            tester = additive(status, "tester", null) { raw ->
+                objOrNull(raw, "tester")?.let {
+                    BatteryStatus.Tester(
+                        stage = text(it.opt("stage"), "tester.stage"), brand = text(it.opt("brand"), "tester.brand"),
+                        testPassed = flag(it.opt("test_passed"), "tester.test_passed")
                     )
                 }
             },

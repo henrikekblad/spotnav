@@ -1980,4 +1980,14 @@
   <string name="card_house_loads_inverter" formatted="false">De omvormer (verliezen en stand-by)</string>
   <string name="card_house_loads_estimated" formatted="false">(geschat)</string>
   <string name="card_house_loads_clamped" formatted="false">Geschatte delen beperkt tot wat gemeten is: {kwh} van de schatting blijft bij het huis.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Gelezen via Remote Home-Assistant: alleen lezen. SpotNav plant met deze batterij maar stuurt haar nooit aan.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Word tester</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Aangemeld</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Resultaat verstuurd</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code ingevoerd</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kan deze batterij uitlezen. De besturing van {brand} wordt samen met gebruikers getest: word tester en je krijgt instructies per e-mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Voer de hardwaretest uit via Ondersteuning → Hardwaretest. Druk één keer op Start: hij draait vanzelf overdag, en het resultaat wordt vanzelf verstuurd.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Het resultaat is verstuurd. Je krijgt een antwoord per e-mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">De besturingscode is ingevoerd: SpotNav mag deze batterij besturen.</string>
 </resources>

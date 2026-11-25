@@ -169,8 +169,9 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     // --- the battery ----------------------------------------------------------------------------
 
     /**
-     * The battery card as the card's redesigned section: the mode row alone (written over the webhook), and under it
-     * only a line that has something to say: a fact the plan needs in a disabled entity, a cold battery's preheating.
+     * The battery card as the card's redesigned section: the mode row (written over the webhook), the tester row of a
+     * brand still being tested (read only), and under them only a line that has something to say: a battery mirrored
+     * from another Home Assistant, a fact the plan needs in a disabled entity, a cold battery's preheating.
      */
     private fun addBatteryCard() {
         val words = cardWords()
@@ -182,6 +183,11 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         val modeLabel = words.say("battery.modeLabel")
         settingRow(card.body, modeLabel, text.modeName(status.mode), onTap = { openBatteryMode(modeLabel, status) })
+        // A brand still being tested: where the tester stands, read only (the sign-up and the hardware test are Home Assistant's).
+        text.testerRow(status)?.let { (label, value, help) ->
+            settingRow(card.body, label, value, if (text.testerSignup(status)) "$help ${t(R.string.site_admin_in_home_assistant)}" else help)
+        }
+        text.readOnlyLine(status)?.let { card.body.addView(muted(it, top = 2, bottom = 4)) }
         text.factsLine(status)?.let { card.body.addView(muted("$it ${t(R.string.site_admin_in_home_assistant)}", top = 2, bottom = 4)) }
         text.preheatLine(status)?.let { card.body.addView(muted(it, top = 2, bottom = 4)) }
         notice?.let { card.body.addView(muted(it, top = 4)) }

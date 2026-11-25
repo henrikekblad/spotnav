@@ -1988,4 +1988,14 @@
   <string name="card_house_loads_inverter" formatted="false">L’onduleur (pertes et veille)</string>
   <string name="card_house_loads_estimated" formatted="false">(estimé)</string>
   <string name="card_house_loads_clamped" formatted="false">Parties estimées limitées à ce qui a été mesuré : {kwh} de l’estimation restent dans la maison.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Lue via Remote Home-Assistant : lecture seule. SpotNav planifie avec cette batterie mais ne la pilote jamais.</string>
+  <string name="card_battery_tester_label" formatted="false">Testeur</string>
+  <string name="card_battery_tester_value_none" formatted="false">Devenir testeur</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Inscrit</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Résultat envoyé</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code saisi</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav peut lire cette batterie. Le pilotage de {brand} est testé avec des utilisateurs : devenez testeur et vous recevrez des instructions par e-mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Lancez le test matériel dans Assistance → Test matériel. Appuyez une fois sur Démarrer : il se lance tout seul en journée, et son résultat est envoyé tout seul.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Le résultat a été envoyé. Vous recevrez une réponse par e-mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Le code de pilotage est saisi : SpotNav peut piloter cette batterie.</string>
 </resources>

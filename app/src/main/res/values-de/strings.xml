@@ -1980,4 +1980,14 @@
   <string name="card_house_loads_inverter" formatted="false">Wechselrichter (Verluste und Standby)</string>
   <string name="card_house_loads_estimated" formatted="false">(geschätzt)</string>
   <string name="card_house_loads_clamped" formatted="false">Geschätzte Teile auf das Gemessene begrenzt: {kwh} der Schätzung bleiben beim Haus.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Über Remote Home-Assistant gelesen: nur lesend. SpotNav plant mit diesem Speicher, steuert ihn aber nie.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Tester werden</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Angemeldet</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Ergebnis gesendet</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code eingegeben</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kann diesen Speicher lesen. Die Steuerung von {brand} wird gemeinsam mit Nutzern getestet: Werde Tester, dann bekommst du eine Anleitung per E-Mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Führe den Hardwaretest unter Support → Hardwaretest aus. Drücke einmal auf Start: Er läuft tagsüber von selbst, und sein Ergebnis wird von selbst gesendet.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Das Ergebnis wurde gesendet. Du bekommst eine Antwort per E-Mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Der Steuercode ist eingegeben: SpotNav darf diesen Speicher steuern.</string>
 </resources>
