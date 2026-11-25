@@ -50,6 +50,20 @@ class HouseNowModelTest {
         assertEquals(Way.OUT, charging.getValue(NodeRole.HEAT).way)
     }
 
+    @Test fun aBatteryReadAtTheBatteryIsDrawnAsReadWithTheInverterInTheHouseSoTheLinesAddUp() {
+        val dc = live("villa_dc_battery.json")
+        assertEquals(-10.0, dc.batteryKw!!, 0.0)
+        assertEquals(-9.57, dc.batteryAcKw!!, 0.0)
+        assertEquals("balance", dc.houseFrom)
+        val lines = HouseNowModel.lines(dc, house()).associateBy { it.role }
+        assertEquals(SchematicLine(NodeRole.BATTERY, 10.0, Way.IN, Tone.BATTERY), lines[NodeRole.BATTERY])
+        assertEquals(dc.houseKw!!, lines.getValue(NodeRole.GRID).kw!! + lines.getValue(NodeRole.SUN).kw!! + lines.getValue(NodeRole.BATTERY).kw!!, 1e-9)
+        // From a Home Assistant before the AC side: the battery as read on both, and no word on the house.
+        val old = (HouseNowRead.decode(HaFixtures.json("house_now/villa_dc_battery.json").apply { remove("battery_ac_kw"); remove("house_from") }) as SiteRead.Read).value
+        assertEquals(-10.0, old.batteryAcKw!!, 0.0)
+        assertNull(old.houseFrom)
+    }
+
     @Test fun theDotsRunFasterWithMorePowerWithinTheLapsBounds() {
         assertEquals(3.3, HouseNowModel.dotLap(0.0), 1e-9)
         assertEquals(0.8, HouseNowModel.dotLap(12.0), 1e-9)

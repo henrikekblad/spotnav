@@ -70,6 +70,44 @@ class SiteSettingsTextTest {
         assertNull(text().factsLine(facts.copy(enableFacts = BatteryStatus.EnableFacts("Sigenergy", 0, listOf("size")))))
     }
 
+    @Test fun aBrandStillBeingTestedSaysWhereTheTesterStandsAndAMirroredBatteryThatItIsReadOnly() {
+        val live = status("battery_control/live.json")
+        // The fixtures send both as null: no row, no line.
+        assertNull(live.tester)
+        assertNull(text().testerRow(live))
+        assertNull(text().readOnlyLine(live))
+        val json = HaFixtures.json("battery_control/live.json").apply {
+            getJSONObject("status").put("battery_read_only", "remote_homeassistant").put(
+                "tester",
+                org.json.JSONObject().put("stage", "none").put("brand", "solis").put("sent_at", org.json.JSONObject.NULL)
+                    .put("result_sent_at", org.json.JSONObject.NULL).put("test_passed", false).put("code_entered_at", org.json.JSONObject.NULL)
+            )
+        }
+        val shown = (BatteryControlRead.decode(json) as BatteryControlRead.Outcome.Status).status
+        assertEquals(BatteryStatus.Tester("none", "solis", false), shown.tester)
+        assertEquals(
+            Triple("Testare", "Bli testare", "SpotNav kan läsa det här batteriet. Styrningen av Solis testas tillsammans med användare: bli testare så får du instruktioner via e-post."),
+            text("sv").testerRow(shown)
+        )
+        assertTrue(text().testerSignup(shown))
+        val coded = shown.copy(tester = BatteryStatus.Tester("control_code", "foxess", true))
+        assertEquals("Kod inskriven", text("sv").testerRow(coded)!!.second)
+        assertEquals(false, text().testerSignup(coded))
+        // A stage the app has no words for reads as none; a brand it does not know is capitalised.
+        assertEquals("Bli testare", text("sv").testerRow(shown.copy(tester = BatteryStatus.Tester("later", "acme", false)))!!.second)
+        assertEquals("Acme", SiteSettingsText.brandName("acme"))
+        assertEquals("Läses via Remote Home-Assistant: endast läsning. SpotNav planerar med batteriet men styr det aldrig.", text("sv").readOnlyLine(shown))
+        // A tester block without its stage is no document.
+        val broken = HaFixtures.json("battery_control/live.json").apply { getJSONObject("status").put("tester", org.json.JSONObject().put("brand", "solis")) }
+        assertTrue(BatteryControlRead.decode(broken) is BatteryControlRead.Outcome.Failed)
+        for (language in CardStringsXml.LANGUAGES) {
+            for (stage in SiteSettingsText.TESTER_STAGES) {
+                val row = text(language).testerRow(shown.copy(tester = BatteryStatus.Tester(stage, "marstek", false)))!!
+                assertTrue("$language $stage", listOf(row.first, row.second, row.third).none { it.contains('{') })
+            }
+        }
+    }
+
     @Test fun degreesAndTheNightAreWordedAsTheCardWordsThem() {
         val sv = text("sv")
         assertEquals("+0,5 °C", sv.signedDegrees(0.5))

@@ -1363,7 +1363,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Batterie</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Auto</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Wärme (geschätzt)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Jeder Teil gegen seinen eigenen Vergleich, siehe „So wird gerechnet“ unten. Ein Teil, den SpotNav nicht gesteuert hat, bleibt außen vor.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Jeder Teil gegen seinen eigenen Vergleich, siehe „So wird gerechnet“ unten.</string>
   <string name="card_hist_house_no_price_source" formatted="false">Für diesen Standort ist kein Strompreis eingerichtet, daher keine Kosten.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Verglichen mit denselben Tagen ohne Batterie und ohne Sonne.</string>
   <string name="card_hist_house_reviewed" formatted="false">Die Ersparnis wurde an {days} der {total} Tage des Zeitraums gemessen.</string>
@@ -1372,14 +1372,12 @@
   <string name="card_hist_house_modes" formatted="false">Die Modi der Batterie gegen Eigenverbrauch</string>
   <string name="card_hist_house_modes_note" formatted="false">Jeder Modus auf derselben gemessenen Last und Sonne geplant, und was die Batterie wirklich tat, gegen reinen Eigenverbrauch; über die geprüften Tage summiert.</string>
   <string name="card_hist_house_days" formatted="false">Tag für Tag</string>
-  <string name="card_hist_house_col_battery" formatted="false">Batterie</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Eigen</string>
-  <string name="card_hist_house_col_share" formatted="false">Vom Perfekten</string>
+  <string name="card_hist_house_col_plan" formatted="false">SpotNavs Plan</string>
+  <string name="card_hist_house_col_share" formatted="false">Anteil am Perfekten</string>
   <string name="card_hist_house_share_partial" formatted="false">unvollständig</string>
   <string name="card_hist_house_share_small" formatted="false">zu klein</string>
-  <string name="card_hist_house_days_note" formatted="false">Batterie: gegen keine Batterie. Plan: SpotNavs Plan, eigen: die eigene Art der Batterie, beide gegen Eigenverbrauch.</string>
-  <string name="card_hist_house_footnote" formatted="false">Die Werte zeigen, was gemessen wurde und was die Pläne getan hätten.</string>
+  <string name="card_hist_house_days_note" formatted="false">Alle Beträge gegen denselben Tag ohne Batterie, mit dem, was um Mitternacht noch in der Batterie war. {real}: was die Batterie wirklich getan hat. SpotNavs Plan: was SpotNavs Plan ({mode}) am selben Tag getan hätte, simuliert. Perfekt: das Bestmögliche im Nachhinein. Anteil am Perfekten: {real} geteilt durch perfekt.</string>
+  <string name="card_hist_house_footnote" formatted="false">Ohne Batterie heißt: derselbe Tag mit demselben Verbrauch und derselben Sonne, aber ohne Batterie. Das ist der Vergleich für „Die Batterie sparte“, den Anteil am Perfekten und die Tabelle danach.</string>
   <string name="card_hist_house_how" formatted="false">So wird gerechnet</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} sparte hier {own}, während „Die Batterie sparte“ unter Geld {battery} zeigt. Beide vergleichen mit keiner Batterie, aber hier zählen nur ganze Tage ({days}) und was um Mitternacht noch in der Batterie war; unter Geld zählen alle gemessenen Tage ({batteryDays}) und nicht, was übrig war.</string>
   <string name="card_hist_forecast_heading" formatted="false">Prognosefehler</string>
@@ -1387,15 +1385,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Sonne</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Sonne, korrigiert</string>
   <string name="card_hist_forecast_soc" formatted="false">Batteriestand</string>
-  <string name="card_hist_forecast_note" formatted="false">Der Mittelwert der mittleren Fehler jedes geprüften Tages (die Prüfungen werden 30 Tage aufbewahrt).</string>
+  <string name="card_hist_forecast_note" formatted="false">Mittlerer Fehler pro Stunde, gemittelt über die geprüften Tage (die Prüfungen werden 30 Tage aufbewahrt).</string>
   <string name="card_hist_forecast_none" formatted="false">In diesem Zeitraum wurde keine Prognose geprüft (die Prüfungen werden 30 Tage aufbewahrt).</string>
   <string name="card_house_compare_in_force" formatted="false">gewählt</string>
   <string name="card_house_compare_none" formatted="false">noch kein voller Tag</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Tag</string>
   <string name="card_perfect_heading_period" formatted="false">Anteil am Perfekten</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} des Perfekten · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} des Perfekten</string>
   <string name="card_perfect_explain" formatted="false">Perfekt: das Bestmögliche im Nachhinein, mit denselben Regeln.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfekt: das Bestmögliche im Nachhinein, darf verkaufen (Regeln von {mode}).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: das Bestmögliche im Nachhinein, ohne Verkauf (nichts ging ins Netz).</string>
@@ -1403,7 +1399,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Was um Mitternacht übrig war, zählt für {days} der Tage zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
   <string name="card_perfect_provisional_other" formatted="false">Was um Mitternacht übrig war, zählt für {days} der Tage zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
   <string name="card_perfect_provisional_day" formatted="false">Was um Mitternacht übrig war, zählt zum eigenen Preis des Tages, bis die Preise des nächsten Tages da sind.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: außerhalb von 0–100 %, an der nächsten Grenze gezeigt (ein Verlust als 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: über 100 %, als 100 % gezeigt (der Akku des Modells ist ideal).</string>
   <string name="card_perfect_nothing" formatted="false">zu kleiner Unterschied zum Vergleichen</string>
   <string name="card_perfect_partial_day" formatted="false">Unvollständiger Tag: unter 90 % des Tages gemessen, daher kein Vergleich.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} unvollständiger Tag wird nicht mitgezählt.</string>
@@ -1956,4 +1952,42 @@
   <string name="card_battery_enable_facts_both" formatted="false">Größe und niedrigster Ladestand der Batterie stehen in deaktivierten Entitäten in {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">Die Lade- und Entladeleistung der Batterie steckt in deaktivierten Entitäten in {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Was der Batterieplan über die Batterie wissen muss, steckt in deaktivierten Entitäten in {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">Verlust {amount}</string>
+  <string name="card_hist_house_share_loss" formatted="false">Verlust</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Tatsächlich</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">nicht gesteuert</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav hat {when} weder die Batterie noch das Auto gesteuert.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav hat {when} die Batterie nicht gesteuert.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav hat {when} das Auto nicht gesteuert.</string>
+  <string name="card_hist_when_today" formatted="false">heute</string>
+  <string name="card_hist_when_yesterday" formatted="false">gestern</string>
+  <string name="card_hist_when_day" formatted="false">an dem Tag</string>
+  <string name="card_hist_when_month" formatted="false">in diesem Monat</string>
+  <string name="card_hist_when_year" formatted="false">in diesem Jahr</string>
+  <string name="card_hist_house_months" formatted="false">Monat für Monat</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">Die {days} von {total} Tag des Zeitraums, die geprüft wurden. Prüfungen werden 30 Tage aufbewahrt, ältere Tage fehlen daher.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">Die {days} von {total} Tagen des Zeitraums, die geprüft wurden. Prüfungen werden 30 Tage aufbewahrt, ältere Tage fehlen daher.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Jeder Monat über seine geprüften Tage summiert. Prüfungen werden 30 Tage aufbewahrt, ältere Tage fehlen daher.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} von {total} Tagen</string>
+  <string name="card_hist_house_col_month" formatted="false">Monat</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfekt</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Alle Beträge gegen denselben Tag ohne Batterie, mit dem, was um Mitternacht noch in der Batterie war. {real}: was die Batterie wirklich getan hat. SpotNavs Plan: was SpotNavs Plan am selben Tag getan hätte, simuliert. Perfekt: das Bestmögliche im Nachhinein. Anteil am Perfekten: {real} geteilt durch perfekt.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Tatsächlich: SpotNav hat die Batterie an einigen Tagen gesteuert, an den anderen hat sie sich selbst gesteuert.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Mittlerer Fehler pro Stunde, gemittelt über {days} geprüften Tag (die Prüfungen werden 30 Tage aufbewahrt).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Mittlerer Fehler pro Stunde, gemittelt über {days} geprüfte Tage (die Prüfungen werden 30 Tage aufbewahrt).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Mittlerer Fehler pro Stunde über den Tag.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparte hier {own}, während „Die Batterie sparte“ unter Geld {battery} zeigt. Beides gegen keine Batterie, aber hier zählt mit, was um Mitternacht noch in der Batterie war, unter Geld nicht.</string>
+  <string name="card_house_loads_inverter" formatted="false">Wechselrichter (Verluste und Standby)</string>
+  <string name="card_house_loads_estimated" formatted="false">(geschätzt)</string>
+  <string name="card_house_loads_clamped" formatted="false">Geschätzte Teile auf das Gemessene begrenzt: {kwh} der Schätzung bleiben beim Haus.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Über Remote Home-Assistant gelesen: nur lesend. SpotNav plant mit diesem Speicher, steuert ihn aber nie.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Tester werden</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Angemeldet</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Ergebnis gesendet</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code eingegeben</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kann diesen Speicher lesen. Die Steuerung von {brand} wird gemeinsam mit Nutzern getestet: Werde Tester, dann bekommst du eine Anleitung per E-Mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Führe den Hardwaretest unter Support → Hardwaretest aus. Drücke einmal auf Start: Er läuft tagsüber von selbst, und sein Ergebnis wird von selbst gesendet.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Das Ergebnis wurde gesendet. Du bekommst eine Antwort per E-Mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Der Steuercode ist eingegeben: SpotNav darf diesen Speicher steuern.</string>
 </resources>

@@ -4,6 +4,7 @@
  "error": null,
  "status": {
   "battery_found": true,
+  "battery_read_only": null,
   "options": {
    "battery_control_enabled": false,
    "battery_control_shadow_only": true,
@@ -100,6 +101,7 @@
    "balanced_margin_minor_per_kwh": 100.0,
    "major_unit": "kr",
    "minor_unit": "öre"
-  }
+  },
+  "tester": null
  }
 }

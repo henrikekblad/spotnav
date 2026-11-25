@@ -1363,7 +1363,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Batterij</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Auto</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Warmte (geschat)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Elk deel tegen een eigen vergelijking, zie Zo wordt het berekend hieronder. Een deel dat SpotNav niet stuurde, blijft buiten beschouwing.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Elk deel tegenover zijn eigen vergelijking, zie Zo wordt het berekend hieronder.</string>
   <string name="card_hist_house_no_price_source" formatted="false">Voor deze locatie is geen stroomprijs ingesteld, dus geen kosten.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Vergeleken met dezelfde dagen zonder batterij en zonder zon.</string>
   <string name="card_hist_house_reviewed" formatted="false">De besparing is gemeten voor {days} van de {total} dagen van de periode.</string>
@@ -1372,14 +1372,12 @@
   <string name="card_hist_house_modes" formatted="false">De standen van de batterij tegen eigen verbruik</string>
   <string name="card_hist_house_modes_note" formatted="false">Elke stand gepland op dezelfde gemeten last en zon, en wat de batterij echt deed, tegen puur eigen verbruik; opgeteld over de beoordeelde dagen.</string>
   <string name="card_hist_house_days" formatted="false">Dag voor dag</string>
-  <string name="card_hist_house_col_battery" formatted="false">Batterij</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Eigen</string>
-  <string name="card_hist_house_col_share" formatted="false">Van perfect</string>
+  <string name="card_hist_house_col_plan" formatted="false">SpotNav-plan</string>
+  <string name="card_hist_house_col_share" formatted="false">Aandeel van perfect</string>
   <string name="card_hist_house_share_partial" formatted="false">onvolledig</string>
   <string name="card_hist_house_share_small" formatted="false">te klein</string>
-  <string name="card_hist_house_days_note" formatted="false">Batterij: tegen geen batterij. Plan: het plan van SpotNav, eigen: de eigen manier van de batterij, beide tegen eigen verbruik.</string>
-  <string name="card_hist_house_footnote" formatted="false">De cijfers tonen wat gemeten is en wat de plannen zouden hebben gedaan.</string>
+  <string name="card_hist_house_days_note" formatted="false">Elk bedrag tegenover dezelfde dag zonder batterij, met wat er om middernacht nog in de batterij zat meegerekend. {real}: wat de batterij echt deed. SpotNav-plan: wat het plan van SpotNav ({mode}) op dezelfde dag zou hebben gedaan, gesimuleerd. Perfect: het best mogelijke achteraf. Aandeel van perfect: {real} gedeeld door het perfecte plan.</string>
+  <string name="card_hist_house_footnote" formatted="false">Zonder batterij betekent dezelfde dag met hetzelfde verbruik en dezelfde zon, maar zonder batterij. Dat is de vergelijking voor De batterij bespaarde, Aandeel van perfect en de tabel erna.</string>
   <string name="card_hist_house_how" formatted="false">Zo wordt het berekend</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} bespaarde hier {own}, terwijl \'De batterij bespaarde\' onder Geld {battery} toont. Beide vergelijken met geen batterij, maar hier tellen alleen hele dagen ({days}) en wat om middernacht nog in de batterij zat; onder Geld tellen alle gemeten dagen ({batteryDays}) en niet wat er nog in zat.</string>
   <string name="card_hist_forecast_heading" formatted="false">Voorspelfouten</string>
@@ -1387,15 +1385,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Zon</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Zon, gecorrigeerd</string>
   <string name="card_hist_forecast_soc" formatted="false">Batterijniveau</string>
-  <string name="card_hist_forecast_note" formatted="false">Het gemiddelde van de gemiddelde fout van elke beoordeelde dag (de beoordelingen blijven 30 dagen bewaard).</string>
+  <string name="card_hist_forecast_note" formatted="false">Gemiddelde fout per uur, gemiddeld over de beoordeelde dagen (de beoordelingen worden 30 dagen bewaard).</string>
   <string name="card_hist_forecast_none" formatted="false">In deze periode is geen voorspelling beoordeeld (de beoordelingen blijven 30 dagen bewaard).</string>
   <string name="card_house_compare_in_force" formatted="false">gekozen</string>
   <string name="card_house_compare_none" formatted="false">nog geen volle dag</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Dag</string>
   <string name="card_perfect_heading_period" formatted="false">Aandeel van perfect</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} van perfect · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} van perfect</string>
   <string name="card_perfect_explain" formatted="false">Perfect: het best mogelijke achteraf, met dezelfde regels.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfect: het best mogelijke achteraf, mag verkopen (regels van {mode}).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfect: het best mogelijke achteraf, zonder verkoop (er ging niets naar het net).</string>
@@ -1403,7 +1399,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
   <string name="card_perfect_provisional_other" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
   <string name="card_perfect_provisional_day" formatted="false">Wat er om middernacht over was, telt tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: buiten 0–100 %, getoond bij de dichtstbijzijnde grens (een verlies als 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: boven 100 %, getoond als 100 % (de batterij van het model is ideaal).</string>
   <string name="card_perfect_nothing" formatted="false">te klein verschil om te vergelijken</string>
   <string name="card_perfect_partial_day" formatted="false">Onvolledige dag: minder dan 90 % van de dag gemeten, dus geen vergelijking.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} onvolledige dag telt niet mee.</string>
@@ -1956,4 +1952,42 @@
   <string name="card_battery_enable_facts_both" formatted="false">De grootte en het laagste niveau van de batterij staan in uitgeschakelde entiteiten in {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">Het laad- en ontlaadvermogen van de batterij staat in uitgeschakelde entiteiten in {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Wat het batterijplan over de batterij moet weten, staat in uitgeschakelde entiteiten in {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">verlies {amount}</string>
+  <string name="card_hist_house_share_loss" formatted="false">verlies</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Werkelijk</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">niet gestuurd</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav heeft {when} de batterij en de auto niet gestuurd.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav heeft {when} de batterij niet gestuurd.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav heeft {when} de auto niet gestuurd.</string>
+  <string name="card_hist_when_today" formatted="false">vandaag</string>
+  <string name="card_hist_when_yesterday" formatted="false">gisteren</string>
+  <string name="card_hist_when_day" formatted="false">die dag</string>
+  <string name="card_hist_when_month" formatted="false">deze maand</string>
+  <string name="card_hist_when_year" formatted="false">dit jaar</string>
+  <string name="card_hist_house_months" formatted="false">Maand voor maand</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">De {days} van de {total} dag van de periode die zijn beoordeeld. Beoordelingen worden 30 dagen bewaard, dus oudere dagen ontbreken.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">De {days} van de {total} dagen van de periode die zijn beoordeeld. Beoordelingen worden 30 dagen bewaard, dus oudere dagen ontbreken.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Elke maand opgeteld over zijn beoordeelde dagen. Beoordelingen worden 30 dagen bewaard, dus oudere dagen ontbreken.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} van {total} dagen</string>
+  <string name="card_hist_house_col_month" formatted="false">Maand</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfect</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Elk bedrag tegenover dezelfde dag zonder batterij, met wat er om middernacht nog in de batterij zat meegerekend. {real}: wat de batterij echt deed. SpotNav-plan: wat het plan van SpotNav op dezelfde dag zou hebben gedaan, gesimuleerd. Perfect: het best mogelijke achteraf. Aandeel van perfect: {real} gedeeld door het perfecte plan.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Werkelijk: SpotNav stuurde de batterij op sommige dagen en de batterij stuurde zichzelf op de andere.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Gemiddelde fout per uur, gemiddeld over {days} beoordeelde dag (de beoordelingen worden 30 dagen bewaard).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Gemiddelde fout per uur, gemiddeld over {days} beoordeelde dagen (de beoordelingen worden 30 dagen bewaard).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Gemiddelde fout per uur over de dag.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} bespaarde hier {own}, terwijl \'De batterij bespaarde\' onder Geld {battery} toont. Beide tegenover geen batterij, maar hier telt mee wat er om middernacht nog in de batterij zat, onder Geld niet.</string>
+  <string name="card_house_loads_inverter" formatted="false">De omvormer (verliezen en stand-by)</string>
+  <string name="card_house_loads_estimated" formatted="false">(geschat)</string>
+  <string name="card_house_loads_clamped" formatted="false">Geschatte delen beperkt tot wat gemeten is: {kwh} van de schatting blijft bij het huis.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Gelezen via Remote Home-Assistant: alleen lezen. SpotNav plant met deze batterij maar stuurt haar nooit aan.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Word tester</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Aangemeld</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Resultaat verstuurd</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Code ingevoerd</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kan deze batterij uitlezen. De besturing van {brand} wordt samen met gebruikers getest: word tester en je krijgt instructies per e-mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Voer de hardwaretest uit via Ondersteuning → Hardwaretest. Druk één keer op Start: hij draait vanzelf overdag, en het resultaat wordt vanzelf verstuurd.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Het resultaat is verstuurd. Je krijgt een antwoord per e-mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">De besturingscode is ingevoerd: SpotNav mag deze batterij besturen.</string>
 </resources>

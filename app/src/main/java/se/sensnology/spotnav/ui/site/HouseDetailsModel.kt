@@ -18,9 +18,6 @@ internal sealed interface DetailBlock {
 
     data class Note(val text: String) : DetailBlock
 
-    /** The sentence over the shares ("Sigenergy AI 82 % av perfekt · SpotNav Balanserad 88 %"). */
-    data class Headline(val text: String) : DetailBlock
-
     /** A way's share of the perfect plan, a bar of [percent] (0 to 100, `null`: none) and its [figure]; [inForce] marks the chosen mode. */
     data class Share(val name: String, val inForce: String?, val percent: Double?, val figure: String, val muted: Boolean) : DetailBlock
 
@@ -64,9 +61,12 @@ private fun SiteText.numberWord(count: Int) = CountWords.word(locale.language.le
 
 /**
  * The house's details sheet (the card's history dialog, `frontend/src/house-history.ts` and `perfect-view.ts`): for the
- * period of the shared picker, every section always open, each figure once. Sections: the cost bars, Andel av perfekt
- * (the shares and one table) or the battery's modes, Pengar, SpotNav sparade, Prognosfel, Dygn för dygn and Så räknas
- * det with Källor. Pure: the view draws what this says.
+ * period of the shared picker, every section always open, each figure once. Sections, in the card's order: the cost
+ * bars, Pengar, SpotNav sparade, Andel av perfekt (the shares and one table) or the battery's modes, Dygn för dygn (a
+ * year: Månad för månad) with every way against the one baseline, no battery, Prognosfel and Så räknas det with
+ * Källor. Every amount is written as the card's `moneyTidy`, a table's column by one rule. What really happened is
+ * named by who ran the battery ("SpotNav", "Sigenergy AI", "Batteriets egen styrning" or "Verkligt"). Pure: the view
+ * draws what this says.
  */
 internal object HouseDetails {
     /** A day's share needs the perfect plan to save at least this much (minor unit; `hindsight.MIN_PERFECT_SAVING`). */
@@ -79,11 +79,12 @@ internal object HouseDetails {
     fun sections(text: SiteText, locale: Locale, history: HouseHistory, house: House?): List<HouseDetailSection> {
         val parts = buildList {
             houseBars(text, locale, history)?.let { add(it) }
-            add(perfectSection(text, history) ?: modesSection(text, history))
+            val real = realName(text, history, house?.battery?.brand)
             add(moneySection(text, history))
             add(spotnavSection(text, history))
+            add(perfectSection(text, history, real) ?: modesSection(text, history, real))
+            add(daysSection(text, locale, history, real))
             add(forecastSection(text, history))
-            add(daysSection(text, locale, history))
             add(howSection(text, history, house))
         }.filterNotNull()
         if (history.energyFlow == null && history.buckets.isEmpty()) {
@@ -97,6 +98,34 @@ internal object HouseDetails {
     private fun share(text: SiteText, part: Double, whole: Double) = if (whole > 0) text.percent(part / whole * 100) else "–"
 
     private fun days(text: SiteText, count: Int) = text.words.say("hist.days", "days" to count.toString())
+
+    /** Who ran the battery over some days, by SpotNav's share of each day's control (`null`: not known, which is not SpotNav). */
+    enum class Runner { SPOTNAV, OWN, MIXED }
+
+    fun runnerOf(shares: List<Double?>): Runner {
+        val values = shares.map { it ?: 0.0 }
+        if (values.isNotEmpty() && values.all { it >= 0.99 }) return Runner.SPOTNAV
+        return if (values.all { it <= 0.01 }) Runner.OWN else Runner.MIXED
+    }
+
+    /** What really happened, named by who ran the battery: SpotNav, its own optimiser ("Sigenergy AI") or the battery's own control, "Verkligt" where both did on different days. */
+    fun runnerName(text: SiteText, runner: Runner, brand: String?): String = when (runner) {
+        Runner.SPOTNAV -> "SpotNav"
+        Runner.MIXED -> text.words.say("hist.house.runner.mixed")
+        Runner.OWN -> HouseNowModel.optimiser(brand) ?: text.words.say("house.compare.own")
+    }
+
+    private fun realName(text: SiteText, answer: HouseHistory, brand: String?): String =
+        runnerName(text, runnerOf(answer.review?.byDay.orEmpty().map { it.controlled }), brand)
+
+    /** "i dag", "i går", "den dagen", "under månaden", "under året": the period shown, for a sentence. */
+    private fun whenWords(text: SiteText, answer: HouseHistory): String = text.words.say(
+        when (answer.period) {
+            HistoryKind.DAY -> if (answer.date == answer.today) "hist.when.today" else if (answer.date == answer.today.minusDays(1)) "hist.when.yesterday" else "hist.when.day"
+            HistoryKind.MONTH -> "hist.when.month"
+            HistoryKind.YEAR -> "hist.when.year"
+        }
+    )
 
     // ---------------------------------------------------------------------------------------------- the cost bars
 
@@ -140,7 +169,7 @@ internal object HouseDetails {
             val (`when`, axis) = HouseGraph.bucketWords(locale, answer.period, item.key, index, n)
             val saving = if (item.cost == null) null else item.batterySaving
             val cost = if (item.periods == 0) null else item.cost
-            fun amount(value: Double) = text.amount(value, answer.money)
+            fun amount(value: Double) = text.tidy(value, answer.money)
             var said: String
             if (item.periods == 0) {
                 said = words.say("hist.house.barNone", "when" to `when`)
@@ -169,7 +198,7 @@ internal object HouseDetails {
             if (shown.any { it.hatch > 0 }) add(BarSeries(SAVING, words.say("hist.house.legend.saving"), 0, hatched = true))
             if (shown.any { it.warn > 0 }) add(BarSeries(EXTRA, words.say("hist.house.legend.extra"), 0, hatched = true))
         }
-        return HouseDetailSection("bars", label, listOf(DetailBlock.Bars(label, bars, series, { text.amount(it, answer.money) }, hint)))
+        return HouseDetailSection("bars", label, listOf(DetailBlock.Bars(label, bars, series, { text.tidy(it, answer.money) }, hint)))
     }
 
     // ---------------------------------------------------------------------------------------------- money
@@ -177,7 +206,7 @@ internal object HouseDetails {
     private fun moneySection(text: SiteText, answer: HouseHistory): HouseDetailSection {
         val words = text.words
         val blocks = mutableListOf<DetailBlock>()
-        fun amount(value: Double) = text.amount(value, answer.money)
+        fun amount(value: Double) = text.tidy(value, answer.money)
         val spent = answer.cost
         if (spent == null || spent.priced == 0) {
             blocks += DetailBlock.Note(words.say(if (answer.money == null) "hist.house.noPriceSource" else "hist.house.noPrices"))
@@ -214,40 +243,58 @@ internal object HouseDetails {
             )
         }
         if (rows.isNotEmpty()) blocks += DetailBlock.Note(words.say("hist.house.baselinesNote"))
-        blocks += DetailBlock.Note(
-            words.say(
-                "hist.house.reviewed",
-                "days" to (if (rows.isNotEmpty()) measured else reviewed.days).toString(),
-                "total" to maxOf(reviewed.days, reviewed.periodDays).toString()
-            )
-        )
+        // How much of the period is measured, only where it is not all of it ("1 of the period's 1 days" says nothing).
+        val shownDays = if (rows.isNotEmpty()) measured else reviewed.days
+        val periodDays = maxOf(reviewed.days, reviewed.periodDays)
+        if (shownDays < periodDays) blocks += DetailBlock.Note(words.say("hist.house.reviewed", "days" to shownDays.toString(), "total" to periodDays.toString()))
         if (reviewed.archived > 0) blocks += DetailBlock.Note(words.say("hist.house.archived", "days" to reviewed.archived.toString()))
         return HouseDetailSection("money", words.say("hist.house.money"), blocks)
     }
 
     // ---------------------------------------------------------------------------------------------- SpotNav's saving
 
+    /**
+     * What SpotNav saved over the period: a row per part SpotNav controlled, each with its days where fewer than the
+     * period's counted days, the total only over two parts or more; a part the site has that SpotNav did not control
+     * says so ("styrdes inte"), never "0 kr"; where SpotNav controlled nothing at all, one sentence instead of the rows.
+     */
     private fun spotnavSection(text: SiteText, answer: HouseHistory): HouseDetailSection? {
-        val saving = answer.saving ?: return null
+        val saving = answer.saving
+        val hasBattery = answer.review != null || answer.ownControl != null || saving?.battery != null
+        if (saving == null && !hasBattery) return null
         val words = text.words
-        fun amount(value: Double) = text.amount(value, answer.money)
-        val blocks = mutableListOf<DetailBlock>(DetailBlock.Figure(words.say("hist.house.spotnav.total"), amount(saving.total)))
-        for ((key, value, count) in listOf(Triple("battery", saving.battery, saving.batteryDays), Triple("car", saving.car, saving.carDays), Triple("heat", saving.heat, saving.heatDays))) {
-            if (value == null) continue
-            val figure = amount(value)
+        fun amount(value: Double) = text.tidy(value, answer.money)
+        val title = words.say("hist.house.spotnav")
+        val carIdle = saving?.car != null && saving.carControlledDays == 0
+        val controlled = listOf(
+            Triple("battery", saving?.battery, saving?.batteryDays ?: 0),
+            Triple("car", if (carIdle) null else saving?.car, saving?.carDays ?: 0),
+            Triple("heat", saving?.heat, saving?.heatDays ?: 0)
+        ).filter { it.second != null }
+        val idle = listOfNotNull("battery".takeIf { hasBattery && saving?.battery == null }, "car".takeIf { carIdle })
+        if (controlled.isEmpty()) {
+            val which = if (idle.size == 2) "both" else idle.firstOrNull() ?: "battery"
+            return HouseDetailSection("spotnav-saving", title, listOf(DetailBlock.Note(words.say("hist.house.spotnav.none.$which", "when" to whenWords(text, answer)))))
+        }
+        val blocks = mutableListOf<DetailBlock>()
+        if (controlled.size > 1) blocks += DetailBlock.Figure(words.say("hist.house.spotnav.total"), amount(saving!!.total))
+        for ((key, value, count) in controlled) {
+            val figure = amount(value!!)
             blocks += DetailBlock.Figure(
                 words.say("hist.house.spotnav.$key"),
-                if (count < saving.days) words.say("hist.house.savedDays.${text.form(count)}", "figure" to figure, "days" to count.toString()) else figure
+                if (count < saving!!.days) words.say("hist.house.savedDays.${text.form(count)}", "figure" to figure, "days" to count.toString()) else figure
             )
         }
+        for (key in idle) blocks += DetailBlock.Figure(words.say("hist.house.spotnav.$key"), words.say("hist.house.spotnav.notControlled"), muted = true)
         blocks += DetailBlock.Note(words.say("hist.house.spotnav.note"))
-        return HouseDetailSection("spotnav-saving", words.say("hist.house.spotnav"), blocks)
+        return HouseDetailSection("spotnav-saving", title, blocks)
     }
 
     // ---------------------------------------------------------------------------------------------- ways
 
-    private fun wayName(text: SiteText, way: String): String =
-        if (way == "own") text.words.say("house.compare.own") else text.words.say("house.compare.spotnav", "mode" to text.words.say("house.mode.$way"))
+    /** A way's name: what really happened ([own], see [runnerName]), or SpotNav and the mode. */
+    private fun wayName(text: SiteText, way: String, own: String): String =
+        if (way == "own") own else text.words.say("house.compare.spotnav", "mode" to text.words.say("house.mode.$way"))
 
     /** The ways in the order shown: the battery's own, the chosen mode, the other modes, self-consumption last. */
     private fun order(mode: String?): List<String> {
@@ -259,23 +306,14 @@ internal object HouseDetails {
 
     private fun onlyPartial(perfect: HouseHistory.Perfect) = perfect.days == 0 || perfect.saving == null
 
-    private fun perfectHeadline(text: SiteText, perfect: HouseHistory.Perfect): String? {
-        val own = perfect.shares["own"]
-        val mode = WAYS.firstOrNull { it != "own" && it == perfect.mode }
-        val plan = mode?.let { perfect.shares[it] }
-        val words = text.words
-        if (own != null && mode != null && plan != null) {
-            return words.say("perfect.headline", "own" to wayName(text, "own"), "ownShare" to text.percent(own), "plan" to wayName(text, mode), "planShare" to text.percent(plan))
-        }
-        val (way, value) = when {
-            own != null -> "own" to own
-            mode != null && plan != null -> mode to plan
-            else -> return null
-        }
-        return words.say("perfect.headlineOne", "name" to wayName(text, way), "share" to text.percent(value))
-    }
+    /** Whether a way lost money against no battery: its share is then no share ("0 %") but a loss with its amount. */
+    private fun lost(perfect: HouseHistory.Perfect, way: String): Boolean = (perfect.savings[way] ?: 0.0) < 0
 
-    private fun perfectRows(text: SiteText, perfect: HouseHistory.Perfect, inForce: String?): List<DetailBlock> {
+    /** A way's figure beside its bar: its share, or "förlust 47 kr" where it lost money against no battery. */
+    private fun shareText(text: SiteText, perfect: HouseHistory.Perfect, way: String, value: Double, money: House.Money?): String =
+        if (lost(perfect, way)) text.words.say("perfect.loss", "amount" to wholeMoney(text, Math.abs(perfect.savings[way]!!), money)) else text.percent(value)
+
+    private fun perfectRows(text: SiteText, perfect: HouseHistory.Perfect, inForce: String?, money: House.Money?, own: String): List<DetailBlock> {
         if (onlyPartial(perfect)) return emptyList()
         val words = text.words
         return order(perfect.mode).mapNotNull { way ->
@@ -283,14 +321,14 @@ internal object HouseDetails {
             val ran = perfect.savings[way] != null
             if (!ran && way != "own") return@mapNotNull null // a mode not planned beside the battery on these days
             DetailBlock.Share(
-                name = wayName(text, way), inForce = if (way == inForce) words.say("house.compare.inForce") else null,
+                name = wayName(text, way, own), inForce = if (way == inForce) words.say("house.compare.inForce") else null,
                 percent = value, muted = value == null,
-                figure = if (value != null) text.percent(value) else words.say(if (ran) "perfect.nothing" else "house.compare.none")
+                figure = if (value != null) shareText(text, perfect, way, value, money) else words.say(if (ran) "perfect.nothing" else "house.compare.none")
             )
         }
     }
 
-    private fun perfectNotes(text: SiteText, perfect: HouseHistory.Perfect, singleDay: Boolean): List<DetailBlock.Note> {
+    private fun perfectNotes(text: SiteText, perfect: HouseHistory.Perfect, singleDay: Boolean, own: String): List<DetailBlock.Note> {
         val words = text.words
         val notes = mutableListOf<String>()
         if (onlyPartial(perfect)) {
@@ -304,29 +342,33 @@ internal object HouseDetails {
         if (singleDay) notes += words.say("perfect.midnight")
         if (perfect.provisional > 0) {
             notes += if (singleDay) words.say("perfect.provisionalDay")
-            else words.say("perfect.provisional.${text.form(perfect.provisional)}", "days" to text.numberWord(perfect.provisional))
+            else words.say("perfect.provisional.${text.form(perfect.provisional)}", "days" to dayCount(text, perfect.provisional))
         }
         if (perfect.partial > 0) notes += words.say("perfect.partial.${text.form(perfect.partial)}", "days" to perfect.partial.toString())
-        val clamped = perfect.clamped.filter { it in WAYS }
-        if (clamped.isNotEmpty()) notes += words.say("perfect.clamped", "names" to clamped.joinToString(", ") { wayName(text, it) })
+        // Clamped at 100 % only: a way clamped at 0 % lost money and says so with its amount in its row.
+        val clamped = perfect.clamped.filter { it in WAYS && !lost(perfect, it) }
+        if (clamped.isNotEmpty()) notes += words.say("perfect.clamped", "names" to clamped.joinToString(", ") { wayName(text, it, own) })
         return notes.map { DetailBlock.Note(it) }
     }
 
     private fun wholeMoney(text: SiteText, minor: Double, money: House.Money?): String =
         if (money?.majorUnit == null) text.amount(minor, money) else "${text.fixed(minor / 100, 0)} ${money.majorUnit}"
 
-    private fun perfectTable(text: SiteText, perfect: HouseHistory.Perfect, money: House.Money?): DetailBlock.Ways? {
+    /** A count of days in words ("åtta dygn"), but one as a figure: "en dygn" is wrong where a day is neuter ("ett dygn"). */
+    private fun dayCount(text: SiteText, days: Int): String = if (days == 1) "1" else text.numberWord(days)
+
+    private fun perfectTable(text: SiteText, perfect: HouseHistory.Perfect, money: House.Money?, own: String): DetailBlock.Ways? {
         if (onlyPartial(perfect)) return null
         val words = text.words
         val head = listOf("perfect.money.saved", "perfect.work.cycles", "perfect.work.switches", "perfect.work.fromGrid", "perfect.work.toGrid").map { words.say(it) }
-        val rows = order(perfect.mode).filter { perfect.savings[it] != null }.map { Triple(it, wayName(text, it), perfect.savings[it]) } +
+        val rows = order(perfect.mode).filter { perfect.savings[it] != null }.map { Triple(it, wayName(text, it, own), perfect.savings[it]) } +
             Triple("perfect", words.say("perfect.money.perfect"), perfect.saving)
         return DetailBlock.Ways(
             head,
             rows.map { (way, name, saving) ->
                 val work = perfect.work[way]
                 name to listOf(
-                    saving?.let { text.amount(it, money) } ?: "–",
+                    saving?.let { text.tidy(it, money) } ?: "–",
                     work?.let { text.fixed(it.cycles, 2) } ?: "–",
                     work?.let { text.fixed(it.switches.toDouble(), 0) } ?: "–",
                     work?.let { text.fixed(it.gridChargeKwh, 1) } ?: "–",
@@ -342,35 +384,36 @@ internal object HouseDetails {
             text.words.say(
                 "perfect.temperature.${text.form(t.days)}",
                 "mean" to "${text.fixed(t.meanC, 1)} °C", "max" to "${text.fixed(t.maxC, 1)} °C",
-                "minutes" to text.fixed(t.minutesAbove.toDouble(), 0), "days" to text.numberWord(t.days)
+                "minutes" to text.fixed(t.minutesAbove.toDouble(), 0), "days" to dayCount(text, t.days)
             )
         )
     }
 
-    /** The battery's ways over the period, each figure once: the share of the perfect plan as the headline and a bar per way, then one table. `null` before the first whole day with a perfect plan. */
-    private fun perfectSection(text: SiteText, answer: HouseHistory): HouseDetailSection? {
+    /** The battery's ways over the period, each figure once: a bar per way with its share of the perfect plan (no headline: the rows give every share), then one table. `null` before the first whole day with a perfect plan. */
+    private fun perfectSection(text: SiteText, answer: HouseHistory, own: String): HouseDetailSection? {
         val reviewed = answer.review
         val perfect = reviewed?.perfect
         if (reviewed == null || !hasPerfect(perfect) || onlyPartial(perfect!!)) return null
         val words = text.words
         val blocks = mutableListOf<DetailBlock>()
-        perfectHeadline(text, perfect)?.let { blocks += DetailBlock.Headline(it) }
-        blocks += perfectRows(text, perfect, reviewed.mode)
+        blocks += perfectRows(text, perfect, reviewed.mode, answer.money, own)
         // The figures first, then every word about them together.
-        val table = perfectTable(text, perfect, answer.money)
+        val table = perfectTable(text, perfect, answer.money, own)
         table?.let { blocks += it }
-        blocks += perfectNotes(text, perfect, answer.period == HistoryKind.DAY)
+        blocks += perfectNotes(text, perfect, answer.period == HistoryKind.DAY, own)
         if (table != null) {
             blocks += DetailBlock.Note(words.say("perfect.money.note", "amount" to wholeMoney(text, MIN_PERFECT_SAVING, answer.money)))
             blocks += DetailBlock.Note(words.say("perfect.work.note"))
         }
         // The same comparison stands under Money with another sum: say why, with both figures.
-        val own = perfect.savings["own"]?.let { text.amount(it, answer.money) }
-        if (own != null && reviewed.batterySaving != null) {
+        val ownSaving = perfect.savings["own"]?.let { text.tidy(it, answer.money) }
+        if (ownSaving != null && reviewed.batterySaving != null) {
+            // The same days on both sides: only what was left at midnight differs, and the day counts say nothing.
             blocks += DetailBlock.Note(
                 words.say(
-                    "hist.house.perfectDiffers", "name" to wayName(text, "own"), "own" to own,
-                    "battery" to text.amount(reviewed.batterySaving, answer.money), "days" to perfect.days.toString(), "batteryDays" to reviewed.batteryDays.toString()
+                    if (perfect.days == reviewed.batteryDays) "hist.house.perfectDiffersMidnight" else "hist.house.perfectDiffers",
+                    "name" to own, "own" to ownSaving, "battery" to text.tidy(reviewed.batterySaving, answer.money),
+                    "days" to perfect.days.toString(), "batteryDays" to reviewed.batteryDays.toString()
                 )
             )
         }
@@ -379,7 +422,7 @@ internal object HouseDetails {
     }
 
     /** Before the first whole day with a perfect plan: SpotNav's modes and the battery's own way against plain self-consumption. */
-    private fun modesSection(text: SiteText, answer: HouseHistory): HouseDetailSection? {
+    private fun modesSection(text: SiteText, answer: HouseHistory, own: String): HouseDetailSection? {
         val reviewed = answer.review ?: return null
         val words = text.words
         val blocks = mutableListOf<DetailBlock>()
@@ -388,19 +431,19 @@ internal object HouseDetails {
             val figures = reviewed.modes[mode]
             var figure = words.say("house.compare.none")
             if (figures?.saving != null) {
-                figure = text.amount(figures.saving, answer.money)
+                figure = text.tidy(figures.saving, answer.money)
                 if (figures.days < reviewed.days) figure += " (${days(text, figures.days)})"
             }
             val name = words.say("house.compare.spotnav", "mode" to words.say("house.mode.$mode")) +
                 if (mode == reviewed.mode) " · ${words.say("house.compare.inForce")}" else ""
             blocks += DetailBlock.Figure(name, figure, muted = figures?.saving == null)
         }
-        blocks += DetailBlock.Figure(words.say("house.compare.own"), text.amount(reviewed.ownSaving, answer.money))
+        blocks += DetailBlock.Figure(own, text.tidy(reviewed.ownSaving, answer.money))
         blocks += DetailBlock.Note(words.say("hist.house.modesNote"))
         val perfect = reviewed.perfect
         if (perfect != null) {
             // Only incomplete days so far: say so, and the cells' temperature where the battery reports it.
-            if (hasPerfect(perfect)) blocks += perfectNotes(text, perfect, answer.period == HistoryKind.DAY)
+            if (hasPerfect(perfect)) blocks += perfectNotes(text, perfect, answer.period == HistoryKind.DAY, own)
             perfectTemperature(text, perfect)?.let { blocks += it }
         }
         return HouseDetailSection("modes", words.say("hist.house.modes"), blocks)
@@ -408,50 +451,106 @@ internal object HouseDetails {
 
     // ---------------------------------------------------------------------------------------------- forecast, days
 
+    /** Each forecast's mean error per hour over the period's reviewed days: the days said once in the note where every row has the same count, else in each row ("±0,42 kW på 3 dygn"). */
     private fun forecastSection(text: SiteText, answer: HouseHistory): HouseDetailSection {
         val words = text.words
-        val blocks = mutableListOf<DetailBlock>()
+        val title = words.say("hist.forecast.heading")
         val f = answer.forecast
-        var any = false
-        for ((label, error, unit) in listOf(
+        val rows = listOf(
             Triple("hist.forecast.house", f.house, "kW"), Triple("hist.forecast.sun", f.sun, "kWh"),
             Triple("hist.forecast.sunCorrected", f.sunCorrected, "kWh"), Triple("hist.forecast.soc", f.soc, "%")
-        )) {
-            if (error == null) continue
-            any = true
-            val value = if (unit == "%") "±${text.fixed(error.mae, 0)} %" else "±${text.fixed(error.mae, if (error.mae < 1) 2 else 1)} $unit"
-            blocks += DetailBlock.Figure(words.say(label), "$value (${days(text, error.days)})")
+        ).filter { it.second != null }
+        if (rows.isEmpty()) return HouseDetailSection("forecast", title, listOf(DetailBlock.Note(words.say("hist.forecast.none"))))
+        val same = rows.map { it.second!!.days }.toSet().singleOrNull()
+        val blocks = mutableListOf<DetailBlock>()
+        for ((label, error, unit) in rows) {
+            val mae = error!!.mae
+            val value = if (unit == "%") "±${text.fixed(mae, 0)} %" else "±${text.fixed(mae, if (mae < 1) 2 else 1)} $unit"
+            val figure = if (same == null) words.say("hist.house.savedDays.${text.form(error.days)}", "figure" to value, "days" to error.days.toString()) else value
+            blocks += DetailBlock.Figure(words.say(label), figure)
         }
-        blocks += DetailBlock.Note(words.say(if (any) "hist.forecast.note" else "hist.forecast.none"))
-        return HouseDetailSection("forecast", words.say("hist.forecast.heading"), blocks)
+        blocks += DetailBlock.Note(
+            when {
+                answer.period == HistoryKind.DAY -> words.say("hist.forecast.noteDay")
+                same == null -> words.say("hist.forecast.note")
+                else -> words.say("hist.forecast.noteDays.${text.form(same)}", "days" to same.toString())
+            }
+        )
+        return HouseDetailSection("forecast", title, blocks)
     }
 
-    private fun daysSection(text: SiteText, locale: Locale, answer: HouseHistory): HouseDetailSection? {
+    private class WayRow(val label: String, val real: Double?, val plan: Double?, val perfect: Double?, val share: Double?, val why: String?)
+
+    /** A month's name standing alone ("november"), as the card's `Intl` long month. */
+    private fun monthName(locale: Locale, key: String): String {
+        val month = java.time.YearMonth.parse(key).month
+        return month.getDisplayName(java.time.format.TextStyle.FULL_STANDALONE, locale).takeIf { name -> name.any { it.isLetter() } }
+            ?: month.getDisplayName(java.time.format.TextStyle.FULL, locale)
+    }
+
+    /**
+     * The battery's ways side by side against the one baseline, no battery: a row a day in a month, a row a month in a
+     * year (summed, with its days where not all of the month's are reviewed), none for a single day. The real way is
+     * named by who ran the battery ([real]).
+     */
+    private fun daysSection(text: SiteText, locale: Locale, answer: HouseHistory, real: String): HouseDetailSection? {
         val reviewed = answer.review
-        if (reviewed == null || answer.period == HistoryKind.DAY || reviewed.byDay.isEmpty()) return null
+        if (reviewed == null || answer.period == HistoryKind.DAY) return null
         val words = text.words
-        val shares = reviewed.byDay.any { it.ownShare != null }
+        val year = answer.period == HistoryKind.YEAR
+        val rows = if (year) {
+            reviewed.byMonth.orEmpty().map { m ->
+                val sub = if (m.days < m.monthDays) "\n" + words.say("hist.house.monthDays", "days" to m.days.toString(), "total" to m.monthDays.toString()) else ""
+                WayRow(monthName(locale, m.month) + sub, m.realVsNone, m.planVsNone, m.perfectVsNone, m.ownShare, m.shareNote)
+            }
+        } else {
+            reviewed.byDay.map { day ->
+                WayRow(HouseGraph.bucketWords(locale, HistoryKind.MONTH, day.date.toString(), 0, 1).first, day.realVsNone, day.planVsNone, day.perfectVsNone, day.ownShare, day.shareNote)
+            }
+        }
+        if (rows.isEmpty()) return null
+        val total = maxOf(reviewed.days, reviewed.periodDays)
+        val intro = if (year) words.say("hist.house.daysIntroYear")
+        else words.say("hist.house.daysIntro.${text.form(total)}", "days" to reviewed.days.toString(), "total" to total.toString())
+        val shares = rows.any { it.share != null || it.why != null }
         val head = buildList {
-            addAll(listOf("house.days.date", "hist.house.col.battery", "hist.house.col.plan", "hist.house.col.own").map { words.say(it) })
+            add(words.say(if (year) "hist.house.col.month" else "house.days.date"))
+            add(real)
+            add(words.say("hist.house.col.plan"))
+            add(words.say("hist.house.col.perfect"))
             if (shares) add(words.say("hist.house.col.share"))
         }
+        // One rule for every amount in the table, so its figures read alike.
+        val money = text.column(rows.flatMap { listOf(it.real, it.plan, it.perfect) }, answer.money)
         val muted = mutableSetOf<Pair<Int, Int>>()
-        val rows = reviewed.byDay.mapIndexed { row, day ->
+        val cells = rows.mapIndexed { index, row ->
             buildList {
-                add(HouseGraph.bucketWords(locale, HistoryKind.MONTH, day.date.toString(), 0, 1).first)
-                for (value in listOf(day.batterySaving, day.planSaving, day.ownSaving)) add(value?.let { text.amount(it, answer.money) } ?: "–")
+                add(row.label)
+                for (value in listOf(row.real, row.plan, row.perfect)) add(value?.let(money) ?: "–")
                 if (shares) {
                     add(
                         when {
-                            day.ownShare != null -> text.percent(day.ownShare)
-                            day.shareNote == null -> "–"
-                            else -> words.say("hist.house.share.${day.shareNote}").also { muted += row to 4 }
+                            row.why == "loss" -> words.say("hist.house.share.loss")
+                            row.share != null -> text.percent(row.share)
+                            row.why == null -> "–"
+                            else -> words.say("hist.house.share.${row.why}")
                         }
                     )
+                    if (row.share == null && row.why != null) muted += index to 4
                 }
             }
         }
-        return HouseDetailSection("days", words.say("hist.house.days"), listOf(DetailBlock.Table(head, rows, muted), DetailBlock.Note(words.say("hist.house.daysNote"))))
+        val mode = reviewed.mode?.takeIf { it in MODES }
+        val blocks = mutableListOf(
+            DetailBlock.Note(intro),
+            DetailBlock.Table(head, cells, muted),
+            DetailBlock.Note(
+                if (mode == null) words.say("hist.house.daysNoteNoMode", "real" to real)
+                else words.say("hist.house.daysNote", "real" to real, "mode" to words.say("house.mode.$mode"))
+            )
+        )
+        if (runnerOf(reviewed.byDay.map { it.controlled }) == Runner.MIXED) blocks += DetailBlock.Note(words.say("hist.house.daysMixed"))
+        return HouseDetailSection("days", words.say(if (year) "hist.house.months" else "hist.house.days"), blocks)
     }
 
     // ---------------------------------------------------------------------------------------------- how it is counted

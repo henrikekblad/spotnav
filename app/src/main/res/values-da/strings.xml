@@ -1363,7 +1363,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Batteri</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Bil</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Varme (anslået)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Hver del mod sin egen sammenligning, se Sådan beregnes det nedenfor. En del SpotNav ikke styrede, er udeladt.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Hver del mod sin egen sammenligning, se Sådan beregnes det nedenfor.</string>
   <string name="card_hist_house_no_price_source" formatted="false">Der er ingen elpris sat op for anlægget, så ingen udgift vises.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Sammenlignet med de samme døgn uden batteri og uden sol.</string>
   <string name="card_hist_house_reviewed" formatted="false">Besparelsen er målt for {days} af periodens {total} døgn.</string>
@@ -1372,14 +1372,12 @@
   <string name="card_hist_house_modes" formatted="false">Batteriets tilstande mod eget forbrug</string>
   <string name="card_hist_house_modes_note" formatted="false">Hver tilstand planlagt på samme målte last og sol, og hvad batteriet faktisk gjorde, mod rent eget forbrug; summeret over de gennemgåede døgn.</string>
   <string name="card_hist_house_days" formatted="false">Døgn for døgn</string>
-  <string name="card_hist_house_col_battery" formatted="false">Batteri</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Eget</string>
-  <string name="card_hist_house_col_share" formatted="false">Af perfekt</string>
+  <string name="card_hist_house_col_plan" formatted="false">SpotNav-planen</string>
+  <string name="card_hist_house_col_share" formatted="false">Andel af perfekt</string>
   <string name="card_hist_house_share_partial" formatted="false">ufuldstændigt døgn</string>
   <string name="card_hist_house_share_small" formatted="false">for lille forskel</string>
-  <string name="card_hist_house_days_note" formatted="false">Batteri: mod intet batteri. Plan: SpotNavs plan, eget: batteriets egen måde, begge mod eget forbrug.</string>
-  <string name="card_hist_house_footnote" formatted="false">Tallene viser, hvad der blev målt, og hvad planerne ville have gjort.</string>
+  <string name="card_hist_house_days_note" formatted="false">Alle beløb mod samme døgn uden batteri, med det, der var tilbage i batteriet ved midnat, regnet med. {real}: det, batteriet faktisk gjorde. SpotNav-planen: det, SpotNavs plan ({mode}) ville have gjort samme døgn, simuleret. Perfekt: det bedst mulige set bagud. Andel af perfekt: {real} delt med perfekt.</string>
+  <string name="card_hist_house_footnote" formatted="false">Uden batteri betyder samme døgn med samme forbrug og sol, men intet batteri. Det er sammenligningen for Batteriet sparede, Andel af perfekt og tabellen efter den.</string>
   <string name="card_hist_house_how" formatted="false">Sådan beregnes det</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} sparede {own} her, mens Batteriet sparede under Penge viser {battery}. Begge er mod intet batteri, men her tæller kun hele døgn ({days}) og det, der var tilbage i batteriet ved midnat; under Penge tæller alle målte døgn ({batteryDays}) og ikke det, der var tilbage.</string>
   <string name="card_hist_forecast_heading" formatted="false">Prognosefejl</string>
@@ -1387,15 +1385,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Sol</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Sol, korrigeret</string>
   <string name="card_hist_forecast_soc" formatted="false">Batteriniveau</string>
-  <string name="card_hist_forecast_note" formatted="false">Gennemsnittet af hvert gennemgået døgns middelfejl (gennemgangene gemmes i 30 døgn).</string>
+  <string name="card_hist_forecast_note" formatted="false">Gennemsnitlig fejl pr. time over de gennemgåede døgn (gennemgangene gemmes i 30 døgn).</string>
   <string name="card_hist_forecast_none" formatted="false">Ingen prognose blev gennemgået i perioden (gennemgangene gemmes i 30 døgn).</string>
   <string name="card_house_compare_in_force" formatted="false">valgt</string>
   <string name="card_house_compare_none" formatted="false">intet helt døgn</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Dag</string>
   <string name="card_perfect_heading_period" formatted="false">Andel af perfekt</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} af perfekt · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} af perfekt</string>
   <string name="card_perfect_explain" formatted="false">Perfekt: det bedst mulige set bagud, med de samme regler.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfekt: det bedst mulige set bagud, må sælge ({mode}-regler).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: det bedst mulige set bagud, uden salg (intet gik ud på nettet).</string>
@@ -1403,7 +1399,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris for {days} af døgnene, indtil næste døgns priser findes.</string>
   <string name="card_perfect_provisional_other" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris for {days} af døgnene, indtil næste døgns priser findes.</string>
   <string name="card_perfect_provisional_day" formatted="false">Det, der var tilbage ved midnat, regnes med døgnets egen pris, indtil næste døgns priser findes.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: uden for 0–100 %, vises ved nærmeste grænse (et tab som 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: over 100 %, vises som 100 % (modellens batteri er ideelt).</string>
   <string name="card_perfect_nothing" formatted="false">for lille forskel at sammenligne</string>
   <string name="card_perfect_partial_day" formatted="false">Ufuldstændigt døgn: under 90 % af døgnet blev målt, så det sammenlignes ikke.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} ufuldstændigt døgn tælles ikke med.</string>
@@ -1956,4 +1952,42 @@
   <string name="card_battery_enable_facts_both" formatted="false">Batteriets størrelse og laveste niveau ligger i deaktiverede entiteter i {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">Batteriets lade- og afladeeffekt findes i deaktiverede entiteter i {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Det, batteriplanen skal vide om batteriet, findes i deaktiverede entiteter i {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">tab {amount}</string>
+  <string name="card_hist_house_share_loss" formatted="false">tab</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Faktisk</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">blev ikke styret</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav styrede ikke batteriet eller bilen {when}.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav styrede ikke batteriet {when}.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav styrede ikke bilen {when}.</string>
+  <string name="card_hist_when_today" formatted="false">i dag</string>
+  <string name="card_hist_when_yesterday" formatted="false">i går</string>
+  <string name="card_hist_when_day" formatted="false">den dag</string>
+  <string name="card_hist_when_month" formatted="false">i løbet af måneden</string>
+  <string name="card_hist_when_year" formatted="false">i løbet af året</string>
+  <string name="card_hist_house_months" formatted="false">Måned for måned</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">De {days} af periodens {total} døgn, der er gennemgået. Gennemgangene gemmes i 30 døgn, så ældre døgn mangler.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">De {days} af periodens {total} døgn, der er gennemgået. Gennemgangene gemmes i 30 døgn, så ældre døgn mangler.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Hver måned summeret over sine gennemgåede døgn. Gennemgangene gemmes i 30 døgn, så ældre døgn mangler.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} af {total} døgn</string>
+  <string name="card_hist_house_col_month" formatted="false">Måned</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfekt</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Alle beløb mod samme døgn uden batteri, med det, der var tilbage i batteriet ved midnat, regnet med. {real}: det, batteriet faktisk gjorde. SpotNav-planen: det, SpotNavs plan ville have gjort samme døgn, simuleret. Perfekt: det bedst mulige set bagud. Andel af perfekt: {real} delt med perfekt.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Faktisk: SpotNav styrede batteriet nogle døgn, og batteriet styrede sig selv de andre.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Gennemsnitlig fejl pr. time over {days} gennemgået døgn (gennemgangene gemmes i 30 døgn).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Gennemsnitlig fejl pr. time over {days} gennemgåede døgn (gennemgangene gemmes i 30 døgn).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Gennemsnitlig fejl pr. time i løbet af døgnet.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparede {own} her, mens Batteriet sparede under Penge viser {battery}. Begge er mod intet batteri, men her regnes det, der var tilbage i batteriet ved midnat, med, under Penge ikke.</string>
+  <string name="card_house_loads_inverter" formatted="false">Vekselretteren (tab og standby)</string>
+  <string name="card_house_loads_estimated" formatted="false">(anslået)</string>
+  <string name="card_house_loads_clamped" formatted="false">Anslåede dele begrænset til det, der blev målt: {kwh} af skønnet bliver i huset.</string>
+  <string name="card_battery_need_mirrored_read_only" formatted="false">Læses via Remote Home-Assistant: kun læsning. SpotNav planlægger med batteriet, men styrer det aldrig.</string>
+  <string name="card_battery_tester_label" formatted="false">Tester</string>
+  <string name="card_battery_tester_value_none" formatted="false">Bliv tester</string>
+  <string name="card_battery_tester_value_asked" formatted="false">Tilmeldt</string>
+  <string name="card_battery_tester_value_tested" formatted="false">Resultat sendt</string>
+  <string name="card_battery_tester_value_control_code" formatted="false">Kode indtastet</string>
+  <string name="card_battery_tester_help_none" formatted="false">SpotNav kan læse dette batteri. Styringen af {brand} testes sammen med brugere: bliv tester, så får du instruktioner på e-mail.</string>
+  <string name="card_battery_tester_help_asked" formatted="false">Kør hardwaretesten under Support → Hardwaretest. Tryk på Start én gang: den kører af sig selv i dagtimerne, og resultatet sendes af sig selv.</string>
+  <string name="card_battery_tester_help_tested" formatted="false">Resultatet er sendt. Du får svar på e-mail.</string>
+  <string name="card_battery_tester_help_control_code" formatted="false">Kontrolkoden er indtastet: SpotNav må styre dette batteri.</string>
 </resources>

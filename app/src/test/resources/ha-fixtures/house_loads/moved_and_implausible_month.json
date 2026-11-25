@@ -4,6 +4,7 @@
     "sensor.shelly_golv_energy": "heat",
     "sensor.ups_energy": "none"
   },
+  "clamped_kwh": 0.0,
   "date": "2026-10-01",
   "end": "2026-11-01",
   "house_kwh": 1030.0,
@@ -15,10 +16,13 @@
       "statistic_id": "sensor.smart_energy_switch_electric_consumption_kwh"
     }
   ],
+  "inverter_kwh": null,
   "kind": "house",
   "loads": [
     {
       "changed": false,
+      "clamped_kwh": 0.0,
+      "estimated": false,
       "kwh": 44.2,
       "name": "Torktumlare",
       "source": "meter",
@@ -26,6 +30,8 @@
     },
     {
       "changed": false,
+      "clamped_kwh": 0.0,
+      "estimated": false,
       "kwh": 31.0,
       "name": "Diskmaskin",
       "source": "meter",
@@ -33,6 +39,8 @@
     },
     {
       "changed": false,
+      "clamped_kwh": 0.0,
+      "estimated": false,
       "kwh": 8.6,
       "name": "NAS",
       "source": "meter",
@@ -56,5 +64,6 @@
   "over_kwh": 0.0,
   "period": "month",
   "site_id": "site_villa",
-  "through": "2026-11-01T00:00:00+00:00"
+  "through": "2026-11-01T00:00:00+00:00",
+  "unknown_kwh": 946.2
 }

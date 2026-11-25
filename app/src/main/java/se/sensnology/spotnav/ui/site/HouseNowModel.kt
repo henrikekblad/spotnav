@@ -105,6 +105,24 @@ internal class SiteText(val words: CardWords, val locale: Locale, private val nu
         return "${fixed(major, if (abs(major) >= 10 || major == 0.0) 0 else 2)} $unit"
     }
 
+    /** [amount], but a whole amount without its decimals: "−7 kr", not "−7,00 kr" (and never "−0 kr"); the card's `moneyTidy`. */
+    fun tidy(minor: Double, money: House.Money?): String {
+        val rounded = Math.round(minor)
+        val unit = money?.majorUnit
+        if (unit != null && rounded % 100 == 0L) return "${fixed(rounded / 100.0, 0)} $unit"
+        return amount(minor, money)
+    }
+
+    /**
+     * One rule for a column of amounts (minor unit), so its figures read alike: whole major units where any is 10 or
+     * more ("24 kr", "0 kr"), else two decimals ("0,35 kr", "7,00 kr"); never "−0". The card's `moneyColumn`.
+     */
+    fun column(values: List<Double?>, money: House.Money?): (Double) -> String {
+        val unit = money?.majorUnit ?: return { amount(it, money) }
+        val decimals = if (values.any { it != null && abs(it) >= 1000 }) 0 else 2
+        return { minor -> "${fixed(minor / 100.0, decimals)} $unit" }
+    }
+
     fun clock(at: Instant, zone: ZoneId): String = CLOCK.format(at.atZone(zone))
 
     /** The day as a short cue ("lör 14"). */
@@ -132,6 +150,9 @@ internal object HouseNowModel {
 
     /** The battery brands whose own optimiser has a name. */
     private val OPTIMISERS = mapOf("sigenergy" to "Sigenergy AI")
+
+    /** The battery's own optimiser's name for its brand, `null` where the card does not know one (the card's `ownOptimiser`). */
+    fun optimiser(brand: String?): String? = OPTIMISERS[brand.orEmpty()]
 
     private val MODES = setOf("self_consumption", "balanced", "max_profit")
 

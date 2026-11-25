@@ -7,6 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +23,17 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
 import java.time.LocalDate
 
-/** The pie's colours for meters (the card's validated categorical order), then Other metered and Unknown. */
+/** The pie's colours for meters (the card's validated categorical order), then Other metered, Unknown and the inverter. */
 internal object PieColours {
     private val METERS = longArrayOf(0xFF3987E5, 0xFFD95926, 0xFF199E70, 0xFFC98500, 0xFFD55181, 0xFF9085E9, 0xFF2AA3C4, 0xFF8AA02C).map { it.toInt() }
     private const val OTHER = 0xFFB9BDC4.toInt()
     private const val UNKNOWN = 0xFF747982.toInt()
+    private const val INVERTER = 0xFF3F7F7A.toInt()
 
     fun of(slot: Int): Int = when (slot) {
         LoadsModel.OTHER_COLOUR -> OTHER
         LoadsModel.UNKNOWN_COLOUR -> UNKNOWN
+        LoadsModel.INVERTER_COLOUR -> INVERTER
         else -> METERS[slot.coerceIn(0, METERS.size - 1)]
     }
 }
@@ -174,7 +180,7 @@ internal class LoadsDialog(
                 "list" to pie.slices.joinToString(", ") { "${it.name} ${LoadsModel.kwh(text, it.kwh)} (${LoadsModel.share(text, it.share)})" }
             )
         }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = scope.dp(8); bottomMargin = scope.dp(8) })
-        for (slice in pie.slices) row.addView(sliceRow(slice), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        for (slice in pie.slices) row.addView(sliceRow(slice, LoadsModel.marks(words, answer, slice)), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         body.addView(row)
         for (line in LoadsModel.notes(text, answer, pie, carApart, heatApart)) {
             body.addView(note(line), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = scope.dp(8) })
@@ -187,7 +193,7 @@ internal class LoadsDialog(
         else -> Periods.optionLabel(text.locale, HistoryPeriod.MONTH, answer.date)
     }
 
-    private fun sliceRow(slice: LoadsModel.Slice) = LinearLayout(scope.context).apply {
+    private fun sliceRow(slice: LoadsModel.Slice, marks: List<String>) = LinearLayout(scope.context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(0, scope.dp(3), 0, scope.dp(3))
@@ -197,7 +203,16 @@ internal class LoadsDialog(
         addView(TextView(context).apply {
             textSize = 14f
             setTextColor(colours.text)
-            this.text = slice.name
+            // The marks after the name, smaller and muted as the card's.
+            this.text = if (marks.isEmpty()) slice.name else SpannableStringBuilder(slice.name).apply {
+                for (mark in marks) {
+                    append("  ")
+                    val start = length
+                    append(mark)
+                    setSpan(RelativeSizeSpan(0.82f), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(ForegroundColorSpan(colours.muted), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            }
         }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         addView(TextView(context).apply {
             textSize = 14f

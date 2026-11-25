@@ -4,6 +4,7 @@
   "error": null,
   "status": {
     "battery_found": true,
+    "battery_read_only": null,
     "options": {
       "battery_control_enabled": true,
       "battery_control_shadow_only": false,
@@ -68,6 +69,7 @@
       },
       "charging_kw": null
     },
-    "plan_costs": null
+    "plan_costs": null,
+    "tester": null
   }
 }

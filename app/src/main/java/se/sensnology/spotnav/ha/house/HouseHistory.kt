@@ -96,7 +96,10 @@ internal data class HouseHistory(
     /** What SpotNav saved over the period, each part over the days that have it, with those days counted. */
     data class Saving(
         val total: Double, val battery: Double?, val car: Double?, val heat: Double?,
-        val batteryDays: Int, val carDays: Int, val heatDays: Int, val days: Int
+        val batteryDays: Int, val carDays: Int, val heatDays: Int, val days: Int,
+        /** The days SpotNav controlled the car on (a charge it started); `null` from a Home Assistant before it. With
+         * none, the car's 0 is a car SpotNav did not control. */
+        val carControlledDays: Int? = null
     )
 
     /** What the battery's own control earned over the period's such days, and what SpotNav's plan would have (`null`: none reviewed). */
@@ -126,15 +129,35 @@ internal data class HouseHistory(
 
     data class ReviewDay(
         val date: LocalDate, val batterySaving: Double?, val planSaving: Double, val ownSaving: Double,
-        /** The day's share of its perfect plan; `null` without one, with [shareNote] (`partial` or `small`) saying why. */
-        val ownShare: Double?, val planShare: Double?, val shareNote: String?
+        /**
+         * The day's share of its perfect plan; `null` without one, with [shareNote] (`partial` or `small`) saying why;
+         * [shareNote] `loss`: the battery lost money against no battery that day.
+         */
+        val ownShare: Double?, val planShare: Double?, val shareNote: String?,
+        /** The day's ways against the same day with no battery, the energy left at midnight counted: what really
+         * happened, SpotNav's plan in the site's mode (simulated) and the perfect plan; `null` without one. */
+        val realVsNone: Double? = null,
+        val planVsNone: Double? = null,
+        val perfectVsNone: Double? = null,
+        /** The share of the day SpotNav controlled the battery (0 to 1), `null` where not known. */
+        val controlled: Double? = null
+    )
+
+    /** A year's month of reviewed days (`review.by_month`): the day figures summed over its [days] reviewed of
+     * [monthDays] (its days before today), its share of the perfect plan over its whole days. [month] is `2026-11`. */
+    data class ReviewMonth(
+        val month: String, val days: Int, val monthDays: Int,
+        val realVsNone: Double?, val planVsNone: Double?, val perfectVsNone: Double?,
+        val ownShare: Double?, val shareNote: String?, val controlled: Double?
     )
 
     data class Review(
         val days: Int, val periodDays: Int, val archived: Int, val actualCost: Double,
         val batterySaving: Double?, val batteryDays: Int, val sunGave: Double?, val sunDays: Int,
         val againstNothing: Double?, val nothingDays: Int, val planSaving: Double, val ownSaving: Double,
-        val modes: Map<String, ModeFigure>, val mode: String?, val byDay: List<ReviewDay>, val perfect: Perfect?
+        val modes: Map<String, ModeFigure>, val mode: String?, val byDay: List<ReviewDay>, val perfect: Perfect?,
+        /** A year's months; `null` for a day or a month, and from a Home Assistant before it. */
+        val byMonth: List<ReviewMonth>? = null
     )
 }
 
@@ -206,7 +229,8 @@ internal object HouseHistoryRead {
                         total = number(it.opt("total"), "saving.total"), battery = numberOrNull(it.opt("battery"), "saving.battery"),
                         car = numberOrNull(it.opt("car"), "saving.car"), heat = numberOrNull(it.opt("heat"), "saving.heat"),
                         batteryDays = count(it.opt("battery_days"), "saving.battery_days"), carDays = count(it.opt("car_days"), "saving.car_days"),
-                        heatDays = count(it.opt("heat_days"), "saving.heat_days"), days = count(it.opt("days"), "saving.days")
+                        heatDays = count(it.opt("heat_days"), "saving.heat_days"), days = count(it.opt("days"), "saving.days"),
+                        carControlledDays = additive(it, "car_controlled_days", null) { raw -> count(raw, "saving.car_controlled_days") }
                     )
                 }
             },
@@ -224,6 +248,11 @@ internal object HouseHistoryRead {
     private fun forecastError(raw: Any?, what: String): HouseHistory.ForecastError? = with(StrictJson) {
         objOrNull(raw, "forecast.$what")?.let { HouseHistory.ForecastError(number(it.opt("mae"), "forecast.$what.mae"), count(it.opt("days"), "forecast.$what.days")) }
     }
+
+    /** Why a day has no share of its perfect plan, as far as the sheet has words for it. */
+    private val SHARE_NOTES = setOf("partial", "small", "loss")
+
+    private val MONTH = Regex("""\d{4}-\d{2}""")
 
     /** The ways a perfect plan is compared with: what happened, and the battery's modes. */
     private val WAYS = listOf("own", "self_consumption", "balanced", "max_profit")
@@ -252,8 +281,28 @@ internal object HouseHistoryRead {
                     ownShare = additive(day, "own_share", null) { numberOrNull(it, "day.own_share") },
                     planShare = additive(day, "plan_share", null) { numberOrNull(it, "day.plan_share") },
                     // A reason a newer Home Assistant names is shown as none.
-                    shareNote = additive(day, "share_note", null) { textOrNull(it, "day.share_note")?.takeIf { note -> note == "partial" || note == "small" } }
+                    shareNote = additive(day, "share_note", null) { textOrNull(it, "day.share_note")?.takeIf { note -> note in SHARE_NOTES } },
+                    realVsNone = additive(day, "real_vs_none", null) { numberOrNull(it, "day.real_vs_none") },
+                    planVsNone = additive(day, "plan_vs_none", null) { numberOrNull(it, "day.plan_vs_none") },
+                    perfectVsNone = additive(day, "perfect_vs_none", null) { numberOrNull(it, "day.perfect_vs_none") },
+                    controlled = additive(day, "controlled", null) { numberOrNull(it, "day.controlled") }
                 )
+            },
+            byMonth = additive(json, "by_month", null) { raw ->
+                if (raw == null || raw == JSONObject.NULL) null else list(raw, "review.by_month").map { entry ->
+                    val month = obj(entry, "review.month")
+                    HouseHistory.ReviewMonth(
+                        month = text(month.opt("month"), "month.month").also { if (!MONTH.matches(it)) bad("month.month") },
+                        days = count(month.opt("days"), "month.days"), monthDays = count(month.opt("month_days"), "month.month_days"),
+                        realVsNone = numberOrNull(month.opt("real_vs_none"), "month.real_vs_none"),
+                        planVsNone = numberOrNull(month.opt("plan_vs_none"), "month.plan_vs_none"),
+                        perfectVsNone = numberOrNull(month.opt("perfect_vs_none"), "month.perfect_vs_none"),
+                        ownShare = numberOrNull(month.opt("own_share"), "month.own_share"),
+                        // A reason a newer Home Assistant names is shown as none.
+                        shareNote = textOrNull(month.opt("share_note"), "month.share_note")?.takeIf { it in SHARE_NOTES },
+                        controlled = numberOrNull(month.opt("controlled"), "month.controlled")
+                    )
+                }
             },
             perfect = additive(json, "perfect", null) { objOrNull(it, "review.perfect")?.let(::perfect) }
         )
