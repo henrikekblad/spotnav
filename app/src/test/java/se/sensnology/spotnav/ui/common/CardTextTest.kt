@@ -100,8 +100,13 @@ class CardTextTest {
         assertNull(first.words("http://ha.local:8123", "sv"))
         assertTrue(first.remember("http://ha.local:8123", "sv", words("sv", "11111111", "house.title" to "Hemmet", "made.up" to "x")))
         assertEquals("Hemmet", first.words("http://ha.local:8123", "sv")?.get("house.title"))
-        // A later start, nothing asked yet.
+        // A later start, nothing asked yet: the screen reads memory only (the app's own words) until the worker has
+        // read the kept file.
         val later = CardStringCache(dir, english)
+        assertNull(later.words("http://ha.local:8123", "sv"))
+        assertFalse(later.preloaded("http://ha.local:8123", "sv"))
+        later.preload("http://ha.local:8123", "sv")
+        assertTrue(later.preloaded("http://ha.local:8123", "sv"))
         assertEquals(mapOf("house.title" to "Hemmet"), later.words("http://ha.local:8123", "sv"))
         assertEquals("11111111", later.hash("http://ha.local:8123", "sv"))
         // Another instance holds nothing of this one's.
@@ -124,6 +129,7 @@ class CardTextTest {
         cache.remember("ha", "sv", words("sv", "11111111", "house.title" to "Hemmet"))
         cache.remember("ha", "sv", words("sv", "33333333", "house.title" to "Huset ändrat"))
         val later = CardStringCache(dir, english)
+        later.preload("ha", "sv")
         assertEquals("33333333", later.hash("ha", "sv"))
         assertEquals("Huset ändrat", later.words("ha", "sv")?.get("house.title"))
         assertEquals("http://ha.local:8123", CardStringCache.instance(" HTTP://HA.local:8123/ "))

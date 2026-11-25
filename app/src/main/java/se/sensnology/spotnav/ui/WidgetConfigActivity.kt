@@ -128,6 +128,11 @@ class WidgetConfigActivity : Activity() {
         // Once per start: chargers paired before 3.0 move to their home's webhook, and a home's new chargers appear.
         // Its own thread, so the screen's first reads never wait behind it.
         SiteUpkeep.startOnce(this, { task -> Thread(task, "site-upkeep").start() })
+        // The card words kept by an earlier run, read in the background so no screen waits on the file.
+        CardStringSync.preloadAll(
+            this,
+            ChargerProfileStore.forContext(this).listProfiles().map { it.baseUrl } + SiteProfileStore.forContext(this).list().map { it.baseUrl }
+        )
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))

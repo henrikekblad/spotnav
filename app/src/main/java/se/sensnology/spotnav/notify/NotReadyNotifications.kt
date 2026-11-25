@@ -136,6 +136,8 @@ internal object NotReadyNotifications {
 
     private fun post(context: Context, profile: ChargerProfile, plan: Plan, block: NotReady): Boolean {
         LocalNotifications.ensureChannels(context)
+        // The check's own worker thread: the kept card words may be read here.
+        CardStringSync.preloadNow(context, profile.baseUrl)
         val said = NotReadyText(text(context, profile.baseUrl), plan.zone, plan.money)
         val message = block.items.joinToString("\n") { said.line(it) }
         val builder = Notification.Builder(context, LocalNotifications.CHANNEL_ALERTS)

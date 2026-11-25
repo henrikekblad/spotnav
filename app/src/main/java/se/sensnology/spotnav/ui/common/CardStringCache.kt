@@ -25,10 +25,21 @@ internal class CardStringCache(private val folder: File, private val english: (S
     private val held = ConcurrentHashMap<String, Held>()
     private val read = ConcurrentHashMap.newKeySet<String>()
 
-    /** The words that may be shown for [instance] in [language], `null` while none are held. */
-    fun words(instance: String, language: String): Map<String, String>? = entry(instance, language)?.words
+    /**
+     * The words that may be shown for [instance] in [language], `null` while none are held in memory. Never reads the
+     * file: safe on the main thread; until [preload] has run, the app's own words are shown.
+     */
+    fun words(instance: String, language: String): Map<String, String>? = held[key(instance, language)]?.words
 
-    /** The hash of the words held for [instance] in [language], to ask whether they are still current. */
+    /** Read the words a previous run kept for [instance] in [language], once. Blocking: a worker thread's. */
+    fun preload(instance: String, language: String) {
+        entry(instance, language)
+    }
+
+    /** Whether the kept file of [instance] in [language] was read this run (or words were fetched). */
+    fun preloaded(instance: String, language: String): Boolean = key(instance, language) in read
+
+    /** The hash of the words held for [instance] in [language], to ask whether they are still current. Blocking. */
     fun hash(instance: String, language: String): String? = entry(instance, language)?.hash
 
     /**
@@ -138,9 +149,30 @@ internal object CardStringSync {
         }
     }
 
-    /** The words that may be shown for [instance] in the app's language, `null` for none (the app's own are used). */
+    /**
+     * The words that may be shown for [instance] in the app's language, `null` for none (the app's own are used). Reads
+     * memory only; the kept file is read by [show]'s worker (or [preloadAll]'s at the app's start).
+     */
     fun words(context: Context, instance: String?): Map<String, String>? =
         instance?.let { cache(context).words(it, AppLanguageSettings.language(context)) }
+
+    /** Read the kept words of [baseUrl]'s Home Assistant in the app's language now. Blocking: for a worker thread. */
+    fun preloadNow(context: Context, baseUrl: String) {
+        if (baseUrl.isBlank()) return
+        val app = context.applicationContext
+        cache(app).preload(CardStringCache.instance(baseUrl), AppLanguageSettings.language(app))
+    }
+
+    /** At the app's start: read every kept file of [baseUrls]' Home Assistants in the app's language, in the background. */
+    fun preloadAll(context: Context, baseUrls: Collection<String>) {
+        val app = context.applicationContext
+        val instances = baseUrls.filter { it.isNotBlank() }.map(CardStringCache::instance).distinct()
+        if (instances.isEmpty()) return
+        val language = AppLanguageSettings.language(app)
+        val held = cache(app)
+        if (instances.all { held.preloaded(it, language) }) return
+        Thread({ instances.forEach { held.preload(it, language) } }, "card-strings").start()
+    }
 
     /**
      * A screen of [baseUrl]'s Home Assistant is shown: its words are the ones used from now on, and they are asked for
@@ -149,13 +181,24 @@ internal object CardStringSync {
     fun show(context: Context, baseUrl: String?, settings: HomeAssistantSettings?) {
         val instance = baseUrl?.takeIf { it.isNotBlank() }?.let(CardStringCache::instance)
         shown = instance
-        if (instance == null || settings == null || !settings.configured) return
+        if (instance == null) return
         val app = context.applicationContext
+        if (settings == null || !settings.configured) {
+            // Not to be asked (it waits to be paired again): what an earlier run kept may still be shown.
+            val held = cache(app)
+            val language = AppLanguageSettings.language(app)
+            if (!held.preloaded(instance, language)) Thread({ held.preload(instance, language) }, "card-strings").start()
+            return
+        }
         val language = AppLanguageSettings.language(app)
         val key = "$instance|$language"
-        if (!asks.claim(key, System.currentTimeMillis())) return
+        val held = cache(app)
+        val ask = asks.claim(key, System.currentTimeMillis())
+        if (!ask && held.preloaded(instance, language)) return
+        // The kept words are read here, never on the screen's thread; the screen shows the app's own until then.
         Thread({
-            val held = cache(app)
+            held.preload(instance, language)
+            if (!ask) return@Thread
             val outcome = HomeAssistantClient.cardStrings(settings, language, held.hash(instance, language))
             if (outcome is CardStringsRead.Outcome.Words) held.remember(instance, language, outcome)
             asks.outcome(key, outcome)
