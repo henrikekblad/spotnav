@@ -22,6 +22,7 @@ import se.sensnology.spotnav.ha.heat.Heat
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
+import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
@@ -44,6 +45,7 @@ import java.time.ZonedDateTime
  */
 internal class HeatPage(
     scope: ViewScope,
+    shell: ScreenShell,
     private val session: HaSession,
     private val memory: SiteMemory,
     private val preferences: SitePreferences,
@@ -72,7 +74,7 @@ internal class HeatPage(
     private val store = HeatHistoryStore(session) { render() }
     private val planBox = HeatPlanPanel(this, store, text)
     private val useBox = HeatUsePanel(this, store, preferences, text, locale, ::siteKey)
-    private val details = HeatDetailsDialog(this, session, text, colours, locale, ::todayDate)
+    private val details = HeatDetailsDialog(this, shell, session, text, colours, locale, ::todayDate)
     // The pool, the spa and the sauna under them, as the card's last tabs.
     private val loadBoxes = HeatLoadBoxes(this, session, text, homeAssistantUrl) { inFlight = false; read() }
     private var boxesOpen = false

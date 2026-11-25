@@ -119,6 +119,7 @@ class WidgetConfigActivity : Activity() {
             navigate = ::showScreen,
             back = ::goBack
         )
+        shell.onOverlayChanged = { open -> backNavigation.setInterceptsBack(open || currentScreen.back(existingWidget) != null) }
         setContentView(shell.root)
         // This phone's own notification check: scheduled while it is on and something is paired.
         LocalNotifications.sync(this)
@@ -203,6 +204,7 @@ class WidgetConfigActivity : Activity() {
      */
     private fun goBack() {
         commitPendingEdit()
+        if (shell.closeOverlay()) return
         currentScreen.back(existingWidget)?.let { showScreen(it) } ?: finish()
     }
 
@@ -214,6 +216,7 @@ class WidgetConfigActivity : Activity() {
     @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun onBackPressed() {
         commitPendingEdit()
+        if (shell.closeOverlay()) return
         val back = currentScreen.back(existingWidget)
         if (back == null) super.onBackPressed() else showScreen(back)
     }

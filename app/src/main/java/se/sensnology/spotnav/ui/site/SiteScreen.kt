@@ -106,8 +106,8 @@ internal class SiteScreen(shell: ScreenShell, private val site: SiteProfile, pri
         }
         shell.pages.offer(key, kinds) { kind ->
             when (kind) {
-                PageKind.HOUSE -> HousePage(this, session, shell.pages.memory(key), SitePreferences.of(context), key)
-                PageKind.HEAT -> HeatPage(this, session, shell.pages.memory(key), SitePreferences.of(context), key, site.baseUrl)
+                PageKind.HOUSE -> HousePage(this, shell, session, shell.pages.memory(key), SitePreferences.of(context), key)
+                PageKind.HEAT -> HeatPage(this, shell, session, shell.pages.memory(key), SitePreferences.of(context), key, site.baseUrl)
                 else -> error("no charger page for a home")
             }
         }
