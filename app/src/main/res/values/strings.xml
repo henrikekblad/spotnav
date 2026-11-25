@@ -1990,4 +1990,5 @@
   <string name="card_hist_forecast_note_days_other" formatted="false">Mean error per hour, averaged over {days} reviewed days (the reviews are kept 30 days).</string>
   <string name="card_hist_forecast_note_day" formatted="false">Mean error per hour over the day.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} saved {own} here, while \"The battery saved\" under Money says {battery}. Both are against no battery, but here what was left in the battery at midnight counts, under Money it does not.</string>
+  <string name="card_house_loads_inverter" formatted="false">The inverter (losses and standby)</string>
 </resources>

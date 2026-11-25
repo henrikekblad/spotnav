@@ -1977,4 +1977,5 @@
   <string name="card_hist_forecast_note_days_other" formatted="false">Gennemsnitlig fejl pr. time over {days} gennemgåede døgn (gennemgangene gemmes i 30 døgn).</string>
   <string name="card_hist_forecast_note_day" formatted="false">Gennemsnitlig fejl pr. time i løbet af døgnet.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparede {own} her, mens Batteriet sparede under Penge viser {battery}. Begge er mod intet batteri, men her regnes det, der var tilbage i batteriet ved midnat, med, under Penge ikke.</string>
+  <string name="card_house_loads_inverter" formatted="false">Vekselretteren (tab og standby)</string>
 </resources>

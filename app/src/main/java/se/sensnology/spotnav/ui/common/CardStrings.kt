@@ -1258,6 +1258,7 @@ internal object CardStrings {
         "hist.forecast.noteDays.other" to R.string.card_hist_forecast_note_days_other,
         "hist.forecast.noteDay" to R.string.card_hist_forecast_note_day,
         "hist.house.perfectDiffersMidnight" to R.string.card_hist_house_perfect_differs_midnight,
+        "house.loads.inverter" to R.string.card_house_loads_inverter,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

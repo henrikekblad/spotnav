@@ -19,15 +19,17 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
 import java.time.LocalDate
 
-/** The pie's colours for meters (the card's validated categorical order), then Other metered and Unknown. */
+/** The pie's colours for meters (the card's validated categorical order), then Other metered, Unknown and the inverter. */
 internal object PieColours {
     private val METERS = longArrayOf(0xFF3987E5, 0xFFD95926, 0xFF199E70, 0xFFC98500, 0xFFD55181, 0xFF9085E9, 0xFF2AA3C4, 0xFF8AA02C).map { it.toInt() }
     private const val OTHER = 0xFFB9BDC4.toInt()
     private const val UNKNOWN = 0xFF747982.toInt()
+    private const val INVERTER = 0xFF3F7F7A.toInt()
 
     fun of(slot: Int): Int = when (slot) {
         LoadsModel.OTHER_COLOUR -> OTHER
         LoadsModel.UNKNOWN_COLOUR -> UNKNOWN
+        LoadsModel.INVERTER_COLOUR -> INVERTER
         else -> METERS[slot.coerceIn(0, METERS.size - 1)]
     }
 }

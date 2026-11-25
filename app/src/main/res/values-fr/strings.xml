@@ -1985,4 +1985,5 @@
   <string name="card_hist_forecast_note_days_other" formatted="false">Erreur moyenne par heure, en moyenne sur {days} jours examinés (les examens sont gardés 30 jours).</string>
   <string name="card_hist_forecast_note_day" formatted="false">Erreur moyenne par heure sur la journée.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} a économisé {own} ici, alors que « La batterie a économisé » sous Argent indique {battery}. Les deux sont face à l\'absence de batterie, mais ici ce qui restait dans la batterie à minuit compte, sous Argent non.</string>
+  <string name="card_house_loads_inverter" formatted="false">L’onduleur (pertes et veille)</string>
 </resources>

@@ -109,17 +109,19 @@ internal object LoadsModel {
     /** The colours a pie has for meters; any further meter goes into Other metered. */
     const val SLOTS = 8
 
-    /** [key]: the meter's statistic id, `other-metered` or `unknown`. [colour]: index into the pie's palette, or -1 other / -2 unknown. */
+    /** [key]: the meter's statistic id, `other-metered`, `inverter` or `unknown`. [colour]: index into the pie's palette, or -1 other / -2 unknown / -3 the inverter. */
     data class Slice(val key: String, val name: String, val kwh: Double, val share: Double, val colour: Int)
 
     class Pie(val whole: Double, val slices: List<Slice>, val merged: List<HouseLoads.Load>)
 
     const val OTHER_COLOUR = -1
     const val UNKNOWN_COLOUR = -2
+    const val INVERTER_COLOUR = -3
 
     /**
      * The meters at or over [SMALL_SHARE] of the whole (at most [SLOTS], largest first), then Other metered with the
-     * rest and Unknown (the house less every meter); an empty slice is left out. The heat's pie shows every source with
+     * rest, the inverter (what a hybrid's inverter used, its losses and standby, where Home Assistant counts it) and
+     * Unknown (the house less every meter and the inverter); an empty slice is left out. The heat's pie shows every source with
      * energy however small, up to [SLOTS]. The whole is the house, or the meters where they add up to more.
      */
     fun pie(words: se.sensnology.spotnav.ui.common.CardWords, answer: HouseLoads): Pie {
@@ -136,9 +138,13 @@ internal object LoadsModel {
         val slices = ArrayList<Slice>()
         shown.mapTo(slices) { Slice(it.statisticId, it.name, it.kwh, if (whole > 0) it.kwh / whole else 0.0, byId.indexOf(it.statisticId)) }
         val metered = merged.sumOf { it.kwh }
-        val unknown = answer.otherKwh ?: 0.0
+        val inverter = if (answer.kind == "house") maxOf(0.0, answer.inverterKwh ?: 0.0) else 0.0
+        val unknown = answer.unknownKwh ?: answer.otherKwh ?: 0.0
         if (metered > 0) {
             slices.add(Slice("other-metered", words.say("house.loads.otherMetered"), metered, if (whole > 0) metered / whole else 0.0, OTHER_COLOUR))
+        }
+        if (inverter > 0) {
+            slices.add(Slice("inverter", words.say("house.loads.inverter"), inverter, if (whole > 0) inverter / whole else 0.0, INVERTER_COLOUR))
         }
         if (unknown > 0 || slices.isEmpty()) {
             slices.add(Slice("unknown", words.say("house.loads.unknown"), unknown, if (whole > 0) unknown / whole else 0.0, UNKNOWN_COLOUR))

@@ -1977,4 +1977,5 @@
   <string name="card_hist_forecast_note_days_other" formatted="false">Keskivirhe tunnissa, keskiarvona {days} tarkastetusta vuorokaudesta (tarkastukset säilytetään 30 vuorokautta).</string>
   <string name="card_hist_forecast_note_day" formatted="false">Keskivirhe tunnissa vuorokauden aikana.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} säästi tässä {own}, kun taas kohdan Raha rivi Akku säästi näyttää {battery}. Molemmat on verrattu tilanteeseen ilman akkua, mutta tässä keskiyöllä akkuun jäänyt energia lasketaan mukaan, kohdassa Raha ei.</string>
+  <string name="card_house_loads_inverter" formatted="false">Invertteri (häviöt ja valmiustila)</string>
 </resources>

@@ -184,27 +184,41 @@ class FlowBoxTest {
 
     // --- the pie (house-loads.test.ts) ---
 
-    @Test fun thePieDrawsTheMetersOver1_5PercentAndPutsTheRestInOtherAndUnknown() {
+    @Test fun thePieDrawsTheMetersOver1_5PercentAndPutsTheRestInOtherTheInverterAndUnknown() {
         val words = CardStringsXml.words("en")
         val pie = LoadsModel.pie(words, loads("villa_day.json"))
         assertEquals(14.62, pie.whole, 0.0)
-        assertEquals(listOf("Torktumlare", "Diskmaskin", "Tvättmaskin", "Other metered", "Unknown"), pie.slices.map { it.name })
+        assertEquals(listOf("Torktumlare", "Diskmaskin", "Tvättmaskin", "Other metered", "The inverter (losses and standby)", "Unknown"), pie.slices.map { it.name })
         assertEquals(listOf("Frys", "Router"), pie.merged.map { it.name })
         assertEquals(0.21 + 0.12, pie.slices[3].kwh, 1e-9)
-        assertEquals(9.6, pie.slices[4].kwh, 1e-9)
+        // What no meter explains, the hybrid inverter's own use taken out of it as a slice of its own.
+        assertEquals(1.83, pie.slices[4].kwh, 1e-9)
+        assertEquals(7.77, pie.slices[5].kwh, 1e-9)
         assertEquals(14.62, pie.slices.sumOf { it.kwh }, 1e-9)
         // A meter's colour follows its statistic id, not its size.
         assertEquals(1, pie.slices[0].colour)
         assertEquals(LoadsModel.OTHER_COLOUR, pie.slices[3].colour)
-        assertEquals(LoadsModel.UNKNOWN_COLOUR, pie.slices[4].colour)
+        assertEquals(LoadsModel.INVERTER_COLOUR, pie.slices[4].colour)
+        assertEquals(LoadsModel.UNKNOWN_COLOUR, pie.slices[5].colour)
         val sv = CardStringsXml.words("sv")
-        assertEquals(listOf("Övrigt uppmätt", "Okänt"), LoadsModel.pie(sv, loads("villa_day.json")).slices.takeLast(2).map { it.name })
+        assertEquals(listOf("Övrigt uppmätt", "Växelriktaren (förluster och tomgång)", "Okänt"), LoadsModel.pie(sv, loads("villa_day.json")).slices.takeLast(3).map { it.name })
+        // From a Home Assistant before the inverter's slice: Unknown is the house less every meter, as before.
+        val old = loads("villa_day.json").copy(inverterKwh = null, unknownKwh = null)
+        assertEquals(listOf("Other metered", "Unknown"), LoadsModel.pie(words, old).slices.takeLast(2).map { it.name })
+        assertEquals(9.6, LoadsModel.pie(words, old).slices.last().kwh, 1e-9)
+        val json = HaFixtures.json("house_loads/villa_day.json").apply { remove("inverter_kwh"); remove("unknown_kwh") }
+        val read = (HouseLoadsRead.decode(json) as SiteRead.Read).value
+        assertNull(read.inverterKwh)
+        assertEquals(9.6, read.unknownKwh!!, 1e-9)
+        // The heat's pie has no inverter.
+        assertTrue(LoadsModel.pie(words, loads("villa_day.json").copy(kind = "heat")).slices.none { it.key == "inverter" })
     }
 
     private fun meters(kwhs: List<Double>, house: Double): HouseLoads {
         val base = loads("villa_day.json")
         val list = kwhs.mapIndexed { i, kwh -> HouseLoads.Load("sensor.m$i", "M$i", kwh, "meter", false) }
-        return base.copy(houseKwh = house, metersKwh = kwhs.sum(), otherKwh = maxOf(0.0, house - kwhs.sum()), loads = list)
+        val other = maxOf(0.0, house - kwhs.sum())
+        return base.copy(houseKwh = house, metersKwh = kwhs.sum(), otherKwh = other, unknownKwh = other, inverterKwh = null, loads = list)
     }
 
     @Test fun theLineIsAt1_5PercentOfTheWhole() {

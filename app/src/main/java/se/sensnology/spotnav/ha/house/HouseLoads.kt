@@ -25,6 +25,11 @@ internal data class HouseLoads(
     val otherKwh: Double?,
     /** How much more the meters add up to than the house. */
     val overKwh: Double,
+    /** What a hybrid's inverter used of the house (its losses and standby), taken out of what no meter explains; `null`
+     * where Home Assistant cannot count it, or from one before it. */
+    val inverterKwh: Double? = null,
+    /** What no meter explains, the inverter left out: [otherKwh] from a Home Assistant before it. */
+    val unknownKwh: Double? = otherKwh,
     val loads: List<Load>,
     val moved: List<Moved>,
     val implausible: List<Implausible>
@@ -82,6 +87,8 @@ internal object HouseLoadsRead {
             metersKwh = number(json.opt("meters_kwh"), "meters_kwh"),
             otherKwh = numberOrNull(json.opt("other_kwh"), "other_kwh"),
             overKwh = number(json.opt("over_kwh"), "over_kwh"),
+            inverterKwh = additive(json, "inverter_kwh", null) { raw -> numberOrNull(raw, "inverter_kwh") },
+            unknownKwh = additive(json, "unknown_kwh", numberOrNull(json.opt("other_kwh"), "other_kwh")) { raw -> numberOrNull(raw, "unknown_kwh") },
             loads = list(json.opt("loads"), "loads").map { entry ->
                 val load = obj(entry, "load")
                 HouseLoads.Load(
