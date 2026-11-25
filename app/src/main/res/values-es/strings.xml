@@ -1371,7 +1371,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Batería</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Coche</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Calefacción (estimado)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Cada parte frente a su propia comparación; véase Cómo se calcula más abajo. Una parte que SpotNav no controló queda fuera.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Cada parte frente a su propia comparación, ver Cómo se calcula más abajo.</string>
   <string name="card_hist_house_no_price_source" formatted="false">No hay precio de la electricidad configurado para este sitio, así que no hay coste.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Comparado con los mismos días sin batería y sin sol.</string>
   <string name="card_hist_house_reviewed" formatted="false">El ahorro se ha medido en {days} de los {total} días del periodo.</string>
@@ -1380,14 +1380,12 @@
   <string name="card_hist_house_modes" formatted="false">Los modos de la batería frente al autoconsumo</string>
   <string name="card_hist_house_modes_note" formatted="false">Cada modo planificado con la misma carga y el mismo sol medidos, y lo que la batería hizo de verdad, frente al autoconsumo simple; sumado sobre los días revisados.</string>
   <string name="card_hist_house_days" formatted="false">Día a día</string>
-  <string name="card_hist_house_col_battery" formatted="false">Batería</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Propio</string>
-  <string name="card_hist_house_col_share" formatted="false">Del perfecto</string>
+  <string name="card_hist_house_col_plan" formatted="false">Plan de SpotNav</string>
+  <string name="card_hist_house_col_share" formatted="false">Parte del perfecto</string>
   <string name="card_hist_house_share_partial" formatted="false">incompleto</string>
   <string name="card_hist_house_share_small" formatted="false">muy pequeña</string>
-  <string name="card_hist_house_days_note" formatted="false">Batería: frente a no tener batería. Plan: el plan de SpotNav, propio: la forma de la batería, ambos frente al autoconsumo.</string>
-  <string name="card_hist_house_footnote" formatted="false">Las cifras muestran lo medido y lo que habrían hecho los planes.</string>
+  <string name="card_hist_house_days_note" formatted="false">Cada importe frente al mismo día sin batería, contando lo que quedaba en la batería a medianoche. {real}: lo que la batería hizo realmente. Plan de SpotNav: lo que el plan de SpotNav ({mode}) habría hecho el mismo día, simulado. Perfecto: lo mejor posible a posteriori. Parte del perfecto: {real} dividido por perfecto.</string>
+  <string name="card_hist_house_footnote" formatted="false">Sin batería significa el mismo día con el mismo consumo y el mismo sol, pero sin batería. Es la comparación para «La batería ahorró», la parte del perfecto y la tabla que la sigue.</string>
   <string name="card_hist_house_how" formatted="false">Cómo se calcula</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} ahorró {own} aquí, mientras que «La batería ahorró» en Dinero muestra {battery}. Ambas se comparan con no tener batería, pero aquí solo cuentan los días completos ({days}) y lo que quedaba en la batería a medianoche; en Dinero cuentan todos los días medidos ({batteryDays}) y no lo que quedaba.</string>
   <string name="card_hist_forecast_heading" formatted="false">Errores de previsión</string>
@@ -1395,15 +1393,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Sol</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Sol, corregido</string>
   <string name="card_hist_forecast_soc" formatted="false">Nivel de la batería</string>
-  <string name="card_hist_forecast_note" formatted="false">La media del error medio de cada día revisado (las revisiones se guardan 30 días).</string>
+  <string name="card_hist_forecast_note" formatted="false">Error medio por hora, promediado sobre los días revisados (las revisiones se guardan 30 días).</string>
   <string name="card_hist_forecast_none" formatted="false">No se revisó ninguna previsión en este periodo (las revisiones se guardan 30 días).</string>
   <string name="card_house_compare_in_force" formatted="false">elegido</string>
   <string name="card_house_compare_none" formatted="false">ningún día completo</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Día</string>
   <string name="card_perfect_heading_period" formatted="false">Parte del perfecto</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} del perfecto · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} del perfecto</string>
   <string name="card_perfect_explain" formatted="false">Perfecto: lo mejor posible a posteriori, con las mismas reglas.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfecto: lo mejor posible a posteriori, puede vender (reglas de {mode}).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfecto: lo mejor posible a posteriori, sin vender (nada salió a la red).</string>
@@ -1965,6 +1961,28 @@
   <string name="card_battery_enable_facts_rating" formatted="false">La potencia de carga y descarga de la batería está en entidades desactivadas en {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Lo que el plan de la batería necesita saber de la batería está en entidades desactivadas en {integration}.</string>
   <string name="card_perfect_loss" formatted="false">pérdida {amount}</string>
-  <string name="card_perfect_headline_loss" formatted="false">{name}: pérdida de {amount} frente a no tener batería</string>
   <string name="card_hist_house_share_loss" formatted="false">pérdida</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Real</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">no controlado</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav no controló la batería ni el coche {when}.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav no controló la batería {when}.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav no controló el coche {when}.</string>
+  <string name="card_hist_when_today" formatted="false">hoy</string>
+  <string name="card_hist_when_yesterday" formatted="false">ayer</string>
+  <string name="card_hist_when_day" formatted="false">ese día</string>
+  <string name="card_hist_when_month" formatted="false">este mes</string>
+  <string name="card_hist_when_year" formatted="false">este año</string>
+  <string name="card_hist_house_months" formatted="false">Mes a mes</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">Los {days} de los {total} días del periodo que se han revisado. Las revisiones se guardan 30 días, así que faltan los días más antiguos.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">Los {days} de los {total} días del periodo que se han revisado. Las revisiones se guardan 30 días, así que faltan los días más antiguos.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Cada mes sumado sobre sus días revisados. Las revisiones se guardan 30 días, así que faltan los días más antiguos.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} de {total} días</string>
+  <string name="card_hist_house_col_month" formatted="false">Mes</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfecto</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Cada importe frente al mismo día sin batería, contando lo que quedaba en la batería a medianoche. {real}: lo que la batería hizo realmente. Plan de SpotNav: lo que el plan de SpotNav habría hecho el mismo día, simulado. Perfecto: lo mejor posible a posteriori. Parte del perfecto: {real} dividido por perfecto.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Real: SpotNav controló la batería algunos días y la batería se controló sola los demás.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Error medio por hora, promediado sobre {days} día revisado (las revisiones se guardan 30 días).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Error medio por hora, promediado sobre {days} días revisados (las revisiones se guardan 30 días).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Error medio por hora a lo largo del día.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} ahorró {own} aquí, mientras que «La batería ahorró» en Dinero muestra {battery}. Ambos son frente a no tener batería, pero aquí cuenta lo que quedaba en la batería a medianoche y en Dinero no.</string>
 </resources>

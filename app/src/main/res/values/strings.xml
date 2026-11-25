@@ -1376,7 +1376,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Battery</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Car</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Heat (estimated)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Each part against its own comparison, see How it is counted below. A part SpotNav did not control is left out.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Each part against its own comparison, see How it is counted below.</string>
   <string name="card_hist_house_no_price_source" formatted="false">No electricity price is set up for this site, so there is no cost.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Compared with the same days without a battery and without sun.</string>
   <string name="card_hist_house_reviewed" formatted="false">Savings are measured for {days} of the period\'s {total} days.</string>
@@ -1385,14 +1385,12 @@
   <string name="card_hist_house_modes" formatted="false">The battery\'s ways against self-consumption</string>
   <string name="card_hist_house_modes_note" formatted="false">Each mode planned on the same measured load and sun, and what the battery really did, against plain self-consumption; summed over the reviewed days.</string>
   <string name="card_hist_house_days" formatted="false">Day by day</string>
-  <string name="card_hist_house_col_battery" formatted="false">Battery</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Own</string>
-  <string name="card_hist_house_col_share" formatted="false">Of perfect</string>
+  <string name="card_hist_house_col_plan" formatted="false">SpotNav\'s plan</string>
+  <string name="card_hist_house_col_share" formatted="false">Share of perfect</string>
   <string name="card_hist_house_share_partial" formatted="false">incomplete day</string>
   <string name="card_hist_house_share_small" formatted="false">too small</string>
-  <string name="card_hist_house_days_note" formatted="false">Battery: against no battery. Plan: SpotNav\'s plan, own: the battery\'s own way, both against self-consumption.</string>
-  <string name="card_hist_house_footnote" formatted="false">The figures show what was measured and what the plans would have done.</string>
+  <string name="card_hist_house_days_note" formatted="false">Every amount against the same day with no battery, with what was left in the battery at midnight counted. {real}: what the battery really did. SpotNav\'s plan: what SpotNav\'s plan ({mode}) would have done on the same day, simulated. Perfect: the best possible in hindsight. Share of perfect: {real} over the perfect plan.</string>
+  <string name="card_hist_house_footnote" formatted="false">No battery means the same day with the same use and sun, but no battery. It is the comparison for The battery saved, Share of perfect and the table after it.</string>
   <string name="card_hist_house_how" formatted="false">How it is counted</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} saved {own} here, while \"The battery saved\" under Money says {battery}. Both are against no battery, but here only whole days count ({days}), with what was left in the battery at midnight; Money counts every measured day ({batteryDays}) and not what was left.</string>
   <string name="card_hist_forecast_heading" formatted="false">Forecast errors</string>
@@ -1400,15 +1398,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Sun</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Sun, corrected</string>
   <string name="card_hist_forecast_soc" formatted="false">Battery level</string>
-  <string name="card_hist_forecast_note" formatted="false">The mean of each reviewed day\'s mean error (the reviews are kept 30 days).</string>
+  <string name="card_hist_forecast_note" formatted="false">Mean error per hour, averaged over the reviewed days (the reviews are kept 30 days).</string>
   <string name="card_hist_forecast_none" formatted="false">No forecast was reviewed in this period (the reviews are kept 30 days).</string>
   <string name="card_house_compare_in_force" formatted="false">chosen</string>
   <string name="card_house_compare_none" formatted="false">no full day yet</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Day</string>
   <string name="card_perfect_heading_period" formatted="false">Share of perfect</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} of perfect · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} of perfect</string>
   <string name="card_perfect_explain" formatted="false">Perfect: the best possible in hindsight, with the same rules.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfect: the best possible in hindsight, allowed to sell ({mode} rules).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfect: the best possible in hindsight, without selling (nothing went to the grid).</string>
@@ -1970,6 +1966,28 @@
   <string name="card_battery_enable_facts_rating" formatted="false">The battery\'s rated charge and discharge power is in disabled entities in {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">What the battery plan needs from the battery is in disabled entities in {integration}.</string>
   <string name="card_perfect_loss" formatted="false">loss {amount}</string>
-  <string name="card_perfect_headline_loss" formatted="false">{name}: loss {amount} against no battery</string>
   <string name="card_hist_house_share_loss" formatted="false">loss</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Actual</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">not controlled</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav did not control the battery or the car {when}.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav did not control the battery {when}.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav did not control the car {when}.</string>
+  <string name="card_hist_when_today" formatted="false">today</string>
+  <string name="card_hist_when_yesterday" formatted="false">yesterday</string>
+  <string name="card_hist_when_day" formatted="false">that day</string>
+  <string name="card_hist_when_month" formatted="false">this month</string>
+  <string name="card_hist_when_year" formatted="false">this year</string>
+  <string name="card_hist_house_months" formatted="false">Month by month</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">The {days} of the period\'s {total} day that have been reviewed. Reviews are kept 30 days, so older days are missing.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">The {days} of the period\'s {total} days that have been reviewed. Reviews are kept 30 days, so older days are missing.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Each month summed over its reviewed days. Reviews are kept 30 days, so older days are missing.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} of {total} days</string>
+  <string name="card_hist_house_col_month" formatted="false">Month</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfect</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Every amount against the same day with no battery, with what was left in the battery at midnight counted. {real}: what the battery really did. SpotNav\'s plan: what SpotNav\'s plan would have done on the same day, simulated. Perfect: the best possible in hindsight. Share of perfect: {real} over the perfect plan.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Actual: SpotNav controlled the battery on some days and the battery ran itself on the others.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Mean error per hour, averaged over {days} reviewed day (the reviews are kept 30 days).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Mean error per hour, averaged over {days} reviewed days (the reviews are kept 30 days).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Mean error per hour over the day.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} saved {own} here, while \"The battery saved\" under Money says {battery}. Both are against no battery, but here what was left in the battery at midnight counts, under Money it does not.</string>
 </resources>

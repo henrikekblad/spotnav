@@ -1363,7 +1363,7 @@
   <string name="card_hist_house_spotnav_battery" formatted="false">Batteri</string>
   <string name="card_hist_house_spotnav_car" formatted="false">Bil</string>
   <string name="card_hist_house_spotnav_heat" formatted="false">Värme (uppskattat)</string>
-  <string name="card_hist_house_spotnav_note" formatted="false">Varje del mot sin egen jämförelse, se Så räknas det nedan. En del som SpotNav inte styrde räknas inte med.</string>
+  <string name="card_hist_house_spotnav_note" formatted="false">Varje del mot sin egen jämförelse, se Så räknas det nedan.</string>
   <string name="card_hist_house_no_price_source" formatted="false">Inget elpris är inrättat för anläggningen, så ingen kostnad visas.</string>
   <string name="card_hist_house_baselines_note" formatted="false">Jämfört med samma dygn utan batteri och utan sol.</string>
   <string name="card_hist_house_reviewed" formatted="false">Sparat är mätt för {days} av periodens {total} dygn.</string>
@@ -1372,14 +1372,12 @@
   <string name="card_hist_house_modes" formatted="false">Batteriets lägen mot egenförbrukning</string>
   <string name="card_hist_house_modes_note" formatted="false">Varje läge planerat på samma uppmätta last och sol, och vad batteriet verkligen gjorde, mot ren egenförbrukning; summerat över de granskade dygnen.</string>
   <string name="card_hist_house_days" formatted="false">Dygn för dygn</string>
-  <string name="card_hist_house_col_battery" formatted="false">Batteri</string>
-  <string name="card_hist_house_col_plan" formatted="false">Plan</string>
-  <string name="card_hist_house_col_own" formatted="false">Eget</string>
-  <string name="card_hist_house_col_share" formatted="false">Av perfekt</string>
+  <string name="card_hist_house_col_plan" formatted="false">SpotNav-planen</string>
+  <string name="card_hist_house_col_share" formatted="false">Andel av perfekt</string>
   <string name="card_hist_house_share_partial" formatted="false">ofullständigt dygn</string>
   <string name="card_hist_house_share_small" formatted="false">för liten skillnad</string>
-  <string name="card_hist_house_days_note" formatted="false">Batteri: mot inget batteri. Plan: SpotNavs plan, eget: batteriets eget sätt, båda mot egenförbrukning.</string>
-  <string name="card_hist_house_footnote" formatted="false">Siffrorna visar vad som mättes och vad planerna skulle ha gjort.</string>
+  <string name="card_hist_house_days_note" formatted="false">Alla belopp mot samma dygn utan batteri, med det som fanns kvar i batteriet vid midnatt inräknat. {real}: det batteriet verkligen gjorde. SpotNav-planen: det SpotNavs plan ({mode}) skulle ha gjort samma dygn, simulerat. Perfekt: det bästa möjliga i efterhand. Andel av perfekt: {real} delat med perfekt.</string>
+  <string name="card_hist_house_footnote" formatted="false">Utan batteri betyder samma dygn med samma förbrukning och sol, men inget batteri. Det är jämförelsen för Batteriet sparade, Andel av perfekt och tabellen efter den.</string>
   <string name="card_hist_house_how" formatted="false">Så räknas det</string>
   <string name="card_hist_house_perfect_differs" formatted="false">{name} sparade {own} här, medan Batteriet sparade under Pengar visar {battery}. Båda är mot inget batteri, men här räknas bara hela dygn ({days}) och det som fanns kvar i batteriet vid midnatt; under Pengar räknas alla mätta dygn ({batteryDays}) och inte det som fanns kvar.</string>
   <string name="card_hist_forecast_heading" formatted="false">Prognosfel</string>
@@ -1387,15 +1385,13 @@
   <string name="card_hist_forecast_sun" formatted="false">Sol</string>
   <string name="card_hist_forecast_sun_corrected" formatted="false">Sol, korrigerad</string>
   <string name="card_hist_forecast_soc" formatted="false">Batterinivå</string>
-  <string name="card_hist_forecast_note" formatted="false">Medelvärdet av varje granskat dygns medelfel (granskningarna sparas 30 dygn).</string>
+  <string name="card_hist_forecast_note" formatted="false">Medelfel per timme, i snitt över de granskade dygnen (granskningarna sparas i 30 dygn).</string>
   <string name="card_hist_forecast_none" formatted="false">Ingen prognos granskades under perioden (granskningarna sparas 30 dygn).</string>
   <string name="card_house_compare_in_force" formatted="false">vald</string>
   <string name="card_house_compare_none" formatted="false">inget fullt dygn</string>
   <string name="card_house_compare_spotnav" formatted="false">SpotNav {mode}</string>
   <string name="card_house_days_date" formatted="false">Dag</string>
   <string name="card_perfect_heading_period" formatted="false">Andel av perfekt</string>
-  <string name="card_perfect_headline" formatted="false">{own} {ownShare} av perfekt · {plan} {planShare}</string>
-  <string name="card_perfect_headline_one" formatted="false">{name} {share} av perfekt</string>
   <string name="card_perfect_explain" formatted="false">Perfekt: bästa möjliga i efterhand, med samma regler.</string>
   <string name="card_perfect_explain_sell" formatted="false">Perfekt: bästa möjliga i efterhand, får sälja ({mode}-regler).</string>
   <string name="card_perfect_explain_no_sell" formatted="false">Perfekt: bästa möjliga i efterhand, utan försäljning (inget gick ut på nätet).</string>
@@ -1957,6 +1953,28 @@
   <string name="card_battery_enable_facts_rating" formatted="false">Batteriets laddnings- och urladdningseffekt finns i avstängda entiteter i {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Det batteriplanen behöver veta om batteriet finns i avstängda entiteter i {integration}.</string>
   <string name="card_perfect_loss" formatted="false">förlust {amount}</string>
-  <string name="card_perfect_headline_loss" formatted="false">{name}: förlust {amount} mot inget batteri</string>
   <string name="card_hist_house_share_loss" formatted="false">förlust</string>
+  <string name="card_hist_house_runner_mixed" formatted="false">Verkligt</string>
+  <string name="card_hist_house_spotnav_not_controlled" formatted="false">styrdes inte</string>
+  <string name="card_hist_house_spotnav_none_both" formatted="false">SpotNav styrde inte batteriet eller bilen {when}.</string>
+  <string name="card_hist_house_spotnav_none_battery" formatted="false">SpotNav styrde inte batteriet {when}.</string>
+  <string name="card_hist_house_spotnav_none_car" formatted="false">SpotNav styrde inte bilen {when}.</string>
+  <string name="card_hist_when_today" formatted="false">i dag</string>
+  <string name="card_hist_when_yesterday" formatted="false">i går</string>
+  <string name="card_hist_when_day" formatted="false">den dagen</string>
+  <string name="card_hist_when_month" formatted="false">under månaden</string>
+  <string name="card_hist_when_year" formatted="false">under året</string>
+  <string name="card_hist_house_months" formatted="false">Månad för månad</string>
+  <string name="card_hist_house_days_intro_one" formatted="false">De {days} av periodens {total} dygn som har granskats. Granskningarna sparas i 30 dygn, så äldre dygn saknas.</string>
+  <string name="card_hist_house_days_intro_other" formatted="false">De {days} av periodens {total} dygn som har granskats. Granskningarna sparas i 30 dygn, så äldre dygn saknas.</string>
+  <string name="card_hist_house_days_intro_year" formatted="false">Varje månad summerad över sina granskade dygn. Granskningarna sparas i 30 dygn, så äldre dygn saknas.</string>
+  <string name="card_hist_house_month_days" formatted="false">{days} av {total} dygn</string>
+  <string name="card_hist_house_col_month" formatted="false">Månad</string>
+  <string name="card_hist_house_col_perfect" formatted="false">Perfekt</string>
+  <string name="card_hist_house_days_note_no_mode" formatted="false">Alla belopp mot samma dygn utan batteri, med det som fanns kvar i batteriet vid midnatt inräknat. {real}: det batteriet verkligen gjorde. SpotNav-planen: det SpotNavs plan skulle ha gjort samma dygn, simulerat. Perfekt: det bästa möjliga i efterhand. Andel av perfekt: {real} delat med perfekt.</string>
+  <string name="card_hist_house_days_mixed" formatted="false">Verkligt: SpotNav styrde batteriet vissa dygn och batteriet styrde sig självt de andra.</string>
+  <string name="card_hist_forecast_note_days_one" formatted="false">Medelfel per timme, i snitt över {days} granskat dygn (granskningarna sparas i 30 dygn).</string>
+  <string name="card_hist_forecast_note_days_other" formatted="false">Medelfel per timme, i snitt över {days} granskade dygn (granskningarna sparas i 30 dygn).</string>
+  <string name="card_hist_forecast_note_day" formatted="false">Medelfel per timme under dygnet.</string>
+  <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparade {own} här, medan Batteriet sparade under Pengar visar {battery}. Båda är mot inget batteri, men här räknas det som fanns kvar i batteriet vid midnatt med, under Pengar inte.</string>
 </resources>

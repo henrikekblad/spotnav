@@ -43,7 +43,6 @@ class HouseDetailsTest {
                 is DetailBlock.Bars -> listOf(b.label, b.hint) + b.series.map { it.label } + b.bars.map { it.words }
                 is DetailBlock.Figure -> listOf(b.name, b.value)
                 is DetailBlock.Note -> listOf(b.text)
-                is DetailBlock.Headline -> listOf(b.text)
                 is DetailBlock.Share -> listOfNotNull(b.name, b.inForce, b.figure)
                 is DetailBlock.Table -> b.head + b.rows.flatten()
                 is DetailBlock.Ways -> b.head + b.groups.flatMap { listOf(it.first) + it.second }
@@ -87,6 +86,24 @@ class HouseDetailsTest {
         assertEquals(1960.0, month.saving!!.car!!, 0.0)
         assertEquals(375.0, month.buckets.first { it.key == "2026-11-12" }.ownBattery!!, 0.0)
         assertNull(history("house_alone_year.json").review)
+        // Each day's ways against no battery, who controlled it, and the days SpotNav controlled the car.
+        val last = month.review!!.byDay.last()
+        assertEquals(listOf(925.0, 820.0, 1200.0, 0.0), listOf(last.realVsNone, last.planVsNone, last.perfectVsNone, last.controlled))
+        assertNull(month.review!!.byDay.first().controlled)
+        assertEquals(2, month.saving!!.carControlledDays)
+        assertNull(month.review!!.byMonth)
+        val november = history("villa_year.json").review!!.byMonth!!.single()
+        assertEquals(listOf("2026-11", 13, 15, 77.0), listOf(november.month, november.days, november.monthDays, november.ownShare))
+        // A month key that is no month is no document; a Home Assistant before these fields still reads.
+        fun year() = HaFixtures.json("house_history/villa_year.json")
+        assertTrue(HouseHistoryRead.decode(year().apply { getJSONObject("review").getJSONArray("by_month").getJSONObject(0).put("month", "november") }) is SiteRead.Failed)
+        val old = year().apply {
+            getJSONObject("review").remove("by_month")
+            getJSONObject("saving").remove("car_controlled_days")
+        }
+        val read = (HouseHistoryRead.decode(old) as SiteRead.Read).value
+        assertNull(read.review!!.byMonth)
+        assertNull(read.saving!!.carControlledDays)
     }
 
     // ---------------------------------------------------------------------------------------------- the cost bars
@@ -107,7 +124,7 @@ class HouseDetailsTest {
         assertEquals(30, bars.bars.size)
         val reviewed = bars.bars.first { it.key == "2026-11-05" }
         assertEquals(listOf(HouseDetails.COST to 3342.0, HouseDetails.SAVING to 400.0), reviewed.lanes.single().map { it.series to it.value })
-        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 37 kr, sparat 4,00 kr", reviewed.words)
+        assertEquals("tors 5 nov: kostnad 33 kr, utan batteri 37 kr, sparat 4 kr", reviewed.words)
         assertEquals(listOf("Kostnad", "Sparat av batteriet"), bars.series.map { it.label })
         assertTrue(bars.series.last().hatched)
         assertEquals("37 kr", bars.scale(BarsLayout.extent(bars.bars, emptySet()).top))
@@ -150,7 +167,7 @@ class HouseDetailsTest {
     @Test fun aMonthHasEverySectionInTheCardsOrder() {
         val month = sections(history("villa_month.json"), withHouse = true)
         // The modes against self-consumption stand in only before the first perfect plan.
-        assertEquals(listOf("bars", "perfect", "money", "spotnav-saving", "forecast", "days", "how"), month.map { it.key })
+        assertEquals(listOf("bars", "money", "spotnav-saving", "perfect", "days", "forecast", "how"), month.map { it.key })
         val money = month.section("money")!!
         assertTrue(money.figures()[0].name == "Elkostnad" && money.figures()[0].value == "521 kr")
         assertEquals("Batteriet sparade" to "52 kr", money.figures().first { it.name == "Batteriet sparade" }.let { it.name to it.value })
@@ -169,7 +186,6 @@ class HouseDetailsTest {
     @Test fun aMonthOpensWithTheSharesOfThePerfectPlanSummedAndOneTable() {
         val perfect = sections(history("villa_month.json")).section("perfect")!!
         assertEquals("Andel av perfekt", perfect.title)
-        assertEquals("Batteriets egen styrning 77 % av perfekt · SpotNav Balanserad 74 %", perfect.blocks.filterIsInstance<DetailBlock.Headline>().single().text)
         val notes = perfect.notes()
         assertTrue(notes.contains("Perfekt: bästa möjliga i efterhand, får sälja (Max vinst-regler)."))
         assertTrue(notes.contains("1 ofullständigt dygn räknas inte med."))
@@ -210,7 +226,7 @@ class HouseDetailsTest {
             sections(month.copy(review = month.review!!.copy(perfect = change(perfect)))).section("perfect")!!
         assertTrue(shown { it.copy(rules = "no_sell") }.notes().contains("Perfekt: bästa möjliga i efterhand, utan försäljning (inget gick ut på nätet)."))
         assertTrue(shown { it.copy(rules = "mode") }.notes().contains("Perfekt: bästa möjliga i efterhand, med samma regler."))
-        assertTrue(shown { it }.notes().contains("Det som fanns kvar vid midnatt räknas med dygnets eget pris för en av dygnen, tills nästa dygns priser finns."))
+        assertTrue(shown { it }.notes().contains("Det som fanns kvar vid midnatt räknas med dygnets eget pris för 1 av dygnen, tills nästa dygns priser finns."))
         val clamped = shown { it.copy(clamped = listOf("own"), shares = it.shares + ("own" to 100.0) + ("max_profit" to null)) }
         assertTrue(clamped.notes().contains("Batteriets egen styrning: över 100 %, visas som 100 % (modellens batteri är idealt)."))
         assertEquals("för liten skillnad att jämföra", clamped.blocks.filterIsInstance<DetailBlock.Share>().first { it.name == "SpotNav Max vinst" }.figure)
@@ -256,53 +272,113 @@ class HouseDetailsTest {
         assertTrue(modes.notes().any { it.startsWith("Battericeller") })
         // On a day, before the first perfect plan, the same: and its figures.
         val day = history("villa_day.json") { h -> h.copy(review = h.review!!.copy(perfect = null)) }
-        assertTrue(sections(day).section("modes")!!.figures().first { it.name.startsWith("SpotNav Max vinst") }.value.contains("2,00 kr"))
+        assertTrue(sections(day).section("modes")!!.figures().first { it.name.startsWith("SpotNav Max vinst") }.value.contains("2 kr"))
     }
 
     @Test fun aDayHasItsMidnightNoteItsForecastErrorsAndNoDayByDayList() {
         val day = sections(history("villa_day.json"))
         assertTrue(day.section("perfect")!!.notes().contains("Räknat med det som fanns kvar i batteriet vid midnatt."))
         val forecast = day.section("forecast")!!
-        assertEquals("Husets last" to "±0,42 kW (1 d)", forecast.figures().first().let { it.name to it.value })
+        // The days are said once, in the note: a single day's own.
+        assertEquals("Husets last" to "±0,42 kW", forecast.figures().first().let { it.name to it.value })
         assertEquals(listOf("Husets last", "Sol", "Sol, korrigerad", "Batterinivå"), forecast.figures().map { it.name })
-        assertTrue(forecast.notes().single().startsWith("Medelvärdet av varje granskat dygns medelfel"))
+        assertEquals("Medelfel per timme under dygnet.", forecast.notes().single())
         assertNull(day.section("days"))
         // Without any forecast reviewed, the sentence says so.
         val none = sections(history("villa_month.json") { it.copy(forecast = HouseHistory.Forecast(null, null, null, null)) }).section("forecast")!!
         assertTrue(none.figures().isEmpty() && none.notes().single().startsWith("Ingen prognos granskades"))
     }
 
+    @Test fun theForecastsDaysAreSaidOnceWhereTheyAgreeAndPerRowWhereTheyDoNot() {
+        val answer = history("villa_month.json")
+        val same = sections(answer).section("forecast")!!
+        assertEquals("±0,50 kW", same.figures().first { it.name == "Husets last" }.value)
+        assertEquals("Medelfel per timme, i snitt över 2 granskade dygn (granskningarna sparas i 30 dygn).", same.notes().single())
+        val apart = sections(answer.copy(forecast = answer.forecast.copy(sun = HouseHistory.ForecastError(0.2, 1)))).section("forecast")!!
+        assertEquals("±0,20 kWh på 1 dygn", apart.figures().first { it.name == "Sol" }.value)
+        assertEquals("Medelfel per timme, i snitt över de granskade dygnen (granskningarna sparas i 30 dygn).", apart.notes().single())
+    }
+
     @Test fun aMonthHasADayByDayTableWithTheShareAndWhyThereIsNone() {
         val days = sections(history("villa_month.json")).section("days")!!
         val table = days.blocks.filterIsInstance<DetailBlock.Table>().single()
-        assertEquals(listOf("Dag", "Batteri", "Plan", "Eget", "Av perfekt"), table.head)
+        assertEquals(listOf("Dag", "Batteriets egen styrning", "SpotNav-planen", "Perfekt", "Andel av perfekt"), table.head)
         assertEquals(13, table.rows.size)
         assertEquals(5, table.rows.first().size)
-        fun share(date: String) = table.rows.first { it[0].endsWith(date.drop(8).trimStart('0').let { d -> " $d nov" }) || it[0].contains(" ${date.takeLast(2).trimStart('0')} nov") }.last()
-        assertEquals("–", share("2026-11-03"))
-        assertEquals("78 %", share("2026-11-06"))
+        fun row(day: Int) = table.rows.first { it[0].endsWith(" $day nov") }
+        assertEquals("–", row(3).last())
+        assertEquals("78 %", row(6).last())
         // A day under 90 % measured, and one whose perfect plan saved under 5 kr, say why; muted.
-        assertEquals("ofullständigt dygn", share("2026-11-07"))
-        assertEquals("för liten skillnad", share("2026-11-09"))
+        assertEquals("ofullständigt dygn", row(7).last())
+        assertEquals("för liten skillnad", row(9).last())
         assertTrue(table.mutedCells.isNotEmpty())
-        assertTrue(days.notes().single().startsWith("Batteri: mot inget batteri."))
+        // One rule for the table's amounts (whole kr, as some are 10 kr or more); the perfect plan only where worked out.
+        assertEquals(listOf("9 kr", "8 kr", "11 kr", "77 %"), row(10).drop(1))
+        assertEquals(listOf("4 kr", "5 kr", "–", "–"), row(4).drop(1))
+        // Which days these are, and what every column is measured against.
+        assertEquals("De 13 av periodens 15 dygn som har granskats. Granskningarna sparas i 30 dygn, så äldre dygn saknas.", days.notes().first())
+        assertTrue(days.notes()[1], Regex("^Alla belopp mot samma dygn utan batteri.*SpotNavs plan \\(Balanserad\\)").containsMatchIn(days.notes()[1]))
+    }
+
+    @Test fun theRealWayIsNamedByWhoRanTheBattery() {
+        val answer = history("villa_month.json")
+        fun head(h: HouseHistory, withHouse: Boolean = false) = sections(h, withHouse = withHouse).section("days")!!.blocks.filterIsInstance<DetailBlock.Table>().single().head[1]
+        // The battery ran itself: its optimiser's name where the brand is known (the house's Sigenergy), else its own control.
+        assertEquals("Sigenergy AI", head(answer, withHouse = true))
+        assertEquals("Batteriets egen styrning", head(answer))
+        fun by(share: (java.time.LocalDate) -> Double?) = answer.copy(review = answer.review!!.copy(byDay = answer.review!!.byDay.map { it.copy(controlled = share(it.date)) }))
+        assertEquals("SpotNav", head(by { 1.0 }))
+        val mixed = by { if (it < java.time.LocalDate.parse("2026-11-10")) 1.0 else 0.0 }
+        assertEquals("Verkligt", head(mixed))
+        assertEquals("Verkligt: SpotNav styrde batteriet vissa dygn och batteriet styrde sig självt de andra.", sections(mixed).section("days")!!.notes().last())
+        // Small amounts only: two decimals for all of them.
+        val small = by { 0.0 }.let { h -> h.copy(review = h.review!!.copy(byDay = h.review!!.byDay.map { it.copy(realVsNone = 35.0, planVsNone = -700.0, perfectVsNone = 900.0) })) }
+        val cells = sections(small).section("days")!!.blocks.filterIsInstance<DetailBlock.Table>().single().rows.first { it[0].endsWith(" 10 nov") }
+        assertEquals(listOf("0,35 kr", "-7,00 kr", "9,00 kr"), cells.subList(1, 4))
+        // The share's own section names the real way the same.
+        assertEquals("Sigenergy AI", sections(answer, withHouse = true).section("perfect")!!.blocks.filterIsInstance<DetailBlock.Share>().first().name)
+    }
+
+    @Test fun aYearHasAMonthARowSayingHowManyOfItsDaysAreReviewed() {
+        val answer = history("villa_year.json")
+        val part = sections(answer).section("days")!!
+        assertEquals("Månad för månad", part.title)
+        val table = part.blocks.filterIsInstance<DetailBlock.Table>().single()
+        assertEquals("Månad", table.head[0])
+        assertEquals(listOf(listOf("november\n13 av 15 dygn", "92 kr", "93 kr", "104 kr", "77 %")), table.rows)
+        val whole = answer.copy(review = answer.review!!.copy(byMonth = answer.review!!.byMonth!!.map { it.copy(monthDays = it.days) }))
+        assertEquals("november", sections(whole).section("days")!!.blocks.filterIsInstance<DetailBlock.Table>().single().rows.single()[0])
+        assertTrue(part.notes().first().startsWith("Varje månad summerad över sina granskade dygn."))
     }
 
     @Test fun theSavingsSectionHasTheTotalAndARowPerPartOverTheDaysThatHaveIt() {
         val saving = sections(history("villa_month.json")).section("spotnav-saving")!!
-        assertEquals(listOf("Totalt", "Bil", "Värme (uppskattat)"), saving.figures().map { it.name })
+        assertEquals(listOf("Totalt", "Bil", "Värme (uppskattat)", "Batteri"), saving.figures().map { it.name })
         assertEquals("21 kr", saving.figures()[0].value)
         assertEquals("20 kr", saving.figures()[1].value)
-        // The heat on two of the seven days, said to be an estimate; no battery row (its own control).
+        // The heat on two of the seven days, said to be an estimate; the battery under its own control said so, not 0 kr.
         assertTrue(saving.figures()[2].value.endsWith("2 dygn"))
-        assertNull(sections(history("villa_month.json") { it.copy(saving = null) }).section("spotnav-saving"))
+        assertEquals("styrdes inte", saving.figures()[3].value)
+        assertTrue(saving.figures()[3].muted)
+        // No saving and no battery: no section.
+        assertNull(sections(history("villa_month.json") { it.copy(saving = null, review = null, ownControl = null) }).section("spotnav-saving"))
+        // A car SpotNav did not control is said so; one part alone has no total.
+        val month = history("villa_month.json")
+        val idleCar = sections(month.copy(saving = month.saving!!.copy(carControlledDays = 0, heat = null))).section("spotnav-saving")!!
+        assertEquals("SpotNav styrde inte batteriet eller bilen under månaden.", idleCar.notes().single())
+        val one = sections(month.copy(saving = month.saving!!.copy(heat = null))).section("spotnav-saving")!!
+        assertEquals(listOf("Bil", "Batteri"), one.figures().map { it.name })
+        // Yesterday, in a day's words.
+        val day = history("villa_day.json")
+        val yesterday = day.copy(today = day.date.plusDays(1), saving = day.saving?.copy(battery = null, car = null, heat = null) ?: HouseHistory.Saving(0.0, null, null, null, 0, 0, 0, 1))
+        assertEquals("SpotNav styrde inte batteriet i går.", sections(yesterday).section("spotnav-saving")!!.notes().single())
     }
 
     @Test fun lastItSaysHowItIsCountedWhatSpotNavsSavingIsComparedWithAndHowTheFlowIsAllocated() {
         val answer = history("villa_month.json")
         fun how(h: HouseHistory, withHouse: Boolean = false) = sections(h, withHouse = withHouse).section("how")!!.notes()
         val lines = how(answer)
-        assertEquals("Siffrorna visar vad som mättes och vad planerna skulle ha gjort.", lines[0])
+        assertTrue(lines[0], lines[0].startsWith("Utan batteri betyder samma dygn med samma förbrukning och sol"))
         assertTrue(lines.contains("Det SpotNav sparade jämförs med:"))
         // The battery ran under its own control: said, and no line for SpotNav's own battery part.
         assertTrue(lines.any { it.startsWith("Batteri: det styrdes av sig självt") })

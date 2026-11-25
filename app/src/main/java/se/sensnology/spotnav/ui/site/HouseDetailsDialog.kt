@@ -108,12 +108,6 @@ internal class HouseDetailsDialog(
         is DetailBlock.Bars -> bars(section, block)
         is DetailBlock.Figure -> row(block.name, block.value, block.muted)
         is DetailBlock.Note -> note(block.text)
-        is DetailBlock.Headline -> TextView(scope.context).apply {
-            textSize = 15f
-            setTextColor(scope.dark)
-            typeface = MEDIUM
-            this.text = block.text
-        }
         is DetailBlock.Share -> share(block)
         is DetailBlock.Table -> table(block)
         is DetailBlock.Ways -> ways(block)
