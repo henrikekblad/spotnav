@@ -166,6 +166,7 @@ internal class ScreenShell(
      * panel puts its own chrome back through [showPanel].
      */
     fun begin() {
+        closeOverlay()
         generation++
         pages.reset()
         scrollView.setOnScrollChangeListener(null as View.OnScrollChangeListener?)
@@ -185,6 +186,49 @@ internal class ScreenShell(
         pages.reset()
         io.shutdownNow()
         reloadPrices = null
+    }
+
+    private var overlay: View? = null
+    private var overlayClosed: (() -> Unit)? = null
+    private var topBefore = View.GONE
+
+    /** Told when a details screen opens or closes, so the Activity keeps Android's Back for it exactly while it is open. */
+    var onOverlayChanged: ((Boolean) -> Unit)? = null
+
+    /**
+     * A page's full-screen details, drawn like a panel (the header with Back and [title], the body scrolling) over the
+     * main screen, whose pages stay as they were underneath: closing it ([closeOverlay], Back) returns to the page where
+     * it was. [closed] runs when it goes, however it goes.
+     */
+    fun showOverlay(title: String, body: View, closed: () -> Unit) {
+        closeOverlay()
+        topBefore = pages.top.visibility
+        pages.top.visibility = View.GONE
+        pages.pager.visibility = View.GONE
+        chrome.removeAllViews()
+        chrome.visibility = View.VISIBLE
+        addPanelHeader(chrome, title, back)
+        val scroll = ScrollView(activity).apply { addView(body) }
+        overlay = scroll
+        overlayClosed = closed
+        root.addView(scroll, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        onOverlayChanged?.invoke(true)
+    }
+
+    /** Take the details screen away; false when none was open (so Back goes on to its other meanings). */
+    fun closeOverlay(): Boolean {
+        val shown = overlay ?: return false
+        val closed = overlayClosed
+        overlay = null
+        overlayClosed = null
+        root.removeView(shown)
+        chrome.removeAllViews()
+        chrome.visibility = View.GONE
+        pages.top.visibility = topBefore
+        pages.pager.visibility = View.VISIBLE
+        onOverlayChanged?.invoke(false)
+        closed?.invoke()
+        return true
     }
 
     /** Show a panel: */

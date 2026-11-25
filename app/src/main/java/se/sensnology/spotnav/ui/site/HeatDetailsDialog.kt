@@ -1,22 +1,21 @@
 package se.sensnology.spotnav.ui.site
 
-import android.app.AlertDialog
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.ha.heat.HeatHistory
 import se.sensnology.spotnav.ha.session.HaSession
+import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.ViewScope
 import java.time.LocalDate
 import java.util.Locale
 
 /**
- * The heat details sheet, opened from the "i" in the heat page's header (the card's history dialog): the page's own
+ * The heat details screen (a full screen like Settings, not a dialog), opened from the "i" in the heat page's header (the card's history dialog): the page's own
  * period picker over a day, month or year (a month to begin with, as the card), and under it every section open:
  * the use in figures, kWh per degree day with its trend, comfort, the shadow comparison, a day's review, how well the
  * house model fits, and a day's hot-water runs ([HeatDetailsModel]). Read when opened and when the period changes, and
@@ -24,6 +23,7 @@ import java.util.Locale
  */
 internal class HeatDetailsDialog(
     private val scope: ViewScope,
+    private val shell: ScreenShell,
     private val session: HaSession,
     private val text: SiteText,
     private val colours: SiteColours,
@@ -31,7 +31,7 @@ internal class HeatDetailsDialog(
     private val today: () -> LocalDate
 ) {
     private val words = text.words
-    private var dialog: AlertDialog? = null
+    private var open = false
     private val main = Handler(Looper.getMainLooper())
     private var store: HeatHistoryStore? = null
     private var choice = PeriodChoice(HistoryPeriod.MONTH)
@@ -39,7 +39,7 @@ internal class HeatDetailsDialog(
     private var picker: PeriodPickerView? = null
     private val minute = object : Runnable {
         override fun run() {
-            if (dialog?.isShowing != true) return
+            if (!open) return
             if (choice.date == null) store?.request(choice, force = true)
             main.postDelayed(this, MINUTE_MS)
         }
@@ -64,12 +64,11 @@ internal class HeatDetailsDialog(
         column.addView(bar, wide())
         column.addView(results, wide().apply { topMargin = scope.dp(8) })
         content = results
-        dialog = AlertDialog.Builder(scope.context)
-            .setTitle(words.say("hist.title.heat"))
-            .setView(ScrollView(scope.context).apply { addView(column) })
-            .setPositiveButton(scope.t(android.R.string.ok), null)
-            .setOnDismissListener { main.removeCallbacks(minute) }
-            .create().also { it.show(); it.useFullWidth() }
+        open = true
+        shell.showOverlay(words.say("hist.title.heat"), column) {
+            open = false
+            main.removeCallbacks(minute)
+        }
         held.request(choice)
         render()
         main.postDelayed(minute, MINUTE_MS)
@@ -77,13 +76,12 @@ internal class HeatDetailsDialog(
 
     fun dismiss() {
         main.removeCallbacks(minute)
-        dialog?.dismiss()
-        dialog = null
+        if (open) shell.closeOverlay()
     }
 
     private fun render() {
         val results = content ?: return
-        if (dialog?.isShowing != true) return
+        if (!open) return
         picker?.show(choice, today())
         results.removeAllViews()
         when (val loaded = store?.history(choice)) {

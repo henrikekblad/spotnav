@@ -18,6 +18,7 @@ import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.session.HaSession
+import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.ViewScope
 import se.sensnology.spotnav.ui.common.cardHeading
 import se.sensnology.spotnav.ui.common.cardTitle
@@ -41,6 +42,7 @@ import java.time.Instant
  */
 internal class HousePage(
     scope: ViewScope,
+    shell: ScreenShell,
     private val session: HaSession,
     private val memory: SiteMemory,
     private val preferences: SitePreferences,
@@ -79,7 +81,7 @@ internal class HousePage(
     }
 
     private val picker = PeriodPickerView(this, words, locale) { periodChosen(it) }
-    private val details = HouseDetailsDialog(this, history, text, colours, locale, { memory.house }, ::todayDate, ::periodChosen)
+    private val details = HouseDetailsDialog(this, shell, history, text, colours, locale, { memory.house }, ::todayDate, ::periodChosen)
     private val periodRow = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(14), 0, dp(14), 0)
@@ -196,7 +198,6 @@ internal class HousePage(
     }
 
     override fun setInView(inView: Boolean) {
-        if (!inView) details.dismiss()
         schematic.running = inView
         if (inView) planBox.cameIntoView()
         if (inView) polling.start() else polling.stop()

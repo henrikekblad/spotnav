@@ -358,8 +358,8 @@ internal class ChargingScreen(
         val held = session ?: return
         shell.pages.offer(id, kinds) { kind ->
             when (kind) {
-                PageKind.HOUSE -> HousePage(this, held, shell.pages.memory(id), SitePreferences.of(context), id) { pairedDashboard?.chargerId }
-                PageKind.HEAT -> HeatPage(this, held, shell.pages.memory(id), SitePreferences.of(context), id, resolvedChargerProfile?.baseUrl)
+                PageKind.HOUSE -> HousePage(this, shell, held, shell.pages.memory(id), SitePreferences.of(context), id) { pairedDashboard?.chargerId }
+                PageKind.HEAT -> HeatPage(this, shell, held, shell.pages.memory(id), SitePreferences.of(context), id, resolvedChargerProfile?.baseUrl)
                 else -> error("no page for $kind")
             }
         }

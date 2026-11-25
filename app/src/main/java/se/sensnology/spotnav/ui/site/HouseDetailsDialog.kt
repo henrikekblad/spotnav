@@ -1,28 +1,28 @@
 package se.sensnology.spotnav.ui.site
 
-import android.app.AlertDialog
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import se.sensnology.spotnav.ha.house.House
 import se.sensnology.spotnav.ha.house.HouseHistory
+import se.sensnology.spotnav.ui.ScreenShell
 import se.sensnology.spotnav.ui.common.ViewScope
 import java.time.LocalDate
 import java.util.Locale
 
 /**
- * The house's details sheet, opened from the "i" in the house page's header (the card's history dialog): the same period
+ * The house's details screen (a full screen like Settings, not a dialog), opened from the "i" in the house page's header (the card's history dialog): the same period
  * picker as the boxes, which it shares ([HouseHistoryStore.choice]: a period chosen here is the page's too), and under it
  * every section of [HouseDetails] always open, never behind a "Show details". It reads the period through the page's
  * store, so a newer answer redraws it ([refresh]).
  */
 internal class HouseDetailsDialog(
     private val scope: ViewScope,
+    private val shell: ScreenShell,
     private val store: HouseHistoryStore,
     private val text: SiteText,
     private val colours: SiteColours,
@@ -33,12 +33,12 @@ internal class HouseDetailsDialog(
     private val onPeriod: (PeriodChoice) -> Unit
 ) {
     private val words = text.words
-    private var dialog: AlertDialog? = null
+    private var open = false
     private val picker = PeriodPickerView(scope, words, locale) { onPeriod(it) }
     private val content = LinearLayout(scope.context).apply { orientation = LinearLayout.VERTICAL }
     private var selected = HashMap<String, String?>()
 
-    val isOpen: Boolean get() = dialog?.isShowing == true
+    val isOpen: Boolean get() = open
 
     fun open() {
         if (isOpen) return
@@ -50,18 +50,14 @@ internal class HouseDetailsDialog(
             addView(picker, wide())
             addView(content, wide().apply { topMargin = scope.dp(8) })
         }
-        dialog = AlertDialog.Builder(scope.context)
-            .setTitle(words.say("hist.title.house"))
-            .setView(ScrollView(scope.context).apply { addView(body) })
-            .setPositiveButton(scope.t(android.R.string.ok), null)
-            .create().also { it.show(); it.useFullWidth() }
+        open = true
+        shell.showOverlay(words.say("hist.title.house"), body) { open = false }
         store.request(store.choice, needsHistory = true, force = false)
         refresh()
     }
 
     fun dismiss() {
-        dialog?.dismiss()
-        dialog = null
+        if (open) shell.closeOverlay()
     }
 
     /** The store has a newer answer, or the period moved: draw the sheet again. */
