@@ -1403,7 +1403,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
   <string name="card_perfect_provisional_other" formatted="false">Wat er om middernacht over was, telt voor {days} van de dagen tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
   <string name="card_perfect_provisional_day" formatted="false">Wat er om middernacht over was, telt tegen de eigen prijs van die dag, tot de prijzen van de volgende dag er zijn.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: buiten 0–100 %, getoond bij de dichtstbijzijnde grens (een verlies als 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: boven 100 %, getoond als 100 % (de batterij van het model is ideaal).</string>
   <string name="card_perfect_nothing" formatted="false">te klein verschil om te vergelijken</string>
   <string name="card_perfect_partial_day" formatted="false">Onvolledige dag: minder dan 90 % van de dag gemeten, dus geen vergelijking.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} onvolledige dag telt niet mee.</string>
@@ -1956,4 +1956,7 @@
   <string name="card_battery_enable_facts_both" formatted="false">De grootte en het laagste niveau van de batterij staan in uitgeschakelde entiteiten in {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">Het laad- en ontlaadvermogen van de batterij staat in uitgeschakelde entiteiten in {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Wat het batterijplan over de batterij moet weten, staat in uitgeschakelde entiteiten in {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">verlies {amount}</string>
+  <string name="card_perfect_headline_loss" formatted="false">{name}: verlies {amount} tegenover geen batterij</string>
+  <string name="card_hist_house_share_loss" formatted="false">verlies</string>
 </resources>

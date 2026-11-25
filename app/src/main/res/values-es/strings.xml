@@ -1411,7 +1411,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Lo que quedaba a medianoche se cuenta al precio del propio día en {days} de los días, hasta que lleguen los precios del día siguiente.</string>
   <string name="card_perfect_provisional_other" formatted="false">Lo que quedaba a medianoche se cuenta al precio del propio día en {days} de los días, hasta que lleguen los precios del día siguiente.</string>
   <string name="card_perfect_provisional_day" formatted="false">Lo que quedaba a medianoche se cuenta al precio del propio día, hasta que lleguen los precios del día siguiente.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: fuera de 0–100 %, se muestra en el límite más cercano (una pérdida como 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: por encima del 100 %, se muestra como 100 % (la batería del modelo es ideal).</string>
   <string name="card_perfect_nothing" formatted="false">diferencia demasiado pequeña para comparar</string>
   <string name="card_perfect_partial_day" formatted="false">Día incompleto: se midió menos del 90 % del día, así que no se compara.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} día incompleto no se cuenta.</string>
@@ -1964,4 +1964,7 @@
   <string name="card_battery_enable_facts_both" formatted="false">El tamaño y el nivel mínimo de la batería están en entidades desactivadas de {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">La potencia de carga y descarga de la batería está en entidades desactivadas en {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Lo que el plan de la batería necesita saber de la batería está en entidades desactivadas en {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">pérdida {amount}</string>
+  <string name="card_perfect_headline_loss" formatted="false">{name}: pérdida de {amount} frente a no tener batería</string>
+  <string name="card_hist_house_share_loss" formatted="false">pérdida</string>
 </resources>

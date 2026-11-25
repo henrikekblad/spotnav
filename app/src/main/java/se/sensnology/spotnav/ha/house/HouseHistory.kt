@@ -126,7 +126,10 @@ internal data class HouseHistory(
 
     data class ReviewDay(
         val date: LocalDate, val batterySaving: Double?, val planSaving: Double, val ownSaving: Double,
-        /** The day's share of its perfect plan; `null` without one, with [shareNote] (`partial` or `small`) saying why. */
+        /**
+         * The day's share of its perfect plan; `null` without one, with [shareNote] (`partial` or `small`) saying why;
+         * [shareNote] `loss`: the battery lost money against no battery that day.
+         */
         val ownShare: Double?, val planShare: Double?, val shareNote: String?
     )
 
@@ -225,6 +228,9 @@ internal object HouseHistoryRead {
         objOrNull(raw, "forecast.$what")?.let { HouseHistory.ForecastError(number(it.opt("mae"), "forecast.$what.mae"), count(it.opt("days"), "forecast.$what.days")) }
     }
 
+    /** Why a day has no share of its perfect plan, as far as the sheet has words for it. */
+    private val SHARE_NOTES = setOf("partial", "small", "loss")
+
     /** The ways a perfect plan is compared with: what happened, and the battery's modes. */
     private val WAYS = listOf("own", "self_consumption", "balanced", "max_profit")
 
@@ -252,7 +258,7 @@ internal object HouseHistoryRead {
                     ownShare = additive(day, "own_share", null) { numberOrNull(it, "day.own_share") },
                     planShare = additive(day, "plan_share", null) { numberOrNull(it, "day.plan_share") },
                     // A reason a newer Home Assistant names is shown as none.
-                    shareNote = additive(day, "share_note", null) { textOrNull(it, "day.share_note")?.takeIf { note -> note == "partial" || note == "small" } }
+                    shareNote = additive(day, "share_note", null) { textOrNull(it, "day.share_note")?.takeIf { note -> note in SHARE_NOTES } }
                 )
             },
             perfect = additive(json, "perfect", null) { objOrNull(it, "review.perfect")?.let(::perfect) }

@@ -1411,7 +1411,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Ce qui restait à minuit est compté au prix du jour même pour {days} des jours, jusqu\'à ce que les prix du jour suivant soient connus.</string>
   <string name="card_perfect_provisional_other" formatted="false">Ce qui restait à minuit est compté au prix du jour même pour {days} des jours, jusqu\'à ce que les prix du jour suivant soient connus.</string>
   <string name="card_perfect_provisional_day" formatted="false">Ce qui restait à minuit est compté au prix du jour même, jusqu\'à ce que les prix du jour suivant soient connus.</string>
-  <string name="card_perfect_clamped" formatted="false">{names} : hors de 0–100 %, affiché à la limite la plus proche (une perte comme 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names} : au-dessus de 100 %, affiché à 100 % (la batterie du modèle est idéale).</string>
   <string name="card_perfect_nothing" formatted="false">écart trop faible pour comparer</string>
   <string name="card_perfect_partial_day" formatted="false">Journée incomplète : moins de 90 % de la journée mesurée, elle n\'est donc pas comparée.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} journée incomplète n\'est pas comptée.</string>
@@ -1964,4 +1964,7 @@
   <string name="card_battery_enable_facts_both" formatted="false">La taille et le niveau minimal de la batterie se trouvent dans des entités désactivées de {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">La puissance de charge et de décharge de la batterie se trouve dans des entités désactivées dans {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Ce que le plan de batterie doit savoir de la batterie se trouve dans des entités désactivées dans {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">perte {amount}</string>
+  <string name="card_perfect_headline_loss" formatted="false">{name} : perte de {amount} par rapport à aucune batterie</string>
+  <string name="card_hist_house_share_loss" formatted="false">perte</string>
 </resources>

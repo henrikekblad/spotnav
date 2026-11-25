@@ -259,12 +259,27 @@ internal object HouseDetails {
 
     private fun onlyPartial(perfect: HouseHistory.Perfect) = perfect.days == 0 || perfect.saving == null
 
-    private fun perfectHeadline(text: SiteText, perfect: HouseHistory.Perfect): String? {
+    /** Whether a way lost money against no battery: its share is then no share ("0 %") but a loss with its amount. */
+    private fun lost(perfect: HouseHistory.Perfect, way: String): Boolean = (perfect.savings[way] ?: 0.0) < 0
+
+    /** A way's figure beside its bar: its share, or "förlust 47 kr" where it lost money against no battery. */
+    private fun shareText(text: SiteText, perfect: HouseHistory.Perfect, way: String, value: Double, money: House.Money?): String =
+        if (lost(perfect, way)) text.words.say("perfect.loss", "amount" to wholeMoney(text, Math.abs(perfect.savings[way]!!), money)) else text.percent(value)
+
+    /**
+     * "Sigenergy AI 82 % av perfekt · SpotNav Balanserad 88 %"; a way that lost money against no battery says so with
+     * its amount ("Sigenergy AI: förlust 47 kr mot inget batteri"); `null` when neither has a share.
+     */
+    private fun perfectHeadline(text: SiteText, perfect: HouseHistory.Perfect, money: House.Money?): String? {
         val own = perfect.shares["own"]
         val mode = WAYS.firstOrNull { it != "own" && it == perfect.mode }
         val plan = mode?.let { perfect.shares[it] }
         val words = text.words
+        fun part(way: String, value: Double): String =
+            if (lost(perfect, way)) words.say("perfect.headlineLoss", "name" to wayName(text, way), "amount" to wholeMoney(text, Math.abs(perfect.savings[way]!!), money))
+            else words.say("perfect.headlineOne", "name" to wayName(text, way), "share" to text.percent(value))
         if (own != null && mode != null && plan != null) {
+            if (lost(perfect, "own") || lost(perfect, mode)) return "${part("own", own)} · ${part(mode, plan)}"
             return words.say("perfect.headline", "own" to wayName(text, "own"), "ownShare" to text.percent(own), "plan" to wayName(text, mode), "planShare" to text.percent(plan))
         }
         val (way, value) = when {
@@ -272,10 +287,10 @@ internal object HouseDetails {
             mode != null && plan != null -> mode to plan
             else -> return null
         }
-        return words.say("perfect.headlineOne", "name" to wayName(text, way), "share" to text.percent(value))
+        return part(way, value)
     }
 
-    private fun perfectRows(text: SiteText, perfect: HouseHistory.Perfect, inForce: String?): List<DetailBlock> {
+    private fun perfectRows(text: SiteText, perfect: HouseHistory.Perfect, inForce: String?, money: House.Money?): List<DetailBlock> {
         if (onlyPartial(perfect)) return emptyList()
         val words = text.words
         return order(perfect.mode).mapNotNull { way ->
@@ -285,7 +300,7 @@ internal object HouseDetails {
             DetailBlock.Share(
                 name = wayName(text, way), inForce = if (way == inForce) words.say("house.compare.inForce") else null,
                 percent = value, muted = value == null,
-                figure = if (value != null) text.percent(value) else words.say(if (ran) "perfect.nothing" else "house.compare.none")
+                figure = if (value != null) shareText(text, perfect, way, value, money) else words.say(if (ran) "perfect.nothing" else "house.compare.none")
             )
         }
     }
@@ -307,7 +322,8 @@ internal object HouseDetails {
             else words.say("perfect.provisional.${text.form(perfect.provisional)}", "days" to text.numberWord(perfect.provisional))
         }
         if (perfect.partial > 0) notes += words.say("perfect.partial.${text.form(perfect.partial)}", "days" to perfect.partial.toString())
-        val clamped = perfect.clamped.filter { it in WAYS }
+        // Clamped at 100 % only: a way clamped at 0 % lost money and says so with its amount in its row.
+        val clamped = perfect.clamped.filter { it in WAYS && !lost(perfect, it) }
         if (clamped.isNotEmpty()) notes += words.say("perfect.clamped", "names" to clamped.joinToString(", ") { wayName(text, it) })
         return notes.map { DetailBlock.Note(it) }
     }
@@ -354,8 +370,8 @@ internal object HouseDetails {
         if (reviewed == null || !hasPerfect(perfect) || onlyPartial(perfect!!)) return null
         val words = text.words
         val blocks = mutableListOf<DetailBlock>()
-        perfectHeadline(text, perfect)?.let { blocks += DetailBlock.Headline(it) }
-        blocks += perfectRows(text, perfect, reviewed.mode)
+        perfectHeadline(text, perfect, answer.money)?.let { blocks += DetailBlock.Headline(it) }
+        blocks += perfectRows(text, perfect, reviewed.mode, answer.money)
         // The figures first, then every word about them together.
         val table = perfectTable(text, perfect, answer.money)
         table?.let { blocks += it }
@@ -443,6 +459,7 @@ internal object HouseDetails {
                 if (shares) {
                     add(
                         when {
+                            day.shareNote == "loss" -> words.say("hist.house.share.loss")
                             day.ownShare != null -> text.percent(day.ownShare)
                             day.shareNote == null -> "–"
                             else -> words.say("hist.house.share.${day.shareNote}").also { muted += row to 4 }

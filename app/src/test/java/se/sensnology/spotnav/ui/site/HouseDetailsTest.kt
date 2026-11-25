@@ -212,12 +212,32 @@ class HouseDetailsTest {
         assertTrue(shown { it.copy(rules = "mode") }.notes().contains("Perfekt: bästa möjliga i efterhand, med samma regler."))
         assertTrue(shown { it }.notes().contains("Det som fanns kvar vid midnatt räknas med dygnets eget pris för en av dygnen, tills nästa dygns priser finns."))
         val clamped = shown { it.copy(clamped = listOf("own"), shares = it.shares + ("own" to 100.0) + ("max_profit" to null)) }
-        assertTrue(clamped.notes().contains("Batteriets egen styrning: utanför 0–100 %, visas vid närmaste gräns (en förlust som 0 %)."))
+        assertTrue(clamped.notes().contains("Batteriets egen styrning: över 100 %, visas som 100 % (modellens batteri är idealt)."))
         assertEquals("för liten skillnad att jämföra", clamped.blocks.filterIsInstance<DetailBlock.Share>().first { it.name == "SpotNav Max vinst" }.figure)
         // A way that did not run on these days has no bar and no block; no figure of the battery's own, no note on it.
         val none = shown { it.copy(savings = it.savings + ("max_profit" to null) + ("own" to null), shares = it.shares + ("max_profit" to null) + ("own" to null)) }
         assertNull(none.blocks.filterIsInstance<DetailBlock.Ways>().single().groups.firstOrNull { it.first == "SpotNav Max vinst" })
         assertFalse(none.notes().any { it.contains("sparade") && it.contains("här, medan") })
+    }
+
+    @Test fun aWayThatLostMoneySaysItsLossNotZeroPercentAndIsNoClampedShare() {
+        val month = history("villa_month.json")
+        val perfect = month.review!!.perfect!!
+        val lost = perfect.copy(savings = perfect.savings + ("own" to -4720.0), shares = perfect.shares + ("own" to 0.0), clamped = listOf("own"))
+        val shown = sections(month.copy(review = month.review!!.copy(perfect = lost))).section("perfect")!!
+        assertEquals("förlust 47 kr", shown.blocks.filterIsInstance<DetailBlock.Share>().first { it.name == "Batteriets egen styrning" }.figure)
+        assertFalse(shown.notes().any { it.contains("över 100 %") })
+        // Clamped at 100 % is still said.
+        val over = perfect.copy(shares = perfect.shares + ("own" to 100.0), clamped = listOf("own"))
+        assertTrue(sections(month.copy(review = month.review!!.copy(perfect = over))).section("perfect")!!.notes().any { it.contains("över 100 %") })
+        // A day the battery lost money on says so in its share cell.
+        val json = HaFixtures.json("house_history/villa_month.json").apply {
+            getJSONObject("review").getJSONArray("by_day").getJSONObject(5).put("share_note", "loss").put("own_share", JSONObject.NULL)
+        }
+        val day = (HouseHistoryRead.decode(json) as SiteRead.Read).value.review!!.byDay[5]
+        assertEquals("loss", day.shareNote)
+        val table = sections((HouseHistoryRead.decode(json) as SiteRead.Read).value).section("days")!!.blocks.filterIsInstance<DetailBlock.Table>().single()
+        assertEquals("förlust", table.rows[5].last())
     }
 
     @Test fun whileOnlyIncompleteDaysHaveAPerfectPlanTheModesStandInWithItsNote() {

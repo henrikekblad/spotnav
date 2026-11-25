@@ -1416,7 +1416,7 @@
   <string name="card_perfect_provisional_one" formatted="false">What was left at midnight is valued at the day\'s own price on {days} of the days, until the next day\'s prices are in.</string>
   <string name="card_perfect_provisional_other" formatted="false">What was left at midnight is valued at the day\'s own price on {days} of the days, until the next day\'s prices are in.</string>
   <string name="card_perfect_provisional_day" formatted="false">What was left at midnight is valued at the day\'s own price until the next day\'s prices are in.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: outside 0–100 %, shown at the nearest end (a loss as 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: above 100 %, shown as 100 % (the model\'s battery is ideal).</string>
   <string name="card_perfect_nothing" formatted="false">too small a difference to compare</string>
   <string name="card_perfect_partial_day" formatted="false">Incomplete day: under 90 % of it was measured, so it is not compared.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} incomplete day is left out.</string>
@@ -1969,4 +1969,7 @@
   <string name="card_battery_enable_facts_both" formatted="false">The battery\'s size and lowest level are in disabled entities in {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">The battery\'s rated charge and discharge power is in disabled entities in {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">What the battery plan needs from the battery is in disabled entities in {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">loss {amount}</string>
+  <string name="card_perfect_headline_loss" formatted="false">{name}: loss {amount} against no battery</string>
+  <string name="card_hist_house_share_loss" formatted="false">loss</string>
 </resources>

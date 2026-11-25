@@ -1237,6 +1237,9 @@ internal object CardStrings {
         "battery.enableFacts.both" to R.string.card_battery_enable_facts_both,
         "battery.enableFacts.rating" to R.string.card_battery_enable_facts_rating,
         "battery.enableFacts.several" to R.string.card_battery_enable_facts_several,
+        "perfect.loss" to R.string.card_perfect_loss,
+        "perfect.headlineLoss" to R.string.card_perfect_headline_loss,
+        "hist.house.share.loss" to R.string.card_hist_house_share_loss,
     )
 
     /** The resource name of the card's [key]: `demand.top.1` is `card_demand_top_1`, `site.importTarget` `card_site_import_target`. */

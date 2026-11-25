@@ -1403,7 +1403,7 @@
   <string name="card_perfect_provisional_one" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris for {days} av døgnene, til neste døgns priser finnes.</string>
   <string name="card_perfect_provisional_other" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris for {days} av døgnene, til neste døgns priser finnes.</string>
   <string name="card_perfect_provisional_day" formatted="false">Det som var igjen ved midnatt regnes med døgnets egen pris til neste døgns priser finnes.</string>
-  <string name="card_perfect_clamped" formatted="false">{names}: utenfor 0–100 %, vises ved nærmeste grense (et tap som 0 %).</string>
+  <string name="card_perfect_clamped" formatted="false">{names}: over 100 %, vises som 100 % (modellens batteri er ideelt).</string>
   <string name="card_perfect_nothing" formatted="false">for liten forskjell å sammenligne</string>
   <string name="card_perfect_partial_day" formatted="false">Ufullstendig døgn: under 90 % av døgnet ble målt, så det sammenlignes ikke.</string>
   <string name="card_perfect_partial_one" formatted="false">{days} ufullstendig døgn regnes ikke med.</string>
@@ -1956,4 +1956,7 @@
   <string name="card_battery_enable_facts_both" formatted="false">Batteriets størrelse og laveste nivå ligger i deaktiverte entiteter i {integration}.</string>
   <string name="card_battery_enable_facts_rating" formatted="false">Batteriets lade- og utladeeffekt finnes i avslåtte entiteter i {integration}.</string>
   <string name="card_battery_enable_facts_several" formatted="false">Det batteriplanen trenger å vite om batteriet, finnes i avslåtte entiteter i {integration}.</string>
+  <string name="card_perfect_loss" formatted="false">tap {amount}</string>
+  <string name="card_perfect_headline_loss" formatted="false">{name}: tap {amount} mot ikke noe batteri</string>
+  <string name="card_hist_house_share_loss" formatted="false">tap</string>
 </resources>
