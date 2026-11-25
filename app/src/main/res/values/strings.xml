@@ -1999,7 +1999,7 @@
   <string name="card_battery_tester_value_asked" formatted="false">Signed up</string>
   <string name="card_battery_tester_value_tested" formatted="false">Result sent</string>
   <string name="card_battery_tester_value_control_code" formatted="false">Code entered</string>
-  <string name="card_battery_tester_help_none" formatted="false">SpotNav can read this battery. Control of {brand} is being tested together with users: become a tester and you get instructions by e-mail.</string>
+  <string name="card_battery_tester_help_none" formatted="false">Control of {brand} isn\'t switched on yet. SpotNav only enables control of a battery brand once it has been tried in a controlled way on at least one real installation. You can be the one who makes that happen: as a tester you run a short hardware test that runs by itself, and help everyone else with {brand} get control. Until then SpotNav reads the battery and only plans what it would have done, in shadow mode.</string>
   <string name="card_battery_tester_help_asked" formatted="false">Run the hardware test under Support → Hardware test. Press Start once: it runs by itself in waking hours, and its result is sent by itself.</string>
   <string name="card_battery_tester_help_tested" formatted="false">The result has been sent. You get an answer by e-mail.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">The control code is entered: SpotNav may control this battery.</string>

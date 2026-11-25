@@ -1994,7 +1994,7 @@
   <string name="card_battery_tester_value_asked" formatted="false">Inscrito</string>
   <string name="card_battery_tester_value_tested" formatted="false">Resultado enviado</string>
   <string name="card_battery_tester_value_control_code" formatted="false">Código introducido</string>
-  <string name="card_battery_tester_help_none" formatted="false">SpotNav puede leer esta batería. El control de {brand} se está probando junto con usuarios: hazte probador y recibirás instrucciones por correo electrónico.</string>
+  <string name="card_battery_tester_help_none" formatted="false">El control de {brand} aún no está activado. SpotNav solo activa el control de una marca de batería cuando se ha probado de forma controlada en al menos una instalación real. Puedes ser quien lo haga posible: como probador ejecutas una breve prueba de hardware que funciona sola, y así ayudas a todos los demás con {brand} a tener control. Hasta entonces, SpotNav lee la batería y solo planifica lo que habría hecho, en modo sombra.</string>
   <string name="card_battery_tester_help_asked" formatted="false">Ejecuta la prueba de hardware en Soporte → Prueba de hardware. Pulsa Iniciar una vez: se ejecuta sola durante el día, y su resultado se envía solo.</string>
   <string name="card_battery_tester_help_tested" formatted="false">El resultado se ha enviado. Recibirás una respuesta por correo electrónico.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">El código de control está introducido: SpotNav puede controlar esta batería.</string>

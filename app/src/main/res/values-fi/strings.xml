@@ -1986,7 +1986,7 @@
   <string name="card_battery_tester_value_asked" formatted="false">Ilmoittauduttu</string>
   <string name="card_battery_tester_value_tested" formatted="false">Tulos lähetetty</string>
   <string name="card_battery_tester_value_control_code" formatted="false">Koodi syötetty</string>
-  <string name="card_battery_tester_help_none" formatted="false">SpotNav pystyy lukemaan tätä akkua. Merkin {brand} ohjausta testataan yhdessä käyttäjien kanssa: ryhdy testaajaksi, niin saat ohjeet sähköpostilla.</string>
+  <string name="card_battery_tester_help_none" formatted="false">Merkin {brand} ohjaus ei ole vielä päällä. SpotNav ottaa akkumerkin ohjauksen käyttöön vasta, kun sitä on kokeiltu hallitusti vähintään yhdessä oikeassa järjestelmässä. Voit olla se, joka tekee sen mahdolliseksi: testaajana ajat lyhyen laitetestin, joka hoituu itsestään, ja autat näin kaikkia muita merkin {brand} käyttäjiä saamaan ohjauksen. Siihen asti SpotNav lukee akkua ja suunnittelee vain, mitä se olisi tehnyt, varjotilassa.</string>
   <string name="card_battery_tester_help_asked" formatted="false">Aja laitteistotesti kohdasta Tuki → Laitteistotesti. Paina Aloita kerran: testi ajetaan itsestään päiväsaikaan, ja sen tulos lähetetään itsestään.</string>
   <string name="card_battery_tester_help_tested" formatted="false">Tulos on lähetetty. Saat vastauksen sähköpostilla.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">Ohjauskoodi on syötetty: SpotNav saa ohjata tätä akkua.</string>

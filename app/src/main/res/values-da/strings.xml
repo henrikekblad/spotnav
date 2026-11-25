@@ -1986,7 +1986,7 @@
   <string name="card_battery_tester_value_asked" formatted="false">Tilmeldt</string>
   <string name="card_battery_tester_value_tested" formatted="false">Resultat sendt</string>
   <string name="card_battery_tester_value_control_code" formatted="false">Kode indtastet</string>
-  <string name="card_battery_tester_help_none" formatted="false">SpotNav kan læse dette batteri. Styringen af {brand} testes sammen med brugere: bliv tester, så får du instruktioner på e-mail.</string>
+  <string name="card_battery_tester_help_none" formatted="false">Styringen af {brand} er ikke slået til endnu. SpotNav slår kun styring af et batterimærke til, når den er afprøvet under ordnede forhold på mindst ét rigtigt anlæg. Du kan være den, der gør det muligt: som tester kører du en kort hardwaretest, der klarer sig selv, og hjælper dermed alle andre med {brand} med at få styring. Indtil da læser SpotNav batteriet og planlægger kun, hvad det ville have gjort, i skyggetilstand.</string>
   <string name="card_battery_tester_help_asked" formatted="false">Kør hardwaretesten under Support → Hardwaretest. Tryk på Start én gang: den kører af sig selv i dagtimerne, og resultatet sendes af sig selv.</string>
   <string name="card_battery_tester_help_tested" formatted="false">Resultatet er sendt. Du får svar på e-mail.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">Kontrolkoden er indtastet: SpotNav må styre dette batteri.</string>

@@ -86,7 +86,7 @@ class SiteSettingsTextTest {
         val shown = (BatteryControlRead.decode(json) as BatteryControlRead.Outcome.Status).status
         assertEquals(BatteryStatus.Tester("none", "solis", false), shown.tester)
         assertEquals(
-            Triple("Testare", "Bli testare", "SpotNav kan läsa det här batteriet. Styrningen av Solis testas tillsammans med användare: bli testare så får du instruktioner via e-post."),
+            Triple("Testare", "Bli testare", "Styrningen av Solis är inte påslagen än. SpotNav slår bara på styrning av ett batterimärke när den har provats under ordnade former på minst en riktig anläggning. Du kan vara den som gör det möjligt: som testare kör du ett kort hårdvarutest som sköter sig självt, och hjälper därmed alla andra med Solis att få styrning. Till dess läser SpotNav batteriet och planerar bara vad den skulle ha gjort, i skuggläge."),
             text("sv").testerRow(shown)
         )
         assertTrue(text().testerSignup(shown))
