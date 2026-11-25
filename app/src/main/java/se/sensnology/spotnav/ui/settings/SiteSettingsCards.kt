@@ -142,14 +142,8 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         SitePriorityText.lines(words, list).forEach { line ->
             card.body.addView(TextView(context).apply { text = line; textSize = 15f; setTextColor(dark); setPadding(0, dp(3), 0, dp(3)) })
         }
-        val address = homeAssistantUrl?.trim()?.trimEnd('/')?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
-        if (address != null) {
-            card.body.addView(android.widget.Button(context).apply {
-                text = t(R.string.site_set_in_home_assistant)
-                isAllCaps = false
-                setOnClickListener { runCatching { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(address))) } }
-            }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(4) })
-        }
+        // Read-only like every other admin setting in the app: one plain line, no button.
+        card.body.addView(muted(t(R.string.site_admin_in_home_assistant), top = 4))
     }
 
     private fun muted(text: String, top: Int = 0, bottom: Int = 0) = TextView(context).apply {

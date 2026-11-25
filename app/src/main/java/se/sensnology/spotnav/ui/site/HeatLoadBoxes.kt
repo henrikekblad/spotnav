@@ -248,15 +248,10 @@ internal class HeatLoadBoxes(
 
     // --- views ----------------------------------------------------------------------------------------
 
-    /** The line a watched load says, with the way to its switch in Home Assistant. */
+    /** The line a watched load says, and that its switch is set in Home Assistant: plain text, as everywhere else. */
     private fun watched(box: LinearLayout, said: String) {
         box.addView(note(said), wide(top = 6))
-        val address = homeAssistantUrl?.trim()?.trimEnd('/')?.takeIf { it.startsWith("http://") || it.startsWith("https://") } ?: return
-        box.addView(Button(context).apply {
-            text = t(R.string.site_set_in_home_assistant)
-            isAllCaps = false
-            setOnClickListener { runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(address))) } }
-        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(2) })
+        box.addView(note(t(R.string.site_admin_in_home_assistant)), wide(top = 2))
     }
 
     private fun errorLine(box: LinearLayout, kind: String) {
