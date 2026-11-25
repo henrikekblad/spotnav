@@ -7,6 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -176,7 +180,7 @@ internal class LoadsDialog(
                 "list" to pie.slices.joinToString(", ") { "${it.name} ${LoadsModel.kwh(text, it.kwh)} (${LoadsModel.share(text, it.share)})" }
             )
         }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = scope.dp(8); bottomMargin = scope.dp(8) })
-        for (slice in pie.slices) row.addView(sliceRow(slice), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        for (slice in pie.slices) row.addView(sliceRow(slice, LoadsModel.marks(words, answer, slice)), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         body.addView(row)
         for (line in LoadsModel.notes(text, answer, pie, carApart, heatApart)) {
             body.addView(note(line), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = scope.dp(8) })
@@ -189,7 +193,7 @@ internal class LoadsDialog(
         else -> Periods.optionLabel(text.locale, HistoryPeriod.MONTH, answer.date)
     }
 
-    private fun sliceRow(slice: LoadsModel.Slice) = LinearLayout(scope.context).apply {
+    private fun sliceRow(slice: LoadsModel.Slice, marks: List<String>) = LinearLayout(scope.context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(0, scope.dp(3), 0, scope.dp(3))
@@ -199,7 +203,16 @@ internal class LoadsDialog(
         addView(TextView(context).apply {
             textSize = 14f
             setTextColor(colours.text)
-            this.text = slice.name
+            // The marks after the name, smaller and muted as the card's.
+            this.text = if (marks.isEmpty()) slice.name else SpannableStringBuilder(slice.name).apply {
+                for (mark in marks) {
+                    append("  ")
+                    val start = length
+                    append(mark)
+                    setSpan(RelativeSizeSpan(0.82f), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(ForegroundColorSpan(colours.muted), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            }
         }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         addView(TextView(context).apply {
             textSize = 14f

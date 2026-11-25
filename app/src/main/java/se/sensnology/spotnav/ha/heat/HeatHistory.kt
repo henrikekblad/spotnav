@@ -73,8 +73,15 @@ internal data class HeatHistory(
 
     data class BucketPart(val key: String, val kwh: Double, val cost: Double?)
 
-    /** [kind] is `pump`, `hot_water`, `zone`, `other`, or `pool`, `spa` and `sauna` (since 3.0); a zone's [name] is the household's. */
-    data class Part(val key: String, val kind: String, val name: String?, val kwh: Double, val cost: Double?)
+    /**
+     * [kind] is `pump`, `hot_water`, `zone`, `other`, or `pool`, `spa` and `sauna` (since 3.0); a zone's [name] is the
+     * household's. [estimated]: some of its energy is an estimate (the pool, the spa or the sauna without its own trusted
+     * power sensor), named "(uppskattat)"; [clampedKwh] the estimate the house had no room for (0 when it fit).
+     */
+    data class Part(
+        val key: String, val kind: String, val name: String?, val kwh: Double, val cost: Double?,
+        val estimated: Boolean = false, val clampedKwh: Double = 0.0
+    )
 
     data class TrendMonth(val month: String, val days: Int, val kwh: Double?, val degreeDays: Double?, val kwhPerDegreeDay: Double?)
 
@@ -224,7 +231,11 @@ internal object HeatHistoryRead {
         val json = obj(raw, "part")
         val kind = text(json.opt("kind"), "part.kind")
         if (kind !in PART_KINDS) bad("part.kind")
-        HeatHistory.Part(text(json.opt("key"), "part.key"), kind, textOrNull(json.opt("name"), "part.name"), number(json.opt("kwh"), "part.kwh"), numberOrNull(json.opt("cost"), "part.cost"))
+        HeatHistory.Part(
+            text(json.opt("key"), "part.key"), kind, textOrNull(json.opt("name"), "part.name"), number(json.opt("kwh"), "part.kwh"), numberOrNull(json.opt("cost"), "part.cost"),
+            estimated = additive(json, "estimated", false) { flag(it, "part.estimated") },
+            clampedKwh = additive(json, "clamped_kwh", 0.0) { number(it, "part.clamped_kwh").coerceAtLeast(0.0) }
+        )
     }
 
     private fun degreeDays(json: JSONObject): HeatHistory.DegreeDays = with(StrictJson) {

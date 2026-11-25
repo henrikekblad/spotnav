@@ -1978,4 +1978,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Gemiddelde fout per uur over de dag.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} bespaarde hier {own}, terwijl \'De batterij bespaarde\' onder Geld {battery} toont. Beide tegenover geen batterij, maar hier telt mee wat er om middernacht nog in de batterij zat, onder Geld niet.</string>
   <string name="card_house_loads_inverter" formatted="false">De omvormer (verliezen en stand-by)</string>
+  <string name="card_house_loads_estimated" formatted="false">(geschat)</string>
+  <string name="card_house_loads_clamped" formatted="false">Geschatte delen beperkt tot wat gemeten is: {kwh} van de schatting blijft bij het huis.</string>
 </resources>

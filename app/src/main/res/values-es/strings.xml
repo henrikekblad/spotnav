@@ -1986,4 +1986,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Error medio por hora a lo largo del día.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} ahorró {own} aquí, mientras que «La batería ahorró» en Dinero muestra {battery}. Ambos son frente a no tener batería, pero aquí cuenta lo que quedaba en la batería a medianoche y en Dinero no.</string>
   <string name="card_house_loads_inverter" formatted="false">El inversor (pérdidas y reposo)</string>
+  <string name="card_house_loads_estimated" formatted="false">(estimado)</string>
+  <string name="card_house_loads_clamped" formatted="false">Partes estimadas limitadas a lo medido: {kwh} de la estimación se quedan en la casa.</string>
 </resources>

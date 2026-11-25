@@ -214,6 +214,26 @@ class FlowBoxTest {
         assertTrue(LoadsModel.pie(words, loads("villa_day.json").copy(kind = "heat")).slices.none { it.key == "inverter" })
     }
 
+    @Test fun anEstimatedPartIsMarkedAndWhatTheHouseHadNoRoomForIsSaid() {
+        val t = SiteText(CardStringsXml.words("sv"), Locale.forLanguageTag("sv"))
+        val answer = loads("heat_estimated_day.json")
+        val spa = answer.loads.first { it.source == "spa" }
+        assertTrue(spa.estimated)
+        assertEquals(23.965, spa.clampedKwh, 1e-9)
+        val pie = LoadsModel.pie(t.words, answer)
+        assertEquals(listOf("(uppskattat)"), LoadsModel.marks(t.words, answer, pie.slices.first { it.key == "climate.spa" }))
+        assertTrue(LoadsModel.marks(t.words, answer, pie.slices.first { it.key == "sensor.varme_effekt" }).isEmpty())
+        assertEquals(
+            "Uppskattade delar begränsade till det som mättes: 24,0 kWh av uppskattningen ligger kvar i huset.",
+            LoadsModel.notes(t, answer, pie, false, false).single { it.startsWith("Uppskattade") }
+        )
+        // A meter the household moved is marked too; nothing estimated, no note.
+        val moved = loads("villa_day.json").let { it.copy(loads = it.loads.mapIndexed { i, load -> if (i == 0) load.copy(changed = true) else load }) }
+        val first = LoadsModel.pie(t.words, moved).slices.first { it.key == moved.loads[0].statisticId }
+        assertEquals(listOf("ändrat av dig"), LoadsModel.marks(t.words, moved, first))
+        assertTrue(LoadsModel.notes(t, moved, LoadsModel.pie(t.words, moved), false, false).none { it.startsWith("Uppskattade") })
+    }
+
     private fun meters(kwhs: List<Double>, house: Double): HouseLoads {
         val base = loads("villa_day.json")
         val list = kwhs.mapIndexed { i, kwh -> HouseLoads.Load("sensor.m$i", "M$i", kwh, "meter", false) }

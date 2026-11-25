@@ -1986,4 +1986,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Erreur moyenne par heure sur la journée.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} a économisé {own} ici, alors que « La batterie a économisé » sous Argent indique {battery}. Les deux sont face à l\'absence de batterie, mais ici ce qui restait dans la batterie à minuit compte, sous Argent non.</string>
   <string name="card_house_loads_inverter" formatted="false">L’onduleur (pertes et veille)</string>
+  <string name="card_house_loads_estimated" formatted="false">(estimé)</string>
+  <string name="card_house_loads_clamped" formatted="false">Parties estimées limitées à ce qui a été mesuré : {kwh} de l’estimation restent dans la maison.</string>
 </resources>

@@ -32,6 +32,21 @@ class HeatUseModelTest {
         assertFalse(none.saved)
     }
 
+    @Test fun anEstimatedPartIsNamedSoAndWhatTheHouseHadNoRoomForIsSaidOnce() {
+        val json = HaFixtures.json("heat_history/zones_month.json").apply {
+            val parts = getJSONArray("parts")
+            parts.getJSONObject(parts.length() - 1).put("kind", "spa").put("estimated", true).put("clamped_kwh", 2.5)
+        }
+        val answer = (HeatHistoryRead.decode(json) as SiteRead.Read).value
+        assertTrue(answer.parts.last().estimated)
+        assertEquals("Spa (uppskattat) 18,7 kWh", HeatUseModel.series(text(), answer, false) { 0 }.last().label)
+        assertEquals("Uppskattade delar begränsade till det som mättes: 2,5 kWh av uppskattningen ligger kvar i huset.", HeatUseModel.notes(text(), answer, false).last())
+        // A Home Assistant before the marks: nothing estimated, nothing left out.
+        assertFalse(month.parts.any { it.estimated })
+        assertTrue(HeatUseModel.notes(text(), month, false).none { it.startsWith("Uppskattade") })
+        assertTrue(HeatHistoryRead.decode(HaFixtures.json("heat_history/zones_month.json").apply { getJSONArray("parts").getJSONObject(0).put("estimated", "yes") }) is SiteRead.Failed)
+    }
+
     @Test fun thePartsAreTogglesWithTheirSumsAndEachZoneHasItsOwnColour() {
         val series = HeatUseModel.series(text(), month, false) { it.hashCode() }
         assertEquals(listOf("Värmepump 581 kWh", "Varmvatten 16,8 kWh", "Ovanvåning 48,7 kWh", "Övrig värme 18,7 kWh"), series.map { it.label })

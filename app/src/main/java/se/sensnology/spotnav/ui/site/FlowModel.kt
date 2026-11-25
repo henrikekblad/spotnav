@@ -157,6 +157,12 @@ internal object LoadsModel {
 
     fun share(text: SiteText, share: Double): String = if (share > 0 && share < 0.005) "<1 %" else text.percent(share * 100)
 
+    /** The marks after a slice's name: moved by the household ("ändrat av dig"), and an estimate ("(uppskattat)"). */
+    fun marks(words: se.sensnology.spotnav.ui.common.CardWords, answer: HouseLoads, slice: Slice): List<String> {
+        val load = answer.loads.firstOrNull { it.statisticId == slice.key } ?: return emptyList()
+        return listOfNotNull(words.say("house.loads.changed").takeIf { load.changed }, words.say("house.loads.estimated").takeIf { load.estimated })
+    }
+
     /** The notes under the pie, in the card's order, as (line, sentence). */
     fun notes(text: SiteText, answer: HouseLoads, pie: Pie, carApart: Boolean, heatApart: Boolean): List<String> {
         val words = text.words
@@ -168,6 +174,7 @@ internal object LoadsModel {
             lines.add(words.say("house.loads.otherHolds", "list" to pie.merged.joinToString(", ") { "${it.name} ${kwh(text, it.kwh)}" }))
         }
         if (answer.overKwh > 0) lines.add(words.say("house.loads.over", "kwh" to kwh(text, answer.overKwh)))
+        if (answer.clampedKwh > 0) lines.add(words.say("house.loads.clamped", "kwh" to kwh(text, answer.clampedKwh)))
         val heat = answer.kind == "heat"
         if (answer.loads.isEmpty() && !heat) lines.add(words.say("house.loads.none"))
         val apart = when {

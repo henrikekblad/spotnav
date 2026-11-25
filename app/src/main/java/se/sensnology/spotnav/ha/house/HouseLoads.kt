@@ -30,12 +30,21 @@ internal data class HouseLoads(
     val inverterKwh: Double? = null,
     /** What no meter explains, the inverter left out: [otherKwh] from a Home Assistant before it. */
     val unknownKwh: Double? = otherKwh,
+    /** The estimates left out because the house had no room for them, summed; 0 from a Home Assistant before it. */
+    val clampedKwh: Double = 0.0,
     val loads: List<Load>,
     val moved: List<Moved>,
     val implausible: List<Implausible>
 ) {
-    /** `source` is `meter` (an Energy dashboard device), `heat_pump` or `zone`. */
-    data class Load(val statisticId: String, val name: String, val kwh: Double, val source: String, val changed: Boolean)
+    /**
+     * `source` is `meter` (an Energy dashboard device), `heat_pump`, `zone` or one of SpotNav's own loads. [estimated]:
+     * some of its energy is an estimate (a part without its own trusted power sensor), named "(uppskattat)";
+     * [clampedKwh] the estimate the house had no room for (left in the house).
+     */
+    data class Load(
+        val statisticId: String, val name: String, val kwh: Double, val source: String, val changed: Boolean,
+        val estimated: Boolean = false, val clampedKwh: Double = 0.0
+    )
 
     data class Moved(val statisticId: String, val name: String, val belongs: String)
 
@@ -89,6 +98,7 @@ internal object HouseLoadsRead {
             overKwh = number(json.opt("over_kwh"), "over_kwh"),
             inverterKwh = additive(json, "inverter_kwh", null) { raw -> numberOrNull(raw, "inverter_kwh") },
             unknownKwh = additive(json, "unknown_kwh", numberOrNull(json.opt("other_kwh"), "other_kwh")) { raw -> numberOrNull(raw, "unknown_kwh") },
+            clampedKwh = additive(json, "clamped_kwh", 0.0) { raw -> number(raw, "clamped_kwh").coerceAtLeast(0.0) },
             loads = list(json.opt("loads"), "loads").map { entry ->
                 val load = obj(entry, "load")
                 HouseLoads.Load(
@@ -96,7 +106,9 @@ internal object HouseLoadsRead {
                     name = text(load.opt("name"), "load.name"),
                     kwh = number(load.opt("kwh"), "load.kwh").coerceAtLeast(0.0),
                     source = additive(load, "source", "meter") { raw -> text(raw, "load.source").also { if (it !in SOURCES) bad("load.source") } },
-                    changed = additive(load, "changed", false) { raw -> flag(raw, "load.changed") }
+                    changed = additive(load, "changed", false) { raw -> flag(raw, "load.changed") },
+                    estimated = additive(load, "estimated", false) { raw -> flag(raw, "load.estimated") },
+                    clampedKwh = additive(load, "clamped_kwh", 0.0) { raw -> number(raw, "load.clamped_kwh").coerceAtLeast(0.0) }
                 )
             },
             moved = additive(json, "moved", emptyList()) { raw ->

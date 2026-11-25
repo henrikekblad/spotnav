@@ -1978,4 +1978,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Gjennomsnittlig feil per time gjennom døgnet.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparte {own} her, mens Batteriet sparte under Penger viser {battery}. Begge er mot intet batteri, men her regnes det som var igjen i batteriet ved midnatt med, under Penger ikke.</string>
   <string name="card_house_loads_inverter" formatted="false">Vekselretteren (tap og tomgang)</string>
+  <string name="card_house_loads_estimated" formatted="false">(anslått)</string>
+  <string name="card_house_loads_clamped" formatted="false">Anslåtte deler begrenset til det som ble målt: {kwh} av anslaget blir i huset.</string>
 </resources>

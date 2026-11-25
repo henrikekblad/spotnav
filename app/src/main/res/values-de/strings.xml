@@ -1978,4 +1978,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Mittlerer Fehler pro Stunde über den Tag.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparte hier {own}, während „Die Batterie sparte“ unter Geld {battery} zeigt. Beides gegen keine Batterie, aber hier zählt mit, was um Mitternacht noch in der Batterie war, unter Geld nicht.</string>
   <string name="card_house_loads_inverter" formatted="false">Wechselrichter (Verluste und Standby)</string>
+  <string name="card_house_loads_estimated" formatted="false">(geschätzt)</string>
+  <string name="card_house_loads_clamped" formatted="false">Geschätzte Teile auf das Gemessene begrenzt: {kwh} der Schätzung bleiben beim Haus.</string>
 </resources>

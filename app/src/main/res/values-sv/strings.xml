@@ -1978,4 +1978,6 @@
   <string name="card_hist_forecast_note_day" formatted="false">Medelfel per timme under dygnet.</string>
   <string name="card_hist_house_perfect_differs_midnight" formatted="false">{name} sparade {own} här, medan Batteriet sparade under Pengar visar {battery}. Båda är mot inget batteri, men här räknas det som fanns kvar i batteriet vid midnatt med, under Pengar inte.</string>
   <string name="card_house_loads_inverter" formatted="false">Växelriktaren (förluster och tomgång)</string>
+  <string name="card_house_loads_estimated" formatted="false">(uppskattat)</string>
+  <string name="card_house_loads_clamped" formatted="false">Uppskattade delar begränsade till det som mättes: {kwh} av uppskattningen ligger kvar i huset.</string>
 </resources>

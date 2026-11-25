@@ -90,6 +90,9 @@ internal object HeatUseModel {
         if (inMoney(answer, wantMoney)) add(text.words.say("hist.heat.footnote"))
         // The pool's, the spa's and the sauna's energy is SpotNav's count from when they ran, not a meter's.
         if (answer.parts.any { it.kind in COUNTED }) add(text.words.say("heat.use.loadsNote"))
+        // An estimate limited to what the house measured: said once, with what was left out.
+        val clamped = answer.parts.sumOf { it.clampedKwh }
+        if (clamped > 0) add(text.words.say("house.loads.clamped", "kwh" to LoadsModel.kwh(text, clamped)))
     }
 
     /** The legend: a toggle per part with its swatch colour and its sum in the unit shown. */
@@ -97,7 +100,7 @@ internal object HeatUseModel {
         val money = inMoney(answer, wantMoney)
         return answer.parts.map { part ->
             val sum = figure(text, answer, money, part.kwh, part.cost)
-            val words = partWord(text, part)
+            val words = if (part.estimated) "${partWord(text, part)} ${text.words.say("house.loads.estimated")}" else partWord(text, part)
             BarSeries(part.key, if (sum == null) words else "$words $sum", colour(slot(answer.parts, part)))
         }
     }
