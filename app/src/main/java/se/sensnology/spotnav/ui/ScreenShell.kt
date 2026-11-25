@@ -209,9 +209,16 @@ internal class ScreenShell(
         chrome.visibility = View.VISIBLE
         addPanelHeader(chrome, title, back)
         val scroll = ScrollView(activity).apply { addView(body) }
-        overlay = scroll
+        // The root draws its children unclipped (the graph's readout may reach past its page), so the scroll's
+        // stretch at the top would draw over the header: a frame of its own keeps the scroll inside its bounds.
+        val frame = android.widget.FrameLayout(activity).apply {
+            clipChildren = true
+            clipToPadding = true
+            addView(scroll, android.widget.FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        }
+        overlay = frame
         overlayClosed = closed
-        root.addView(scroll, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        root.addView(frame, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
         onOverlayChanged?.invoke(true)
     }
 
