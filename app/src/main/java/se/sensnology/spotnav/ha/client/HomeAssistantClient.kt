@@ -481,6 +481,12 @@ object HomeAssistantClient {
         return SiteDoor.access(status, body, failure)
     }
 
+    /** The card's words in [language] (webhook `get_strings`), unchanged when [knownHash] is still current. Never throws. */
+    internal fun cardStrings(settings: HomeAssistantSettings, language: String, knownHash: String?): CardStringsRead.Outcome {
+        val (status, body, failure) = ask(settings, CardStringsRead.payload(language, knownHash))
+        return CardStringsRead.answer(status, body, failure)
+    }
+
     /**
      * This phone's own notification entry (webhook `phone_notifications`, SpotNav 3.0): read, or written by [body]'s
      * `set`. The body carries the app's secret id: never logged here or by the request. Never throws.

@@ -22,6 +22,8 @@ import se.sensnology.spotnav.sites.SiteUpkeep
 import se.sensnology.spotnav.sites.MainSubject
 import se.sensnology.spotnav.sites.SiteProfileStore
 import se.sensnology.spotnav.chargers.ChargerProfileStore
+import se.sensnology.spotnav.chargers.toHomeAssistantSettings
+import se.sensnology.spotnav.ui.common.CardStringSync
 import se.sensnology.spotnav.ui.site.SiteScreen
 import se.sensnology.spotnav.widget.WidgetChargerResolver
 import se.sensnology.spotnav.ui.charging.ChargingScreen
@@ -126,6 +128,11 @@ class WidgetConfigActivity : Activity() {
         // Once per start: chargers paired before 3.0 move to their home's webhook, and a home's new chargers appear.
         // Its own thread, so the screen's first reads never wait behind it.
         SiteUpkeep.startOnce(this, { task -> Thread(task, "site-upkeep").start() })
+        // The card words kept by an earlier run, read in the background so no screen waits on the file.
+        CardStringSync.preloadAll(
+            this,
+            ChargerProfileStore.forContext(this).listProfiles().map { it.baseUrl } + SiteProfileStore.forContext(this).list().map { it.baseUrl }
+        )
         // Which screen to show: the one the user was already on, or -- on a fresh launch -- this
         // entry point's default.
         showScreen(Screen.restored(savedInstanceState?.getString(STATE_SCREEN), existingWidget))
@@ -173,6 +180,7 @@ class WidgetConfigActivity : Activity() {
         shell.onNotificationPermission = null
         dayRollover.cancel()
         liveRefresh.cancel()
+        showCardStrings()
         when (screen) {
             Screen.MAIN -> showCharging()
             Screen.PRICE_TABLE -> PriceTableScreen(shell).show()
@@ -192,9 +200,28 @@ class WidgetConfigActivity : Activity() {
         val resolved = WidgetChargerResolver.resolve(WidgetSettings.load(this, widgetId), ChargerProfileStore.forContext(this))
         val sites = SiteProfileStore.forContext(this)
         val site = MainSubject.site(resolved, ChargerProfileStore.forContext(this).listProfiles(), sites.list(), sites.activeSiteId())
+        showCardStrings()
         if (site != null) SiteScreen(shell, site) { showCharging() }.show()
         else ChargingScreen(shell) { showCharging() }.show()
         if (foreground) { dayRollover.arm(); liveRefresh.arm() }
+    }
+
+    /**
+     * The card's words of the Home Assistant the screens belong to: the charger shown, else the home shown without one.
+     * They are asked for (once a run) unless it waits to be paired again; until they are in, the app's own are shown.
+     */
+    private fun showCardStrings() {
+        val profiles = ChargerProfileStore.forContext(this)
+        val resolved = WidgetChargerResolver.resolve(WidgetSettings.load(this, widgetId), profiles)?.takeIf { it.configured }
+        val sites = SiteProfileStore.forContext(this)
+        val site = if (resolved != null) null else MainSubject.site(null, profiles.listProfiles(), sites.list(), sites.activeSiteId())
+        when {
+            resolved != null ->
+                CardStringSync.show(this, resolved.baseUrl, resolved.takeUnless { it.needsPairing }?.toHomeAssistantSettings())
+            site != null ->
+                CardStringSync.show(this, site.baseUrl, site.takeIf { it.configured && !it.needsPairing }?.toHomeAssistantSettings())
+            else -> CardStringSync.show(this, null, null)
+        }
     }
 
     /**

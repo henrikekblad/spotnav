@@ -21,7 +21,10 @@ import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.heat.HeatLoadPress
 import se.sensnology.spotnav.ha.house.NotReady
 import se.sensnology.spotnav.ha.house.Plan
-import se.sensnology.spotnav.ui.common.CardStrings
+import se.sensnology.spotnav.ui.common.CardStringCache
+import se.sensnology.spotnav.ui.common.CardStringSync
+import se.sensnology.spotnav.ui.common.CardText
+import se.sensnology.spotnav.ui.common.cardResource
 import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.site.NotReadyText
 import se.sensnology.spotnav.ui.site.SiteText
@@ -98,15 +101,17 @@ internal object NotReadyNotifications {
 
     private fun manager(context: Context) = context.getSystemService(NotificationManager::class.java)
 
-    /** The card's words in the app's language, outside a screen. */
-    fun words(context: Context): CardWords = CardWords { key, params ->
-        var said = CardStrings.IDS[key]?.let { AppLanguageSettings.text(context, it) } ?: key
-        for ((name, value) in params) said = said.replace("{$name}", value)
-        said
+    /**
+     * The card's words in the app's language, outside a screen: those fetched from [baseUrl]'s Home Assistant when the
+     * app holds them, else its own.
+     */
+    fun words(context: Context, baseUrl: String? = null): CardWords {
+        val fetched = CardStringSync.words(context, baseUrl?.takeIf { it.isNotBlank() }?.let(CardStringCache::instance))
+        return CardWords { key, params -> CardText.text(key, params, fetched, { AppLanguageSettings.text(context, it) }, { name -> cardResource(context, name) }) }
     }
 
-    private fun text(context: Context) =
-        SiteText(words(context), AppLanguageSettings.locale(context), AppLanguageSettings.numberLocale(context))
+    private fun text(context: Context, baseUrl: String?) =
+        SiteText(words(context, baseUrl), AppLanguageSettings.locale(context), AppLanguageSettings.numberLocale(context))
 
     /**
      * One check's read of a site's plan, for the paired charger [profile] it was read through: post, keep or take off
@@ -131,7 +136,9 @@ internal object NotReadyNotifications {
 
     private fun post(context: Context, profile: ChargerProfile, plan: Plan, block: NotReady): Boolean {
         LocalNotifications.ensureChannels(context)
-        val said = NotReadyText(text(context), plan.zone, plan.money)
+        // The check's own worker thread: the kept card words may be read here.
+        CardStringSync.preloadNow(context, profile.baseUrl)
+        val said = NotReadyText(text(context, profile.baseUrl), plan.zone, plan.money)
         val message = block.items.joinToString("\n") { said.line(it) }
         val builder = Notification.Builder(context, LocalNotifications.CHANNEL_ALERTS)
             .setSmallIcon(R.drawable.ic_spotnav_monochrome)
