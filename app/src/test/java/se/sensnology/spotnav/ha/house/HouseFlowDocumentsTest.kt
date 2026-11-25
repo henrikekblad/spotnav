@@ -57,6 +57,7 @@ class HouseFlowDocumentsTest {
     @Test fun everyLoadsFixtureIsListedAndDecodes() {
         // name -> kind, house kWh, loads, moved, implausible
         val expected = mapOf(
+            "heat_estimated_day.json" to listOf("heat", 32.895, 3, 0, 0),
             "heat_villa_day.json" to listOf("heat", 21.4, 4, 0, 0),
             "meters_over_house.json" to listOf("house", 40.0, 2, 0, 0),
             "moved_and_implausible_month.json" to listOf("house", 1030.0, 3, 2, 1),

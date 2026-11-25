@@ -27,6 +27,7 @@ class HouseDocumentsTest {
         val expected = mapOf(
             "house_alone_now.json" to listOf(1.8, 1.8, "----", null),
             "villa_car.json" to listOf(7.6, 1.7, "sbch", true),
+            "villa_dc_battery.json" to listOf(0.2, 10.2, "sbch", false),
             "villa_export.json" to listOf(-2.6, 1.0, "sbch", false),
             "villa_now.json" to listOf(0.4, 3.1, "sbch", true)
         )
