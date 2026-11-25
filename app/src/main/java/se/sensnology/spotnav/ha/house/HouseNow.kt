@@ -6,7 +6,10 @@ import java.time.Instant
 
 /**
  * The site's live flows (webhook `get_house_now`, the twin of `spotnav/get_house_now`, `api_version` 1): what the
- * house page's Now tab draws. Powers are kW; `null` is unread or not there.
+ * house page's Now tab draws. Powers are kW; `null` is unread or not there. The battery's line is [batteryKw], the
+ * battery's power as read (what its own app shows), and [houseKw] is the balance with it (`site/house_now.py`), so the
+ * lines add up around the house: on a hybrid that reads the battery at the battery (DC) the inverter's loss and standby
+ * are in the house, as in the energy flow.
  */
 internal data class HouseNow(
     val siteId: String,
@@ -25,7 +28,11 @@ internal data class HouseNow(
     val heatKw: Double?,
     val heatFrom: String?,
     val houseKw: Double?,
-    val has: Has
+    val has: Has,
+    /** The battery on the AC side, as the review and the plan count it; not drawn. [batteryKw] from a Home Assistant before it. */
+    val batteryAcKw: Double? = batteryKw,
+    /** How the house is had: `plant` (the plant's own load) or `balance`; `null` unread or from a Home Assistant before it. */
+    val houseFrom: String? = null
 ) {
     /** What the site has to draw. */
     data class Has(val sun: Boolean, val battery: Boolean, val car: Boolean, val heat: Boolean)
@@ -78,7 +85,9 @@ internal object HouseNowRead {
                 battery = flag(has.opt("battery"), "has.battery"),
                 car = flag(has.opt("car"), "has.car"),
                 heat = flag(has.opt("heat"), "has.heat")
-            )
+            ),
+            batteryAcKw = additive(json, "battery_ac_kw", numberOrNull(json.opt("battery_kw"), "battery_kw")) { numberOrNull(it, "battery_ac_kw") },
+            houseFrom = additive(json, "house_from", null) { textOrNull(it, "house_from") }
         )
     }
 }
