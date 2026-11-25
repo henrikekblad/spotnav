@@ -24,6 +24,7 @@ import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ui.common.CardStringCache
 import se.sensnology.spotnav.ui.common.CardStringSync
 import se.sensnology.spotnav.ui.common.CardText
+import se.sensnology.spotnav.ui.common.cardResource
 import se.sensnology.spotnav.ui.common.CardWords
 import se.sensnology.spotnav.ui.site.NotReadyText
 import se.sensnology.spotnav.ui.site.SiteText
@@ -106,7 +107,7 @@ internal object NotReadyNotifications {
      */
     fun words(context: Context, baseUrl: String? = null): CardWords {
         val fetched = CardStringSync.words(context, baseUrl?.takeIf { it.isNotBlank() }?.let(CardStringCache::instance))
-        return CardWords { key, params -> CardText.text(key, params, fetched) { AppLanguageSettings.text(context, it) } }
+        return CardWords { key, params -> CardText.text(key, params, fetched, { AppLanguageSettings.text(context, it) }, { name -> cardResource(context, name) }) }
     }
 
     private fun text(context: Context, baseUrl: String?) =

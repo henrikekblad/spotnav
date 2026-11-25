@@ -1333,12 +1333,24 @@ internal object CardText {
         return text
     }
 
-    /** The text of [key] with [params] filled: [fetched] (already [accepted]) first, else the app's own ([bundled]). */
-    fun text(key: String, params: Map<String, String>, fetched: Map<String, String>?, bundled: (Int) -> String): String {
+    /**
+     * The text of [key] with [params] filled: [fetched] (already [accepted]) first, else the app's own ([bundled]: in
+     * its language, else English). A key missing from [CardStrings.IDS] is logged and read by its resource name
+     * ([byName], `card_<key>`), so a resource the table lacks still shows the app's own text; only a key with no
+     * resource at all says nothing (there is no text of it anywhere in the app, and the key itself is never shown).
+     */
+    fun text(
+        key: String,
+        params: Map<String, String>,
+        fetched: Map<String, String>?,
+        bundled: (Int) -> String,
+        byName: (String) -> Int? = { null }
+    ): String {
         val id = CardStrings.IDS[key]
         if (id == null) {
             log("No card text for $key")
-            return ""
+            val named = byName(CardStrings.resourceName(key)) ?: return ""
+            return fill(runCatching { bundled(named) }.getOrDefault(""), params)
         }
         return fill(fetched?.get(key) ?: bundled(id), params)
     }
@@ -1347,5 +1359,10 @@ internal object CardText {
 /** The card's words as this screen's language has them: fetched from the screen's Home Assistant, else the app's own. */
 internal fun ViewScope.cardWords(): CardWords {
     val fetched = CardStringSync.words(activity, CardStringSync.shown)
-    return CardWords { key, params -> CardText.text(key, params, fetched) { template(it) } }
+    return CardWords { key, params -> CardText.text(key, params, fetched, { template(it) }, { name -> cardResource(activity, name) }) }
 }
+
+/** The id of the app's string resource [name], `null` for none. */
+@android.annotation.SuppressLint("DiscouragedApi")
+internal fun cardResource(context: android.content.Context, name: String): Int? =
+    context.resources.getIdentifier(name, "string", context.packageName).takeIf { it != 0 }

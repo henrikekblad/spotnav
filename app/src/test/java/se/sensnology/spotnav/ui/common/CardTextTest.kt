@@ -36,12 +36,21 @@ class CardTextTest {
         assertEquals("Huset", CardText.text("house.title", emptyMap(), null, bundled("sv")))
     }
 
-    @Test fun aKeyTheAppDoesNotKnowIsNeverShown() {
+    @Test fun aKeyMissingFromTheTableIsLoggedAndShowsTheAppsOwnTextNeverTheFetchedOneOrTheKey() {
         val logged = mutableListOf<String>()
         CardText.log = { logged += it }
         try {
-            assertEquals("", CardText.text("no.such.key", emptyMap(), mapOf("no.such.key" to "Hello"), bundled("en")))
-            assertEquals(listOf("No card text for no.such.key"), logged)
+            // A resource the table lacks: the app's own text by its name (in the app's language, else English).
+            val swedish = mapOf(4_242 to "Läs igen {what}")
+            val byName = { name: String -> if (name == "card_extra_reread") 4_242 else null }
+            val said = CardText.text(
+                "extra.reread", mapOf("what" to "planen"), mapOf("extra.reread" to "Fetched"), { swedish.getValue(it) }, byName
+            )
+            assertEquals("Läs igen planen", said)
+            assertEquals(listOf("No card text for extra.reread"), logged)
+            // No resource of it at all: nothing to show, and never the key itself.
+            assertEquals("", CardText.text("no.such.key", emptyMap(), mapOf("no.such.key" to "Hello"), bundled("en"), byName))
+            assertEquals(2, logged.size)
         } finally {
             CardText.log = {}
         }
