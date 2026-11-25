@@ -6,6 +6,12 @@ import se.sensnology.spotnav.R
  * The Home Assistant card's own words this app shows as they are (`frontend/src/i18n`), by the card's key: each is a
  * string resource `card_<key>` in all nine languages, its placeholders kept as the card writes them (`{kw}`) and
  * filled by [CardWords]. Added with the card's key so the app says the same thing in the same words.
+ *
+ * The resources are the baseline: a Home Assistant that answers `get_strings` hands the app the card's current words
+ * for the same keys, which the screens of that Home Assistant show instead ([CardText], [CardStringSync]). The app's
+ * own texts are never fetched and stay as built: pairing and sign-in, the setup before Home Assistant is connected,
+ * the app's own notices when Home Assistant does not answer, widgets, quick tiles, store texts, crash and permission
+ * texts, and anything shown without a paired Home Assistant (none of them is a `card_*` resource read here).
  */
 internal object CardStrings {
     val IDS: Map<String, Int> = mapOf(
@@ -1285,9 +1291,61 @@ internal fun interface CardWords {
     fun say(key: String, vararg params: Pair<String, String>): String = text(key, params.toMap())
 }
 
-/** The card's words as this screen's language has them. */
-internal fun ViewScope.cardWords(): CardWords = CardWords { key, params ->
-    var text = CardStrings.IDS[key]?.let { template(it) } ?: key
-    for ((name, value) in params) text = text.replace("{$name}", value)
-    text
+/**
+ * Which text a card key shows, and which fetched texts may be shown at all. Pure.
+ *
+ * Lookup order for a key: the words fetched from the screen's Home Assistant (`get_strings`, held by
+ * [CardStringCache] from this run or an earlier one) -> the app's own `card_*` resource in its language -> the same in
+ * English (Android's own fallback to `values/`). A key the app does not know is never shown: it is logged and says
+ * nothing.
+ *
+ * A fetched text is used only when it is plain text (no markup, no control characters but line breaks), at most
+ * [MAX_LENGTH] characters, for a key the app already knows ([CardStrings.IDS]: a fetched file cannot add new UI), and
+ * with no placeholder the app's English text of that key lacks (the app would not fill it); otherwise the app's own
+ * text of that key is shown. Plural forms are the card's own keys (`.one`, `.other`), chosen by the caller.
+ */
+internal object CardText {
+    const val MAX_LENGTH = 2_000
+
+    private val PLACEHOLDER = Regex("\\{(\\w+)\\}")
+    private val MARKUP = Regex("<\\s*[A-Za-z/!?]|&#?[A-Za-z0-9]+;")
+
+    /** Where a key the app does not know is logged; the Android side sets it. */
+    @Volatile var log: (String) -> Unit = {}
+
+    fun placeholders(text: String): Set<String> = PLACEHOLDER.findAll(text).map { it.groupValues[1] }.toSet()
+
+    /** Whether a fetched [text] for [key] may be shown, given the app's own English text of the key ([english]). */
+    fun usable(key: String, text: String, english: String?): Boolean =
+        key in CardStrings.IDS && english != null &&
+            text.length <= MAX_LENGTH &&
+            !MARKUP.containsMatchIn(text) &&
+            text.none { it.isISOControl() && it != '\n' } &&
+            english.let(::placeholders).containsAll(placeholders(text))
+
+    /** The fetched words that may be shown ([usable]), by key; [english] is the app's own English text of a key. */
+    fun accepted(fetched: Map<String, String>, english: (String) -> String?): Map<String, String> =
+        fetched.filter { (key, text) -> key in CardStrings.IDS && usable(key, text, english(key)) }
+
+    fun fill(template: String, params: Map<String, String>): String {
+        var text = template
+        for ((name, value) in params) text = text.replace("{$name}", value)
+        return text
+    }
+
+    /** The text of [key] with [params] filled: [fetched] (already [accepted]) first, else the app's own ([bundled]). */
+    fun text(key: String, params: Map<String, String>, fetched: Map<String, String>?, bundled: (Int) -> String): String {
+        val id = CardStrings.IDS[key]
+        if (id == null) {
+            log("No card text for $key")
+            return ""
+        }
+        return fill(fetched?.get(key) ?: bundled(id), params)
+    }
+}
+
+/** The card's words as this screen's language has them: fetched from the screen's Home Assistant, else the app's own. */
+internal fun ViewScope.cardWords(): CardWords {
+    val fetched = CardStringSync.words(activity, CardStringSync.shown)
+    return CardWords { key, params -> CardText.text(key, params, fetched) { template(it) } }
 }
