@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The cover: a rocket. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <group android:rotation="35" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,8 C64,22 66,44 62,64 H38 C34,44 36,22 50,8 Z">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="35.5" android:startY="36" android:endX="64.5" android:endY="36"><item android:offset="0" android:color="#FFFFFFFF"/><item android:offset="1" android:color="#FFC9CFE0"/></gradient></aapt:attr>
+    </path>
+    <path
+        android:pathData="M43,36 A7,7 0 1,0 57,36 A7,7 0 1,0 43,36 Z"
+        android:fillColor="#FF5B9BFF"
+        android:strokeColor="#FF2A2F7A"
+        android:strokeWidth="2.5" />
+    <path
+        android:pathData="M38,52 L26,70 L38,66 Z M62,52 L74,70 L62,66 Z"
+        android:fillColor="#FFEC6FB5" />
+    <path
+        android:pathData="M42,66 Q50,98 58,66 Z">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="50" android:startY="66" android:endX="50" android:endY="82"><item android:offset="0" android:color="#FFFFE066"/><item android:offset="1" android:color="#00FF6A3D"/></gradient></aapt:attr>
+    </path>
+    </group>
+</vector>

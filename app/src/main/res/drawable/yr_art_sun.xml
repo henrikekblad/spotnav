@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The sun. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <group android:name="rays" android:rotation="0" android:pivotX="50" android:pivotY="50">
+    <group android:rotation="0" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="30" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="60" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="90" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="120" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="150" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="180" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="210" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="240" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="270" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="300" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    <group android:rotation="330" android:pivotX="50" android:pivotY="50">
+    <path
+        android:pathData="M50,4 H50 A2,2 0 0 1 52,6 V18 A2,2 0 0 1 50,20 H50 A2,2 0 0 1 48,18 V6 A2,2 0 0 1 50,4 Z"
+        android:fillColor="#FFFFF3A6" />
+    </group>
+    </group>
+    <path
+        android:pathData="M28,50 A22,22 0 1,0 72,50 A22,22 0 1,0 28,50 Z">
+        <aapt:attr name="android:fillColor"><gradient android:type="radial" android:centerX="45.6" android:centerY="43.4" android:gradientRadius="22"><item android:offset="0" android:color="#FFFFF6C2"/><item android:offset="1" android:color="#FFF2B705"/></gradient></aapt:attr>
+    </path>
+</vector>
