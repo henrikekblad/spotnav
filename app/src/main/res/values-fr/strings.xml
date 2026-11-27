@@ -1089,13 +1089,6 @@
   <string name="card_house_plan_then_hold" formatted="false">elle garde sa charge</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">elle vend au réseau</string>
   <string name="card_house_plan_then_self" formatted="false">elle couvre la maison et stocke le soleil</string>
-  <string name="card_house_now_tab_sun" formatted="false">Soleil auj.</string>
-  <string name="card_house_now_tab_grid" formatted="false">Acheté auj.</string>
-  <string name="card_house_now_tab_sold" formatted="false">vendu {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Batterie</string>
-  <string name="card_house_now_tab_car" formatted="false">Voiture</string>
-  <string name="card_house_now_tab_heat" formatted="false">Chauffage auj.</string>
-  <string name="card_house_now_tab_house" formatted="false">Maison auj.</string>
   <string name="card_house_now_tab_house_now" formatted="false">La maison maintenant</string>
   <string name="card_house_now_tab_no_live" formatted="false">pas encore de valeurs en direct</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">Le soleil donne {kw}</string>
@@ -1106,15 +1099,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">La batterie se charge à {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">La voiture donne {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">La voiture se charge à {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Chauffage {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">Le chauffage utilise {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Aujourd\'hui : {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">la batterie a rapporté {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">la batterie a rapporté {amount} (pilotage propre)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav a économisé {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} auj.</string>
-  <string name="card_house_now_tab_today" formatted="false">auj.</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">hors voiture</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % autonomie</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Heure bon marché · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Heure normale · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Heure chère · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">La batterie et le soleil couvrent la maison pendant l\'heure chère.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">La batterie couvre la maison pendant l\'heure chère.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Heure bon marché : la batterie et la voiture se chargent sur le réseau.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Heure bon marché : la batterie se charge sur le réseau.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Heure bon marché : la voiture se charge.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">Le soleil couvre la maison et charge la batterie. Le surplus est vendu.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">Le soleil couvre la maison. Le surplus est vendu.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">Le soleil couvre la maison et charge la batterie.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">Le soleil couvre la maison.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">Le soleil couvre une partie de la maison.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">Le soleil et la batterie couvrent la maison.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">Le soleil et la batterie couvrent une partie de la maison.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">La batterie couvre la maison.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">La batterie couvre une partie de la maison.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">La voiture se charge.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">La maison prend tout au réseau.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Soleil</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Soleil, rien maintenant</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Réseau</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Achète</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Vend</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Réseau, au repos</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">couvre la maison</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">se charge</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">en attente</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Batterie</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">En charge</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Branchée</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">Pas de voiture</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Voiture</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} auj.</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">acheté {bought} · vendu {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">entrée {in} · sortie {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">chargé {kwh} auj.</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} auj.</string>
+  <string name="card_house_now_tab_house_name" formatted="false">maison</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Chauffage</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Piscine, spa, sauna</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Autre</string>
   <string name="card_house_learning_capped_while" formatted="false">Charge sur le réseau au plus à {kw} kW pendant l\'apprentissage des pointes de la maison ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Apprend les pointes de la maison, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Ne se charge pas sur le réseau d\'ici là.</string>

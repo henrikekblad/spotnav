@@ -1081,13 +1081,6 @@
   <string name="card_house_plan_then_hold" formatted="false">holder det ladningen</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">selger det til nettet</string>
   <string name="card_house_plan_then_self" formatted="false">dekker det huset og lagrer solen</string>
-  <string name="card_house_now_tab_sun" formatted="false">Sol i dag</string>
-  <string name="card_house_now_tab_grid" formatted="false">Kjøpt i dag</string>
-  <string name="card_house_now_tab_sold" formatted="false">solgt {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Batteri</string>
-  <string name="card_house_now_tab_car" formatted="false">Bil</string>
-  <string name="card_house_now_tab_heat" formatted="false">Varme i dag</string>
-  <string name="card_house_now_tab_house" formatted="false">Hus i dag</string>
   <string name="card_house_now_tab_house_now" formatted="false">Huset nå</string>
   <string name="card_house_now_tab_no_live" formatted="false">ingen sanntidsverdier ennå</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">Solen gir {kw}</string>
@@ -1098,15 +1091,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">Batteriet lader {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">Bilen gir {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">Bilen lader {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Varme {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">Varmen bruker {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">I dag: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">batteriet tjente {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">batteriet tjente {amount} (egen styring)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparte {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} i dag</string>
-  <string name="card_house_now_tab_today" formatted="false">i dag</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">uten bilen</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % egen strøm</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Billig time · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Normal time · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Dyr time · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">Batteriet og solen dekker huset i den dyre timen.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">Batteriet dekker huset i den dyre timen.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Billig time: batteriet og bilen lades fra nettet.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Billig time: batteriet lades fra nettet.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Billig time: bilen lades.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">Solen dekker huset og lader batteriet. Overskuddet selges.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">Solen dekker huset. Overskuddet selges.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">Solen dekker huset og lader batteriet.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">Solen dekker huset.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">Solen dekker en del av huset.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">Solen og batteriet dekker huset.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">Solen og batteriet dekker en del av huset.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">Batteriet dekker huset.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">Batteriet dekker en del av huset.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">Bilen lades.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">Huset tar alt fra nettet.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Sol</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Sol, ingen nå</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Nett</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Kjøper</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Selger</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Nett, i ro</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">dekker huset</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">lader</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">holder</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Batteri</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">Lader</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Tilkoblet</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">Ingen bil</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Bil</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} i dag</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">kjøpt {bought} · solgt {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">inn {in} · ut {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">ladet {kwh} i dag</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} i dag</string>
+  <string name="card_house_now_tab_house_name" formatted="false">huset</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Varme</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Basseng, spa, badstue</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Øvrig</string>
   <string name="card_house_learning_capped_while" formatted="false">Nettlading høyst {kw} kW mens husets topper læres inn ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Lærer husets topper, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Lader ikke fra nettet før da.</string>

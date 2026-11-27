@@ -28,7 +28,8 @@ import java.time.Instant
 
 /**
  * The house page: the header ("Huset · Laddar från nätet"), and under it the Now box as the Home Assistant card's Now tab has
- * it: the live schematic, one sentence of what the battery does and does next, today's money, and the small notes; then
+ * it: the headline (the own share, the price now, one sentence), the live drawing with the house's parts in its ring
+ * and their legend, one sentence of what the battery does and does next, today's money, and the small notes; then
  * the Plan box where Home Assistant serves `get_plan` ([HousePlanBox]).
  *
  * It reads only while it is in view with the app in the foreground ([setInView]): the live flows every 10 s, the
@@ -120,7 +121,12 @@ internal class HousePage(
     }
     private val testExplain = note()
     private val state = line().apply { setTextColor(muted) }
-    private val schematic = HouseSchematicView(context, colours, AppLanguageSettings.locale(context))
+    /** The headline: the own share's and the price's pills, then one sentence of what is happening now. */
+    private val pills = line().apply { setLineSpacing(dp(6).toFloat(), 1f) }
+    private val why = line().apply { textSize = 14f; setTextColor(muted) }
+    private val schematic = HouseSchematicView(context, colours)
+    /** The ring's legend under the drawing: each part of the house with its figure. */
+    private val legend = note().apply { gravity = Gravity.CENTER_HORIZONTAL; setLineSpacing(dp(2).toFloat(), 1f) }
     private val plan = line()
     private val money = line()
     private val notes = note()
@@ -177,7 +183,10 @@ internal class HousePage(
 
     init {
         body.addView(state, wide())
-        body.addView(schematic, wide())
+        body.addView(pills, wide())
+        body.addView(why, wide().apply { topMargin = dp(4) })
+        body.addView(schematic, wide().apply { topMargin = dp(8) })
+        body.addView(legend, wide().apply { topMargin = dp(4) })
         body.addView(plan, wide().apply { topMargin = dp(10) })
         body.addView(money, wide().apply { topMargin = dp(6) })
         body.addView(notes, wide().apply { topMargin = dp(6) })
@@ -289,7 +298,7 @@ internal class HousePage(
         if (house == null) {
             state.text = words.say(if (failed) "house.failed" else "house.loading")
             state.visibility = View.VISIBLE
-            listOf(schematic, plan, money, notes, learning).forEach { it.visibility = View.GONE }
+            listOf(pills, why, schematic, legend, plan, money, notes, learning).forEach { it.visibility = View.GONE }
             periodRow.visibility = View.GONE
             flowGroup.visibility = View.GONE
             boxes.values.forEach { it.panel.visibility = View.GONE }
@@ -298,9 +307,15 @@ internal class HousePage(
         state.visibility = View.GONE
         renderBoxes(house)
         val live = memory.live
+        val now = Instant.now()
+        val picture = HouseNowModel.picture(text, house, live, now)
+        val density = resources.displayMetrics.density
+        show(pills, NowText.pills(picture.headline, colours, density))
+        say(why, picture.headline.why)
         schematic.visibility = View.VISIBLE
-        schematic.show { wide -> HouseNowModel.schematic(text, house, live, wide) }
-        say(plan, HouseNowModel.planSentence(text, house, Instant.now()))
+        schematic.show(picture)
+        show(legend, NowText.legend(picture.legend, colours, density))
+        say(plan, HouseNowModel.planSentence(text, house, now))
         say(money, HouseNowModel.moneyLine(text, house))
         say(notes, HouseNowModel.notesLine(text, house, live))
         say(learning, HouseNowModel.learningLines(text, house).joinToString("\n").ifEmpty { null })
@@ -387,6 +402,11 @@ internal class HousePage(
     }
 
     private fun siteKey(): String = memory.house?.siteId ?: profileId
+
+    private fun show(view: TextView, words: CharSequence?) {
+        view.text = words ?: ""
+        view.visibility = if (words == null) View.GONE else View.VISIBLE
+    }
 
     private fun say(view: TextView, words: String?) {
         view.text = words.orEmpty()

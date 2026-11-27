@@ -1081,13 +1081,6 @@
   <string name="card_house_plan_then_hold" formatted="false">se pitää varauksensa</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">se myy verkkoon</string>
   <string name="card_house_plan_then_self" formatted="false">se kattaa talon ja varastoi auringon</string>
-  <string name="card_house_now_tab_sun" formatted="false">Aurinko tänään</string>
-  <string name="card_house_now_tab_grid" formatted="false">Ostettu tänään</string>
-  <string name="card_house_now_tab_sold" formatted="false">myyty {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Akku</string>
-  <string name="card_house_now_tab_car" formatted="false">Auto</string>
-  <string name="card_house_now_tab_heat" formatted="false">Lämpö tänään</string>
-  <string name="card_house_now_tab_house" formatted="false">Talo tänään</string>
   <string name="card_house_now_tab_house_now" formatted="false">Talo nyt</string>
   <string name="card_house_now_tab_no_live" formatted="false">ei vielä reaaliaikaisia lukemia</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">Aurinko tuottaa {kw}</string>
@@ -1098,15 +1091,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">Akku latautuu {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">Auto antaa {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">Auto latautuu {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Lämpö {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">Lämmitys käyttää {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Tänään: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">akku tienasi {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">akku tienasi {amount} (oma ohjaus)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav säästi {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} tänään</string>
-  <string name="card_house_now_tab_today" formatted="false">tänään</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">ilman autoa</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % omaa sähköä</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Halpa tunti · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Tavallinen tunti · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Kallis tunti · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">Akku ja aurinko kattavat talon kalliin tunnin aikana.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">Akku kattaa talon kalliin tunnin aikana.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Halpa tunti: akku ja auto latautuvat verkosta.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Halpa tunti: akku latautuu verkosta.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Halpa tunti: auto latautuu.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">Aurinko kattaa talon ja lataa akkua. Ylijäämä myydään.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">Aurinko kattaa talon. Ylijäämä myydään.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">Aurinko kattaa talon ja lataa akkua.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">Aurinko kattaa talon.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">Aurinko kattaa osan talosta.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">Aurinko ja akku kattavat talon.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">Aurinko ja akku kattavat osan talosta.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">Akku kattaa talon.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">Akku kattaa osan talosta.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">Auto latautuu.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">Talo ottaa kaiken verkosta.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Aurinko</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Aurinko, ei nyt</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Verkko</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Ostaa</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Myy</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Verkko, levossa</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">kattaa talon</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">latautuu</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">pitää</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Akku</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">Latautuu</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Kytketty</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">Ei autoa</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Auto</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} tänään</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">ostettu {bought} · myyty {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">sisään {in} · ulos {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">ladattu {kwh} tänään</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} tänään</string>
+  <string name="card_house_now_tab_house_name" formatted="false">talo</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Lämmitys</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Allas, spa, sauna</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Muu</string>
   <string name="card_house_learning_capped_while" formatted="false">Lataus verkosta enintään {kw} kW, kun talon huippuja opetellaan ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Opettelee talon huippuja, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Ei lataa verkosta ennen sitä.</string>

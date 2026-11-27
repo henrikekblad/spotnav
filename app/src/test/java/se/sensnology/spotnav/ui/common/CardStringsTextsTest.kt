@@ -26,4 +26,17 @@ class CardStringsTextsTest {
         assertEquals("No lowering planned for the next 24 hours", en.say("heat.ahead.none"))
         assertFalse("heat.settings.offsetHelp" in CardStrings.IDS)
     }
+
+    @Test fun theNowTabsNewWordsAreMappedAndTheCornersWordsAreGone() {
+        val gone = listOf("sun", "grid", "sold", "battery", "car", "heat", "house", "carToday", "today", "houseNoCar", "line.heat.in", "line.heat.out")
+        for (key in gone) assertFalse(key, "house.nowTab.$key" in CardStrings.IDS)
+        val nowKeys = CardStrings.IDS.keys.filter { it.startsWith("house.nowTab.") }
+        assertEquals(16, nowKeys.count { it.startsWith("house.nowTab.why.") })
+        assertEquals(5, nowKeys.count { it.startsWith("house.nowTab.today.") })
+        val sv = CardStringsXml.words("sv")
+        val en = CardStringsXml.words("en")
+        assertEquals("87 % egen el", sv.say("house.nowTab.own", "pct" to "87"))
+        assertEquals("Expensive hour · 1.23 kr", en.say("house.nowTab.price.dear", "price" to "1.23 kr"))
+        assertEquals("Pool, spa, bastu", sv.say("house.nowTab.part.pool"))
+    }
 }

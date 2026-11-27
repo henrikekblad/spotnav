@@ -1,89 +1,110 @@
 package se.sensnology.spotnav.ui.site
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.hypot
 
-/** The Now schematic's geometry, as the Home Assistant card draws it (`frontend/src/house-now.ts`). */
+/** The Now drawing's geometry against the card's own (`frontend/test/house-tabs.test.ts`, `now-scale.test.ts`). */
 class SchematicLayoutTest {
-    @Test fun theHeightFollowsTheWidthWithinItsBoundsAndAHouseAloneIsOneLowRow() {
-        assertEquals(296f, SchematicLayout.height(340f, alone = false))
-        assertEquals(315f, SchematicLayout.height(750f, alone = false))
-        assertEquals(344f, SchematicLayout.height(1200f, alone = false))
-        assertEquals(90f, SchematicLayout.height(340f, alone = true))
+    private val all = listOf(NodeRole.SUN, NodeRole.GRID, NodeRole.BATTERY, NodeRole.CAR)
+
+    @Test fun oneOrTwoOuterNodesStandInARowAndThreeOrFourAtFixedCorners() {
+        // Each outer node as far out as its drawing allows: its reach and 6 dp off the edge.
+        val alone = SchematicLayout.layout(listOf(NodeRole.GRID), 360f)
+        assertEquals(LayoutKind.ROW, alone.kind)
+        assertEquals(150f, alone.height)
+        assertEquals(Spot(31f, 75f), alone.spots[NodeRole.GRID])
+        assertEquals(Spot(180f, 75f), alone.spots[null])
+        assertEquals(200f, alone.drawn)
+        assertEquals(20f, alone.top)
+        val two = SchematicLayout.layout(listOf(NodeRole.CAR, NodeRole.GRID), 360f)
+        assertEquals(LayoutKind.ROW, two.kind)
+        assertEquals(Spot(31f, 75f), two.spots[NodeRole.GRID])
+        assertEquals(Spot(329f, 75f), two.spots[NodeRole.CAR])
+        val three = SchematicLayout.layout(listOf(NodeRole.SUN, NodeRole.GRID, NodeRole.CAR), 360f)
+        assertEquals(LayoutKind.CORNERS, three.kind)
+        assertEquals(Spot(31f, 52f), three.spots[NodeRole.SUN])
+        assertEquals(Spot(329f, 52f), three.spots[NodeRole.GRID])
+        assertEquals(329f, three.spots.getValue(NodeRole.CAR).x)
+        // The diagonals flat: the rise to the house 0.45 of the run, the same down to the bottom corners.
+        val house = three.spots.getValue(null)
+        val sun = three.spots.getValue(NodeRole.SUN)
+        assertEquals(0.45f, (house.y - sun.y) / (house.x - sun.x), 0.01f)
+        assertEquals(house.y - sun.y, three.spots.getValue(NodeRole.CAR).y - house.y, 0.01f)
+        // A missing corner stays empty; with the battery the corners make room for its level ring.
+        assertNull(three.spots[NodeRole.BATTERY])
+        assertEquals(37f, SchematicLayout.layout(all, 360f).spots.getValue(NodeRole.BATTERY).x)
     }
 
-    @Test fun theHouseIsInTheMiddleTheOthersAroundItAndTheHeatWellBelow() {
-        val height = SchematicLayout.height(340f, alone = false)
-        val spots = SchematicLayout.spots(340f, height, alone = false)
-        val house = spots.getValue(null)
-        assertEquals(170f, house.x)
-        assertTrue(spots.getValue(NodeRole.SUN).x < house.x && spots.getValue(NodeRole.SUN).y < house.y)
-        assertTrue(spots.getValue(NodeRole.GRID).x > house.x && spots.getValue(NodeRole.GRID).y < house.y)
-        assertTrue(spots.getValue(NodeRole.BATTERY).x < house.x && spots.getValue(NodeRole.BATTERY).y > house.y)
-        assertTrue(spots.getValue(NodeRole.CAR).x > house.x && spots.getValue(NodeRole.CAR).y > house.y)
-        // The heat's line straight down is long enough to show its flow.
-        assertEquals(house.x, spots.getValue(NodeRole.HEAT).x)
-        assertTrue(spots.getValue(NodeRole.HEAT).y - house.y >= 90f)
-        // Every disc is inside the picture, clear of the corners' words above and below.
-        for ((role, spot) in spots) {
-            val r = SchematicLayout.radius(role, alone = false)
-            assertTrue("$role", spot.x - r >= 0f && spot.x + r <= 340f && spot.y - r >= 43f && spot.y + r <= height)
-        }
+    @Test fun aWiderBoxDrawsEverythingLargerUpTo1point6AndPushesTheCornersOut() {
+        assertEquals(1f, SchematicLayout.scale(300f))
+        assertEquals(1f, SchematicLayout.scale(360f))
+        assertEquals(1.111f, SchematicLayout.scale(400f), 0.001f)
+        assertEquals(1.6f, SchematicLayout.scale(640f))
+        assertEquals(1.6f, SchematicLayout.scale(900f))
+        assertEquals(13, SchematicLayout.fontSizes(SchematicLayout.scale(400f)).first)
+        assertEquals(8.8f * 1.2f, SchematicLayout.lineWidth(4.0, 1.2f), 1e-4f)
+        val narrow = SchematicLayout.layout(all, 360f)
+        val wide = SchematicLayout.layout(all, 400f)
+        assertTrue(wide.spots.getValue(NodeRole.GRID).x - wide.spots.getValue(NodeRole.SUN).x > narrow.spots.getValue(NodeRole.GRID).x - narrow.spots.getValue(NodeRole.SUN).x)
+        assertTrue(wide.height > narrow.height)
+        // The drawing is between 300 and 640 dp wide whatever the box.
+        assertEquals(300f, SchematicLayout.drawingWidth(280f))
+        assertEquals(332f, SchematicLayout.drawingWidth(332f))
+        assertEquals(640f, SchematicLayout.drawingWidth(800f))
     }
 
-    @Test fun aHouseAloneHasTheGridAtTheLeftAndTheHouseAtTheRight() {
-        val spots = SchematicLayout.spots(340f, 90f, alone = true)
-        assertEquals(setOf(null, NodeRole.GRID), spots.keys)
-        assertTrue(spots.getValue(NodeRole.GRID).x < spots.getValue(null).x)
-        assertEquals(spots.getValue(NodeRole.GRID).y, spots.getValue(null).y)
-        val line = SchematicLayout.line(NodeRole.GRID, Way.IN, spots, alone = true)
-        // The figure stands above the line's middle.
-        assertEquals(LabelPlace.Align.MIDDLE, line.label.align)
-        assertTrue(line.label.at.y < line.mid.y)
+    @Test fun aLinesWidthIsTheSquareRootOfItsPowerAndItEndsAtEachNodesOuterEdge() {
+        assertEquals(1.5f, SchematicLayout.lineWidth(0.0))
+        assertEquals(1.5f, SchematicLayout.lineWidth(0.04))
+        assertEquals(1.5f, SchematicLayout.lineWidth(null))
+        assertEquals(5.4f, SchematicLayout.lineWidth(1.0), 1e-4f)
+        assertEquals(8.8f, SchematicLayout.lineWidth(4.0), 1e-4f)
+        assertEquals(8.8f, SchematicLayout.lineWidth(-4.0), 1e-4f)
+        // Never under the battery's ring or the house's: from 31 dp off the battery's centre to 51 dp off the house's.
+        val ends = SchematicLayout.lineEnds(Spot(46f, 248f), Spot(180f, 150f), SchematicLayout.outer(NodeRole.BATTERY), SchematicLayout.outer(null))
+        assertEquals(31f, hypot(ends.a.x - 46f, ends.a.y - 248f), 1e-3f)
+        assertEquals(51f, hypot(ends.b.x - 180f, ends.b.y - 150f), 1e-3f)
     }
 
-    @Test fun aLineIsDrawnTheWayThePowerFlowsBetweenTheDiscsEdges() {
-        val spots = SchematicLayout.spots(340f, 296f, alone = false)
-        val house = spots.getValue(null)
-        val grid = spots.getValue(NodeRole.GRID)
-        val buying = SchematicLayout.line(NodeRole.GRID, Way.IN, spots, alone = false)
-        val selling = SchematicLayout.line(NodeRole.GRID, Way.OUT, spots, alone = false)
-        // Towards the house when buying, away from it when selling: the same two ends, swapped.
-        assertEquals(buying.from, selling.to)
-        assertEquals(buying.to, selling.from)
-        assertEquals(SchematicLayout.NODE_R + 3f, hypot(buying.from.x - grid.x, buying.from.y - grid.y), 0.01f)
-        assertEquals(SchematicLayout.HOUSE_R + 3f, hypot(buying.to.x - house.x, buying.to.y - house.y), 0.01f)
-        assertEquals(buying.length, selling.length, 0.001f)
-        // The arrowhead turns with the way.
-        assertEquals(180f, Math.abs(buying.angleDegrees - selling.angleDegrees), 0.01f)
-        // The figure is above its line whichever way the power runs, never on it.
-        assertTrue(buying.label.at.y < buying.mid.y)
-        assertEquals(buying.label, selling.label)
-        // A still line is drawn like one towards the house.
-        assertEquals(buying, SchematicLayout.line(NodeRole.GRID, Way.STILL, spots, alone = false))
+    @Test fun theChevronsRunFasterWithMorePowerAndAThinLineHasNone() {
+        assertNull(SchematicLayout.chevronScale(0.1))
+        assertTrue(SchematicLayout.chevronScale(1.0)!! * 9 <= SchematicLayout.lineWidth(1.0) * 0.7f + 1e-6f)
+        assertEquals(1.25f, SchematicLayout.chevronScale(30.0))
+        assertTrue(SchematicLayout.chevronSpeed(6.0) > SchematicLayout.chevronSpeed(1.0))
+        assertEquals(2, SchematicLayout.chevronCount(10f, 1f))
+        assertEquals(7, SchematicLayout.chevronCount(500f, 1f))
+        assertEquals(5, SchematicLayout.chevronCount(70f, 1f))
     }
 
-    @Test fun theHeatsFigureStandsToTheRightOfItsShortLine() {
-        val spots = SchematicLayout.spots(340f, 296f, alone = false)
-        val heat = SchematicLayout.line(NodeRole.HEAT, Way.OUT, spots, alone = false)
-        assertEquals(LabelPlace.Align.START, heat.label.align)
-        assertEquals(heat.mid.y, heat.label.at.y)
-        assertTrue(heat.label.at.x > heat.mid.x)
-        // The lower lines' figures run away from the middle, clear of it.
-        assertEquals(LabelPlace.Align.END, SchematicLayout.line(NodeRole.BATTERY, Way.IN, spots, alone = false).label.align)
-        assertEquals(LabelPlace.Align.START, SchematicLayout.line(NodeRole.CAR, Way.OUT, spots, alone = false).label.align)
+    @Test fun theKwStandsAboveAHorizontalLineAndOnTheOuterSideOfADiagonal() {
+        val flat = SchematicLayout.labelPlace(Spot(69f, 75f), Spot(129f, 75f), 1.0, 180f)
+        assertTrue(flat.above)
+        assertEquals(75f - (SchematicLayout.lineWidth(1.0) / 2 + 10) + 4, flat.at.y, 1e-3f)
+        assertEquals(LabelPlace.Align.MIDDLE, flat.align)
+        // The sun's line (top left to the house): its label up and to the left, anchored at its end.
+        val sun = SchematicLayout.labelPlace(Spot(70f, 70f), Spot(140f, 120f), 1.2, 180f)
+        assertTrue(!sun.above)
+        assertTrue(sun.at.x < 105f)
+        assertEquals(LabelPlace.Align.END, sun.align)
+        // The car's line (house to bottom right): on its outer side, to the right.
+        val car = SchematicLayout.labelPlace(Spot(220f, 180f), Spot(290f, 230f), 7.4, 180f)
+        assertTrue(car.at.x > 255f)
+        assertEquals(LabelPlace.Align.START, car.align)
     }
 
-    @Test fun theDotsStandOneGapApartAndRunFromTheLinesStart() {
-        val still = SchematicLayout.dots(30f, 0f)
-        assertEquals(listOf(0f, 9.1f, 18.2f, 27.3f), still.map { Math.round(it * 10) / 10f })
-        val half = SchematicLayout.dots(30f, 0.5f)
-        assertEquals(4.55f, half.first(), 0.001f)
-        assertTrue(half.all { it in 0f..30f })
-        // A whole lap is where it began: the dots never jump.
-        assertEquals(still, SchematicLayout.dots(30f, 1f))
-        assertEquals(half.size, SchematicLayout.dots(30f, 2.5f).size)
+    @Test fun aCaptionNearAnEdgeIsAnchoredInwardAndLongCaptionsAreWrittenSmaller() {
+        assertEquals(4f to LabelPlace.Align.START, SchematicLayout.captionAnchor(37f, 360f))
+        assertEquals(356f to LabelPlace.Align.END, SchematicLayout.captionAnchor(323f, 360f))
+        assertEquals(180f to LabelPlace.Align.MIDDLE, SchematicLayout.captionAnchor(180f, 360f))
+        val layout = SchematicLayout.layout(all, 360f)
+        val short = all.associateWith { Captions("Sol", "7,5 kWh i dag") }
+        assertEquals(12, SchematicLayout.captionSize(12, layout, short))
+        val long = all.associateWith { Captions("Netz, im Leerlauf, ganz lange Worte", "gekauft 76,9 · verkauft 0,1 kWh") }
+        val size = SchematicLayout.captionSize(12, layout, long)
+        assertTrue("$size", size in 9 until 12)
+        assertEquals(9, SchematicLayout.captionSize(12, layout, all.associateWith { Captions("x".repeat(200), "") }))
     }
 }

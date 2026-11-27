@@ -1094,13 +1094,6 @@
   <string name="card_house_plan_then_hold" formatted="false">it holds its charge</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">it sells to the grid</string>
   <string name="card_house_plan_then_self" formatted="false">it covers the house and stores the sun</string>
-  <string name="card_house_now_tab_sun" formatted="false">Sun today</string>
-  <string name="card_house_now_tab_grid" formatted="false">Bought today</string>
-  <string name="card_house_now_tab_sold" formatted="false">sold {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Battery</string>
-  <string name="card_house_now_tab_car" formatted="false">Car</string>
-  <string name="card_house_now_tab_heat" formatted="false">Heat today</string>
-  <string name="card_house_now_tab_house" formatted="false">House today</string>
   <string name="card_house_now_tab_house_now" formatted="false">The house now</string>
   <string name="card_house_now_tab_no_live" formatted="false">no live figures yet</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">The sun gives {kw}</string>
@@ -1111,15 +1104,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">The battery charges {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">The car gives {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">The car charges {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Heat {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">The heat uses {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Today: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">the battery earned {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">the battery earned {amount} (own control)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav saved {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} today</string>
-  <string name="card_house_now_tab_today" formatted="false">today</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">without the car</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % own power</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Cheap hour · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Normal hour · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Expensive hour · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">The battery and the sun cover the house in the expensive hour.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">The battery covers the house in the expensive hour.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Cheap hour: the battery and the car charge from the grid.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Cheap hour: the battery charges from the grid.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Cheap hour: the car charges.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">The sun covers the house and charges the battery. The surplus is sold.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">The sun covers the house. The surplus is sold.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">The sun covers the house and charges the battery.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">The sun covers the house.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">The sun covers part of the house.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">The sun and the battery cover the house.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">The sun and the battery cover part of the house.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">The battery covers the house.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">The battery covers part of the house.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">The car is charging.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">The house takes everything from the grid.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Sun</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Sun, none now</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Grid</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Buying</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Selling</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Grid, idle</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">covers the house</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">charging</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">holding</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Battery</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">Charging</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Plugged in</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">No car</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Car</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} today</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">bought {bought} · sold {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">in {in} · out {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">charged {kwh} today</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} today</string>
+  <string name="card_house_now_tab_house_name" formatted="false">house</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Heat</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Pool, spa, sauna</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Other</string>
   <string name="card_house_learning_capped_while" formatted="false">Grid charging at most {kw} kW while the house\'s peaks are being learned ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Learning the house\'s peaks, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Does not charge from the grid until then.</string>
