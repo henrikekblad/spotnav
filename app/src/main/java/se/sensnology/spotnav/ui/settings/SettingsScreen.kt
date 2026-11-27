@@ -217,7 +217,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 battery = { mode, done -> siteSession.batteryControl(mode, done) },
                 heatRead = { done -> siteSession.heatSettings(done) },
                 heatWrite = { request, done -> siteSession.updateHeat(request, done) },
-                priorityRead = { done -> siteSession.sitePriority(done) },
+                viewRead = { done -> siteSession.siteView(done) },
                 homeAssistant = shownSite.baseUrl
             )
             val shownGeneration = viewGeneration
@@ -399,7 +399,7 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
                 battery = { mode, done -> session.batteryControl(mode, done) },
                 heatRead = { done -> session.heatSettings(done) },
                 heatWrite = { request, done -> session.updateHeat(request, done) },
-                priorityRead = { done -> session.sitePriority(done) },
+                viewRead = { done -> session.siteView(done) },
                 homeAssistant = settingsProfile.baseUrl,
                 // A 3.0 list in place of the old priority controls; without one they stay.
                 onPriority = { pairedCards.setPriorityList(it) }

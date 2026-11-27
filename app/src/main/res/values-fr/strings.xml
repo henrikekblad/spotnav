@@ -1767,6 +1767,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa entre les bains</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Filtration de la piscine</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Pompe à chaleur de la piscine</string>
+  <string name="card_export_curtail_title" formatted="false">Pas d\'injection à prix négatifs</string>
+  <string name="card_export_curtail_help" formatted="false">Tant que vendre de l\'électricité coûte de l\'argent, SpotNav met à zéro la limite d\'injection de l\'onduleur, puis la rétablit. Le soleil continue d\'alimenter la maison, la voiture et la batterie. S\'applique à tout le site.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav écrit la limite d\'injection de votre installation {brand} tant qu\'un kWh vendu rapporte moins que rien, puis rétablit la valeur qui s\'y trouvait. Si quelqu\'un d\'autre modifie la limite entre-temps, SpotNav n\'y touche plus.</string>
+  <string name="card_export_curtail_saving" formatted="false">Ces {days} derniers jours, l\'injection à prix négatifs a coûté {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Encore en test avec {brand} : pour l\'instant réservé aux bêta-testeurs.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">La limite d\'injection est désactivée dans Home Assistant. Activez-la pour utiliser ceci.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Aucune limite d\'injection n\'est réglée dans l\'onduleur. Réglez-en d\'abord une dans l\'application de l\'onduleur, au maximum que vous avez le droit d\'injecter. SpotNav l\'abaisse ensuite et rétablit la vôtre, sans jamais en régler une lui-même.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">La maison s\'est mise à tirer du courant du réseau quand la limite a été appliquée : SpotNav a rétabli la limite. SpotNav réessaiera de lui-même demain.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">L\'onduleur n\'a pas respecté la limite : SpotNav l\'a rétablie et s\'est arrêté. Désactivez puis réactivez ceci pour réessayer.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">L\'onduleur n\'a pas pris le réglage : SpotNav s\'est arrêté. Désactivez puis réactivez ceci pour réessayer.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">La limite d\'injection n\'est pas activée dans l\'onduleur. Activez-la dans l\'application de l\'onduleur, ou installez l\'intégration HACS ({repo}) pour que SpotNav puisse le faire.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Avec {brand}, ceci ne fonctionne pour l\'instant que pour les bêta-testeurs. Cochez Bêta-testeur dans Assistance pour l\'utiliser.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Ceci nécessite la puissance réseau totale du compteur, que ce site n\'a pas.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Piloté par SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Piloté par SpotNav : {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Piloté par SpotNav via le cloud : seulement des changements lents et planifiés.</string>

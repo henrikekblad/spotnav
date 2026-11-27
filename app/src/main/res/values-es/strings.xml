@@ -1767,6 +1767,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa entre baños</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Circulación de la piscina</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Bomba de calor de la piscina</string>
+  <string name="card_export_curtail_title" formatted="false">Sin exportación con precios negativos</string>
+  <string name="card_export_curtail_help" formatted="false">Mientras vender electricidad cuesta dinero, SpotNav pone a cero el límite de exportación del inversor y lo restablece después. El sol sigue alimentando la casa, el coche y la batería. Se aplica a toda la instalación.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav escribe el límite de exportación de tu sistema {brand} mientras un kWh vendido rinde menos que nada, y después restablece el valor que había. Si otra persona cambia el límite entretanto, SpotNav lo deja como está.</string>
+  <string name="card_export_curtail_saving" formatted="false">En los últimos {days} días, exportar con precios negativos costó {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Todavía en pruebas con {brand}: por ahora solo para probadores beta.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">El límite de exportación está desactivado en Home Assistant. Actívalo para usar esto.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">El inversor no tiene ningún límite de exportación configurado. Configura primero uno en la app del inversor, con lo máximo que puedes exportar. SpotNav lo baja después y restablece el tuyo, y nunca configura uno propio.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">La casa empezó a tomar electricidad de la red cuando se aplicó el límite, así que SpotNav lo restableció. SpotNav volverá a intentarlo por sí solo mañana.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">El inversor no respetó el límite, así que SpotNav lo restableció y se detuvo. Desactiva y activa esto para volver a intentarlo.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">El inversor no aceptó el ajuste, así que SpotNav se detuvo. Desactiva y activa esto para volver a intentarlo.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">El límite de exportación no está habilitado en el inversor. Habilítalo en la app del inversor, o instala la integración HACS ({repo}) para que SpotNav pueda hacerlo.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Con {brand} esto funciona por ahora solo para probadores beta. Marca Probador beta en Soporte para usarlo.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Esto necesita la potencia total de red del contador, que esta instalación no tiene.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Controlado por SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Controlado por SpotNav: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Controlado por SpotNav a través de la nube: solo cambios lentos y planificados.</string>

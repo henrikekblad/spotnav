@@ -1772,6 +1772,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa between baths</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Pool circulation</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Pool heat pump</string>
+  <string name="card_export_curtail_title" formatted="false">No export at negative prices</string>
+  <string name="card_export_curtail_help" formatted="false">While selling electricity costs money, SpotNav sets the inverter\'s export limit to zero and puts it back afterwards. The sun still runs the house, the car and the battery. Applies to the whole site.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav writes the export limit of your {brand} system while a sold kWh earns less than nothing, and then puts back the value that was there. If someone else changes the limit meanwhile, SpotNav leaves it alone.</string>
+  <string name="card_export_curtail_saving" formatted="false">In the last {days} days, exporting at negative prices cost {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Still being tested with {brand}: for beta testers only so far.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">The export limit is disabled in Home Assistant. Enable it to use this.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">The inverter has no export limit set. Set one in the inverter\'s own app first, at the most you may export. SpotNav then lowers it and puts yours back, and never sets one of its own.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">The home started importing power when the limit was set, so SpotNav put the limit back. SpotNav tries again by itself tomorrow.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">The inverter did not follow the limit, so SpotNav put it back and stopped. Turn this off and on to try again.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">The inverter did not take the setting, so SpotNav stopped. Turn this off and on to try again.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">The export limit is not enabled in the inverter. Enable it in the inverter\'s own app, or install the HACS integration ({repo}) so SpotNav can.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">With {brand} this works for beta testers only so far. Tick Beta tester under Support to use it.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">This needs the meter\'s total grid power, which this site does not have.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Controlled by SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Controlled by SpotNav: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Controlled by SpotNav through the cloud: slow, planned changes only.</string>

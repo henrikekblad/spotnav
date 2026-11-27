@@ -1759,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa kylpyjen välillä</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Altaan kierrätys</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Altaan lämpöpumppu</string>
+  <string name="card_export_curtail_title" formatted="false">Ei vientiä negatiivisilla hinnoilla</string>
+  <string name="card_export_curtail_help" formatted="false">Kun sähkön myyminen maksaa, SpotNav asettaa invertterin vientirajan nollaan ja palauttaa sen jälkeenpäin. Aurinko pyörittää edelleen taloa, autoa ja akkua. Koskee koko kohdetta.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav kirjoittaa {brand}-järjestelmäsi vientirajan silloin, kun myydystä kWh:sta saa alle nollan, ja palauttaa sen jälkeen siinä olleen arvon. Jos joku muu muuttaa rajaa sillä välin, SpotNav jättää sen rauhaan.</string>
+  <string name="card_export_curtail_saving" formatted="false">Viimeisten {days} päivän aikana vienti negatiivisilla hinnoilla maksoi {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Testataan vielä merkillä {brand}: toistaiseksi vain beetatestaajille.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">Vientiraja on poistettu käytöstä Home Assistantissa. Ota se käyttöön, jotta tätä voi käyttää.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Invertteriin ei ole asetettu vientirajaa. Aseta se ensin invertterin omassa sovelluksessa suurimpaan sallittuun vientiisi. SpotNav laskee sitä sen jälkeen ja palauttaa sinun arvosi, eikä koskaan aseta omaansa.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Talo alkoi ottaa sähköä verkosta, kun raja asetettiin, joten SpotNav palautti rajan. SpotNav yrittää itse uudelleen huomenna.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">Invertteri ei noudattanut rajaa, joten SpotNav palautti sen ja lopetti. Kytke tämä pois ja päälle yrittääksesi uudelleen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">Invertteri ei ottanut asetusta vastaan, joten SpotNav lopetti. Kytke tämä pois ja päälle yrittääksesi uudelleen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">Vientirajaa ei ole otettu käyttöön invertterissä. Ota se käyttöön invertterin omassa sovelluksessa tai asenna HACS-integraatio ({repo}), jotta SpotNav voi tehdä sen.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Merkillä {brand} tämä toimii toistaiseksi vain beetatestaajille. Valitse Beetatestaaja kohdasta Tuki käyttääksesi tätä.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Tämä vaatii mittarin kokonaistehon verkkoon päin, jota tällä kohteella ei ole.</string>
   <string name="card_heat_load_control_controlled" formatted="false">SpotNav ohjaa.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">SpotNav ohjaa: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">SpotNav ohjaa pilven kautta: vain hitaita, suunniteltuja muutoksia.</string>

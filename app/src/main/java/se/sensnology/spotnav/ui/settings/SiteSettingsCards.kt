@@ -18,7 +18,9 @@ import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
+import se.sensnology.spotnav.ha.site.ExportCurtail
 import se.sensnology.spotnav.ha.site.SitePriority
+import se.sensnology.spotnav.ha.site.SiteView
 import se.sensnology.spotnav.ha.heat.HeatWrite
 import se.sensnology.spotnav.ui.common.NumberSpec
 import se.sensnology.spotnav.ui.common.ViewScope
@@ -47,6 +49,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
     private var battery: BatteryControlRead.Outcome? = null
     private var heat: SiteRead<HeatSettings>? = null
     private var priority: SitePriority? = null
+    private var exportCurtail: ExportCurtail? = null
     private var homeAssistantUrl: String? = null
     private var priorityHeard: (SitePriority?) -> Unit = {}
     private var notice: String? = null
@@ -54,7 +57,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
 
     private var readBattery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit = { _, done -> done(BatteryControlRead.Outcome.Failed(null)) }
     private var readHeat: ((SiteRead<HeatSettings>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
-    private var readPriority: ((SiteRead<SitePriority?>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
+    private var readView: ((SiteRead<SiteView>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) }
     private var writeHeat: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit =
         { _, done -> done(HeatWrite.Outcome.Failed(null)) }
 
@@ -67,7 +70,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         battery: (String?, (BatteryControlRead.Outcome) -> Unit) -> Unit,
         heatRead: ((SiteRead<HeatSettings>) -> Unit) -> Unit,
         heatWrite: (HeatWrite.Request, (HeatWrite.Outcome) -> Unit) -> Unit,
-        priorityRead: ((SiteRead<SitePriority?>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) },
+        viewRead: ((SiteRead<SiteView>) -> Unit) -> Unit = { done -> done(SiteRead.Failed(null)) },
         homeAssistant: String? = null,
         onPriority: (SitePriority?) -> Unit = {}
     ) {
@@ -75,7 +78,7 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         readBattery = battery
         readHeat = heatRead
         writeHeat = heatWrite
-        readPriority = priorityRead
+        readView = viewRead
         homeAssistantUrl = homeAssistant
     }
 
@@ -88,17 +91,18 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         }
         if (offered.batteryControl) loadBattery(null)
         if (offered.getHeat) loadHeat()
-        // The site's priority list comes with 3.0's site actions (the house page among them).
-        if (offered.getHouse) loadPriority()
+        // The site's priority list and export switch come with 3.0's site actions (the house page among them).
+        if (offered.getHouse) loadView()
     }
 
-    private fun loadPriority() {
-        readPriority { outcome ->
-            if (isDestroyed) return@readPriority
-            // A failed read keeps the list shown; none read leaves the card out.
+    private fun loadView() {
+        readView { outcome ->
+            if (isDestroyed) return@readView
+            // A failed read keeps what is shown; none read leaves the cards out.
             if (outcome is SiteRead.Read) {
-                priority = outcome.value
-                priorityHeard(outcome.value)
+                priority = outcome.value.priority
+                exportCurtail = outcome.value.exportCurtail
+                priorityHeard(outcome.value.priority)
             }
             repaint()
         }
@@ -130,6 +134,28 @@ internal class SiteSettingsCards(scope: ViewScope, private val parent: LinearLay
         if (offered.getHeat && heat != null) addHeatCard()
         if (offered.getHeat) (heat as? SiteRead.Read)?.value?.let(::addLoadCards)
         priority?.takeIf { offered.getHouse && it.rows.isNotEmpty() }?.let(::addPriorityCard)
+        exportCurtail?.takeIf { offered.getHouse && it.found }?.let(::addExportCard)
+    }
+
+    // --- no export at negative prices ---------------------------------------------------------------
+
+    /**
+     * "No export at negative prices", read-only as the card shows it to someone who is no administrator (the card's
+     * Solar section): on or off, what it does, while off what exporting at a negative price cost lately, the beta
+     * note for an untested brand and at most one line the person can act on. An administrator switches it in Home
+     * Assistant; no webhook writes it. Only where an export limit SpotNav can run is found.
+     */
+    private fun addExportCard(block: ExportCurtail) {
+        val words = cardWords()
+        val card = card(container, words.say("exportCurtail.title"), R.drawable.ic_solar)
+        settingRow(
+            card.body, words.say("exportCurtail.title"), words.say(if (block.enabled) "settings.value.on" else "settings.value.off"),
+            words.say("exportCurtail.help")
+        )
+        listOfNotNull(text.exportSaving(block), text.exportBeta(block), text.exportNeed(block)).forEach {
+            card.body.addView(muted(it, top = 4, bottom = 4))
+        }
+        card.body.addView(muted(t(R.string.site_admin_in_home_assistant), top = 4))
     }
 
     // --- the priority list ------------------------------------------------------------------------

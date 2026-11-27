@@ -1759,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa zwischen den Bädern</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Poolumwälzung</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Poolwärmepumpe</string>
+  <string name="card_export_curtail_title" formatted="false">Keine Einspeisung bei negativen Preisen</string>
+  <string name="card_export_curtail_help" formatted="false">Solange das Einspeisen Geld kostet, setzt SpotNav die Einspeisebegrenzung des Wechselrichters auf null und stellt sie danach wieder her. Die Sonne versorgt weiterhin Haus, Auto und Speicher. Gilt für den ganzen Standort.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav schreibt die Einspeisebegrenzung deiner {brand}-Anlage, solange eine verkaufte kWh weniger als nichts einbringt, und stellt danach den Wert wieder her, der dort stand. Ändert jemand anderes die Begrenzung in der Zwischenzeit, lässt SpotNav sie in Ruhe.</string>
+  <string name="card_export_curtail_saving" formatted="false">In den letzten {days} Tagen hat das Einspeisen bei negativen Preisen {amount} gekostet ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Wird mit {brand} noch getestet: bisher nur für Betatester.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">Die Einspeisebegrenzung ist in Home Assistant deaktiviert. Aktiviere sie, um dies zu nutzen.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Im Wechselrichter ist keine Einspeisebegrenzung eingestellt. Stelle zuerst in der App des Wechselrichters eine ein, auf das Höchste, das du einspeisen darfst. SpotNav senkt sie dann und stellt deine wieder her, und setzt nie eine eigene.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Das Haus hat Strom aus dem Netz bezogen, als die Begrenzung gesetzt wurde, daher hat SpotNav sie zurückgestellt. SpotNav versucht es morgen von selbst erneut.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">Der Wechselrichter hat die Begrenzung nicht befolgt, daher hat SpotNav sie zurückgestellt und aufgehört. Schalte dies aus und wieder ein, um es erneut zu versuchen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">Der Wechselrichter hat die Einstellung nicht angenommen, daher hat SpotNav aufgehört. Schalte dies aus und wieder ein, um es erneut zu versuchen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">Die Einspeisebegrenzung ist im Wechselrichter nicht aktiviert. Aktiviere sie in der App des Wechselrichters oder installiere die HACS-Integration ({repo}), damit SpotNav das kann.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Mit {brand} funktioniert dies bisher nur für Betatester. Setze unter Support den Haken bei Betatester, um es zu nutzen.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Dafür wird die gesamte Netzleistung des Zählers benötigt, die dieser Standort nicht hat.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Von SpotNav gesteuert.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Von SpotNav gesteuert: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Von SpotNav über die Cloud gesteuert: nur langsame, geplante Änderungen.</string>

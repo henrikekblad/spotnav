@@ -1759,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa mellem badene</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Poolens cirkulation</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Poolens varmepumpe</string>
+  <string name="card_export_curtail_title" formatted="false">Ingen eksport ved negative priser</string>
+  <string name="card_export_curtail_help" formatted="false">Når det koster penge at sælge strøm, sætter SpotNav vekselretterens eksportgrænse til nul og sætter den tilbage bagefter. Solen driver stadig huset, bilen og batteriet. Gælder hele anlægget.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav skriver eksportgrænsen i dit {brand}-anlæg, mens en solgt kWh giver mindre end nul, og sætter derefter den værdi tilbage, der stod der. Hvis en anden ændrer grænsen i mellemtiden, lader SpotNav den være.</string>
+  <string name="card_export_curtail_saving" formatted="false">De seneste {days} dage kostede eksport ved negative priser {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Testes stadig med {brand}: indtil videre kun for betatestere.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">Eksportgrænsen er slået fra i Home Assistant. Aktivér den for at bruge dette.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Vekselretteren har ingen eksportgrænse indstillet. Indstil først en i vekselretterens egen app, på det højeste du må eksportere. SpotNav sænker den derefter og sætter din tilbage, og indstiller aldrig sin egen.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Huset begyndte at trække strøm fra nettet, da grænsen blev sat, så SpotNav satte grænsen tilbage. SpotNav prøver igen af sig selv i morgen.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">Vekselretteren fulgte ikke grænsen, så SpotNav satte den tilbage og stoppede. Slå dette fra og til for at prøve igen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">Vekselretteren tog ikke imod indstillingen, så SpotNav stoppede. Slå dette fra og til for at prøve igen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">Eksportgrænsen er ikke aktiveret i vekselretteren. Aktivér den i vekselretterens egen app, eller installér HACS-integrationen ({repo}), så SpotNav kan gøre det.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Med {brand} virker dette indtil videre kun for betatestere. Sæt hak ved Betatester under Support for at bruge det.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Dette kræver målerens samlede effekt mod nettet, som dette anlæg ikke har.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Styres af SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Styres af SpotNav: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Styres af SpotNav via skyen: kun langsomme, planlagte ændringer.</string>

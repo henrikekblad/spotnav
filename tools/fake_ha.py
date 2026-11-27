@@ -1527,6 +1527,12 @@ def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
     if action == "get_site_settings_view":
         body = json.loads((DASHBOARD_FIXTURES.parent / "webhook/site_webhook_get_site_settings_view.json").read_text(encoding="utf-8"))
         body.update({"site_id": home, "name": HOMES[home]["name"], "charger_ids": _home_chargers(home)})
+        # "No export at negative prices" found on a Sigenergy plant, off, with what exporting at a negative price cost
+        # lately, so the Settings screen shows its read-only card (the vendored view has no export limit found).
+        body["export_curtail"] = {
+            **body.get("export_curtail", {}), "found": True, "enabled": False, "brand": "sigenergy", "state": "off",
+            "saving": {"days": 30, "kwh": 12.4, "minor": 845.0, "blocked_minor": 0.0, "major_unit": "kr", "minor_unit": "öre"},
+        }
         return 200, body
     return 400, {"ok": False, "error": "spotnav_not_supported_here", "action": action}
 

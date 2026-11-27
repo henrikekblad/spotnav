@@ -21,8 +21,8 @@ import se.sensnology.spotnav.ha.house.HouseRead
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.HeatSettings
-import se.sensnology.spotnav.ha.site.SitePriority
-import se.sensnology.spotnav.ha.site.SitePriorityRead
+import se.sensnology.spotnav.ha.site.SiteView
+import se.sensnology.spotnav.ha.site.SiteViewRead
 import se.sensnology.spotnav.ha.site.HeatSettingsRead
 import se.sensnology.spotnav.ha.pairing.HomeAssistantPairingClient
 import se.sensnology.spotnav.ha.settings.HaPlanningSettings
@@ -436,10 +436,10 @@ object HomeAssistantClient {
         return BatteryControlRead.answer(status, body)
     }
 
-    /** The site's priority list (webhook `get_site_settings_view`'s `priority`), shown read-only. Never throws. */
-    internal fun sitePriority(settings: HomeAssistantSettings): SiteRead<SitePriority?> {
-        val (status, body) = write(settings, SitePriorityRead.payload())
-        return SitePriorityRead.answer(status, body)
+    /** The site's priority list and export switch (webhook `get_site_settings_view`), shown read-only. Never throws. */
+    internal fun siteView(settings: HomeAssistantSettings): SiteRead<SiteView> {
+        val (status, body) = write(settings, SiteViewRead.payload())
+        return SiteViewRead.answer(status, body)
     }
 
     /** The site's heat settings (webhook `get_heat`), as the Settings screen reads them. Never throws. */

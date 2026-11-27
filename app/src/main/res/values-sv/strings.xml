@@ -1759,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa mellan baden</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Poolens cirkulation</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Poolens värmepump</string>
+  <string name="card_export_curtail_title" formatted="false">Ingen export vid negativa priser</string>
+  <string name="card_export_curtail_help" formatted="false">När det kostar pengar att sälja el sätter SpotNav växelriktarens exportgräns till noll och återställer den efteråt. Solen driver fortfarande huset, bilen och batteriet. Gäller hela anläggningen.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav skriver exportgränsen i din {brand}-anläggning medan en såld kWh ger mindre än noll, och sätter sedan tillbaka värdet som stod där. Om någon annan ändrar gränsen under tiden låter SpotNav den vara.</string>
+  <string name="card_export_curtail_saving" formatted="false">De senaste {days} dagarna kostade export vid negativa priser {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Testas fortfarande med {brand}: än så länge bara för betatestare.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">Exportgränsen är avstängd i Home Assistant. Aktivera den för att använda det här.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Växelriktaren har ingen exportgräns inställd. Ställ först in en i växelriktarens egen app, på det mesta du får exportera. SpotNav sänker den sedan och sätter tillbaka din, och ställer aldrig in en egen.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Huset började ta el från nätet när gränsen sattes, så SpotNav återställde gränsen. SpotNav försöker igen av sig självt i morgon.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">Växelriktaren följde inte gränsen, så SpotNav återställde den och slutade. Slå av och på det här för att försöka igen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">Växelriktaren tog inte emot inställningen, så SpotNav slutade. Slå av och på det här för att försöka igen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">Exportgränsen är inte aktiverad i växelriktaren. Aktivera den i växelriktarens egen app, eller installera HACS-integrationen ({repo}) så kan SpotNav göra det.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Med {brand} fungerar det här än så länge bara för betatestare. Kryssa i Betatestare under Support för att använda det.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Det här kräver elmätarens totala effekt mot nätet, som den här anläggningen saknar.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Styrs av SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Styrs av SpotNav: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Styrs av SpotNav via molnet: bara långsamma, planerade ändringar.</string>
