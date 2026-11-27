@@ -62,6 +62,20 @@ class YearReviewReadTest {
         assertNotNull(YearReviewRead.decode(JSONObject(overWebhook(fixture("car_only.json"))), strict = true))
     }
 
+    private fun webhook(name: String): String = HaFixtures.json("webhook/$name").toString()
+
+    @Test fun theWebhooksOwnAnswers() {
+        val fresh = YearReviewRead.answer(200, webhook("get_year_review_success.json")) as YearReviewRead.Outcome.Read
+        assertTrue(fresh.answer.banner)
+        assertNotNull(YearReviewRead.decode(HaFixtures.json("webhook/get_year_review_success.json"), strict = true))
+        val viewed = YearReviewRead.answer(200, webhook("get_year_review_viewed.json")) as YearReviewRead.Outcome.Read
+        assertFalse(viewed.answer.banner)
+        assertTrue(viewed.answer.row)
+        assertEquals(YearReviewRead.Outcome.None, YearReviewRead.answer(400, webhook("get_year_review_no_site.json")))
+        assertTrue(YearReviewSeen.accepted(200, webhook("year_review_seen_success.json")))
+        assertFalse(YearReviewSeen.accepted(400, webhook("year_review_seen_invalid.json")))
+    }
+
     @Test fun stateNoneHasNoBandNoRowAndNoReview() {
         val outcome = YearReviewRead.answer(200, overWebhook(fixture("state_none.json"))) as YearReviewRead.Outcome.Read
         assertEquals(YearReviewAnswer.State.NONE, outcome.answer.state)
