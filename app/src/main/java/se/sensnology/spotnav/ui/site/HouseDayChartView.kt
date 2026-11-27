@@ -128,7 +128,8 @@ internal class HouseDayChartView(
     private val select = choose
     private val current = chosen
 
-    private val sell = 0xFFC2185B.toInt()
+    /** What is sold: the energy palette's export. */
+    private val sell = colours.of(Tone.EXPORT)
 
     init {
         isFocusable = true

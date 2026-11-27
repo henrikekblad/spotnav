@@ -10,6 +10,8 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.text.TextPaint
 import android.view.View
+import se.sensnology.spotnav.ui.common.Energy
+import se.sensnology.spotnav.ui.common.EnergyPalette
 import kotlin.math.ceil
 import kotlin.math.max
 
@@ -20,8 +22,9 @@ internal class PlanPalette(private val colours: SiteColours) {
         PlanLayer.HEAT -> colours.of(Tone.HEAT)
         PlanLayer.WATER_HEATER -> WATER_HEATER
         PlanLayer.CAR -> colours.of(Tone.CAR)
-        PlanLayer.POOL_HEAT -> 0xFF2B6CB0.toInt()
-        PlanLayer.POOL_CIRCULATION -> 0xFF63A4E0.toInt()
+        PlanLayer.POOL_HEAT -> colours.of(Tone.POOL)
+        // A lighter step of the pool, beside its darker heat pump (the card's `load-colours.ts`).
+        PlanLayer.POOL_CIRCULATION -> EnergyPalette.mixWhite(colours.of(Tone.POOL), 0.55f)
         PlanLayer.SPA -> 0xFF6F8F2F.toInt()
         PlanLayer.SAUNA -> 0xFFA8693F.toInt()
         PlanLayer.BATTERY_IN -> colours.of(Tone.BATTERY)
@@ -29,12 +32,13 @@ internal class PlanPalette(private val colours: SiteColours) {
         PlanLayer.BATTERY_OUT -> SiteColours.mix(colours.of(Tone.BATTERY), colours.card, 0.55f)
     }
 
+    /** A price band's background: the energy palette's cheap, mid or expensive at 35 %. */
     fun tone(tone: PriceTone): Int = withAlpha(
         when (tone) {
-            PriceTone.CHEAP -> 0xFF43A047.toInt()
-            PriceTone.MID -> 0xFFFFA600.toInt()
-            PriceTone.EXPENSIVE -> CEILING
-        }, 0.45f
+            PriceTone.CHEAP -> colours.of(Energy.CHEAP)
+            PriceTone.MID -> colours.of(Energy.MID)
+            PriceTone.EXPENSIVE -> colours.of(Energy.EXPENSIVE)
+        }, 0.35f
     )
 
     val text: Int get() = colours.text

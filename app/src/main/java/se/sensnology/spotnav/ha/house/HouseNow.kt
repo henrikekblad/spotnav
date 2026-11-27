@@ -32,10 +32,22 @@ internal data class HouseNow(
     /** The battery on the AC side, as the review and the plan count it; not drawn. [batteryKw] from a Home Assistant before it. */
     val batteryAcKw: Double? = batteryKw,
     /** How the house is had: `plant` (the plant's own load) or `balance`; `null` unread or from a Home Assistant before it. */
-    val houseFrom: String? = null
+    val houseFrom: String? = null,
+    /** The house less its heat; [houseKw] less [heatKw] (never below 0) from a Home Assistant before it. */
+    val restKw: Double? = houseKw?.let { maxOf(0.0, it - (heatKw ?: 0.0)) },
+    /**
+     * The roles whose figure is estimated (`grid`, `sun`, `battery`, `car`, `heat`, `pool`): Home Assistant balances the
+     * figures to the hundredth (`grid + sun = house + car + battery`, `heat + pool + other = house`) and marks the role
+     * it moved. None from a Home Assistant before it.
+     */
+    val estimated: Set<String> = emptySet(),
+    /** The pool's, the spa's and the sauna's draw now; `null` without them or from a Home Assistant before it. */
+    val poolKw: Double? = null,
+    /** The house less its heat and pool; [restKw] from a Home Assistant before it. */
+    val otherKw: Double? = restKw
 ) {
-    /** What the site has to draw. */
-    data class Has(val sun: Boolean, val battery: Boolean, val car: Boolean, val heat: Boolean)
+    /** What the site has to draw; [pool] is false from a Home Assistant before it. */
+    data class Has(val sun: Boolean, val battery: Boolean, val car: Boolean, val heat: Boolean, val pool: Boolean = false)
 }
 
 internal object HouseNowRead {
@@ -63,6 +75,9 @@ internal object HouseNowRead {
 
     private fun document(json: JSONObject): HouseNow = with(StrictJson) {
         val has = obj(json.opt("has"), "has")
+        val houseKw = numberOrNull(json.opt("house_kw"), "house_kw")
+        val heatKw = numberOrNull(json.opt("heat_kw"), "heat_kw")
+        val restKw = additive(json, "rest_kw", houseKw?.let { maxOf(0.0, it - (heatKw ?: 0.0)) }) { numberOrNull(it, "rest_kw") }
         HouseNow(
             siteId = text(json.opt("site_id"), "site_id"),
             at = instant(json.opt("at"), "at"),
@@ -77,17 +92,22 @@ internal object HouseNowRead {
                 else -> flag(raw, "car_connected")
             },
             carSocPct = numberOrNull(json.opt("car_soc_pct"), "car_soc_pct"),
-            heatKw = numberOrNull(json.opt("heat_kw"), "heat_kw"),
+            heatKw = heatKw,
             heatFrom = textOrNull(json.opt("heat_from"), "heat_from"),
-            houseKw = numberOrNull(json.opt("house_kw"), "house_kw"),
+            houseKw = houseKw,
             has = HouseNow.Has(
                 sun = flag(has.opt("sun"), "has.sun"),
                 battery = flag(has.opt("battery"), "has.battery"),
                 car = flag(has.opt("car"), "has.car"),
-                heat = flag(has.opt("heat"), "has.heat")
+                heat = flag(has.opt("heat"), "has.heat"),
+                pool = additive(has, "pool", false) { flag(it, "has.pool") }
             ),
             batteryAcKw = additive(json, "battery_ac_kw", numberOrNull(json.opt("battery_kw"), "battery_kw")) { numberOrNull(it, "battery_ac_kw") },
-            houseFrom = additive(json, "house_from", null) { textOrNull(it, "house_from") }
+            houseFrom = additive(json, "house_from", null) { textOrNull(it, "house_from") },
+            restKw = restKw,
+            estimated = additive(json, "estimated", emptySet()) { raw -> list(raw, "estimated").map { text(it, "estimated") }.toSet() },
+            poolKw = additive(json, "pool_kw", null) { numberOrNull(it, "pool_kw") },
+            otherKw = additive(json, "other_kw", restKw) { numberOrNull(it, "other_kw") }
         )
     }
 }

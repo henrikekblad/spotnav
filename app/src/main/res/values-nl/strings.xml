@@ -1081,13 +1081,6 @@
   <string name="card_house_plan_then_hold" formatted="false">houdt ze de lading vast</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">verkoopt ze aan het net</string>
   <string name="card_house_plan_then_self" formatted="false">dekt ze het huis en slaat de zon op</string>
-  <string name="card_house_now_tab_sun" formatted="false">Zon vandaag</string>
-  <string name="card_house_now_tab_grid" formatted="false">Gekocht vandaag</string>
-  <string name="card_house_now_tab_sold" formatted="false">verkocht {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Batterij</string>
-  <string name="card_house_now_tab_car" formatted="false">Auto</string>
-  <string name="card_house_now_tab_heat" formatted="false">Warmte vandaag</string>
-  <string name="card_house_now_tab_house" formatted="false">Huis vandaag</string>
   <string name="card_house_now_tab_house_now" formatted="false">Het huis nu</string>
   <string name="card_house_now_tab_no_live" formatted="false">nog geen live-waarden</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">De zon levert {kw}</string>
@@ -1098,15 +1091,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">De batterij laadt {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">De auto levert {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">De auto laadt {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Warmte {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">De warmte gebruikt {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Vandaag: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">de batterij verdiende {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">de batterij verdiende {amount} (eigen sturing)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav bespaarde {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} vandaag</string>
-  <string name="card_house_now_tab_today" formatted="false">vandaag</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">zonder auto</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % eigen stroom</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Goedkoop uur · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Normaal uur · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Duur uur · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">De batterij en de zon dekken het huis in het dure uur.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">De batterij dekt het huis in het dure uur.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Goedkoop uur: de batterij en de auto laden uit het net.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Goedkoop uur: de batterij laadt uit het net.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Goedkoop uur: de auto laadt.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">De zon dekt het huis en laadt de batterij. Het overschot wordt verkocht.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">De zon dekt het huis. Het overschot wordt verkocht.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">De zon dekt het huis en laadt de batterij.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">De zon dekt het huis.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">De zon dekt een deel van het huis.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">De zon en de batterij dekken het huis.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">De zon en de batterij dekken een deel van het huis.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">De batterij dekt het huis.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">De batterij dekt een deel van het huis.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">De auto laadt.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">Het huis haalt alles uit het net.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Zon</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Zon, nu geen</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Net</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Koopt</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Verkoopt</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Net, in rust</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">dekt het huis</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">laadt</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">houdt vast</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Batterij</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">Laadt</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Aangesloten</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">Geen auto</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Auto</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} vandaag</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">gekocht {bought} · verkocht {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">in {in} · uit {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">geladen {kwh} vandaag</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} vandaag</string>
+  <string name="card_house_now_tab_house_name" formatted="false">huis</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Verwarming</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Zwembad, spa, sauna</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Overig</string>
   <string name="card_house_learning_capped_while" formatted="false">Laden uit het net hoogstens {kw} kW terwijl de pieken van het huis worden geleerd ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Leert de pieken van het huis, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Laadt tot dan niet uit het net.</string>
@@ -1728,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa tussen de baden</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Zwembadcirculatie</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Zwembadwarmtepomp</string>
+  <string name="card_export_curtail_title" formatted="false">Geen teruglevering bij negatieve prijzen</string>
+  <string name="card_export_curtail_help" formatted="false">Zolang stroom verkopen geld kost, zet SpotNav de terugleverlimiet van de omvormer op nul en zet die daarna terug. De zon voedt nog steeds het huis, de auto en de batterij. Geldt voor de hele locatie.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav schrijft de terugleverlimiet van je {brand}-installatie zolang een verkochte kWh minder dan niets oplevert, en zet daarna de waarde terug die er stond. Als iemand anders de limiet intussen wijzigt, laat SpotNav die met rust.</string>
+  <string name="card_export_curtail_saving" formatted="false">In de afgelopen {days} dagen kostte terugleveren bij negatieve prijzen {amount} ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Wordt nog getest met {brand}: voorlopig alleen voor bètatesters.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">De terugleverlimiet is uitgeschakeld in Home Assistant. Schakel die in om dit te gebruiken.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">In de omvormer is geen terugleverlimiet ingesteld. Stel er eerst een in via de eigen app van de omvormer, op het meeste dat je mag terugleveren. SpotNav verlaagt die daarna en zet de jouwe terug, en stelt er nooit zelf een in.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Het huis begon stroom van het net te halen toen de limiet werd ingesteld, dus SpotNav zette de limiet terug. SpotNav probeert het morgen vanzelf opnieuw.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">De omvormer volgde de limiet niet, dus SpotNav zette die terug en stopte. Zet dit uit en weer aan om het opnieuw te proberen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">De omvormer nam de instelling niet over, dus SpotNav stopte. Zet dit uit en weer aan om het opnieuw te proberen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">De terugleverlimiet is niet ingeschakeld in de omvormer. Schakel die in via de eigen app van de omvormer, of installeer de HACS-integratie ({repo}) zodat SpotNav dat kan.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Met {brand} werkt dit voorlopig alleen voor bètatesters. Vink Bètatester aan onder Ondersteuning om het te gebruiken.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Hiervoor is het totale netvermogen van de meter nodig, en dat heeft deze locatie niet.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Gestuurd door SpotNav.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Gestuurd door SpotNav: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Gestuurd door SpotNav via de cloud: alleen langzame, geplande wijzigingen.</string>

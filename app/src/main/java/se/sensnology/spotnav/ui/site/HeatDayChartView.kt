@@ -33,22 +33,20 @@ internal class HeatDaySpec(
     val selectedMs: Long? = null
 )
 
-/** The colours of the plan chart, the card's (`--spotnav-heat-*-colour`). */
+/** The colours of the plan chart, the card's (`--spotnav-heat-*-colour`); the rooms in the heat's and the car in its own from the energy palette. */
 internal object HeatChartColours {
     const val LOWER = 0xFF2F80C8.toInt()
     const val RAISE = 0xFFD9822B.toInt()
     const val RELAY = 0xFF14808F.toInt()
     const val WATER = 0xFFC62828.toInt()
-    const val INDOOR = 0xFFE5554B.toInt()
-    const val CAR = 0xFFF08C3A.toInt()
     const val COMFORT = 0xFF43A047.toInt()
 
     fun withAlpha(colour: Int, share: Float): Int = (colour and 0x00FFFFFF) or ((share * 255).toInt() shl 24)
 
     /** The swatch of a legend entry: its colour (with its share of opaque) and whether it is a thin line or a droplet. */
-    fun of(kind: String, text: Int): Triple<Int, String, Int> = when (kind) {
-        "indoor_mean" -> Triple(INDOOR, "line", 3)
-        "indoor_coldest" -> Triple(withAlpha(INDOOR, 0.55f), "line", 2)
+    fun of(kind: String, text: Int, colours: SiteColours): Triple<Int, String, Int> = when (kind) {
+        "indoor_mean" -> Triple(colours.of(Tone.HEAT), "line", 3)
+        "indoor_coldest" -> Triple(withAlpha(colours.of(Tone.HEAT), 0.55f), "line", 2)
         "setpoint" -> Triple(withAlpha(text, 0.75f), "dash", 2)
         "comfort" -> Triple(withAlpha(COMFORT, 0.18f), "box", 0)
         "executed" -> Triple(withAlpha(LOWER, 0.38f), "box", 0)
@@ -58,7 +56,7 @@ internal object HeatChartColours {
         "relay" -> Triple(withAlpha(RELAY, 0.34f), "box", 0)
         "relay_expected" -> Triple(withAlpha(RELAY, 0.18f), "box", 0)
         "hot_water" -> Triple(WATER, "drop", 0)
-        else -> Triple(CAR, "line", 4)
+        else -> Triple(colours.of(Tone.CAR), "line", 4)
     }
 }
 
@@ -120,7 +118,7 @@ internal class HeatDayChart(
     }
 
     private fun swatch(kind: String): android.graphics.drawable.Drawable {
-        val (colour, shape, thickness) = HeatChartColours.of(kind, colours.text)
+        val (colour, shape, thickness) = HeatChartColours.of(kind, colours.text, colours)
         val w = scope.dp(15)
         val h = scope.dp(11)
         val density = scope.resources.displayMetrics.density
@@ -311,7 +309,7 @@ internal class HeatDayPlotView(
                 if (previous != null && point.startMs - previous <= chart.stepMs) path.lineTo(px, py) else path.moveTo(px, py)
                 previous = point.startMs
             }
-            line.color = HeatChartColours.withAlpha(HeatChartColours.INDOOR, alpha)
+            line.color = HeatChartColours.withAlpha(colours.of(Tone.HEAT), alpha)
             line.strokeWidth = thick * d
             canvas.drawPath(path, line)
         }
@@ -328,7 +326,7 @@ internal class HeatDayPlotView(
         line.color = colours.wire
         line.strokeWidth = 1f * d
         canvas.drawLine(0f, plotBottom, w, plotBottom, line)
-        fill.color = HeatChartColours.CAR
+        fill.color = colours.of(Tone.CAR)
         for (run in HeatPlanModel.carRuns(chart)) {
             val from = x(run.startMs)
             rect.set(from, CAR_Y * d, max(from + d, x(run.endMs)), (CAR_Y + CAR_HEIGHT) * d)
@@ -380,10 +378,10 @@ internal class HeatDayPlotView(
             line.strokeWidth = 1f * d
             canvas.drawLine(middle, (TOP - 4) * d, middle, (CAR_Y + CAR_HEIGHT) * d, line)
             chart.points.firstOrNull { it.startMs == at }?.let { point ->
-                fill.color = HeatChartColours.INDOOR
+                fill.color = colours.of(Tone.HEAT)
                 canvas.drawCircle(middle, y(point.meanC), 4f * d, fill)
                 if (chart.withColdest && abs(point.coldestC - point.meanC) >= DayChart.DIFFERS_C) {
-                    fill.color = HeatChartColours.withAlpha(HeatChartColours.INDOOR, 0.7f)
+                    fill.color = HeatChartColours.withAlpha(colours.of(Tone.HEAT), 0.7f)
                     canvas.drawCircle(middle, y(point.coldestC), 3f * d, fill)
                 }
             }

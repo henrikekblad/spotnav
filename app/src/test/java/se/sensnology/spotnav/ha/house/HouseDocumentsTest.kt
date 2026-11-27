@@ -27,9 +27,13 @@ class HouseDocumentsTest {
         val expected = mapOf(
             "house_alone_now.json" to listOf(1.8, 1.8, "----", null),
             "villa_car.json" to listOf(7.6, 1.7, "sbch", true),
+            "villa_car_lags.json" to listOf(0.5, 0.0, "sbch", true),
             "villa_dc_battery.json" to listOf(0.2, 10.2, "sbch", false),
             "villa_export.json" to listOf(-2.6, 1.0, "sbch", false),
-            "villa_now.json" to listOf(0.4, 3.1, "sbch", true)
+            "villa_heat_over.json" to listOf(0.1, 1.3, "sbch", false),
+            "villa_now.json" to listOf(0.4, 3.1, "sbch", true),
+            "villa_pool.json" to listOf(-3.1, 2.3, "sbch", false),
+            "villa_stale_parts.json" to listOf(0.0, 2.04, "sbch", false)
         )
         assertEquals(expected.keys, HaFixtures.files("house_now").map { it.name }.toSet())
         for ((name, row) in expected) {
@@ -46,6 +50,43 @@ class HouseDocumentsTest {
         assertEquals("power", villa.sunFrom)
         assertEquals("recent", villa.heatFrom)
         assertNull(now("house_alone_now.json").sunKw)
+        // The parts of the house and what Home Assistant estimated to balance the figures.
+        val pool = now("villa_pool.json")
+        assertTrue(pool.has.pool)
+        assertEquals(setOf("pool"), pool.estimated)
+        assertEquals(listOf(0.9, 0.9, 0.5, 1.4), listOf(pool.heatKw, pool.poolKw, pool.otherKw, pool.restKw))
+        val stale = now("villa_stale_parts.json")
+        assertFalse(stale.has.pool)
+        assertEquals(setOf("sun", "heat"), stale.estimated)
+        assertNull(stale.poolKw)
+        assertEquals(0.27, stale.restKw!!, 0.0)
+        assertEquals(0.27, stale.otherKw!!, 0.0)
+        assertEquals(setOf("car"), now("villa_car_lags.json").estimated)
+    }
+
+    @Test fun theLiveFlowsOfAnEarlierHomeAssistantTakeTheCardsFallbacks() {
+        val full = now("villa_pool.json")
+        fun without(vararg keys: String, fromHas: Boolean = false): HouseNow {
+            val json = HaFixtures.json("house_now/villa_pool.json")
+            keys.forEach { if (fromHas) json.getJSONObject("has").remove(it) else json.remove(it) }
+            return (HouseNowRead.decode(json) as SiteRead.Read).value
+        }
+        // The rest is the house less its heat, never below 0; the other part is the rest.
+        assertEquals(1.4, without("rest_kw").restKw!!, 1e-9)
+        assertEquals(full.copy(estimated = emptySet()), without("estimated"))
+        assertEquals(full.copy(poolKw = null), without("pool_kw"))
+        assertEquals(full.copy(otherKw = full.restKw), without("other_kw"))
+        assertEquals(full.copy(has = full.has.copy(pool = false)), without("pool", fromHas = true))
+        val old = without("rest_kw", "estimated", "pool_kw", "other_kw")
+        assertEquals(1.4, old.otherKw!!, 1e-9)
+        val heatOver = HaFixtures.json("house_now/villa_heat_over.json").apply { remove("rest_kw"); remove("other_kw"); put("heat_kw", 2.0) }
+        assertEquals(0.0, (HouseNowRead.decode(heatOver) as SiteRead.Read).value.otherKw!!, 0.0)
+        // Present, a key must be its shape.
+        for ((key, bad) in listOf("rest_kw" to "1", "estimated" to "sun", "pool_kw" to true, "other_kw" to "0.5")) {
+            assertEquals(key, SiteRead.Failed(null), HouseNowRead.decode(HaFixtures.json("house_now/villa_pool.json").put(key, bad)))
+        }
+        assertEquals(SiteRead.Failed(null), HouseNowRead.decode(HaFixtures.json("house_now/villa_pool.json").put("estimated", org.json.JSONArray().put(1))))
+        assertEquals(SiteRead.Failed(null), HouseNowRead.decode(HaFixtures.json("house_now/villa_pool.json").apply { getJSONObject("has").put("pool", 1) }))
     }
 
     @Test fun everyHouseFixtureIsListedAndDecodes() {
@@ -108,8 +149,8 @@ class HouseDocumentsTest {
     }
 
     @Test fun anUnknownKeyIsNotLookedAt() {
-        val live = HaFixtures.json("house_now/villa_now.json").put("pool_kw", 1.2)
-        live.getJSONObject("has").put("pool", true)
+        val live = HaFixtures.json("house_now/villa_now.json").put("spa_kw", 1.2)
+        live.getJSONObject("has").put("spa", true)
         assertEquals(now("villa_now.json"), (HouseNowRead.decode(live) as SiteRead.Read).value)
         val house = HaFixtures.json("house/villa_battery_sun.json").put("pool", JSONObject().put("kw", 1.2))
         house.getJSONObject("battery").put("warranty_years", 10)

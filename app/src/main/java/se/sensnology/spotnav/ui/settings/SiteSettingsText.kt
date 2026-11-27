@@ -9,6 +9,7 @@ import se.sensnology.spotnav.ha.dashboard.DemandBlock
 import se.sensnology.spotnav.ha.settings.HaSettingsStrategy
 import se.sensnology.spotnav.ha.site.BatteryControlRead
 import se.sensnology.spotnav.ha.site.BatteryStatus
+import se.sensnology.spotnav.ha.site.ExportCurtail
 import se.sensnology.spotnav.ha.site.HeatNight
 import se.sensnology.spotnav.ha.site.HeatSettings
 import se.sensnology.spotnav.ui.site.HeatHoldText
@@ -112,6 +113,49 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         }
         val major = minor / 100
         return "${fixed(major, if (major % 1.0 == 0.0 || Math.abs(major) >= 10) 0 else 2)} ${costs.majorUnit}"
+    }
+
+    // ---- no export at negative prices
+
+    /** The brand's name as the export lines write it; none where no brand is found. */
+    fun exportBrand(block: ExportCurtail): String = block.brand?.let(::brandName).orEmpty()
+
+    /** What exporting at a negative price cost in the last days, while the switch is off and it cost anything (the
+     * card's `exportCurtail.saving`); `null` otherwise. */
+    fun exportSaving(block: ExportCurtail): String? {
+        val saving = block.saving
+        if (block.enabled || saving.minor <= 0) return null
+        val amount = if (saving.majorUnit == null) {
+            fixed(saving.minor, 0) + (saving.minorUnit?.takeIf { it.isNotEmpty() }?.let { " $it" } ?: "")
+        } else {
+            val major = saving.minor / 100
+            "${fixed(major, if (Math.abs(major) >= 10 || major == 0.0) 0 else 2)} ${saving.majorUnit}"
+        }
+        val energy = "${fixed(saving.kwh, if (Math.abs(saving.kwh) >= 100) 0 else 1)} kWh"
+        return words.say("exportCurtail.saving", "days" to saving.days.toString(), "amount" to amount, "energy" to energy)
+    }
+
+    /** The beta note for a brand whose recipe is still untested (not with `beta_only`, which has its own line). */
+    fun exportBeta(block: ExportCurtail): String? =
+        if (block.beta && block.need != "beta_only") words.say("exportCurtail.beta", "brand" to exportBrand(block)) else null
+
+    /** The one line about what the person can act on (the card's `exportCurtailNeed`); `null` for none or a code the
+     * app does not know. */
+    fun exportNeed(block: ExportCurtail): String? {
+        val need = block.need ?: return null
+        val kind = need.substringBefore(':')
+        return when (kind) {
+            "control_disabled" -> words.say("exportCurtail.need.controlDisabled")
+            "limit_unset" -> words.say("exportCurtail.need.limitUnset")
+            "not_obeyed" -> words.say("exportCurtail.need.notObeyed")
+            "import_rose" -> words.say("exportCurtail.need.importRose")
+            "not_taken" -> words.say("exportCurtail.need.notTaken")
+            // The repository holds a slash and comes after the first colon only.
+            "needs_hacs_integration" -> words.say("exportCurtail.need.needsHacs", "repo" to need.substringAfter(':', "").ifEmpty { "HACS" })
+            "beta_only" -> words.say("exportCurtail.need.betaOnly", "brand" to exportBrand(block))
+            "no_grid_reading" -> words.say("exportCurtail.need.noGridReading")
+            else -> null
+        }
     }
 
     // ---- the heat
@@ -248,7 +292,11 @@ internal class SiteSettingsText(private val words: CardWords, private val locale
         /** The tester stages the card has words for (`BatteryControl.tester_view`); another reads as `none`. */
         val TESTER_STAGES = setOf("none", "asked", "tested", "control_code")
 
-        private val BRAND_NAMES = mapOf("foxess" to "FoxESS", "ecoflow" to "EcoFlow", "marstek" to "Marstek", "solis" to "Solis")
+        private val BRAND_NAMES = mapOf(
+            "foxess" to "FoxESS", "ecoflow" to "EcoFlow", "marstek" to "Marstek", "solis" to "Solis",
+            "solaredge" to "SolarEdge", "solax" to "SolaX", "goodwe" to "GoodWe", "tesla" to "Tesla Powerwall",
+            "kostal" to "Kostal Plenticore", "deye" to "Deye / Sunsynk"
+        )
 
         /** A recipe's brand id as people write it (`foxess` is FoxESS); an unknown one capitalised (the card's `brandName`). */
         fun brandName(brand: String): String = BRAND_NAMES[brand] ?: brand.replaceFirstChar { it.uppercase() }

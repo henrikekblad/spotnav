@@ -1081,13 +1081,6 @@
   <string name="card_house_plan_then_hold" formatted="false">hält sie die Ladung</string>
   <string name="card_house_plan_then_export_discharge" formatted="false">verkauft sie ins Netz</string>
   <string name="card_house_plan_then_self" formatted="false">deckt sie das Haus und speichert die Sonne</string>
-  <string name="card_house_now_tab_sun" formatted="false">Sonne heute</string>
-  <string name="card_house_now_tab_grid" formatted="false">Bezogen heute</string>
-  <string name="card_house_now_tab_sold" formatted="false">verkauft {kwh}</string>
-  <string name="card_house_now_tab_battery" formatted="false">Batterie</string>
-  <string name="card_house_now_tab_car" formatted="false">Auto</string>
-  <string name="card_house_now_tab_heat" formatted="false">Wärme heute</string>
-  <string name="card_house_now_tab_house" formatted="false">Haus heute</string>
   <string name="card_house_now_tab_house_now" formatted="false">Das Haus jetzt</string>
   <string name="card_house_now_tab_no_live" formatted="false">noch keine Live-Werte</string>
   <string name="card_house_now_tab_line_sun_in" formatted="false">Die Sonne liefert {kw}</string>
@@ -1098,15 +1091,53 @@
   <string name="card_house_now_tab_line_battery_out" formatted="false">Die Batterie lädt {kw}</string>
   <string name="card_house_now_tab_line_car_in" formatted="false">Das Auto liefert {kw}</string>
   <string name="card_house_now_tab_line_car_out" formatted="false">Das Auto lädt {kw}</string>
-  <string name="card_house_now_tab_line_heat_in" formatted="false">Wärme {kw}</string>
-  <string name="card_house_now_tab_line_heat_out" formatted="false">Die Wärme braucht {kw}</string>
   <string name="card_house_now_tab_money" formatted="false">Heute: {parts}</string>
   <string name="card_house_now_tab_money_battery" formatted="false">die Batterie brachte {amount}</string>
   <string name="card_house_now_tab_money_battery_own" formatted="false">die Batterie brachte {amount} (eigene Steuerung)</string>
   <string name="card_house_now_tab_money_saved" formatted="false">SpotNav sparte {amount}</string>
-  <string name="card_house_now_tab_car_today" formatted="false">{kwh} heute</string>
-  <string name="card_house_now_tab_today" formatted="false">heute</string>
-  <string name="card_house_now_tab_house_no_car" formatted="false">ohne Auto</string>
+  <string name="card_house_now_tab_own" formatted="false">{pct} % eigener Strom</string>
+  <string name="card_house_now_tab_price_cheap" formatted="false">Günstige Stunde · {price}</string>
+  <string name="card_house_now_tab_price_mid" formatted="false">Normale Stunde · {price}</string>
+  <string name="card_house_now_tab_price_dear" formatted="false">Teure Stunde · {price}</string>
+  <string name="card_house_now_tab_why_battery_sun_dear" formatted="false">Batterie und Sonne decken das Haus in der teuren Stunde.</string>
+  <string name="card_house_now_tab_why_battery_dear" formatted="false">Die Batterie deckt das Haus in der teuren Stunde.</string>
+  <string name="card_house_now_tab_why_cheap_battery_car" formatted="false">Günstige Stunde: Batterie und Auto laden aus dem Netz.</string>
+  <string name="card_house_now_tab_why_cheap_battery" formatted="false">Günstige Stunde: Die Batterie lädt aus dem Netz.</string>
+  <string name="card_house_now_tab_why_cheap_car" formatted="false">Günstige Stunde: Das Auto lädt.</string>
+  <string name="card_house_now_tab_why_sun_battery_sold" formatted="false">Die Sonne deckt das Haus und lädt die Batterie. Der Überschuss wird eingespeist.</string>
+  <string name="card_house_now_tab_why_sun_sold" formatted="false">Die Sonne deckt das Haus. Der Überschuss wird eingespeist.</string>
+  <string name="card_house_now_tab_why_sun_battery" formatted="false">Die Sonne deckt das Haus und lädt die Batterie.</string>
+  <string name="card_house_now_tab_why_sun_all" formatted="false">Die Sonne deckt das Haus.</string>
+  <string name="card_house_now_tab_why_sun_part" formatted="false">Die Sonne deckt einen Teil des Hauses.</string>
+  <string name="card_house_now_tab_why_sun_battery_all" formatted="false">Sonne und Batterie decken das Haus.</string>
+  <string name="card_house_now_tab_why_sun_battery_part" formatted="false">Sonne und Batterie decken einen Teil des Hauses.</string>
+  <string name="card_house_now_tab_why_battery" formatted="false">Die Batterie deckt das Haus.</string>
+  <string name="card_house_now_tab_why_battery_part" formatted="false">Die Batterie deckt einen Teil des Hauses.</string>
+  <string name="card_house_now_tab_why_car" formatted="false">Das Auto lädt.</string>
+  <string name="card_house_now_tab_why_grid_all" formatted="false">Das Haus bezieht alles aus dem Netz.</string>
+  <string name="card_house_now_tab_state_sun" formatted="false">Sonne</string>
+  <string name="card_house_now_tab_state_sun_none" formatted="false">Sonne, gerade keine</string>
+  <string name="card_house_now_tab_state_grid" formatted="false">Netz</string>
+  <string name="card_house_now_tab_state_buying" formatted="false">Bezieht</string>
+  <string name="card_house_now_tab_state_selling" formatted="false">Speist ein</string>
+  <string name="card_house_now_tab_state_grid_idle" formatted="false">Netz, in Ruhe</string>
+  <string name="card_house_now_tab_state_covers" formatted="false">deckt das Haus</string>
+  <string name="card_house_now_tab_state_charging" formatted="false">lädt</string>
+  <string name="card_house_now_tab_state_holds" formatted="false">hält</string>
+  <string name="card_house_now_tab_state_battery" formatted="false">Batterie</string>
+  <string name="card_house_now_tab_state_car_charging" formatted="false">Lädt</string>
+  <string name="card_house_now_tab_state_car_plugged" formatted="false">Angesteckt</string>
+  <string name="card_house_now_tab_state_no_car" formatted="false">Kein Auto</string>
+  <string name="card_house_now_tab_state_car" formatted="false">Auto</string>
+  <string name="card_house_now_tab_today_sun" formatted="false">{kwh} heute</string>
+  <string name="card_house_now_tab_today_grid" formatted="false">bezogen {bought} · eingespeist {sold} kWh</string>
+  <string name="card_house_now_tab_today_battery" formatted="false">rein {in} · raus {out} kWh</string>
+  <string name="card_house_now_tab_today_car" formatted="false">geladen {kwh} heute</string>
+  <string name="card_house_now_tab_today_house" formatted="false">{kwh} heute</string>
+  <string name="card_house_now_tab_house_name" formatted="false">Haus</string>
+  <string name="card_house_now_tab_part_heat" formatted="false">Heizung</string>
+  <string name="card_house_now_tab_part_pool" formatted="false">Pool, Spa, Sauna</string>
+  <string name="card_house_now_tab_part_other" formatted="false">Sonstiges</string>
   <string name="card_house_learning_capped_while" formatted="false">Netzladung höchstens {kw} kW, während die Spitzen des Hauses gelernt werden ({left}).</string>
   <string name="card_house_learning_peaks_line" formatted="false">Lernt die Spitzen des Hauses, {left}.</string>
   <string name="card_house_learning_no_grid_until" formatted="false">Lädt bis dahin nicht aus dem Netz.</string>
@@ -1728,6 +1759,19 @@
   <string name="card_site_priority_row_spa_idle" formatted="false">Spa zwischen den Bädern</string>
   <string name="card_site_priority_row_pool_circulation" formatted="false">Poolumwälzung</string>
   <string name="card_site_priority_row_pool_heat" formatted="false">Poolwärmepumpe</string>
+  <string name="card_export_curtail_title" formatted="false">Keine Einspeisung bei negativen Preisen</string>
+  <string name="card_export_curtail_help" formatted="false">Solange das Einspeisen Geld kostet, setzt SpotNav die Einspeisebegrenzung des Wechselrichters auf null und stellt sie danach wieder her. Die Sonne versorgt weiterhin Haus, Auto und Speicher. Gilt für den ganzen Standort.</string>
+  <string name="card_export_curtail_intro" formatted="false">SpotNav schreibt die Einspeisebegrenzung deiner {brand}-Anlage, solange eine verkaufte kWh weniger als nichts einbringt, und stellt danach den Wert wieder her, der dort stand. Ändert jemand anderes die Begrenzung in der Zwischenzeit, lässt SpotNav sie in Ruhe.</string>
+  <string name="card_export_curtail_saving" formatted="false">In den letzten {days} Tagen hat das Einspeisen bei negativen Preisen {amount} gekostet ({energy}).</string>
+  <string name="card_export_curtail_beta" formatted="false">Wird mit {brand} noch getestet: bisher nur für Betatester.</string>
+  <string name="card_export_curtail_need_control_disabled" formatted="false">Die Einspeisebegrenzung ist in Home Assistant deaktiviert. Aktiviere sie, um dies zu nutzen.</string>
+  <string name="card_export_curtail_need_limit_unset" formatted="false">Im Wechselrichter ist keine Einspeisebegrenzung eingestellt. Stelle zuerst in der App des Wechselrichters eine ein, auf das Höchste, das du einspeisen darfst. SpotNav senkt sie dann und stellt deine wieder her, und setzt nie eine eigene.</string>
+  <string name="card_export_curtail_need_import_rose" formatted="false">Das Haus hat Strom aus dem Netz bezogen, als die Begrenzung gesetzt wurde, daher hat SpotNav sie zurückgestellt. SpotNav versucht es morgen von selbst erneut.</string>
+  <string name="card_export_curtail_need_not_obeyed" formatted="false">Der Wechselrichter hat die Begrenzung nicht befolgt, daher hat SpotNav sie zurückgestellt und aufgehört. Schalte dies aus und wieder ein, um es erneut zu versuchen.</string>
+  <string name="card_export_curtail_need_not_taken" formatted="false">Der Wechselrichter hat die Einstellung nicht angenommen, daher hat SpotNav aufgehört. Schalte dies aus und wieder ein, um es erneut zu versuchen.</string>
+  <string name="card_export_curtail_need_needs_hacs" formatted="false">Die Einspeisebegrenzung ist im Wechselrichter nicht aktiviert. Aktiviere sie in der App des Wechselrichters oder installiere die HACS-Integration ({repo}), damit SpotNav das kann.</string>
+  <string name="card_export_curtail_need_beta_only" formatted="false">Mit {brand} funktioniert dies bisher nur für Betatester. Setze unter Support den Haken bei Betatester, um es zu nutzen.</string>
+  <string name="card_export_curtail_need_no_grid_reading" formatted="false">Dafür wird die gesamte Netzleistung des Zählers benötigt, die dieser Standort nicht hat.</string>
   <string name="card_heat_load_control_controlled" formatted="false">Von SpotNav gesteuert.</string>
   <string name="card_heat_load_control_controlled_why" formatted="false">Von SpotNav gesteuert: {why}.</string>
   <string name="card_heat_load_control_cloud" formatted="false">Von SpotNav über die Cloud gesteuert: nur langsame, geplante Änderungen.</string>

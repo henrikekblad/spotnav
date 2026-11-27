@@ -14,7 +14,9 @@ internal class Palette(
     val muted: Int,
     val accent: Int,
     val appBackground: Int,
-    val cardBackground: Int
+    val cardBackground: Int,
+    /** What energy is drawn in, light or dark with the screen. */
+    val energy: EnergyPalette = EnergyPalette.LIGHT
 ) {
     companion object {
         fun of(context: Context): Palette {
@@ -23,7 +25,8 @@ internal class Palette(
             return if (darkTheme) {
                 Palette(
                     dark = 0xFFF5F7FA.toInt(), muted = 0xFFA8B1BC.toInt(), accent = accent,
-                    appBackground = 0xFF10151B.toInt(), cardBackground = 0xFF222C37.toInt()
+                    appBackground = 0xFF10151B.toInt(), cardBackground = 0xFF222C37.toInt(),
+                    energy = EnergyPalette.DARK
                 )
             } else {
                 Palette(

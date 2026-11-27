@@ -23,16 +23,16 @@ import se.sensnology.spotnav.ha.session.HaSession
 import se.sensnology.spotnav.ui.common.ViewScope
 import java.time.LocalDate
 
-/** The pie's colours for meters (the card's validated categorical order), then Other metered, Unknown and the inverter. */
+/** The pie's colours for meters (the card's validated categorical order), then Other metered, Unknown (the energy palette's other), the inverter and the heat pump (the heat's). */
 internal object PieColours {
     private val METERS = longArrayOf(0xFF3987E5, 0xFFD95926, 0xFF199E70, 0xFFC98500, 0xFFD55181, 0xFF9085E9, 0xFF2AA3C4, 0xFF8AA02C).map { it.toInt() }
     private const val OTHER = 0xFFB9BDC4.toInt()
-    private const val UNKNOWN = 0xFF747982.toInt()
     private const val INVERTER = 0xFF3F7F7A.toInt()
 
-    fun of(slot: Int): Int = when (slot) {
+    fun of(slot: Int, colours: SiteColours): Int = when (slot) {
         LoadsModel.OTHER_COLOUR -> OTHER
-        LoadsModel.UNKNOWN_COLOUR -> UNKNOWN
+        LoadsModel.UNKNOWN_COLOUR -> colours.of(Tone.OTHER)
+        LoadsModel.HEAT_PUMP_COLOUR -> colours.of(Tone.HEAT)
         LoadsModel.INVERTER_COLOUR -> INVERTER
         else -> METERS[slot.coerceIn(0, METERS.size - 1)]
     }
@@ -72,14 +72,14 @@ internal class PieView(context: Context, private val colours: SiteColours) : Vie
         val total = drawn.sumOf { it.kwh }
         var start = -90f
         if (drawn.isEmpty()) {
-            ring.color = PieColours.of(LoadsModel.UNKNOWN_COLOUR)
+            ring.color = PieColours.of(LoadsModel.UNKNOWN_COLOUR, colours)
             ring.alpha = 90
             canvas.drawArc(box, 0f, 360f, false, ring)
             ring.alpha = 255
         }
         for (slice in drawn) {
             val sweep = if (total > 0) (slice.kwh / total * 360).toFloat() else 0f
-            ring.color = PieColours.of(slice.colour)
+            ring.color = PieColours.of(slice.colour, colours)
             canvas.drawArc(box, start, if (drawn.size == 1) 360f else sweep, false, ring)
             start += sweep
         }
@@ -198,7 +198,7 @@ internal class LoadsDialog(
         gravity = Gravity.CENTER_VERTICAL
         setPadding(0, scope.dp(3), 0, scope.dp(3))
         addView(View(context).apply {
-            background = GradientDrawable().apply { setColor(PieColours.of(slice.colour)); cornerRadius = scope.dp(3).toFloat() }
+            background = GradientDrawable().apply { setColor(PieColours.of(slice.colour, colours)); cornerRadius = scope.dp(3).toFloat() }
         }, LinearLayout.LayoutParams(scope.dp(10), scope.dp(10)).apply { marginEnd = scope.dp(8) })
         addView(TextView(context).apply {
             textSize = 14f

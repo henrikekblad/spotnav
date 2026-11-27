@@ -302,11 +302,11 @@ internal class HouseHistoryPanel(
 
     private fun priceSeries(hours: List<House.Hour>, battery: Boolean): List<BarSeries> = buildList {
         add(BarSeries(Series.BUY, words.say("house.legend.buy"), colours.text, line = true))
-        add(BarSeries(Series.SELL_PRICE, words.say("house.legend.sellPrice"), SELL, line = true))
+        add(BarSeries(Series.SELL_PRICE, words.say("house.legend.sellPrice"), colours.of(Tone.EXPORT), line = true))
         if (battery) {
             add(BarSeries(Series.BATTERY, words.say("house.legend.battery"), colours.of(Tone.BATTERY), line = true))
             if (hours.any { it.batteryAction == "grid_charge" }) add(BarSeries(Series.CHARGE, words.say("house.legend.charge"), colours.of(Tone.GRID)))
-            if (hours.any { it.batteryAction == "export_discharge" }) add(BarSeries(Series.SELL, words.say("house.legend.sell"), SELL))
+            if (hours.any { it.batteryAction == "export_discharge" }) add(BarSeries(Series.SELL, words.say("house.legend.sell"), colours.of(Tone.EXPORT)))
         }
     }
 
@@ -357,7 +357,5 @@ internal class HouseHistoryPanel(
     private fun wide() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     private companion object {
-        /** The price's sell colour, the card's (`--spotnav-sell`). */
-        const val SELL = 0xFFC2185B.toInt()
     }
 }
