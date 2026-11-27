@@ -121,6 +121,55 @@ class NotificationRulesTest {
         assertFalse(NotificationSnapshot.fromJson(snap().toJson().apply { remove("person_paused") })!!.personPaused)
     }
 
+    /** Runs the checks in order, as the phone keeps them, and answers each check's events. */
+    private fun run(vararg checks: NotificationSnapshot): List<List<LocalEvent>> {
+        var kept: NotificationSnapshot? = null
+        var sent = emptyMap<NotificationEvent, Instant>()
+        return checks.mapIndexed { index, check ->
+            val d = NotificationRules.derive(kept, check.copy(at = t0.plus(Duration.ofMinutes(20L * index))), all, sent)
+            kept = d.snapshot
+            sent = d.lastSent
+            d.events
+        }
+    }
+
+    private fun risk(d: List<LocalEvent>) = d.filter { it.event == PLAN_AT_RISK }
+
+    @Test fun aDepartureAtRiskIsNotToldWhileTheCarIsAway() {
+        // 27 November: the plan made for the next plug-in said deadline_too_short with no car there.
+        val away = snap(connected = false, departure = "07:30")
+        assertEquals(emptyList<LocalEvent>(), run(away, away.copy(atRisk = true)).flatMap(::risk))
+    }
+
+    @Test fun aChargerThatCannotSayAfterAnUnplugKeepsTheCarAway() {
+        val away = snap(connected = false, departure = "07:30")
+        val offline = snap(connected = null, departure = "07:30", atRisk = true)
+        assertEquals(emptyList<LocalEvent>(), run(away, offline, offline).flatMap(::risk))
+        // Nor a window that does not start then.
+        val waiting = offline.copy(windowOpen = true, windowsLeft = true, stopReason = "not_started")
+        assertEquals(emptyList<LocalEvent>(), run(away, offline, waiting).flatten().filter { it.event == PLAN_STOPPED })
+    }
+
+    @Test fun aDepartureStillAtRiskAtThePlugInIsToldOnce() {
+        val away = snap(connected = false, departure = "07:30", atRisk = true)
+        val plugged = away.copy(connected = true)
+        val told = listOf(LocalEvent(PLAN_AT_RISK, time = "07:30"))
+        assertEquals(listOf(emptyList(), told, emptyList(), emptyList()), run(away, plugged, plugged, plugged.copy(connected = null)).map(::risk))
+        // Unplugged and plugged in again while it stays at risk: not told again.
+        assertEquals(emptyList<LocalEvent>(), run(away, plugged, away, plugged).drop(2).flatMap(::risk))
+        // Once fine again, a new risk is told.
+        assertEquals(told, run(away, plugged, plugged.copy(atRisk = false), plugged).drop(3).flatMap(::risk))
+        // Fine by the plug-in: nothing.
+        assertEquals(emptyList<LocalEvent>(), run(away, plugged.copy(atRisk = false)).flatMap(::risk))
+    }
+
+    @Test fun aPlugStateKnownBeforeIsKeptAcrossAStore() {
+        val d = NotificationRules.derive(snap(connected = false), snap(at = later, connected = null), all, emptyMap())
+        val kept = NotificationSnapshot.fromJson(d.snapshot!!.toJson())!!
+        assertEquals(false, kept.knownConnected)
+        assertTrue(kept.away)
+    }
+
     @Test fun aDepartureAtRiskIsToldWithItsTime() {
         assertEquals(
             listOf(LocalEvent(PLAN_AT_RISK, time = "07:30")),
