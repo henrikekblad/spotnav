@@ -48,7 +48,7 @@ internal data class StoryPage(
 internal class YearReviewText(
     private val words: CardWords,
     private val language: String,
-    private val dates: Locale,
+    val dates: Locale,
     private val numbers: Locale
 ) {
     /** A number with up to [digits] decimals ("1 483", "0,3"), as the card's `formatNumber`. */
