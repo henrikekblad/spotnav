@@ -71,6 +71,9 @@ internal class HouseSchematicView(context: Context, private val colours: SiteCol
     private val words = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val chevron = Path().apply { moveTo(-3f, -4f); lineTo(2f, 0f); lineTo(-3f, 4f) }
     private val arc = RectF()
+    /** The kW figures of a draw, written after everything else (kept between draws, so a frame allocates nothing). */
+    private val labelWords = ArrayList<String>(4)
+    private val labelPlaces = ArrayList<LabelPlace>(4)
 
     init {
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
@@ -121,7 +124,8 @@ internal class HouseSchematicView(context: Context, private val colours: SiteCol
         val house = layout.spots.getValue(null)
         var flowing = false
         idlePaint.color = colours.of(Energy.IDLE)
-        val labels = ArrayList<Triple<String, LabelPlace, Float>>()
+        labelWords.clear()
+        labelPlaces.clear()
         for (line in shown.figures.lines) {
             val spot = layout.spots.getValue(line.role)
             // Drawn from the source to the target, so the chevrons run the way the power flows.
@@ -170,7 +174,10 @@ internal class HouseSchematicView(context: Context, private val colours: SiteCol
                 }
                 canvas.restore()
             }
-            shown.labels[line.role]?.let { labels.add(Triple(it, SchematicLayout.labelPlace(ends.a, ends.b, kw, house.x, k), w)) }
+            shown.labels[line.role]?.let {
+                labelWords.add(it)
+                labelPlaces.add(SchematicLayout.labelPlace(ends.a, ends.b, kw, house.x, k))
+            }
         }
         // The outer nodes, each with its two captions.
         for (line in shown.figures.lines) {
@@ -244,7 +251,9 @@ internal class HouseSchematicView(context: Context, private val colours: SiteCol
         val todayY = if (layout.kind == LayoutKind.ROW) house.y + 42f * k + 2 * (caption + 3f) else house.y + ringR + 19f * k
         write(canvas, shown.houseToday, house.x, todayY, LabelPlace.Align.MIDDLE, caption, SiteColours.mix(colours.of(Tone.HOUSE), colours.text, 0.68f), bold = true)
         // The kW figures last, on a halo in the card's colour, so they read across a line.
-        for ((text, place, _) in labels) {
+        for (index in labelWords.indices) {
+            val text = labelWords[index]
+            val place = labelPlaces[index]
             words.textSize = labelSize.toFloat()
             words.typeface = medium
             words.textAlign = paintAlign(place.align)
