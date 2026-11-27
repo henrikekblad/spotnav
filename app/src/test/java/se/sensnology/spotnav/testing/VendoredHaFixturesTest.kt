@@ -8,7 +8,10 @@ import java.io.File
 
 /** The vendored fixtures are a copy, so they can fall behind. */
 class VendoredHaFixturesTest {
-    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes", "grid_tariff", "power_month", "house", "house_now", "house_history", "house_loads", "battery_control", "heat_card", "heat_history", "plan")
+    private val vendored = listOf("webhook", "dashboard", "settings/v1", "site_settings/v1", "vehicle/v1", "sessions", "codes", "grid_tariff", "power_month", "house", "house_now", "house_history", "house_loads", "battery_control", "heat_card", "heat_history", "plan", "year_review")
+
+    /** Parts the integration added after the copy was last taken whole (`year_review`, 3.0's year review). */
+    private val LATER = setOf("year_review")
 
     /** This repository's root: the directory holding the sync script. */
     private fun repoRoot(): File? {
@@ -57,6 +60,8 @@ class VendoredHaFixturesTest {
         assumeTrue("the Home Assistant repository is not next to this one", source != null)
         assumeTrue("the Home Assistant checkout is not at the commit the copy was taken from", sameCommit(source!!))
         for (part in vendored) {
+            // A part the integration added later than the copy's commit is compared once the checkout has it.
+            if (part in LATER && !File(source, part).isDirectory) continue
             val theirs = File(source, part).walkTopDown().filter { it.isFile }
                 .associate { it.relativeTo(File(source, part)).path to it.readBytes() }
             val ours = File(HaFixtures.root, part).walkTopDown().filter { it.isFile }

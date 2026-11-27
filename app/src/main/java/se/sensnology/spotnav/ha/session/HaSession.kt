@@ -45,6 +45,8 @@ import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.ha.client.SessionsOutcome
 import se.sensnology.spotnav.ha.sessions.SessionsCsv
 import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import se.sensnology.spotnav.ha.yearreview.YearReviewRead
+import se.sensnology.spotnav.ha.yearreview.YearReviewSeen
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.concurrent.Executor
@@ -171,6 +173,12 @@ internal interface HaTransport {
 
     /** One month of charge history as a CSV text; never throws. */
     fun sessionsCsv(month: YearMonth): SessionsOutcome<SessionsCsv> = SessionsOutcome.Failed
+
+    /** `get_year_review` for this phone ([appId]); never throws. */
+    fun yearReview(appId: String?): YearReviewRead.Outcome = YearReviewRead.Outcome.None
+
+    /** `year_review_seen` for this phone; never throws. */
+    fun yearReviewSeen(appId: String, year: Int, seen: YearReviewSeen.Seen): Boolean = false
 }
 
 /** [HaTransport] over the webhook of one charger, captured once so no answer can land on another. */
@@ -263,6 +271,11 @@ internal class HomeAssistantTransport(private val connection: HomeAssistantSetti
     override fun camera(request: CameraCommands.Request) = HomeAssistantClient.camera(connection, request)
 
     override fun sessionsCsv(month: YearMonth) = HomeAssistantClient.sessionsCsv(connection, month)
+
+    override fun yearReview(appId: String?) = HomeAssistantClient.yearReview(connection, appId)
+
+    override fun yearReviewSeen(appId: String, year: Int, seen: YearReviewSeen.Seen) =
+        HomeAssistantClient.yearReviewSeen(connection, appId, year, seen)
 }
 
 /**
@@ -512,6 +525,19 @@ internal class HaSession(
             val outcome = transport.house(date)
             mainThread { done(outcome) }
         }
+    }
+
+    /** `get_year_review` for this phone (never throws). */
+    fun yearReview(appId: String?, done: (YearReviewRead.Outcome) -> Unit) {
+        background.execute {
+            val outcome = transport.yearReview(appId)
+            mainThread { done(outcome) }
+        }
+    }
+
+    /** `year_review_seen` for this phone, nothing waited for (never throws). */
+    fun yearReviewSeen(appId: String, year: Int, seen: YearReviewSeen.Seen) {
+        background.execute { transport.yearReviewSeen(appId, year, seen) }
     }
 
     /** `get_house_history` (never throws). */

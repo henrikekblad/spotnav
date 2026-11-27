@@ -33,6 +33,8 @@ import se.sensnology.spotnav.vehicles.VehicleRefresh
 import se.sensnology.spotnav.vehicles.VehicleStatus
 import se.sensnology.spotnav.ha.sessions.SessionsCsv
 import se.sensnology.spotnav.ha.sessions.SessionsMonth
+import se.sensnology.spotnav.ha.yearreview.YearReviewRead
+import se.sensnology.spotnav.ha.yearreview.YearReviewSeen
 import java.net.HttpURLConnection
 import java.time.YearMonth
 import java.net.URL
@@ -485,6 +487,24 @@ object HomeAssistantClient {
     internal fun cardStrings(settings: HomeAssistantSettings, language: String, knownHash: String?): CardStringsRead.Outcome {
         val (status, body, failure) = ask(settings, CardStringsRead.payload(language, knownHash))
         return CardStringsRead.answer(status, body, failure)
+    }
+
+    /** The year's review for this phone (webhook `get_year_review`, SpotNav 3.0). Never throws. */
+    internal fun yearReview(settings: HomeAssistantSettings, appId: String?): YearReviewRead.Outcome {
+        val (status, body, failure) = ask(settings, YearReviewRead.payload(appId))
+        return if (failure != null) YearReviewRead.Outcome.Later
+        else YearReviewRead.answer(status, body)
+    }
+
+    /** This phone opened the year's review or closed its band (webhook `year_review_seen`). Never throws. */
+    internal fun yearReviewSeen(
+        settings: HomeAssistantSettings,
+        appId: String,
+        year: Int,
+        seen: YearReviewSeen.Seen
+    ): Boolean {
+        val (status, body) = write(settings, YearReviewSeen.payload(appId, year, seen))
+        return YearReviewSeen.accepted(status, body)
     }
 
     /**
