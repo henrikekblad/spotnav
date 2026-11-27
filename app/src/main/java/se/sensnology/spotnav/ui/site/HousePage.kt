@@ -94,7 +94,7 @@ internal class HousePage(
         ownChargerId?.let { PlanChoiceScope.Charger(it(), session.namesCharger) } ?: PlanChoiceScope.Home
     }
     private val flowStatus = line().apply { setTextColor(muted) }
-    private val sankey = SankeyView(context, text).apply { onOpen = ::openLoads }
+    private val sankey = SankeyView(context, text, colours.energy).apply { onOpen = ::openLoads }
     private val tiles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
     private val flowHint = note()
     private val flowTitle = cardTitle("")

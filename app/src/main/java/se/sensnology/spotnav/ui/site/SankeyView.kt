@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
 import se.sensnology.spotnav.ha.house.House
+import se.sensnology.spotnav.ui.common.EnergyPalette
 
 /**
  * The Energy flow's Sankey diagram, drawn from [SankeyLayout] as the Home Assistant card draws it
@@ -22,7 +23,7 @@ import se.sensnology.spotnav.ha.house.House
  * ([onOpen] with `house` or `heat`). Sizes are laid out in density-independent pixels and drawn scaled.
  */
 @SuppressLint("ViewConstructor") // built in code with the page's words: there is nothing to inflate
-internal class SankeyView(context: Context, private val text: SiteText) : View(context) {
+internal class SankeyView(context: Context, private val text: SiteText, private val energy: EnergyPalette) : View(context) {
     private var flow: House.EnergyFlow? = null
     private var past = false
     private var layout: SankeyLayout.Layout? = null
@@ -97,7 +98,7 @@ internal class SankeyView(context: Context, private val text: SiteText) : View(c
                 close()
             }
             fill.shader = LinearGradient(
-                laid.x0.toFloat(), 0f, laid.x1.toFloat(), 0f, colour(band.from.node.role), colour(band.to.node.role), Shader.TileMode.CLAMP
+                laid.x0.toFloat(), 0f, laid.x1.toFloat(), 0f, energy.flowBlock(band.from.node.role, band.from.node.source), energy.flowBlock(band.to.node.role, band.to.node.source), Shader.TileMode.CLAMP
             )
             fill.alpha = 140
             canvas.drawPath(path, fill)
@@ -110,7 +111,7 @@ internal class SankeyView(context: Context, private val text: SiteText) : View(c
 
     private fun drawBlock(canvas: Canvas, block: SankeyLayout.Block, total: Double, laid: SankeyLayout.Layout) {
         val rect = RectF(block.x.toFloat(), block.y.toFloat(), (block.x + block.w).toFloat(), (block.y + block.h).toFloat())
-        fill.color = colour(block.node.role)
+        fill.color = energy.flowBlock(block.node.role, block.node.source)
         canvas.drawRoundRect(rect, 6f, 6f, fill)
         // A soft light from the top over the block's own colour.
         fill.shader = LinearGradient(0f, rect.top, 0f, rect.bottom, intArrayOf(0x52FFFFFF, 0x00FFFFFF, 0x00FFFFFF), floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP)
@@ -188,16 +189,5 @@ internal class SankeyView(context: Context, private val text: SiteText) : View(c
         const val INK = 0xFF15151C.toInt()
         const val ACTION_BASE = 0x5A4E0000
         val ACTION_KINDS = listOf("house", "heat")
-
-        /** The card's block colours, bright enough for the dark words on a light and a dark screen. */
-        fun colour(role: String): Int = when (role) {
-            "solar" -> 0xFFF2C94C
-            "battery" -> 0xFF4FD1C5
-            "grid" -> 0xFF8C9CF5
-            "house" -> 0xFFB98CF0
-            "car" -> 0xFFFFA86B
-            "heat" -> 0xFFFF8F87
-            else -> 0xFFB0BEC5
-        }.toInt()
     }
 }

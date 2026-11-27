@@ -1,5 +1,7 @@
 package se.sensnology.spotnav.chart
 
+import se.sensnology.spotnav.ui.common.Energy
+
 /**
  * The chart's whole palette. The chart is an intentional dark data panel that paints its own surface in
  * every system theme, so one type holds every colour the renderer uses.
@@ -24,8 +26,8 @@ internal data class ChartTheme(
         /** Near-white ink that reads against the chart's dark surface. */
         const val INK_ON_DARK: Int = 0xFFFFFFFF.toInt()
 
-        /** The card's `--spotnav-sun`. */
-        const val SUN: Int = 0xFFE8A200.toInt()
+        /** The energy palette's sun, its dark value: the chart is a dark panel on every screen. */
+        val SUN: Int = Energy.SUN.dark
 
         /** The dark data panel palette. */
         val Dark = ChartTheme(

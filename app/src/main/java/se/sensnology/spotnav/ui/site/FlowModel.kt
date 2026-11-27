@@ -109,7 +109,7 @@ internal object LoadsModel {
     /** The colours a pie has for meters; any further meter goes into Other metered. */
     const val SLOTS = 8
 
-    /** [key]: the meter's statistic id, `other-metered`, `inverter` or `unknown`. [colour]: index into the pie's palette, or -1 other / -2 unknown / -3 the inverter. */
+    /** [key]: the meter's statistic id, `other-metered`, `inverter` or `unknown`. [colour]: index into the pie's palette, or -1 other / -2 unknown / -3 the inverter / -4 the heat pump. */
     data class Slice(val key: String, val name: String, val kwh: Double, val share: Double, val colour: Int)
 
     class Pie(val whole: Double, val slices: List<Slice>, val merged: List<HouseLoads.Load>)
@@ -117,6 +117,8 @@ internal object LoadsModel {
     const val OTHER_COLOUR = -1
     const val UNKNOWN_COLOUR = -2
     const val INVERTER_COLOUR = -3
+    /** The heat pump's meter, in the heat's own colour (the energy palette). */
+    const val HEAT_PUMP_COLOUR = -4
 
     /**
      * The meters at or over [SMALL_SHARE] of the whole (at most [SLOTS], largest first), then Other metered with the
@@ -133,10 +135,13 @@ internal object LoadsModel {
             val big = if (answer.kind == "heat") load.kwh > 0 else load.kwh / whole >= SMALL_SHARE
             if (whole > 0 && big && shown.size < SLOTS) shown.add(load) else merged.add(load)
         }
-        // A meter's colour by its statistic id among those shown, not by its size.
-        val byId = shown.map { it.statisticId }.sorted()
+        // A meter's colour by its statistic id among those shown, not by its size; the heat pump's is the heat's.
+        val byId = shown.filter { it.source != "heat_pump" }.map { it.statisticId }.sorted()
         val slices = ArrayList<Slice>()
-        shown.mapTo(slices) { Slice(it.statisticId, it.name, it.kwh, if (whole > 0) it.kwh / whole else 0.0, byId.indexOf(it.statisticId)) }
+        shown.mapTo(slices) {
+            val colour = if (it.source == "heat_pump") HEAT_PUMP_COLOUR else byId.indexOf(it.statisticId)
+            Slice(it.statisticId, it.name, it.kwh, if (whole > 0) it.kwh / whole else 0.0, colour)
+        }
         val metered = merged.sumOf { it.kwh }
         val inverter = if (answer.kind == "house") maxOf(0.0, answer.inverterKwh ?: 0.0) else 0.0
         val unknown = answer.unknownKwh ?: answer.otherKwh ?: 0.0

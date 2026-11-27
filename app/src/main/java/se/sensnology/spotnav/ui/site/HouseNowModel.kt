@@ -17,8 +17,8 @@ internal enum class NodeRole(val key: String) { SUN("sun"), GRID("grid"), BATTER
 /** Which way the power runs on a line: towards the house, away from it, or not at all. */
 internal enum class Way(val key: String) { IN("in"), OUT("out"), STILL("still") }
 
-/** What a figure or a line's dots are coloured as: a part's own colour, an import or an export. */
-internal enum class Tone { SUN, BATTERY, CAR, HEAT, GRID, IMPORT, EXPORT, HOUSE }
+/** What a figure or a line is coloured as: a part's own colour, an import or an export (the grid is its import's). */
+internal enum class Tone { SUN, BATTERY, CAR, HEAT, GRID, IMPORT, EXPORT, HOUSE, POOL, OTHER }
 
 /** One line of the schematic: its power (kW, never negative; `null` unread), its way and its colour. */
 internal data class SchematicLine(val role: NodeRole, val kw: Double?, val way: Way, val tone: Tone)
