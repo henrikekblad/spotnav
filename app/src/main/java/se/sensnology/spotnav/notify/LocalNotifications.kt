@@ -24,6 +24,7 @@ import se.sensnology.spotnav.chargers.toHomeAssistantSettings
 import se.sensnology.spotnav.ha.client.HomeAssistantClient
 import se.sensnology.spotnav.ha.client.PhoneNotificationsCall
 import se.sensnology.spotnav.ha.dashboard.Dashboard
+import se.sensnology.spotnav.ha.house.Plan
 import se.sensnology.spotnav.ha.house.SiteRead
 import se.sensnology.spotnav.ha.settings.NotificationEvent
 import se.sensnology.spotnav.push.PushNotifications
@@ -210,6 +211,8 @@ internal object LocalNotifications {
         // Each site's plan is read once, through the first of its chargers that answers for it.
         val plansRead = HashSet<String>()
         val sitesTold = HashSet<String>()
+        // Followed after every charger was read, so each car's plug state is this check's.
+        val sitePlans = ArrayList<Pair<ChargerProfile, Plan>>()
         for (profile in profiles) {
             // A charger waiting to be paired again is asked only when its slow check is due.
             if (!profileStore.claimRead(profile.localId)) continue
@@ -231,12 +234,18 @@ internal object LocalNotifications {
             // What will not be ready in time across the site (3.0's plan): one notice per site, as "Not ready in time".
             if (dashboard.capabilities.getHouse && plansRead.add(profile.baseUrl + "|" + (dashboard.site?.name ?: profile.localId))) {
                 val plan = (HomeAssistantClient.plan(profile.toHomeAssistantSettings()) as? SiteRead.Read)?.value
-                if (plan != null && sitesTold.add(plan.siteId)) {
-                    NotReadyNotifications.follow(app, store, profile, plan, PhoneChoice.siteAtRisk(answerOf(profile), store.enabled, store.events), now)
-                }
+                if (plan != null && sitesTold.add(plan.siteId)) sitePlans.add(profile to plan)
             }
             if (derivation.events.isEmpty() || !allowed(app)) continue
             derivation.events.forEach { post(app, profile.localId, name, it) }
+        }
+        for ((profile, plan) in sitePlans) {
+            // A car known to be away is not told about (its charger paired on this phone, the same Home Assistant).
+            val away = profiles
+                .filter { it.baseUrl == profile.baseUrl && store.snapshot(it.localId)?.away == true }
+                .mapNotNull { it.remoteChargerId }
+                .toSet()
+            NotReadyNotifications.follow(app, store, profile, plan, PhoneChoice.siteAtRisk(answerOf(profile), store.enabled, store.events), now, away)
         }
         // The pool's season (Home Assistant's choice for this phone), read through each Home Assistant's door.
         for (door in doors) {
