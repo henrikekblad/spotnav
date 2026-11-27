@@ -1990,4 +1990,83 @@
   <string name="card_battery_tester_help_asked" formatted="false">Aja laitteistotesti kohdasta Tuki → Laitteistotesti. Paina Aloita kerran: testi ajetaan itsestään päiväsaikaan, ja sen tulos lähetetään itsestään.</string>
   <string name="card_battery_tester_help_tested" formatted="false">Tulos on lähetetty. Saat vastauksen sähköpostilla.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">Ohjauskoodi on syötetty: SpotNav saa ohjata tätä akkua.</string>
+  <string name="card_year_review_title" formatted="false">Vuosi SpotNavin kanssa</string>
+  <string name="card_year_review_row" formatted="false">Vuosi SpotNavin kanssa {year}</string>
+  <string name="card_year_review_banner_title" formatted="false">Vuosi SpotNavin kanssa on täällä</string>
+  <string name="card_year_review_banner_sub" formatted="false">Katso, mitä {year} antoi – vie vain minuutin</string>
+  <string name="card_year_review_banner_close" formatted="false">Sulje banneri</string>
+  <string name="card_year_review_nav_back" formatted="false">Takaisin</string>
+  <string name="card_year_review_nav_next" formatted="false">Seuraava</string>
+  <string name="card_year_review_nav_close" formatted="false">Sulje</string>
+  <string name="card_year_review_nav_page" formatted="false">Sivu {page}/{pages}</string>
+  <string name="card_year_review_cover_big" formatted="false">Sinun {year}</string>
+  <string name="card_year_review_cover_say" formatted="false">Tässä on vuosi lukuina: mitä siirrettiin ja mitä se antoi.</string>
+  <string name="card_year_review_cover_say_since" formatted="false">SpotNav on ohjannut kotiasi {date} lähtien. Sitä edeltävä aika on laskettu Home Assistantin omista tilastoista, missä se on mahdollista.</string>
+  <string name="card_year_review_cover_partial" formatted="false">Osa vuodesta</string>
+  <string name="card_year_review_saved_eyebrow" formatted="false">Säästetty</string>
+  <string name="card_year_review_saved_say" formatted="false">Niin paljon halvemmaksi vuosi tuli kuin jos kaikki olisi ajettu ilman suunnitelmaa.</string>
+  <string name="card_year_review_saved_foot" formatted="false">SpotNavin päivittäisten tarkastelujen summa verrattuna samaan kulutukseen ilman suunnitelmaa.</string>
+  <string name="card_year_review_saved_foot_estimated" formatted="false">≈ Ennen SpotNav 3.0:aa tehdyt lataukset on arvioitu vuorokauden keskihinnan mukaan.</string>
+  <string name="card_year_review_saved_part_battery" formatted="false">Akku {amount}</string>
+  <string name="card_year_review_saved_part_car" formatted="false">Auto {amount}</string>
+  <string name="card_year_review_saved_part_heat" formatted="false">Lämmitys {amount}</string>
+  <string name="card_year_review_saved_part_since" formatted="false">{part} {date} lähtien</string>
+  <string name="card_year_review_car_eyebrow" formatted="false">Auto</string>
+  <string name="card_year_review_car_say" formatted="false">auton latauksesta tapahtui vuorokauden halvimpina tunteina.</string>
+  <string name="card_year_review_car_say_count" formatted="false">Auto ladattiin kotona tänä vuonna.</string>
+  <string name="card_year_review_car_charges_one" formatted="false">{count} lataus</string>
+  <string name="card_year_review_car_charges_other" formatted="false">{count} latausta</string>
+  <string name="card_year_review_car_cheapest" formatted="false">halvin {price}, {date}</string>
+  <string name="card_year_review_car_since" formatted="false">Laskettu {date} lähtien, niin pitkälle kuin hinnat ulottuvat.</string>
+  <string name="card_year_review_car_estimated" formatted="false">≈ Home Assistantin tilastoista luetut lataukset lasketaan tunneittain.</string>
+  <string name="card_year_review_fees" formatted="false">Hinnat ovat pörssihinta sekä maksusi.</string>
+  <string name="card_year_review_since" formatted="false">{date} lähtien.</string>
+  <string name="card_year_review_sun_eyebrow" formatted="false">Aurinko</string>
+  <string name="card_year_review_sun_say" formatted="false">tuli aurinkopaneeleistasi.</string>
+  <string name="card_year_review_sun_say_sold" formatted="false">tuli aurinkopaneeleistasi. {pct} käytettiin kotona, loput myytiin.</string>
+  <string name="card_year_review_sun_say_out" formatted="false">tuli aurinkopaneeleistasi. {pct} käytettiin kotona, loput meni verkkoon.</string>
+  <string name="card_year_review_battery_eyebrow" formatted="false">Akku</string>
+  <string name="card_year_review_battery_say" formatted="false">akku ansaitsi ostamalla halvalla ja käyttämällä kalliina tunteina.</string>
+  <string name="card_year_review_battery_say_kwh" formatted="false">akku antoi takaisin kotiin tänä vuonna.</string>
+  <string name="card_year_review_battery_say_saved" formatted="false">akku säästi sähkölaskussa tänä vuonna.</string>
+  <string name="card_year_review_battery_cycles_one" formatted="false">≈ {count} kierros</string>
+  <string name="card_year_review_battery_cycles_other" formatted="false">≈ {count} kierrosta</string>
+  <string name="card_year_review_battery_buy" formatted="false">ostettu hintaan {price}</string>
+  <string name="card_year_review_battery_use" formatted="false">käytetty hintaan {price}</string>
+  <string name="card_year_review_battery_earned_since" formatted="false">Rahat lasketaan tarkastelluista päivistä {date} lähtien.</string>
+  <string name="card_year_review_battery_saved_foot" formatted="false">≈ Laskettu kunkin tunnin hinnalla riippumatta siitä, kuka akkua ohjasi.</string>
+  <string name="card_year_review_fuse_eyebrow" formatted="false">Sulake</string>
+  <string name="card_year_review_fuse_say" formatted="false">SpotNav laski latausta hetkeksi sen sijaan, että sulake olisi palanut.</string>
+  <string name="card_year_review_expensive_eyebrow" formatted="false">Kallein tunti</string>
+  <string name="card_year_review_expensive_when" formatted="false">{date} klo {time}.</string>
+  <string name="card_year_review_expensive_bought_none" formatted="false">{date} klo {time}. Silloin et ostanut sähköä verkosta lainkaan.</string>
+  <string name="card_year_review_expensive_bought_little" formatted="false">{date} klo {time}. Silloin ostit vain {kwh}.</string>
+  <string name="card_year_review_expensive_bought" formatted="false">{date} klo {time}. Silloin ostit {kwh}.</string>
+  <string name="card_year_review_thanks_eyebrow" formatted="false">Kiitos</string>
+  <string name="card_year_review_thanks_big" formatted="false">Kiitos vuodesta!</string>
+  <string name="card_year_review_thanks_say" formatted="false">SpotNav on ilmainen ja avointa lähdekoodia. Uudet laturit, akut ja Home Assistantin versiot sekä vastaukset kaikille apua tarvitseville vievät paljon aikaa. Jos SpotNav säästi sinulle rahaa tänä vuonna, lahjoitus auttaa työtä jatkumaan.</string>
+  <string name="card_year_review_thanks_sponsor" formatted="false">Tue SpotNavia GitHubissa</string>
+  <string name="card_year_review_thanks_share" formatted="false">Tallenna jaettava kuva</string>
+  <string name="card_year_review_thanks_sharing" formatted="false">Tehdään kuvaa…</string>
+  <string name="card_year_review_thanks_share_failed" formatted="false">Kuvaa ei voitu tehdä.</string>
+  <string name="card_year_review_thanks_share_hint" formatted="false">Jos mitään ei tallentunut, tallenna kuva painamalla sitä pitkään.</string>
+  <string name="card_year_review_thanks_foot" formatted="false">Tarina löytyy kohdasta Asetukset → Tuki 31. tammikuuta asti.</string>
+  <string name="card_year_review_share_alt" formatted="false">Jaettava kuva</string>
+  <string name="card_year_review_share_title" formatted="false">Minun {year}</string>
+  <string name="card_year_review_share_sub" formatted="false">SpotNavin kanssa</string>
+  <string name="card_year_review_share_sub_since" formatted="false">SpotNavin kanssa, {month} lähtien</string>
+  <string name="card_year_review_share_saved" formatted="false">Säästetty</string>
+  <string name="card_year_review_share_car" formatted="false">Auto ladattu halpoina tunteina</string>
+  <string name="card_year_review_share_sun" formatted="false">Auringosta</string>
+  <string name="card_year_review_share_battery" formatted="false">Akku ansaitsi</string>
+  <string name="card_year_review_share_battery_saved" formatted="false">Akku säästi</string>
+  <string name="card_year_review_share_battery_kwh" formatted="false">Akku antoi takaisin</string>
+  <string name="card_year_review_share_foot" formatted="false">SpotNav – ilmainen Home Assistantiin</string>
+  <string name="card_year_review_fuse_times_one" formatted="false">kerran</string>
+  <string name="card_year_review_fuse_times_other" formatted="false">kertaa</string>
+  <string name="card_settings_section_support" formatted="false">Tuki</string>
+  <string name="year_review_share">Jaa kuva</string>
+  <string name="year_review_save">Tallenna Kuviin</string>
+  <string name="year_review_saved">Tallennettu kansioon Kuvat/SpotNav.</string>
+  <string name="year_review_save_failed">Kuvaa ei voitu tallentaa.</string>
 </resources>

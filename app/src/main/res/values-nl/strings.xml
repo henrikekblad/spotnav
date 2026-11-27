@@ -1990,4 +1990,83 @@
   <string name="card_battery_tester_help_asked" formatted="false">Voer de hardwaretest uit via Ondersteuning → Hardwaretest. Druk één keer op Start: hij draait vanzelf overdag, en het resultaat wordt vanzelf verstuurd.</string>
   <string name="card_battery_tester_help_tested" formatted="false">Het resultaat is verstuurd. Je krijgt een antwoord per e-mail.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">De besturingscode is ingevoerd: SpotNav mag deze batterij besturen.</string>
+  <string name="card_year_review_title" formatted="false">Het jaar met SpotNav</string>
+  <string name="card_year_review_row" formatted="false">Het jaar met SpotNav {year}</string>
+  <string name="card_year_review_banner_title" formatted="false">Het jaar met SpotNav is er</string>
+  <string name="card_year_review_banner_sub" formatted="false">Zie wat {year} opleverde – het duurt maar een minuut</string>
+  <string name="card_year_review_banner_close" formatted="false">Banner sluiten</string>
+  <string name="card_year_review_nav_back" formatted="false">Terug</string>
+  <string name="card_year_review_nav_next" formatted="false">Volgende</string>
+  <string name="card_year_review_nav_close" formatted="false">Sluiten</string>
+  <string name="card_year_review_nav_page" formatted="false">Pagina {page} van {pages}</string>
+  <string name="card_year_review_cover_big" formatted="false">Jouw {year}</string>
+  <string name="card_year_review_cover_say" formatted="false">Hier is het jaar in cijfers: wat er verschoven werd en wat het opleverde.</string>
+  <string name="card_year_review_cover_say_since" formatted="false">SpotNav stuurt je huis sinds {date}. Wat daarvoor gebeurde, is waar mogelijk berekend uit de eigen statistieken van Home Assistant.</string>
+  <string name="card_year_review_cover_partial" formatted="false">Deel van het jaar</string>
+  <string name="card_year_review_saved_eyebrow" formatted="false">Bespaard</string>
+  <string name="card_year_review_saved_say" formatted="false">Zoveel goedkoper was het jaar dan wanneer alles zonder plan was gedraaid.</string>
+  <string name="card_year_review_saved_foot" formatted="false">De som van de dagelijkse controle van SpotNav, tegenover hetzelfde verbruik zonder plan.</string>
+  <string name="card_year_review_saved_foot_estimated" formatted="false">≈ Laadbeurten van vóór SpotNav 3.0 zijn geschat tegen de gemiddelde dagprijs.</string>
+  <string name="card_year_review_saved_part_battery" formatted="false">Batterij {amount}</string>
+  <string name="card_year_review_saved_part_car" formatted="false">Auto {amount}</string>
+  <string name="card_year_review_saved_part_heat" formatted="false">Verwarming {amount}</string>
+  <string name="card_year_review_saved_part_since" formatted="false">{part} sinds {date}</string>
+  <string name="card_year_review_car_eyebrow" formatted="false">De auto</string>
+  <string name="card_year_review_car_say" formatted="false">van het laden van de auto gebeurde in de goedkoopste uren van de dag.</string>
+  <string name="card_year_review_car_say_count" formatted="false">De auto laadde dit jaar thuis.</string>
+  <string name="card_year_review_car_charges_one" formatted="false">{count} laadbeurt</string>
+  <string name="card_year_review_car_charges_other" formatted="false">{count} laadbeurten</string>
+  <string name="card_year_review_car_cheapest" formatted="false">goedkoopst {price}, {date}</string>
+  <string name="card_year_review_car_since" formatted="false">Geteld sinds {date}, zover de prijzen reiken.</string>
+  <string name="card_year_review_car_estimated" formatted="false">≈ Laadbeurten uit de statistieken van Home Assistant worden per uur geteld.</string>
+  <string name="card_year_review_fees" formatted="false">De prijzen zijn de spotprijs plus je kosten.</string>
+  <string name="card_year_review_since" formatted="false">Sinds {date}.</string>
+  <string name="card_year_review_sun_eyebrow" formatted="false">De zon</string>
+  <string name="card_year_review_sun_say" formatted="false">kwam van je zonnepanelen.</string>
+  <string name="card_year_review_sun_say_sold" formatted="false">kwam van je zonnepanelen. {pct} werd thuis gebruikt, de rest werd verkocht.</string>
+  <string name="card_year_review_sun_say_out" formatted="false">kwam van je zonnepanelen. {pct} werd thuis gebruikt, de rest ging het net op.</string>
+  <string name="card_year_review_battery_eyebrow" formatted="false">De batterij</string>
+  <string name="card_year_review_battery_say" formatted="false">verdiende de batterij door goedkoop te laden en in dure uren te leveren.</string>
+  <string name="card_year_review_battery_say_kwh" formatted="false">gaf de batterij dit jaar terug aan het huis.</string>
+  <string name="card_year_review_battery_say_saved" formatted="false">bespaarde de batterij dit jaar op de energierekening.</string>
+  <string name="card_year_review_battery_cycles_one" formatted="false">≈ {count} cyclus</string>
+  <string name="card_year_review_battery_cycles_other" formatted="false">≈ {count} cycli</string>
+  <string name="card_year_review_battery_buy" formatted="false">gekocht voor {price}</string>
+  <string name="card_year_review_battery_use" formatted="false">gebruikt bij {price}</string>
+  <string name="card_year_review_battery_earned_since" formatted="false">Het geld wordt geteld vanaf gecontroleerde dagen sinds {date}.</string>
+  <string name="card_year_review_battery_saved_foot" formatted="false">≈ Gerekend met de prijs van elk uur, wie de batterij ook aanstuurde.</string>
+  <string name="card_year_review_fuse_eyebrow" formatted="false">De zekering</string>
+  <string name="card_year_review_fuse_say" formatted="false">verlaagde SpotNav het laden even in plaats van de zekering te laten springen.</string>
+  <string name="card_year_review_expensive_eyebrow" formatted="false">Het duurste uur</string>
+  <string name="card_year_review_expensive_when" formatted="false">{date} om {time}.</string>
+  <string name="card_year_review_expensive_bought_none" formatted="false">{date} om {time}. Toen kocht je geen stroom van het net.</string>
+  <string name="card_year_review_expensive_bought_little" formatted="false">{date} om {time}. Toen kocht je maar {kwh}.</string>
+  <string name="card_year_review_expensive_bought" formatted="false">{date} om {time}. Toen kocht je {kwh}.</string>
+  <string name="card_year_review_thanks_eyebrow" formatted="false">Bedankt</string>
+  <string name="card_year_review_thanks_big" formatted="false">Bedankt voor het jaar!</string>
+  <string name="card_year_review_thanks_say" formatted="false">SpotNav is gratis en open source. Nieuwe laders, batterijen en versies van Home Assistant, en antwoorden voor iedereen die hulp nodig heeft, kosten veel tijd. Als SpotNav je dit jaar geld heeft bespaard, helpt een bijdrage het werk door te gaan.</string>
+  <string name="card_year_review_thanks_sponsor" formatted="false">Steun SpotNav op GitHub</string>
+  <string name="card_year_review_thanks_share" formatted="false">Een afbeelding bewaren om te delen</string>
+  <string name="card_year_review_thanks_sharing" formatted="false">Afbeelding wordt gemaakt…</string>
+  <string name="card_year_review_thanks_share_failed" formatted="false">De afbeelding kon niet worden gemaakt.</string>
+  <string name="card_year_review_thanks_share_hint" formatted="false">Als er niets is bewaard: houd de afbeelding ingedrukt om haar te bewaren.</string>
+  <string name="card_year_review_thanks_foot" formatted="false">Het verhaal blijft tot 31 januari onder Instellingen → Ondersteuning.</string>
+  <string name="card_year_review_share_alt" formatted="false">De afbeelding om te delen</string>
+  <string name="card_year_review_share_title" formatted="false">Mijn {year}</string>
+  <string name="card_year_review_share_sub" formatted="false">met SpotNav</string>
+  <string name="card_year_review_share_sub_since" formatted="false">met SpotNav, sinds {month}</string>
+  <string name="card_year_review_share_saved" formatted="false">Bespaard</string>
+  <string name="card_year_review_share_car" formatted="false">Auto geladen in goedkope uren</string>
+  <string name="card_year_review_share_sun" formatted="false">Van de zon</string>
+  <string name="card_year_review_share_battery" formatted="false">De batterij verdiende</string>
+  <string name="card_year_review_share_battery_saved" formatted="false">De batterij bespaarde</string>
+  <string name="card_year_review_share_battery_kwh" formatted="false">De batterij gaf terug</string>
+  <string name="card_year_review_share_foot" formatted="false">SpotNav – gratis voor Home Assistant</string>
+  <string name="card_year_review_fuse_times_one" formatted="false">keer</string>
+  <string name="card_year_review_fuse_times_other" formatted="false">keer</string>
+  <string name="card_settings_section_support" formatted="false">Ondersteuning</string>
+  <string name="year_review_share">Afbeelding delen</string>
+  <string name="year_review_save">Opslaan in Afbeeldingen</string>
+  <string name="year_review_saved">Opgeslagen in Afbeeldingen/SpotNav.</string>
+  <string name="year_review_save_failed">De afbeelding kon niet worden opgeslagen.</string>
 </resources>
