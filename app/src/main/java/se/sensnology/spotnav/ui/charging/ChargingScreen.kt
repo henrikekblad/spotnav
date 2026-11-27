@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.charging
 
+import se.sensnology.spotnav.ui.yearreview.YearReviewBand
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
@@ -220,6 +221,15 @@ internal class ChargingScreen(
         authorityProfile = resolvedChargerProfile?.takeIf { it.configured }
         session = authorityProfile?.let { shell.haSession(it) }
         refreshPairAgain()
+        // The year's review band at the top of the charger page, under the notices and above the cards, while Home
+        // Assistant offers it.
+        val held = session
+        val door = profileId
+        if (held != null && door != null) {
+            content.addView(YearReviewBand(this, held, door).view, content.indexOfChild(pairAgainNotice) + 1, LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ))
+        }
         val authorityCache = ConfirmedSettingsStore.forContext(applicationContext)
         val authorityCoordinator = authorityProfile?.let { subject ->
             SettingsAuthorityCoordinator(
