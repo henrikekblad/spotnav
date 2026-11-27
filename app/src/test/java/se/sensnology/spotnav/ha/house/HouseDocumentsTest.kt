@@ -27,9 +27,13 @@ class HouseDocumentsTest {
         val expected = mapOf(
             "house_alone_now.json" to listOf(1.8, 1.8, "----", null),
             "villa_car.json" to listOf(7.6, 1.7, "sbch", true),
+            "villa_car_lags.json" to listOf(0.5, 0.0, "sbch", true),
             "villa_dc_battery.json" to listOf(0.2, 10.2, "sbch", false),
             "villa_export.json" to listOf(-2.6, 1.0, "sbch", false),
-            "villa_now.json" to listOf(0.4, 3.1, "sbch", true)
+            "villa_heat_over.json" to listOf(0.1, 1.3, "sbch", false),
+            "villa_now.json" to listOf(0.4, 3.1, "sbch", true),
+            "villa_pool.json" to listOf(-3.1, 2.3, "sbch", false),
+            "villa_stale_parts.json" to listOf(0.0, 2.04, "sbch", false)
         )
         assertEquals(expected.keys, HaFixtures.files("house_now").map { it.name }.toSet())
         for ((name, row) in expected) {
