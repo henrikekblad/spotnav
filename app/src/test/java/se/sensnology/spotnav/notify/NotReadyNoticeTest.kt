@@ -26,6 +26,18 @@ class NotReadyNoticeTest {
         assertEquals(NotReadyNotice.Step.Post(key), NotReadyNotice.step(block(), "charger_garage@2026-11-17T06:00:00Z", day, zone))
     }
 
+    @Test fun aCarKnownToBeAwayIsLeftOut() {
+        val kept = NotReadyNotice.withoutAway(block(), setOf("charger_garage"))!!
+        assertEquals(listOf("spa"), kept.items.map { it.loadId })
+        assertEquals(listOf(null, "spa", "spa"), kept.ranked.map { it.loadId })
+        assertEquals(NotReadyNotice.Step.Post("spa@2026-11-17T18:00:00Z"), NotReadyNotice.step(kept, null, day, zone))
+        // Another charger away changes nothing; the car alone away: nothing to tell.
+        assertEquals(block(), NotReadyNotice.withoutAway(block(), setOf("charger_carport")))
+        val carOnly = block().let { b -> b.copy(items = b.items.filter { it.kind == "car" }) }
+        assertEquals(null, NotReadyNotice.withoutAway(carOnly, setOf("charger_garage")))
+        assertEquals(NotReadyNotice.Step.Keep, NotReadyNotice.step(NotReadyNotice.withoutAway(carOnly, setOf("charger_garage")), null, day, zone))
+    }
+
     @Test fun neverAtNightAndTakenOffOnceNothingAsks() {
         assertEquals(NotReadyNotice.Step.Wait, NotReadyNotice.step(block(), null, Instant.parse("2026-11-16T21:30:00Z"), zone))
         assertEquals(NotReadyNotice.Step.Wait, NotReadyNotice.step(block(), null, Instant.parse("2026-11-17T05:59:00Z"), zone))

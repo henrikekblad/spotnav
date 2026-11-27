@@ -58,6 +58,20 @@ internal object NotReadyNotice {
     fun key(block: NotReady): String =
         block.items.filter { it.chosen == null }.map { "${it.loadId}@${it.deadline}" }.sorted().joinToString(",")
 
+    /**
+     * [block] without the cars known to be away ([away]: their charger entry ids) and their choices: the plan is made
+     * for a car's next plug-in, so its departure is not told while it is away (Home Assistant's `fit_may_tell`). The
+     * spa's baths and the sauna's sessions stay. `null` when nothing is left.
+     */
+    fun withoutAway(block: NotReady?, away: Set<String>): NotReady? {
+        if (block == null || away.isEmpty()) return block
+        val gone = block.items.filter { it.kind == "car" && it.loadId in away }.map { it.loadId }.toSet()
+        if (gone.isEmpty()) return block
+        val items = block.items.filter { it.loadId !in gone }
+        if (items.isEmpty()) return null
+        return NotReady(items, block.ranked.filter { it.loadId == null || it.loadId !in gone })
+    }
+
     fun step(block: NotReady?, posted: String?, now: Instant, zone: ZoneId): Step {
         if (block == null || !block.asks) return if (posted == null) Step.Keep else Step.Retire
         val key = key(block)
@@ -115,16 +129,25 @@ internal object NotReadyNotifications {
 
     /**
      * One check's read of a site's plan, for the paired charger [profile] it was read through: post, keep or take off
-     * its notice. Not chosen ([chosen] false, the phone's "Not ready in time" off): taken off.
+     * its notice. The cars in [away] (charger entry ids) are left out of it. Not chosen ([chosen] false, the phone's "Not ready in time" off): taken off.
      */
-    fun follow(context: Context, store: LocalNotificationStore, profile: ChargerProfile, plan: Plan, chosen: Boolean, now: Instant = Instant.now()) {
+    fun follow(
+        context: Context,
+        store: LocalNotificationStore,
+        profile: ChargerProfile,
+        plan: Plan,
+        chosen: Boolean,
+        now: Instant = Instant.now(),
+        away: Set<String> = emptySet()
+    ) {
         val site = plan.siteId
         val posted = store.notReadyPosted(site)
-        val step = if (chosen) NotReadyNotice.step(plan.notReady, posted, now, plan.zone) else NotReadyNotice.Step.Retire
+        val block = NotReadyNotice.withoutAway(plan.notReady, away)
+        val step = if (chosen) NotReadyNotice.step(block, posted, now, plan.zone) else NotReadyNotice.Step.Retire
         when (step) {
             is NotReadyNotice.Step.Post -> {
                 if (!LocalNotifications.allowed(context)) return
-                if (post(context, profile, plan, plan.notReady!!)) store.setNotReadyPosted(site, step.key)
+                if (post(context, profile, plan, block!!)) store.setNotReadyPosted(site, step.key)
             }
             NotReadyNotice.Step.Retire -> {
                 manager(context).cancel(tag(site), ID)

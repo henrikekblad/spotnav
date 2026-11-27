@@ -82,8 +82,18 @@ internal data class NotificationSnapshot(
      * and a check without the line): the notice is told once per `since`, so a line that leaves and comes back after
      * a restart is not told again, while one held back (not chosen, the repeat limit, another reason first) still is.
      */
-    val carRefusesTold: String? = null
+    val carRefusesTold: String? = null,
+    /**
+     * Whether a car is plugged in as last known: [connected], or while the charger cannot say (`null`) the reading
+     * before, as Home Assistant keeps it. Filled by [NotificationRules.derive]; `null` until anything is known.
+     */
+    val knownConnected: Boolean? = null,
+    /** A `plan_at_risk` was told and the departure has stayed at risk since: not told again on a new plug-in. */
+    val atRiskTold: Boolean = false
 ) {
+    /** The car is known to be away: no outcome of a charge that cannot happen is told (Home Assistant's rule). */
+    val away: Boolean get() = (knownConnected ?: connected) == false
+
     fun toJson(): JSONObject = JSONObject().apply {
         put("at", at.toEpochMilli())
         put("charging", charging)
@@ -111,6 +121,8 @@ internal data class NotificationSnapshot(
         put("car_refuses_target", carRefusesTarget ?: JSONObject.NULL)
         put("car_refuses_since", carRefusesSince ?: JSONObject.NULL)
         put("car_refuses_told", carRefusesTold ?: JSONObject.NULL)
+        put("known_connected", knownConnected ?: JSONObject.NULL)
+        put("at_risk_told", atRiskTold)
     }
 
     companion object {
@@ -145,7 +157,9 @@ internal data class NotificationSnapshot(
                 carRefusesLevel = number("car_refuses_level"),
                 carRefusesTarget = number("car_refuses_target"),
                 carRefusesSince = text("car_refuses_since"),
-                carRefusesTold = text("car_refuses_told")
+                carRefusesTold = text("car_refuses_told"),
+                knownConnected = json.opt("known_connected") as? Boolean,
+                atRiskTold = json.opt("at_risk_told") as? Boolean ?: false
             )
         }.getOrNull()
     }
@@ -286,11 +300,19 @@ internal object NotificationRules {
         chosen: Set<NotificationEvent>,
         lastSent: Map<NotificationEvent, Instant>
     ): Derivation {
+        // A charger that cannot say (offline) keeps the last known reading, as Home Assistant does.
+        val known = current.connected ?: previous?.let { it.knownConnected ?: it.connected }
+        @Suppress("NAME_SHADOWING")
+        val current = current.copy(knownConnected = known)
         if (previous == null || Duration.between(previous.at, current.at) > STALE || current.at.isBefore(previous.at)) {
             return Derivation(
                 emptyList(),
                 lastSent,
-                current.copy(completeTold = previous?.completeTold ?: false, carRefusesTold = previous?.carRefusesTold)
+                current.copy(
+                    completeTold = previous?.completeTold ?: false,
+                    carRefusesTold = previous?.carRefusesTold,
+                    atRiskTold = current.atRisk && previous?.atRiskTold == true
+                )
             )
         }
         val found = changes(previous, current)
@@ -298,13 +320,18 @@ internal object NotificationRules {
         // A completion is told once per charge: again only after the car was unplugged or a new charge started.
         var told = previous.completeTold && current.connected != false && !(current.charging && !previous.charging)
         var refusesTold = previous.carRefusesTold
+        // A told `plan_at_risk` stands until the departure is no longer at risk: an unplug and a new plug-in do not
+        // tell it again.
+        var riskTold = previous.atRiskTold && current.atRisk
         val events = found.filter { event ->
             if (event.event == NotificationEvent.CHARGE_COMPLETE && told) return@filter false
+            if (event.event == NotificationEvent.PLAN_AT_RISK && riskTold) return@filter false
             val last = sent[event.event]
             val quiet = last != null && Duration.between(last, current.at) < QUIET
             (event.event in chosen && !quiet).also {
                 if (it) sent[event.event] = current.at
                 if (it && event.event == NotificationEvent.CHARGE_COMPLETE) told = true
+                if (it && event.event == NotificationEvent.PLAN_AT_RISK) riskTold = true
                 if (it && event.event == NotificationEvent.PLAN_STOPPED && event.reason == CAR_REFUSES) {
                     refusesTold = current.carRefusesSince ?: refusesTold
                 }
@@ -313,21 +340,25 @@ internal object NotificationRules {
         return Derivation(
             events,
             sent,
-            current.copy(completeTold = told, carRefusesTold = refusesTold)
+            current.copy(completeTold = told, carRefusesTold = refusesTold, atRiskTold = riskTold)
         )
     }
 
     /** Every event the change from [before] to [now] is, chosen or not, in the contract's order. */
     private fun changes(before: NotificationSnapshot, now: NotificationSnapshot): List<LocalEvent> = buildList {
+        // A window that does not start while the car is away is no fault (Home Assistant's rule).
+        fun stop(snapshot: NotificationSnapshot) = snapshot.stopReason.takeUnless { it == "not_started" && snapshot.away }
+        val stopNow = stop(now)
+        val stopBefore = stop(before)
         // The car refusing is told once per `since` (Home Assistant keeps it across its restart); without one, when
         // the line comes.
         val since = now.carRefusesSince
         val refusesNew = if (since != null) since != before.carRefusesTold && since != before.carRefusesSince
-            else before.stopReason != CAR_REFUSES
-        val own = if (now.stopReason == CAR_REFUSES) refusesNew
-            else now.stopReason in OWN_REASONS && before.stopReason != now.stopReason
-        if (own || (now.stopReason != null && now.stopReason !in OWN_REASONS && before.stopReason == null)) {
-            val reason = if (now.stopReason == "not_started" && before.charging) "stopped" else now.stopReason
+            else stopBefore != CAR_REFUSES
+        val own = if (stopNow == CAR_REFUSES) refusesNew
+            else stopNow in OWN_REASONS && stopBefore != stopNow
+        if (own || (stopNow != null && stopNow !in OWN_REASONS && stopBefore == null)) {
+            val reason = if (stopNow == "not_started" && before.charging) "stopped" else stopNow
             if (reason == CAR_REFUSES) {
                 add(
                     LocalEvent(
@@ -338,7 +369,11 @@ internal object NotificationRules {
                 add(LocalEvent(NotificationEvent.PLAN_STOPPED, reason = reason))
             }
         }
-        if (now.atRisk && !before.atRisk) add(LocalEvent(NotificationEvent.PLAN_AT_RISK, time = now.departure))
+        // The plan is made while the car is away too (for the next plug-in): its departure at risk is told only with a
+        // car there, so one that arose while it was away is told at the plug-in if it still stands then.
+        if (now.atRisk && !now.away && !(before.atRisk && !before.away)) {
+            add(LocalEvent(NotificationEvent.PLAN_AT_RISK, time = now.departure))
+        }
         complete(before, now)?.let(::add)
         if (now.charging && !before.charging) add(LocalEvent(NotificationEvent.CHARGE_STARTED, time = now.windowEnd))
         if (now.connected == true && before.connected == false) add(LocalEvent(NotificationEvent.PLUGGED_IN))
