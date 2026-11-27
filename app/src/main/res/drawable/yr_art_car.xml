@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The car. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M4,50 L18,50 M8,60 L20,60"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.8"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M22,66 V56 L32,40 Q34,37 38,37 H66 Q70,37 72,40 L82,56 V66 Q82,70 78,70 H26 Q22,70 22,66 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.5">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="50" android:startY="37" android:endX="50" android:endY="70"><item android:offset="0" android:color="#FFFFD0EA"/><item android:offset="1" android:color="#FFEC6FB5"/></gradient></aapt:attr>
+    </path>
+    <path
+        android:pathData="M36,42 H64 L70,54 H30 Z"
+        android:fillColor="#FF6B1E52"
+        android:fillAlpha="0.5" />
+    <path
+        android:pathData="M27,70 A7,7 0 1,0 41,70 A7,7 0 1,0 27,70 Z"
+        android:fillColor="#FF2B1022"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.5" />
+    <path
+        android:pathData="M63,70 A7,7 0 1,0 77,70 A7,7 0 1,0 63,70 Z"
+        android:fillColor="#FF2B1022"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.5" />
+    <path
+        android:pathData="M52,44 L46,56 H53 L49,66 L59,51 H52 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The most expensive hour: the price peak. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M8,78 L24,70 L36,74 L48,30 L58,72 L72,66 L92,70"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M42,30 A6,6 0 1,0 54,30 A6,6 0 1,0 42,30 Z"
+        android:fillColor="#FFFFD1D1"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2" />
+    <path
+        android:pathData="M70,14 V40 M60,32 L70,42 L80,32"
+        android:strokeColor="#FFFFE066"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

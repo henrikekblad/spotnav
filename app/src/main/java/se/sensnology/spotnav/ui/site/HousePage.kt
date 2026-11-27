@@ -24,6 +24,7 @@ import se.sensnology.spotnav.ui.common.cardHeading
 import se.sensnology.spotnav.ui.common.cardTitle
 import se.sensnology.spotnav.ui.common.cardWords
 import se.sensnology.spotnav.ui.common.headerTitle
+import se.sensnology.spotnav.ui.yearreview.YearReviewBand
 import java.time.Instant
 
 /**
@@ -161,6 +162,8 @@ internal class HousePage(
     override val view: View = ScrollView(context).apply {
         addView(LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
+            // The year's review band, while Home Assistant offers it (the card's band at the top of the house card).
+            addView(YearReviewBand(this@HousePage, session, profileId).view, wide())
             // The page's heading: its name and what the battery does now. The mark and the gear are the top row's.
             addView(headerRow, wide().apply { bottomMargin = dp(8) })
             addView(testExplain, wide().apply { bottomMargin = dp(8) })

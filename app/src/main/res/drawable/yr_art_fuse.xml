@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The fuse: a shield. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M50,8 L84,20 V48 C84,70 68,84 50,92 C32,84 16,70 16,48 V20 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="50" android:startY="8" android:endX="50" android:endY="92"><item android:offset="0" android:color="#FFCFE2FF"/><item android:offset="1" android:color="#FF5B9BFF"/></gradient></aapt:attr>
+    </path>
+    <path
+        android:pathData="M34,50 L46,62 L68,38"
+        android:strokeColor="#FF1D3F8A"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

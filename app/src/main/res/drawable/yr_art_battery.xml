@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The battery. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M38,18 H62 A8,8 0 0 1 70,26 V80 A8,8 0 0 1 62,88 H38 A8,8 0 0 1 30,80 V26 A8,8 0 0 1 38,18 Z"
+        android:fillColor="#26FFFFFF"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3" />
+    <path
+        android:pathData="M45,10 H55 A3,3 0 0 1 58,13 V15 A3,3 0 0 1 55,18 H45 A3,3 0 0 1 42,15 V13 A3,3 0 0 1 45,10 Z"
+        android:fillColor="#FFFFFFFF" />
+    <path
+        android:pathData="M40,40 H60 A4,4 0 0 1 64,44 V78 A4,4 0 0 1 60,82 H40 A4,4 0 0 1 36,78 V44 A4,4 0 0 1 40,40 Z">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="50" android:startY="82" android:endX="50" android:endY="40"><item android:offset="0" android:color="#FF7FF0DE"/><item android:offset="1" android:color="#FF22C3B0"/></gradient></aapt:attr>
+    </path>
+    <path
+        android:pathData="M53,46 L44,62 H52 L47,76 L58,58 H50 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

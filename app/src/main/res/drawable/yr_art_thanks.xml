@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thank you: a heart. The card's own illustration (frontend/src/year-review-art.ts), 100 x 100. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M50,84 C20,62 10,46 18,30 C26,16 44,18 50,32 C56,18 74,16 82,30 C90,46 80,62 50,84 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3">
+        <aapt:attr name="android:fillColor"><gradient android:type="radial" android:centerX="38.75" android:centerY="38.5" android:gradientRadius="40"><item android:offset="0" android:color="#FFFFD6EC"/><item android:offset="1" android:color="#FFEC6FB5"/></gradient></aapt:attr>
+    </path>
+</vector>

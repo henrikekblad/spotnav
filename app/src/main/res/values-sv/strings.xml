@@ -2034,4 +2034,83 @@
   <string name="card_battery_tester_help_asked" formatted="false">Kör hårdvarutestet under Support → Hårdvarutest. Tryck på Start en gång: det körs av sig självt på dagtid, och resultatet skickas av sig självt.</string>
   <string name="card_battery_tester_help_tested" formatted="false">Resultatet har skickats. Du får svar via e-post.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">Kontrollkoden är inskriven: SpotNav får styra det här batteriet.</string>
+  <string name="card_year_review_title" formatted="false">Året med SpotNav</string>
+  <string name="card_year_review_row" formatted="false">Året med SpotNav {year}</string>
+  <string name="card_year_review_banner_title" formatted="false">Året med SpotNav är här</string>
+  <string name="card_year_review_banner_sub" formatted="false">Se vad {year} gav – tar bara en minut</string>
+  <string name="card_year_review_banner_close" formatted="false">Stäng bandet</string>
+  <string name="card_year_review_nav_back" formatted="false">Bakåt</string>
+  <string name="card_year_review_nav_next" formatted="false">Nästa</string>
+  <string name="card_year_review_nav_close" formatted="false">Stäng</string>
+  <string name="card_year_review_nav_page" formatted="false">Sida {page} av {pages}</string>
+  <string name="card_year_review_cover_big" formatted="false">Ditt {year}</string>
+  <string name="card_year_review_cover_say" formatted="false">Här är året i siffror: vad som flyttades och vad det gav.</string>
+  <string name="card_year_review_cover_say_since" formatted="false">SpotNav har styrt hos dig sedan {date}. Det som hände före det har räknats fram ur Home Assistants egen statistik där det går.</string>
+  <string name="card_year_review_cover_partial" formatted="false">Delvis år</string>
+  <string name="card_year_review_saved_eyebrow" formatted="false">Sparat</string>
+  <string name="card_year_review_saved_say" formatted="false">Så mycket billigare blev året än om allt hade körts utan plan.</string>
+  <string name="card_year_review_saved_foot" formatted="false">Summan av SpotNavs dagsgranskning, jämfört med samma förbrukning utan plan.</string>
+  <string name="card_year_review_saved_foot_estimated" formatted="false">≈ Laddningar före SpotNav 3.0 är uppskattade mot dygnets snittpris.</string>
+  <string name="card_year_review_saved_part_battery" formatted="false">Batteriet {amount}</string>
+  <string name="card_year_review_saved_part_car" formatted="false">Bilen {amount}</string>
+  <string name="card_year_review_saved_part_heat" formatted="false">Värmen {amount}</string>
+  <string name="card_year_review_saved_part_since" formatted="false">{part} sedan {date}</string>
+  <string name="card_year_review_car_eyebrow" formatted="false">Bilen</string>
+  <string name="card_year_review_car_say" formatted="false">av bilens laddning skedde under dygnets billigaste timmar.</string>
+  <string name="card_year_review_car_say_count" formatted="false">Bilen laddade hemma i år.</string>
+  <string name="card_year_review_car_charges_one" formatted="false">{count} laddning</string>
+  <string name="card_year_review_car_charges_other" formatted="false">{count} laddningar</string>
+  <string name="card_year_review_car_cheapest" formatted="false">billigast {price}, {date}</string>
+  <string name="card_year_review_car_since" formatted="false">Räknat sedan {date}, så långt priserna räcker.</string>
+  <string name="card_year_review_car_estimated" formatted="false">≈ Laddningar hämtade ur Home Assistants statistik räknas per timme.</string>
+  <string name="card_year_review_fees" formatted="false">Priserna är spotpris plus dina avgifter.</string>
+  <string name="card_year_review_since" formatted="false">Sedan {date}.</string>
+  <string name="card_year_review_sun_eyebrow" formatted="false">Solen</string>
+  <string name="card_year_review_sun_say" formatted="false">kom från dina solceller.</string>
+  <string name="card_year_review_sun_say_sold" formatted="false">kom från dina solceller. {pct} användes hemma, resten såldes.</string>
+  <string name="card_year_review_sun_say_out" formatted="false">kom från dina solceller. {pct} användes hemma, resten gick ut på nätet.</string>
+  <string name="card_year_review_battery_eyebrow" formatted="false">Batteriet</string>
+  <string name="card_year_review_battery_say" formatted="false">tjänade batteriet på att köpa billigt och använda dyrt.</string>
+  <string name="card_year_review_battery_say_kwh" formatted="false">gav batteriet tillbaka till huset i år.</string>
+  <string name="card_year_review_battery_say_saved" formatted="false">sparade batteriet på elräkningen i år.</string>
+  <string name="card_year_review_battery_cycles_one" formatted="false">≈ {count} varv</string>
+  <string name="card_year_review_battery_cycles_other" formatted="false">≈ {count} varv</string>
+  <string name="card_year_review_battery_buy" formatted="false">köpte för {price}</string>
+  <string name="card_year_review_battery_use" formatted="false">använde vid {price}</string>
+  <string name="card_year_review_battery_earned_since" formatted="false">Pengarna räknas från granskade dagar sedan {date}.</string>
+  <string name="card_year_review_battery_saved_foot" formatted="false">≈ Räknat på varje timmes pris, oavsett vem som styrde batteriet.</string>
+  <string name="card_year_review_fuse_eyebrow" formatted="false">Säkringen</string>
+  <string name="card_year_review_fuse_say" formatted="false">sänkte SpotNav laddningen en stund i stället för att låta säkringen lösa ut.</string>
+  <string name="card_year_review_expensive_eyebrow" formatted="false">Dyraste timmen</string>
+  <string name="card_year_review_expensive_when" formatted="false">{date} kl. {time}.</string>
+  <string name="card_year_review_expensive_bought_none" formatted="false">{date} kl. {time}. Då köpte du ingen el från nätet.</string>
+  <string name="card_year_review_expensive_bought_little" formatted="false">{date} kl. {time}. Då köpte du bara {kwh}.</string>
+  <string name="card_year_review_expensive_bought" formatted="false">{date} kl. {time}. Då köpte du {kwh}.</string>
+  <string name="card_year_review_thanks_eyebrow" formatted="false">Tack</string>
+  <string name="card_year_review_thanks_big" formatted="false">Tack för året!</string>
+  <string name="card_year_review_thanks_say" formatted="false">SpotNav är gratis och öppen källkod. Nya laddare, batterier och versioner av Home Assistant, och svar till alla som behöver hjälp, tar mycket tid. Om SpotNav har sparat dig pengar i år hjälper ett bidrag arbetet att fortsätta.</string>
+  <string name="card_year_review_thanks_sponsor" formatted="false">Stöd SpotNav på GitHub</string>
+  <string name="card_year_review_thanks_share" formatted="false">Spara en bild att dela</string>
+  <string name="card_year_review_thanks_sharing" formatted="false">Gör bilden…</string>
+  <string name="card_year_review_thanks_share_failed" formatted="false">Bilden gick inte att göra.</string>
+  <string name="card_year_review_thanks_share_hint" formatted="false">Om inget sparades: håll fingret på bilden för att spara den.</string>
+  <string name="card_year_review_thanks_foot" formatted="false">Berättelsen finns kvar under Inställningar → Support till 31 januari.</string>
+  <string name="card_year_review_share_alt" formatted="false">Bilden att dela</string>
+  <string name="card_year_review_share_title" formatted="false">Mitt {year}</string>
+  <string name="card_year_review_share_sub" formatted="false">med SpotNav</string>
+  <string name="card_year_review_share_sub_since" formatted="false">med SpotNav, sedan {month}</string>
+  <string name="card_year_review_share_saved" formatted="false">Sparat</string>
+  <string name="card_year_review_share_car" formatted="false">Bilen laddad i billiga timmar</string>
+  <string name="card_year_review_share_sun" formatted="false">Från solen</string>
+  <string name="card_year_review_share_battery" formatted="false">Batteriet tjänade</string>
+  <string name="card_year_review_share_battery_saved" formatted="false">Batteriet sparade</string>
+  <string name="card_year_review_share_battery_kwh" formatted="false">Batteriet gav tillbaka</string>
+  <string name="card_year_review_share_foot" formatted="false">SpotNav – gratis för Home Assistant</string>
+  <string name="card_year_review_fuse_times_one" formatted="false">gång</string>
+  <string name="card_year_review_fuse_times_other" formatted="false">gånger</string>
+  <string name="card_settings_section_support" formatted="false">Support</string>
+  <string name="year_review_share">Dela bilden</string>
+  <string name="year_review_save">Spara i Bilder</string>
+  <string name="year_review_saved">Sparad i Bilder/SpotNav.</string>
+  <string name="year_review_save_failed">Bilden gick inte att spara.</string>
 </resources>

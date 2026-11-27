@@ -2042,4 +2042,83 @@
   <string name="card_battery_tester_help_asked" formatted="false">Ejecuta la prueba de hardware en Soporte → Prueba de hardware. Pulsa Iniciar una vez: se ejecuta sola durante el día, y su resultado se envía solo.</string>
   <string name="card_battery_tester_help_tested" formatted="false">El resultado se ha enviado. Recibirás una respuesta por correo electrónico.</string>
   <string name="card_battery_tester_help_control_code" formatted="false">El código de control está introducido: SpotNav puede controlar esta batería.</string>
+  <string name="card_year_review_title" formatted="false">El año con SpotNav</string>
+  <string name="card_year_review_row" formatted="false">El año con SpotNav {year}</string>
+  <string name="card_year_review_banner_title" formatted="false">Ya está aquí el año con SpotNav</string>
+  <string name="card_year_review_banner_sub" formatted="false">Mira lo que dio {year}: solo lleva un minuto</string>
+  <string name="card_year_review_banner_close" formatted="false">Cerrar el aviso</string>
+  <string name="card_year_review_nav_back" formatted="false">Atrás</string>
+  <string name="card_year_review_nav_next" formatted="false">Siguiente</string>
+  <string name="card_year_review_nav_close" formatted="false">Cerrar</string>
+  <string name="card_year_review_nav_page" formatted="false">Página {page} de {pages}</string>
+  <string name="card_year_review_cover_big" formatted="false">Tu {year}</string>
+  <string name="card_year_review_cover_say" formatted="false">Aquí está el año en cifras: lo que se movió y lo que dio.</string>
+  <string name="card_year_review_cover_say_since" formatted="false">SpotNav controla tu casa desde el {date}. Lo anterior se ha calculado con las estadísticas propias de Home Assistant cuando ha sido posible.</string>
+  <string name="card_year_review_cover_partial" formatted="false">Parte del año</string>
+  <string name="card_year_review_saved_eyebrow" formatted="false">Ahorrado</string>
+  <string name="card_year_review_saved_say" formatted="false">Eso es lo que el año costó de menos que si todo hubiera funcionado sin plan.</string>
+  <string name="card_year_review_saved_foot" formatted="false">La suma de la revisión diaria de SpotNav, frente al mismo consumo sin plan.</string>
+  <string name="card_year_review_saved_foot_estimated" formatted="false">≈ Las cargas anteriores a SpotNav 3.0 se estiman con el precio medio del día.</string>
+  <string name="card_year_review_saved_part_battery" formatted="false">Batería {amount}</string>
+  <string name="card_year_review_saved_part_car" formatted="false">Coche {amount}</string>
+  <string name="card_year_review_saved_part_heat" formatted="false">Calefacción {amount}</string>
+  <string name="card_year_review_saved_part_since" formatted="false">{part} desde el {date}</string>
+  <string name="card_year_review_car_eyebrow" formatted="false">El coche</string>
+  <string name="card_year_review_car_say" formatted="false">de la carga del coche se hizo en las horas más baratas del día.</string>
+  <string name="card_year_review_car_say_count" formatted="false">El coche se cargó en casa este año.</string>
+  <string name="card_year_review_car_charges_one" formatted="false">{count} carga</string>
+  <string name="card_year_review_car_charges_other" formatted="false">{count} cargas</string>
+  <string name="card_year_review_car_cheapest" formatted="false">la más barata {price}, {date}</string>
+  <string name="card_year_review_car_since" formatted="false">Contado desde el {date}, hasta donde llegan los precios.</string>
+  <string name="card_year_review_car_estimated" formatted="false">≈ Las cargas leídas de las estadísticas de Home Assistant se cuentan por horas.</string>
+  <string name="card_year_review_fees" formatted="false">Los precios son el precio spot más tus tarifas.</string>
+  <string name="card_year_review_since" formatted="false">Desde el {date}.</string>
+  <string name="card_year_review_sun_eyebrow" formatted="false">El sol</string>
+  <string name="card_year_review_sun_say" formatted="false">vinieron de tus paneles solares.</string>
+  <string name="card_year_review_sun_say_sold" formatted="false">vinieron de tus paneles solares. Se usó en casa el {pct}; el resto se vendió.</string>
+  <string name="card_year_review_sun_say_out" formatted="false">vinieron de tus paneles solares. Se usó en casa el {pct}; el resto salió a la red.</string>
+  <string name="card_year_review_battery_eyebrow" formatted="false">La batería</string>
+  <string name="card_year_review_battery_say" formatted="false">ganó la batería cargando barato y devolviendo en las horas caras.</string>
+  <string name="card_year_review_battery_say_kwh" formatted="false">devolvió la batería a la casa este año.</string>
+  <string name="card_year_review_battery_say_saved" formatted="false">ahorró la batería en la factura de la luz este año.</string>
+  <string name="card_year_review_battery_cycles_one" formatted="false">≈ {count} ciclo</string>
+  <string name="card_year_review_battery_cycles_other" formatted="false">≈ {count} ciclos</string>
+  <string name="card_year_review_battery_buy" formatted="false">comprado a {price}</string>
+  <string name="card_year_review_battery_use" formatted="false">usado a {price}</string>
+  <string name="card_year_review_battery_earned_since" formatted="false">El dinero se cuenta con los días revisados desde el {date}.</string>
+  <string name="card_year_review_battery_saved_foot" formatted="false">≈ Calculado con el precio de cada hora, sin importar quién controlara la batería.</string>
+  <string name="card_year_review_fuse_eyebrow" formatted="false">El fusible</string>
+  <string name="card_year_review_fuse_say" formatted="false">SpotNav bajó la carga un rato en lugar de dejar que saltara el fusible.</string>
+  <string name="card_year_review_expensive_eyebrow" formatted="false">La hora más cara</string>
+  <string name="card_year_review_expensive_when" formatted="false">{date} a las {time}.</string>
+  <string name="card_year_review_expensive_bought_none" formatted="false">{date} a las {time}. Entonces no compraste electricidad de la red.</string>
+  <string name="card_year_review_expensive_bought_little" formatted="false">{date} a las {time}. Entonces solo compraste {kwh}.</string>
+  <string name="card_year_review_expensive_bought" formatted="false">{date} a las {time}. Entonces compraste {kwh}.</string>
+  <string name="card_year_review_thanks_eyebrow" formatted="false">Gracias</string>
+  <string name="card_year_review_thanks_big" formatted="false">¡Gracias por el año!</string>
+  <string name="card_year_review_thanks_say" formatted="false">SpotNav es gratuito y de código abierto. Los nuevos cargadores, baterías y versiones de Home Assistant, y las respuestas a todos los que necesitan ayuda, llevan mucho tiempo. Si SpotNav te ha ahorrado dinero este año, una contribución ayuda a que el trabajo continúe.</string>
+  <string name="card_year_review_thanks_sponsor" formatted="false">Apoya SpotNav en GitHub</string>
+  <string name="card_year_review_thanks_share" formatted="false">Guardar una imagen para compartir</string>
+  <string name="card_year_review_thanks_sharing" formatted="false">Creando la imagen…</string>
+  <string name="card_year_review_thanks_share_failed" formatted="false">No se pudo crear la imagen.</string>
+  <string name="card_year_review_thanks_share_hint" formatted="false">Si no se guardó nada, mantén pulsada la imagen para guardarla.</string>
+  <string name="card_year_review_thanks_foot" formatted="false">La historia sigue en Ajustes → Soporte hasta el 31 de enero.</string>
+  <string name="card_year_review_share_alt" formatted="false">La imagen para compartir</string>
+  <string name="card_year_review_share_title" formatted="false">Mi {year}</string>
+  <string name="card_year_review_share_sub" formatted="false">con SpotNav</string>
+  <string name="card_year_review_share_sub_since" formatted="false">con SpotNav, desde {month}</string>
+  <string name="card_year_review_share_saved" formatted="false">Ahorrado</string>
+  <string name="card_year_review_share_car" formatted="false">Coche cargado en horas baratas</string>
+  <string name="card_year_review_share_sun" formatted="false">Del sol</string>
+  <string name="card_year_review_share_battery" formatted="false">La batería ganó</string>
+  <string name="card_year_review_share_battery_saved" formatted="false">La batería ahorró</string>
+  <string name="card_year_review_share_battery_kwh" formatted="false">La batería devolvió</string>
+  <string name="card_year_review_share_foot" formatted="false">SpotNav – gratis para Home Assistant</string>
+  <string name="card_year_review_fuse_times_one" formatted="false">vez</string>
+  <string name="card_year_review_fuse_times_other" formatted="false">veces</string>
+  <string name="card_settings_section_support" formatted="false">Soporte</string>
+  <string name="year_review_share">Compartir la imagen</string>
+  <string name="year_review_save">Guardar en Imágenes</string>
+  <string name="year_review_saved">Guardada en Imágenes/SpotNav.</string>
+  <string name="year_review_save_failed">No se pudo guardar la imagen.</string>
 </resources>

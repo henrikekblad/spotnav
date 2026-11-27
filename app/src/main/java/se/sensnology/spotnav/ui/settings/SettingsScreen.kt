@@ -1,5 +1,6 @@
 package se.sensnology.spotnav.ui.settings
 
+import se.sensnology.spotnav.ui.yearreview.YearReviewSupportCard
 import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.ActivityNotFoundException
@@ -238,6 +239,9 @@ internal class SettingsScreen(shell: ScreenShell) : ScreenPart(shell) {
         shell.settingsCar = null
         // Opened from a "Get started" row: at that row, once it is drawn, marked for a moment.
         shell.settingsTarget?.let { target -> shell.settingsTarget = null; seekRow(target) }
+        // Support: the year's review row while Home Assistant offers it (the card's Settings → Support row).
+        if (settingsProfile != null) YearReviewSupportCard(this, content, shell.haSession(settingsProfile), settingsProfile.localId)
+        else if (shownSite != null) YearReviewSupportCard(this, content, shell.siteSession(shownSite), MainSubject.pagesKey(shownSite))
         // Who hears about the charge: Home Assistant's Companion app choice and this phone's own check.
         val notificationsCard = settingsProfile?.let { PairedNotificationsCard(scope = this, parent = content, baseUrl = it.baseUrl) }
         val settingsGeneration = viewGeneration

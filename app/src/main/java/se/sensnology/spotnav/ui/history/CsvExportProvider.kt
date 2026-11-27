@@ -11,14 +11,14 @@ import android.provider.OpenableColumns
 import java.io.File
 
 /**
- * Hands one exported CSV to the share sheet. The app has no AndroidX, so this is the small piece a
- * file provider would be: it serves only the files in this app's own export folder, read-only, and
- * only to the app the share sheet picked (the grant travels with the intent).
+ * Hands one exported file to the share sheet: a CSV of the charge history, or the year review's picture (PNG). The
+ * app has no AndroidX, so this is the small piece a file provider would be: it serves only the files in this app's
+ * own export folder, read-only, and only to the app the share sheet picked (the grant travels with the intent).
  */
 class CsvExportProvider : ContentProvider() {
     override fun onCreate(): Boolean = true
 
-    override fun getType(uri: Uri): String = "text/csv"
+    override fun getType(uri: Uri): String = if (uri.lastPathSegment?.endsWith(".png") == true) "image/png" else "text/csv"
 
     override fun query(
         uri: Uri, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?
@@ -69,6 +69,16 @@ class CsvExportProvider : ContentProvider() {
             val name = safeName(filename)
             File(dir, name).writeText(csv, Charsets.UTF_8)
             return Uri.Builder().scheme("content").authority(authority(context)).appendPath(name).build()
+        }
+
+        /** Write [bytes] as [filename] (a plain name, else refused), replacing earlier exports, and give the address to share it by. */
+        fun writeBytes(context: Context, filename: String, bytes: ByteArray): Uri {
+            require(SAFE_NAME.matches(filename) && !filename.startsWith(".")) { "not a plain file name" }
+            val dir = folder(context)
+            dir.mkdirs()
+            dir.listFiles()?.forEach { it.delete() }
+            File(dir, filename).writeBytes(bytes)
+            return Uri.Builder().scheme("content").authority(authority(context)).appendPath(filename).build()
         }
 
         private fun fileFor(context: Context, uri: Uri): File? {

@@ -1441,6 +1441,7 @@ SITES = {"added": False, "pairing": True, "access": "ok", "unloaded": False}
 SITE_CHARGERS = ("sitecharger", "sitecharger2")
 #: The actions a home answers itself; every other one is a charger's and needs `charger_id`.
 HOME_ACTIONS = (
+    "get_year_review", "year_review_seen",
     "get_site", "get_house", "get_house_now", "get_house_history", "get_house_loads", "get_heat", "get_heat_history",
     "update_heat", "heat_boost", "battery_control", "get_site_settings_view", "update_site_settings", "get_power_month",
     "suggest_import_target",
@@ -1502,6 +1503,24 @@ def get_site_body(home: str) -> dict:
     }
 
 
+# The year's review (3.0): the integration's full-year fixture for every home and the house chargers; a phone that
+# opened it or closed its band (by its `app_id`) is answered `banner: false` from then on, until this stops.
+YEAR_REVIEW_FIXTURE = DASHBOARD_FIXTURES.parent / "year_review/v1/full_year.json"
+YEAR_REVIEW_SEEN: set[str] = set()
+
+
+def year_review_body(action: str, payload: dict) -> tuple[int, dict]:
+    if action == "year_review_seen":
+        if not isinstance(payload.get("app_id"), str) or payload.get("seen_action") not in ("viewed", "dismissed"):
+            return 400, {"ok": False, "error": "spotnav_invalid_request", "action": action}
+        YEAR_REVIEW_SEEN.add(payload["app_id"])
+        return 200, {"ok": True, "action": action}
+    body = json.loads(YEAR_REVIEW_FIXTURE.read_text(encoding="utf-8"))
+    if payload.get("app_id") in YEAR_REVIEW_SEEN:
+        body["banner"] = False
+    return 200, {"ok": True, "action": action, **body}
+
+
 def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
     """One of the home's own actions, answered as the `heat` and `sitesettings` scenarios answer them."""
     if action == "get_site":
@@ -1524,6 +1543,8 @@ def home_action_body(home: str, action: str, payload: dict) -> tuple[int, dict]:
         return heat_boost_body(payload)
     if action == "battery_control":
         return battery_control_body(payload)
+    if action in ("get_year_review", "year_review_seen"):
+        return year_review_body(action, payload)
     if action == "get_site_settings_view":
         body = json.loads((DASHBOARD_FIXTURES.parent / "webhook/site_webhook_get_site_settings_view.json").read_text(encoding="utf-8"))
         body.update({"site_id": home, "name": HOMES[home]["name"], "charger_ids": _home_chargers(home)})
@@ -2004,6 +2025,9 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if key in SITE_CHARGERS and action in HOME_ACTIONS:
                     self._json(*home_action_body(_home_of(key) or "siteonly_charger", action, payload))
+                    return
+                if action in ("get_year_review", "year_review_seen") and key in ("house", "heat"):
+                    self._json(*year_review_body(action, payload))
                     return
                 if action == "dashboard":
                     self._json(200, dashboard_body(key, payload.get("reads")))
