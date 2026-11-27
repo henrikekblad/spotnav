@@ -1,0 +1,6 @@
+Nytt i 3.3:
+- Året med SpotNav: en kort fortelling om året ditt med et bilde å dele (10. des – 31. jan)
+- Den nye Nå-boksen, som i kortet
+- De samme fargene for den samme energien overalt
+- Ingen eksport ved negative priser vises i batteriinnstillingene
+- Året med SpotNav krever SpotNav for Home Assistant 3.0.0b8

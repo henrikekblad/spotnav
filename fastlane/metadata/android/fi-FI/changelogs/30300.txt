@@ -1,0 +1,6 @@
+Uutta versiossa 3.3:
+- Vuosi SpotNavin kanssa: lyhyt tarina vuodestasi ja jaettava kuva (10.12.–31.1.)
+- Uusi Nyt-ruutu, kuten kortissa
+- Samat värit samalle energialle kaikkialla
+- Ei vientiä negatiivisilla hinnoilla näkyy akun asetuksissa
+- Vuosi SpotNavin kanssa vaatii SpotNav for Home Assistant 3.0.0b8:n

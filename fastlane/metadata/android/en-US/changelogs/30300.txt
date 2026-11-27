@@ -1,0 +1,6 @@
+New in 3.3:
+- The year with SpotNav: a short story of your year with a picture to share (10 Dec – 31 Jan)
+- The new Now box, as in the card
+- One set of colours for the same energy everywhere
+- No export at negative prices shown in the battery settings
+- The year with SpotNav needs SpotNav for Home Assistant 3.0.0b8

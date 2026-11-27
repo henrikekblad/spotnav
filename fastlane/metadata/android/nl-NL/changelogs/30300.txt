@@ -1,0 +1,6 @@
+Nieuw in 3.3:
+- Het jaar met SpotNav: een kort verhaal over je jaar met een afbeelding om te delen (10 dec – 31 jan)
+- Het nieuwe Nu-blok, zoals in de kaart
+- Dezelfde kleuren voor dezelfde energie overal
+- Geen teruglevering bij negatieve prijzen staat in de batterij-instellingen
+- Het jaar met SpotNav vraagt SpotNav voor Home Assistant 3.0.0b8

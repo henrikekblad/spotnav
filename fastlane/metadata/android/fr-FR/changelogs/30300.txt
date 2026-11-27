@@ -1,0 +1,6 @@
+Nouveau dans la 3.3 :
+- L'année avec SpotNav : une courte histoire de ton année avec une image à partager (10 déc – 31 janv)
+- Le nouveau bloc Maintenant, comme dans la carte
+- Les mêmes couleurs pour la même énergie partout
+- Pas d'injection aux prix négatifs, affiché dans les réglages de la batterie
+- L'année avec SpotNav demande SpotNav pour Home Assistant 3.0.0b8
