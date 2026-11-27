@@ -102,9 +102,10 @@ tab reads `get_house_history` (a day, month or year: the villa's, or for `flows=
 and, for the pie behind House and Heat, `get_house_loads` (`ha-fixtures/house_history/`, `ha-fixtures/house_loads/`);
 the answers are the fixtures with their period moved to the one asked for, a date after today is refused as
 `spotnav_invalid_date`.
-`GET /spotnav-mock/house?flows=now|export|car|alone|none&control=own|test|on` chooses the moment: buying a little,
-selling the sun, the car charging, a house with the grid alone, or no live answer at all (`none`: the reads are
-refused, as when the site is not loaded); and who runs the battery: its own optimiser, nobody yet (Test), or SpotNav.
+`GET /spotnav-mock/house?flows=now|export|car|alone|pool|stale|lags|none&control=own|test|on` chooses the moment: buying
+a little, selling the sun, the car charging, a house with the grid alone, the pool beside the heat in the house's ring,
+the heat and the sun estimated from the last period, a car whose charger lags behind its meter, or no live answer at
+all (`none`: the reads are refused, as when the site is not loaded); and who runs the battery: its own optimiser, nobody yet (Test), or SpotNav.
 `get_house` with a `date` answers that past day (the villa's past day moved to it), and `get_house_history` the day,
 month or year asked for (the vendored `ha-fixtures/house_history/` villa documents moved to the period; a year of a
 house alone for `flows=alone`, a day or a month of one without battery, sun, heat or prices), so the Graf and Pris och
@@ -709,7 +710,10 @@ def update_grid_fee(payload: dict) -> tuple[int, dict]:
 
 #: The `house` scenario's choices, set with `GET /spotnav-mock/house?flows=..&control=..`.
 HOUSE = {"flows": "now", "control": "own"}
-HOUSE_FLOWS = {"now": "villa_now.json", "export": "villa_export.json", "car": "villa_car.json", "alone": "house_alone_now.json"}
+HOUSE_FLOWS = {
+    "now": "villa_now.json", "export": "villa_export.json", "car": "villa_car.json", "alone": "house_alone_now.json",
+    "pool": "villa_pool.json", "stale": "villa_stale_parts.json", "lags": "villa_car_lags.json",
+}
 HOUSE_CONTROLS = ("own", "test", "on")
 
 #: The `heat` scenario's state: which fixture, and the settings the dial and Home/Away have written since.
@@ -754,11 +758,15 @@ def house_now_body() -> tuple[int, dict]:
     body = json.loads((DASHBOARD_FIXTURES.parent / "house_now" / name).read_text(encoding="utf-8"))
     now = datetime.now(ZoneInfo("UTC"))
     body["at"] = now.replace(microsecond=0).isoformat()
-    # The house's own use swings a few hundred watts over a minute and a half, and the grid carries the difference.
+    # The house's own use swings a few hundred watts over a minute and a half, and the grid carries the difference;
+    # the swing is in the house's rest, so the figures still balance as Home Assistant's do.
     swing = round(0.3 * math.sin(now.timestamp() / 15.0), 1)
-    if body["house_kw"] is not None and body["grid_kw"] is not None:
-        body["house_kw"] = round(body["house_kw"] + swing, 1)
-        body["grid_kw"] = round(body["grid_kw"] + swing, 1)
+    if body["house_kw"] is not None and body["grid_kw"] is not None and body["house_kw"] + swing >= 0:
+        body["house_kw"] = round(body["house_kw"] + swing, 2)
+        body["grid_kw"] = round(body["grid_kw"] + swing, 2)
+        for key in ("rest_kw", "other_kw"):
+            if body.get(key) is not None:
+                body[key] = round(max(0.0, body[key] + swing), 2)
     return 200, {"ok": True, "action": action, **body}
 
 
